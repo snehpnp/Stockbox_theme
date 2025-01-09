@@ -1,4 +1,4 @@
-# Stock Box 📦
+# Stock Box 📦  
 
 ![Stock Box Logo](https://stockboxpnp.pnpuniverse.com/uploads/basicsetting/logo-1735629852084-427650703.png)  
 **Automatic Trading Platform**  
@@ -46,8 +46,8 @@ Key Features:
 ---
 
 ## Developers 👩‍💻👨‍💻  
-- **Sneh Jaiswal**  
-- **Neha Sharma**  
+- [**Sneh Jaiswal**](https://github.com/snehpnp)  
+- [**Neha Sharma**](https://github.com/NehaSharma3496)  
 
 ---
 
