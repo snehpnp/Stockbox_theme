@@ -1,6 +1,6 @@
 # Stock Box 📦
 
-![Stock Box Logo]([https://via.placeholder.com/800x200?text=Stock+Box+Banner](https://stockboxpnp.pnpuniverse.com/uploads/basicsetting/logo-1735629852084-427650703.png))  
+![Stock Box Logo](https://stockboxpnp.pnpuniverse.com/uploads/basicsetting/logo-1735629852084-427650703.png)  
 **Automatic Trading Platform**  
 
 ## Project Description  
