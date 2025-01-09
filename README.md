@@ -5,6 +5,12 @@
 
 ---
 
+## Developers 👩‍💻👨‍💻  
+- [**Sneh Jaiswal**](https://github.com/snehpnp)  
+- [**Neha Sharma**](https://github.com/NehaSharma3496)  
+
+---
+
 ## 📝 Project Description  
 **Stock Box** is a cutting-edge platform designed for automatic trading (like algorithmic trading). It connects with multiple brokers to enable live trades seamlessly.  
 
