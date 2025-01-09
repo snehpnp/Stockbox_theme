@@ -1,6 +1,6 @@
 # 📦 Stock Box  
 
-![Stock Box Logo](https://avatars.githubusercontent.com/u/111964398?s=400&u=f8571e4c1d032b4af336965e451c3efa1df8a483&v=4)  
+
 **🚀 Automatic Trading Platform**  
 
 ---
