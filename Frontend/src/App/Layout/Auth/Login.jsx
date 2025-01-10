@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const Login = () => {
-  const [status, setStatus] = useState(null); // Default status is null
+  const [status, setStatus] = useState(1); // Default status is null
 
   useEffect(() => {
     // Retrieve the status from localStorage
@@ -15,7 +15,7 @@ const Login = () => {
     <>
       <div className="row">
         <div className="col-lg-8 mx-auto">
-          {status === "1" ? (
+          {status == "1" ? (
             // First Login Form
             <div className="login-wrapper">
               <div className="background" />
