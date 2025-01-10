@@ -24,7 +24,7 @@ import AddTheme from "../pages/Themes/AddTheme";
 import Edittheme from "../pages/Themes/EditTheme";
 import Modals from '../components/Modals';
 import Services from '../pages/Services'
-import Login from "../Auth/Login";
+import Login from "../Layout/Auth/Login";
 import Company from '../Layout/Superadmin/Company/Company'
 
 export default function App() {

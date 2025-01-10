@@ -130,7 +130,7 @@ button.button_sell.active {
     background-color: #fff;
 }
   
-.Sidebar-vertical {
+.sidebar-vertical-container  .SidebarColored {
     width: 250px;
     position: fixed;
     height: 100%;
@@ -249,11 +249,7 @@ button.button_sell.active {
     background: #cfaaaa;
     border-radius: 5px;
 }
-.Sidebar-horizontal {
-  
-    position: relative;
-   
-}
+
 
 ul.sidebar-menu ul {
     display: block !important;
