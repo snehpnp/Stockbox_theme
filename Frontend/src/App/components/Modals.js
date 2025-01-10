@@ -25,7 +25,7 @@ const Modals = () => {
         >      
         <div className='modal-header'>
           Modal Head
-          <button onClick={closeModal} className='modal-close-btn-head' ><i class="fa-solid fa-xmark"></i></button>
+          <button onClick={closeModal} className='modal-close-btn-head' ><i className="fa-solid fa-xmark"></i></button>
         </div>
         <div className='modal-body'>
           <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>

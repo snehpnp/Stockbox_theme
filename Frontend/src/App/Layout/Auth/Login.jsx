@@ -39,6 +39,7 @@ const Login = () => {
         text: "Login successful!",
         timer: 1500,
       }).then(() => navigate("/user/dashboard"));
+      window.location.reload();
     }
   };
 

@@ -632,26 +632,26 @@ const Services = () => {
             )}
 
             <div
-              class="modal fade"
+              className="modal fade"
               id="exampleModal1"
               tabindex="-1"
               aria-labelledby="exampleModalLabel"
               aria-hidden="true"
             >
-              <div class="modal-dialog">
-                <div class="modal-content rounded-1">
-                  <div class="modal-header rounded-1">
-                    <h5 class="modal-title" id="exampleModalLabel">
+              <div className="modal-dialog">
+                <div className="modal-content rounded-1">
+                  <div className="modal-header rounded-1">
+                    <h5 className="modal-title" id="exampleModalLabel">
                       Discription
                     </h5>
                     <button
                       type="button"
-                      class="btn-close"
+                      className="btn-close"
                       data-bs-dismiss="modal"
                       aria-label="Close"
                     ></button>
                   </div>
-                  <div class="modal-body ">
+                  <div className="modal-body ">
                     Lorem ipsum dolor sit amet consectetur adipisicing elit.
                     Nulla minus nemo aut reiciendis mollitia recusandae
                     dignissimos quaerat incidunt est, sunt suscipit accusamus!

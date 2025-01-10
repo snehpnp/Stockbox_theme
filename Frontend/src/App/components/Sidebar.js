@@ -172,10 +172,10 @@ const Sidebar = () => {
                         }}
                       >
                         <IconComponent icon={tab.icon} className="mx-2" />
-                        {!isCollapsed ? tab.name : ""}
+                        {!isCollapsed ? tab?.name : ""}
                       </Link>
-                      {tab.children.length > 0 &&
-                        (openTab === tab.name ? (
+                      {tab?.children?.length > 0 &&
+                        (openTab === tab?.name ? (
                           <ChevronDown size={20} />
                         ) : (
                           <ChevronRight size={20} />
