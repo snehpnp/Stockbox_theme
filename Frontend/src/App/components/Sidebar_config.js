@@ -6,7 +6,7 @@ const Admin = [
   {
     label: "Plan",
     icon: "Rocket",
-    subMenu: [
+    children: [
       { label: "Package", icon: "Repeat2", link: "/admin/plan", name: "Package" },
       { label: "Segment", icon: "ScatterChart", link: "/admin/service", name: "Segment" },
       { label: "Category", icon: "ClipboardType", link: "/admin/category", name: "Category" },
@@ -17,7 +17,7 @@ const Admin = [
   {
     label: "Basket",
     icon: "ShoppingCart",
-    subMenu: [
+    children: [
       { label: "Basket Detail", icon: "ShoppingCart", link: "/admin/basket", name: "BasketDetail" },
       { label: "Basket Stock Published", icon: "Boxes", link: "/admin/basket/basketstockpublish", name: "BasketStockPublished" },
       { label: "Subscription History", icon: "FolderClock", link: "/admin/purchasebaskethistory", name: "SubscriptionHistory" },
@@ -27,7 +27,7 @@ const Admin = [
   {
     label: "Signal",
     icon: "Activity",
-    subMenu: [
+    children: [
       { label: "Open Signal", icon: "ScatterChart", link: "/admin/signal", name: "OpenSignal" },
       { label: "Close Signal", icon: "ScatterChart", link: "/admin/closesignal", name: "CloseSignal" },
     ],
@@ -44,7 +44,7 @@ const Admin = [
   {
     label: "Basic Settings",
     icon: "Cog",
-    subMenu: [
+    children: [
       { label: "General Setting", icon: "Wrench", link: "/admin/generalsettings", name: "GeneralSetting" },
       { label: "Email Setting", icon: "EthernetPort", link: "/admin/emailsetting", name: "EmailSetting" },
       { label: "API Information", icon: "Building2", link: "/admin/Apiinfo", name: "APIInformation" },
