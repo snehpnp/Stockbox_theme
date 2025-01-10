@@ -170,7 +170,7 @@ const SuperAdmin = [
     name: "Dashboard",
     label: "Dashboard",
     icon: "LayoutDashboard",
-    link: "/dashboard",
+    link: "/superadmin/dashboard",
     children: [],
   },
   
@@ -178,16 +178,41 @@ const SuperAdmin = [
     name: "company",
     label: "company",
     icon: "Cog",
-    link: "/company",
+    link: "/superadmin/company",
     children: [],
   },
   {
     name: "Themes",
     label: "Themes",
     icon: "Cog",
-    link: "/themes",
+    link: "/superadmin/themes",
     children: [],
   },
 ];
 
-export { SuperAdmin, Admin };
+const User = [
+  {
+    name: "Dashboard",
+    label: "Dashboard",
+    icon: "LayoutDashboard",
+    link: "/superadmin/dashboard",
+    children: [],
+  },
+  
+  {
+    name: "company",
+    label: "company",
+    icon: "Cog",
+    link: "/superadmin/company",
+    children: [],
+  },
+  {
+    name: "Themes",
+    label: "Themes",
+    icon: "Cog",
+    link: "/superadmin/themes",
+    children: [],
+  },
+];
+
+export { SuperAdmin, Admin,User};

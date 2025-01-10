@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { SuperAdmin, Admin } from "./Sidebar_config";
+import { SuperAdmin, Admin ,User} from "./Sidebar_config";
 
 import {
   UserRoundPlus,
@@ -44,7 +44,7 @@ const Sidebar = () => {
   const [openTab, setOpenTab] = useState(null);
   const location = useLocation(); // Get the current location
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
-  const [routes, setRoutes] = useState(SuperAdmin);
+  const [routes, setRoutes] = useState(localStorage.getItem("Role")=="SUPERADMIN"?SuperAdmin:localStorage.getItem("Role")=="ADMIN"?Admin:User);
 
   const sidebarColor = "red";
   useEffect(() => {

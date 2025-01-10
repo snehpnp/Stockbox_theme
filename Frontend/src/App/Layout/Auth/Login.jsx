@@ -11,6 +11,10 @@ const Login = () => {
     }
   }, []);
 
+  const LoginUpdate = () => {
+localStorage.setItem('Role',"USER" );
+localStorage.setItem('Token',"123" ); 
+  }
   return (
     <>
       <div className="row">
@@ -41,7 +45,7 @@ const Login = () => {
                         required=""
                       />
                     </div>
-                    <button className="form-button">Login</button>
+                    <button className="form-button" onClick={LoginUpdate}>Login</button>
                   </form>
                 </div>
               </div>
@@ -81,7 +85,7 @@ const Login = () => {
                       placeholder="Password"
                     />
                   </div>
-                  <button type="submit">Login</button>
+                  <button type="submit"  onClick={LoginUpdate}>Login</button>
                 </form>
               </div>
             </div>
