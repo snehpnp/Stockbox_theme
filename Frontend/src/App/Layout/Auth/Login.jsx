@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const Login = () => {
-  const [status, setStatus] = useState(1); // Default status is null
+  const [status, setStatus] = useState(2); // Default status is null
 
   useEffect(() => {
     // Retrieve the status from localStorage
@@ -54,7 +54,8 @@ const Login = () => {
             // Second Login Form
             <div className="glass-container">
               <div className="wrapper">
-                <h1>Login</h1>
+              <img src="https://www.pms.crmplus.in/files/system/_file5c2e1123e834d-site-logo.png" alt="background" />
+
                 <form>
                   <div>
                     <label htmlFor="email-input">
