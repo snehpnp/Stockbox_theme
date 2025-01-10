@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Logo from "./Images/LOGO.png";
+import Logo from "../Images/LOGO.png";
 import ProfileImage from "../Images/logo1.png"; // Replace with your profile image
 import { FaBell } from "react-icons/fa"; // Importing a notification bell icon
 
