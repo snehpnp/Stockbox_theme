@@ -1,4 +1,5 @@
-const Theme = require("../models/Theme");
+const db = require("../Models");
+const Theme = db.Theme;
 
 // Create a new theme
 exports.createTheme = async (req, res) => {

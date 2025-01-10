@@ -47,7 +47,7 @@ const Edittheme = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/themes/${id}`,
+        `http://localhost:5000/themes/${id}`,
         updatedValues
       );
       if (response.data.status) {
@@ -60,7 +60,7 @@ const Edittheme = () => {
   const GetTheme = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/themes/${id}`
+        `http://localhost:5000/themes/${id}`
       );
       setInitialValues(response.data.data);
       setIsGradient((prev) => ({

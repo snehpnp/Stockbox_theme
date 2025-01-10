@@ -6,7 +6,7 @@ const Config = {
 
 export async function GetAllThemesApi() {
   try {
-    const response = await axios.get(`${Config.base_url}api/themes`);
+    const response = await axios.get(`${Config.base_url}themes`);
     
     return response.data; 
   } catch (error) {
@@ -17,7 +17,7 @@ export async function GetAllThemesApi() {
 
 export async function GetThemeByIdApi(id) {
   try {
-    const response = await axios.get(`${Config.base_url}api/themes/${id}`);
+    const response = await axios.get(`${Config.base_url}themes/${id}`);
     
     return response.data; 
   } catch (error) {
@@ -28,7 +28,7 @@ export async function GetThemeByIdApi(id) {
 
 export async function AddThemeApi(data) {
   try {
-    const response = await axios.post(`${Config.base_url}api/themes`, data);
+    const response = await axios.post(`${Config.base_url}themes`, data);
     
     return response.data; 
   } catch (error) {

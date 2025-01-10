@@ -14,7 +14,7 @@ function Theme() {
 
   const handleDelete = (id) => {
     axios
-      .delete(`http://localhost:5000/api/themes/${id}`)
+      .delete(`http://localhost:5000/themes/${id}`)
       .then((response) => {
         GetAllThemes();
       })

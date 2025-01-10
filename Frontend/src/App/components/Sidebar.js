@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { Admin } from "./Sidebar_config";
+import { SuperAdmin, Admin } from "./Sidebar_config";
 
 import {
   UserRoundPlus,
@@ -33,38 +33,37 @@ import {
   ClipboardType,
   ShoppingCart,
   Cog,
-
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import BgImg from "./Images/bg2.mp4";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isTopbar, setIsTopbar] = useState(false);
   const [openTab, setOpenTab] = useState(null);
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
+  const [routes, setRoutes] = useState(SuperAdmin);
 
-  const sidebarColor= 'red';
+  const sidebarColor = "red";
   useEffect(() => {
     if (theme && theme.sidebarPosition === "Header") {
       setIsTopbar(true);
     }
   }, [theme]);
 
-
   const toggleSubmenu = (tabName) => {
     setOpenTab(openTab === tabName ? null : tabName);
   };
 
-  let SidebarId = theme.sidebarName
+  let SidebarId = theme.sidebarName;
 
-
-
-  const sidebarClasses = `SidebarColored Sidebar-${isTopbar ? "vertical" : "horizontal"
-    }`;
+  const sidebarClasses = `SidebarColored Sidebar-${
+    isTopbar ? "vertical" : "horizontal"
+  }`;
 
   const sidebarContainerClass =
-    SidebarId === 2 ? "SidebarColored unique-sidebar-container" : "SidebarColored default-sidebar-container";
+    SidebarId === 2
+      ? "SidebarColored unique-sidebar-container"
+      : "SidebarColored default-sidebar-container";
   const sidebarStyles = {
     width: isTopbar ? "100%" : isCollapsed ? "60px" : "250px",
     height: isTopbar ? "60px" : "calc(100vh - 76px)",
@@ -83,10 +82,8 @@ const Sidebar = () => {
     } else {
       document.body.classList.add("sidebar-vertical-container");
       document.body.classList.remove("sidebar-horizontal-container");
-
     }
   }, [isTopbar]);
-
 
   // Toggle the sidebar and body class
   const toggleSidebar = () => {
@@ -103,15 +100,17 @@ const Sidebar = () => {
       document.body.classList.remove("sidebar-collapsed");
     }
   }, [isCollapsed]);
+
+  let subMenuStyles = {};
+
   return (
     <>
-      <div className="sidebar-container"
+      <div
+        className="sidebar-container"
         style={{
           flexDirection: isTopbar ? "column" : "row",
         }}
       >
-
-
         {SidebarId == 1 && (
           <div
             className={
@@ -119,32 +118,36 @@ const Sidebar = () => {
                 ? "SidebarColored Sidebar-horizontal"
                 : "SidebarColored Sidebar-vertical"
             }
-
           >
             <div>
               {!isTopbar && (
-                <div
-                  className="sidebartoggle"
-                  onClick={toggleSidebar}
-                >
-                  <i className={`bx ${isCollapsed ? "bx-chevrons-right" : "bx-chevrons-left"}`}></i>
-
+                <div className="sidebartoggle" onClick={toggleSidebar}>
+                  <i
+                    className={`bx ${
+                      isCollapsed ? "bx-chevrons-right" : "bx-chevrons-left"
+                    }`}
+                  ></i>
                 </div>
               )}
             </div>
 
-
-
-            <ul className="sidebar-menu"
+            <ul
+              className="sidebar-menu"
               style={{
-
                 flexDirection: isTopbar ? "row" : "column",
                 gap: isTopbar ? "20px" : "12px",
               }}
             >
-              {Admin &&
-                Admin.map((tab) => (
-                  <li key={tab.name} style={{ width: "100%", marginTop: "5px",color:'red !important' }}>
+              {routes &&
+                routes.map((tab) => (
+                  <li
+                    key={tab.name}
+                    style={{
+                      width: "100%",
+                      marginTop: "5px",
+                      color: "red !important",
+                    }}
+                  >
                     {/* Parent Tab */}
                     <div
                       onClick={() => tab.children && toggleSubmenu(tab.name)}
@@ -155,7 +158,6 @@ const Sidebar = () => {
                         cursor: tab.children ? "pointer" : "default",
                         padding: "0px",
                         borderRadius: "0px",
-                        
                       }}
                     >
                       <Link
@@ -222,10 +224,10 @@ const Sidebar = () => {
 
         {SidebarId == 2 && (
           <div className={sidebarContainerClass} style={sidebarStyles}>
-            <div
-            >
+            <div>
               {!isTopbar && (
-                <button className="sidebartoggle"
+                <button
+                  className="sidebartoggle"
                   onClick={toggleSidebar}
                   style={{
                     border: "none",
@@ -233,7 +235,9 @@ const Sidebar = () => {
                     cursor: "pointer",
                   }}
                 >
-                  {isCollapsed ? "<i className='fa-solid fa-angles-left'></i>" : "<<"}
+                  {isCollapsed
+                    ? "<i className='fa-solid fa-angles-left'></i>"
+                    : "<<"}
                 </button>
               )}
             </div>
@@ -304,7 +308,7 @@ const Sidebar = () => {
                                 display: "flex",
                                 alignItems: "center",
                                 gap: "10px",
-                                color: 'red !important',
+                                color: "red !important",
                               }}
                             >
                               <IconComponent icon={tab.icon} className="mx-2" />
@@ -385,7 +389,7 @@ const Sidebar = () => {
                           display: "flex",
                           alignItems: "center",
                           gap: "10px",
-                          color:'red !important',
+                          color: "red !important",
                         }}
                       >
                         {SidebarId === 2 && (
@@ -426,7 +430,6 @@ const Sidebar = () => {
                                 display: "flex",
                                 alignItems: "center",
                                 gap: "10px",
-
                               }}
                             >
                               {SidebarId === 2 && (
@@ -446,9 +449,6 @@ const Sidebar = () => {
             </ul>
           </div>
         )}
-
-
-
       </div>
     </>
   );
