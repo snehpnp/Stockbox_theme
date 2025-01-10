@@ -6,6 +6,11 @@ import { FaBell } from "react-icons/fa"; // Importing a notification bell icon
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
 
+const Logout = () => {
+  localStorage.clear();
+  window.location.href = "/login";
+}
+
   return (
     <>
       {/* Navbar */}
@@ -84,7 +89,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   <li style={dropdownItemStyle}>🛠️ Profile Settings</li>
                   <li style={dropdownItemStyle}>📦 Service</li>
                   <li style={dropdownItemStyle}>ℹ️ About</li>
-                  <li style={dropdownItemStyle}>🚪 Logout</li>
+                  <li style={dropdownItemStyle} onClick={(e)=>Logout()}>🚪 Logout</li>
                 </ul>
               </div>
             </div>

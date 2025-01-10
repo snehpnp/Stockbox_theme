@@ -31,7 +31,6 @@ export default function App() {
 
     const Token = localStorage.getItem("Token");
 
-    console.log(Token);
 
 
   return (

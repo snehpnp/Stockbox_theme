@@ -1,43 +1,63 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 
 const Login = () => {
-  const [status, setStatus] = useState(2); // Default status is null
+    const navigate = useNavigate();
+  
+  const [status, setStatus] = useState(2); // Default status
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    // Retrieve the status from localStorage
-    const userData = JSON.parse(localStorage.getItem('user_data')); // Adjust key as per your storage
-    if (userData && userData.status) {
-      setStatus(userData.status);
+
+
+  const handleLogin = (e) => {
+    e.preventDefault(); // Prevent form refresh
+    if (email.trim() === "" || password.trim() === "") {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Please enter both email and password",
+      });
+    } else {
+      // Simulate successful login
+      localStorage.setItem("Role", "USER");
+      localStorage.setItem("Token", "123");
+      
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "Login successful!",
+        timer: 1500,
+      }).then(() => navigate("/user/dashboard"));
+
     }
-  }, []);
+  };
 
-  const LoginUpdate = () => {
-localStorage.setItem('Role',"USER" );
-localStorage.setItem('Token',"123" ); 
-  }
   return (
-    <div className='main-login'>  
-      <div className="row align-items-center h-100"> 
+    <div className="main-login">
+      <div className="row align-items-center h-100">
         <div className="col-lg-7 mx-auto">
-          {status == "1" ? (
+          {status === "1" ? (
             // First Login Form
             <div className="login-wrapper">
-              <div className="background" >
-              </div>
+              <div className="background"></div>
               <div className="login-container active">
-              <img src="https://www.pms.crmplus.in/files/system/_file5c2e1123e834d-site-logo.png" alt="background" />
-
+                <img
+                  src="https://www.pms.crmplus.in/files/system/_file5c2e1123e834d-site-logo.png"
+                  alt="background"
+                />
                 <div className="inner-div mt-4">
-
-                  {/* <h2 className="headline">Login</h2> */}
-                  <form className="login-form">
+                  <form className="login-form" onSubmit={handleLogin}>
                     <div className="form-item">
-                      <label htmlFor="username-login">Username</label>
+                      <label htmlFor="username-login">Email</label>
                       <input
                         id="username-login"
-                        name="username"
-                        type="text"
-                        required=""
+                        name="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
                       />
                     </div>
                     <div className="form-item">
@@ -46,10 +66,14 @@ localStorage.setItem('Token',"123" );
                         id="password-login"
                         name="password"
                         type="password"
-                        required=""
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
                       />
                     </div>
-                    <button className="form-button" onClick={LoginUpdate}>Login</button>
+                    <button className="form-button" type="submit">
+                      Login
+                    </button>
                   </form>
                 </div>
               </div>
@@ -58,9 +82,11 @@ localStorage.setItem('Token',"123" );
             // Second Login Form
             <div className="glass-container">
               <div className="wrapper">
-              <img src="https://www.pms.crmplus.in/files/system/_file5c2e1123e834d-site-logo.png" alt="background" />
-
-                <form>
+                <img
+                  src="https://www.pms.crmplus.in/files/system/_file5c2e1123e834d-site-logo.png"
+                  alt="background"
+                />
+                <form onSubmit={handleLogin}>
                   <div>
                     <label htmlFor="email-input">
                       <span>@</span>
@@ -70,6 +96,8 @@ localStorage.setItem('Token',"123" );
                       name="email"
                       id="email-input"
                       placeholder="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
                   <div>
@@ -88,9 +116,11 @@ localStorage.setItem('Token',"123" );
                       name="password"
                       id="password-input"
                       placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                     />
                   </div>
-                  <button type="submit"  onClick={LoginUpdate}>Login</button>
+                  <button type="submit">Login</button>
                 </form>
               </div>
             </div>
