@@ -12,7 +12,7 @@ const Login = () => {
   }, []);
 
   return (
-    <>
+    <>  
       <div className="row">
         <div className="col-lg-8 mx-auto">
           {status === "1" ? (
