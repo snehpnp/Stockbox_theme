@@ -2,10 +2,11 @@ import React, { useState, useEffect, use } from "react";
 import Navbar from "../components/Navbar";
 import Content from "../Routes/Route";
 import Sidebar from "../components/Sidebar";
-import Setting_sidebar from '../components/Setting_sidebar'
+import Setting_sidebar from "../components/Setting_sidebar";
 
 export default function App() {
   const savedTheme = localStorage.getItem("theme");
+  
   useEffect(() => {
     if (savedTheme) {
       const theme = JSON.parse(savedTheme); // Parse the theme object
@@ -128,25 +129,21 @@ export default function App() {
       {savedTheme && (
         <>
           <Navbar />
-        <div className="content-wrapper">
-        <Sidebar />
-        <div
-  className="content"
-  
->
- 
-  {/* Content Overlay */}
-  <div
-    style={{
-      position: "relative",
-      zIndex: 1,
-    }}
-  >
-    <Content />
-  </div>
-</div>
-        </div>
-         
+          <div className="content-wrapper">
+            <Sidebar />
+            <div className="content">
+              {/* Content Overlay */}
+              <div
+                style={{
+                  position: "relative",
+                  zIndex: 1,
+                }}
+              >
+                <Content />
+              </div>
+            </div>
+          </div>
+
           <Setting_sidebar />
         </>
       )}
