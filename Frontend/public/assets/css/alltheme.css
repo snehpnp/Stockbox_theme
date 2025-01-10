@@ -860,3 +860,7 @@ font-weight: 900;
 text-transform: uppercase;
 margin-bottom:0;
 }
+.main-login {
+  overflow: hidden;
+  height: 100vh;
+}

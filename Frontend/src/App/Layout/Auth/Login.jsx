@@ -12,16 +12,20 @@ const Login = () => {
   }, []);
 
   return (
-    <>  
-      <div className="row">
-        <div className="col-lg-8 mx-auto">
+    <div className='main-login'>  
+      <div className="row align-items-center h-100"> 
+        <div className="col-lg-7 mx-auto">
           {status == "1" ? (
             // First Login Form
             <div className="login-wrapper">
-              <div className="background" />
+              <div className="background" >
+              </div>
               <div className="login-container active">
-                <div className="inner-div">
-                  <h2 className="headline">Login</h2>
+              <img src="https://www.pms.crmplus.in/files/system/_file5c2e1123e834d-site-logo.png" alt="background" />
+
+                <div className="inner-div mt-4">
+
+                  {/* <h2 className="headline">Login</h2> */}
                   <form className="login-form">
                     <div className="form-item">
                       <label htmlFor="username-login">Username</label>
@@ -88,7 +92,7 @@ const Login = () => {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
