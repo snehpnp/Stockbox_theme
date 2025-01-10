@@ -67,22 +67,22 @@ const SuperAdmin = [
     link: "/superadmin/dashboard",
     children: [],
   },
-  
   {
-    name: "company",
-    label: "company",
-    icon: "Cog",
+    name: "Company",
+    label: "Company",
+    icon: "Building2",
     link: "/superadmin/company",
     children: [],
   },
   {
     name: "Themes",
     label: "Themes",
-    icon: "Cog",
+    icon: "Paintbrush",
     link: "/superadmin/themes",
     children: [],
   },
 ];
+
 
 const User = [
   {
@@ -95,144 +95,117 @@ const User = [
   {
     name: "Service",
     label: "Service",
-    icon: "Service",
+    icon: "ClipboardType",
     link: "/user/service",
     children: [],
   },
-
   {
     name: "Trades",
     label: "Trades",
-    icon: "Trades",
+    icon: "Activity",
     link: "/user/trades",
     children: [],
   },
-
   {
     name: "Basket",
     label: "Basket",
-    icon: "Basket",
+    icon: "ShoppingCart",
     link: "/user/basket",
     children: [],
   },
-
   {
     name: "Subscription",
     label: "Subscription",
-    icon: "Subscription",
+    icon: "Rocket",
     link: "/user/subscription",
     children: [],
   },
-
   {
     name: "Demat",
     label: "Demat",
-    icon: "Demat",
+    icon: "EthernetPort",
     link: "/user/demat",
     children: [],
   },
-
   {
     name: "TradeResponse",
     label: "Trade Response",
-    icon: "TradeResponse",
+    icon: "ArrowRightLeft",
     link: "/user/trade-response",
     children: [],
   },
-
   {
     name: "BasketResponse",
     label: "Basket Response",
-    icon: "BasketResponse",
+    icon: "FolderClock",
     link: "/user/basket/response",
     children: [],
   },
-
-
   {
     name: "Coupons",
     label: "Coupons",
-    icon: "Coupons",
+    icon: "Copyright",
     link: "/user/coupons",
     children: [],
   },
-
   {
     name: "ReferEarn",
-    label: " Refer & Earn",
-    icon: "ReferEarn",
+    label: "Refer & Earn",
+    icon: "HelpingHand",
     link: "/user/refer-earn",
     children: [],
   },
-
   {
     name: "Faqs",
     label: "Faqs",
-    icon: "Faqs",
+    icon: "HelpingHand",
     link: "/user/faq",
     children: [],
   },
-
-
   {
     name: "PrivacyPolicy",
-    label: "PrivacyPolicy",
-    icon: "PrivacyPolicy",
+    label: "Privacy Policy",
+    icon: "Wrench",
     link: "/user/privacy-policy",
     children: [],
   },
-
   {
     name: "TermsConditions",
     label: "Terms & Conditions",
-    icon: "TermsConditions",
+    icon: "Wrench",
     link: "/user/terms-conditions",
     children: [],
   },
-  // CREATE HELPDESK AND Brodcast and payment history and past performance
-
   {
     name: "HelpDesk",
-    label: "HelpDesk",
-    icon: "HelpDesk",
+    label: "Help Desk",
+    icon: "HelpingHand",
     link: "/user/help-desk",
     children: [],
   },
-
   {
     name: "Brodcast",
-    label: "Brodcast",
-    icon: "Brodcast",
+    label: "Broadcast",
+    icon: "HelpingHand",
     link: "/user/brodcast",
     children: [],
   },
-
   {
     name: "PaymentHistory",
     label: "Payment History",
-    icon: "PaymentHistory",
+    icon: "WalletCards",
     link: "/user/payment-history",
     children: [],
   },
-
   {
     name: "PastPerformance",
     label: "Past Performance",
-    icon: "PastPerformance",
+    icon: "ScatterChart",
     link: "/user/past-performance",
     children: [],
   },
-
- 
-
-
-
-
-
-
-
-
 ];
+
 
 export { SuperAdmin, Admin,User};
 
