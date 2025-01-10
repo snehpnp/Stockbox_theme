@@ -35,7 +35,6 @@ import {
   Cog,
 } from "lucide-react";
 
-import BgImg from "./Images/bg2.mp4";
 import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
@@ -46,7 +45,6 @@ const Sidebar = () => {
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
   const [routes, setRoutes] = useState(localStorage.getItem("Role")=="SUPERADMIN"?SuperAdmin:localStorage.getItem("Role")=="ADMIN"?Admin:User);
 
-  const sidebarColor = "red";
   useEffect(() => {
     if (theme && theme.sidebarPosition === "Header") {
       setIsTopbar(true);
@@ -59,9 +57,7 @@ const Sidebar = () => {
 
   let SidebarId = theme.sidebarName;
 
-  const sidebarClasses = `SidebarColored Sidebar-${
-    isTopbar ? "vertical" : "horizontal"
-  }`;
+
 
   const sidebarContainerClass =
     SidebarId === 2
@@ -88,12 +84,10 @@ const Sidebar = () => {
     }
   }, [isTopbar]);
 
-  // Toggle the sidebar and body class
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
 
-  // Update the body class based on the isCollapsed state
   useEffect(() => {
     if (isCollapsed) {
       document.body.classList.add("sidebar-collapsed");
