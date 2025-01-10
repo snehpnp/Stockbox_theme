@@ -58,7 +58,7 @@ const userModel = Schema({
     },
 
 )
-const User_model = model('USERS', userModel);
+const User_model = model('users', userModel);
 
 
 

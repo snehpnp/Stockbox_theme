@@ -173,13 +173,13 @@ const SuperAdmin = [
     link: "/dashboard",
     children: [],
   },
-  {
-    name: "Services",
-    label: "Dashboard",
-    icon: "Wrench",
-    link: "/services",
-    children: [],
-  },
+  // {
+  //   name: "Services",
+  //   label: "Dashboard",
+  //   icon: "Wrench",
+  //   link: "/services",
+  //   children: [],
+  // },
   // {
   //   name: "Users",
   //   label: "Users",

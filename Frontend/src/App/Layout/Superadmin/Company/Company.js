@@ -2,12 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Table from "../../../components/Tabels/Table";
 import {
-  Settings2,
   Eye,
   UserPen,
-  Trash2,
-  Download,
-  ArrowDownToLine,
+  Trash2
 } from "lucide-react";
 import Swal from "sweetalert2";
 import {
@@ -17,7 +14,8 @@ import {
   UpdateCompany,
 } from "../../../Services/Superadmin/Admin";
 import { Tooltip } from "antd";
-import { fDateTime, fDate } from "../../../../Utils/Date_formate";
+import {  fDate } from "../../../../Utils/Date_formate";
+import {GetAllThemesNameApi} from '../../../Services/Themes/Theme'
 
 const Company = () => {
   const token = localStorage.getItem("token");
@@ -25,9 +23,11 @@ const Company = () => {
 
   const [clients, setClients] = useState([]);
   const [searchInput, setSearchInput] = useState("");
+  const [themes, setThemes] = useState([]);
 
   useEffect(() => {
     getAdminclient();
+    GetAllThemes();
   }, [searchInput]);
 
   const getAdminclient = async () => {
@@ -42,6 +42,17 @@ const Company = () => {
             item.phone.toLowerCase().includes(searchInput.toLowerCase())
         );
         setClients(searchInput ? filterdata : response.data);
+      }
+    } catch (error) {
+      console.log("error");
+    }
+  };
+
+  const GetAllThemes = async () => {
+    try {
+      const response = await GetAllThemesNameApi();
+      if (response.status) {
+        setThemes(response.data);
       }
     } catch (error) {
       console.log("error");
@@ -93,7 +104,6 @@ const Company = () => {
   };
 
   // update status
-
   const handleSwitchChange = async (event, id) => {
     const originalChecked = event.target.checked;
     const user_active_status = originalChecked ? "true" : "false";
@@ -162,6 +172,21 @@ const Company = () => {
       name: "Phone No",
       selector: (row) => row.phone,
       sortable: true,
+    },
+    {
+      name: "Theme Selected",
+      sortable: true,
+      selector: (row) => (
+        <>
+        <select className="form-select" aria-label="Default select example">
+         {themes.map((item) => (
+           <option value={item._id} selected={item._id == row.theme_id}>
+             {item.ThemeName}
+           </option>
+         ))}
+        </select>
+        </>
+      )
     },
 
     {

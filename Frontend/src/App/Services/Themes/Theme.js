@@ -15,6 +15,17 @@ export async function GetAllThemesApi() {
   }
 }
 
+export async function GetAllThemesNameApi() {
+  try {
+    const response = await axios.get(`${Config.base_url}themes/names`);
+    
+    return response.data; 
+  } catch (error) {
+    console.log("Error fetching themes:", error.message || error);  
+    throw error;  
+  }
+}
+
 export async function GetThemeByIdApi(id) {
   try {
     const response = await axios.get(`${Config.base_url}themes/${id}`);

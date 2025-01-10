@@ -9,29 +9,58 @@ exports.createTheme = async (req, res) => {
     res.status(201).json({
       status: true,
       data: newTheme,
-      message: "Theme added successfully"
+      message: "Theme added successfully",
     });
   } catch (error) {
     res.status(400).json({
       status: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
 
-// Get all themes
+
 exports.getAllThemes = async (req, res) => {
   try {
     const themes = await Theme.find();
     res.status(200).json({
       status: true,
       data: themes,
-      message: "Themes found successfully"
+      message: "Themes found successfully",
     });
   } catch (error) {
     res.status(500).json({
       status: false,
-      message: error.message
+      message: error.message,
+    });
+  }
+};
+
+
+exports.getAllThemesName = async (req, res) => {
+  console.log("Getting all themes names");
+  try {
+    
+    const themes = await Theme.find().select("ThemeName");
+    console.log(themes);
+
+    if (!themes || themes.length === 0) {
+      return res.json({
+        status: false,
+        message: "No themes found",
+      });
+    }
+
+    res.json({
+      status: true,
+      data: themes,
+      message: "Themes found successfully",
+    });
+  } catch (error) {
+    console.error("Error fetching themes:", error);
+    res.json({
+      status: false,
+      message: "Internal Server Error",
     });
   }
 };
@@ -44,18 +73,18 @@ exports.getThemeById = async (req, res) => {
       return res.status(404).json({
         status: false,
         message: "Theme not found",
-        data: {}
+        data: {},
       });
     }
     res.status(200).json({
       status: true,
       data: theme,
-      message: "Theme found successfully"
+      message: "Theme found successfully",
     });
   } catch (error) {
     res.status(500).json({
       status: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -71,18 +100,18 @@ exports.updateTheme = async (req, res) => {
     if (!updatedTheme) {
       return res.status(404).json({
         status: false,
-        message: "Theme not found"
+        message: "Theme not found",
       });
     }
     res.status(200).json({
       status: true,
       data: updatedTheme,
-      message: "Theme updated successfully"
+      message: "Theme updated successfully",
     });
   } catch (error) {
     res.status(400).json({
       status: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -94,17 +123,17 @@ exports.deleteTheme = async (req, res) => {
     if (!theme) {
       return res.status(404).json({
         status: false,
-        message: "Theme not found"
+        message: "Theme not found",
       });
     }
     res.status(200).json({
       status: true,
-      message: "Theme deleted successfully"
+      message: "Theme deleted successfully",
     });
   } catch (error) {
     res.status(500).json({
       status: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
