@@ -3,13 +3,11 @@ import Swal from "sweetalert2";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 
 const Login = () => {
-    const navigate = useNavigate();
-  
+  const navigate = useNavigate();
+
   const [status, setStatus] = useState(2); // Default status
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-
 
   const handleLogin = (e) => {
     e.preventDefault(); // Prevent form refresh
@@ -21,16 +19,26 @@ const Login = () => {
       });
     } else {
       // Simulate successful login
-      localStorage.setItem("Role", "USER");
-      localStorage.setItem("Token", "123");
-      
+      if (email == "user@gmail.com") {
+        localStorage.setItem("Role", "USER");
+        localStorage.setItem("Token", "123");
+      } else if (email == "superadmin@gmail.com") {
+        localStorage.setItem("Role", "SUPERADMIN");
+        localStorage.setItem("Token", "123");
+      } else if (email == "admin@gmail.com") {
+        localStorage.setItem("Role", "ADMIN");
+        localStorage.setItem("Token", "123");
+      } else {
+        localStorage.setItem("Role", "USER");
+        localStorage.setItem("Token", "123");
+      }
+
       Swal.fire({
         icon: "success",
         title: "Success",
         text: "Login successful!",
         timer: 1500,
       }).then(() => navigate("/user/dashboard"));
-
     }
   };
 
