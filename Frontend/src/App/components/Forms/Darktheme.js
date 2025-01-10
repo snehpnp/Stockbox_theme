@@ -1,5 +1,5 @@
 import React from 'react';
-import Contnet from '../Content';
+import Contnet from '../Contents/Content';
 
 const darkStyle = {
   background: '#2C2C2C',

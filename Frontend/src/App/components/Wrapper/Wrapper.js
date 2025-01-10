@@ -1,8 +1,8 @@
 import React, { useState, useEffect, use } from "react";
-import Navbar from "../components/Navbar";
-import Content from "../Routes/Route";
-import Sidebar from "../components/Sidebar";
-import Setting_sidebar from "../components/Setting_sidebar";
+import Navbar from "../Navbars/Navbar";
+import Content from "../../Routes/Route";
+import Sidebar from "../Sidebars/Sidebar";
+import Setting_sidebar from "../Sidebars/Setting_sidebar";
 
 export default function App() {
   const savedTheme = localStorage.getItem("theme");

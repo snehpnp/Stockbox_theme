@@ -22,7 +22,7 @@ import Chart from "../pages/Chart";
 import Theme from "../pages/Themes/Theme";
 import AddTheme from "../pages/Themes/AddTheme";
 import Edittheme from "../pages/Themes/EditTheme";
-import Modals from '../components/Modals';
+import Modals from '../components/Models/Modals';
 import Services from '../pages/Services'
 import Login from "../Layout/Auth/Login";
 import Company from '../Layout/Superadmin/Company/Company'

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Contnet from "../components/Content";
+import Contnet from "../components/Contents/Content";
 
 // Sample data for 20 products
 const productsData = [

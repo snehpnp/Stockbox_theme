@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import Contnet from '../components/Content'
+import Contnet from '../Contents/Content'
 import Modal from 'react-modal';
 
 const Modals = () => {

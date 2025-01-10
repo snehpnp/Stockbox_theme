@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import Wrapper from "./App/components/Wrapper";
+import Wrapper from "./App/components/Wrapper/Wrapper";
 import Login from "./App/Layout/Auth/Login";
 
 const App = () => {

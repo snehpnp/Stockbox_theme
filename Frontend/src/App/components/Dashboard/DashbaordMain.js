@@ -12,7 +12,7 @@ import Dashboard9 from "./Dashboard9";
 import Dashboard10 from "./Dashboard10";
 import Dashboard11 from "./Dashboard11";
 
-import Contnet from "../Content";
+import Contnet from "../Contents/Content";
 
 const DashboardData = {
   total_client: 10,

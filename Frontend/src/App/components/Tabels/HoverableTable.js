@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa'; // Edit and Delete icons
 import Switch from 'react-switch'; // Corrected import for default export
-import Contnet from '../Content';
+import Contnet from '../Contents/Content';
 
 const HoverableTable = () => {
   const [isActive, setIsActive] = useState(false);
