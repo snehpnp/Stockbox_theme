@@ -16,15 +16,46 @@ const Content = ({
           {/* <div className="row mb-3">
             <div className="col-lg-6"></div>
           </div> */}
-          <ol className="row breadcrumb">
-            <div className="col-lg-6">
-              <li className="breadcrumb-item">
-                <h4 className="font-w500 mb-0">{Page_title}</h4>
-                <h4 className="font-w500 mb-0">{Page_title_showClient}</h4>
-              </li>
-            </div>
 
-            {button_status == false ? null : (
+<nav className="breadcrumb">
+  <div className="col-lg-6"><ul className="breadcrumb-links">
+          <li>
+            <a href="#" className="breadcrumb-box">
+              <svg
+                className="breadcrumb-icon-home"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M9.293 2.293a1 1 0 011.414 0l7 7A1 1 0 0117 11h-1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-3a1 1 0 00-1-1H9a1 1 0 00-1 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-6H3a1 1 0 01-.707-1.707l7-7z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </a>
+          </li>
+          <li>
+            <div className="breadcrumb-box">
+              <svg
+                className="breadcrumb-icon"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <p  className="mb-0 breadcrumb-text">
+              {Page_title}
+              </p>
+              
+            </div>
+          </li>
+        </ul></div>
+        <div className="col-lg-6">
+        {button_status == false ? null : (
               <div className="col-lg-6 ">
                 <Link
                   to={route}
@@ -40,7 +71,10 @@ const Content = ({
                 </Link>
               </div>
             )}
-          </ol>
+        </div>
+      </nav>
+
+         
         </div>
 
         <div className="row">

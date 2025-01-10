@@ -15,32 +15,32 @@ const Admin = [
     link: "/services",
     children: [],
   },
-  // {
-  //   name: "Users",
-  //   label: "Users",
-  //   icon: "Users",
-  //   link: "/users",
-  //   children: [
-  //     {
-  //       name: "All Users",
-  //       label: "All Users",
-  //       icon: "Users",
-  //       link: "/users",
-  //     },
-  //     {
-  //       name: "Add User",
-  //       label: "Add User",
-  //       icon: "UserRoundPlus",
-  //       link: "/users/add",
-  //     },
-  //     {
-  //       name: "Edit User",
-  //       label: "Edit User",
-  //       icon: "UserPen",
-  //       link: "/users/edit/:id",
-  //     },
-  //   ],
-  // },
+  {
+    name: "Users",
+    label: "Users",
+    icon: "Users",
+    link: "/users",
+    children: [
+      {
+        name: "All Users",
+        label: "All Users",
+        icon: "Users",
+        link: "/users",
+      },
+      {
+        name: "Add User",
+        label: "Add User",
+        icon: "UserRoundPlus",
+        link: "/users/add",
+      },
+      {
+        name: "Edit User",
+        label: "Edit User",
+        icon: "UserPen",
+        link: "/users/edit/:id",
+      },
+    ],
+  },
   // {
   //   name: "Tables",
   //   label: "Tables",

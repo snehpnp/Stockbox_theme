@@ -35,13 +35,15 @@ import {
   Cog,
 
 } from "lucide-react";
-import { Link } from "react-router-dom";
+
 import BgImg from "./Images/bg2.mp4";
+import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isTopbar, setIsTopbar] = useState(false);
   const [openTab, setOpenTab] = useState(null);
+  const location = useLocation(); // Get the current location
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
 
   const sidebarColor= 'red';
@@ -103,6 +105,8 @@ const Sidebar = () => {
       document.body.classList.remove("sidebar-collapsed");
     }
   }, [isCollapsed]);
+
+  let subMenuStyles ={}
   return (
     <>
       <div className="sidebar-container"
@@ -139,7 +143,7 @@ const Sidebar = () => {
               style={{
 
                 flexDirection: isTopbar ? "row" : "column",
-                gap: isTopbar ? "20px" : "12px",
+                gap: isTopbar ? "20px" : "5px",
               }}
             >
               {Admin &&
@@ -147,7 +151,7 @@ const Sidebar = () => {
                   <li key={tab.name} style={{ width: "100%", marginTop: "5px",color:'red !important' }}>
                     {/* Parent Tab */}
                     <div
-                      onClick={() => tab.children && toggleSubmenu(tab.name)}
+                       onClick={() => tab.children && toggleSubmenu(tab.name)}
                       style={{
                         display: "flex",
                         alignItems: "center",
@@ -159,12 +163,16 @@ const Sidebar = () => {
                       }}
                     >
                       <Link
+                     
                         to={tab.link}
+                        className={`sidebar-link ${
+                          location.pathname === tab.link ? "active" : ""
+                        }`}
                         style={{
                           textDecoration: "none",
                           display: "flex",
                           alignItems: "center",
-                          gap: "10px",
+                         
                           color: "red !important",
                         }}
                       >
@@ -193,9 +201,15 @@ const Sidebar = () => {
                           <li
                             key={child.name}
                             style={{ margin: "5px 0", zIndex: -999 }}
+                            className={`sidebar-subitem ${
+                              location.pathname === child.link ? "active" : ""
+                            }`}
                           >
                             <Link
                               to={child.link}
+                              className={`sidebar-sublink ${
+                                location.pathname === child.link ? "active" : ""
+                              }`}
                               style={{
                                 textDecoration: "none",
                                 display: "flex",
@@ -298,13 +312,14 @@ const Sidebar = () => {
                         {tab.children.map((child) => (
                           <li key={child.name} style={{ margin: "5px 0" }}>
                             <Link
+                            
                               to={child.link}
                               style={{
                                 textDecoration: "none",
                                 display: "flex",
                                 alignItems: "center",
                                 gap: "10px",
-                                color: 'red !important',
+                                
                               }}
                             >
                               <IconComponent icon={tab.icon} className="mx-2" />

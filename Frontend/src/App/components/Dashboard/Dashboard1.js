@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
 import { Link } from "react-router-dom";
+import ReactApexChart from "react-apexcharts";
 import { Bar, Pie } from "react-chartjs-2"; // Import multiple chart types
 import "chart.js/auto"; // Enable auto Chart.js integration
 import { Users, CheckCircle, XCircle, FlaskConical, Hourglass } from "lucide-react"; // Import icons
@@ -51,39 +52,49 @@ const Dashboard1 = ({ data }) => {
       },
     ],
   };
-  const [state, setState] = React.useState({
-          
-    series: [{
-      name: 'series1',
-      data: [31, 40, 28, 51, 42, 109, 100]
-    }, {
-      name: 'series2',
-      data: [11, 32, 45, 32, 34, 52, 41]
-    }],
+
+  // ApexCharts area chart state
+  const [state] = React.useState({
+    series: [
+      {
+        name: "series1",
+        data: [31, 40, 28, 51, 42, 109, 100],
+      },
+      {
+        name: "series2",
+        data: [11, 32, 45, 32, 34, 52, 41],
+      },
+    ],
     options: {
       chart: {
         height: 350,
-        type: 'area'
+        type: "area",
       },
       dataLabels: {
-        enabled: false
+        enabled: false,
       },
       stroke: {
-        curve: 'smooth'
+        curve: "smooth",
       },
       xaxis: {
-        type: 'datetime',
-        categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
+        type: "datetime",
+        categories: [
+          "2018-09-19T00:00:00.000Z",
+          "2018-09-19T01:30:00.000Z",
+          "2018-09-19T02:30:00.000Z",
+          "2018-09-19T03:30:00.000Z",
+          "2018-09-19T04:30:00.000Z",
+          "2018-09-19T05:30:00.000Z",
+          "2018-09-19T06:30:00.000Z",
+        ],
       },
       tooltip: {
         x: {
-          format: 'dd/MM/yy HH:mm'
+          format: "dd/MM/yy HH:mm",
         },
       },
     },
-  
-  
-});
+  });
 
   const arr = [
     {
@@ -131,7 +142,19 @@ const Dashboard1 = ({ data }) => {
   return (
     <div className="theme-1-dashboard" style={{ padding: "20px" }}>
       {/* Cards Section */}
-      
+      <div className="row mb-4">
+      <div className="col-md-12 mb-4">
+          <div className="chart-container shadow p-3">
+           
+            <ReactApexChart
+              options={state.options}
+              series={state.series}
+              type="area"
+              height={350}
+            />
+          </div>
+        </div>
+      </div>
       <div className="row mb-5">
         {arr.map((item) => (
           <div
@@ -192,6 +215,7 @@ const Dashboard1 = ({ data }) => {
             <Pie data={pieData} />
           </div>
         </div>
+       
       </div>
     </div>
   );

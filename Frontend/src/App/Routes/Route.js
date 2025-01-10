@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import Login from "../pages/Login";
+// import Login from "../pages/Login";
 import Settings from "../pages/Settings";
 import Home from "../pages/Home";
 import Dashboard from "../components/Dashboard/DashbaordMain";
@@ -24,6 +24,7 @@ import AddTheme from "../pages/Themes/AddTheme";
 import Edittheme from "../pages/Themes/EditTheme";
 import Modals from '../components/Modals';
 import Services from '../pages/Services'
+import Login from "../Auth/Login";
 
 export default function App() {
 
@@ -55,6 +56,7 @@ export default function App() {
       <Route path="/edit-theme/:id" element={<Edittheme />} />
       <Route path="/modals" element={<Modals />} />
       <Route path="/services" element={<Services />} />
+      <Route path="/login" element={<Login />} />
     </Routes>
   );
 }
