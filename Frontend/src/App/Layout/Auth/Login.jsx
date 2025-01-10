@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const Login = () => {
-  const [status, setStatus] = useState(1); // Default status is null
+  const [status, setStatus] = useState(2); // Default status is null
 
   useEffect(() => {
     // Retrieve the status from localStorage
@@ -16,16 +16,20 @@ localStorage.setItem('Role',"USER" );
 localStorage.setItem('Token',"123" ); 
   }
   return (
-    <>
-      <div className="row">
-        <div className="col-lg-8 mx-auto">
+    <div className='main-login'>  
+      <div className="row align-items-center h-100"> 
+        <div className="col-lg-7 mx-auto">
           {status == "1" ? (
             // First Login Form
             <div className="login-wrapper">
-              <div className="background" />
+              <div className="background" >
+              </div>
               <div className="login-container active">
-                <div className="inner-div">
-                  <h2 className="headline">Login</h2>
+              <img src="https://www.pms.crmplus.in/files/system/_file5c2e1123e834d-site-logo.png" alt="background" />
+
+                <div className="inner-div mt-4">
+
+                  {/* <h2 className="headline">Login</h2> */}
                   <form className="login-form">
                     <div className="form-item">
                       <label htmlFor="username-login">Username</label>
@@ -54,7 +58,8 @@ localStorage.setItem('Token',"123" );
             // Second Login Form
             <div className="glass-container">
               <div className="wrapper">
-                <h1>Login</h1>
+              <img src="https://www.pms.crmplus.in/files/system/_file5c2e1123e834d-site-logo.png" alt="background" />
+
                 <form>
                   <div>
                     <label htmlFor="email-input">
@@ -92,7 +97,7 @@ localStorage.setItem('Token',"123" );
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

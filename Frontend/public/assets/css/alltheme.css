@@ -853,10 +853,15 @@ display: flex;
 flex-direction: column;
 align-items: center;
 justify-content: center;
+margin: 0px auto;
 }
 .glass-container h1{
 font-size: 3rem;
 font-weight: 900;
 text-transform: uppercase;
 margin-bottom:0;
+}
+.main-login {
+  overflow: hidden;
+  height: 100vh;
 }
