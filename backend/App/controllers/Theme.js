@@ -37,7 +37,7 @@ exports.getAllThemes = async (req, res) => {
 };
 
 exports.getAllThemesName = async (req, res) => {
-  console.log("Getting all themes names");
+
   try {
     const themes = await Theme.find().select("ThemeName");
     console.log(themes);
@@ -139,7 +139,7 @@ exports.deleteTheme = async (req, res) => {
 exports.updateThemeCompany = async (req, res) => {
   try {
     const { id, theme_id } = req.body;
-    console.log("Updating theme for company", id, theme_id);
+  
     const updatedCompany = await Company_Modal.findByIdAndUpdate(
       { _id: id },
       { theme_id: theme_id },

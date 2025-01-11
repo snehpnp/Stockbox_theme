@@ -44,7 +44,7 @@ const Company = () => {
         setClients(searchInput ? filterdata : response.data);
       }
     } catch (error) {
-      console.log("error");
+   
     }
   };
 
@@ -55,7 +55,7 @@ const Company = () => {
         setThemes(response.data);
       }
     } catch (error) {
-      console.log("error");
+   
     }
   };
 

@@ -197,7 +197,7 @@ class Users {
         message: "Password changed successfully",
       });
     } catch (error) {
-      console.log("Error in changePassword:", error);
+   
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -271,7 +271,7 @@ class Users {
         },
       });
     } catch (error) {
-      console.log("Error in updateProfile:", error);
+     
       return res.status(500).json({
         status: false,
         message: "Server error",

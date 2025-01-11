@@ -8,7 +8,7 @@ import Edittheme from "../Layout/Superadmin/Themes/EditTheme";
 import Company from "../Layout/Superadmin/Company/Company";
 
 export default function App() {
-  console.log("Superadmin routes 1"); 
+
   return (
     <Routes>
       <Route path="/themes" element={<Theme />} />

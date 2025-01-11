@@ -50,7 +50,7 @@ class CompanyController {
             });
     
         } catch (error) {
-            console.log("Server error:", error);
+        
             return res.status(500).json({ status: false, message: "Server error", data: [] });
         }
     }
@@ -187,7 +187,7 @@ class CompanyController {
             });
     
         } catch (error) {
-            console.log("Error updating Company:", error);
+      
             return res.status(500).json({
                 status: false,
                 message: "Server error",

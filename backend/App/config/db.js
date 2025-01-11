@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const connectToMongoDB = async () => {
   try {
     const db_connect = process.env.MONGO_URI;
-console.log("db_connect", db_connect);
+
     // Connect to MongoDB without deprecated options
     mongoose.connect(db_connect, {
       dbName: process.env.DB_NAME,
