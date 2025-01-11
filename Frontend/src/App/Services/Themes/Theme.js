@@ -1,8 +1,7 @@
 import axios from "axios";
 
-const Config = { 
-  base_url: process.env.REACT_APP_API_URL || "http://localhost:5000/" 
-};
+import * as Config from "../../../Utils/config";
+
 
 export async function GetAllThemesApi() {
   try {

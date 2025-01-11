@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+const { Schema, model } = require("mongoose");
 
-const themeSchema = new mongoose.Schema(
+const themeSchema = new Schema(
   {
     ThemeName: { type: String, required: true },
     sidebarColor: { type: String, required: true },
@@ -27,4 +27,6 @@ const themeSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Theme", themeSchema);
+const ThemeModal = model("Theme", themeSchema);
+
+module.exports = ThemeModal;

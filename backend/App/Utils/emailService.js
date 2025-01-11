@@ -1,6 +1,7 @@
 // emailService.js
 const nodemailer = require('nodemailer');
 const db = require("../Models");
+const BasicSetting_Modal = db.BasicSetting;
 
 /**
  * Creates and returns a transporter object using SMTP transport.
@@ -8,19 +9,23 @@ const db = require("../Models");
  */
 async function createTransporter() {
   try {
-   
+    const settings = await BasicSetting_Modal.findOne();
+    if (!settings || !settings.smtp_status) {
+      throw new Error('SMTP settings are not configured or are disabled');
+    }
+
     const transporter = nodemailer.createTransport({
-      host: 'mail.tradestreet.in',
-      port: 465,
-      secure: 465, 
+      host: settings.smtp_host,
+      port: settings.smtp_port,
+      secure: settings.smtp_port === 465, // Use SSL if port is 465
       auth: {
-        user: 'connectbox@tradestreet.in',
-        pass: 'Connect#box3211',
+        user: settings.smtp_username,
+        pass: settings.smtp_password,
       },
     });
     return transporter;
   } catch (error) {
-    console.log('Error creating transporter:', error);
+    // console.log('Error creating transporter:', error);
     throw error;
   }
 }
@@ -34,10 +39,10 @@ async function sendEmail(mailOptions) {
   try {
     const transporter = await createTransporter();
     const info = await transporter.sendMail(mailOptions);
-    console.log('Message sent:', info.messageId);
+    // console.log('Message sent:', info.messageId);
     return info;
   } catch (error) {
-    console.log('Error sending email:', error);
+    // console.log('Error sending email:', error);
     throw error;
   }
 }
