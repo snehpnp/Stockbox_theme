@@ -865,3 +865,20 @@ margin-bottom:0;
   overflow: hidden;
   height: 100vh;
 }
+
+.trade-card {
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid #ececec;
+  box-shadow: 0 0.25rem 0.875rem 0 rgb(0 0 0 / 12%);
+}
+.trade-content {
+  border-radius: 5px;
+  padding: 16px;
+  background: #f2f2f2;
+}
+.btn-buy {
+  background-color: #28a745;
+  color: #fff;
+}
