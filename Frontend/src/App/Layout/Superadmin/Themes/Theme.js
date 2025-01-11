@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Contnet from "../../components/Contents/Content";
-import { GetAllThemesApi, GetThemeByIdApi } from "../../Services/Themes/Theme";
+import Contnet from "../../../components/Contents/Content";
+import { GetAllThemesApi, GetThemeByIdApi } from "../../../Services/Themes/Theme";
 
 function Theme() {
   const navigate = useNavigate();

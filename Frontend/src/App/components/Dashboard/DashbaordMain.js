@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/alt-text */
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Dashboard1 from "./Dashboard1";
 import Dashboard2 from "./Dashboard2";
 import Dashboard3 from "./Dashboard3";
@@ -37,7 +37,7 @@ const DashboardData = {
   used_licence: 10,
 };
 
-const Dashboard = () => {
+const Dashboard = (DashboardData) => {
   var GetThemeId = JSON.parse(localStorage.getItem("theme"));
 
   return (
@@ -48,7 +48,7 @@ const Dashboard = () => {
         button_status={false}
         route="/add-theme"
       >
-        {CallDashboard(GetThemeId.themeId)}
+        {CallDashboard(GetThemeId?.themeId || 1)}
       </Contnet>
     </>
   );

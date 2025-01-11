@@ -11,7 +11,7 @@ import {
   deleteCompany,
   UpdateCompanyStatus,
   GetCompanylist,
-  UpdateCompany,
+  UpdateThemeApi,
 } from "../../../Services/Superadmin/Admin";
 import { Tooltip } from "antd";
 import {  fDate } from "../../../../Utils/Date_formate";
@@ -149,6 +149,33 @@ const Company = () => {
     navigate(`/admin/companydetail/${_id}`);
   };
 
+  const UpdateTheme = async (id, theme_id) => {
+    const data = { id: id, theme_id: theme_id };
+    console.log(data);
+    try {
+      const response = await UpdateThemeApi(data);
+      if (response.status) {
+        Swal.fire({
+          title: "Theme Updated!",
+          icon: "success",
+          timer: 1000,
+          timerProgressBar: true,
+        });
+        setTimeout(() => {
+          Swal.close();
+        }, 1000);
+      }
+      getAdminclient();
+    } catch (error) {
+      Swal.fire(
+        "Error",
+        "There was an error processing your request.",
+        "error"
+      );
+    }
+  }
+
+
   const columns = [
     {
       name: "S.No",
@@ -178,7 +205,7 @@ const Company = () => {
       sortable: true,
       selector: (row) => (
         <>
-        <select className="form-select" aria-label="Default select example">
+        <select className="form-select" onChange={(e) => UpdateTheme(row._id, e.target.value)}>
          {themes.map((item) => (
            <option value={item._id} selected={item._id == row.theme_id}>
              {item.ThemeName}

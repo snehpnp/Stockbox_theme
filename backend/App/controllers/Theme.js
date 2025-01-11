@@ -1,5 +1,6 @@
 const db = require("../Models");
 const Theme = db.Theme;
+const Company_Modal = db.Company;
 
 // Create a new theme
 exports.createTheme = async (req, res) => {
@@ -19,7 +20,6 @@ exports.createTheme = async (req, res) => {
   }
 };
 
-
 exports.getAllThemes = async (req, res) => {
   try {
     const themes = await Theme.find();
@@ -36,11 +36,9 @@ exports.getAllThemes = async (req, res) => {
   }
 };
 
-
 exports.getAllThemesName = async (req, res) => {
   console.log("Getting all themes names");
   try {
-    
     const themes = await Theme.find().select("ThemeName");
     console.log(themes);
 
@@ -134,6 +132,37 @@ exports.deleteTheme = async (req, res) => {
     res.status(500).json({
       status: false,
       message: error.message,
+    });
+  }
+};
+
+exports.updateThemeCompany = async (req, res) => {
+  try {
+    const { id, theme_id } = req.body;
+    console.log("Updating theme for company", id, theme_id);
+    const updatedCompany = await Company_Modal.findByIdAndUpdate(
+      { _id: id },
+      { theme_id: theme_id },
+      { new: true }
+    ); 
+    
+    if (!updatedCompany) {
+      return res.status(404).json({
+        status: false,
+        message: "Company not found",
+      });
+    }
+    res.status(200).json({
+      status: true,
+      data: updatedCompany,
+      message: "Company updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating Company:", error);
+    res.status(500).json({
+      status: false,
+      message: "Server error",
+      error: error.message,
     });
   }
 };
