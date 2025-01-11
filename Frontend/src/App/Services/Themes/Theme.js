@@ -47,3 +47,25 @@ export async function AddThemeApi(data) {
     throw error;  
   }
 }
+
+export async function UpdateThemeApi(id, data) {
+  try {
+    const response = await axios.put(`${Config.base_url}themes/${id}`, data);
+    
+    return response.data; 
+  } catch (error) {
+    console.log("Error updating theme:", error.message || error);  
+    throw error;  
+  }
+}
+
+export async function DeleteThemeApi(id) {
+  try {
+    const response = await axios.delete(`${Config.base_url}themes/${id}`);
+    
+    return response.data; 
+  } catch (error) {
+    console.log("Error deleting theme:", error.message || error);  
+    throw error;  
+  }
+}

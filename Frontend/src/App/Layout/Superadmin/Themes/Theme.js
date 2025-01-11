@@ -2,19 +2,19 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Contnet from "../../../components/Contents/Content";
-import { GetAllThemesApi, GetThemeByIdApi } from "../../../Services/Themes/Theme";
+import { GetAllThemesApi, GetThemeByIdApi,DeleteThemeApi } from "../../../Services/Themes/Theme";
 
 function Theme() {
   const navigate = useNavigate();
   const [themes, setThemes] = useState([]);
 
   const handleEdit = (id) => {
-    navigate(`/edit-theme/${id}`);
+    navigate(`/superadmin/edit-theme/${id}`);
   };
 
   const handleDelete = (id) => {
-    axios
-      .delete(`http://localhost:5000/themes/${id}`)
+   
+    DeleteThemeApi(id)
       .then((response) => {
         GetAllThemes();
       })
@@ -24,7 +24,7 @@ function Theme() {
   };
 
   const handleAddTheme = () => {
-    navigate("/add-theme");
+    navigate("/superadmin/add-theme");
   };
 
   const GetAllThemes = async () => {

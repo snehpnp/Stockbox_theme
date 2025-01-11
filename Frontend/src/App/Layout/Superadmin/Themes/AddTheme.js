@@ -78,7 +78,7 @@ const Addtheme = () => {
       // Send data to the backend API
       const Response = await AddThemeApi(updatedValues);
       if (Response.status) {
-        window.location.href = "/#/themes";
+        window.location.href = "/superadmin/themes";
       }
     } catch (error) {
       console.log("Error applying theme:", error);

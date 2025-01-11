@@ -4,6 +4,7 @@ import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import Contnet from "../../../components/Contents/Content";
+import {UpdateThemeApi,GetThemeByIdApi} from '../../../Services/Themes/Theme'
 
 const Edittheme = () => {
   const { id } = useParams();
@@ -46,12 +47,10 @@ const Edittheme = () => {
     };
 
     try {
-      const response = await axios.put(
-        `http://localhost:5000/themes/${id}`,
-        updatedValues
-      );
+      
+      const response = await UpdateThemeApi(id, updatedValues)
       if (response.data.status) {
-        window.location.href = "/#/themes";
+        window.location.href = "/superadmin/themes";
       } else {
       }
     } catch (error) {}
@@ -59,9 +58,8 @@ const Edittheme = () => {
 
   const GetTheme = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/themes/${id}`
-      );
+      
+      const response = await GetThemeByIdApi(id)
       setInitialValues(response.data.data);
       setIsGradient((prev) => ({
         sidebar: response.data.data.sidebarColor.includes("gradient"),
@@ -74,6 +72,7 @@ const Edittheme = () => {
   useEffect(() => {
     GetTheme();
   }, []);
+
   return (
     <Contnet Page_title="Edit Theme" button_title="Back" button_status={false}>
       <Container id="app" style={{ marginTop: "50px", color: "black" }}>
