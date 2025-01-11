@@ -23,7 +23,7 @@ import Theme from "../pages/Themes/Theme";
 import AddTheme from "../pages/Themes/AddTheme";
 import Edittheme from "../pages/Themes/EditTheme";
 import Modals from '../components/Models/Modals';
-import Services from '../pages/Services'
+
 import Login from "../Layout/Auth/Login";
 import Company from '../Layout/Superadmin/Company/Company'
 import Trade from "../pages/Trade";
@@ -58,7 +58,7 @@ export default function App() {
       <Route path="/add-theme" element={<AddTheme />} />
       <Route path="/edit-theme/:id" element={<Edittheme />} />
       <Route path="/modals" element={<Modals />} />
-      <Route path="/service" element={<Services />} />
+     
       <Route path="/trades" element={<Trade />} />
       <Route path="/login" element={<Login />} />
       <Route path="/basket" element={<Basket />} />

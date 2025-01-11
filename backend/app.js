@@ -2,7 +2,7 @@
 
 
 require('dotenv').config();
-const mongoConnection = require("./App/Connection/Connection");
+const mongoConnection = require("./App/Connection/Connection.js");
 const express = require("express");
 const app = express();
 var axios = require('axios');
@@ -15,7 +15,7 @@ const cors = require('cors');
 const WebSocket = require('ws');
 var CryptoJS = require("crypto-js");
 const bodyparser = require('body-parser');
-const db = require("./App/Models");
+const db = require("./App/Models/index.js");
 //const { AddBulkStockCron } = require('./App/Controllers/Cron.js'); 
 process.env.TZ = 'Asia/Kolkata'; // Set the global time zone to IST
 console.log('Current time in IST:', new Date());
@@ -47,8 +47,8 @@ io.on("connection", (socket) => {
 
 
 // console.log("io ",io)
-require("./App/Utils/ioSocketReturn")(app, io);
-const { sendFCMNotification } = require('./App/Controllers/Pushnotification');
+require("./App/Utils/ioSocketReturn.js")(app, io);
+const { sendFCMNotification } = require('./App/Controllers/Pushnotification.js');
 
 require('./App/Controllers/Cron.js');
 require('./App/Utils/Settimeout.js');
@@ -89,7 +89,7 @@ const Basketstock_Modal = db.Basketstock;
 const Liveprice_Modal = db.Liveprice;
 const Requestclient_Modal = db.Requestclient;
 
-const { Alice_Socket } = require("./App/Utils/AliceSocket");
+const { Alice_Socket } = require("./App/Utils/AliceSocket.js");
 
 
 const corsOpts = {
