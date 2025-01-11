@@ -13,14 +13,12 @@ const userModel = Schema({
         type: String,
         required: true,
         trim: true,
-        unique: true,
         default: null
     },
     Email: {
         type: String,
         required: true,
         trim: true,
-        unique: true,
         default: null
     },
     PhoneNo: {
@@ -29,7 +27,6 @@ const userModel = Schema({
         trim: true,
         min: 10,
         max: 10,
-        unique: true,
         default: null
     },
     password:{
@@ -37,6 +34,26 @@ const userModel = Schema({
         required: true,
         trim: true,
         default: null
+    },
+    Role: {
+        type: Number,
+        default: 2
+    },  
+    add_by: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    permissions: [{ type: String }],
+    del: {
+        type: Number,
+        enum: [1, 0],
+        default: 0
+    },
+    ActiveStatus: {
+        type: Number,
+        enum: [1, 0],
+        default: 0
     },
     createdAt: {
         type: Date,
@@ -46,6 +63,10 @@ const userModel = Schema({
         type: String,
         default: null,
     },
+    token: {
+        type: String,
+        default: null // Token field to store the random 20-character token
+      },
     forgotPasswordTokenExpiry: {
         type: Date,
         default: null,
@@ -58,7 +79,8 @@ const userModel = Schema({
     },
 
 )
-const User_model = model('users', userModel);
+const User_model = model('USERS', userModel);
+
 
 
 

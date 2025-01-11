@@ -2,12 +2,7 @@ import axios from 'axios';
 import * as Config from "../../../Utils/config";
 
 
-
-
-
-
 // get change password api 
-
 export async function ChangePassword(data, token) {
     try {
         const res = await axios.post(`${Config.base_url}user/change-password`, data, {
@@ -24,9 +19,7 @@ export async function ChangePassword(data, token) {
     }
 }
 
-
 //  forget api 
-
 export async function ForgetPasswordApi(data, token) {
     try {
         const res = await axios.post(`${Config.base_url}user/forgot-password`, data, {
@@ -43,9 +36,7 @@ export async function ForgetPasswordApi(data, token) {
     }
 }
 
-
 // get dasboard api 
-
 export async function getDashboarddetail(token) {
 
     try {
@@ -59,9 +50,6 @@ export async function getDashboarddetail(token) {
         return { error: err.response?.data || err.message };
     }
 }
-
-
-// get company list 
 
 // get list for staaf
 export async function GetCompanylist(token) {
@@ -77,12 +65,7 @@ export async function GetCompanylist(token) {
     }
 }
 
-
-
-
-
 // update company status
-
 export async function UpdateCompanyStatus(data, token) {
     try {
         const res = await axios.post(`${Config.base_url}company/change-status`, data, {
@@ -98,10 +81,7 @@ export async function UpdateCompanyStatus(data, token) {
     }
 }
 
-
-
 // delete company
-
 export async function deleteCompany(_id, token) {
     try {
         const res = await axios.get(`${Config.base_url}company/delete/${_id}`, {
@@ -115,12 +95,7 @@ export async function deleteCompany(_id, token) {
     }
 }
 
-
-
-// update company data 
-
 // update company status
-
 export async function Updatecompanydata(data, token) {
     try {
         const res = await axios.post(`${Config.base_url}company/update`, data, {
@@ -136,9 +111,7 @@ export async function Updatecompanydata(data, token) {
     }
 }
 
-
 // add company data 
-
 export async function AddComapanydata(data, token) {
     try {
         const res = await axios.post(`${Config.base_url}company/add`, data, {
@@ -156,10 +129,7 @@ export async function AddComapanydata(data, token) {
 }
 
 
-// company detail
-
 // delete company
-
 export async function CompanyDetailbyadmin(_id, token) {
     try {
         const res = await axios.get(`${Config.base_url}company/clientlist/${_id}`, {
@@ -172,3 +142,15 @@ export async function CompanyDetailbyadmin(_id, token) {
         return { error: err.response?.data || err.message };
     }
 }
+
+
+export async function UpdateThemeApi( data) {
+    try {
+      const response = await axios.post(`${Config.base_url}update/theme/company`, data);
+      
+      return response.data; 
+    } catch (error) {
+      console.log("Error updating theme:", error.message || error);  
+      throw error;  
+    }
+  }

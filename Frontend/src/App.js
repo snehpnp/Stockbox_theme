@@ -47,17 +47,18 @@ const App = () => {
 
   return (
     <div className="App">
+      {location.pathname !== "/login" && <Wrapper />}
+
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/forget" element={<div>Forget Password</div>} />
         <Route path="/signup/*" element={<div>Signup Page</div>} />
-        <Route path="/superadmin/*" element={<Wrapper />} />
-        <Route path="/admin/*" element={<Wrapper />} />
-        <Route path="/user/*" element={<Wrapper />} />
-        <Route path="/employee/*" element={<Wrapper />} />
       </Routes>
     </div>
   );
 };
+
+
+
 
 export default App;

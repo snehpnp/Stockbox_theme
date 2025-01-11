@@ -1,6 +1,6 @@
 import React, { useState, useEffect, use } from "react";
 import Navbar from "../Navbars/Navbar";
-import Content from "../../Routes/Route";
+import Content from "../../Routes/route.routes";
 import Sidebar from "../Sidebars/Sidebar";
 import Setting_sidebar from "../Sidebars/Setting_sidebar";
 

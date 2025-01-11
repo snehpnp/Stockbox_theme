@@ -2,7 +2,6 @@
   "name": "themeproject",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://snehpnp.github.io/themeproject",
   "dependencies": {
     "@ant-design/icons": "^5.5.2",
     "@emotion/react": "^11.14.0",
