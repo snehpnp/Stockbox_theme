@@ -1,13 +1,13 @@
 import { Routes, Route } from "react-router-dom";
 
-import Dashboard from "../components/Dashboard/DashbaordMain";
+import Dashboard from "../Layout/Superadmin/Dashboard/Dashboard";
 
 import Theme from "../Layout/Superadmin/Themes/Theme";
 import AddTheme from "../Layout/Superadmin/Themes/AddTheme";
 import Edittheme from "../Layout/Superadmin/Themes/EditTheme";
 import Company from "../Layout/Superadmin/Company/Company";
 
-export default function App() {
+const SuperadminRouting =() =>{
 
   return (
     <Routes>
@@ -19,3 +19,4 @@ export default function App() {
     </Routes>
   );
 }
+export default SuperadminRouting;

@@ -1,8 +1,13 @@
 import React from 'react'
 
+import Dashboard1 from '../../../components/Dashboard/DashbaordMain'
+
 function Dashboard() {
   return (
-    <div>Dashboard</div>
+    <div>
+
+      <Dashboard1 />
+    </div>
   )
 }
 
