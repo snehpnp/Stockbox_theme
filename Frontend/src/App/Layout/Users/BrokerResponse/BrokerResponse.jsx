@@ -1,15 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Content from "../../../components/Contents/Content";
 
 const BrokerResponse = () => {
   return (
     <div>
-      <div>
-        <div className="page-content">
-         
+       <Content
+      Page_title="Basket"
+      button_title="Add Basket"
+      button_status={true}
+    >
 
-          <div className="card p-4 bg-light">
-            <div
+<div
               className="accordion accordion-flush"
               id="accordionFlushExample"
             >
@@ -248,10 +250,16 @@ const BrokerResponse = () => {
                 </div>
               </div>
             </div>
-          </div>
+
+    </Content>
+      <div>
+       
+         
+
+         
         </div>
       </div>
-    </div>
+   
   );
 };
 

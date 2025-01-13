@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+
 const Content = ({
   Page_title,
   button_title,
@@ -38,7 +39,8 @@ const Content = ({
             </div>
             <div className="col-lg-6">
               {button_status === false ? null : (
-                <div className="col-lg-6 ">
+                
+                
                   <Link
                     to={route}
                     className="btn btn-primary float-lg-end "
@@ -51,7 +53,8 @@ const Content = ({
                     ></i>{" "}
                     {button_title}
                   </Link>
-                </div>
+               
+               
               )}
             </div>
           </nav>

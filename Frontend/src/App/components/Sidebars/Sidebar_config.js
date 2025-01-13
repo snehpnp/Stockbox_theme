@@ -143,7 +143,7 @@ const User = [
     name: "BasketResponse",
     label: "Basket Response",
     icon: "FolderClock",
-    link: "/user/basket_response/basket_response",
+    link: "/user/broker_response/",
     children: [],
   },
   {
