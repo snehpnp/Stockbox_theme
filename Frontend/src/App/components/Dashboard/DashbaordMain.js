@@ -46,6 +46,7 @@ const Dashboard = (DashboardData) => {
         Page_title="Dashboard"
         button_title="Add Theme"
         button_status={false}
+        backbutton_title={false} // This will hide the back button
         route="/add-theme"
       >
         {CallDashboard(GetThemeId?.themeId || 1)}

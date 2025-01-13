@@ -14,6 +14,8 @@ const Coupon = () => {
       Page_title="Coupons"
       button_title="Add Basket"
       button_status={true}
+       backbutton_title="Back"
+      backbutton_status={true}
     >
           <div className="page-content">
                

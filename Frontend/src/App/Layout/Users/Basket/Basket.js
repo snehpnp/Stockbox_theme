@@ -42,7 +42,10 @@ function Basket() {
     <Content
       Page_title="Basket"
       button_title="Add Basket"
+      backbutton_title="back"
       button_status={true}
+      backbutton_status={true}
+
     >
 
       

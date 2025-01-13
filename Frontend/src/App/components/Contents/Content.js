@@ -1,12 +1,14 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import { House,ChevronRight } from "lucide-react";
 
 const Content = ({
   Page_title,
   button_title,
   Page_title_showClient,
+  backbutton_title,
   button_status,
+  backbutton_status,
   route,
   permissions, // Add a permissions prop
   ...rest
@@ -16,7 +18,14 @@ const Content = ({
   const handleHomeClick = () => {
     navigate("/"); // Redirect to home page
   };
-
+ // Handle back button click (go to previous page)
+ const handleBackClick = () => {
+  if (backbutton_title === "Back") {
+    window.history.back(); // Navigate to the previous page in the browser history
+  } else {
+    // Handle other cases if necessary
+  }
+};
   return (
     <div className="content-body">
       <div className="container-fluid">
@@ -25,25 +34,41 @@ const Content = ({
             <div className="col-lg-6">
               <ul className="breadcrumb-links">
                 <li>
-                  <i className="fa-solid fa-house" onClick={handleHomeClick}></i>
+                <House onClick={handleHomeClick}></House>
+               
                   <a href="/" className="breadcrumb-box" />
                 </li>
-
+                <li><ChevronRight /></li>
                 <li>
                   <div className="breadcrumb-box">
-                    <i className="fa-solid fa-chevron-right breadcrumb-icon"></i>
+                 
                     <p className="mb-0 breadcrumb-text">{Page_title}</p>
                   </div>
                 </li>
               </ul>
             </div>
             <div className="col-lg-6">
+               {/* Back button */}
+      {backbutton_status && backbutton_title && (
+                <button
+                  onClick={handleBackClick} // Handle back button click
+                  className="btn btn-primary float-lg-end ms-3"
+                  
+                >
+                  <i
+                    className={`fa-solid ${
+                      backbutton_title === "Back" ? "fa-arrow-left" : "fa-arrow-left"
+                    }`}
+                  ></i>{" "}
+                  {backbutton_title}
+                </button>
+              )}
               {button_status === false ? null : (
                 
                 
                   <Link
                     to={route}
-                    className="btn btn-primary float-lg-end "
+                    className="btn btn-primary float-lg-end"
                     style={{ padding: "10px !important" }}
                   >
                     <i
@@ -56,6 +81,7 @@ const Content = ({
                
                
               )}
+     
             </div>
           </nav>
         </div>
