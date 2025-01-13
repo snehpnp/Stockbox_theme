@@ -131,10 +131,11 @@ button.button_sell.active {
 }
   
 .sidebar-vertical-container  .SidebarColored {
-    width: 250px;
-    position: fixed;
-    height: 100%;
-    transition: all 0.3s ease;
+  width: 250px;
+  position: fixed;
+  height: 100%;
+  transition: all 0.3s ease;
+  padding-bottom: 70px !important;
 }
 .sidebar-open  .Sidebar-vertical {
     padding: 10px 30px 20px 25px;

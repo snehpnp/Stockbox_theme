@@ -8,6 +8,7 @@ import BrokerResponse from "../Layout/Users/BrokerResponse/BrokerResponse";
 import PastPerformance from "../Layout/Users/PastPerformance/PastPerformance";  
 import ReferEarn from "../Layout/Users/ReferEarn/Refer";
 import Coupon from "../Layout/Users/Coupon/Coupon";
+// import Faq from "../Layout/Users/Faq/Faq";
 
        
 
@@ -22,6 +23,7 @@ export default function App() {
       <Route path="/past-performance" element={ <PastPerformance/> } />
       <Route path="/refer-earn" element={<ReferEarn />} />
       <Route path="/coupons" element={<Coupon />} />
+      {/* <Route path="/faq" element={<Faq />} /> */}
     </Routes>
   );
 }
