@@ -28,7 +28,7 @@ export default function Setting_sidebar() {
     btnTxtColor: "#ffffff",
     HeadingColor: "#ffffff",
     WrapperColor: "#ffffff",
-    sidebarFontColor: "#000000", // Added for Sidebar Font Color
+    sidebarFontColor: "#000000",
   });
 
   const [isOpen, setIsOpen] = useState(false);
@@ -88,7 +88,7 @@ export default function Setting_sidebar() {
 
       const wrapper = document.querySelector(".wrapper");
       if (wrapper) {
-        wrapper.style.backgroundColor = theme.WrapperColor || "#ffffff"; // Default to white if no color is set
+        wrapper.style.backgroundColor = theme.WrapperColor || "#ffffff";
       }
     }
   }, []);

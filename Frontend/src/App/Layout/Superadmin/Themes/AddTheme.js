@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Formik, Form, Field } from "formik";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
-import axios from "axios"; // Ensure axios is installed
 import Contnet from "../../../components/Contents/Content";
 import { AddThemeApi } from "../../../Services/Themes/Theme";
 

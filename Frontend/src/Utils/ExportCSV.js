@@ -12,19 +12,22 @@ export default function ExportToExport({ apiData, fileName }) {
 
     // Set column widths
     const wscols = [
-      { wpx: 200 },  
-      { wpx: 200 },  
-      { wpx: 200 },  
-      { wpx: 200 }, 
-      { wpx: 200 }, 
-      { wpx: 200 }, 
+      { wpx: 200 },
+      { wpx: 200 },
+      { wpx: 200 },
+      { wpx: 200 },
+      { wpx: 200 },
+      { wpx: 200 },
+      { wpx: 200 },
+      { wpx: 200 },
+      { wpx: 200 },
     ];
     ws['!cols'] = wscols;
 
     // Optional: Add styles
     const cellStyle = { font: { name: "Arial", sz: 12, bold: true }, alignment: { vertical: "center", horizontal: "center" } };
     for (const cell in ws) {
-      if (cell[0] === "!") continue; 
+      if (cell[0] === "!") continue;
       ws[cell].s = cellStyle;
     }
 
@@ -43,9 +46,11 @@ export default function ExportToExport({ apiData, fileName }) {
       data-placement="top"
       title="Export To Excel"
       delay={{ show: "0", hide: "100" }}
-      style={{ margin: "10px 0" }}  
+
     >
-      <i className="fa fa-download" aria-hidden="true"></i> Export-Excel
+      <i className="bx bxs-download" aria-hidden="true"></i>
+
+      Export-Excel
     </button>
   );
 }
