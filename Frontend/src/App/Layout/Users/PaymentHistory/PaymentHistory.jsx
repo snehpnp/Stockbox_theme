@@ -1,7 +1,7 @@
 import React from "react";
-import Table from "../../../components/Table";
+import Table from "../../../components/Tabels/Table";
 
-const PayementHistory = () => {
+const PaymentHistory = () => {
   // Static data
   const PayementHistory = [
     {
@@ -58,4 +58,4 @@ const PayementHistory = () => {
   );
 };
 
-export default PayementHistory;
+export default PaymentHistory;
