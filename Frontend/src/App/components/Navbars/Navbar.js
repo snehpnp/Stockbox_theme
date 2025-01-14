@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Logo from "../Images/LOGO.png";
 import ProfileImage from "../Images/logo1.png"; // Replace with your profile image
-import { FaBell } from "react-icons/fa"; // Importing a notification bell icon
+import { FaBell,FaBars } from "react-icons/fa"; // Importing a notification bell icon
 
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
@@ -10,6 +10,17 @@ const Logout = () => {
   localStorage.clear();
   window.location.href = "/login";
 }
+const toggleSidebar = () => {
+  const body = document.body;
+
+  if (body.classList.contains("sidebar-open")) {
+    body.classList.remove("sidebar-open");
+    body.classList.add("sidebar-closed", "sidebar-collapsed"); // Use separate arguments
+  } else {
+    body.classList.remove("sidebar-closed", "sidebar-collapsed"); // Use separate arguments
+    body.classList.add("sidebar-open");
+  }
+};
 
   return (
     <>
@@ -25,6 +36,8 @@ const Logout = () => {
         }}
       >
         <div className="container-fluid">
+          <div>
+         
           <a className="navbar-brand" href="#">
             <img
               src={Logo}
@@ -32,7 +45,19 @@ const Logout = () => {
               style={{ width: "200px", height: "50px" }}
             />
           </a>
-
+          <button
+          className="btn btn-light me-2"
+          onClick={toggleSidebar}
+          style={{
+            border: "none",
+            fontSize: "18px",
+            cursor: "pointer",
+          }}
+        >
+          <FaBars />
+        </button>
+           
+        </div>
           {/* Right Side */}
           <div className="d-flex align-items-center position-relative ml-auto">
 

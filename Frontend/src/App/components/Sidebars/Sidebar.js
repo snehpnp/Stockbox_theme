@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { SuperAdmin, Admin ,User} from "../Sidebars/Sidebar_config";
 
-import {
-  UserRoundPlus,
+import { UserRoundPlus,
   Users,
   Wrench,
   UserPen,
