@@ -1,5 +1,5 @@
 import axios from 'axios';
-import * as Config from "../Utils/config";
+import * as Config from "../../../Utils/config";
 
 export async function GetPastPerformance(data) {
   const { token, userId } = data;
