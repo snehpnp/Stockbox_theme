@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Table from "../../../components/Tabels/Table";
-import { getMySubscription } from "../../../Services/UserService/User";
+import { GetPrivacyPolicy } from "../../../Services/UserService/User";
 import Content from "../../../components/Contents/Content";
 
 const Privacy = () => {

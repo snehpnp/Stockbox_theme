@@ -45,7 +45,7 @@ import AddStaff from "../Layout/Admin/Admin_staff/AddStaff";
 import Update from "../Layout/Admin/Admin_staff/Update";
 import Staffpermission from "../Layout/Admin/Admin_staff/Staffpermission";
 import Generalsettings from "../Layout/Admin/BasicSetting/Generalsettings";
-import Apiinfo from "../Layout/Admin/BasicSetting/Apiinfo";
+// import Apiinfo from "../Layout/Admin/BasicSetting/Apiinfo";
 import Payementgateway from "../Layout/Admin/BasicSetting/Payementgateway";
 import Emailsettings from "../Layout/Admin/BasicSetting/Emailsettings";
 import Emailtemplate from "../Layout/Admin/BasicSetting/Emailtemplate";
@@ -135,7 +135,7 @@ export default function App() {
 
 
       <Route path="/generalsettings" element={<Generalsettings />} />
-      <Route path="/Apiinfo" element={<Apiinfo />} />
+      {/* <Route path="/Apiinfo" element={<Apiinfo />} /> */}
       <Route path="/paymentgeteway" element={<Payementgateway />} />
       <Route path="/emailsetting" element={<Emailsettings />} />
       <Route path="/emailtemplate" element={<Emailtemplate />} />

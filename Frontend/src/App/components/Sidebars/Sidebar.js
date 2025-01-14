@@ -138,6 +138,7 @@ const Sidebar = () => {
                 routes.map((tab) => (
                   <li
                     key={tab.name}
+                  
                     style={{
                       width: "100%",
                       marginTop: "5px",
@@ -146,6 +147,7 @@ const Sidebar = () => {
                   >
                     {/* Parent Tab */}
                     <div
+                    
                       onClick={() => tab.children && toggleSubmenu(tab.name)}
                       style={{
                         display: "flex",
@@ -182,6 +184,7 @@ const Sidebar = () => {
 
                     {tab.children && openTab === tab.name && (
                       <ul
+                      className="submenu"
                         style={{
                           listStyle: "none",
                           paddingLeft: "20px",
