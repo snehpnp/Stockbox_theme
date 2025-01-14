@@ -12,6 +12,7 @@ import Faq from "../Layout/Users/Faq/Faq";
 import PaymentHistory from "../Layout/Users/PaymentHistory/PaymentHistory";
 import Subscription from "../Layout/Users/Subscription/Subscription";
 import Privacy from "../Layout/Users/Privacy/Privacy";
+import Terms from "../Layout/Users/TermsCondition/Terms";
 
        
 
@@ -30,6 +31,7 @@ export default function App() {
       <Route path="/payment-history" element={<PaymentHistory />} />
       <Route path="/subscription" element={<Subscription />} />
       <Route path="/privacy-policy" element={<Privacy />} />
+      <Route path="/terms-conditions" element={<Terms />} />
     </Routes>
   );
 }
