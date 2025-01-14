@@ -1,5 +1,6 @@
 import React from "react";
 import Table from "../../../components/Tabels/Table";
+import Content from "../../../components/Contents/Content";
 
 const PaymentHistory = () => {
   // Static data
@@ -35,25 +36,21 @@ const PaymentHistory = () => {
   ];
 
   return (
+    <div>
+            <Content
+      Page_title="Payment History"
+
+      button_status={false}
+      
+      backbutton_status={false}
+    >
     <div className="page-content">
-      <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-        <div className="breadcrumb-title pe-3">Payement History</div>
-        <div className="ps-3">
-          <nav aria-label="breadcrumb">
-            <ol className="breadcrumb mb-0 p-0">
-              <li className="breadcrumb-item">
-                <a href="/admin/dashboard">
-                  <i className="bx bx-home-alt" />
-                </a>
-              </li>
-            </ol>
-          </nav>
-        </div>
-      </div>
-      <hr />
+      
       <div className="card">
         <Table columns={columns} data={PayementHistory} />
       </div>
+    </div>
+    </Content>
     </div>
   );
 };
