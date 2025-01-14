@@ -5,17 +5,29 @@ import { format, formatDistanceToNow } from 'date-fns';
 // ----------------------------------------------------------------------
 
 export function fDate(date) {
-  if(date == "" || date == null ){
+  if (date == "" || date == null) {
     return ""
-  }else{
+  } else {
 
     return format(new Date(date), 'dd MMMM yyyy');
   }
 }
 
 export function fDateTime(date) {
+  return format(new Date(date), 'dd MMM yyyy ');
+}
+
+export function fDateMonth(monthYear) {
+
+  const month = monthYear.slice(0, 2);
+  const year = monthYear.slice(2);
+  const date = new Date(`${year}-${month}-01`);
+  return date.toLocaleString('default', { month: 'long', year: 'numeric' });
+};
+export function fDateTimeH(date) {
   return format(new Date(date), 'dd MMM yyyy HH:mm:ss');
 }
+
 
 export function fDateTimeSuffix(date) {
   return format(new Date(date), 'dd/MM/yyyy hh:mm:ss');
@@ -68,7 +80,7 @@ export const convert_string_to_month = (expiry) => {
   const moth_str = expiry.substring(2, 4);
   const year_expiry = expiry.substring(4);
 
- 
+
 
   let month_string
   if (moth_str === "01") {
@@ -111,7 +123,7 @@ export const convert_string_to_month = (expiry) => {
 
 }
 
- 
+
 
 export const isForeignUserAllowedToLogin = (userCountry, userLocalTime) => {
 
@@ -139,14 +151,14 @@ export const isForeignUserAllowedToLogin = (userCountry, userLocalTime) => {
 //   const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 //   const weekday = weekdays[currentDate.getDay()];
 //   const holidays = new Holidays();
- 
+
 
 //   return !holidays.isHoliday(currentDate) && weekday !== 'Sunday' && weekday !== 'Saturday'
 // }
 
 
 
-export const isToday =(date) =>{
+export const isToday = (date) => {
   const today = new Date();
   return (
     date.getDate() === today.getDate() &&

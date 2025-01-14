@@ -1,8 +1,28 @@
 const Admin = [
-  { label: "Dashboard", icon: "LayoutDashboard", link: "/admin/dashboard", name: "Dashboard" },
-  { label: "Client", icon: "Users", link: "/admin/client", name: "Client" },
-  { label: "Client Request", icon: "UserPen", link: "/admin/clientrequest", name: "ClientRequest" },
-  { label: "Free Trial Client", icon: "UserPen", link: "/admin/freeclient", name: "FreeTrialClient" },
+  {
+    label: "Dashboard",
+    icon: "LayoutDashboard",
+    link: "/admin/dashboard",
+    name: "Dashboard"
+  },
+  {
+    label: "Client",
+    icon: "Users",
+    link: "/admin/client",
+    name: "Client"
+  },
+  {
+    label: "Client Request",
+    icon: "UserPen",
+    link: "/admin/clientrequest",
+    name: "ClientRequest"
+  },
+  {
+    label: "Free Trial Client",
+    icon: "UserPen",
+    link: "/admin/freeclient",
+    name: "FreeTrialClient"
+  },
   {
     label: "Plan",
     icon: "Rocket",
@@ -18,9 +38,23 @@ const Admin = [
     label: "Basket",
     icon: "ShoppingCart",
     children: [
-      { label: "Basket Detail", icon: "ShoppingCart", link: "/admin/basket", name: "BasketDetail" },
-      { label: "Basket Stock Published", icon: "Boxes", link: "/admin/basket/basketstockpublish", name: "BasketStockPublished" },
-      { label: "Subscription History", icon: "FolderClock", link: "/admin/purchasebaskethistory", name: "SubscriptionHistory" },
+      {
+        label: "Basket Detail",
+        icon: "ShoppingCart",
+        link: "/admin/basket",
+        name: "BasketDetail"
+      },
+      {
+        label: "Basket Stock Published",
+        icon: "Boxes", link: "/admin/basket/basketstockpublish",
+        name: "BasketStockPublished"
+      },
+      {
+        label: "Subscription History",
+        icon: "FolderClock",
+        link: "/admin/purchasebaskethistory",
+        name: "SubscriptionHistory"
+      },
     ],
     name: "Basket",
   },
@@ -28,39 +62,152 @@ const Admin = [
     label: "Signal",
     icon: "Activity",
     children: [
-      { label: "Open Signal", icon: "ScatterChart", link: "/admin/signal", name: "OpenSignal" },
-      { label: "Close Signal", icon: "ScatterChart", link: "/admin/closesignal", name: "CloseSignal" },
+      {
+        label: "Open Signal",
+        icon: "ScatterChart",
+        link: "/admin/signal",
+        name: "OpenSignal"
+      },
+      {
+        label: "Close Signal",
+        icon: "ScatterChart", link: "/admin/closesignal",
+        name: "CloseSignal"
+      },
     ],
     name: "Signal",
   },
-  { label: "Payment History", icon: "WalletCards", link: "/admin/paymenthistory", name: "PaymentHistory" },
-  { label: "Withdrawal Request", icon: "ArrowRightLeft", link: "/admin/paymentrequest", name: "WithdrawalRequest" },
-  { label: "Blogs", icon: "Paintbrush", link: "/admin/blogs", name: "Blogs" },
-  { label: "News", icon: "Vote", link: "/admin/news", name: "News" },
-  { label: "Coupon", icon: "Copyright", link: "/admin/coupon", name: "Coupon" },
-  { label: "Banner", icon: "Frame", link: "/admin/banner", name: "Banner" },
-  { label: "Client Plan Expiry", icon: "FolderClock", link: "/admin/planexpiry", name: "ClientPlanExpiry" },
-  { label: "Performance", icon: "ScatterChart", link: "/admin/perfom", name: "Performance" },
+  {
+    label: "Payment History",
+    icon: "WalletCards",
+    link: "/admin/paymenthistory",
+    name: "PaymentHistory"
+  },
+  {
+    label: "Withdrawal Request",
+    icon: "ArrowRightLeft",
+    link: "/admin/paymentrequest",
+    name: "WithdrawalRequest"
+  },
+  {
+    label: "Blogs",
+    icon: "Paintbrush",
+    link: "/admin/blogs",
+    name: "Blogs"
+  },
+  {
+    label: "News",
+    icon: "Vote",
+    link: "/admin/news",
+    name: "News"
+  },
+  {
+    label: "Coupon",
+    icon: "Copyright",
+    link: "/admin/coupon",
+    name: "Coupon"
+  },
+  {
+    label: "Banner",
+    icon: "Frame",
+    link: "/admin/banner",
+    name: "Banner"
+  },
+  {
+    label: "Client Plan Expiry",
+    icon: "FolderClock",
+    link: "/admin/planexpiry",
+    name: "ClientPlanExpiry"
+  },
+  {
+    label: "Performance",
+    icon: "ScatterChart",
+    link: "/admin/perfom",
+    name: "Performance"
+  },
   {
     label: "Basic Settings",
     icon: "Cog",
     children: [
-      { label: "General Setting", icon: "Wrench", link: "/admin/generalsettings", name: "GeneralSetting" },
-      { label: "Email Setting", icon: "EthernetPort", link: "/admin/emailsetting", name: "EmailSetting" },
-      { label: "API Information", icon: "Building2", link: "/admin/Apiinfo", name: "APIInformation" },
-      { label: "Payment Gateway", icon: "ArrowRightLeft", link: "/admin/paymentgeteway", name: "PaymentGateway" },
-      { label: "Email Template", icon: "ClipboardType", link: "/admin/emailtemplate", name: "EmailTemplate" },
-      { label: "Refer And Earn", icon: "HelpingHand", link: "/admin/referandearn", name: "ReferAndEarn" },
-      { label: "Auto SquareOff", icon: "CandlestickChart", link: "/admin/autosquareoff", name: "AutoSquareOff" },
-      { label: "Bank Detail", icon: "Wrench", link: "/admin/bankdetail", name: "BankDetail" },
-      { label: "QR Detail", icon: "Wrench", link: "/admin/QRdetails", name: "QRDetail" },
+      {
+        label: "General Setting",
+        icon: "Wrench",
+        link: "/admin/generalsettings",
+        name: "GeneralSetting"
+      },
+      {
+        label: "Email Setting",
+        icon: "EthernetPort",
+        link: "/admin/emailsetting",
+        name: "EmailSetting"
+      },
+      {
+        label: "API Information",
+        icon: "Building2", link: "/admin/Apiinfo",
+        name: "APIInformation"
+      },
+      {
+        label: "Payment Gateway",
+        icon: "ArrowRightLeft",
+        link: "/admin/paymentgeteway",
+        name: "PaymentGateway"
+      },
+      {
+        label: "Email Template",
+        icon: "ClipboardType",
+        link: "/admin/emailtemplate",
+        name: "EmailTemplate"
+      },
+      {
+        label: "Refer And Earn",
+        icon: "HelpingHand",
+        link: "/admin/referandearn",
+        name: "ReferAndEarn"
+      },
+      {
+        label: "Auto SquareOff",
+        icon: "CandlestickChart",
+        link: "/admin/autosquareoff",
+        name: "AutoSquareOff"
+      },
+      {
+        label: "Bank Detail",
+        icon: "Wrench",
+        link: "/admin/bankdetail",
+        name: "BankDetail"
+      },
+      {
+        label: "QR Detail",
+        icon: "Wrench",
+        link: "/admin/QRdetails",
+        name: "QRDetail"
+      },
     ],
     name: "BasicSettings",
   },
-  { label: "Broadcast SMS", icon: "HelpingHand", link: "/admin/message", name: "BroadcastSMS" },
-  { label: "FAQ", icon: "HelpingHand", link: "/admin/faq", name: "FAQ" },
-  { label: "Help Center", icon: "HelpingHand", link: "/admin/help", name: "HelpCenter" },
-  { label: "Policy", icon: "Wrench", link: "/admin/termsandcondtion", name: "Policy" },
+  {
+    label: "Broadcast SMS",
+    icon: "HelpingHand",
+    link: "/admin/message",
+    name: "BroadcastSMS"
+  },
+  {
+    label: "FAQ",
+    icon: "HelpingHand",
+    link: "/admin/faq",
+    name: "FAQ"
+  },
+  {
+    label: "Help Center",
+    icon: "HelpingHand",
+    link: "/admin/help",
+    name: "HelpCenter"
+  },
+  {
+    label: "Policy",
+    icon: "Wrench",
+    link: "/admin/termsandcondtion",
+    name: "Policy"
+  },
 ];
 
 
@@ -212,17 +359,7 @@ const User = [
 ];
 
 
-export { SuperAdmin, Admin,User};
-
-
-
-
-
-
-
-
-
-
+export { SuperAdmin, Admin, User };
 
 
 
