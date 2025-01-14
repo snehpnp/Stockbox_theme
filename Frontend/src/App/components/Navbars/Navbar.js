@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Logo from "../Images/LOGO.png";
 import ProfileImage from "../Images/logo1.png"; // Replace with your profile image
 import { FaBell,FaBars } from "react-icons/fa"; // Importing a notification bell icon
+import { Link } from "react-router-dom";
 
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
@@ -111,7 +112,10 @@ const toggleSidebar = () => {
 
               <div style={profileDropdownStyle} className="dropdown-menu" aria-labelledby="dropdownMenuLink">
                 <ul style={dropdownListStyle}>
-                  <li style={dropdownItemStyle}>🛠️ Profile Settings</li>
+                  <li style={dropdownItemStyle}>
+                    <Link to ='/user/profiles' >🛠️ Profile Settings</Link>
+                    
+                    </li>
                   <li style={dropdownItemStyle}>📦 Service</li>
                   <li style={dropdownItemStyle}>ℹ️ About</li>
                   <li style={dropdownItemStyle} onClick={(e)=>Logout()}>🚪 Logout</li>

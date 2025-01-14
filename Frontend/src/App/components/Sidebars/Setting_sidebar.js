@@ -378,7 +378,7 @@ export default function Setting_sidebar() {
             </Form>
           )}
         </Formik>
-        ;
+     
       </div>
     </>
   );

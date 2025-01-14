@@ -13,6 +13,9 @@ import PaymentHistory from "../Layout/Users/PaymentHistory/PaymentHistory";
 import Subscription from "../Layout/Users/Subscription/Subscription";
 import Privacy from "../Layout/Users/Privacy/Privacy";
 import Terms from "../Layout/Users/TermsCondition/Terms";
+import Profiles from "../Layout/Users/Profile/Profiles";
+// import Demat from "../Layout/Users/Demat/Demat";
+
 
        
 
@@ -32,6 +35,8 @@ export default function App() {
       <Route path="/subscription" element={<Subscription />} />
       <Route path="/privacy-policy" element={<Privacy />} />
       <Route path="/terms-conditions" element={<Terms />} />
+      <Route path="/profiles" element={<Profiles />} />
+      {/* <Route path="/demat" element={<Demat />} /> */}
     </Routes>
   );
 }
