@@ -1,0 +1,127 @@
+  async loginUser(req, res) {
+    try {
+      const { UserName, password } = req.body;  // Extract password here
+      const settings = await BasicSetting_Modal.findOne();
+      if (!settings.staffstatus) {
+        return res.json({ status: false, message: "Your panel has been deactivated. Please contact the administrator for assistance." });
+      }
+
+      if (!UserName) {
+        return res.json({ status: false, message: "username is required" });
+      }
+      if (!password) {
+        return res.json({ status: false, message: "password is required" });
+      }
+
+      const user = await Users_Modal.findOne({
+        UserName: UserName,
+        ActiveStatus: '1',
+        del: '0'   // Make sure ActiveStatus is compared as a string
+      });
+
+      if (!user) {
+        return res.json({
+          status: false,
+          message: "User not found or account is inactive",
+        });
+      }
+
+
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.json({
+          status: false,
+          message: "Password is Incorrect",
+        });
+      }
+
+      const token = crypto.randomBytes(10).toString('hex'); // 10 bytes = 20 hex characters
+      user.token = token;
+      await user.save();
+
+      return res.json({
+        status: true,
+        message: "Login successful",
+        data: {
+          FullName: user.FullName,
+          Email: user.Email,
+          PhoneNo: user.PhoneNo,
+          Role: user.Role,
+          id: user.id,
+          token: token,
+        },
+      });
+    } catch (error) {
+      return res.json({
+        status: false,
+        message: "Server error",
+        error: error.message,
+      });
+    }
+  }
+
+  async loginClient(req, res) {
+    try {
+      const { UserName, password, devicetoken } = req.body;  // Extract password here
+      
+      if (!UserName) {
+        return res.status(400).json({ status: false, message: "Please enter email/phone number" });
+      }
+     
+  
+      if (!password) {
+        return res.status(400).json({ status: false, message: "Please enter password" });
+      }
+     
+  
+     
+      const client = await Clients_Modal.findOne({
+        $or: [{ Email: UserName }, { PhoneNo : UserName }],  // Check for email or mobile
+        ActiveStatus: '1',
+        del: '0'   // Make sure ActiveStatus is compared as a string
+      });
+  
+      if (!client) {
+        return res.status(404).json({
+          status: false,
+          message: "client not found or account is inactive",
+        });
+      }
+  
+     
+      const isMatch = await bcrypt.compare(password, client.password);
+      if (!isMatch) {
+        return res.status(401).json({
+          status: false,
+          message: "Invalid Password!",
+        });
+      }
+  
+       
+  
+      const token = crypto.randomBytes(10).toString('hex'); // 10 bytes = 20 hex characters
+      client.token = token;
+      client.devicetoken = devicetoken;
+      await client.save();
+  
+      return res.json({
+        status: true,
+        message: "Login successful",
+        data: {
+          FullName: client.FullName,
+          Email: client.Email,
+          PhoneNo: client.PhoneNo,
+          id: client.id,
+          token: token,
+          angleredirecturl: `${req.protocol}://${req.headers.host}/backend/angle/getaccesstoken?key=${client._id}`,
+          aliceredirecturl: `${req.protocol}://${req.headers.host}/backend/aliceblue/getaccesstoken?key=${client._id}` },
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: false,
+        message: "Server error",
+        error: error.message,
+      });
+    }
+  }
