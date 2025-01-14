@@ -3,14 +3,29 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { LoginApi } from "../../Services/Auth/Login";
 
+
+
+
+
 const Login = () => {
+
+
   const navigate = useNavigate();
+
+
+
   let logoSrc =
     "https://www.pms.crmplus.in/files/system/_file5c2e1123e834d-site-logo.png";
-  const [status, setStatus] = useState(2); // Default status
+
+
+
+  const [status, setStatus] = useState(2);
   const [username, setusername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -34,10 +49,10 @@ const Login = () => {
         ResData.data.Role === 0
           ? "SUPERADMIN"
           : ResData.data.Role === 1
-          ? "ADMIN"
-          : ResData.data.Role === 2
-          ? "EMPLOYEE"
-          : "USER"
+            ? "ADMIN"
+            : ResData.data.Role === 2
+              ? "EMPLOYEE"
+              : "USER"
       );
 
       Swal.fire({
