@@ -187,8 +187,8 @@ const Sidebar = () => {
                       className="submenu"
                         style={{
                           listStyle: "none",
-                          paddingLeft: "20px",
-                          marginTop: "5px",
+                        
+                         
                           display: isCollapsed ? "none" : "block",
                           position: isTopbar ? "absolute" : "relative",
                         }}

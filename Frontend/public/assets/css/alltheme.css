@@ -218,10 +218,10 @@ button.button_sell.active {
     border-radius: 10px;
 }
   /* Submenu */
-  .submenu {
-    list-style: none;
-    padding-left: 20px;
-    margin-top: 5px;
+  ul.submenu {
+    background: #ffff;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    padding: 10px;
   }
   
   .submenu-item {
