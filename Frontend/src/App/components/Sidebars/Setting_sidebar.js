@@ -29,6 +29,7 @@ export default function Setting_sidebar() {
     HeadingColor: "#ffffff",
     WrapperColor: "#ffffff",
     sidebarFontColor: "#000000",
+    WrapperColor: "#000000"
   });
 
   const [isOpen, setIsOpen] = useState(false);
@@ -40,13 +41,13 @@ export default function Setting_sidebar() {
   const updateButtonStyles = (btnBgColor, btnTxtColor) => {
     const styleElementId = "dynamic-button-styles";
     let styleElement = document.getElementById(styleElementId);
-  
+
     if (!styleElement) {
       styleElement = document.createElement("style");
       styleElement.id = styleElementId;
       document.head.appendChild(styleElement);
     }
-  
+
     styleElement.innerHTML = `
       .btn-primary {
         background-color: ${btnBgColor} !important;
@@ -55,7 +56,7 @@ export default function Setting_sidebar() {
       }
     `;
   };
-  
+
   const handleClickOutside = (event) => {
     if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
       setIsOpen(false);
@@ -95,6 +96,8 @@ export default function Setting_sidebar() {
       BtnBgColor: theme.BtnBgColor || "#ffffff",
       btnTxtColor: theme.btnTxtColor || "#ffffff",
       HeadingColor: theme.HeadingColor || "#ffffff",
+      WrapperColor: theme.WrapperColor || "#ffffff",
+
     });
   }, []);
 
@@ -397,7 +400,7 @@ export default function Setting_sidebar() {
             </Form>
           )}
         </Formik>
-     
+
       </div>
     </>
   );

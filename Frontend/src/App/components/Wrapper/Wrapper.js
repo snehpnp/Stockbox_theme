@@ -6,7 +6,7 @@ import Setting_sidebar from "../Sidebars/Setting_sidebar";
 
 export default function App() {
   const savedTheme = localStorage.getItem("theme");
-  
+
   useEffect(() => {
     if (savedTheme) {
       const theme = JSON.parse(savedTheme); // Parse the theme object
@@ -103,6 +103,7 @@ export default function App() {
         btnTxtColor: "#ffffff",
         HeadingColor: "#ffffff",
         contentColor: "#8f8f8f",
+        WrapperColor: "#000000"
       };
 
       localStorage.setItem("theme", JSON.stringify(data));

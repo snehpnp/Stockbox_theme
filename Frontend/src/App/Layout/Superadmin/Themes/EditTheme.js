@@ -3,7 +3,7 @@ import { Formik, Form, Field } from "formik";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import Contnet from "../../../components/Contents/Content";
-import {UpdateThemeApi,GetThemeByIdApi} from '../../../Services/Themes/Theme'
+import { UpdateThemeApi, GetThemeByIdApi } from '../../../Services/Themes/Theme'
 
 const Edittheme = () => {
   const { id } = useParams();
@@ -31,6 +31,7 @@ const Edittheme = () => {
     BtnBgColor: "#ffffff",
     btnTxtColor: "#ffffff",
     HeadingColor: "#ffffff",
+    WrapperColor: "#000000"
   });
 
   const handleSubmit = async (values) => {
@@ -46,18 +47,18 @@ const Edittheme = () => {
     };
 
     try {
-      
+
       const response = await UpdateThemeApi(id, updatedValues)
       if (response.data.status) {
         window.location.href = "/superadmin/themes";
       } else {
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const GetTheme = async () => {
     try {
-      
+
       const response = await GetThemeByIdApi(id)
       setInitialValues(response.data.data);
       setIsGradient((prev) => ({
@@ -65,7 +66,7 @@ const Edittheme = () => {
         navbar: response.data.data.navbarColor.includes("gradient"),
         font: response.data.data.fontColor.includes("gradient"),
       }));
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
@@ -99,7 +100,7 @@ const Edittheme = () => {
                           name="themeId"
                           className="form-control"
                         >
-                        <option value="1">1</option>
+                          <option value="1">1</option>
                           <option value="2">2</option>
                           <option value="3">3</option>
                           <option value="4">4</option>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Logo from "../Images/LOGO.png";
-import ProfileImage from "../Images/logo1.png"; // Replace with your profile image
-import { FaBell, FaBars } from "react-icons/fa"; // Importing a notification bell icon
+import ProfileImage from "../Images/logo1.png";
+import { FaBell, FaBars } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
@@ -26,9 +26,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
     if (body.classList.contains("sidebar-open")) {
       body.classList.remove("sidebar-open");
-      body.classList.add("sidebar-closed", "sidebar-collapsed"); // Use separate arguments
+      body.classList.add("sidebar-closed", "sidebar-collapsed");
     } else {
-      body.classList.remove("sidebar-closed", "sidebar-collapsed"); // Use separate arguments
+      body.classList.remove("sidebar-closed", "sidebar-collapsed");
       body.classList.add("sidebar-open");
     }
   };
@@ -69,7 +69,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
             </button>
 
           </div>
-          {/* Right Side */}
+
           <div className="d-flex align-items-center position-relative ml-auto">
 
             <div className="dropdown">

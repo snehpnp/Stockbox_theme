@@ -291,7 +291,7 @@ const Sidebar = () => {
 
                         {!isCollapsed ? tab.name : ""}
                       </Link>
-                      {tab.children.length > 0 &&
+                      {tab.children?.length > 0 &&
                         (openTab === tab.name ? (
                           <ChevronDown
                             size={20}
@@ -409,7 +409,7 @@ const Sidebar = () => {
                         )}
                         {!isCollapsed ? tab.name : ""}
                       </Link>
-                      {tab.children.length > 0 &&
+                      {tab.children?.length > 0 &&
                         (openTab === tab.name ? (
                           <ChevronDown
                             size={20}

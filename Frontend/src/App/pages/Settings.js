@@ -27,6 +27,8 @@ const Settings = () => {
     BtnBgColor: "#ffffff",
     btnTxtColor: "#ffffff",
     HeadingColor: "#ffffff",
+    WrapperColor: "#000000"
+
   });
 
   // On Component Mount: Load theme from localStorage
@@ -56,11 +58,12 @@ const Settings = () => {
       BtnBgColor: theme.BtnBgColor || "#ffffff",
       btnTxtColor: theme.btnTxtColor || "#ffffff",
       HeadingColor: theme.HeadingColor || "#ffffff",
-      
+      WrapperColor: theme.WrapperColor || "#ffffff",
+
     });
   }, []);
 
- 
+
 
   return (
     <Container id="app" style={{ marginTop: "50px", color: "black" }}>
@@ -215,7 +218,7 @@ const Settings = () => {
                 <Card>
                   <Card.Body>
                     <Card.Title>Font Color</Card.Title>
-                  
+
                     <div className="mt-3">
                       <label>Font Solid Color: </label>
                       <Field name="fontColor" type="color" />
@@ -298,7 +301,7 @@ const Settings = () => {
                       </Field>
                     </div>
 
-                 
+
                   </Card.Body>
                 </Card>
               </Col>
@@ -307,9 +310,9 @@ const Settings = () => {
                 <Card>
                   <Card.Body>
                     <Card.Title>Theme Settings</Card.Title>
-                 
 
-                   
+
+
 
                     <div className="mt-3">
                       <label>Dashboard Name: </label>
