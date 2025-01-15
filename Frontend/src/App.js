@@ -15,7 +15,7 @@ const App = () => {
   useEffect(() => {
     if (!Token) {
       if (!location.pathname.includes("login") && !location.pathname.includes("user-login")) {
-        console.log("--")
+
         navigate("/user-login");
 
       }
