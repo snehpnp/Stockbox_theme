@@ -5,6 +5,7 @@ const Admin = [
     link: "/admin/dashboard",
     name: "Dashboard"
   },
+ 
   {
     label: "Client",
     icon: "Users",
@@ -33,6 +34,12 @@ const Admin = [
       { label: "Free Trial Status", icon: "Boxes", link: "/admin/freetrialstatus", name: "FreeTrialStatus" },
     ],
     name: "Plan",
+  },
+  {
+    label: "Staff",
+    icon: "LayoutDashboard",
+    link: "/admin/staff",
+    name: "Staff"
   },
   {
     label: "Basket",
