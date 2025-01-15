@@ -21,6 +21,7 @@ const themeSchema = new Schema(
     status: { type: String, default: 0 },
     btnTxtColor: { type: String, required: true },
     HeadingColor: { type: String, required: true },
+    WrapperColor: { type: String, required: true }
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt

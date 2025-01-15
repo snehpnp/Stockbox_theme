@@ -38,10 +38,12 @@ import {
 import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
+
+
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isTopbar, setIsTopbar] = useState(false);
   const [openTab, setOpenTab] = useState(null);
-  const location = useLocation(); // Get the current location
+  const location = useLocation();
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
   const [routes, setRoutes] = useState(localStorage.getItem("Role") == "SUPERADMIN" ? SuperAdmin : localStorage.getItem("Role") == "ADMIN" ? Admin : User);
 
@@ -55,8 +57,8 @@ const Sidebar = () => {
     setOpenTab(openTab === tabName ? null : tabName);
   };
 
-  let SidebarId = theme.sidebarName;
 
+  let SidebarId = theme.sidebarName;
 
 
   const sidebarContainerClass =
@@ -74,6 +76,8 @@ const Sidebar = () => {
     padding: isTopbar ? "0 20px" : "10px",
   };
 
+
+
   useEffect(() => {
     if (isTopbar) {
       document.body.classList.add("sidebar-horizontal-container");
@@ -87,6 +91,9 @@ const Sidebar = () => {
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
+
+
+
 
   useEffect(() => {
     if (isCollapsed) {
@@ -138,11 +145,11 @@ const Sidebar = () => {
                 routes.map((tab) => (
                   <li
                     key={tab.name}
-                  
+
                   >
                     {/* Parent Tab */}
                     <div
-                    
+
                       onClick={() => tab.children && toggleSubmenu(tab.name)}
                       style={{
                         display: "flex",
@@ -179,11 +186,11 @@ const Sidebar = () => {
 
                     {tab.children && openTab === tab.name && (
                       <ul
-                      className="submenu"
+                        className="submenu"
                         style={{
                           listStyle: "none",
-                        
-                         
+
+
                           display: isCollapsed ? "none" : "block",
                           position: isTopbar ? "absolute" : "relative",
                         }}
@@ -191,7 +198,7 @@ const Sidebar = () => {
                         {tab.children.map((child) => (
                           <li
                             key={child.name}
-                           
+
                             className={`sidebar-subitem ${location.pathname === child.link ? "active" : ""
                               }`}
                           >
@@ -284,7 +291,7 @@ const Sidebar = () => {
 
                         {!isCollapsed ? tab.name : ""}
                       </Link>
-                      {tab.children.length > 0 &&
+                      {tab.children?.length > 0 &&
                         (openTab === tab.name ? (
                           <ChevronDown
                             size={20}
@@ -402,7 +409,7 @@ const Sidebar = () => {
                         )}
                         {!isCollapsed ? tab.name : ""}
                       </Link>
-                      {tab.children.length > 0 &&
+                      {tab.children?.length > 0 &&
                         (openTab === tab.name ? (
                           <ChevronDown
                             size={20}

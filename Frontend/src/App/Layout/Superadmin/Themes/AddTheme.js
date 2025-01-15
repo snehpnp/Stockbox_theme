@@ -29,6 +29,7 @@ const Addtheme = () => {
     BtnBgColor: "#ffffff",
     btnTxtColor: "#ffffff",
     HeadingColor: "#ffffff",
+    WrapperColor: "#000000"
   });
 
   useEffect(() => {
@@ -58,6 +59,8 @@ const Addtheme = () => {
       BtnBgColor: theme.BtnBgColor || "#ffffff",
       btnTxtColor: theme.btnTxtColor || "#ffffff",
       HeadingColor: theme.HeadingColor || "#ffffff",
+      WrapperColor: theme.WrapperColor || "#ffffff",
+
     });
   }, []);
 

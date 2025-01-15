@@ -1,15 +1,58 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
 import { Link } from "react-router-dom";
+import { GetServicedata, GETPlanList } from "../../../Services/UserService/User";
 
- 
 
 function Service() {
+
+
+
+  const token = localStorage.getItem('Token');
+  const userid = localStorage.getItem('Id');
+
+
   const [selectedPlan, setSelectedPlan] = useState("all");
+  const [service, setService] = useState([])
+
 
   const handleSelectChange = (event) => {
     setSelectedPlan(event.target.value);
   };
+
+
+  const getservice = async () => {
+    try {
+      const response = await GetServicedata()
+      if (response.status) {
+        setService(response?.data)
+      }
+    } catch (error) {
+
+    }
+  }
+
+
+  const getplan = async () => {
+    try {
+      const response = await GETPlanList(userid, token)
+      if (response.status) {
+        console.log("response?.data", response)
+      }
+    } catch (error) {
+
+    }
+  }
+
+
+
+
+  useEffect(() => {
+    getservice()
+    getplan()
+  }, [])
+
+
 
   return (
     <Content
@@ -18,7 +61,7 @@ function Service() {
       button_status={false}
 
     >
-<div className="card">
+      <div className="card">
         <div className="card-body">
           <div>
             <label htmlFor="planSelect" className="mb-1">
@@ -35,20 +78,22 @@ function Service() {
                   Select Plans
                 </option>
                 <option value="all">All</option>
-                <option value="intraday">
-                  Intraday <span className="price-span">(Cash + Option)</span>
-                </option>
-                <option value="short-term">
-                  Short Term <span className="price-span">(Cash + Option)</span>
-                </option>
-                <option value="long-term">
-                  Long Term <span className="price-span">(Cash + Option)</span>
-                </option>
+                {service && service.map((item) => {
+                  return (
+                    <>
+                      <option value="intraday" key={item._id} >
+                        <span className="price-span" >{item?.title}</span>
+                      </option>
+                    </>
+                  )
+                })}
+
               </select>
             </div>
           </div>
           <div className="pricing-container price1 row mt-4">
-            {/* Conditionally render cards based on the selected plan */}
+
+
             {selectedPlan === "all" && (
               <>
                 <div className="row row-cols-1 row-cols-md-1 row-cols-lg-3 row-cols-xl-3">

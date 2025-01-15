@@ -36,12 +36,6 @@ const Admin = [
     name: "Plan",
   },
   {
-    label: "Staff",
-    icon: "LayoutDashboard",
-    link: "/admin/staff",
-    name: "Staff"
-  },
-  {
     label: "Basket",
     icon: "ShoppingCart",
     children: [

@@ -71,6 +71,7 @@ import Stock from "../Layout/Admin/Stock/Stock";
 
 
 export default function App() {
+
   return (
     <Routes>
       <Route path="/themes" element={<Theme />} />

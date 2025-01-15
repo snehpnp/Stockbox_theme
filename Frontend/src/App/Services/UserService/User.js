@@ -1,8 +1,8 @@
 import axios from 'axios';
-import * as Config from "../../../Utils/config";
+import * as Config from "../../../Utils/config"
 
 export async function GetPastPerformance(data) {
-  const { token, userId } = data;
+    const { token, userId } = data;
     try {
         const res = await axios.get(`${Config.base_url}api/list/past-performance/${userId}`, {
             headers: {
@@ -33,39 +33,43 @@ export async function GetPrivacyPolicy(token) {
     }
 }
 
-export async function getTermsCondition(token)
-{
-    try{
-        const res= await axios.get(`${Config.base_url}api/list/content/66dbec0a9f7a0365f1f4527d`,
-            {
-                headers: {
-                    "Authorization":`Bearer ${token}`
-                }
-            });
-            
-            return res?.data;
-        } catch (err) {
-            console.error('Error fetching Terms Condition data:', err);
-            throw err;
-        }
-    }
 
-    export async function getFaq(token)
-{
-    try{
-        const res= await axios.get(`${Config.base_url}api/list/faq`,
+
+
+export async function getTermsCondition(token) {
+    try {
+        const res = await axios.get(`${Config.base_url}api/list/content/66dbec0a9f7a0365f1f4527d`,
             {
                 headers: {
-                    "Authorization":`Bearer ${token}`
+                    "Authorization": `Bearer ${token}`
                 }
             });
-            
-            return res?.data;
-        } catch (err) {
-            console.error('Error fetching Faq data:', err);
-            throw err;
-        }
+
+        return res?.data;
+    } catch (err) {
+        console.error('Error fetching Terms Condition data:', err);
+        throw err;
     }
+}
+
+export async function getFaq(token) {
+    try {
+        const res = await axios.get(`${Config.base_url}api/list/faq`,
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+        return res?.data;
+    } catch (err) {
+        console.error('Error fetching Faq data:', err);
+        throw err;
+    }
+}
+
+
+
 
 export async function getMySubscription(token, id) {
     try {
@@ -79,5 +83,41 @@ export async function getMySubscription(token, id) {
     } catch (err) {
         console.error('Error fetching plan data:', err);
         throw err;
+    }
+}
+
+
+
+
+// get service data 
+
+export async function GetServicedata(token) {
+    try {
+        const res = await axios.get(`${Config.base_url}api/list/service`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+// get plan list 
+
+export async function GETPlanList(id, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}api/list/myplan/${id}`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
     }
 }
