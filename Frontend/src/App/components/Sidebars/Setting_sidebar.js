@@ -29,7 +29,6 @@ export default function Setting_sidebar() {
     HeadingColor: "#ffffff",
     WrapperColor: "#ffffff",
     sidebarFontColor: "#000000",
-    WrapperColor: "#000000"
   });
 
   const [isOpen, setIsOpen] = useState(false);
@@ -37,24 +36,6 @@ export default function Setting_sidebar() {
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
-  };
-  const updateButtonStyles = (btnBgColor, btnTxtColor) => {
-    const styleElementId = "dynamic-button-styles";
-    let styleElement = document.getElementById(styleElementId);
-
-    if (!styleElement) {
-      styleElement = document.createElement("style");
-      styleElement.id = styleElementId;
-      document.head.appendChild(styleElement);
-    }
-
-    styleElement.innerHTML = `
-      .btn-primary {
-        background-color: ${btnBgColor} !important;
-        color: ${btnTxtColor} !important;
-        border-color: ${btnBgColor} !important;
-      }
-    `;
   };
 
   const handleClickOutside = (event) => {
@@ -96,8 +77,6 @@ export default function Setting_sidebar() {
       BtnBgColor: theme.BtnBgColor || "#ffffff",
       btnTxtColor: theme.btnTxtColor || "#ffffff",
       HeadingColor: theme.HeadingColor || "#ffffff",
-      WrapperColor: theme.WrapperColor || "#ffffff",
-
     });
   }, []);
 
@@ -113,6 +92,26 @@ export default function Setting_sidebar() {
       }
     }
   }, []);
+
+  const [color, setColor] = useState(
+    () => localStorage.getItem('dynamicColor') || '#000000'
+  );
+
+  useEffect(() => {
+    // Set the initial color in CSS variable
+    document.documentElement.style.setProperty('--dynamic-color', color);
+  }, [color]);
+
+  const handleColorChange = (event) => {
+    const selectedColor = event.target.value;
+    setColor(selectedColor);
+
+    // Update the global CSS variable
+    document.documentElement.style.setProperty('--dynamic-color', selectedColor);
+
+    // Save the color to localStorage
+    localStorage.setItem('dynamicColor', selectedColor);
+  };
 
   return (
     <>
@@ -140,12 +139,20 @@ export default function Setting_sidebar() {
               sidebarFontColor: values.sidebarFontColor, // Include Sidebar Font Color
             };
             localStorage.setItem("theme", JSON.stringify(updatedValues));
-            updateButtonStyles(values.BtnBgColor, values.btnTxtColor);
             window.location.reload();
           }}
         >
           {({ values }) => (
             <Form>
+              <div>
+      <h1 className="content-heading">This text changes color dynamically!</h1>
+      <input
+        type="color"
+        value={color}
+        onChange={handleColorChange}
+        aria-label="Choose a color"
+      />
+    </div>
               <Row>
                 <Col md={12} lg={12}>
                   <label className="setting-label">Sidebar Color</label>
@@ -400,7 +407,7 @@ export default function Setting_sidebar() {
             </Form>
           )}
         </Formik>
-
+     
       </div>
     </>
   );
