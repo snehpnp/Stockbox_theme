@@ -8,7 +8,14 @@ import BrokerResponse from "../Layout/Users/BrokerResponse/BrokerResponse";
 import PastPerformance from "../Layout/Users/PastPerformance/PastPerformance";  
 import ReferEarn from "../Layout/Users/ReferEarn/Refer";
 import Coupon from "../Layout/Users/Coupon/Coupon";
-// import Faq from "../Layout/Users/Faq/Faq";
+import Faq from "../Layout/Users/Faq/Faq";
+import PaymentHistory from "../Layout/Users/PaymentHistory/PaymentHistory";
+import Subscription from "../Layout/Users/Subscription/Subscription";
+import Privacy from "../Layout/Users/Privacy/Privacy";
+import Terms from "../Layout/Users/TermsCondition/Terms";
+import Profiles from "../Layout/Users/Profile/Profiles";
+// import Demat from "../Layout/Users/Demat/Demat";
+
 
        
 
@@ -23,7 +30,13 @@ export default function App() {
       <Route path="/past-performance" element={ <PastPerformance/> } />
       <Route path="/refer-earn" element={<ReferEarn />} />
       <Route path="/coupons" element={<Coupon />} />
-      {/* <Route path="/faq" element={<Faq />} /> */}
+      <Route path="/faq" element={<Faq />} />
+      <Route path="/payment-history" element={<PaymentHistory />} />
+      <Route path="/subscription" element={<Subscription />} />
+      <Route path="/privacy-policy" element={<Privacy />} />
+      <Route path="/terms-conditions" element={<Terms />} />
+      <Route path="/profiles" element={<Profiles />} />
+      {/* <Route path="/demat" element={<Demat />} /> */}
     </Routes>
   );
 }

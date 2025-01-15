@@ -47,9 +47,6 @@ const Sidebar = () => {
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
   const [routes, setRoutes] = useState(localStorage.getItem("Role") == "SUPERADMIN" ? SuperAdmin : localStorage.getItem("Role") == "ADMIN" ? Admin : User);
 
-
-
-
   useEffect(() => {
     if (theme && theme.sidebarPosition === "Header") {
       setIsTopbar(true);
@@ -148,14 +145,11 @@ const Sidebar = () => {
                 routes.map((tab) => (
                   <li
                     key={tab.name}
-                    style={{
-                      width: "100%",
-                      marginTop: "5px",
-                      color: "red !important",
-                    }}
+
                   >
                     {/* Parent Tab */}
                     <div
+
                       onClick={() => tab.children && toggleSubmenu(tab.name)}
                       style={{
                         display: "flex",
@@ -192,10 +186,11 @@ const Sidebar = () => {
 
                     {tab.children && openTab === tab.name && (
                       <ul
+                        className="submenu"
                         style={{
                           listStyle: "none",
-                          paddingLeft: "20px",
-                          marginTop: "5px",
+
+
                           display: isCollapsed ? "none" : "block",
                           position: isTopbar ? "absolute" : "relative",
                         }}
@@ -203,7 +198,7 @@ const Sidebar = () => {
                         {tab.children.map((child) => (
                           <li
                             key={child.name}
-                            style={{ margin: "5px 0", zIndex: -999 }}
+
                             className={`sidebar-subitem ${location.pathname === child.link ? "active" : ""
                               }`}
                           >

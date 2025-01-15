@@ -273,7 +273,7 @@ const AllBasketHistory = () => {
                                     onChange={(e) => setSearchInput(e.target.value)}
                                     value={searchInput}
                                 />
-                                <span className="position-absolute top-50 product-show translate-middle-y">
+                                <span className="ps-3 position-absolute top-50 product-show translate-middle-y">
                                     <i className="bx bx-search" />
                                 </span>
 

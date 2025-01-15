@@ -4,6 +4,7 @@ import { GetClient } from '../../../Services/Admin/Admin';
 import { fDateTime, fDateMonth } from '../../../../Utils/Date_formate';
 import Table from '../../../Extracomponents/Table';
 import { Link } from 'react-router-dom';
+import Dashboard from '../../../components/Dashboard/DashbaordMain';
 
 
 const Dashbord = () => {
@@ -162,7 +163,7 @@ const Dashbord = () => {
 
     return (
         <div>
-
+<Dashboard />
             <div className="page-content">
                 <div className="row newbg">
                     <div className="col-md-3">

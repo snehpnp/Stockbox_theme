@@ -17,6 +17,7 @@
     "file-saver": "^2.0.5",
     "formik": "^2.4.6",
     "lucide-react": "^0.469.0",
+    "quill": "^2.0.3",
     "react": "^19.0.0",
     "react-apexcharts": "^1.7.0",
     "react-bootstrap": "^2.10.7",
