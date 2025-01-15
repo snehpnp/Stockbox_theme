@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 
-import { SuperAdmin, Admin ,User} from "../Sidebars/Sidebar_config";
+import { SuperAdmin, Admin, User } from "../Sidebars/Sidebar_config";
 
-import { UserRoundPlus,
+import {
+  UserRoundPlus,
   Users,
   Wrench,
   UserPen,
@@ -37,12 +38,17 @@ import { UserRoundPlus,
 import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
+
+
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isTopbar, setIsTopbar] = useState(false);
   const [openTab, setOpenTab] = useState(null);
-  const location = useLocation(); // Get the current location
+  const location = useLocation();
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
-  const [routes, setRoutes] = useState(localStorage.getItem("Role")=="SUPERADMIN"?SuperAdmin:localStorage.getItem("Role")=="ADMIN"?Admin:User);
+  const [routes, setRoutes] = useState(localStorage.getItem("Role") == "SUPERADMIN" ? SuperAdmin : localStorage.getItem("Role") == "ADMIN" ? Admin : User);
+
+
+
 
   useEffect(() => {
     if (theme && theme.sidebarPosition === "Header") {
@@ -54,8 +60,8 @@ const Sidebar = () => {
     setOpenTab(openTab === tabName ? null : tabName);
   };
 
-  let SidebarId = theme.sidebarName;
 
+  let SidebarId = theme.sidebarName;
 
 
   const sidebarContainerClass =
@@ -73,6 +79,8 @@ const Sidebar = () => {
     padding: isTopbar ? "0 20px" : "10px",
   };
 
+
+
   useEffect(() => {
     if (isTopbar) {
       document.body.classList.add("sidebar-horizontal-container");
@@ -86,6 +94,9 @@ const Sidebar = () => {
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
+
+
+
 
   useEffect(() => {
     if (isCollapsed) {
@@ -119,9 +130,8 @@ const Sidebar = () => {
               {!isTopbar && (
                 <div className="sidebartoggle" onClick={toggleSidebar}>
                   <i
-                    className={`bx ${
-                      isCollapsed ? "bx-chevrons-right" : "bx-chevrons-left"
-                    }`}
+                    className={`bx ${isCollapsed ? "bx-chevrons-right" : "bx-chevrons-left"
+                      }`}
                   ></i>
                 </div>
               )}
@@ -146,7 +156,7 @@ const Sidebar = () => {
                   >
                     {/* Parent Tab */}
                     <div
-                       onClick={() => tab.children && toggleSubmenu(tab.name)}
+                      onClick={() => tab.children && toggleSubmenu(tab.name)}
                       style={{
                         display: "flex",
                         alignItems: "center",
@@ -157,16 +167,15 @@ const Sidebar = () => {
                       }}
                     >
                       <Link
-                     
+
                         to={tab.link}
-                        className={`sidebar-link ${
-                          location.pathname === tab.link ? "active" : ""
-                        }`}
+                        className={`sidebar-link ${location.pathname === tab.link ? "active" : ""
+                          }`}
                         style={{
                           textDecoration: "none",
                           display: "flex",
                           alignItems: "center",
-                         
+
                           color: "red !important",
                         }}
                       >
@@ -195,15 +204,13 @@ const Sidebar = () => {
                           <li
                             key={child.name}
                             style={{ margin: "5px 0", zIndex: -999 }}
-                            className={`sidebar-subitem ${
-                              location.pathname === child.link ? "active" : ""
-                            }`}
+                            className={`sidebar-subitem ${location.pathname === child.link ? "active" : ""
+                              }`}
                           >
                             <Link
                               to={child.link}
-                              className={`sidebar-sublink ${
-                                location.pathname === child.link ? "active" : ""
-                              }`}
+                              className={`sidebar-sublink ${location.pathname === child.link ? "active" : ""
+                                }`}
                               style={{
                                 textDecoration: "none",
                                 display: "flex",
@@ -308,14 +315,14 @@ const Sidebar = () => {
                         {tab.children.map((child) => (
                           <li key={child.name} style={{ margin: "5px 0" }}>
                             <Link
-                            
+
                               to={child.link}
                               style={{
                                 textDecoration: "none",
                                 display: "flex",
                                 alignItems: "center",
                                 gap: "10px",
-                                
+
                               }}
                             >
                               <IconComponent icon={tab.icon} className="mx-2" />

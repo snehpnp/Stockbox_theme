@@ -35,6 +35,12 @@ const Admin = [
     name: "Plan",
   },
   {
+    label: "Staff",
+    icon: "bx-user-plus",
+    link: "/admin/staff",
+    name: "Staff"
+  },
+  {
     label: "Basket",
     icon: "ShoppingCart",
     children: [

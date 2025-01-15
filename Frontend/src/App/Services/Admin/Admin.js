@@ -16,12 +16,6 @@ export async function GetClient(token) {
 
         return res?.data;
     } catch (err) {
-
-
-        // if ("Forbidden" == err.response?.data || err.message) {
-        //     localStorage.clear()
-        //     window.location.reload()
-        // }
         return err;
     }
 }
