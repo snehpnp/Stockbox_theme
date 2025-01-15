@@ -33,7 +33,7 @@ const Login = () => {
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: "Please enter both email and password",
+        text: "Please enter both username and password",
       });
       return;
     }
@@ -43,16 +43,18 @@ const Login = () => {
     setIsLoading(false);
 
     if (ResData.status) {
-      localStorage.setItem("Token", ResData.data.token);
+
+      localStorage.setItem("Token", ResData.data?.token);
+      localStorage.setItem("Id", ResData.data?.id);
       localStorage.setItem(
         "Role",
-        ResData.data.Role === 0
+        ResData?.data?.Role === 0
           ? "SUPERADMIN"
-          : ResData.data.Role === 1
+          : ResData?.data?.Role === 1
             ? "ADMIN"
-            : ResData.data.Role === 2
-              ? "EMPLOYEE"
-              : "USER"
+            : ResData?.data?.Role === 2
+              ? "EMPLOYEE" : ""
+
       );
 
       Swal.fire({
@@ -61,7 +63,20 @@ const Login = () => {
         text: "Login successful!",
         timer: 1500,
       }).then(() => {
-        navigate("/user/dashboard");
+        if (ResData?.data?.Role === 0) {
+          setTimeout(() => {
+            navigate("/superadmin/dashboard");
+          }, 2200);
+        } else if (ResData?.data?.Role === 1) {
+          setTimeout(() => {
+            navigate("/admin/dashboard");
+          }, 2200);
+        } else if (ResData?.data?.Role === 2) {
+
+          setTimeout(() => {
+            navigate("/employee/dashboard");
+          }, 2200);
+        }
         window.location.reload();
       });
     } else {
@@ -72,7 +87,7 @@ const Login = () => {
       });
     }
   };
-  
+
 
   return (
     <div className="main-login">
@@ -86,12 +101,12 @@ const Login = () => {
                 <div className="inner-div mt-4">
                   <form className="login-form" onSubmit={handleLogin}>
                     <div className="form-item">
-                      <label htmlFor="username-login">Email</label>
+                      <label htmlFor="username-login">username</label>
                       <input
                         id="username-login"
                         name="username"
                         type="text"
-                        aria-label="Enter your email"
+                        aria-label="Enter your username"
                         value={username}
                         onChange={(e) => setusername(e.target.value)}
                         required

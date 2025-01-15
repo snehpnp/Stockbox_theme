@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Wrapper from "./App/components/Wrapper/Wrapper";
 import Login from "./App/Layout/Auth/Login";
+import Userlogin from "./App/Layout/Auth/Userlogin";
+
 
 const App = () => {
   const navigate = useNavigate();
@@ -12,7 +14,14 @@ const App = () => {
 
   useEffect(() => {
     if (!Token) {
-      navigate("/login");
+      if (!location.pathname.includes("login") && !location.pathname.includes("user-login")) {
+        console.log("--")
+        navigate("/user-login");
+
+      }
+      // navigate("/login");
+      // navigate("/user-login");
+
       return;
     }
 
@@ -25,7 +34,8 @@ const App = () => {
     }
 
     // Redirect to dashboard based on role
-    if (location.pathname.includes("login") || location.pathname === "/") {
+    if (location.pathname.includes("login") || location.pathname.includes("user-login") || location.pathname === "/") {
+
       switch (Role) {
         case "SUPERADMIN":
           navigate("/superadmin/dashboard");
@@ -40,17 +50,22 @@ const App = () => {
           navigate("/employee/dashboard");
           break;
         default:
-          navigate("/login");
+        // navigate("/login");
+        // navigate("/user-login");
+
       }
     }
   }, [Token, Role, location.pathname, navigate]);
 
   return (
     <div className="App">
-      {location.pathname !== "/login" && <Wrapper />}
+      {(location.pathname !== "/login" && location.pathname !== "/user-login") && <Wrapper />}
 
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/user-login" element={<Userlogin />} />
+
+
         <Route path="/forget" element={<div>Forget Password</div>} />
         <Route path="/signup/*" element={<div>Signup Page</div>} />
       </Routes>

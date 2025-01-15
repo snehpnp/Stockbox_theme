@@ -6,11 +6,13 @@ import { GetServicedata, GETPlanList } from "../../../Services/UserService/User"
 
 function Service() {
 
+
+
   const token = localStorage.getItem('Token');
-  const userid = localStorage.getItem('id');
+  const userid = localStorage.getItem('Id');
+
 
   const [selectedPlan, setSelectedPlan] = useState("all");
-
   const [service, setService] = useState([])
 
 
@@ -33,7 +35,7 @@ function Service() {
 
   const getplan = async () => {
     try {
-      const response = await GETPlanList()
+      const response = await GETPlanList(userid, token)
       if (response.status) {
         console.log("response?.data", response)
       }
@@ -79,8 +81,8 @@ function Service() {
                 {service && service.map((item) => {
                   return (
                     <>
-                      <option value="intraday" key={item._id}>
-                        <span className="price-span">{item?.title}</span>
+                      <option value="intraday" key={item._id} >
+                        <span className="price-span" >{item?.title}</span>
                       </option>
                     </>
                   )
