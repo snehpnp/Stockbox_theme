@@ -139,11 +139,6 @@ const Sidebar = () => {
                   <li
                     key={tab.name}
                   
-                    style={{
-                      width: "100%",
-                      marginTop: "5px",
-                      color: "red !important",
-                    }}
                   >
                     {/* Parent Tab */}
                     <div
@@ -196,7 +191,7 @@ const Sidebar = () => {
                         {tab.children.map((child) => (
                           <li
                             key={child.name}
-                            style={{ margin: "5px 0", zIndex: -999 }}
+                           
                             className={`sidebar-subitem ${location.pathname === child.link ? "active" : ""
                               }`}
                           >

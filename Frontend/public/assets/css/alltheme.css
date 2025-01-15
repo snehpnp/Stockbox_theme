@@ -154,7 +154,7 @@ button.button_sell.active {
   padding-bottom: 70px !important;
 }
 .sidebar-open  .Sidebar-vertical {
-    padding: 10px 30px 20px 25px;
+    padding: 10px 10px 10px 10px;
    
 }
   .Sidebar-horizontal {
@@ -220,10 +220,12 @@ button.button_sell.active {
   /* Submenu */
   ul.submenu {
     background: #ffff;
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-    padding: 10px;
+    /* box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px; */
+    padding: 0 10px;
   }
-  
+  li.sidebar-subitem {
+    padding: 7px 0;
+}
   .submenu-item {
     margin: 5px 0;
   }
@@ -240,6 +242,7 @@ button.button_sell.active {
   }
   .content-wrapper {
     display: flex;
+    height: 100vh;
 }
 .sidebar-vertical-container.sidebar-open .content {
     width: calc(100% - 250px);
@@ -900,4 +903,32 @@ margin-bottom:0;
 .btn-buy {
   background-color: #28a745;
   color: #fff;
+}
+.product-show {
+  font-size: 18px;
+  left: 15px;
+}
+.page-breadcrumb .breadcrumb-title {
+  border-left: 1px solid #ccc;
+  padding-left: 15px;
+}
+.page-breadcrumb nav {
+  padding-right: 15px;
+}
+.page-breadcrumb nav  ol.breadcrumb .breadcrumb-item{
+font-size: 20px;
+color: #000;
+line-height: 20px;
+}
+.page-breadcrumb
+{
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  flex-direction: row-reverse;
+    justify-content: left;
+}
+ol.breadcrumb.mb-0.p-0 {
+  box-shadow: none !important;
 }
