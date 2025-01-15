@@ -61,6 +61,22 @@ const toggleSidebar = () => {
         </div>
           {/* Right Side */}
           <div className="d-flex align-items-center position-relative ml-auto">
+          <div className="d-flex">
+  <span className="switch-label p-1">
+    Trading Status:<span style={{ color: "red" }}>Off</span>
+  </span>
+  <div
+    className="form-check form-switch form-check-dark"
+    style={{ margin: "inherit", fontSize: 21 }}
+  >
+    <input
+      className="form-check-input"
+      type="checkbox"
+      role="switch"
+      id="flexSwitchCheckDark"
+    />
+  </div>
+</div>
 
             <div className="dropdown">
               <div
