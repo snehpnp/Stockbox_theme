@@ -163,7 +163,7 @@ const Dashbord = () => {
 
     return (
         <div>
-<Dashboard />
+            {/* <Dashboard /> */}
             <div className="page-content">
                 <div className="row newbg">
                     <div className="col-md-3">

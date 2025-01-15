@@ -64,18 +64,11 @@ const Login = () => {
         timer: 1500,
       }).then(() => {
         if (ResData?.data?.Role === 0) {
-          setTimeout(() => {
-            navigate("/superadmin/dashboard");
-          }, 2200);
+          navigate("/superadmin/dashboard");
         } else if (ResData?.data?.Role === 1) {
-          setTimeout(() => {
-            navigate("/admin/dashboard");
-          }, 2200);
+          navigate("/admin/dashboard");
         } else if (ResData?.data?.Role === 2) {
-
-          setTimeout(() => {
-            navigate("/employee/dashboard");
-          }, 2200);
+          navigate("/employee/dashboard");
         }
         window.location.reload();
       });

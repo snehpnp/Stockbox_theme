@@ -1,27 +1,28 @@
 import React, { useState } from "react";
 import Logo from "../Images/LOGO.png";
 import ProfileImage from "../Images/logo1.png"; // Replace with your profile image
-import { FaBell,FaBars } from "react-icons/fa"; // Importing a notification bell icon
+import { FaBell, FaBars } from "react-icons/fa"; // Importing a notification bell icon
 import { Link } from "react-router-dom";
 
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
 
-const Logout = () => {
-  localStorage.clear();
-  window.location.href = "/login";
-}
-const toggleSidebar = () => {
-  const body = document.body;
+  const Logout = () => {
+    localStorage.clear();
+    // window.location.href = "/login";
 
-  if (body.classList.contains("sidebar-open")) {
-    body.classList.remove("sidebar-open");
-    body.classList.add("sidebar-closed", "sidebar-collapsed"); // Use separate arguments
-  } else {
-    body.classList.remove("sidebar-closed", "sidebar-collapsed"); // Use separate arguments
-    body.classList.add("sidebar-open");
   }
-};
+  const toggleSidebar = () => {
+    const body = document.body;
+
+    if (body.classList.contains("sidebar-open")) {
+      body.classList.remove("sidebar-open");
+      body.classList.add("sidebar-closed", "sidebar-collapsed"); // Use separate arguments
+    } else {
+      body.classList.remove("sidebar-closed", "sidebar-collapsed"); // Use separate arguments
+      body.classList.add("sidebar-open");
+    }
+  };
 
   return (
     <>
@@ -38,27 +39,27 @@ const toggleSidebar = () => {
       >
         <div className="container-fluid">
           <div>
-         
-          <a className="navbar-brand" href="#">
-            <img
-              src={Logo}
-              alt="Logo"
-              style={{ width: "200px", height: "50px" }}
-            />
-          </a>
-          <button
-          className="btn btn-light me-2"
-          onClick={toggleSidebar}
-          style={{
-            border: "none",
-            fontSize: "18px",
-            cursor: "pointer",
-          }}
-        >
-          <FaBars />
-        </button>
-           
-        </div>
+
+            <a className="navbar-brand" href="#">
+              <img
+                src={Logo}
+                alt="Logo"
+                style={{ width: "200px", height: "50px" }}
+              />
+            </a>
+            <button
+              className="btn btn-light me-2"
+              onClick={toggleSidebar}
+              style={{
+                border: "none",
+                fontSize: "18px",
+                cursor: "pointer",
+              }}
+            >
+              <FaBars />
+            </button>
+
+          </div>
           {/* Right Side */}
           <div className="d-flex align-items-center position-relative ml-auto">
 
@@ -113,12 +114,12 @@ const toggleSidebar = () => {
               <div style={profileDropdownStyle} className="dropdown-menu" aria-labelledby="dropdownMenuLink">
                 <ul style={dropdownListStyle}>
                   <li style={dropdownItemStyle}>
-                    <Link to ='/user/profiles' >🛠️ Profile Settings</Link>
-                    
-                    </li>
+                    <Link to='/user/profiles' >🛠️ Profile Settings</Link>
+
+                  </li>
                   <li style={dropdownItemStyle}>📦 Service</li>
                   <li style={dropdownItemStyle}>ℹ️ About</li>
-                  <li style={dropdownItemStyle} onClick={(e)=>Logout()}>🚪 Logout</li>
+                  <li style={dropdownItemStyle} onClick={(e) => Logout()}>🚪 Logout</li>
                 </ul>
               </div>
             </div>
