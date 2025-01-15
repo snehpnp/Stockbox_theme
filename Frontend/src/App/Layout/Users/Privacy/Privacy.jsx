@@ -4,6 +4,8 @@ import { GetPrivacyPolicy } from "../../../Services/UserService/User";
 import Content from "../../../components/Contents/Content";
 
 const Privacy = () => {
+
+
   const [privacyPolicy, setPrivacyPolicy] = useState("");
 
   const fetchPrivacyPolicy = async () => {
@@ -30,7 +32,7 @@ const Privacy = () => {
         backbutton_status={false}
       >
         <div className="page-content">
-      
+
           <div className="card">
             <div className="card-body">
               <h5 className="card-title">Privacy & Policy</h5>

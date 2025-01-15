@@ -37,9 +37,7 @@ export function f_time(date) {
   return format(new Date(date), 'yyyy-MM-dd');
 }
 
-export function fa_time(date) {
-  return format(new Date(date), 'yyyy/MM/dd');
-}
+
 
 export function get_three_digit_month(date) {
   return format(new Date(date), 'yyyy-MMM-dd');
@@ -53,6 +51,11 @@ export function fToNow(date) {
   return formatDistanceToNow(new Date(date), {
     addSuffix: true,
   });
+}
+
+
+export function fa_time(date) {
+  return format(new Date(date), 'dd MMM');
 }
 
 export const getActualDateFormate = (date) => {
