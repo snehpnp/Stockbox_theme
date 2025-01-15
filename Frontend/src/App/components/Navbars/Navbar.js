@@ -7,9 +7,18 @@ import { Link } from "react-router-dom";
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
 
+  const Role = localStorage.getItem("Role")
+
+  console.log("Role", Role)
+
   const Logout = () => {
     localStorage.clear();
-    // window.location.href = "/login";
+    if (Role == "USER") {
+      window.location.href = "/user-login";
+    } else {
+      window.location.href = "/login";
+    }
+
 
   }
   const toggleSidebar = () => {
