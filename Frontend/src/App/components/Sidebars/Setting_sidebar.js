@@ -37,7 +37,25 @@ export default function Setting_sidebar() {
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
-
+  const updateButtonStyles = (btnBgColor, btnTxtColor) => {
+    const styleElementId = "dynamic-button-styles";
+    let styleElement = document.getElementById(styleElementId);
+  
+    if (!styleElement) {
+      styleElement = document.createElement("style");
+      styleElement.id = styleElementId;
+      document.head.appendChild(styleElement);
+    }
+  
+    styleElement.innerHTML = `
+      .btn-primary {
+        background-color: ${btnBgColor} !important;
+        color: ${btnTxtColor} !important;
+        border-color: ${btnBgColor} !important;
+      }
+    `;
+  };
+  
   const handleClickOutside = (event) => {
     if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
       setIsOpen(false);
@@ -119,6 +137,7 @@ export default function Setting_sidebar() {
               sidebarFontColor: values.sidebarFontColor, // Include Sidebar Font Color
             };
             localStorage.setItem("theme", JSON.stringify(updatedValues));
+            updateButtonStyles(values.BtnBgColor, values.btnTxtColor);
             window.location.reload();
           }}
         >
