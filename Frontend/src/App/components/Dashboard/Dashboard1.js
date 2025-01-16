@@ -181,7 +181,7 @@ const Dashboard1 = ({ data }) => {
               >
                 <item.icon />
               </div>
-              <h5 className="text-center">{item.name}</h5>
+              <h5 className="text-center ">{item.name}</h5>
               <h3 className="my-3 text-center">{item.value}</h3>
               <div className="text-center">
                 <Link

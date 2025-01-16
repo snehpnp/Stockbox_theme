@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Contnet from "../../../components/Contents/Content";
-import { GetAllThemesApi, GetThemeByIdApi,DeleteThemeApi } from "../../../Services/Themes/Theme";
+import { GetAllThemesApi, GetThemeByIdApi, DeleteThemeApi } from "../../../Services/Themes/Theme";
 
 function Theme() {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ function Theme() {
   };
 
   const handleDelete = (id) => {
-   
+
     DeleteThemeApi(id)
       .then((response) => {
         GetAllThemes();
@@ -55,12 +55,13 @@ function Theme() {
 
 
 
-document.documentElement.style.setProperty("--BtnPriTxtCol", themeData?.BtnPriTxtCol);
-document.documentElement.style.setProperty("--BtnSecTxtCol", themeData?.BtnSecTxtCol);
-document.documentElement.style.setProperty("--BtnBorderColor", themeData?.BtnBorderColor);
-document.documentElement.style.setProperty("--BtnSecBorderColor", themeData?.BtnSecBorderColor);
-document.documentElement.style.setProperty("--BtnPriBgCol", themeData?.BtnPriBgCol);
-document.documentElement.style.setProperty("--BtnSecBgCol", themeData?.BtnSecBgCol);
+      document.documentElement.style.setProperty("--BtnPriTxtCol", themeData?.BtnPriTxtCol);
+      document.documentElement.style.setProperty("--BtnSecTxtCol", themeData?.BtnSecTxtCol);
+      document.documentElement.style.setProperty("--BtnBorderColor", themeData?.BtnBorderColor);
+      document.documentElement.style.setProperty("--BtnSecBorderColor", themeData?.BtnSecBorderColor);
+      document.documentElement.style.setProperty("--BtnPriBgCol", themeData?.BtnPriBgCol);
+      document.documentElement.style.setProperty("--BtnSecBgCol", themeData?.BtnSecBgCol);
+      document.documentElement.style.setProperty("--PrimaryColor", themeData?.PrimaryColor);
 
 
 
@@ -68,7 +69,7 @@ document.documentElement.style.setProperty("--BtnSecBgCol", themeData?.BtnSecBgC
 
 
       window.location.reload();
-      
+
     } catch (error) {
       console.error("Error applying theme:", error);
     }

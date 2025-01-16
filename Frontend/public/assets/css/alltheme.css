@@ -942,6 +942,17 @@ ol.breadcrumb.mb-0.p-0 {
 .content-heading {
   color: var(--dynamic-color, black) !important; /* Default color is black */
 }
-.btn-main {
+.btn-primary {
   background-color: var(--BtnPriBgCol, black) !important; /* Default color is black */
+  color: var(--BtnPriTxtCol, #fff) !important; /* Default color is black */
+  border-color: var(--BtnBorderColor, black) !important; /* Default color is black */
+}
+.btn-secoondary {
+  background-color: var(--BtnPriBgCol, #fff) !important; /* Default color is black */
+  color: var(--BtnPriTxtCol, black) !important; /* Default color is black */
+  border-color: var(--BtnSecBorderColor, black) !important; /* Default color is black */
+}
+.primary-text
+{
+  color: var(--PrimaryColor, black) !important; /* Default color is black */
 }
