@@ -167,11 +167,11 @@ const Dashbord = () => {
             <div className="page-content">
                 <div className="row newbg">
                     <div className="col-md-3">
-                        <div className="card radius-10 bg-gradient-moonlit">
+                        <div className="card radius-10  mb-4 bg-gradient-moonlit">
                             <Link to="/admin/planexpirymonth">
                                 <div className="card-body">
                                     <div className="d-flex align-items-center">
-                                        <h5 className="mb-0 text-white">
+                                        <h5 className="mb-0 ">
                                             {monthexpiry?.length > 0
                                                 ? monthexpiry?.some((item) => fDateMonth(item.month) === currentMonthYear)
                                                     ? monthexpiry.reduce((acc, item) => {
@@ -184,15 +184,15 @@ const Dashbord = () => {
                                         </h5>
 
                                         <div className="ms-auto">
-                                            <i className="bx bx-user-plus fs-3 text-white" />
+                                            <i className="bx bx-user-plus fs-3 " />
                                         </div>
                                     </div>
                                     <div
-                                        className="progress my-2 bg-opacity-25 bg-white"
+                                        className="progress my-2 bg-opacity-25 "
                                         style={{ height: 4 }}
                                     >
                                         <div
-                                            className="progress-bar bg-white"
+                                            className="progress-bar "
                                             role="progressbar"
                                             style={{ width: "55%" }}
                                             aria-valuenow={25}
@@ -200,11 +200,11 @@ const Dashbord = () => {
                                             aria-valuemax={100}
                                         />
                                     </div>
-                                    <div className="d-flex align-items-center text-white">
-                                        <p className="mb-0">Current Month Active License</p>
+                                    <div className="d-flex align-items-center ">
+                                        <p className="mb-0 content-heading">Current Month Active License</p>
                                         <p className="mb-0 ms-auto">
                                             <span>
-                                                <i className="bx bx-up-arrow-alt text-white" />
+                                                <i className="bx bx-up-arrow-alt " />
                                             </span>
                                         </p>
                                     </div>
@@ -214,23 +214,23 @@ const Dashbord = () => {
 
                     </div>
                     <div className="col-md-3">
-                        <div className="card radius-10 bg-gradient-deepblue">
+                        <div className="card radius-10  mb-4 bg-gradient-deepblue">
                             <Link to="/admin/client" className="text-decoration-none">
                                 <div className="card-body">
                                     <div className="d-flex align-items-center">
-                                        <h5 className="mb-0 text-white">
+                                        <h5 className="mb-0 ">
                                             {data.clientCountTotal && data.clientCountTotal}
                                         </h5>
                                         <div className="ms-auto">
-                                            <i className="bx bx-user fs-3 text-white" />
+                                            <i className="bx bx-user fs-3 " />
                                         </div>
                                     </div>
                                     <div
-                                        className="progress my-2 bg-opacity-25 bg-white"
+                                        className="progress my-2 bg-opacity-25 "
                                         style={{ height: 4 }}
                                     >
                                         <div
-                                            className="progress-bar bg-white"
+                                            className="progress-bar "
                                             role="progressbar"
                                             style={{ width: "55%" }}
                                             aria-valuenow={25}
@@ -238,11 +238,11 @@ const Dashbord = () => {
                                             aria-valuemax={100}
                                         />
                                     </div>
-                                    <div className="d-flex align-items-center text-white">
+                                    <div className="d-flex align-items-center ">
                                         <p className="mb-0">Total Clients</p>
                                         <p className="mb-0 ms-auto">
                                             <span>
-                                                <i className="bx bx-up-arrow-alt text-white" />
+                                                <i className="bx bx-up-arrow-alt " />
                                             </span>
                                         </p>
                                     </div>
@@ -252,21 +252,21 @@ const Dashbord = () => {
                         </div>
                     </div>
                     <div className="col-md-3">
-                        <div className="card radius-10 bg-gradient-ohhappiness">
+                        <div className="card radius-10  mb-4 bg-gradient-ohhappiness">
                             <Link to="/admin/client" state={{ clientStatus: 1 }}>
                                 <div className="card-body">
                                     <div className="d-flex align-items-center">
-                                        <h5 className="mb-0 text-white">{data.clientCountActive && data.clientCountActive}</h5>
+                                        <h5 className="mb-0 ">{data.clientCountActive && data.clientCountActive}</h5>
                                         <div className="ms-auto">
-                                            <i className="fadeIn animated bx bx-user-circle fs-3 text-white" />
+                                            <i className="fadeIn animated bx bx-user-circle fs-3 " />
                                         </div>
                                     </div>
                                     <div
-                                        className="progress my-2 bg-opacity-25 bg-white"
+                                        className="progress my-2 bg-opacity-25 "
                                         style={{ height: 4 }}
                                     >
                                         <div
-                                            className="progress-bar bg-white"
+                                            className="progress-bar "
                                             role="progressbar"
                                             style={{ width: "55%" }}
                                             aria-valuenow={25}
@@ -274,13 +274,13 @@ const Dashbord = () => {
                                             aria-valuemax={100}
                                         />
                                     </div>
-                                    <div className="d-flex align-items-center text-white">
+                                    <div className="d-flex align-items-center ">
                                         <p className="mb-0">Total Active Clients</p>
                                         <p className="mb-0 ms-auto">
 
                                             <span>
 
-                                                <i className="bx bx-up-arrow-alt text-white" />
+                                                <i className="bx bx-up-arrow-alt " />
 
 
                                                 {/* <i className="bx bx-up-arrow-alt" /> */}
@@ -292,21 +292,21 @@ const Dashbord = () => {
                         </div>
                     </div>
                     <div className="col-md-3">
-                        <div className="card radius-10 bg-gradient-ibiza">
+                        <div className="card radius-10  mb-4 bg-gradient-ibiza">
                             <Link to="/admin/client" state={{ clientStatus: 0 }}>
                                 <div className="card-body">
                                     <div className="d-flex align-items-center">
-                                        <h5 className="mb-0 text-white">{data.clientCountTotal - data.clientCountActive}</h5>
+                                        <h5 className="mb-0 ">{data.clientCountTotal - data.clientCountActive}</h5>
                                         <div className="ms-auto">
-                                            <i className="fadeIn animated bx bx-user-x fs-3 text-white" />
+                                            <i className="fadeIn animated bx bx-user-x fs-3 " />
                                         </div>
                                     </div>
                                     <div
-                                        className="progress my-2 bg-opacity-25 bg-white"
+                                        className="progress my-2 bg-opacity-25 "
                                         style={{ height: 4 }}
                                     >
                                         <div
-                                            className="progress-bar bg-white"
+                                            className="progress-bar "
                                             role="progressbar"
                                             style={{ width: "55%" }}
                                             aria-valuenow={25}
@@ -314,13 +314,13 @@ const Dashbord = () => {
                                             aria-valuemax={100}
                                         />
                                     </div>
-                                    <div className="d-flex align-items-center text-white">
+                                    <div className="d-flex align-items-center ">
                                         <p className="mb-0">Total Deactive Clients</p>
                                         <p className="mb-0 ms-auto">
 
                                             <span>
 
-                                                <i className="bx bx-up-arrow-alt text-white" />                                        </span>
+                                                <i className="bx bx-up-arrow-alt " />                                        </span>
                                         </p>
                                     </div>
                                 </div>
@@ -329,21 +329,21 @@ const Dashbord = () => {
                     </div>
 
                     <div className="col-md-3">
-                        <div className="card radius-10 bg-gradient-moonlit ">
+                        <div className="card radius-10  mb-4 bg-gradient-moonlit ">
                             <Link to="/admin/signal" state={{ clientStatus: "todayopensignal" }}>
                                 <div className="card-body">
                                     <div className="d-flex align-items-center">
-                                        <h5 className="mb-0 text-white">{data.todayOpenSignal && data.todayOpenSignal}</h5>
+                                        <h5 className="mb-0 ">{data.todayOpenSignal && data.todayOpenSignal}</h5>
                                         <div className="ms-auto">
-                                            <i className="bx bx-wifi-2 fs-3 text-white" />
+                                            <i className="bx bx-wifi-2 fs-3 " />
                                         </div>
                                     </div>
                                     <div
-                                        className="progress my-2 bg-opacity-25 bg-white"
+                                        className="progress my-2 bg-opacity-25 "
                                         style={{ height: 4 }}
                                     >
                                         <div
-                                            className="progress-bar bg-white"
+                                            className="progress-bar "
                                             role="progressbar"
                                             style={{ width: "55%" }}
                                             aria-valuenow={25}
@@ -351,7 +351,7 @@ const Dashbord = () => {
                                             aria-valuemax={100}
                                         />
                                     </div>
-                                    <div className="d-flex align-items-center text-white">
+                                    <div className="d-flex align-items-center ">
                                         <p className="mb-0">Today's Open Signal</p>
                                         <p className="mb-0 ms-auto">
 
@@ -359,7 +359,7 @@ const Dashbord = () => {
 
 
 
-                                                <i className="bx bx-up-arrow-alt text-white" />
+                                                <i className="bx bx-up-arrow-alt " />
 
                                             </span>
                                         </p>
@@ -369,21 +369,21 @@ const Dashbord = () => {
                         </div>
                     </div>
                     <div className="col-md-3">
-                        <div className="card radius-10 bg-gradient-ibiza ">
+                        <div className="card radius-10  mb-4 bg-gradient-ibiza ">
                             <Link to="/admin/closesignal" state={{ clientStatus: "todayclosesignal" }}>
                                 <div className="card-body">
                                     <div className="d-flex align-items-center">
-                                        <h5 className="mb-0 text-white">{data.todayCloseSignal && data.todayCloseSignal}</h5>
+                                        <h5 className="mb-0 ">{data.todayCloseSignal && data.todayCloseSignal}</h5>
                                         <div className="ms-auto">
-                                            <i className="fadeIn animated bx bx-wifi-off fs-3 text-white" />
+                                            <i className="fadeIn animated bx bx-wifi-off fs-3 " />
                                         </div>
                                     </div>
                                     <div
-                                        className="progress my-2 bg-opacity-25 bg-white"
+                                        className="progress my-2 bg-opacity-25 "
                                         style={{ height: 4 }}
                                     >
                                         <div
-                                            className="progress-bar bg-white"
+                                            className="progress-bar "
                                             role="progressbar"
                                             style={{ width: "55%" }}
                                             aria-valuenow={25}
@@ -391,14 +391,14 @@ const Dashbord = () => {
                                             aria-valuemax={100}
                                         />
                                     </div>
-                                    <div className="d-flex align-items-center text-white">
+                                    <div className="d-flex align-items-center ">
                                         <p className="mb-0">Today's Close Signal</p>
                                         <p className="mb-0 ms-auto">
 
                                             <span>
 
 
-                                                <i className="bx bx-up-arrow-alt text-white" />
+                                                <i className="bx bx-up-arrow-alt " />
 
                                             </span>
                                         </p>
@@ -409,21 +409,21 @@ const Dashbord = () => {
                     </div>
 
                     <div className="col-md-3">
-                        <div className="card radius-10 bg-gradient-ohhappiness">
+                        <div className="card radius-10  mb-4 bg-gradient-ohhappiness">
                             <Link to="/admin/signal">
                                 <div className="card-body">
                                     <div className="d-flex align-items-center">
-                                        <h5 className="mb-0 text-white">{data.OpensignalCountTotal && data.OpensignalCountTotal}</h5>
+                                        <h5 className="mb-0 ">{data.OpensignalCountTotal && data.OpensignalCountTotal}</h5>
                                         <div className="ms-auto">
-                                            <i className="bx bxl-redux fs-3 text-white" />
+                                            <i className="bx bxl-redux fs-3 " />
                                         </div>
                                     </div>
                                     <div
-                                        className="progress my-2 bg-opacity-25 bg-white"
+                                        className="progress my-2 bg-opacity-25 "
                                         style={{ height: 4 }}
                                     >
                                         <div
-                                            className="progress-bar bg-white"
+                                            className="progress-bar "
                                             role="progressbar"
                                             style={{ width: "55%" }}
                                             aria-valuenow={25}
@@ -431,12 +431,12 @@ const Dashbord = () => {
                                             aria-valuemax={100}
                                         />
                                     </div>
-                                    <div className="d-flex align-items-center text-white">
+                                    <div className="d-flex align-items-center ">
                                         <p className="mb-0">Total Open Signals</p>
                                         <p className="mb-0 ms-auto">
 
                                             <span>
-                                                <i className="bx bx-up-arrow-alt text-white" />
+                                                <i className="bx bx-up-arrow-alt " />
                                                 {/* <i className="bx bx-up-arrow-alt" /> */}
                                             </span>
                                         </p>
@@ -446,21 +446,21 @@ const Dashbord = () => {
                         </div>
                     </div>
                     <div className="col-md-3">
-                        <div className="card radius-10 bg-gradient-deepblue">
+                        <div className="card radius-10  mb-4 bg-gradient-deepblue">
                             <Link to="/admin/closesignal">
                                 <div className="card-body">
                                     <div className="d-flex align-items-center">
-                                        <h5 className="mb-0 text-white">{data.CloseSignalCountTotal && data.CloseSignalCountTotal}</h5>
+                                        <h5 className="mb-0 ">{data.CloseSignalCountTotal && data.CloseSignalCountTotal}</h5>
                                         <div className="ms-auto">
-                                            <i className="bx bx-wifi-2 fs-3 text-white" />
+                                            <i className="bx bx-wifi-2 fs-3 " />
                                         </div>
                                     </div>
                                     <div
-                                        className="progress my-2 bg-opacity-25 bg-white"
+                                        className="progress my-2 bg-opacity-25 "
                                         style={{ height: 4 }}
                                     >
                                         <div
-                                            className="progress-bar bg-white"
+                                            className="progress-bar "
                                             role="progressbar"
                                             style={{ width: "55%" }}
                                             aria-valuenow={25}
@@ -468,12 +468,12 @@ const Dashbord = () => {
                                             aria-valuemax={100}
                                         />
                                     </div>
-                                    <div className="d-flex align-items-center text-white">
+                                    <div className="d-flex align-items-center ">
                                         <p className="mb-0">Total Close Signals </p>
                                         <p className="mb-0 ms-auto">
 
                                             <span>
-                                                <i className="bx bx-up-arrow-alt text-white" />
+                                                <i className="bx bx-up-arrow-alt " />
                                                 {/* <i className="bx bx-up-arrow-alt" /> */}
                                             </span>
                                         </p>
@@ -483,21 +483,21 @@ const Dashbord = () => {
                         </div>
                     </div>
                     <div className="col-md-3">
-                        <div className="card radius-10 bg-gradient-deepblue">
+                        <div className="card radius-10  mb-4 bg-gradient-deepblue">
                             <Link to="/admin/client" state={{ clientStatus: "active" }}>
                                 <div className="card-body">
                                     <div className="d-flex align-items-center">
-                                        <h5 className="mb-0 text-white">{data.activePlanclient && data.activePlanclient}</h5>
+                                        <h5 className="mb-0 ">{data.activePlanclient && data.activePlanclient}</h5>
                                         <div className="ms-auto">
-                                            <i className="bx bx-wifi-2 fs-3 text-white" />
+                                            <i className="bx bx-wifi-2 fs-3 " />
                                         </div>
                                     </div>
                                     <div
-                                        className="progress my-2 bg-opacity-25 bg-white"
+                                        className="progress my-2 bg-opacity-25 "
                                         style={{ height: 4 }}
                                     >
                                         <div
-                                            className="progress-bar bg-white"
+                                            className="progress-bar "
                                             role="progressbar"
                                             style={{ width: "55%" }}
                                             aria-valuenow={25}
@@ -505,13 +505,13 @@ const Dashbord = () => {
                                             aria-valuemax={100}
                                         />
                                     </div>
-                                    <div className="d-flex align-items-center text-white">
+                                    <div className="d-flex align-items-center ">
                                         <p className="mb-0">Total Plan Active Clients </p>
                                         <p className="mb-0 ms-auto">
 
                                             <span>
 
-                                                <i className="bx bx-up-arrow-alt text-white" />
+                                                <i className="bx bx-up-arrow-alt " />
 
                                                 {/* <i className="bx bx-up-arrow-alt" /> */}
                                             </span>
@@ -522,21 +522,21 @@ const Dashbord = () => {
                         </div>
                     </div>
                     <div className="col-md-3">
-                        <div className="card radius-10 bg-gradient-deepblue">
+                        <div className="card radius-10  mb-4 bg-gradient-deepblue">
                             <Link to="/admin/client" state={{ clientStatus: "expired" }}>
                                 <div className="card-body">
                                     <div className="d-flex align-items-center">
-                                        <h5 className="mb-0 text-white">{data.inActivePlanclient && data.inActivePlanclient}</h5>
+                                        <h5 className="mb-0 ">{data.inActivePlanclient && data.inActivePlanclient}</h5>
                                         <div className="ms-auto">
-                                            <i className="bx bx-wifi-2 fs-3 text-white" />
+                                            <i className="bx bx-wifi-2 fs-3 " />
                                         </div>
                                     </div>
                                     <div
-                                        className="progress my-2 bg-opacity-25 bg-white"
+                                        className="progress my-2 bg-opacity-25 "
                                         style={{ height: 4 }}
                                     >
                                         <div
-                                            className="progress-bar bg-white"
+                                            className="progress-bar "
                                             role="progressbar"
                                             style={{ width: "55%" }}
                                             aria-valuenow={25}
@@ -544,12 +544,12 @@ const Dashbord = () => {
                                             aria-valuemax={100}
                                         />
                                     </div>
-                                    <div className="d-flex align-items-center text-white">
+                                    <div className="d-flex align-items-center ">
                                         <p className="mb-0">Total Plan Expired </p>
                                         <p className="mb-0 ms-auto">
 
                                             <span>
-                                                <i className="bx bx-up-arrow-alt text-white" />
+                                                <i className="bx bx-up-arrow-alt " />
 
                                                 {/* <i className="bx bx-up-arrow-alt" /> */}
                                             </span>
@@ -560,21 +560,21 @@ const Dashbord = () => {
                         </div>
                     </div>
                     <div className="col-md-3">
-                        <div className="card radius-10 bg-gradient-deepblue">
+                        <div className="card radius-10  mb-4 bg-gradient-deepblue">
                             <Link to="/admin/freeclient" state={{ clientStatus: "active" }}>
                                 <div className="card-body">
                                     <div className="d-flex align-items-center">
-                                        <h5 className="mb-0 text-white">{data.activeFreetrial && data.activeFreetrial}</h5>
+                                        <h5 className="mb-0 ">{data.activeFreetrial && data.activeFreetrial}</h5>
                                         <div className="ms-auto">
-                                            <i className="bx bx-wifi-2 fs-3 text-white" />
+                                            <i className="bx bx-wifi-2 fs-3 " />
                                         </div>
                                     </div>
                                     <div
-                                        className="progress my-2 bg-opacity-25 bg-white"
+                                        className="progress my-2 bg-opacity-25 "
                                         style={{ height: 4 }}
                                     >
                                         <div
-                                            className="progress-bar bg-white"
+                                            className="progress-bar "
                                             role="progressbar"
                                             style={{ width: "55%" }}
                                             aria-valuenow={25}
@@ -582,12 +582,12 @@ const Dashbord = () => {
                                             aria-valuemax={100}
                                         />
                                     </div>
-                                    <div className="d-flex align-items-center text-white">
+                                    <div className="d-flex align-items-center ">
                                         <p className="mb-0">Total Active Free Clients</p>
                                         <p className="mb-0 ms-auto">
 
                                             <span>
-                                                <i className="bx bx-up-arrow-alt text-white" />
+                                                <i className="bx bx-up-arrow-alt " />
                                                 {/* <i className="bx bx-up-arrow-alt" /> */}
                                             </span>
                                         </p>
@@ -597,21 +597,21 @@ const Dashbord = () => {
                         </div>
                     </div>
                     <div className="col-md-3">
-                        <div className="card radius-10 bg-gradient-deepblue">
+                        <div className="card radius-10  mb-4 bg-gradient-deepblue">
                             <Link to="/admin/freeclient" state={{ clientStatus: "expired" }}>
                                 <div className="card-body">
                                     <div className="d-flex align-items-center">
-                                        <h5 className="mb-0 text-white">{data.inActiveFreetrial && data.inActiveFreetrial}</h5>
+                                        <h5 className="mb-0 ">{data.inActiveFreetrial && data.inActiveFreetrial}</h5>
                                         <div className="ms-auto">
-                                            <i className="bx bx-wifi-2 fs-3 text-white" />
+                                            <i className="bx bx-wifi-2 fs-3 " />
                                         </div>
                                     </div>
                                     <div
-                                        className="progress my-2 bg-opacity-25 bg-white"
+                                        className="progress my-2 bg-opacity-25 "
                                         style={{ height: 4 }}
                                     >
                                         <div
-                                            className="progress-bar bg-white"
+                                            className="progress-bar "
                                             role="progressbar"
                                             style={{ width: "55%" }}
                                             aria-valuenow={25}
@@ -619,12 +619,12 @@ const Dashbord = () => {
                                             aria-valuemax={100}
                                         />
                                     </div>
-                                    <div className="d-flex align-items-center text-white">
+                                    <div className="d-flex align-items-center ">
                                         <p className="mb-0">Total Inactive Free Clients</p>
                                         <p className="mb-0 ms-auto">
 
                                             <span>
-                                                <i className="bx bx-up-arrow-alt text-white" />
+                                                <i className="bx bx-up-arrow-alt " />
                                                 {/* <i className="bx bx-up-arrow-alt" /> */}
                                             </span>
                                         </p>

@@ -8,18 +8,7 @@
     --heading-color: #000000;
   }
   /* Primary Button Style */
-.btn-primary {
-  background-color: var(--primary-bg-color, #007bff); /* Default background */
-  color: var(--primary-text-color, #fff); /* Default text color */
-  border-color: var(--primary-border-color, #007bff); /* Default border color */
-}
 
-/* Secondary Button Style */
-.btn-secondary {
-  background-color: var(--secondary-bg-color, #6c757d); /* Default background */
-  color: var(--secondary-text-color, #fff); /* Default text color */
-  border-color: var(--secondary-border-color, #6c757d); /* Default border color */
-}
 a{
   text-decoration: none !important;
 }
@@ -931,4 +920,25 @@ line-height: 20px;
 }
 ol.breadcrumb.mb-0.p-0 {
   box-shadow: none !important;
+}
+:root {
+  --btn-bg-color: #007bff; /* Default Blue */
+  --btn-txt-color: #ffffff; /* Default White */
+  --btn-secondary-bg-color: #007bff; /* Default Blue */
+  --btn-secondary-txt-color: #ffffff; /* Default White */
+}
+
+/* Primary button using CSS variables */
+.btn-primary {
+  background-color: var(--btn-bg-color) !important; 
+  color: var(--btn-txt-color) !important; 
+}
+
+/* Secondary button using CSS variables */
+.btn-secondary {
+  background-color: var(--btn-secondary-bg-color) !important;
+  color: var(--btn-secondary-txt-color) !important;
+}
+.content-heading {
+  color: var(--dynamic-color, black) !important; /* Default color is black */
 }
