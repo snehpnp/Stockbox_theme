@@ -1,6 +1,6 @@
 const db = require("../../Models");
 const Theme = db.ThemeModal;
-const Company_Modal = db.Company;
+const Company_Modal = db.Company1;
 
 // Create a new theme
 exports.createTheme = async (req, res) => {
@@ -139,6 +139,14 @@ exports.deleteTheme = async (req, res) => {
 exports.updateThemeCompany = async (req, res) => {
   try {
     const { id, theme_id } = req.body;
+    if(!id || !theme_id){
+      return res.status(400).json({
+        status: false,
+        message: "Please provide company id and theme id",
+      });
+    }
+
+    const FindCompany = await Company_Modal.findById(id).select("url");
   
     const updatedCompany = await Company_Modal.findByIdAndUpdate(
       { _id: id },
@@ -152,6 +160,13 @@ exports.updateThemeCompany = async (req, res) => {
         message: "Company not found",
       });
     }
+
+    console.log("FindCompany", FindCompany);
+
+
+
+
+
     res.status(200).json({
       status: true,
       data: updatedCompany,

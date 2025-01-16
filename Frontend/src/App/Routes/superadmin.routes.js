@@ -16,6 +16,7 @@ console.log("SuperadminRouting")
       <Route path="/edit-theme/:id" element={<Edittheme />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/company" element={<Company />} />
+      
     </Routes>
   );
 }
