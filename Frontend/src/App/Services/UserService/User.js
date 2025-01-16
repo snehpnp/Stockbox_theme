@@ -18,9 +18,9 @@ export async function GetPastPerformance(data) {
 }
 
 
-export async function GetPrivacyPolicy(id, token) {
+export async function GetPrivacyPolicy(token) {
     try {
-        const res = await axios.get(`${Config.base_url}api/list/content/${id}`, {
+        const res = await axios.get(`${Config.base_url}api/list/content/66dbef118b3cf3e8cf23a988`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             },
@@ -143,6 +143,22 @@ export async function GETPlanList(id, token) {
 }
 
 
+// get plan by category 
+
+export async function GetPlanByCategory(token) {
+    try {
+        const res = await axios.get(`${Config.base_url}api/list/planbycategory`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
 // get coupon 
 
 export async function GetCouponlist(token) {
@@ -156,5 +172,23 @@ export async function GetCouponlist(token) {
         return res?.data;
     } catch (err) {
         return err;
+    }
+}
+
+
+// add subscribe plan 
+
+export async function AddplanSubscription(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/list/addplansubscription`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
     }
 }
