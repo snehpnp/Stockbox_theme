@@ -13,26 +13,7 @@ const Edittheme = () => {
     font: false,
   });
 
-  const [initialValues, setInitialValues] = useState({
-    sidebarColor: "#ffffff",
-    navbarColor: "#ffffff",
-    fontColor: "#ffffff",
-    sidebarGradientStart: "#ffffff",
-    sidebarGradientEnd: "#000000",
-    navbarGradientStart: "#ffffff",
-    navbarGradientEnd: "#000000",
-    fontGradientStart: "#ffffff",
-    fontGradientEnd: "#000000",
-    sidebarPosition: "Header",
-    fontFamily: "Arial",
-    navbarPosition: "Header",
-    themeId: "1",
-    sidebarName: "1",
-    BtnBgColor: "#ffffff",
-    btnTxtColor: "#ffffff",
-    HeadingColor: "#ffffff",
-    WrapperColor: "#000000"
-  });
+  const [initialValues, setInitialValues] = useState();
 
   const handleSubmit = async (values) => {
     const updatedValues = {
@@ -60,12 +41,15 @@ const Edittheme = () => {
     try {
 
       const response = await GetThemeByIdApi(id)
-      setInitialValues(response.data.data);
-      setIsGradient((prev) => ({
-        sidebar: response.data.data.sidebarColor.includes("gradient"),
-        navbar: response.data.data.navbarColor.includes("gradient"),
-        font: response.data.data.fontColor.includes("gradient"),
-      }));
+      if (response.data) {
+        setInitialValues(response.data);
+        setIsGradient((prev) => ({
+          sidebar: response?.data?.sidebarColor.includes("gradient"),
+          navbar: response?.data?.navbarColor.includes("gradient"),
+          font: response?.data?.fontColor.includes("gradient"),
+        }));
+      }
+
     } catch (error) { }
   };
 
@@ -73,10 +57,11 @@ const Edittheme = () => {
     GetTheme();
   }, []);
 
+
   return (
     <Contnet Page_title="Edit Theme" button_title="Back" button_status={false}>
-      <Container id="app" style={{ marginTop: "50px", color: "black" }}>
-        <h2 className="my-4">Add Theme</h2>
+      {initialValues && <Container id="app" style={{ marginTop: "50px", color: "black" }}>
+        <h2 className="my-4">Edit Theme</h2>
 
         <Formik
           initialValues={initialValues}
@@ -336,7 +321,7 @@ const Edittheme = () => {
             </Form>
           )}
         </Formik>
-      </Container>
+      </Container>}
     </Contnet>
   );
 };
