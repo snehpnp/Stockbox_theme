@@ -942,3 +942,6 @@ ol.breadcrumb.mb-0.p-0 {
 .content-heading {
   color: var(--dynamic-color, black) !important; /* Default color is black */
 }
+.btn-main {
+  background-color: var(--BtnPriBgCol, black) !important; /* Default color is black */
+}

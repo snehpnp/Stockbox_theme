@@ -8,7 +8,7 @@ import Edittheme from "../Layout/Superadmin/Themes/EditTheme";
 import Company from "../Layout/Superadmin/Company/Company";
 
 const SuperadminRouting =() =>{
-
+console.log("SuperadminRouting")
   return (
     <Routes>
       <Route path="/themes" element={<Theme />} />

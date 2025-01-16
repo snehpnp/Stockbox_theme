@@ -94,12 +94,12 @@ export default function Setting_sidebar() {
   }, []);
 
   const [color, setColor] = useState(
-    () => localStorage.getItem('dynamicColor') || '#000000'
+    () => localStorage.getItem("dynamicColor") || "#000000"
   );
 
   useEffect(() => {
     // Set the initial color in CSS variable
-    document.documentElement.style.setProperty('--dynamic-color', color);
+    document.documentElement.style.setProperty("--dynamic-color", color);
   }, [color]);
 
   const handleColorChange = (event) => {
@@ -107,10 +107,13 @@ export default function Setting_sidebar() {
     setColor(selectedColor);
 
     // Update the global CSS variable
-    document.documentElement.style.setProperty('--dynamic-color', selectedColor);
+    document.documentElement.style.setProperty(
+      "--dynamic-color",
+      selectedColor
+    );
 
     // Save the color to localStorage
-    localStorage.setItem('dynamicColor', selectedColor);
+    localStorage.setItem("dynamicColor", selectedColor);
   };
 
   return (
@@ -145,14 +148,16 @@ export default function Setting_sidebar() {
           {({ values }) => (
             <Form>
               <div>
-      <h1 className="content-heading">This text changes color dynamically!</h1>
-      <input
-        type="color"
-        value={color}
-        onChange={handleColorChange}
-        aria-label="Choose a color"
-      />
-    </div>
+                <h1 className="content-heading">
+                  This text changes color dynamically!
+                </h1>
+                <input
+                  type="color"
+                  value={color}
+                  onChange={handleColorChange}
+                  aria-label="Choose a color"
+                />
+              </div>
               <Row>
                 <Col md={12} lg={12}>
                   <label className="setting-label">Sidebar Color</label>
@@ -394,6 +399,7 @@ export default function Setting_sidebar() {
                   </div>
                 </Col>
               </Row>
+              
               <div className="setting-sidebar-divider-line"></div>
               <Col md={12} lg={12}>
                 <label className="setting-label">Sidebar Font Color</label>
@@ -407,7 +413,6 @@ export default function Setting_sidebar() {
             </Form>
           )}
         </Formik>
-     
       </div>
     </>
   );

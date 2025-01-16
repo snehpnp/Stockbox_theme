@@ -29,7 +29,16 @@ const Addtheme = () => {
     BtnBgColor: "#ffffff",
     btnTxtColor: "#ffffff",
     HeadingColor: "#ffffff",
-    WrapperColor: "#000000"
+    WrapperColor: "#000000",
+    wrapperGradientStart: "#ffffff",
+    wrapperGradientEnd: "#000000",
+    BtnPriTxtCol: "#ffffff",
+    BtnSecTxtCol: "#ffffff",
+    BtnBorderColor: "#ffffff",
+    BtnSecBorderColor: "#ffffff",
+    BtnPriBgCol: "#ffffff",
+    BtnSecBgCol: "#ffffff",
+    wrapperMode: false,
   });
 
   useEffect(() => {
@@ -38,6 +47,7 @@ const Addtheme = () => {
       sidebar: theme.sidebarColor?.includes("gradient") || false,
       navbar: theme.navbarColor?.includes("gradient") || false,
       font: theme.fontColor?.includes("gradient") || false,
+      wrapperMode: theme.WrapperColor?.includes("gradient") || false,
     });
 
     setInitialValues({
@@ -60,11 +70,20 @@ const Addtheme = () => {
       btnTxtColor: theme.btnTxtColor || "#ffffff",
       HeadingColor: theme.HeadingColor || "#ffffff",
       WrapperColor: theme.WrapperColor || "#ffffff",
-
+      wrapperGradientStart: theme.wrapperGradientStart || "#ffffff",
+      wrapperGradientEnd: theme.wrapperGradientEnd || "#000000",
+      BtnPriTxtCol: theme.BtnPriTxtCol || "#ffffff",
+      BtnSecTxtCol: theme.BtnSecTxtCol || "#ffffff",
+      BtnBorderColor: theme.BtnBorderColor || "#ffffff",
+      BtnSecBorderColor: theme.BtnSecBorderColor || "#ffffff",
+      BtnPriBgCol: theme.BtnPriBgCol || "#ffffff",
+      BtnSecBgCol: theme.BtnSecBgCol || "#ffffff",
+      wrapperMode: theme.wrapperMode || false,
     });
   }, []);
 
   const handleSubmit = async (values) => {
+    console.log("Form values:", values);
     const updatedValues = {
       ...values,
       sidebarColor: isGradient.sidebar
@@ -74,17 +93,18 @@ const Addtheme = () => {
         ? `linear-gradient(to right, ${values.navbarGradientStart}, ${values.navbarGradientEnd})`
         : values.navbarColor,
       fontColor: values.fontColor,
+      wrapperMode: isGradient.font
     };
 
-    try {
-      // Send data to the backend API
-      const Response = await AddThemeApi(updatedValues);
-      if (Response.status) {
-        window.location.href = "/superadmin/themes";
-      }
-    } catch (error) {
-      console.log("Error applying theme:", error);
-    }
+    // try {
+    //   // Send data to the backend API
+    //   const Response = await AddThemeApi(updatedValues);
+    //   if (Response.status) {
+    //     window.location.href = "/superadmin/themes";
+    //   }
+    // } catch (error) {
+    //   console.log("Error applying theme:", error);
+    // }
   };
 
   return (
@@ -127,67 +147,49 @@ const Addtheme = () => {
                           <option value="11">11</option>
                         </Field>
                       </div>
+
+                      <div className="mt-3">
+                        <label>Font: </label>
+                        <Field
+                          as="select"
+                          name="fontFamily"
+                          className="form-control"
+                        >
+                          <option value="Arial">Arial</option>
+                          <option value="Times New Roman">
+                            Times New Roman
+                          </option>
+                          <option value="Courier New">Courier New</option>
+                          <option value="Verdana">Verdana</option>
+                          <option value="Georgia">Georgia</option>
+                          <option value="Impact">Impact</option>
+                          <option value="Comic Sans MS">Comic Sans MS</option>
+                          <option value="Tahoma">Tahoma</option>
+                          <option value="Trebuchet MS">Trebuchet MS</option>
+                          <option value="Lucida Console">Lucida Console</option>
+                          <option value="Palatino Linotype">
+                            Palatino Linotype
+                          </option>
+                          <option value="Arial Black">Arial Black</option>
+                          <option value="Consolas">Consolas</option>
+                        </Field>
+                      </div>
                     </Card.Body>
                   </Card>
                 </Col>
                 <Col md={6} lg={4} className="mb-4">
                   <Card>
                     <Card.Body>
-                      <label>Sidebar Color</label>
-                      <div>
-                        <label>Sidebar Color Mode: </label>
-                        <label>
-                          <input
-                            type="radio"
-                            name="sidebarMode"
-                            checked={!isGradient.sidebar}
-                            onChange={() =>
-                              setIsGradient((prev) => ({
-                                ...prev,
-                                sidebar: false,
-                              }))
-                            }
-                          />
-                          Solid
-                        </label>
-                        <label>
-                          <input
-                            type="radio"
-                            name="sidebarMode"
-                            checked={isGradient.sidebar}
-                            onChange={() =>
-                              setIsGradient((prev) => ({
-                                ...prev,
-                                sidebar: true,
-                              }))
-                            }
-                          />
-                          Gradient
-                        </label>
+                      <Card.Title>Font Color</Card.Title>
+                      <div className="mt-3">
+                        <label>Font Solid Color: </label>
+                        <Field name="fontColor" type="color" />
                       </div>
 
-                      {!isGradient.sidebar ? (
-                        <div className="mt-3">
-                          <label>Sidebar Solid Color: </label>
-                          <Field name="sidebarColor" type="color" />
-                        </div>
-                      ) : (
-                        <div className="mt-3">
-                          <label>Sidebar Gradient Start: </label>
-                          <Field name="sidebarGradientStart" type="color" />
-                          <br />
-                          <label>Sidebar Gradient End: </label>
-                          <Field name="sidebarGradientEnd" type="color" />
-                          <div
-                            style={{
-                              marginTop: "10px",
-                              height: "50px",
-                              background: `linear-gradient(to right, ${values.sidebarGradientStart}, ${values.sidebarGradientEnd})`,
-                              border: "1px solid #ccc",
-                            }}
-                          ></div>
-                        </div>
-                      )}
+                      <div className="mt-3">
+                        <label>Heading Color: </label>
+                        <Field name="HeadingColor" type="color" />
+                      </div>
                     </Card.Body>
                   </Card>
                 </Col>
@@ -257,64 +259,65 @@ const Addtheme = () => {
               </Row>
 
               <Row>
-                {/* Font Color Card */}
-                <Col md={6} lg={4} className="mb-4">
-                  <Card>
-                    <Card.Body>
-                      <Card.Title>Font Color</Card.Title>
-                      <div className="mt-3">
-                        <label>Font Solid Color: </label>
-                        <Field name="fontColor" type="color" />
-                      </div>
-
-                      <div className="mt-3">
-                        <label>Button Text Color: </label>
-                        <Field name="btnTxtColor" type="color" />
-                      </div>
-
-                      <div className="mt-3">
-                        <label>Heading Color: </label>
-                        <Field name="HeadingColor" type="color" />
-                      </div>
-
-                      <div className="mt-3">
-                        <label>Button Background Color: </label>
-                        <Field name="BtnBgColor" type="color" />
-                      </div>
-
-                      <div className="mt-3">
-                        <label>Font: </label>
-                        <Field
-                          as="select"
-                          name="fontFamily"
-                          className="form-control"
-                        >
-                          <option value="Arial">Arial</option>
-                          <option value="Times New Roman">
-                            Times New Roman
-                          </option>
-                          <option value="Courier New">Courier New</option>
-                          <option value="Verdana">Verdana</option>
-                          <option value="Georgia">Georgia</option>
-                          <option value="Impact">Impact</option>
-                          <option value="Comic Sans MS">Comic Sans MS</option>
-                          <option value="Tahoma">Tahoma</option>
-                          <option value="Trebuchet MS">Trebuchet MS</option>
-                          <option value="Lucida Console">Lucida Console</option>
-                          <option value="Palatino Linotype">
-                            Palatino Linotype
-                          </option>
-                          <option value="Arial Black">Arial Black</option>
-                          <option value="Consolas">Consolas</option>
-                        </Field>
-                      </div>
-                    </Card.Body>
-                  </Card>
-                </Col>
                 <Col md={6} lg={4} className="mb-4">
                   <Card>
                     <Card.Body>
                       <Card.Title>Sidebar Settings</Card.Title>
+
+                      <div>
+                        <label>Sidebar Color Mode: </label>
+                        <label>
+                          <input
+                            type="radio"
+                            name="sidebarMode"
+                            checked={!isGradient.sidebar}
+                            onChange={() =>
+                              setIsGradient((prev) => ({
+                                ...prev,
+                                sidebar: false,
+                              }))
+                            }
+                          />
+                          Solid
+                        </label>
+                        <label>
+                          <input
+                            type="radio"
+                            name="sidebarMode"
+                            checked={isGradient.sidebar}
+                            onChange={() =>
+                              setIsGradient((prev) => ({
+                                ...prev,
+                                sidebar: true,
+                              }))
+                            }
+                          />
+                          Gradient
+                        </label>
+                      </div>
+
+                      {!isGradient.sidebar ? (
+                        <div className="mt-3">
+                          <label>Sidebar Solid Color: </label>
+                          <Field name="sidebarColor" type="color" />
+                        </div>
+                      ) : (
+                        <div className="mt-3">
+                          <label>Sidebar Gradient Start: </label>
+                          <Field name="sidebarGradientStart" type="color" />
+                          <br />
+                          <label>Sidebar Gradient End: </label>
+                          <Field name="sidebarGradientEnd" type="color" />
+                          <div
+                            style={{
+                              marginTop: "10px",
+                              height: "50px",
+                              background: `linear-gradient(to right, ${values.sidebarGradientStart}, ${values.sidebarGradientEnd})`,
+                              border: "1px solid #ccc",
+                            }}
+                          ></div>
+                        </div>
+                      )}
                       <div className="mt-3">
                         <label>Sidebar Position: </label>
                         <Field
@@ -339,6 +342,106 @@ const Addtheme = () => {
                           <option value="3">New Sidebar</option>
                         </Field>
                       </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
+
+                <Col md={6} lg={4} className="mb-4">
+                  <Card>
+                    <Card.Body>
+                      <Card.Title>Buttons Settings</Card.Title>
+
+                      <div className="mt-3">
+                        <label>primary Button Text Color: </label>
+                        <Field name="BtnPriTxtCol" type="color" />
+                      </div>
+
+                      <div className="mt-3">
+                        <label>Secondary Button Text Color: </label>
+                        <Field name="BtnSecTxtCol" type="color" />
+                      </div>
+
+                      <div className="mt-3">
+                        <label>Primary Button Border Color: </label>
+                        <Field name="BtnBorderColor" type="color" />
+                      </div>
+
+                      <div className="mt-3">
+                        <label>Secondary Button Border Color: </label>
+                        <Field name="BtnSecBorderColor" type="color" />
+                      </div>
+
+                      <div className="mt-3">
+                        <label>primary Button Background Color </label>
+                        <Field name="BtnPriBgCol" type="color" />
+                      </div>
+
+                      <div className="mt-3">
+                        <label>Secondary Button Background Color </label>
+                        <Field name="BtnSecBgCol" type="color" />
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
+                <Col md={6} lg={4} className="mb-4">
+                  <Card>
+                    <Card.Body>
+                      <Card.Title>Wrapper Settings</Card.Title>
+
+                      <div>
+                        <label>Wrapper Color Mode: </label>
+                        <label>
+                          <input
+                            type="radio"
+                            name="wrapperMode"
+                            checked={!isGradient.font}
+                            onChange={() =>
+                              setIsGradient((prev) => ({
+                                ...prev,
+                                font: false,
+                              }))
+                            }
+                          />
+                          Solid
+                        </label>
+                        <label>
+                          <input
+                            type="radio"
+                            name="wrapperMode"
+                            checked={isGradient.font}
+                            onChange={() =>
+                              setIsGradient((prev) => ({
+                                ...prev,
+                                font: true,
+                              }))
+                            }
+                          />
+                          Gradient
+                        </label>
+                      </div>
+
+                      {!isGradient.font ? (
+                        <div className="mt-3">
+                          <label>Wrapper Solid Color: </label>
+                          <Field name="WrapperColor" type="color" />
+                        </div>
+                      ) : (
+                        <div className="mt-3">
+                          <label>Wrapper Gradient Start: </label>
+                          <Field name="wrapperGradientStart" type="color" />
+                          <br />
+                          <label>Wrapper Gradient End: </label>
+                          <Field name="wrapperGradientEnd" type="color" />
+                          <div
+                            style={{
+                              marginTop: "10px",
+                              height: "50px",
+                              background: `linear-gradient(to right, ${values.wrapperGradientStart}, ${values.wrapperGradientEnd})`,
+                              border: "1px solid #ccc",
+                            }}
+                          ></div>
+                        </div>
+                      )}
                     </Card.Body>
                   </Card>
                 </Col>

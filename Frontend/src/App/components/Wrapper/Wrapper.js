@@ -83,6 +83,14 @@ export default function App() {
       allFont.forEach((element) => {
         element.style.fontFamily = fontFamily;
       });
+
+
+      document.documentElement.style.setProperty("--BtnPriTxtCol", theme?.BtnPriTxtCol);
+document.documentElement.style.setProperty("--BtnSecTxtCol", theme?.BtnSecTxtCol);
+document.documentElement.style.setProperty("--BtnBorderColor", theme?.BtnBorderColor);
+document.documentElement.style.setProperty("--BtnSecBorderColor", theme?.BtnSecBorderColor);
+document.documentElement.style.setProperty("--BtnPriBgCol", theme?.BtnPriBgCol);
+document.documentElement.style.setProperty("--BtnSecBgCol", theme?.BtnSecBgCol);
     } else {
       let data = {
         sidebarColor: "linear-gradient(to right, #1fa9ff, #000000)",
