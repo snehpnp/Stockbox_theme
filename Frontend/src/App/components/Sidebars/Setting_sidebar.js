@@ -145,14 +145,14 @@ export default function Setting_sidebar() {
           {({ values }) => (
             <Form>
               <div>
-      <h1 className="content-heading">This text changes color dynamically!</h1>
-      <input
-        type="color"
-        value={color}
-        onChange={handleColorChange}
-        aria-label="Choose a color"
-      />
-    </div>
+                <h1 className="content-heading">This text changes color dynamically!</h1>
+                <input
+                  type="color"
+                  value={color}
+                  onChange={handleColorChange}
+                  aria-label="Choose a color"
+                />
+              </div>
               <Row>
                 <Col md={12} lg={12}>
                   <label className="setting-label">Sidebar Color</label>
@@ -407,7 +407,7 @@ export default function Setting_sidebar() {
             </Form>
           )}
         </Formik>
-     
+
       </div>
     </>
   );

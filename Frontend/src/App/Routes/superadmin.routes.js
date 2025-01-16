@@ -6,8 +6,11 @@ import Theme from "../Layout/Superadmin/Themes/Theme";
 import AddTheme from "../Layout/Superadmin/Themes/AddTheme";
 import Edittheme from "../Layout/Superadmin/Themes/EditTheme";
 import Company from "../Layout/Superadmin/Company/Company";
+import Update from "../Layout/Superadmin/Company/Update";
+import Addcompany from "../Layout/Superadmin/Company/Addcompany";
+import Companydetail from "../Layout/Superadmin/Company/Companydetail";
 
-const SuperadminRouting =() =>{
+const SuperadminRouting = () => {
 
   return (
     <Routes>
@@ -16,6 +19,10 @@ const SuperadminRouting =() =>{
       <Route path="/edit-theme/:id" element={<Edittheme />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/company" element={<Company />} />
+      <Route path="/companyupdate" element={<Update />} />
+      <Route path="/addcompany" element={<Addcompany />} />
+      <Route path="/companydetail/:id" element={<Companydetail />} />
+
     </Routes>
   );
 }

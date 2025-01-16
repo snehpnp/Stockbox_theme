@@ -18,9 +18,9 @@ export async function GetPastPerformance(data) {
 }
 
 
-export async function GetPrivacyPolicy(token) {
+export async function GetPrivacyPolicy(id, token) {
     try {
-        const res = await axios.get(`${Config.base_url}api/list/content/66dbef118b3cf3e8cf23a988`, {
+        const res = await axios.get(`${Config.base_url}api/list/content/${id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             },
