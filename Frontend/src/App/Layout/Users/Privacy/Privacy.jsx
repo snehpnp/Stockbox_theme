@@ -6,15 +6,18 @@ import Content from "../../../components/Contents/Content";
 const Privacy = () => {
 
 
+  const token = localStorage.getItem('Token');
+  const userid = localStorage.getItem('Id');
+
   const [privacyPolicy, setPrivacyPolicy] = useState("");
 
   const fetchPrivacyPolicy = async () => {
     try {
-      const res = await GetPrivacyPolicy();
+      const res = await GetPrivacyPolicy(userid, token);
       if (res.status) {
         setPrivacyPolicy(res.data.description);
       }
-      console.log("Response:", res.data); // Inspect the response
+
     } catch (error) {
       console.error("Error fetching privacy policy:", error);
     }

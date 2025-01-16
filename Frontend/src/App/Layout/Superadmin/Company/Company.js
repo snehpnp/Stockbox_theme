@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Table from "../../../components/Tabels/Table";
+import Table from "../../../Extracomponents/Table";
 import {
   Eye,
   UserPen,
@@ -14,8 +14,8 @@ import {
   UpdateThemeApi,
 } from "../../../Services/Superadmin/Admin";
 import { Tooltip } from "antd";
-import {  fDate } from "../../../../Utils/Date_formate";
-import {GetAllThemesNameApi} from '../../../Services/Themes/Theme'
+import { fDate } from "../../../../Utils/Date_formate";
+import { GetAllThemesNameApi } from '../../../Services/Themes/Theme'
 
 const Company = () => {
   const token = localStorage.getItem("token");
@@ -44,7 +44,7 @@ const Company = () => {
         setClients(searchInput ? filterdata : response.data);
       }
     } catch (error) {
-   
+
     }
   };
 
@@ -55,7 +55,7 @@ const Company = () => {
         setThemes(response.data);
       }
     } catch (error) {
-   
+
     }
   };
 
@@ -205,13 +205,13 @@ const Company = () => {
       sortable: true,
       selector: (row) => (
         <>
-        <select className="form-select" onChange={(e) => UpdateTheme(row._id, e.target.value)}>
-         {themes.map((item) => (
-           <option value={item._id} selected={item._id == row.theme_id}>
-             {item.ThemeName}
-           </option>
-         ))}
-        </select>
+          <select className="form-select" onChange={(e) => UpdateTheme(row._id, e.target.value)}>
+            {themes.map((item) => (
+              <option value={item._id} selected={item._id == row.theme_id}>
+                {item.ThemeName}
+              </option>
+            ))}
+          </select>
         </>
       )
     },
