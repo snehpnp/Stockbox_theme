@@ -1,67 +1,118 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Content from "../../../components/Contents/Content";
+import { GetCouponlist } from '../../../Services/UserService/User';
+import { fa_time } from '../../../../Utils/Date_formate';
+import Swal from 'sweetalert2';
 
 const Coupon = () => {
+
+    const [coupon, setCoupon] = useState([])
+
+
+
     const handleCopyCode = (code) => {
-        navigator.clipboard.writeText(code);
-        alert(`Coupon code "${code}" copied to clipboard!`);
+        navigator.clipboard.writeText(code).then(() => {
+            Swal.fire({
+                title: 'Copied!',
+                text: `Coupon code "${code}" has been copied to your clipboard.`,
+                icon: 'success',
+                confirmButtonText: 'OK',
+                timer: 2000,
+            });
+        }).catch((err) => {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Failed to copy the coupon code. Please try again.',
+                icon: 'error',
+                confirmButtonText: 'OK',
+            });
+        });
     };
+
+
+
+
+    const getCoupon = async () => {
+        try {
+            const response = await GetCouponlist()
+            if (response.status) {
+                setCoupon(response?.data)
+                console.log("response", response.data)
+            }
+        } catch (error) {
+
+        }
+    }
+
+
+    useEffect(() => {
+        getCoupon()
+    }, [])
+
 
     return (
         <div>
 
-       <Content
-      Page_title="Coupons"
-      button_title="Add Basket"
-      button_status={true}
-       backbutton_title="Back"
-      backbutton_status={true}
-    >
-          <div className="page-content">
-               
+            <Content
+                Page_title="Coupons"
 
-                <div className="card radius-5">
-                    <div className="card-body">
-                        <ul className="list-unstyled">
-                            {/* Coupon Item */}
-                            {["SUPERHIT", "MEGADEAL", "SAVE20"].map((coupon, index) => (
-                                <li className="d-flex align-items-center border-bottom pb-2" key={index}>
-                                    <img
-                                        src="assets/images/avatars/avatar-8.png"
-                                        className="rounded-circle p-1 border"
-                                        width={70}
-                                        height={70}
-                                        alt="..."
-                                    />
-                                    <div className="flex-grow-1 ms-3">
-                                    <p className='mb-2'>
-                                            <strong>Segment Name:</strong> Premium Members
-                                        </p>
-                                        <h5 className="mt-0 mb-1">
-                                            Unlock Unbeatable Exclusive redDeals!
-                                            <span className="c-offer"> 20% OFF</span>
-                                        </h5>
-                                        <p className="use-cod">
-                                            Use code <span>{coupon}</span> | Valid till 31 Dec |{" "}
-                                            <a href="#">T&amp;C</a>
-                                        </p>
-                                        
-                                    </div>
-                                    <button
-                                        type="button"
-                                        className=" btn btn-outline-secondary px-5"
-                                        onClick={() => handleCopyCode(coupon)}
-                                    >
-                                        <i className='bx bx-copy'></i>
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
+                button_status={false}
+                backbutton_title="Back"
+                backbutton_status={true}
+            >
+                <div className="page-content">
+
+
+                    <div className="card radius-5">
+                        <div className="card-body">
+                            <ul className="list-unstyled">
+                                {coupon &&
+                                    coupon?.map((item, index) => (
+                                        <li
+                                            className="d-flex align-items-center border-bottom pb-2"
+                                            key={index}
+                                        >
+                                            <div
+                                                className="rounded-circle p-1 border d-flex align-items-center justify-content-center"
+                                                style={{
+                                                    width: '70px',
+                                                    height: '70px',
+                                                    backgroundColor: '#f0f0f0',
+                                                    textAlign: 'center',
+                                                }}
+                                            >
+                                                {item.serviceName}
+                                            </div>
+
+                                            <div className="flex-grow-1 ms-3">
+                                                <p className="mb-2">
+                                                    <strong>Segment Name:</strong> {item.serviceName || "Premium Members"}
+                                                </p>
+                                                <h5 className="mt-0 mb-1">
+                                                    Unlock Unbeatable Exclusive redDeals!
+
+                                                </h5>
+                                                <p className="use-cod">
+                                                    Use code <span>{item?.code}</span> | Valid till {fa_time(item?.enddate)} {" "}
+
+                                                </p>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline-secondary px-5"
+                                                onClick={() => handleCopyCode(item.code)}
+                                            >
+                                                <i className="bx bx-copy"></i>
+                                            </button>
+                                        </li>
+                                    ))}
+                            </ul>
+
+                        </div>
                     </div>
                 </div>
-            </div>
-    </Content>
-          
+            </Content>
+
         </div>
     );
 };

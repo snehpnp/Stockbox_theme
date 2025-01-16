@@ -106,11 +106,48 @@ export async function GetServicedata(token) {
 }
 
 
+// get category  list 
+
+
+
+export async function GetCategorylist(token) {
+    try {
+        const res = await axios.get(`${Config.base_url}api/list/planbycategory`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+
 // get plan list 
 
 export async function GETPlanList(id, token) {
     try {
         const res = await axios.get(`${Config.base_url}api/list/myplan/${id}`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+// get coupon 
+
+export async function GetCouponlist(token) {
+    try {
+        const res = await axios.get(`${Config.base_url}api/list/coupon`, {
             headers: {
                 'Authorization': `${token}`
             },
