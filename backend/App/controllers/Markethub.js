@@ -323,7 +323,7 @@ async placeOrder(req, res) {
                    positionData = await CheckPosition(client.apikey, authToken, stock.segment,stock.instrument_token,producttype,signal.calltype,stock.tradesymbol);
                 
                   } catch (error) {
-                //   console.error('Error in CheckPosition:', error.message);
+                
                 
               }
 
@@ -333,7 +333,7 @@ async placeOrder(req, res) {
                              holdingData = await CheckHolding(client.apikey, authToken , stock.segment,stock.instrument_token,producttype,signal.calltype);
                            
                         } catch (error) {
-                            // console.error('Error in CheckHolding:', error.message);
+                         
                         }
                         totalValue = Math.abs(positionData.qty)+holdingData.qty;
                     }
@@ -651,8 +651,7 @@ let data = JSON.stringify({
                  positionData = await CheckPosition(client.apikey, authToken, stock.segment,stock.instrument_token,producttype,signal.calltype,stock.tradesymbol);
               
                 } catch (error) {
-                // console.error('Error in CheckPosition:', error.message);
-              
+             
             }
 
          
@@ -661,7 +660,7 @@ let data = JSON.stringify({
                            holdingData = await CheckHolding(client.apikey, authToken , stock.segment,stock.instrument_token,producttype,signal.calltype);
                          
                       } catch (error) {
-                        //   console.error('Error in CheckHolding:', error.message);
+                       
                       }
                       totalValue = Math.abs(positionData.qty)+holdingData.qty;
                   }
@@ -1145,7 +1144,7 @@ async function CheckHolding(userId, authToken, segment, instrument_token, produc
                 };
         }
     } catch (error) {
-        // console.error('Error fetching position:', error.response ? error.response.data : error.message);
+      
         return {
             status: false,
             qty: 0,

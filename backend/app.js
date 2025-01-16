@@ -18,7 +18,7 @@ const bodyparser = require('body-parser');
 const db = require("./App/Models/index.js");
 //const { AddBulkStockCron } = require('./App/Controllers/Cron.js'); 
 process.env.TZ = 'Asia/Kolkata'; // Set the global time zone to IST
-console.log('Current time in IST:', new Date());
+
 const nodemailer = require('nodemailer');
 const socketIo = require("socket.io");
 const server = http.createServer(app);
@@ -33,7 +33,6 @@ const io = socketIo(server, {
 
 
 io.on("connection", (socket) => {
-  // console.log(`Client connected: ${socket.id}`);
   socket.on("disconnect", () => {
     console.log(`Client disconnected: ${socket.id}`);
   });
@@ -46,7 +45,6 @@ io.on("connection", (socket) => {
 });
 
 
-// console.log("io ",io)
 require("./App/Utils/ioSocketReturn.js")(app, io);
 const { sendFCMNotification } = require('./App/Controllers/Pushnotification.js');
 

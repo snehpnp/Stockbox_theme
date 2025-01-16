@@ -12,7 +12,7 @@ export async function GetPastPerformance(data) {
 
         return res?.data;
     } catch (err) {
-        console.error('Error fetching past performance:', err);
+        console.log('Error fetching past performance:', err);
         throw err;
     }
 }
@@ -28,7 +28,7 @@ export async function GetPrivacyPolicy(id, token) {
 
         return res?.data;
     } catch (err) {
-        console.error('Error fetching privacy policy data:', err);
+        console.log('Error fetching privacy policy data:', err);
         throw err;
     }
 }
@@ -47,7 +47,7 @@ export async function getTermsCondition(token) {
 
         return res?.data;
     } catch (err) {
-        console.error('Error fetching Terms Condition data:', err);
+        console.log('Error fetching Terms Condition data:', err);
         throw err;
     }
 }
@@ -63,7 +63,7 @@ export async function getFaq(token) {
 
         return res?.data;
     } catch (err) {
-        console.error('Error fetching Faq data:', err);
+        console.log('Error fetching Faq data:', err);
         throw err;
     }
 }
@@ -81,7 +81,7 @@ export async function getMySubscription(token, id) {
 
         return res?.data;
     } catch (err) {
-        console.error('Error fetching plan data:', err);
+        console.log('Error fetching plan data:', err);
         throw err;
     }
 }

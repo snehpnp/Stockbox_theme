@@ -184,13 +184,7 @@ const clientsModel = new Schema({
 });
 
 const Clients_model = model('CLIENTS', clientsModel);
-// Clients_model.syncIndexes()
-//   .then(() => {
-//     console.log('Indexes have been successfully synchronized.');
-//   })
-//   .catch((error) => {
-//     console.error('Error syncing indexes:', error);
-//   });
+
 
 
 module.exports = Clients_model;
