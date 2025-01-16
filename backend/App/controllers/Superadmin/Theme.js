@@ -162,15 +162,12 @@ exports.updateThemeCompany = async (req, res) => {
     }
 
     if (FindCompany) {
-      console.log("FindCompany", FindCompany?.url);
-
       if (FindCompany?.url.includes("localhost")) {
-        console.log("FindCompany---", FindCompany?.url);
         const response = await axios.post(
           "http://localhost:5001/basicsetting/updatethemecompany",
           { theme_id: theme_id }
         );
-        console.log("response", response.data);
+
         return res.status(200).json({
           status: true,
           data: updatedCompany,
@@ -181,7 +178,6 @@ exports.updateThemeCompany = async (req, res) => {
           `${FindCompany?.url}/basicsetting/updatethemecompany`,
           { theme_id: theme_id }
         );
-        console.log("response", response.data);
       }
       return res.status(200).json({
         status: true,
@@ -189,8 +185,6 @@ exports.updateThemeCompany = async (req, res) => {
         message: "Company updated successfully",
       });
     }
-
-    
   } catch (error) {
     console.error("Error updating Company:", error);
     res.status(500).json({
