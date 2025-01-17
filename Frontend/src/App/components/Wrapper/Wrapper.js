@@ -33,9 +33,9 @@ export default function App() {
         "*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(button)"
       );
 
-      // all.forEach((element) => {
-      //   element.style.color = fontColor;
-      // });
+      all.forEach((element) => {
+        element.style.color = fontColor;
+      });
       // all.forEach((element) => {
       //   element.style.color = contentColor;
       // });

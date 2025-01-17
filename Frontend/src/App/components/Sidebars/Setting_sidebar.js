@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Formik, Form, Field,useFormikContext } from "formik";
+import { Formik, Form, Field } from "formik";
 import { Row, Col, Button } from "react-bootstrap";
 import { SketchPicker } from 'react-color';
 
@@ -28,7 +28,6 @@ export default function Setting_sidebar() {
 
     HeadingColor: "#ffffff",
     WrapperColor: "#ffffff",
-    sidebarFontColor: "#000000",
     headSidebarFontCol: "#ffffff",
     headSidebarFontActiveCol: "#ffffff",
   });
@@ -96,17 +95,10 @@ export default function Setting_sidebar() {
     }
   }, []);
 
+  const [color, setColor] = useState(
+    () => localStorage.getItem("dynamicColor") || "#000000"
+  );
 
-
-
-  const [color, setColor] = useState("#ffffff"); 
-  const [showPicker, setShowPicker] = useState(false);
-
-  const handleColorChange = (color) => {
-    setColor(color.hex); 
-    console.log(color.hex);
-   
-  };
 
   
 
@@ -140,15 +132,15 @@ export default function Setting_sidebar() {
                   navbarColor: isGradient.navbar
                     ? `linear-gradient(to right, ${values.navbarGradientStart}, ${values.navbarGradientEnd})`
                     : values.navbarColor,
-                  fontColor: values.fontColor,
-                  sidebarFontColor: values.sidebarFontColor, // Include Sidebar Font Color
+                  fontColor: values.fontColor
+                
                 };
                 localStorage.setItem("theme", JSON.stringify(updatedValues));
                 window.location.reload();
               }}
             >
               {({ values }) => (
-                <Form >
+                <Form>
 
 
                   <Row>
@@ -315,71 +307,11 @@ export default function Setting_sidebar() {
                         <Field name="headSidebarFontCol" type="color" />
                       </div>
                       
-
                       <div className="color-input-div">
-      <label className="text-dark">Sidebar/Navbar Active Color:</label>
-      <div style={{ display: "flex", alignItems: "center", position: "relative" }}>
-        {/* Display color preview */}
-        <div
-          style={{
-            width: "30px",
-            height: "30px",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            marginRight: "10px",
-            backgroundColor: color,
-            cursor: "pointer",
-          }}
-          onClick={() => setShowPicker(!showPicker)} // Toggle SketchPicker visibility
-        ></div>
-        <Field
-          name="headSidebarFontActiveCol"
-          type="text"
-          value={color}
-          readOnly
-          style={{
-            width: "150px",
-            height: "30px",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "5px",
-            backgroundColor: "#f8f9fa",
-          }}
-        />
-      </div>
-      {showPicker && (
-        <div
-          style={{
-            position: "absolute",
-            zIndex: "10",
-            marginTop: "10px",
-            border: "1px solid #ccc",
-            borderRadius: "8px",
-            background: "#fff",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-          }}
-        >
-          {/* SketchPicker */}
-          <SketchPicker color={color} onChangeComplete={handleColorChange} />
-          {/* Close Button */}
-          <button
-            style={{
-              display: "block",
-              margin: "10px auto 0",
-              padding: "5px 10px",
-              background: "#f44336",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-            onClick={() => setShowPicker(false)}
-          >
-            Close
-          </button>
-        </div>
-      )}
-    </div>
+                        <label className="text-dark">Sidebar/Navbar Active Color: </label>
+                        <Field name="headSidebarFontActiveCol" type="color" />
+                      </div>
+                      
 
                       <div className="text-dark color-input-div">
                         <label className="text-dark">Font: </label>
@@ -457,7 +389,7 @@ export default function Setting_sidebar() {
                         </Field>
                       </div>
 
-                      <div className="color-input-div">
+                      {/* <div className="color-input-div">
                         <label className="text-dark">Sidebar Name: </label>
                         <Field
                           as="select"
@@ -474,7 +406,7 @@ export default function Setting_sidebar() {
                             New Sidebar
                           </option>
                         </Field>
-                      </div>
+                      </div> */}
                     </Col>
 
                     <div className="setting-sidebar-divider-line"></div>
@@ -543,15 +475,7 @@ export default function Setting_sidebar() {
                   </Row>
 
                   <div className="setting-sidebar-divider-line"></div>
-                  <Col md={12} lg={12}>
-                    <label className="text-dark setting-label">
-                      Sidebar Font Color
-                    </label>
-                    <div className="color-input-div">
-                      <label className="text-dark">Sidebar Font Color: </label>
-                      <Field name="sidebarFontColor" type="color" />
-                    </div>
-                  </Col>
+                  
 
                   <Button className="text-dark" type="submit">
                     Apply Changes
