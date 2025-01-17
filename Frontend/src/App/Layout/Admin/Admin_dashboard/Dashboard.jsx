@@ -171,7 +171,7 @@ const Dashbord = () => {
                             <Link to="/admin/planexpirymonth">
                                 <div className="card-body">
                                     <div className="d-flex align-items-center">
-                                        <h5 className="mb-0 ">
+                                        <h5 className="mb-0 primary-text">
                                             {monthexpiry?.length > 0
                                                 ? monthexpiry?.some((item) => fDateMonth(item.month) === currentMonthYear)
                                                     ? monthexpiry.reduce((acc, item) => {

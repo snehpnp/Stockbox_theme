@@ -37,6 +37,7 @@ const Addtheme = () => {
     BtnPriBgCol: "#ffffff",
     BtnSecBgCol: "#ffffff",
     wrapperMode: false,
+    TextPrimaryColor: "#ffffff",
   });
 
   useEffect(() => {
@@ -75,6 +76,7 @@ const Addtheme = () => {
       BtnPriBgCol: theme.BtnPriBgCol || "#ffffff",
       BtnSecBgCol: theme.BtnSecBgCol || "#ffffff",
       wrapperMode: theme.wrapperMode || false,
+      TextPrimaryColor: theme.TextPrimaryColor || "#ffffff",
     });
   }, []);
 
@@ -177,6 +179,11 @@ const Addtheme = () => {
                   <Card>
                     <Card.Body>
                       <Card.Title>Font Color</Card.Title>
+                      <div>
+                        <label>Primary Text Color Mode: </label>
+                        <Field name="TextPrimaryColor" type="color" />
+
+                      </div>
                       <div className="mt-3">
                         <label>Font Solid Color: </label>
                         <Field name="fontColor" type="color" />
@@ -346,20 +353,25 @@ const Addtheme = () => {
                   <Card>
                     <Card.Body>
                       <Card.Title>Buttons Settings</Card.Title>
-
+                      <div className="mt-3">
+                        <label>primary Button Background Color </label>
+                        <Field name="BtnPriBgCol" type="color" />
+                      </div>
                       <div className="mt-3">
                         <label>primary Button Text Color: </label>
                         <Field name="BtnPriTxtCol" type="color" />
                       </div>
-
-                      <div className="mt-3">
-                        <label>Secondary Button Text Color: </label>
-                        <Field name="BtnSecTxtCol" type="color" />
-                      </div>
-
                       <div className="mt-3">
                         <label>Primary Button Border Color: </label>
                         <Field name="BtnBorderColor" type="color" />
+                      </div>
+                      <div className="mt-3">
+                        <label>Secondary Button Background Color </label>
+                        <Field name="BtnSecBgCol" type="color" />
+                      </div>
+                      <div className="mt-3">
+                        <label>Secondary Button Text Color: </label>
+                        <Field name="BtnSecTxtCol" type="color" />
                       </div>
 
                       <div className="mt-3">
@@ -367,15 +379,9 @@ const Addtheme = () => {
                         <Field name="BtnSecBorderColor" type="color" />
                       </div>
 
-                      <div className="mt-3">
-                        <label>primary Button Background Color </label>
-                        <Field name="BtnPriBgCol" type="color" />
-                      </div>
 
-                      <div className="mt-3">
-                        <label>Secondary Button Background Color </label>
-                        <Field name="BtnSecBgCol" type="color" />
-                      </div>
+
+
                     </Card.Body>
                   </Card>
                 </Col>
