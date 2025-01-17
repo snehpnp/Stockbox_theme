@@ -24,8 +24,7 @@ export default function Setting_sidebar() {
     navbarPosition: "Header",
     themeId: "1",
     sidebarName: "1",
-    BtnBgColor: "#ffffff",
-    btnTxtColor: "#ffffff",
+
     HeadingColor: "#ffffff",
     WrapperColor: "#ffffff",
     sidebarFontColor: "#000000",
@@ -33,6 +32,7 @@ export default function Setting_sidebar() {
 
   const [isOpen, setIsOpen] = useState(false);
   const sidebarRef = useRef(null);
+  const RoleData = localStorage.getItem("Role");
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -74,8 +74,6 @@ export default function Setting_sidebar() {
       navbarPosition: theme.navbarPosition || "Header",
       themeId: theme.themeId || "1",
       sidebarName: theme.sidebarName || "1",
-      BtnBgColor: theme.BtnBgColor || "#ffffff",
-      btnTxtColor: theme.btnTxtColor || "#ffffff",
       HeadingColor: theme.HeadingColor || "#ffffff",
     });
   }, []);
@@ -118,6 +116,8 @@ export default function Setting_sidebar() {
 
   return (
     <>
+
+   {RoleData == "SUPERADMIN" && <>
       <span className="sidebar-setting-toggle-button" onClick={toggleSidebar}>
         <i className="fa-solid fa-gear fa-spin"></i>
       </span>
@@ -147,17 +147,7 @@ export default function Setting_sidebar() {
         >
           {({ values }) => (
             <Form>
-              <div>
-                <h1 className="content-heading">
-                  This text changes color dynamically!
-                </h1>
-                <input
-                  type="color"
-                  value={color}
-                  onChange={handleColorChange}
-                  aria-label="Choose a color"
-                />
-              </div>
+             
               <Row>
                 <Col md={12} lg={12}>
                   <label className="setting-label">Sidebar Color</label>
@@ -293,19 +283,11 @@ export default function Setting_sidebar() {
                   </div>
 
                   <div className="color-input-div">
-                    <label>Button Text Color: </label>
-                    <Field name="btnTxtColor" type="color" />
-                  </div>
-
-                  <div className="color-input-div">
                     <label>Heading Color: </label>
                     <Field name="HeadingColor" type="color" />
                   </div>
 
-                  <div className="color-input-div">
-                    <label>Button Background Color: </label>
-                    <Field name="BtnBgColor" type="color" />
-                  </div>
+                
 
                   <div className="color-input-div">
                     <label>Font: </label>
@@ -399,7 +381,7 @@ export default function Setting_sidebar() {
                   </div>
                 </Col>
               </Row>
-              
+
               <div className="setting-sidebar-divider-line"></div>
               <Col md={12} lg={12}>
                 <label className="setting-label">Sidebar Font Color</label>
@@ -414,6 +396,7 @@ export default function Setting_sidebar() {
           )}
         </Formik>
       </div>
+    </>}
     </>
   );
 }

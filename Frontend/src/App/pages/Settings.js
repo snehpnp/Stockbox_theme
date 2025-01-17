@@ -24,8 +24,6 @@ const Settings = () => {
     navbarPosition: "Header",
     themeId: "1",
     sidebarName: "1",
-    BtnBgColor: "#ffffff",
-    btnTxtColor: "#ffffff",
     HeadingColor: "#ffffff",
     WrapperColor: "#000000"
 
@@ -55,8 +53,6 @@ const Settings = () => {
       navbarPosition: theme.navbarPosition || "Header",
       themeId: theme.themeId || "1",
       sidebarName: theme.sidebarName || "1",
-      BtnBgColor: theme.BtnBgColor || "#ffffff",
-      btnTxtColor: theme.btnTxtColor || "#ffffff",
       HeadingColor: theme.HeadingColor || "#ffffff",
       WrapperColor: theme.WrapperColor || "#ffffff",
 
@@ -226,19 +222,10 @@ const Settings = () => {
 
 
                     <div className="mt-3">
-                      <label>Button Text Color: </label>
-                      <Field name="btnTxtColor" type="color" />
-                    </div>
-
-                    <div className="mt-3">
                       <label>Heading Color: </label>
                       <Field name="HeadingColor" type="color" />
                     </div>
 
-                    <div className="mt-3">
-                      <label>Button Background Color: </label>
-                      <Field name="BtnBgColor" type="color" />
-                    </div>
 
                     <div className="mt-3">
                       <label>Font: </label>

@@ -178,13 +178,13 @@ const Userlogin = () => {
                                     htmlFor="inputEmailAddress"
                                     className="form-label"
                                   >
-                                    setemail
+                                    Email
                                   </label>
                                   <input
                                     type="text"
                                     className="form-control"
                                     id="inputEmailAddress"
-                                    placeholder="Enter Your setemail"
+                                    placeholder="Enter Your Email"
                                     value={email}
                                     onChange={(e) => setemail(e.target.value)}
                                   />
