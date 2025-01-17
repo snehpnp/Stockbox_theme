@@ -105,6 +105,11 @@ export default function App() {
         theme?.HeadingColor
       );
 
+      document.documentElement.style.setProperty(
+        "--sidebarColor",
+        theme?.sidebarColor
+      );
+
 
     } else {
       let data = {

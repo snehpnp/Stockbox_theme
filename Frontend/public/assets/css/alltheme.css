@@ -974,3 +974,10 @@ a.sidebar-color.sidebar-sublink.active {
 .heading-color {
   color: var(--HeadingColor, black) !important; /* Default color is black */
 }
+
+.sidebar-bg {
+  background: var(
+    --sidebarColor,
+    white
+  ) !important; 
+}
