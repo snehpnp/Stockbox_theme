@@ -4,7 +4,7 @@ import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { Addplanbyadmin, getcategoryplan, getplanlist, getActivecategoryplan } from '../../../Services/Admin/Admin';
-
+import Content from '../../../components/Contents/Content';
 
 
 const Addplan = () => {
@@ -61,7 +61,7 @@ const Addplan = () => {
     };
 
     const onSubmit = async (values) => {
-        console.log("values", values.Status)
+
         const req = {
             title: "",
             description: values.description,
@@ -212,18 +212,21 @@ const Addplan = () => {
 
 
     return (
-        <div style={{ marginTop: "100px" }}>
-            <DynamicForm
-                fields={fields}
-                formik={formik}
-                page_title="Add New Package"
-                btn_name="Add Package"
-                btn_name1="Cancel"
-                sumit_btn={true}
-                btn_name1_route={"/admin/plan"}
-                additional_field={<></>}
-            />
-        </div>
+        <Content
+            button_status={false} button_title="Add Package">
+            <div style={{ marginTop: "100px" }}>
+                <DynamicForm
+                    fields={fields}
+                    formik={formik}
+                    page_title="Add New Package"
+                    btn_name="Add Package"
+                    btn_name1="Cancel"
+                    sumit_btn={true}
+                    btn_name1_route={"/admin/plan"}
+                    additional_field={<></>}
+                />
+            </div>
+        </Content>
     );
 };
 
