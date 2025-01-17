@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Contnet from "../../../components/Contents/Content";
-import { GetAllThemesApi, GetThemeByIdApi,DeleteThemeApi } from "../../../Services/Themes/Theme";
+import { GetAllThemesApi, GetThemeByIdApi, DeleteThemeApi } from "../../../Services/Themes/Theme";
 
 function Theme() {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ function Theme() {
   };
 
   const handleDelete = (id) => {
-   
+
     DeleteThemeApi(id)
       .then((response) => {
         GetAllThemes();
@@ -41,11 +41,35 @@ function Theme() {
     try {
       const response = await GetThemeByIdApi(id);
 
-      const themeData = response.data;
+      let themeData = response.data;
 
       localStorage.setItem("theme", JSON.stringify(themeData));
+      // BtnPriTxtCol: theme.BtnPriTxtCol || "#ffffff",
+      // BtnSecTxtCol: theme.BtnSecTxtCol || "#ffffff",
+      // BtnBorderColor: theme.BtnBorderColor || "#ffffff",
+      // BtnSecBorderColor: theme.BtnSecBorderColor || "#ffffff",
+      // BtnPriBgCol: theme.BtnPriBgCol || "#ffffff",
+      // BtnSecBgCol: theme.BtnSecBgCol || "#ffffff",
+
+      // console.log("themeData", themeData);
+
+
+
+      document.documentElement.style.setProperty("--BtnPriTxtCol", themeData?.BtnPriTxtCol);
+      document.documentElement.style.setProperty("--BtnSecTxtCol", themeData?.BtnSecTxtCol);
+      document.documentElement.style.setProperty("--BtnBorderColor", themeData?.BtnBorderColor);
+      document.documentElement.style.setProperty("--BtnSecBorderColor", themeData?.BtnSecBorderColor);
+      document.documentElement.style.setProperty("--BtnPriBgCol", themeData?.BtnPriBgCol);
+      document.documentElement.style.setProperty("--BtnSecBgCol", themeData?.BtnSecBgCol);
+      document.documentElement.style.setProperty("--PrimaryColor", themeData?.PrimaryColor);
+
+
+
+
+
+
       window.location.reload();
-      
+
     } catch (error) {
       console.error("Error applying theme:", error);
     }
@@ -70,14 +94,7 @@ function Theme() {
         <div style={{ textAlign: "right", marginBottom: "10px" }}>
           <button
             onClick={handleAddTheme}
-            style={{
-              padding: "10px 20px",
-              backgroundColor: "#4caf50",
-              color: "#fff",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
+            className="btn btn-main"
           >
             + Add Theme
           </button>

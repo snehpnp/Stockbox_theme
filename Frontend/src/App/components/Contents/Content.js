@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { House,ChevronRight } from "lucide-react";
+import { House, ChevronRight } from "lucide-react";
 
 const Content = ({
   Page_title,
@@ -16,16 +16,14 @@ const Content = ({
   const navigate = useNavigate();
 
   const handleHomeClick = () => {
-    navigate("/"); // Redirect to home page
+    navigate("/"); 
   };
- // Handle back button click (go to previous page)
- const handleBackClick = () => {
-  if (backbutton_title === "Back") {
-    window.history.back(); // Navigate to the previous page in the browser history
-  } else {
-    // Handle other cases if necessary
-  }
-};
+
+  const handleBackClick = () => {
+    if (backbutton_title === "Back") {
+      window.history.back(); 
+    } 
+  };
   return (
     <div className="content-body">
       <div className="container-fluid">
@@ -34,54 +32,51 @@ const Content = ({
             <div className="col-lg-6">
               <ul className="breadcrumb-links">
                 <li>
-                <House onClick={handleHomeClick}></House>
-               
+                  <House onClick={handleHomeClick}></House>
+
                   <a href="/" className="breadcrumb-box" />
                 </li>
-                <li><ChevronRight /></li>
+                <li>
+                  <ChevronRight />
+                </li>
                 <li>
                   <div className="breadcrumb-box">
-                 
-                    <p className="mb-0 breadcrumb-text">{Page_title}</p>
+                    <h6 className="heading-color mb-0 breadcrumb-text">{Page_title}</h6>
                   </div>
                 </li>
               </ul>
             </div>
             <div className="col-lg-6">
-               {/* Back button */}
-      {backbutton_status && backbutton_title && (
+              {/* Back button */}
+              {backbutton_status && backbutton_title && (
                 <button
                   onClick={handleBackClick} // Handle back button click
                   className="btn btn-primary float-lg-end ms-3"
-                  
                 >
                   <i
                     className={`fa-solid ${
-                      backbutton_title === "Back" ? "fa-arrow-left" : "fa-arrow-left"
+                      backbutton_title === "Back"
+                        ? "fa-arrow-left"
+                        : "fa-arrow-left"
                     }`}
                   ></i>{" "}
                   {backbutton_title}
                 </button>
               )}
               {button_status === false ? null : (
-                
-                
-                  <Link
-                    to={route}
-                    className="btn btn-primary float-lg-end"
-                    style={{ padding: "10px !important" }}
-                  >
-                    <i
-                      className={`fa-solid  ${
-                        button_title === "Back" ? "fa-arrow-left" : "fa-plus"
-                      } `}
-                    ></i>{" "}
-                    {button_title}
-                  </Link>
-               
-               
+                <Link
+                  to={route}
+                  className="btn btn-primary float-lg-end"
+                  style={{ padding: "10px !important" }}
+                >
+                  <i
+                    className={`fa-solid  ${
+                      button_title === "Back" ? "fa-arrow-left" : "fa-plus"
+                    } `}
+                  ></i>{" "}
+                  {button_title}
+                </Link>
               )}
-     
             </div>
           </nav>
         </div>

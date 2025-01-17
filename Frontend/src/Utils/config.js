@@ -1,3 +1,5 @@
+export const Doamin_url = `${window.location.origin}/`;
+
 
 export const base_url = `http://localhost:5001/`;
 export const soket_url = `http://localhost:5001/`;

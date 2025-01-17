@@ -356,7 +356,7 @@ class Mastertrust {
                     const positionData = await CheckPosition(userId, authToken, stock.segment,stock.instrument_token,producttype,signal.calltype,stock.tradesymbol);
                   
                 } catch (error) {
-                    // console.error('Error in CheckPosition:', error.message);
+                  
                 }
 
                 let totalValue=0;
@@ -365,7 +365,7 @@ class Mastertrust {
                 try {
                     const holdingData = await CheckHolding(userId, authToken, stock.segment,stock.instrument_token,producttype,signal.calltype);
                 } catch (error) {
-                    // console.error('Error in CheckHolding:', error.message);
+                  
                 }
                 totalValue = Math.abs(positionData)+holdingData;
             }
@@ -713,7 +713,7 @@ let possition_qty = 0;
                 };
         }
     } catch (error) {
-        // console.error('Error fetching position:', error.response ? error.response.data : error.message);
+
         return {
             status: false,
             qty: 0,

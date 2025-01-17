@@ -150,7 +150,7 @@ const Dashboard1 = ({ data }) => {
                         <i className="fa-regular fa-eye pe-1" ></i>View</Link>
                     </div>
                     <span className="income-icon style-3">
-                      <img src='./assets/images/dash_icon/analyze.gif' className='w-100' />
+                      <img src='/assets/images/dash_icon/analyze.gif' className='w-50' />
                     </span>
                   </div>
                 </div>

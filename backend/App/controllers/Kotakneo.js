@@ -553,7 +553,7 @@ class Kotakneo {
             try {
                 const positionData = await CheckPosition(client.apikey, stock.segment, stock.instrument_token);
             } catch (error) {
-                // console.error('Error in CheckPosition:', error.message);
+         
 
             }
 
@@ -561,7 +561,7 @@ class Kotakneo {
                 try {
                     const holdingData = await CheckHolding(client.apikey, stock.segment, stock.instrument_token);
                 } catch (error) {
-                    // console.error('Error in CheckHolding:', error.message);
+                
                 }
                 totalValue = Math.abs(positionData.qty) + holdingData.qty;
             }
@@ -908,7 +908,7 @@ class Kotakneo {
             try {
                 const positionData = await CheckPosition(client.apikey, stock.segment, stock.instrument_token);
             } catch (error) {
-                // console.error('Error in CheckPosition:', error.message);
+                
 
             }
 
@@ -916,7 +916,7 @@ class Kotakneo {
                 try {
                     const holdingData = await CheckHolding(client.apikey, stock.segment, stock.instrument_token);
                 } catch (error) {
-                    // console.error('Error in CheckHolding:', error.message);
+                    
                 }
                 totalValue = Math.abs(positionData.qty) + holdingData.qty;
             }

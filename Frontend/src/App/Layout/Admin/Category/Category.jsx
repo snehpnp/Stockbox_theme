@@ -253,12 +253,7 @@ const Category = () => {
     };
 
     const columns = [
-        // {
-        //     name: 'S.No',
-        //     selector: (row, index) => 10 + index + 1,
-        //     sortable: false,
-        //     width: '78px',
-        // },
+   
         {
             name: 'Title',
             selector: row => row.title,
@@ -358,7 +353,7 @@ const Category = () => {
 
     return (
         <div>
-            <div className="page-content">
+            {/* <div className="page-content">
 
                 <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
                     <div className="breadcrumb-title pe-3">Category</div>
@@ -527,25 +522,7 @@ const Category = () => {
 
 
 
-                                                            {/* <div className="row">
-                                                                <div className="col-md-12">
-                                                                    <label htmlFor="service">Service</label>
-                                                                    {servicedata.length > 0 && (
-                                                                        <DropdownMultiselect
-                                                                            options={servicedata.map((item) => ({
-                                                                                key: item._id,
-                                                                                label: item.title,
-                                                                            }))}
-                                                                            name="service"
-                                                                            handleOnChange={(selected) => {
-                                                                                setUpdatetitle({ ...updatetitle, service: selected });
-                                                                            }}
-                                                                            placeholder="Select services"
-                                                                            required
-                                                                        />
-                                                                    )}
-                                                                </div>
-                                                            </div> */}
+                                                      
 
                                                             <div className="row">
                                                                 <div className="col-md-12">
@@ -628,7 +605,7 @@ const Category = () => {
                         )}
                     </div>
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 };

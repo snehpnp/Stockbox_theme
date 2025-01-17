@@ -45,9 +45,8 @@ async function sendFCMNotification(title, body, tokens, type="") {
       messages.map(message => admin.messaging().send(message))
     );
 
- // console.log('Notifications sent successfully:', response);
   } catch (error) {
- // console.error('Error sending notifications:', error);
+
   }
 }
 

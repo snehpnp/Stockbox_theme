@@ -14,10 +14,10 @@ const Faq = () => {
       if (res.status === true) {
         setFaq(res.data);
       } else {
-        console.error('API response status is false.');
+        console.log('API response status is false.');
       }
     } catch (err) {
-      console.error('Error fetching FAQ:', err);
+      console.log('Error fetching FAQ:', err);
       setFaq([]);
     }
   };

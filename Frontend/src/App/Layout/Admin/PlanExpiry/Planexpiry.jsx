@@ -47,7 +47,7 @@ const Planexpiry = () => {
                 setServiceList(response.data);
             }
         } catch (error) {
-            console.error('Error fetching services:', error);
+            console.log('Error fetching services:', error);
         }
     };
 
@@ -69,7 +69,7 @@ const Planexpiry = () => {
                 setTotalRows(response.pagination.total);
             }
         } catch (error) {
-            console.error('Error fetching client data:', error);
+            console.log('Error fetching client data:', error);
         }
 
         setIsLoading(false)
@@ -99,10 +99,10 @@ const Planexpiry = () => {
                     console.log("No data available.");
                 }
             } else {
-                console.error("Failed to fetch data:", response.status);
+                console.log("Failed to fetch data:", response.status);
             }
         } catch (error) {
-            console.error("Error fetching clients:", error);
+            console.log("Error fetching clients:", error);
         }
     };
 

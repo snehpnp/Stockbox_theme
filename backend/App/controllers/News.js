@@ -81,7 +81,7 @@ class NewsController {
                 await sendFCMNotification(notificationTitle, notificationBody, tokens,"add news");
                 // console.log('Notifications sent successfully');
               } catch (error) {
-                // console.error('Error sending notifications:', error);
+               
               }
         
         

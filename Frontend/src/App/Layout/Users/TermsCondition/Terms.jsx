@@ -19,7 +19,7 @@ const Terms = () => {
                 setTermsCondition(res.data.description);
             }
         } catch (error) {
-            console.error('Error fetching Terms Condition:', error);
+            console.log('Error fetching Terms Condition:', error);
         }
     };
 

@@ -60,7 +60,7 @@ const Company = () => {
   };
 
   const updateCompany = async (row) => {
-    navigate("/admin/companyupdate/", { state: { row } });
+    navigate("/superadmin/companyupdate/", { state: { row } });
   };
 
   const DeleteCompanydata = async (_id) => {
@@ -146,7 +146,7 @@ const Company = () => {
   };
 
   const companydetail = async (_id) => {
-    navigate(`/admin/companydetail/${_id}`);
+    navigate(`/superadmin/companydetail/${_id}`);
   };
 
   const UpdateTheme = async (id, theme_id) => {
@@ -275,7 +275,7 @@ const Company = () => {
               <nav aria-label="breadcrumb">
                 <ol className="breadcrumb mb-0 p-0">
                   <li className="breadcrumb-item">
-                    <Link to="/admin/dashboard">
+                    <Link to="/superadmin/dashboard">
                       <i className="bx bx-home-alt" />
                     </Link>
                   </li>
@@ -301,7 +301,7 @@ const Company = () => {
                   </span>
                 </div>
                 <div className="ms-auto">
-                  <Link to="/admin/addcompany" className="btn btn-primary">
+                  <Link to="/superadmin/addcompany" className="btn btn-primary">
                     <i className="bx bxs-plus-square" aria-hidden="true" />
                     Add Company
                   </Link>

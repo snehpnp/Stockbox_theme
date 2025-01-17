@@ -30,26 +30,14 @@ export default function App() {
       // const all = document.querySelectorAll("*");
 
       const all = document.querySelectorAll(
-        "*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(button)"
+        "*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(button):not(a)"
       );
 
       all.forEach((element) => {
         element.style.color = fontColor;
       });
-      all.forEach((element) => {
-        element.style.color = contentColor;
-      });
-      buttons.forEach((button) => {
-        if (button) {
-          if (font) {
-            button.style.background = theme.BtnBgColor;
-            button.style.color = theme.btnTxtColor;
-          } else {
-            button.style.backgroundColor = theme.BtnBgColor;
-            button.style.color = theme.btnTxtColor;
-          }
-        }
-      });
+    
+   
 
       if (container) {
         if (navbar) {
@@ -67,22 +55,62 @@ export default function App() {
         }
       }
 
-      const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
-      if (headings) {
-        headings.forEach((heading) => {
-          if (theme.HeadingColor) {
-            heading.style.color = theme.HeadingColor;
-          } else {
-            heading.style.color = theme.fontColor;
-          }
-        });
-      }
+ 
 
-      // CHANGE ALL SOFTWARE FONT FAMILY
+      // ----------------------------------------------
+      // NEW CHANGE ALL SOFTWARE FONT FAMILY
 
       allFont.forEach((element) => {
         element.style.fontFamily = fontFamily;
       });
+
+      // Apply background color to .container-fluid
+      document.documentElement.style.setProperty(
+        "--BtnPriTxtCol",
+        theme?.BtnPriTxtCol
+      );
+      document.documentElement.style.setProperty(
+        "--BtnSecTxtCol",
+        theme?.BtnSecTxtCol
+      );
+      document.documentElement.style.setProperty(
+        "--BtnBorderColor",
+        theme?.BtnBorderColor
+      );
+      document.documentElement.style.setProperty(
+        "--BtnSecBorderColor",
+        theme?.BtnSecBorderColor
+      );
+      document.documentElement.style.setProperty(
+        "--BtnPriBgCol",
+        theme?.BtnPriBgCol
+      );
+      document.documentElement.style.setProperty(
+        "--BtnSecBgCol",
+        theme?.BtnSecBgCol
+      );
+
+      document.documentElement.style.setProperty(
+        "--headSidebarFontCol",
+        theme?.headSidebarFontCol
+      );
+
+      document.documentElement.style.setProperty(
+        "--headSidebarFontActiveCol",
+        theme?.headSidebarFontActiveCol
+      );
+
+      document.documentElement.style.setProperty(
+        "--HeadingColor",
+        theme?.HeadingColor
+      );
+
+      document.documentElement.style.setProperty(
+        "--sidebarColor",
+        theme?.sidebarColor
+      );
+
+
     } else {
       let data = {
         sidebarColor: "linear-gradient(to right, #1fa9ff, #000000)",
@@ -99,11 +127,9 @@ export default function App() {
         navbarPosition: "Header",
         themeId: "1",
         sidebarName: "1",
-        BtnBgColor: "#ffffff",
-        btnTxtColor: "#ffffff",
         HeadingColor: "#ffffff",
         contentColor: "#8f8f8f",
-        WrapperColor: "#000000"
+        WrapperColor: "#000000",
       };
 
       localStorage.setItem("theme", JSON.stringify(data));

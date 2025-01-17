@@ -17,14 +17,23 @@ const themeSchema = new Schema(
     navbarPosition: { type: String, required: true },
     themeId: { type: String, required: true },
     sidebarName: { type: String, required: true },
-    BtnBgColor: { type: String, required: true },
     status: { type: String, default: 0 },
-    btnTxtColor: { type: String, required: true },
     HeadingColor: { type: String, required: true },
-    WrapperColor: { type: String, required: true }
+    WrapperColor: { type: String, required: true },
+    wrapperGradientStart: { type: String, required: true },
+    wrapperGradientEnd: { type: String, required: true },
+    BtnPriTxtCol: { type: String, required: true },
+    BtnSecTxtCol: { type: String, required: true },
+    BtnBorderColor: { type: String, required: true },
+    BtnSecBorderColor: { type: String, required: true },
+    BtnPriBgCol: { type: String, required: true },
+    BtnSecBgCol: { type: String, required: true },
+    wrapperMode: { type: String, required: true },
+    headSidebarFontActiveCol: { type: String, required: true },
+    headSidebarFontCol: { type: String, required: true },
   },
   {
-    timestamps: true, // Automatically adds createdAt and updatedAt
+    timestamps: true,
   }
 );
 

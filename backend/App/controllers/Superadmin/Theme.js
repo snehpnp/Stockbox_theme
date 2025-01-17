@@ -1,6 +1,7 @@
 const db = require("../../Models");
 const Theme = db.ThemeModal;
-const Company_Modal = db.Company;
+const Company_Modal = db.Company1;
+const axios = require("axios");
 
 // Create a new theme
 exports.createTheme = async (req, res) => {
@@ -37,7 +38,6 @@ exports.getAllThemes = async (req, res) => {
 };
 
 exports.getAllThemesName = async (req, res) => {
-
   try {
     const themes = await Theme.find().select("ThemeName");
     console.log(themes);
@@ -139,24 +139,52 @@ exports.deleteTheme = async (req, res) => {
 exports.updateThemeCompany = async (req, res) => {
   try {
     const { id, theme_id } = req.body;
-  
+    if (!id || !theme_id) {
+      return res.status(400).json({
+        status: false,
+        message: "Please provide company id and theme id",
+      });
+    }
+
+    const FindCompany = await Company_Modal.findById(id).select("url");
+
     const updatedCompany = await Company_Modal.findByIdAndUpdate(
       { _id: id },
       { theme_id: theme_id },
       { new: true }
-    ); 
-    
+    );
+
     if (!updatedCompany) {
       return res.status(404).json({
         status: false,
         message: "Company not found",
       });
     }
-    res.status(200).json({
-      status: true,
-      data: updatedCompany,
-      message: "Company updated successfully",
-    });
+
+    if (FindCompany) {
+      if (FindCompany?.url.includes("localhost")) {
+        const response = await axios.post(
+          "http://localhost:5001/basicsetting/updatethemecompany",
+          { theme_id: theme_id }
+        );
+
+        return res.status(200).json({
+          status: true,
+          data: updatedCompany,
+          message: "Company updated successfully",
+        });
+      } else {
+        const response = await axios.post(
+          `${FindCompany?.url}/basicsetting/updatethemecompany`,
+          { theme_id: theme_id }
+        );
+      }
+      return res.status(200).json({
+        status: true,
+        data: updatedCompany,
+        message: "Company updated successfully",
+      });
+    }
   } catch (error) {
     console.error("Error updating Company:", error);
     res.status(500).json({
