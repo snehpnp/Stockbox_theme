@@ -113,25 +113,6 @@ const PaymentHistory = () => {
       sortable: false,
       width: '100px',
     },
-    // {
-    //   name: 'Name',
-    //   selector: row => row.clientName,
-    //   sortable: true,
-    //   width: '200px',
-    // },
-    // {
-    //   name: 'Email',
-    //   selector: row => row.clientEmail,
-    //   sortable: true,
-    //   width: '300px',
-    // },
-    // {
-    //   name: 'Phone',
-    //   selector: row => row.clientPhoneNo,
-    //   sortable: true,
-    //   width: '200px',
-    // },
-
     {
       name: 'Title',
       selector: row => row?.categoryDetails?.title,
