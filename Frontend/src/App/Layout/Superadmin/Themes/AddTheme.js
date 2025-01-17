@@ -37,7 +37,8 @@ const Addtheme = () => {
     BtnPriBgCol: "#ffffff",
     BtnSecBgCol: "#ffffff",
     wrapperMode: false,
-    TextPrimaryColor: "#ffffff",
+    headSidebarFontActiveCol: "#ffffff",
+    headSidebarFontCol: "#ffffff",
   });
 
   useEffect(() => {
@@ -76,7 +77,8 @@ const Addtheme = () => {
       BtnPriBgCol: theme.BtnPriBgCol || "#ffffff",
       BtnSecBgCol: theme.BtnSecBgCol || "#ffffff",
       wrapperMode: theme.wrapperMode || false,
-      TextPrimaryColor: theme.TextPrimaryColor || "#ffffff",
+      headSidebarFontCol: theme.headSidebarFontCol || "#ffffff",
+      headSidebarFontActiveCol: theme.headSidebarFontActiveCol || "#ffffff",
     });
   }, []);
 
@@ -176,9 +178,7 @@ const Addtheme = () => {
                           className="text-dark form-control"
                         >
                           <option className="text-dark" value="Arial">Arial</option>
-                          <option className="text-dark" value="Times New Roman">
-                            Times New Roman
-                          </option>
+                          <option className="text-dark" value="Times New Roman">Times New Roman</option>
                           <option className="text-dark" value="Courier New">Courier New</option>
                           <option className="text-dark" value="Verdana">Verdana</option>
                           <option className="text-dark" value="Georgia">Georgia</option>
@@ -187,12 +187,36 @@ const Addtheme = () => {
                           <option className="text-dark" value="Tahoma">Tahoma</option>
                           <option className="text-dark" value="Trebuchet MS">Trebuchet MS</option>
                           <option className="text-dark" value="Lucida Console">Lucida Console</option>
-                          <option className="text-dark" value="Palatino Linotype">
-                            Palatino Linotype
-                          </option>
+                          <option className="text-dark" value="Palatino Linotype">Palatino Linotype</option>
                           <option className="text-dark" value="Arial Black">Arial Black</option>
                           <option className="text-dark" value="Consolas">Consolas</option>
+                          <option className="text-dark" value="Lucida Sans Unicode">Lucida Sans Unicode</option>
+                          <option className="text-dark" value="Garamond">Garamond</option>
+                          <option className="text-dark" value="Book Antiqua">Book Antiqua</option>
+                          <option className="text-dark" value="Copperplate">Copperplate</option>
+                          <option className="text-dark" value="Brush Script MT">Brush Script MT</option>
+                          <option className="text-dark" value="Arial Narrow">Arial Narrow</option>
+                          <option className="text-dark" value="Century Gothic">Century Gothic</option>
+                          <option className="text-dark" value="Rockwell">Rockwell</option>
+                          <option className="text-dark" value="Franklin Gothic Medium">Franklin Gothic Medium</option>
+                          <option className="text-dark" value="Arial Rounded MT Bold">Arial Rounded MT Bold</option>
+                          <option className="text-dark" value="Poppins">Poppins</option>
+                          <option className="text-dark" value="Roboto">Roboto</option>
+                          <option className="text-dark" value="Open Sans">Open Sans</option>
+                          <option className="text-dark" value="Lato">Lato</option>
+                          <option className="text-dark" value="Montserrat">Montserrat</option>
+                          <option className="text-dark" value="Oswald">Oswald</option>
+                          <option className="text-dark" value="Raleway">Raleway</option>
+                          <option className="text-dark" value="PT Sans">PT Sans</option>
+                          <option className="text-dark" value="Merriweather">Merriweather</option>
+                          <option className="text-dark" value="Nunito">Nunito</option>
+                          <option className="text-dark" value="Ubuntu">Ubuntu</option>
+                          <option className="text-dark" value="Playfair Display">Playfair Display</option>
+                          <option className="text-dark" value="Fira Sans">Fira Sans</option>
+                          <option className="text-dark" value="Inter">Inter</option>
+                          <option className="text-dark" value="Work Sans">Work Sans</option>
                         </Field>
+
                       </div>
                     </Card.Body>
                   </Card>
@@ -201,12 +225,7 @@ const Addtheme = () => {
                   <Card>
                     <Card.Body>
                       <Card.Title className="text-dark">Font Color</Card.Title>
-                      <div>
-                        <label className="text-dark">
-                          Primary Text Color Mode:{" "}
-                        </label>
-                        <Field name="TextPrimaryColor" type="color" />
-                      </div>
+
                       <div className="mt-3">
                         <label className="text-dark">Font Solid Color: </label>
                         <Field name="fontColor" type="color" />
@@ -216,6 +235,18 @@ const Addtheme = () => {
                         <label className="text-dark">Heading Color: </label>
                         <Field name="HeadingColor" type="color" />
                       </div>
+
+
+                      <div className="mt-3">
+                        <label className="text-dark">Sidebar/Navbar Color: </label>
+                        <Field name="headSidebarFontCol" type="color" />
+                      </div>
+
+                      <div className="mt-3">
+                        <label className="text-dark">Sidebar/Navbar Active Color: </label>
+                        <Field name="headSidebarFontActiveCol" type="color" />
+                      </div>
+
                     </Card.Body>
                   </Card>
                 </Col>

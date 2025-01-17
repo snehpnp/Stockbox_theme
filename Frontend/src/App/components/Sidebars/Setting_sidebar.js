@@ -79,6 +79,7 @@ export default function Setting_sidebar() {
       HeadingColor: theme.HeadingColor || "#ffffff",
       headSidebarFontCol: theme.headSidebarFontCol || "#ffffff",
       headSidebarFontActiveCol: theme.headSidebarFontActiveCol || "#ffffff",
+      WrapperColor: theme.WrapperColor || "#ffffff",
     });
   }, []);
 
@@ -389,24 +390,7 @@ export default function Setting_sidebar() {
                         </Field>
                       </div>
 
-                      {/* <div className="color-input-div">
-                        <label className="text-dark">Sidebar Name: </label>
-                        <Field
-                          as="select"
-                          name="sidebarName"
-                          className="text-dark form-control"
-                        >
-                          <option className="text-dark" value="1">
-                            Main
-                          </option>
-                          <option className="text-dark" value="2">
-                            Card Sidebar
-                          </option>
-                          <option className="text-dark" value="3">
-                            New Sidebar
-                          </option>
-                        </Field>
-                      </div> */}
+                   
                     </Col>
 
                     <div className="setting-sidebar-divider-line"></div>

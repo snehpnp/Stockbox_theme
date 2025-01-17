@@ -30,15 +30,13 @@ export default function App() {
       // const all = document.querySelectorAll("*");
 
       const all = document.querySelectorAll(
-        "*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(button)"
+        "*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(button):not(a)"
       );
 
       all.forEach((element) => {
         element.style.color = fontColor;
       });
-      // all.forEach((element) => {
-      //   element.style.color = contentColor;
-      // });
+    
    
 
       if (container) {
@@ -102,6 +100,10 @@ export default function App() {
         theme?.headSidebarFontActiveCol
       );
 
+      document.documentElement.style.setProperty(
+        "--HeadingColor",
+        theme?.HeadingColor
+      );
 
 
     } else {
