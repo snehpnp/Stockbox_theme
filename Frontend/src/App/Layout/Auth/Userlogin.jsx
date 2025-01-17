@@ -48,16 +48,16 @@ const Userlogin = () => {
 
     if (ResData.status) {
       localStorage.setItem("Token", ResData.data?.token);
-      localStorage.setItem("Id", ResData.data?.id);
+      localStorage.setItem("id", ResData.data?.id);
       localStorage.setItem(
         "Role",
         ResData?.data?.Role === 0
           ? "SUPERADMIN"
           : ResData?.data?.Role === 1
-          ? "ADMIN"
-          : ResData?.data?.Role === 2
-          ? "EMPLOYEE"
-          : "USER"
+            ? "ADMIN"
+            : ResData?.data?.Role === 2
+              ? "EMPLOYEE"
+              : "USER"
       );
 
       Swal.fire({
@@ -83,7 +83,7 @@ const Userlogin = () => {
       let token = "";
       const response = await basicsettinglist(token);
       if (response.status) {
-        console.log("response", response);
+        ;
         localStorage.setItem("theme", JSON.stringify(response?.Theme));
 
         const faviconElement = document.querySelector("link[rel='icon']");
@@ -217,9 +217,8 @@ const Userlogin = () => {
                                       className="input-group-text bg-transparent"
                                     >
                                       <i
-                                        className={`bx ${
-                                          showPassword ? "bx-show" : "bx-hide"
-                                        }`}
+                                        className={`bx ${showPassword ? "bx-show" : "bx-hide"
+                                          }`}
                                       />
                                     </a>
                                   </div>

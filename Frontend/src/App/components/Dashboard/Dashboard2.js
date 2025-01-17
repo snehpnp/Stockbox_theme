@@ -127,6 +127,8 @@ const Dashboard1 = ({ data }) => {
     },
   ];
 
+
+
   return (
     <>
       <div className="theme-2-dashboard">

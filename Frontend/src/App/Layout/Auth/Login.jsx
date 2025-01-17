@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { LoginApi } from "../../Services/Auth/Login";
@@ -37,16 +37,16 @@ const Login = () => {
 
     if (ResData.status) {
       localStorage.setItem("Token", ResData.data?.token);
-      localStorage.setItem("Id", ResData.data?.id);
+      localStorage.setItem("id", ResData.data?.id);
       localStorage.setItem(
         "Role",
         ResData?.data?.Role === 0
           ? "SUPERADMIN"
           : ResData?.data?.Role === 1
-          ? "ADMIN"
-          : ResData?.data?.Role === 2
-          ? "EMPLOYEE"
-          : ""
+            ? "ADMIN"
+            : ResData?.data?.Role === 2
+              ? "EMPLOYEE"
+              : ""
       );
 
       Swal.fire({
@@ -214,9 +214,8 @@ const Login = () => {
                                       className="input-group-text bg-transparent"
                                     >
                                       <i
-                                        className={`bx ${
-                                          showPassword ? "bx-show" : "bx-hide"
-                                        }`}
+                                        className={`bx ${showPassword ? "bx-show" : "bx-hide"
+                                          }`}
                                       />
                                     </a>
                                   </div>
