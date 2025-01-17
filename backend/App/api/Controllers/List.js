@@ -41,10 +41,10 @@ const fs = require('fs');
 
 
 
-const {orderplace} = require('../../Controllers/Aliceblue');
-const {angleorderplace} = require('../../Controllers/Angle')
-const {kotakneoorderplace} = require('../../Controllers/Kotakneo')
-const {markethuborderplace} = require('../../Controllers/Markethub')
+const { orderplace } = require('../../Controllers/Aliceblue');
+const { angleorderplace } = require('../../Controllers/Angle')
+const { kotakneoorderplace } = require('../../Controllers/Kotakneo')
+const { markethuborderplace } = require('../../Controllers/Markethub')
 
 
 
@@ -578,7 +578,7 @@ class List {
       end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
 
       // Split the services in the category if they exist
-      const planservice = plan.category.service;
+      const planservice = plan.category?.service;
       const planservices = planservice ? planservice.split(',') : [];
       // Loop through each service ID and update or add the plan
       for (const serviceId of planservices) {
@@ -719,7 +719,7 @@ class List {
       // Save the subscription
       const savedSubscription = await newSubscription.save();
 
-     
+
 
       if (coupon_code) {
         const resultc = await Coupon_Modal.findOne({
@@ -764,7 +764,7 @@ class List {
         if (refertokens.length > 0) {
         }
         else {
-         
+
           const senderamount = (price * settings.sender_earn) / 100;
           const receiveramount = (price * settings.receiver_earn) / 100;
 
@@ -841,120 +841,118 @@ class List {
         await client.save();
       }
 
-if(settings.invoicestatus==1) {
-      const length = 6;
-      const digits = '0123456789';
-      let orderNumber = '';
-    
-      for (let i = 0; i < length; i++) {
-        orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
-      }
+      if (settings.invoicestatus == 1) {
+        const length = 6;
+        const digits = '0123456789';
+        let orderNumber = '';
 
-      
-      let payment_type;
-      if(orderid)
-      {
-        payment_type ="Online";
-      }
-      else
-      {
-        payment_type ="Offline";
-
-      }
-
-      const templatePath = path.join(__dirname, '../../../template', 'invoice.html');
-          let htmlContent = fs.readFileSync(templatePath, 'utf8');
-      
-          htmlContent = htmlContent
-              .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
-              .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
-              .replace(/{{payment_type}}/g, payment_type)
-              .replace(/{{clientname}}/g, client.FullName)
-              .replace(/{{email}}/g, client.Email)
-              .replace(/{{PhoneNo}}/g, client.PhoneNo)
-              .replace(/{{validity}}/g, savedSubscription.validity)
-              .replace(/{{plan_end}}/g, formatDate(savedSubscription.plan_end))
-              .replace(/{{plan_price}}/g, savedSubscription.plan_price)
-              .replace(/{{total}}/g, savedSubscription.total)
-              .replace(/{{discount}}/g, savedSubscription.discount)
-              .replace(/{{orderid}}/g, savedSubscription.orderid)
-              .replace(/{{planname}}/g, plan.category.title)
-              .replace(/{{plantype}}/g, "Plan")
-              .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
-
-      
-         const browser = await puppeteer.launch({
-          args: ['--no-sandbox', '--disable-setuid-sandbox']
-             });
-          const page = await browser.newPage();
-          await page.setContent(htmlContent);
-      
-          // Define the path to save the PDF
-          const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
-          const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
-          
-          // Generate PDF and save to the specified path
-          await page.pdf({
-              path: pdfPath,
-              format: 'A4',
-              printBackground: true,
-              margin: {
-                  top: '20mm',
-                  right: '10mm',
-                  bottom: '50mm',
-                  left: '10mm',
-              },
-          });
-      
-          await browser.close();
-      
-          savedSubscription.ordernumber = `INV-${orderNumber}`;
-          savedSubscription.invoice = `INV-${orderNumber}.pdf`;
-          const updatedSubscription = await savedSubscription.save();
-
-
-   const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
-      if (!mailtemplate || !mailtemplate.mail_body) {
-        throw new Error('Mail template not found');
-      }
-
-      const templatePaths = path.join(__dirname, '../../../template', 'mailtemplate.html');
-
-      fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
-        if (err) {
-          console.error('Error reading HTML template:', err);
-          return;
+        for (let i = 0; i < length; i++) {
+          orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
         }
 
-        let finalMailBody = mailtemplate.mail_body
-          .replace('{clientName}', `${client.FullName}`);
 
-        const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+        let payment_type;
+        if (orderid) {
+          payment_type = "Online";
+        }
+        else {
+          payment_type = "Offline";
 
-        // Replace placeholders with actual values
-        const finalHtml = htmlTemplate
-          .replace(/{{company_name}}/g, settings.website_title)
-          .replace(/{{body}}/g, finalMailBody)
-          .replace(/{{logo}}/g, logo);
+        }
 
-        const mailOptions = {
-          to: client.Email,
-          from: `${settings.from_name} <${settings.from_mail}>`, 
-          subject: `${mailtemplate.mail_subject}`,
-          html: finalHtml,
-          attachments: [
-            {
-              filename: `INV-${orderNumber}.pdf`, // PDF file name
-              path: pdfPath, // Path to the PDF file
-            }
-          ]
-        };
+        const templatePath = path.join(__dirname, '../../../template', 'invoice.html');
+        let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
-        // Send email
-        await sendEmail(mailOptions);
-      });
+        htmlContent = htmlContent
+          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+          .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
+          .replace(/{{payment_type}}/g, payment_type)
+          .replace(/{{clientname}}/g, client.FullName)
+          .replace(/{{email}}/g, client.Email)
+          .replace(/{{PhoneNo}}/g, client.PhoneNo)
+          .replace(/{{validity}}/g, savedSubscription.validity)
+          .replace(/{{plan_end}}/g, formatDate(savedSubscription.plan_end))
+          .replace(/{{plan_price}}/g, savedSubscription.plan_price)
+          .replace(/{{total}}/g, savedSubscription.total)
+          .replace(/{{discount}}/g, savedSubscription.discount)
+          .replace(/{{orderid}}/g, savedSubscription.orderid)
+          .replace(/{{planname}}/g, plan.category.title)
+          .replace(/{{plantype}}/g, "Plan")
+          .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
-    }
+
+        const browser = await puppeteer.launch({
+          args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+        const page = await browser.newPage();
+        await page.setContent(htmlContent);
+
+        // Define the path to save the PDF
+        const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+
+        // Generate PDF and save to the specified path
+        await page.pdf({
+          path: pdfPath,
+          format: 'A4',
+          printBackground: true,
+          margin: {
+            top: '20mm',
+            right: '10mm',
+            bottom: '50mm',
+            left: '10mm',
+          },
+        });
+
+        await browser.close();
+
+        savedSubscription.ordernumber = `INV-${orderNumber}`;
+        savedSubscription.invoice = `INV-${orderNumber}.pdf`;
+        const updatedSubscription = await savedSubscription.save();
+
+
+        const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
+        if (!mailtemplate || !mailtemplate.mail_body) {
+          throw new Error('Mail template not found');
+        }
+
+        const templatePaths = path.join(__dirname, '../../../template', 'mailtemplate.html');
+
+        fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
+          if (err) {
+            console.error('Error reading HTML template:', err);
+            return;
+          }
+
+          let finalMailBody = mailtemplate.mail_body
+            .replace('{clientName}', `${client.FullName}`);
+
+          const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+
+          // Replace placeholders with actual values
+          const finalHtml = htmlTemplate
+            .replace(/{{company_name}}/g, settings.website_title)
+            .replace(/{{body}}/g, finalMailBody)
+            .replace(/{{logo}}/g, logo);
+
+          const mailOptions = {
+            to: client.Email,
+            from: `${settings.from_name} <${settings.from_mail}>`,
+            subject: `${mailtemplate.mail_subject}`,
+            html: finalHtml,
+            attachments: [
+              {
+                filename: `INV-${orderNumber}.pdf`, // PDF file name
+                path: pdfPath, // Path to the PDF file
+              }
+            ]
+          };
+
+          // Send email
+          await sendEmail(mailOptions);
+        });
+
+      }
       // Return success response
       return res.status(201).json({
         status: true,
@@ -1032,123 +1030,121 @@ if(settings.invoicestatus==1) {
       // Save to the database
       const savedSubscription = await newSubscription.save();
 
-      if(settings.invoicestatus==1) {
+      if (settings.invoicestatus == 1) {
 
-      const length = 6;
-      const digits = '0123456789';
-      let orderNumber = '';
-    
-      for (let i = 0; i < length; i++) {
-        orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
-      }
+        const length = 6;
+        const digits = '0123456789';
+        let orderNumber = '';
 
-      
-      let payment_type;
-      if(orderid)
-      {
-        payment_type ="Online";
-      }
-      else
-      {
-        payment_type ="Offline";
-
-      }
-
-      const templatePath = path.join(__dirname, '../../../template', 'invoice.html');
-          let htmlContent = fs.readFileSync(templatePath, 'utf8');
-      
-          htmlContent = htmlContent
-              .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
-              .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
-              .replace(/{{payment_type}}/g, payment_type)
-              .replace(/{{clientname}}/g, client.FullName)
-              .replace(/{{email}}/g, client.Email)
-              .replace(/{{PhoneNo}}/g, client.PhoneNo)
-              .replace(/{{validity}}/g, savedSubscription.validity)
-              .replace(/{{plan_end}}/g, formatDate(savedSubscription.enddate))
-              .replace(/{{plan_price}}/g, savedSubscription.plan_price)
-              .replace(/{{total}}/g, savedSubscription.total)
-              .replace(/{{discount}}/g, savedSubscription.discount)
-              .replace(/{{orderid}}/g, savedSubscription.orderid)
-              .replace(/{{planname}}/g, basket.title)
-              .replace(/{{plantype}}/g, "Basket")
-              .replace(/{{plan_start}}/g, formatDate(savedSubscription.startdate));
-
-      
-         const browser = await puppeteer.launch({
-          args: ['--no-sandbox', '--disable-setuid-sandbox']
-             });
-          const page = await browser.newPage();
-          await page.setContent(htmlContent);
-      
-          // Define the path to save the PDF
-          const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
-          const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
-          
-          // Generate PDF and save to the specified path
-          await page.pdf({
-              path: pdfPath,
-              format: 'A4',
-              printBackground: true,
-              margin: {
-                  top: '20mm',
-                  right: '10mm',
-                  bottom: '50mm',
-                  left: '10mm',
-              },
-          });
-      
-          await browser.close();
-      
-          savedSubscription.ordernumber = `INV-${orderNumber}`;
-          savedSubscription.invoice = `INV-${orderNumber}.pdf`;
-          const updatedSubscription = await savedSubscription.save();
-
-
-   const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
-      if (!mailtemplate || !mailtemplate.mail_body) {
-        throw new Error('Mail template not found');
-      }
-
-
-
-      const templatePaths = path.join(__dirname, '../../../template', 'mailtemplate.html');
-
-      fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
-        if (err) {
-          console.error('Error reading HTML template:', err);
-          return;
+        for (let i = 0; i < length; i++) {
+          orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
         }
 
-        let finalMailBody = mailtemplate.mail_body
-          .replace('{clientName}', `${client.FullName}`);
 
-        const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+        let payment_type;
+        if (orderid) {
+          payment_type = "Online";
+        }
+        else {
+          payment_type = "Offline";
 
-        // Replace placeholders with actual values
-        const finalHtml = htmlTemplate
-          .replace(/{{company_name}}/g, settings.website_title)
-          .replace(/{{body}}/g, finalMailBody)
-          .replace(/{{logo}}/g, logo);
+        }
 
-        const mailOptions = {
-          to: client.Email,
-          from: `${settings.from_name} <${settings.from_mail}>`, 
-          subject: `${mailtemplate.mail_subject}`,
-          html: finalHtml,
-          attachments: [
-            {
-              filename: `INV-${orderNumber}.pdf`, // PDF file name
-              path: pdfPath, // Path to the PDF file
-            }
-          ]
-        };
+        const templatePath = path.join(__dirname, '../../../template', 'invoice.html');
+        let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
-        // Send email
-        await sendEmail(mailOptions);
-      });
+        htmlContent = htmlContent
+          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+          .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
+          .replace(/{{payment_type}}/g, payment_type)
+          .replace(/{{clientname}}/g, client.FullName)
+          .replace(/{{email}}/g, client.Email)
+          .replace(/{{PhoneNo}}/g, client.PhoneNo)
+          .replace(/{{validity}}/g, savedSubscription.validity)
+          .replace(/{{plan_end}}/g, formatDate(savedSubscription.enddate))
+          .replace(/{{plan_price}}/g, savedSubscription.plan_price)
+          .replace(/{{total}}/g, savedSubscription.total)
+          .replace(/{{discount}}/g, savedSubscription.discount)
+          .replace(/{{orderid}}/g, savedSubscription.orderid)
+          .replace(/{{planname}}/g, basket.title)
+          .replace(/{{plantype}}/g, "Basket")
+          .replace(/{{plan_start}}/g, formatDate(savedSubscription.startdate));
 
-    }
+
+        const browser = await puppeteer.launch({
+          args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+        const page = await browser.newPage();
+        await page.setContent(htmlContent);
+
+        // Define the path to save the PDF
+        const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+
+        // Generate PDF and save to the specified path
+        await page.pdf({
+          path: pdfPath,
+          format: 'A4',
+          printBackground: true,
+          margin: {
+            top: '20mm',
+            right: '10mm',
+            bottom: '50mm',
+            left: '10mm',
+          },
+        });
+
+        await browser.close();
+
+        savedSubscription.ordernumber = `INV-${orderNumber}`;
+        savedSubscription.invoice = `INV-${orderNumber}.pdf`;
+        const updatedSubscription = await savedSubscription.save();
+
+
+        const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
+        if (!mailtemplate || !mailtemplate.mail_body) {
+          throw new Error('Mail template not found');
+        }
+
+
+
+        const templatePaths = path.join(__dirname, '../../../template', 'mailtemplate.html');
+
+        fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
+          if (err) {
+            console.error('Error reading HTML template:', err);
+            return;
+          }
+
+          let finalMailBody = mailtemplate.mail_body
+            .replace('{clientName}', `${client.FullName}`);
+
+          const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+
+          // Replace placeholders with actual values
+          const finalHtml = htmlTemplate
+            .replace(/{{company_name}}/g, settings.website_title)
+            .replace(/{{body}}/g, finalMailBody)
+            .replace(/{{logo}}/g, logo);
+
+          const mailOptions = {
+            to: client.Email,
+            from: `${settings.from_name} <${settings.from_mail}>`,
+            subject: `${mailtemplate.mail_subject}`,
+            html: finalHtml,
+            attachments: [
+              {
+                filename: `INV-${orderNumber}.pdf`, // PDF file name
+                path: pdfPath, // Path to the PDF file
+              }
+            ]
+          };
+
+          // Send email
+          await sendEmail(mailOptions);
+        });
+
+      }
       // Respond with the created subscription
       return res.status(201).json({
         status: true,
@@ -1191,16 +1187,16 @@ if(settings.invoicestatus==1) {
         {
           $project: {
             _id: 1, // Include the _id of BasketSubscription_Modal
-            basket_id:1,
-            client_id:1,
-             plan_price:1,
-            total:1,
-            orderid:1,
-            coupon:1,
-            startdate:1,
-            enddate:1,
-            validity:1,
-            'basketDetails.title': 1, 
+            basket_id: 1,
+            client_id: 1,
+            plan_price: 1,
+            total: 1,
+            orderid: 1,
+            coupon: 1,
+            startdate: 1,
+            enddate: 1,
+            validity: 1,
+            'basketDetails.title': 1,
             'basketDetails.description': 1,
             'basketDetails.mininvamount': 1
           }
@@ -1390,16 +1386,16 @@ if(settings.invoicestatus==1) {
           serviceName = "Cash";
         } else if (results.service == "66dfeef84a88602fbbca9b79") {
           serviceName = "Option";
-        } else if (results.service == "66dfede64a88602fbbca9b72"){
+        } else if (results.service == "66dfede64a88602fbbca9b72") {
           serviceName = "Future";
         }
-        else{
+        else {
           serviceName = "All";
         }
 
         return {
           ...results._doc, // Spread the original bannerss document
-          image: results.image ? `${baseUrl}/uploads/coupon/${results.image}` : null, 
+          image: results.image ? `${baseUrl}/uploads/coupon/${results.image}` : null,
           serviceName: serviceName
         };
       });
@@ -1454,11 +1450,11 @@ if(settings.invoicestatus==1) {
       const currentDateOnly = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()); // Strip time
       const startDateOnly = new Date(coupon.startdate.getFullYear(), coupon.startdate.getMonth(), coupon.startdate.getDate());
       const endDateOnly = new Date(coupon.enddate.getFullYear(), coupon.enddate.getMonth(), coupon.enddate.getDate());
-      
+
       if (currentDateOnly < startDateOnly || currentDateOnly > endDateOnly) {
         return res.status(400).json({ message: 'Coupon is not valid at this time' });
       }
-      
+
 
       // Check if the purchase meets the minimum purchase value requirement
       if (purchaseValue < coupon.minpurchasevalue) {
@@ -1484,7 +1480,7 @@ if(settings.invoicestatus==1) {
         const plan = await Plan_Modal.findById(planid)
           .populate('category')
           .exec();
-        if (coupon.service != plan.category.service) {
+        if (coupon.service != plan.category?.service) {
 
           return res.status(404).json({ message: 'Service Does not match' });
         }
@@ -1512,7 +1508,7 @@ if(settings.invoicestatus==1) {
     }
   }
 
-  
+
   async showSignalsToClients(req, res) {
     try {
       const { service_id, client_id, search, page = 1 } = req.body;
@@ -1546,22 +1542,22 @@ if(settings.invoicestatus==1) {
       // };
 
 
-const query = {
-  service: service_id,
-  close_status: false,
-};
+      const query = {
+        service: service_id,
+        close_status: false,
+      };
 
-// Check if deliverystatus is true
-if (client.deliverystatus === true) {
-  query.created_at = {
-    $lte: endDates[0], // Only keep the end date condition
-  };
-} else {
-  query.created_at = {
-    $gte: startDates[0], // Include both start and end date conditions
-    $lte: endDates[0],
-  };
-}
+      // Check if deliverystatus is true
+      if (client.deliverystatus === true) {
+        query.created_at = {
+          $lte: endDates[0], // Only keep the end date condition
+        };
+      } else {
+        query.created_at = {
+          $gte: startDates[0], // Include both start and end date conditions
+          $lte: endDates[0],
+        };
+      }
 
       // const signals = await Signal_Modal.find(query);
 
@@ -1708,26 +1704,26 @@ if (client.deliverystatus === true) {
 
 
 
-      
-const query = {
-  service: service_id,
-  close_status: true,
-  closedate: {
-          $gte: startDates[0], 
-      }
-   };
 
-// Check if deliverystatus is true
-if (client.deliverystatus === true) {
-  query.created_at = {
-    $lte: endDates[0], // Only keep the end date condition
-  };
-} else {
-  query.created_at = {
-    $gte: startDates[0], // Include both start and end date conditions
-    $lte: endDates[0],
-  };
-}
+      const query = {
+        service: service_id,
+        close_status: true,
+        closedate: {
+          $gte: startDates[0],
+        }
+      };
+
+      // Check if deliverystatus is true
+      if (client.deliverystatus === true) {
+        query.created_at = {
+          $lte: endDates[0], // Only keep the end date condition
+        };
+      } else {
+        query.created_at = {
+          $gte: startDates[0], // Include both start and end date conditions
+          $lte: endDates[0],
+        };
+      }
 
 
       const protocol = req.protocol; // Will be 'http' or 'https'
@@ -1884,10 +1880,10 @@ if (client.deliverystatus === true) {
         service: service_id,
         close_status: true,
         closedate: {
-         $gte: startDates[0], 
+          $gte: startDates[0],
         }
       };
-      
+
       // Check if deliverystatus is true
       if (client.deliverystatus === true) {
         query.created_at = {
@@ -1899,7 +1895,7 @@ if (client.deliverystatus === true) {
           $lte: endDates[0],
         };
       }
-      
+
 
 
       // Print the query to the console
@@ -1940,7 +1936,7 @@ if (client.deliverystatus === true) {
       const query = {
         service: service_id,
         close_status: true,
-        closeprice: { $ne: 0 } 
+        closeprice: { $ne: 0 }
       };
 
       if (search && search.trim() !== '') {
@@ -1961,18 +1957,18 @@ if (client.deliverystatus === true) {
 
 
 
-        const protocol = req.protocol; // Will be 'http' or 'https'
+      const protocol = req.protocol; // Will be 'http' or 'https'
 
-        const baseUrl = `${protocol}://${req.headers.host}`; // Construct the base URL
-  
-           const signalsWithReportUrls = signals.map(signal => {
-        
-            return {
-                ...signal,
-                report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null 
-            };
-        });
-       
+      const baseUrl = `${protocol}://${req.headers.host}`; // Construct the base URL
+
+      const signalsWithReportUrls = signals.map(signal => {
+
+        return {
+          ...signal,
+          report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null
+        };
+      });
+
       const totalSignals = await Signal_Modal.countDocuments(query);
 
       return res.json({
@@ -2097,76 +2093,78 @@ if (client.deliverystatus === true) {
   async BasketListss(req, res) {
     try {
       const { clientid } = req.body; // assuming clientid is passed in the request
-  
+
       // Get the current date
       const currentDate = new Date();
-  
+
       const clientObjectId = new mongoose.Types.ObjectId(clientid);
 
 
       const result = await Basket_Modal.aggregate([
         {
-            $lookup: {
-                from: 'basketsubscriptions',
-                localField: '_id',
-                foreignField: 'basket_id',
-                as: 'subscription_info'
-            }
-        },
-      {
-    $addFields: {
-      filteredSubscriptions: {
-        $ifNull: [
-          {
-            $filter: {
-              input: '$subscription_info',
-              as: 'sub',
-              cond: { $eq: ['$$sub.client_id', clientObjectId] }
-            }
-          },
-          []
-        ]
-      }
-    }
-  },
-        {
-            $addFields: {
-                latestSubscription: {
-                    $arrayElemAt: [
-                        {
-                            $sortArray: {
-                                input: '$filteredSubscriptions',
-                                sortBy: { enddate: -1 }
-                            }
-                        },
-                        0
-                    ]
-                }
-            }
+          $lookup: {
+            from: 'basketsubscriptions',
+            localField: '_id',
+            foreignField: 'basket_id',
+            as: 'subscription_info'
+          }
         },
         {
-            $addFields: {
-                isSubscribed: {
-                    $cond: {
-                        if: { $gt: [{ $size: '$filteredSubscriptions' }, 0] },
-                        then: true,
-                        else: false
-                    }
+          $addFields: {
+            filteredSubscriptions: {
+              $ifNull: [
+                {
+                  $filter: {
+                    input: '$subscription_info',
+                    as: 'sub',
+                    cond: { $eq: ['$$sub.client_id', clientObjectId] }
+                  }
                 },
-                isActive: {
-                    $cond: {
-                        if: { $and: [
-                            { $gt: [{ $size: '$filteredSubscriptions' }, 0] },
-                            { $gte: [currentDate, '$latestSubscription.startdate'] },
-                            { $lte: [currentDate, '$latestSubscription.enddate'] }
-                        ]},
-                        then: true,
-                        else: false
-                    }
-                },
-                startdate: '$latestSubscription.startdate',
-                enddate: '$latestSubscription.enddate'
+                []
+              ]
             }
+          }
+        },
+        {
+          $addFields: {
+            latestSubscription: {
+              $arrayElemAt: [
+                {
+                  $sortArray: {
+                    input: '$filteredSubscriptions',
+                    sortBy: { enddate: -1 }
+                  }
+                },
+                0
+              ]
+            }
+          }
+        },
+        {
+          $addFields: {
+            isSubscribed: {
+              $cond: {
+                if: { $gt: [{ $size: '$filteredSubscriptions' }, 0] },
+                then: true,
+                else: false
+              }
+            },
+            isActive: {
+              $cond: {
+                if: {
+                  $and: [
+                    { $gt: [{ $size: '$filteredSubscriptions' }, 0] },
+                    { $gte: [currentDate, '$latestSubscription.startdate'] },
+                    { $lte: [currentDate, '$latestSubscription.enddate'] }
+                  ]
+                },
+                then: true,
+                else: false
+              }
+            },
+            startdate: '$latestSubscription.startdate',
+            enddate: '$latestSubscription.enddate'
+          }
         },
         {
           $match: {
@@ -2228,45 +2226,45 @@ if (client.deliverystatus === true) {
             ],
             as: "stock_details"
           }
-        },        
+        },
         {
-            $project: {
-                basket_id: 1,
-                title: 1,
-                description: 1,
-                full_price: 1,
-                basket_price: 1,
-                mininvamount: 1,
-                accuracy: 1,
-                portfolioweightage: 1,
-                cagr: 1,
-                cagr_live: 1,
-                frequency: 1,
-                validity: 1,
-                next_rebalance_date: 1,
-                status: 1,
-                del: 1,
-                created_at: 1,
-                updated_at: 1,
-                type: 1,
-                themename: 1,
-                isSubscribed: 1,
-                isActive: 1,
-                startdate: 1,
-                enddate: 1,
-                stock_details: {
-                  $filter: {
-                      input: "$stock_details", // Filter the joined stock details
-                      as: "stock",
-                      cond: { $eq: ["$$stock.del", false] } // Exclude deleted stocks
-                  }
-              },
-            }
+          $project: {
+            basket_id: 1,
+            title: 1,
+            description: 1,
+            full_price: 1,
+            basket_price: 1,
+            mininvamount: 1,
+            accuracy: 1,
+            portfolioweightage: 1,
+            cagr: 1,
+            cagr_live: 1,
+            frequency: 1,
+            validity: 1,
+            next_rebalance_date: 1,
+            status: 1,
+            del: 1,
+            created_at: 1,
+            updated_at: 1,
+            type: 1,
+            themename: 1,
+            isSubscribed: 1,
+            isActive: 1,
+            startdate: 1,
+            enddate: 1,
+            stock_details: {
+              $filter: {
+                input: "$stock_details", // Filter the joined stock details
+                as: "stock",
+                cond: { $eq: ["$$stock.del", false] } // Exclude deleted stocks
+              }
+            },
+          }
         }
-    ]);
-    
+      ]);
 
-  
+
+
       res.status(200).json({
         status: true,
         message: "Baskets retrieved successfully.",
@@ -2280,12 +2278,12 @@ if (client.deliverystatus === true) {
       });
     }
   }
-  
+
 
   async BasketstockList(req, res) {
     try {
       const { id } = req.params;
-  
+
       // Step 1: Get the latest version for the given basket_id
       const latestVersion = await Basketstock_Modal.findOne({
         basket_id: id,
@@ -2294,7 +2292,7 @@ if (client.deliverystatus === true) {
       })
         .sort({ version: -1 }) // Sort by version in descending order
         .select("version"); // Fetch only the version field
-      
+
       // Step 2: Fetch basket stock data for the latest version
       let basketstock = [];
       if (latestVersion) {
@@ -2305,7 +2303,7 @@ if (client.deliverystatus === true) {
           version: latestVersion.version // Filter by the latest version
         }).lean(); // Use .lean() for plain objects to allow adding custom fields
       }
-      
+
       // Step 3: Add instrument_token to each basket stock
       if (basketstock.length > 0) {
         basketstock = await Promise.all(
@@ -2313,7 +2311,7 @@ if (client.deliverystatus === true) {
             const stockDetails = await Stock_Modal.findOne({
               tradesymbol: stock.tradesymbol // Match tradesymbol in the stocks collection
             }).select("instrument_token"); // Fetch only the instrument_token field
-      
+
             return {
               ...stock, // Spread existing stock fields
               instrument_token: stockDetails ? stockDetails.instrument_token : null // Add instrument_token
@@ -2321,7 +2319,7 @@ if (client.deliverystatus === true) {
           })
         );
       }
-  
+
       // Step 3: Return the response
       return res.json({
         status: true,
@@ -2341,8 +2339,8 @@ if (client.deliverystatus === true) {
   async MyPorfolio(req, res) {
     try {
       const { id, clientid } = req.params; // Extract basket_id and client_id from request parameters
-  
-     
+
+
       const result = await Basketorder_Modal.aggregate([
         {
           $match: {
@@ -2351,64 +2349,64 @@ if (client.deliverystatus === true) {
             ordertype: "BUY" // Filter by client_id
           }
         },
-           {
-            $group: {
-              _id: null, // Single group since we are already filtering by basket_id and client_id
-              maxVersion: { $max: "$version" } // Determine the highest version
-            }
-          },
-          {
-            $lookup: {
-              from: "basketordermodels", // Collection name
-              localField: "maxVersion", // The max version determined earlier
-              foreignField: "version", // Match version field in the collection
-              as: "latestOrders"
-            }
-          },
-          { $unwind: "$latestOrders" },
-          {
-            $match: {
-              "latestOrders.basket_id": id,
-              "latestOrders.clientid": clientid
-            }
-          },
-          {
-            $group: {
-              _id: "$latestOrders.tradesymbol", // Group by tradesymbol
-              totalQuantity: { $sum: "$latestOrders.quantity" }, // Sum the quantity
-              basket_id: { $first: "$latestOrders.basket_id" }, // Get the basket_id
-              clientid: { $first: "$latestOrders.clientid" }, // Get the client_id
-              ordertype: { $first: "$latestOrders.ordertype" }, // Get the ordertype (example)
-              price: { $first: "$latestOrders.price" }, // Get the price (example)
-              ordertoken: { $first: "$latestOrders.ordertoken" }, // Get the ordertype (example)
-              borkerid: { $first: "$latestOrders.borkerid" }, // Get the ordertype (example)
-              exchange: { $first: "$latestOrders.exchange" }, 
-              version: { $first: "$latestOrders.version" }, // Get the ordertype (example)
-              createdAt: { $first: "$latestOrders.createdAt" }, // Get createdAt timestamp
-              updatedAt: { $first: "$latestOrders.updatedAt" } // Get updatedAt timestamp
-            }
-          },
-          // Project the final fields for response
-          {
-            $project: {
-              _id: 0, // We don’t need the _id from the group stage
-              tradesymbol: "$_id", // Rename _id to tradesymbol
-              totalQuantity: 1,
-              basket_id: 1,
-              clientid: 1,
-              borkerid: 1,
-              ordertype: 1,
-              price: 1,
-              ordertoken: 1,
-              exchange: 1,
-              version: 1,
-              createdAt: 1,
-              updatedAt: 1
-
-            }
+        {
+          $group: {
+            _id: null, // Single group since we are already filtering by basket_id and client_id
+            maxVersion: { $max: "$version" } // Determine the highest version
           }
-        ]);
-  
+        },
+        {
+          $lookup: {
+            from: "basketordermodels", // Collection name
+            localField: "maxVersion", // The max version determined earlier
+            foreignField: "version", // Match version field in the collection
+            as: "latestOrders"
+          }
+        },
+        { $unwind: "$latestOrders" },
+        {
+          $match: {
+            "latestOrders.basket_id": id,
+            "latestOrders.clientid": clientid
+          }
+        },
+        {
+          $group: {
+            _id: "$latestOrders.tradesymbol", // Group by tradesymbol
+            totalQuantity: { $sum: "$latestOrders.quantity" }, // Sum the quantity
+            basket_id: { $first: "$latestOrders.basket_id" }, // Get the basket_id
+            clientid: { $first: "$latestOrders.clientid" }, // Get the client_id
+            ordertype: { $first: "$latestOrders.ordertype" }, // Get the ordertype (example)
+            price: { $first: "$latestOrders.price" }, // Get the price (example)
+            ordertoken: { $first: "$latestOrders.ordertoken" }, // Get the ordertype (example)
+            borkerid: { $first: "$latestOrders.borkerid" }, // Get the ordertype (example)
+            exchange: { $first: "$latestOrders.exchange" },
+            version: { $first: "$latestOrders.version" }, // Get the ordertype (example)
+            createdAt: { $first: "$latestOrders.createdAt" }, // Get createdAt timestamp
+            updatedAt: { $first: "$latestOrders.updatedAt" } // Get updatedAt timestamp
+          }
+        },
+        // Project the final fields for response
+        {
+          $project: {
+            _id: 0, // We don’t need the _id from the group stage
+            tradesymbol: "$_id", // Rename _id to tradesymbol
+            totalQuantity: 1,
+            basket_id: 1,
+            clientid: 1,
+            borkerid: 1,
+            ordertype: 1,
+            price: 1,
+            ordertoken: 1,
+            exchange: 1,
+            version: 1,
+            createdAt: 1,
+            updatedAt: 1
+
+          }
+        }
+      ]);
+
       return res.json({
         status: true,
         message: "Basket Stock fetched successfully",
@@ -2416,7 +2414,7 @@ if (client.deliverystatus === true) {
       });
     } catch (error) {
       console.error("Error fetching basket stock:", error);
-  
+
       // Handle any server errors gracefully
       return res.json({
         status: false,
@@ -2425,22 +2423,22 @@ if (client.deliverystatus === true) {
       });
     }
   }
-  
 
-  
+
+
   async BasketstockLists(req, res) {
     try {
       const { id, clientid } = req.params; // Extract basket_id and client_id from request parameters
-  
+
       // Convert clientid to ObjectId for database query
       const clientObjectId = new mongoose.Types.ObjectId(clientid);
-  
+
       // Fetch the latest subscription for the given basket_id and client_id
       const subscription = await BasketSubscription_Modal.findOne({
         basket_id: id,
         client_id: clientObjectId,
       }).sort({ created_at: -1 });
-  
+
       // Check if subscription exists
       if (!subscription) {
         return res.json({
@@ -2449,10 +2447,10 @@ if (client.deliverystatus === true) {
           data: [],
         });
       }
-  
+
       // Extract the subscription's end date
       const latestEndDate = subscription.enddate;
-  
+
       // Fetch the latest version of basket stocks and perform aggregations
       const latestVersionStock = await Basketstock_Modal.aggregate([
         {
@@ -2525,7 +2523,7 @@ if (client.deliverystatus === true) {
           },
         },
       ]);
-  
+
       // Return the fetched data as a response
       return res.json({
         status: true,
@@ -2534,7 +2532,7 @@ if (client.deliverystatus === true) {
       });
     } catch (error) {
       console.error("Error fetching basket stock:", error);
-  
+
       // Handle any server errors gracefully
       return res.json({
         status: false,
@@ -2543,21 +2541,21 @@ if (client.deliverystatus === true) {
       });
     }
   }
-  
-  
+
+
   async BasketstockListBalance(req, res) {
     try {
       const { id, clientid } = req.params; // Extract basket_id and client_id from request parameters
-  
+
       // Convert clientid to ObjectId for database query if necessary
       const clientObjectId = new mongoose.Types.ObjectId(clientid);
-  
+
       // Fetch the latest subscription for the given basket_id and client_id
       const subscription = await BasketSubscription_Modal.findOne({
         basket_id: id,
         client_id: clientObjectId,
       }).sort({ created_at: -1 });
-  
+
       // Check if subscription exists
       if (!subscription) {
         return res.json({
@@ -2566,7 +2564,7 @@ if (client.deliverystatus === true) {
           data: [],
         });
       }
-  
+
       // Extract the subscription's end date
       const latestEndDate = subscription.enddate;
 
@@ -2607,8 +2605,8 @@ if (client.deliverystatus === true) {
             del: false,
             status: 1,
             created_at: { $lt: latestEndDate },
-            version: { $in: lastTwoVersions }, 
-            
+            version: { $in: lastTwoVersions },
+
           },
         },
         {
@@ -2673,18 +2671,18 @@ if (client.deliverystatus === true) {
           },
         },
       ]);
-  
+
       return res.json({
         status: true,
         message: "Basket Stock fetched successfully",
         data: latestVersionStock,
       });
-      
-      
-      
+
+
+
     } catch (error) {
       console.error("Error fetching basket stock:", error);
-  
+
       // Handle any server errors gracefully
       return res.json({
         status: false,
@@ -2693,12 +2691,12 @@ if (client.deliverystatus === true) {
       });
     }
   }
-  
+
   async getBasketVersionOrder(req, res) {
     try {
       // Extract basket_id, clientid, and version from request body
       const { basket_id, clientid, version } = req.body; // Fix typo: use req.body instead of req.bady
-  console.log("req.body",req.body);
+      console.log("req.body", req.body);
       // Perform aggregation to fetch orders from BasketOrderModel
       const orders = await Basketorder_Modal.aggregate([
         {
@@ -2739,7 +2737,7 @@ if (client.deliverystatus === true) {
           },
         },
       ]);
-  
+
       // Return the orders as a response
       return res.status(200).json({
         status: true,
@@ -2755,7 +2753,7 @@ if (client.deliverystatus === true) {
       });
     }
   }
-  
+
 
   async BasketList(req, res) {
     try {
@@ -3057,31 +3055,31 @@ if (client.deliverystatus === true) {
     try {
       const { id } = req.body;  // Extract client id from request body
       const currentDate = new Date();
-  
+
       // Fetch active plans
       const activePlans = await Planmanage.find({
         clientid: id,
         startdate: { $lte: currentDate },
         enddate: { $gte: currentDate }
       }).distinct('serviceid');
-    
+
       // Fetch expired plans
       const expiredPlans = await Planmanage.find({
         clientid: id,
         enddate: { $lt: currentDate }
       }).distinct('serviceid');
-    
+
       // Fetch all plans (non-subscription check)
       const allPlans = await Planmanage.find({
         clientid: id
       }).distinct('serviceid');
-    
+
       // Determine the type based on active/expired plans
       let query = {
         del: false,
         status: true
       };
-  
+
       if (activePlans.length > 0) {
         // If there are active plans
         query.$or = [
@@ -3098,37 +3096,37 @@ if (client.deliverystatus === true) {
           { type: 'nonsubscribe', service: "" }
         ];
       }
-  
+
       // If 'all' is selected, include all broadcasts
       if (activePlans.length > 0 || expiredPlans.length > 0 || allPlans.length === 0) {
         query.$or.push(
           { type: 'all' }
         );
       }
-  
+
       // Fetch the broadcasts
       const broadcasts = await Broadcast_Modal.find(query).sort({ created_at: -1 });
-  
+
       // Remove duplicates
       const uniqueBroadcasts = Array.from(new Set(broadcasts.map(b => b._id))).map(id => {
         return broadcasts.find(b => b._id === id);
       });
-  
+
       if (!uniqueBroadcasts.length) {
         return res.status(404).json({ status: false, message: "No matching broadcasts found." });
       }
-  
+
       // Return the matching broadcasts
       return res.status(200).json({ status: true, data: uniqueBroadcasts });
-  
+
     } catch (error) {
       console.error("Error fetching broadcasts:", error);
       return res.status(500).json({ status: false, message: "Internal server error" });
     }
   }
-  
-  
-  
+
+
+
   async myFreetrial(req, res) {
     try {
       const { id } = req.params;
@@ -3254,7 +3252,7 @@ if (client.deliverystatus === true) {
 
         const [firstSignal, lastSignal] = await Promise.all([
           Signal_Modal.findOne({ del: 0, close_status: true, closeprice: { $ne: 0 }, service: serviceId }).sort({ created_at: 1 }),
-          Signal_Modal.findOne({ del: 0, close_status: true,  closeprice: { $ne: 0 }, service: serviceId }).sort({ created_at: -1 })
+          Signal_Modal.findOne({ del: 0, close_status: true, closeprice: { $ne: 0 }, service: serviceId }).sort({ created_at: -1 })
         ]);
 
         if (!firstSignal || !lastSignal) {
@@ -3435,236 +3433,236 @@ if (client.deliverystatus === true) {
 
 
 
-/*
+  /*
+    async Notification(req, res) {
+      try {
+        const { id } = req.params;
+        const { page = 1 } = req.query; 
+        let limit = 10;
+  
+        const today = new Date();
+  
+  
+  
+        const client = await Clients_Modal.findById(id).select('createdAt');
+        if (!client) {
+          return res.status(404).json({ status: false, message: "Client not found" });
+        }
+        const clientCreatedAt = client.createdAt;
+  
+        const activePlans = await Planmanage.find({
+          clientid: id,
+        startdate: { $lte: today },
+        enddate: { $gte: today }
+        }).select('serviceid');
+  
+  
+  
+        
+        const activeServiceIds = activePlans.map(plan => plan.serviceid);
+  
+        const result = await Notification_Modal.find({
+          createdAt: { $gte: clientCreatedAt }, 
+          $or: [
+            { clientid: id },
+            {
+              clientid: null,
+              $or: [
+                {
+                  type: { $in: ['close signal', 'open signal'] },
+                  segmentid: { $in: activeServiceIds } 
+                },
+                { type: { $nin: ['close signal', 'open signal'] } }
+              ]
+            },
+            {
+              clienttype: {
+                $in: [
+                  'active', 
+                  'expired', 
+                  'no subscribe', 
+                  'all'
+                ]
+              },
+              $or: [
+                { clienttype: 'active', segmentid: { $in: activeServiceIds } },
+                {
+                  clienttype: 'expired',
+                  segmentid: {
+                    $in: await Planmanage.find({
+                      clientid: id,
+                      startdate: { $lte: today },
+                      enddate: { $gte: today } 
+                    }).distinct('serviceid')
+                  }
+                },
+                {
+                  clienttype: 'nonsubscribe',
+                  segmentid: {
+                    $nin: await Planmanage.find({ clientid: id }).distinct('serviceid')
+                  }
+                },
+                { clienttype: 'all' }
+              ]
+            }
+          ]
+        })
+          .sort({ createdAt: -1 })
+          .skip((page - 1) * limit) 
+          .limit(parseInt(limit)); 
+  
+        const totalCount = await Notification_Modal.countDocuments({
+          createdAt: { $gte: clientCreatedAt }, 
+          $or: [
+            { clientid: id },
+            {
+              clientid: null,
+              $or: [
+                {
+                  type: { $in: ['close signal', 'open signal'] },
+                  segmentid: { $in: activeServiceIds }
+                },
+                { type: { $nin: ['close signal', 'open signal'] } }
+              ]
+            },
+            {
+              clienttype: {
+                $in: ['active', 'expired', 'no subscribe', 'all']
+              },
+              $or: [
+                { clienttype: 'active', segmentid: { $in: activeServiceIds } },
+                {
+                  clienttype: 'expired',
+                  segmentid: {
+                    $in: await Planmanage.find({
+                      clientid: id,
+                      enddate: { $lt: today }
+                    }).distinct('serviceid')
+                  }
+                },
+                {
+                  clienttype: 'nonsubscribe',
+                  segmentid: {
+                    $nin: await Planmanage.find({ clientid: id }).distinct('serviceid')
+                  }
+                },
+                { clienttype: 'all' }
+              ]
+            }
+          ]
+        });
+  
+        return res.json({
+          status: true,
+          message: "get",
+          data: result,
+          pagination: {
+            total: totalCount,
+            page: parseInt(page),
+            limit: parseInt(limit),
+            totalPages: Math.ceil(totalCount / limit)
+          }
+        });
+  
+      } catch (error) {
+        return res.json({ status: false, message: "Server error", data: [] });
+      }
+    }
+  
+  */
+
   async Notification(req, res) {
     try {
       const { id } = req.params;
-      const { page = 1 } = req.query; 
-      let limit = 10;
-
+      const { page = 1 } = req.query; // Default values for page and limit
+      const limit = 10;
       const today = new Date();
 
-
-
+      // Fetch the client's creation date
       const client = await Clients_Modal.findById(id).select('createdAt');
       if (!client) {
         return res.status(404).json({ status: false, message: "Client not found" });
       }
       const clientCreatedAt = client.createdAt;
 
+      // Fetch active plans
       const activePlans = await Planmanage.find({
         clientid: id,
-      startdate: { $lte: today },
-      enddate: { $gte: today }
-      }).select('serviceid');
+        startdate: { $lte: today },
+        enddate: { $gte: today }
+      }).distinct('serviceid');
 
+      // Fetch expired plans
+      const expiredPlans = await Planmanage.find({
+        clientid: id,
+        enddate: { $lt: today }
+      }).distinct('serviceid');
 
+      // Fetch all plans (non-subscription check)
+      const allPlans = await Planmanage.find({
+        clientid: id
+      }).distinct('serviceid');
 
-      
-      const activeServiceIds = activePlans.map(plan => plan.serviceid);
+      // Determine if client has no active or expired plans
+      const noPlans = activePlans.length === 0 && expiredPlans.length === 0;
 
-      const result = await Notification_Modal.find({
-        createdAt: { $gte: clientCreatedAt }, 
+      // Logging plan information for debugging
+      // console.log("Active Plans:", activePlans);
+      // console.log("Expired Plans:", expiredPlans);
+      // console.log("All Plans (No Subscription):", allPlans);
+
+      // Construct the query dynamically
+      const queryConditions = {
+        createdAt: { $gte: clientCreatedAt }, // Notifications created after client creation date
         $or: [
+          // Notifications specific to the client
           { clientid: id },
+
+          // Global notifications
           {
             clientid: null,
             $or: [
-              {
-                type: { $in: ['close signal', 'open signal'] },
-                segmentid: { $in: activeServiceIds } 
-              },
-              { type: { $nin: ['close signal', 'open signal'] } }
+              // Global notifications with 'close signal', 'open signal', or 'add broadcast' types
+              { type: { $in: ['close signal', 'open signal', 'add broadcast'] }, segmentid: { $in: activePlans } },
+              // Global notifications with other types
+              { type: { $nin: ['close signal', 'open signal', 'add broadcast'] } }
             ]
           },
+
+          // Broadcast notifications
           {
-            clienttype: {
-              $in: [
-                'active', 
-                'expired', 
-                'no subscribe', 
-                'all'
-              ]
-            },
+            clienttype: { $in: ['active', 'expired', 'nonsubscribe', 'all'] },
             $or: [
-              { clienttype: 'active', segmentid: { $in: activeServiceIds } },
-              {
-                clienttype: 'expired',
-                segmentid: {
-                  $in: await Planmanage.find({
-                    clientid: id,
-                    startdate: { $lte: today },
-                    enddate: { $gte: today } 
-                  }).distinct('serviceid')
-                }
-              },
-              {
-                clienttype: 'nonsubscribe',
-                segmentid: {
-                  $nin: await Planmanage.find({ clientid: id }).distinct('serviceid')
-                }
-              },
+              // For active clients, include active plans
+              { clienttype: 'active', segmentid: { $in: activePlans } },
+              // For expired clients, include expired plans
+              { clienttype: 'expired', segmentid: { $in: expiredPlans } },
+              // For clients with no active or expired plans (no subscription)
+              ...(noPlans ? [{ clienttype: 'nonsubscribe' }] : []),
+              // For all clients
               { clienttype: 'all' }
             ]
           }
         ]
-      })
+      };
+
+      // Fetch notifications based on constructed query
+      const result = await Notification_Modal.find(queryConditions)
         .sort({ createdAt: -1 })
-        .skip((page - 1) * limit) 
-        .limit(parseInt(limit)); 
+        .skip((page - 1) * limit)  // Pagination
+        .limit(parseInt(limit));   // Limit the number of records
 
-      const totalCount = await Notification_Modal.countDocuments({
-        createdAt: { $gte: clientCreatedAt }, 
-        $or: [
-          { clientid: id },
-          {
-            clientid: null,
-            $or: [
-              {
-                type: { $in: ['close signal', 'open signal'] },
-                segmentid: { $in: activeServiceIds }
-              },
-              { type: { $nin: ['close signal', 'open signal'] } }
-            ]
-          },
-          {
-            clienttype: {
-              $in: ['active', 'expired', 'no subscribe', 'all']
-            },
-            $or: [
-              { clienttype: 'active', segmentid: { $in: activeServiceIds } },
-              {
-                clienttype: 'expired',
-                segmentid: {
-                  $in: await Planmanage.find({
-                    clientid: id,
-                    enddate: { $lt: today }
-                  }).distinct('serviceid')
-                }
-              },
-              {
-                clienttype: 'nonsubscribe',
-                segmentid: {
-                  $nin: await Planmanage.find({ clientid: id }).distinct('serviceid')
-                }
-              },
-              { clienttype: 'all' }
-            ]
-          }
-        ]
-      });
-
+      // Return the response with notifications
       return res.json({
         status: true,
-        message: "get",
-        data: result,
-        pagination: {
-          total: totalCount,
-          page: parseInt(page),
-          limit: parseInt(limit),
-          totalPages: Math.ceil(totalCount / limit)
-        }
+        message: "Notifications fetched successfully",
+        data: result
       });
-
     } catch (error) {
-      return res.json({ status: false, message: "Server error", data: [] });
+      // console.error(error);
+      return res.status(500).json({ status: false, message: "Server error", data: [] });
     }
   }
-
-*/
-
-async Notification(req, res) {
-  try {
-    const { id } = req.params;
-    const { page = 1 } = req.query; // Default values for page and limit
-    const limit = 10;
-    const today = new Date();
-
-    // Fetch the client's creation date
-    const client = await Clients_Modal.findById(id).select('createdAt');
-    if (!client) {
-      return res.status(404).json({ status: false, message: "Client not found" });
-    }
-    const clientCreatedAt = client.createdAt;
-
-    // Fetch active plans
-    const activePlans = await Planmanage.find({
-      clientid: id,
-      startdate: { $lte: today },
-      enddate: { $gte: today }
-    }).distinct('serviceid');
-
-    // Fetch expired plans
-    const expiredPlans = await Planmanage.find({
-      clientid: id,
-      enddate: { $lt: today }
-    }).distinct('serviceid');
-
-    // Fetch all plans (non-subscription check)
-    const allPlans = await Planmanage.find({
-      clientid: id
-    }).distinct('serviceid');
-
-    // Determine if client has no active or expired plans
-    const noPlans = activePlans.length === 0 && expiredPlans.length === 0;
-
-    // Logging plan information for debugging
-    // console.log("Active Plans:", activePlans);
-    // console.log("Expired Plans:", expiredPlans);
-    // console.log("All Plans (No Subscription):", allPlans);
-
-    // Construct the query dynamically
-    const queryConditions = {
-      createdAt: { $gte: clientCreatedAt }, // Notifications created after client creation date
-      $or: [
-        // Notifications specific to the client
-        { clientid: id },
-        
-        // Global notifications
-        {
-          clientid: null,
-          $or: [
-            // Global notifications with 'close signal', 'open signal', or 'add broadcast' types
-            { type: { $in: ['close signal', 'open signal', 'add broadcast'] }, segmentid: { $in: activePlans } },
-            // Global notifications with other types
-            { type: { $nin: ['close signal', 'open signal', 'add broadcast'] } }
-          ]
-        },
-        
-        // Broadcast notifications
-        {
-          clienttype: { $in: ['active', 'expired', 'nonsubscribe', 'all'] },
-          $or: [
-            // For active clients, include active plans
-            { clienttype: 'active', segmentid: { $in: activePlans } },
-            // For expired clients, include expired plans
-            { clienttype: 'expired', segmentid: { $in: expiredPlans } },
-            // For clients with no active or expired plans (no subscription)
-            ...(noPlans ? [{ clienttype: 'nonsubscribe' }] : []),
-            // For all clients
-            { clienttype: 'all' }
-          ]
-        }
-      ]
-    };
-
-    // Fetch notifications based on constructed query
-    const result = await Notification_Modal.find(queryConditions)
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)  // Pagination
-      .limit(parseInt(limit));   // Limit the number of records
-
-    // Return the response with notifications
-    return res.json({
-      status: true,
-      message: "Notifications fetched successfully",
-      data: result
-    });
-  } catch (error) {
-    // console.error(error);
-    return res.status(500).json({ status: false, message: "Server error", data: [] });
-  }
-}
 
 
 
@@ -3705,7 +3703,7 @@ async Notification(req, res) {
 
       const banks = await Bank_Modal.find({ del: false, status: true, type: 2 });
 
-      const protocol = req.protocol; 
+      const protocol = req.protocol;
 
       const baseUrl = `${protocol}://${req.headers.host}`; // Construct base URL dynamically
 
@@ -3735,7 +3733,7 @@ async Notification(req, res) {
   async placeOrder(req, res) {
     try {
       const { basket_id, clientid, brokerid, investmentamount, type } = req.body;
-  
+
       const basket = await Basket_Modal.findById(basket_id);
       if (!basket) {
         return res.status(400).json({
@@ -3743,65 +3741,65 @@ async Notification(req, res) {
           message: "Basket not found.",
         });
       }
-  
 
-                  
-            if (investmentamount < basket.mininvamount) {
-              return res.status(400).json({
-                status: false,
-                message: `Investment amount must be at least ${basket.mininvamount}.`,
-              });
-            }
 
-            const client = await Clients_Modal.findById(clientid);
-            if (!client) {
-                return res.status(404).json({
-                    status: false,
-                    message: "Client not found"
-                });
-            }
 
-            if (client.tradingstatus == 0) {
-              return res.status(404).json({
-                  status: false,
-                  message: "Client Broker Not Login, Please Login With Broker"
-              });
-          }
-
-        
-      // Get stocks for the basket
-      const existingStocks = await Basketstock_Modal.find({ basket_id }).sort({ version: -1 });
-
-      const version = existingStocks.length > 0 ? existingStocks[0].version : 1; 
-     
-
-if(version==1)  {
       if (investmentamount < basket.mininvamount) {
         return res.status(400).json({
           status: false,
           message: `Investment amount must be at least ${basket.mininvamount}.`,
         });
       }
-    }
-      
+
+      const client = await Clients_Modal.findById(clientid);
+      if (!client) {
+        return res.status(404).json({
+          status: false,
+          message: "Client not found"
+        });
+      }
+
+      if (client.tradingstatus == 0) {
+        return res.status(404).json({
+          status: false,
+          message: "Client Broker Not Login, Please Login With Broker"
+        });
+      }
+
+
+      // Get stocks for the basket
+      const existingStocks = await Basketstock_Modal.find({ basket_id }).sort({ version: -1 });
+
+      const version = existingStocks.length > 0 ? existingStocks[0].version : 1;
+
+
+      if (version == 1) {
+        if (investmentamount < basket.mininvamount) {
+          return res.status(400).json({
+            status: false,
+            message: `Investment amount must be at least ${basket.mininvamount}.`,
+          });
+        }
+      }
+
       if (!existingStocks || existingStocks.length === 0) {
         return res.status(400).json({
           status: false,
           message: "No stocks found in the basket.",
         });
       }
-  
+
       // Total investment amount
       const totalAmount = investmentamount;
-  
+
       // Initialize an array to store the calculated stock orders
       const stockOrders = [];
       let respo;
       let isFundChecked = false; // Flag to ensure we check funds only once
       // Iterate over each stock to calculate allocated amount and quantity
       for (const stock of existingStocks) {
-        const { tradesymbol, weightage,name } = stock;
-  
+        const { tradesymbol, weightage, name } = stock;
+
         try {
           // Fetch stock data from Stock_Modal
           const stockData = await Stock_Modal.findOne({ tradesymbol });
@@ -3809,25 +3807,25 @@ if(version==1)  {
             console.log(`Stock data not found for trade symbol: ${tradesymbol}`);
             continue; // Skip this stock if no data found
           }
-  
+
           const instrumentToken = stockData.instrument_token;
-  
+
           // Fetch live price from Liveprice_Modal
           const livePrice = await Liveprice_Modal.findOne({ token: instrumentToken });
           if (!livePrice) {
             console.log(`Live price not found for instrument token: ${instrumentToken}`);
             continue; // Skip this stock if live price is unavailable
           }
-  
+
           const lpPrice = livePrice.lp;
-  
+
           // Calculate allocated amount and quantity
           const allocatedAmount = (weightage / 100) * totalAmount;
           const quantity = Math.floor(allocatedAmount / lpPrice); // Use Math.floor to avoid fractional shares
-  
+
           // Store the order details for the stock
           const stockOrder = {
-            symbol:name,
+            symbol: name,
             tradesymbol,
             quantity,
             lpPrice,
@@ -3839,313 +3837,312 @@ if(version==1)  {
           // Add the stock order to the stockOrders array
           stockOrders.push(stockOrder);
 
- if(type==1) {
-  let howmanytimebuy = 1;
-       if(brokerid==2) {
-       
-
-        if (!isFundChecked) {
-          const orders = await Basketorder_Modal.find({
-            tradesymbol: tradesymbol,
-            clientid: clientid,
-            basket_id: basket_id,
-            version:version,
-            borkerid: brokerid
-        })
-        .sort({ createdAt: -1 }) // Sort by `createdAt` in descending order
-        .limit(1);
-
-        
-            if (orders.length > 0) {
-                const order = orders[0]; // Use the first order if only one is relevant
-                howmanytimebuy = (order.howmanytimebuy || 0) + 1; // Increment the `howmanytimebuy` value
-              }
-        }
-        const authToken = client.authtoken;
-        const userId = client.alice_userid;
-
-          const config = {
-            method: 'get', 
-            url: `https://ant.aliceblueonline.com/rest/AliceBlueAPIService/api/limits/getRmsLimits`, // Construct the full URL
-            headers: {
-              'Authorization': 'Bearer ' + userId + ' ' + authToken,
-            }
-          };
-          
-          const response = await axios(config);
-          const responseData = response.data;
-          
-          if (responseData[0].stat == 'Ok') {
-            // if (!isFundChecked) {
-            //   isFundChecked = true; // Set the flag to true
-            //   const net = parseFloat(responseData[0].net); // Convert responseData.net to a float
-            //  const total = parseFloat(totalAmount);
-            //   if (total >= net) {
-            //     return res.status(400).json({
-            //       status: false,
-            //       message: "Insufficient funds in your broker account.",
-            //     });
-            //   }
-            // }
-
-         
-     
-            respo = await orderplace({
-              id: clientid,
-              basket_id:basket_id,
-              quantity,
-              price: lpPrice,
-              tradesymbol: tradesymbol,
-              instrumentToken: instrumentToken,
-              version: stock.version,
-              brokerid: brokerid,
-              calltype: "BUY",
-              howmanytimebuy
-            });
-
-            console.log("respo",respo);
-
-         }
-        
-          
-        }
-        else if(brokerid==1) {
+          if (type == 1) {
+            let howmanytimebuy = 1;
+            if (brokerid == 2) {
 
 
-          if (!isFundChecked) {
-            const orders = await Basketorder_Modal.find({
-              tradesymbol: tradesymbol,
-              clientid: clientid,
-              basket_id: basket_id,
-              version:version,
-              borkerid: brokerid
-          })
-          .sort({ createdAt: -1 }) // Sort by `createdAt` in descending order
-          .limit(1);
-  
-          
-              if (orders.length > 0) {
+              if (!isFundChecked) {
+                const orders = await Basketorder_Modal.find({
+                  tradesymbol: tradesymbol,
+                  clientid: clientid,
+                  basket_id: basket_id,
+                  version: version,
+                  borkerid: brokerid
+                })
+                  .sort({ createdAt: -1 }) // Sort by `createdAt` in descending order
+                  .limit(1);
+
+
+                if (orders.length > 0) {
                   const order = orders[0]; // Use the first order if only one is relevant
                   howmanytimebuy = (order.howmanytimebuy || 0) + 1; // Increment the `howmanytimebuy` value
                 }
-          }
+              }
+              const authToken = client.authtoken;
+              const userId = client.alice_userid;
 
-          const authToken = client.authtoken;
-          const userId = client.apikey;
-  
-          var config = {
-            method: 'get',
-            url: 'https://apiconnect.angelone.in/rest/secure/angelbroking/user/v1/getRMS',
-            headers: { 
-              'Authorization': `Bearer ${authToken}`,
-              'Content-Type': 'application/json', 
-              'Accept': 'application/json', 
-              'X-UserType': 'USER', 
-              'X-SourceID': 'WEB', 
-              'X-ClientLocalIP': 'CLIENT_LOCAL_IP', // Replace with actual IP
-              'X-ClientPublicIP': 'CLIENT_PUBLIC_IP', // Replace with actual IP
-              'X-MACAddress': 'MAC_ADDRESS', // Replace with actual MAC address
-              'X-PrivateKey': userId // Replace with actual API key
-          },
-          };
-          
-            
-            const response = await axios(config);
-            if (response.data.message == 'SUCCESS') {
-            const responseData = response.data.data;
-           
-            if (!isFundChecked) {
-              isFundChecked = true; // Set the flag to true
-              const net = parseFloat(responseData.net); // Convert responseData.net to a float
-              const total = parseFloat(totalAmount);
-            
-               if (total >= net) {
-                return res.status(400).json({
-                  status: false,
-                  message: "Insufficient funds in your broker account.",
+              const config = {
+                method: 'get',
+                url: `https://ant.aliceblueonline.com/rest/AliceBlueAPIService/api/limits/getRmsLimits`, // Construct the full URL
+                headers: {
+                  'Authorization': 'Bearer ' + userId + ' ' + authToken,
+                }
+              };
+
+              const response = await axios(config);
+              const responseData = response.data;
+
+              if (responseData[0].stat == 'Ok') {
+                // if (!isFundChecked) {
+                //   isFundChecked = true; // Set the flag to true
+                //   const net = parseFloat(responseData[0].net); // Convert responseData.net to a float
+                //  const total = parseFloat(totalAmount);
+                //   if (total >= net) {
+                //     return res.status(400).json({
+                //       status: false,
+                //       message: "Insufficient funds in your broker account.",
+                //     });
+                //   }
+                // }
+
+
+
+                respo = await orderplace({
+                  id: clientid,
+                  basket_id: basket_id,
+                  quantity,
+                  price: lpPrice,
+                  tradesymbol: tradesymbol,
+                  instrumentToken: instrumentToken,
+                  version: stock.version,
+                  brokerid: brokerid,
+                  calltype: "BUY",
+                  howmanytimebuy
+                });
+
+                console.log("respo", respo);
+
+              }
+
+
+            }
+            else if (brokerid == 1) {
+
+
+              if (!isFundChecked) {
+                const orders = await Basketorder_Modal.find({
+                  tradesymbol: tradesymbol,
+                  clientid: clientid,
+                  basket_id: basket_id,
+                  version: version,
+                  borkerid: brokerid
+                })
+                  .sort({ createdAt: -1 }) // Sort by `createdAt` in descending order
+                  .limit(1);
+
+
+                if (orders.length > 0) {
+                  const order = orders[0]; // Use the first order if only one is relevant
+                  howmanytimebuy = (order.howmanytimebuy || 0) + 1; // Increment the `howmanytimebuy` value
+                }
+              }
+
+              const authToken = client.authtoken;
+              const userId = client.apikey;
+
+              var config = {
+                method: 'get',
+                url: 'https://apiconnect.angelone.in/rest/secure/angelbroking/user/v1/getRMS',
+                headers: {
+                  'Authorization': `Bearer ${authToken}`,
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+                  'X-UserType': 'USER',
+                  'X-SourceID': 'WEB',
+                  'X-ClientLocalIP': 'CLIENT_LOCAL_IP', // Replace with actual IP
+                  'X-ClientPublicIP': 'CLIENT_PUBLIC_IP', // Replace with actual IP
+                  'X-MACAddress': 'MAC_ADDRESS', // Replace with actual MAC address
+                  'X-PrivateKey': userId // Replace with actual API key
+                },
+              };
+
+
+              const response = await axios(config);
+              if (response.data.message == 'SUCCESS') {
+                const responseData = response.data.data;
+
+                if (!isFundChecked) {
+                  isFundChecked = true; // Set the flag to true
+                  const net = parseFloat(responseData.net); // Convert responseData.net to a float
+                  const total = parseFloat(totalAmount);
+
+                  if (total >= net) {
+                    return res.status(400).json({
+                      status: false,
+                      message: "Insufficient funds in your broker account.",
+                    });
+                  }
+                }
+
+
+
+                respo = await angleorderplace({
+                  id: clientid,
+                  basket_id: basket_id,
+                  quantity,
+                  price: lpPrice,
+                  tradesymbol: tradesymbol,
+                  instrumentToken: instrumentToken,
+                  version: stock.version,
+                  brokerid: brokerid,
+                  calltype: "BUY",
+                  howmanytimebuy // Increment version for the new stock order
+                });
+              }
+
+            }
+            else if (brokerid == 3) {
+
+              if (!isFundChecked) {
+                const orders = await Basketorder_Modal.find({
+                  tradesymbol: tradesymbol,
+                  clientid: clientid,
+                  basket_id: basket_id,
+                  version: version,
+                  borkerid: brokerid
+                })
+                  .sort({ createdAt: -1 }) // Sort by `createdAt` in descending order
+                  .limit(1);
+
+
+                if (orders.length > 0) {
+                  const order = orders[0]; // Use the first order if only one is relevant
+                  howmanytimebuy = (order.howmanytimebuy || 0) + 1; // Increment the `howmanytimebuy` value
+                }
+              }
+
+              var data2 = JSON.stringify({ "seg": "CASH", "exch": "NSE", "prod": "ALL" });
+              const requestData = `jData=${data2}`;
+
+              var config = {
+                method: "post",
+                url: `https://gw-napi.kotaksecurities.com/Orders/2.0/quick/user/limits?sId=${client.hserverid}`,
+                headers: {
+                  accept: "*/*",
+                  sid: client.kotakneo_sid,
+                  Auth: client.authtoken,
+                  "Content-Type": "application/json",
+                  Authorization: "Bearer " + client.oneTimeToken,
+                },
+                data: requestData,
+              };
+
+
+              const response = await axios.request(config);
+              if (response.data.stat === 'Ok') {
+
+                if (!isFundChecked) {
+                  isFundChecked = true; // Set the flag to true
+                  const net = parseFloat(response.data.Net); // Convert responseData.net to a float
+                  const total = parseFloat(totalAmount);
+
+                  if (total >= net) {
+                    return res.status(400).json({
+                      status: false,
+                      message: "Insufficient funds in your broker account.",
+                    });
+                  }
+                }
+
+
+                respo = await kotakneoorderplace({
+                  id: clientid,
+                  basket_id: basket_id,
+                  quantity,
+                  price: lpPrice,
+                  tradesymbol: tradesymbol,
+                  instrumentToken: instrumentToken,
+                  version: stock.version,
+                  brokerid: brokerid,
+                  calltype: "B",
+                  howmanytimebuy // Increment version for the new stock order
                 });
               }
             }
+            else if (brokerid == 4) {
 
-          
-     
-            respo =  await angleorderplace({
-            id: clientid,
-            basket_id:basket_id,
-            quantity,
-            price: lpPrice,
-            tradesymbol: tradesymbol,
-            instrumentToken: instrumentToken,
-            version: stock.version,
-            brokerid: brokerid,
-            calltype: "BUY",
-            howmanytimebuy // Increment version for the new stock order
-          });
-        }
-        
-        }
-        else if(brokerid==3) {
+              if (!isFundChecked) {
+                const orders = await Basketorder_Modal.find({
+                  tradesymbol: tradesymbol,
+                  clientid: clientid,
+                  basket_id: basket_id,
+                  version: version,
+                  borkerid: brokerid
+                })
+                  .sort({ createdAt: -1 }) // Sort by `createdAt` in descending order
+                  .limit(1);
 
-          if (!isFundChecked) {
-            const orders = await Basketorder_Modal.find({
-              tradesymbol: tradesymbol,
-              clientid: clientid,
-              basket_id: basket_id,
-              version:version,
-              borkerid: brokerid
-          })
-          .sort({ createdAt: -1 }) // Sort by `createdAt` in descending order
-          .limit(1);
-  
-          
-              if (orders.length > 0) {
+
+                if (orders.length > 0) {
                   const order = orders[0]; // Use the first order if only one is relevant
                   howmanytimebuy = (order.howmanytimebuy || 0) + 1; // Increment the `howmanytimebuy` value
                 }
-          }
-
-          var data2 = JSON.stringify({"seg": "CASH","exch": "NSE","prod": "ALL"});
-          const requestData = `jData=${data2}`;
-
-        var config = {
-            method: "post",
-            url: `https://gw-napi.kotaksecurities.com/Orders/2.0/quick/user/limits?sId=${client.hserverid}`,
-            headers: {
-                accept: "*/*",
-                sid: client.kotakneo_sid,
-                Auth: client.authtoken,
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + client.oneTimeToken,
-            },
-            data: requestData,
-        };
-
-
-        const response = await axios.request(config);
-        if (response.data.stat === 'Ok') {
-
-        if (!isFundChecked) {
-          isFundChecked = true; // Set the flag to true
-          const net = parseFloat(response.data.Net); // Convert responseData.net to a float
-          const total = parseFloat(totalAmount);
-        
-           if (total >= net) {
-            return res.status(400).json({
-              status: false,
-              message: "Insufficient funds in your broker account.",
-            });
-          }
-        }
-
-        
-        respo = await kotakneoorderplace({
-            id: clientid,
-            basket_id:basket_id,
-            quantity,
-            price: lpPrice,
-            tradesymbol: tradesymbol,
-            instrumentToken: instrumentToken,
-            version: stock.version,
-            brokerid: brokerid,
-            calltype: "B",
-            howmanytimebuy // Increment version for the new stock order
-          });
-        }
-        }
-        else if(brokerid==4) {
-
-          if (!isFundChecked) {
-            const orders = await Basketorder_Modal.find({
-              tradesymbol: tradesymbol,
-              clientid: clientid,
-              basket_id: basket_id,
-              version:version,
-              borkerid: brokerid
-          })
-          .sort({ createdAt: -1 }) // Sort by `createdAt` in descending order
-          .limit(1);
-  
-          
-              if (orders.length > 0) {
-                  const order = orders[0]; // Use the first order if only one is relevant
-                  howmanytimebuy = (order.howmanytimebuy || 0) + 1; // Increment the `howmanytimebuy` value
-                }
-          }
-
-          const authToken = client.authtoken;
-          const userId = client.apikey;
-  
-          var config = {
-            method: 'post',
-            url: 'https://fund.markethubonline.com/middleware/api/v2/GetLimits',
-            headers: { 
-              'Content-Type': 'application/json', 
-              'Authorization': `Bearer ${client.authtoken}`
-            },
-          };
-          
-            
-            const response = await axios(config);
-
-            if (response.data.message == 'Ok') {
-            const responseData = response.data.data;
-          
-      
-            if (!isFundChecked) {
-              isFundChecked = true; // Set the flag to true
-              const net = parseFloat(responseData.net); // Convert responseData.net to a float
-              const total = parseFloat(totalAmount);
-            
-               if (total >= net) {
-                return res.status(400).json({
-                  status: false,
-                  message: "Insufficient funds in your broker account.",
-                });
               }
+
+              const authToken = client.authtoken;
+              const userId = client.apikey;
+
+              var config = {
+                method: 'post',
+                url: 'https://fund.markethubonline.com/middleware/api/v2/GetLimits',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${client.authtoken}`
+                },
+              };
+
+
+              const response = await axios(config);
+
+              if (response.data.message == 'Ok') {
+                const responseData = response.data.data;
+
+
+                if (!isFundChecked) {
+                  isFundChecked = true; // Set the flag to true
+                  const net = parseFloat(responseData.net); // Convert responseData.net to a float
+                  const total = parseFloat(totalAmount);
+
+                  if (total >= net) {
+                    return res.status(400).json({
+                      status: false,
+                      message: "Insufficient funds in your broker account.",
+                    });
+                  }
+                }
+
+
+
+                respo = await markethuborderplace({
+                  id: clientid,
+                  basket_id: basket_id,
+                  quantity,
+                  price: lpPrice,
+                  tradesymbol: tradesymbol,
+                  instrumentToken: instrumentToken,
+                  version: stock.version,
+                  brokerid: brokerid,
+                  calltype: "BUY",
+                  howmanytimebuy // Increment version for the new stock order
+                });
+
+              }
+
             }
 
-          
-
-            respo = await markethuborderplace({
-            id: clientid,
-            basket_id:basket_id,
-            quantity,
-            price: lpPrice,
-            tradesymbol: tradesymbol,
-            instrumentToken: instrumentToken,
-            version: stock.version,
-            brokerid: brokerid,
-            calltype: "BUY",
-            howmanytimebuy // Increment version for the new stock order
-          });
-
-            }
-
-        }
-
-      }
+          }
 
         } catch (innerError) {
           console.error(`Error processing stock ${tradesymbol}:`, innerError);
           continue; // Skip this stock in case of an error
         }
       }
-  
-if(type!=1)
-{
-  res.status(200).json({
-    status: true,
-    message: type == 1 ? "Order Placed Successfully." : "Order Confirm Successfully.",
-    data: stockOrders,
-  });
-}
-else {
-      res.status(200).json({
-        "response":respo
-      });
 
-    }
-    
+      if (type != 1) {
+        res.status(200).json({
+          status: true,
+          message: type == 1 ? "Order Placed Successfully." : "Order Confirm Successfully.",
+          data: stockOrders,
+        });
+      }
+      else {
+        res.status(200).json({
+          "response": respo
+        });
+
+      }
+
     } catch (error) {
       console.error("Error placing order:", error);
       res.status(500).json({
@@ -4154,16 +4151,16 @@ else {
       });
     }
   }
-  
-  
+
+
 
 
   async exitPlaceOrder(req, res) {
     try {
       const { basket_id, clientid, brokerid, version, ids } = req.body;
-  
 
-      
+
+
       const basket = await Basket_Modal.findById(basket_id);
       if (!basket) {
         return res.status(400).json({
@@ -4171,18 +4168,18 @@ else {
           message: "Basket not found.",
         });
       }
-  
+
       // Get stocks for the basket
-      const existingStocks = await Basketstock_Modal.find({ basket_id:basket_id,version:version });      
+      const existingStocks = await Basketstock_Modal.find({ basket_id: basket_id, version: version });
       if (!existingStocks || existingStocks.length === 0) {
         return res.status(400).json({
           status: false,
           message: "No stocks found in the basket.",
         });
       }
-  
+
       // Total investment amount
-  
+
       // Initialize an array to store the calculated stock orders
       const stockOrders = [];
       let respo;
@@ -4190,31 +4187,31 @@ else {
       for (const stock of existingStocks) {
         const { tradesymbol, quantity } = stock;
 
-       
-        
-        const orders = await Basketorder_Modal.find({ 
-          tradesymbol: tradesymbol, 
-          clientid: clientid, 
-          basket_id: basket_id, 
+
+
+        const orders = await Basketorder_Modal.find({
+          tradesymbol: tradesymbol,
+          clientid: clientid,
+          basket_id: basket_id,
           borkerid: brokerid,
           version: version,
           howmanytimebuy: { $in: ids }
-      });
+        });
 
-    
+
 
         // Calculating buy and sell quantities
         const buyQuantity = orders
-            .filter(order => order.ordertype === 'BUY')
-            .reduce((total, order) => total + order.quantity, 0);
-    
+          .filter(order => order.ordertype === 'BUY')
+          .reduce((total, order) => total + order.quantity, 0);
+
         const sellQuantity = orders
-            .filter(order => order.ordertype === 'SELL')
-            .reduce((total, order) => total + order.quantity, 0);
-    
+          .filter(order => order.ordertype === 'SELL')
+          .reduce((total, order) => total + order.quantity, 0);
+
         // Calculating the difference
         const netQuantity = buyQuantity - sellQuantity;
-     
+
         try {
           // Fetch stock data from Stock_Modal
           const stockData = await Stock_Modal.findOne({ tradesymbol });
@@ -4222,19 +4219,19 @@ else {
             console.log(`Stock data not found for trade symbol: ${tradesymbol}`);
             continue; // Skip this stock if no data found
           }
-  
+
           const instrumentToken = stockData.instrument_token;
-  
+
           // Fetch live price from Liveprice_Modal
           const livePrice = await Liveprice_Modal.findOne({ token: instrumentToken });
           if (!livePrice) {
             console.log(`Live price not found for instrument token: ${instrumentToken}`);
             continue; // Skip this stock if live price is unavailable
           }
-  
+
           const lpPrice = livePrice.lp;
-  
-        
+
+
           const stockOrder = {
             tradesymbol,
             netQuantity,
@@ -4248,75 +4245,75 @@ else {
           stockOrders.push(stockOrder);
 
 
-          if(brokerid==2) {
-             respo = await orderplace({
-            id: clientid,
-            basket_id:basket_id,
-            quantity:netQuantity,
-            price: lpPrice,
-            tradesymbol: tradesymbol,
-            instrumentToken: instrumentToken,
-            version: version,
-            brokerid: brokerid,
-            calltype: "SELL",
-            howmanytimebuy:ids 
-          });
-        }
-          else if(basket_id==1) {
-             respo = await angleorderplace({
+          if (brokerid == 2) {
+            respo = await orderplace({
               id: clientid,
-              basket_id:basket_id,
-              quantity:netQuantity,
-              price: lpPrice,
-              tradesymbol: tradesymbol,
-              instrumentToken: instrumentToken,
-              version: version,
-              brokerid: brokerid,
-              calltype: "SELL", 
-              howmanytimebuy:ids 
-            });
-          
-          }
-          else if(brokerid==3) {
-
-             respo = await kotakneoorderplace({
-              id: clientid,
-              basket_id:basket_id,
-              quantity:netQuantity,
-              price: lpPrice,
-              tradesymbol: tradesymbol,
-              instrumentToken: instrumentToken,
-              version: version,
-              brokerid: brokerid,
-              calltype: "S",
-              howmanytimebuy:ids
-            });
-          
-          }
-          else if(brokerid==4) {
-             respo = await markethuborderplace({
-              id: clientid,
-              basket_id:basket_id,
-              quantity:netQuantity,
+              basket_id: basket_id,
+              quantity: netQuantity,
               price: lpPrice,
               tradesymbol: tradesymbol,
               instrumentToken: instrumentToken,
               version: version,
               brokerid: brokerid,
               calltype: "SELL",
-              howmanytimebuy:ids  
+              howmanytimebuy: ids
             });
-          
+          }
+          else if (basket_id == 1) {
+            respo = await angleorderplace({
+              id: clientid,
+              basket_id: basket_id,
+              quantity: netQuantity,
+              price: lpPrice,
+              tradesymbol: tradesymbol,
+              instrumentToken: instrumentToken,
+              version: version,
+              brokerid: brokerid,
+              calltype: "SELL",
+              howmanytimebuy: ids
+            });
+
+          }
+          else if (brokerid == 3) {
+
+            respo = await kotakneoorderplace({
+              id: clientid,
+              basket_id: basket_id,
+              quantity: netQuantity,
+              price: lpPrice,
+              tradesymbol: tradesymbol,
+              instrumentToken: instrumentToken,
+              version: version,
+              brokerid: brokerid,
+              calltype: "S",
+              howmanytimebuy: ids
+            });
+
+          }
+          else if (brokerid == 4) {
+            respo = await markethuborderplace({
+              id: clientid,
+              basket_id: basket_id,
+              quantity: netQuantity,
+              price: lpPrice,
+              tradesymbol: tradesymbol,
+              instrumentToken: instrumentToken,
+              version: version,
+              brokerid: brokerid,
+              calltype: "SELL",
+              howmanytimebuy: ids
+            });
+
           }
         } catch (innerError) {
           console.error(`Error processing stock ${tradesymbol}:`, innerError);
           continue; // Skip this stock in case of an error
         }
       }
-  
+
       // Respond with success and order details
       res.status(200).json({
-        "response":respo
+        "response": respo
       });
 
 
@@ -4328,13 +4325,13 @@ else {
       });
     }
   }
-  
+
 
   async checkBasketSell(req, res) {
     try {
       // Destructure the request body
       const { basket_id, clientid, brokerid, version } = req.body;
-  
+
       // Validate required fields
       if (!basket_id || !clientid || !brokerid || !version) {
         return res.status(400).json({
@@ -4342,28 +4339,28 @@ else {
           message: "Missing required parameters. Please provide basket_id, clientid, brokerid, version, and tradesymbol."
         });
       }
-  
+
       // Perform aggregation to group orders by `howmanytimebuy`
       const groupedOrders = await Basketorder_Modal.aggregate([
         {
-            $match: {
-                version: version,
-                clientid: clientid,
-                basket_id: basket_id,
-                borkerid: brokerid,
-                exitstatus: 0
-            }
+          $match: {
+            version: version,
+            clientid: clientid,
+            basket_id: basket_id,
+            borkerid: brokerid,
+            exitstatus: 0
+          }
         },
         {
-            $group: {
-                _id: "$howmanytimebuy"
-            }
+          $group: {
+            _id: "$howmanytimebuy"
+          }
         },
         {
-            $sort: { _id: 1 } // Sort by `howmanytimebuy` in ascending order
+          $sort: { _id: 1 } // Sort by `howmanytimebuy` in ascending order
         }
-    ]);
-    
+      ]);
+
       // Check if there are any grouped orders
       if (!groupedOrders.length) {
         return res.status(404).json({
@@ -4371,7 +4368,7 @@ else {
           message: "No orders found for the specified criteria."
         });
       }
-  
+
       // Return the grouped orders
       res.status(200).json({
         status: true,
@@ -4387,7 +4384,7 @@ else {
       });
     }
   }
-  
+
   async Refer(req, res) {
     return res.status(200).json({
       status: true,
@@ -4414,13 +4411,13 @@ else {
         {
           $project: {
             lp: 1,
-            curtime:1,
+            curtime: 1,
             token: 1,
             tradesymbol: '$stockDetails.tradesymbol', // Include tradesymbol from dstocks
           }
         }
       ]);
-  
+
       return res.json({
         status: true,
         message: "Live prices fetched successfully",
@@ -4441,54 +4438,54 @@ else {
     try {
       const { id } = req.params;
 
-  const client = await Clients_Modal.findOne({ _id: id, del: 0, ActiveStatus: 1 });
+      const client = await Clients_Modal.findOne({ _id: id, del: 0, ActiveStatus: 1 });
 
-  if (!client) {
-    return console.error('Client not found or inactive.');
+      if (!client) {
+        return console.error('Client not found or inactive.');
+      }
+
+      client.devicetoken = "";
+      await client.save();
+
+      return res.json({
+        status: true,
+        message: "Logout successfully",
+      });
+
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: false,
+        message: "Server error",
+        data: []
+      });
+    }
   }
 
-    client.devicetoken = "";
-    await client.save();
 
-  return res.json({
-    status: true,
-    message: "Logout successfully",
-  });
 
-} catch (error) {
-  console.error(error);
-  return res.status(500).json({
-    status: false,
-    message: "Server error",
-    data: []
-  });
-}
-}
+  async addRequest(req, res) {
+    try {
+      const { clientid, type } = req.body;
 
 
 
-async addRequest(req, res) {
-  try {
-    const { clientid, type } = req.body;
+      const result = new Requestclient_Modal({
+        clientid: clientid,
+        type: type
+      });
 
+      const savedSubscription = await result.save();
 
+      return res.status(201).json({
+        status: true,
+      });
 
-    const result = new Requestclient_Modal({
-      clientid: clientid,
-      type: type
-    });
-
-    const savedSubscription = await result.save();
-
-    return res.status(201).json({
-      status: true,
-    });
-
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ status: false, message: 'Server error', data: [] });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ status: false, message: 'Server error', data: [] });
+    }
   }
-}
 
 
 }
