@@ -135,8 +135,8 @@ const Dashboard1 = ({ data }) => {
             return (
               <React.Fragment key={index}>
                 <div className="col-xl-4 col-lg-3 col-xxl-3 col-sm-6">
-                  <div className="rounded bg-primary overflow-hidden second-dash-card">
-                    <div className="card-body pb-0 pt-3">
+                  <div className="sidebar-bg mb-3 rounded overflow-hidden ">
+                    <div className=" card-body pb-0 pt-3">
                       <div className="row">
                         <div className="col-12">
                           <h5 className="text-white">{item.name}</h5>

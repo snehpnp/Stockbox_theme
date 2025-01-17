@@ -16,15 +16,13 @@ const Content = ({
   const navigate = useNavigate();
 
   const handleHomeClick = () => {
-    navigate("/"); // Redirect to home page
+    navigate("/"); 
   };
-  // Handle back button click (go to previous page)
+
   const handleBackClick = () => {
     if (backbutton_title === "Back") {
-      window.history.back(); // Navigate to the previous page in the browser history
-    } else {
-      // Handle other cases if necessary
-    }
+      window.history.back(); 
+    } 
   };
   return (
     <div className="content-body">
@@ -43,7 +41,7 @@ const Content = ({
                 </li>
                 <li>
                   <div className="breadcrumb-box">
-                    <p className="mb-0 breadcrumb-text">{Page_title}</p>
+                    <h6 className="heading-color mb-0 breadcrumb-text">{Page_title}</h6>
                   </div>
                 </li>
               </ul>

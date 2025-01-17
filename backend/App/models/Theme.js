@@ -29,6 +29,8 @@ const themeSchema = new Schema(
     BtnPriBgCol: { type: String, required: true },
     BtnSecBgCol: { type: String, required: true },
     wrapperMode: { type: String, required: true },
+    headSidebarFontActiveCol: { type: String, required: true },
+    headSidebarFontCol: { type: String, required: true },
   },
   {
     timestamps: true,
