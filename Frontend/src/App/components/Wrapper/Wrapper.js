@@ -33,12 +33,12 @@ export default function App() {
         "*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(button)"
       );
 
-      all.forEach((element) => {
-        element.style.color = fontColor;
-      });
-      all.forEach((element) => {
-        element.style.color = contentColor;
-      });
+      // all.forEach((element) => {
+      //   element.style.color = fontColor;
+      // });
+      // all.forEach((element) => {
+      //   element.style.color = contentColor;
+      // });
    
 
       if (container) {
@@ -91,6 +91,19 @@ export default function App() {
         "--BtnSecBgCol",
         theme?.BtnSecBgCol
       );
+
+      document.documentElement.style.setProperty(
+        "--headSidebarFontCol",
+        theme?.headSidebarFontCol
+      );
+
+      document.documentElement.style.setProperty(
+        "--headSidebarFontActiveCol",
+        theme?.headSidebarFontActiveCol
+      );
+
+
+
     } else {
       let data = {
         sidebarColor: "linear-gradient(to right, #1fa9ff, #000000)",
