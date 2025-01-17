@@ -48,7 +48,7 @@ const FreetrialStatus = () => {
         setDisableUpdate(true); // Disable the button initially
       }
     } catch (error) {
-      console.error('Error fetching basic settings:', error);
+      console.log('Error fetching basic settings:', error);
     }
   };
 
@@ -63,7 +63,7 @@ const FreetrialStatus = () => {
         setDisableUpdate(true); // Disable the button initially
       }
     } catch (error) {
-      console.error('Error fetching free trial status:', error);
+      console.log('Error fetching free trial status:', error);
     }
   };
 

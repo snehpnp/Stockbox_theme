@@ -30,7 +30,7 @@ const Payementgateway = () => {
                 setOnlinePaymentEnabled(clientData.paymentstatus === 1);
             }
         } catch (error) {
-            console.error('Error fetching API details:', error);
+            console.log('Error fetching API details:', error);
         }
     };
 

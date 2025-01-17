@@ -235,7 +235,12 @@ const BasicSettingSchema = new Schema({
         type: Number,
         enum: [1, 0],
         default: 0
-    }
+    },
+    theme_id: {
+        type: Schema.Types.ObjectId,
+        ref: "Theme",
+        default: null
+      },
 
 }, {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }

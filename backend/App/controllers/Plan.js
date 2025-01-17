@@ -642,7 +642,7 @@ try {
     await license.save();
     // console.log('License updated successfully.');
 } catch (error) {
-    // console.error('Error updating license:', error);
+
 }
 
 

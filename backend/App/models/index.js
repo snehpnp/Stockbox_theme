@@ -50,6 +50,7 @@ module.exports = {
     Requestclient: require("./Requestclient"),
     Company :require("./Company"),
     ThemeModal: require("./Theme"),
+    Company1 :require("./Company1"),
 
     open_position:open_position,
     open_position_excute:open_position_excute,

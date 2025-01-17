@@ -42,7 +42,7 @@ const Apiinfo = () => {
                 });
             }
         } catch (error) {
-            console.error('Error fetching API details:', error);
+            console.log('Error fetching API details:', error);
         }
     };
 

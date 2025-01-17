@@ -495,7 +495,6 @@ class Users {
 
       fs.readFile(templatePath, 'utf8', async (err, htmlTemplate) => {
         if (err) {
-          // console.error('Error reading HTML template:', err);
           return;
         }
         const url = `${req.protocol}://${req.headers.host}/#/resetpassword/${resetToken}`;
@@ -789,7 +788,6 @@ class Users {
       return res.send({ success: true, message: 'Email sent successfully', info });
 
     } catch (error) {
-      // console.error('Error sending email:', error);
       return res.status(500).send({ success: false, message: 'Error sending email', error: error.message });
     }
   }

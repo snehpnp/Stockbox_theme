@@ -21,7 +21,7 @@ class Signal {
           await new Promise((resolve, reject) => {
             upload('report').fields([{ name: 'report', maxCount: 1 }])(req, res, (err) => {
                 if (err) {
-                    // console.error('File upload error:', err);
+                  
                     return reject(err);
                 }
 
@@ -172,11 +172,11 @@ if (!stocks) {
 
 
             try {
-              // Send notifications to all device tokens
+            
               await sendFCMNotification(notificationTitle, notificationBody, tokens,"open signal");
-              // console.log('Notifications sent successfully');
+            
             } catch (error) {
-              // console.error('Error sending notifications:', error);
+           
             }
 
 
@@ -682,7 +682,7 @@ async getSignalWithFilter(req, res) {
         await sendFCMNotification(notificationTitle, notificationBody, tokens,"close signal");
         // console.log('Notifications sent successfully');
       } catch (error) {
-     //   console.error('Error sending notifications:', error);
+    
       }
 
 

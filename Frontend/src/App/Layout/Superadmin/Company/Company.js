@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Table from "../../../components/Tabels/Table";
+import Table from "../../../Extracomponents/Table";
 import {
   Eye,
   UserPen,
@@ -14,8 +14,8 @@ import {
   UpdateThemeApi,
 } from "../../../Services/Superadmin/Admin";
 import { Tooltip } from "antd";
-import {  fDate } from "../../../../Utils/Date_formate";
-import {GetAllThemesNameApi} from '../../../Services/Themes/Theme'
+import { fDate } from "../../../../Utils/Date_formate";
+import { GetAllThemesNameApi } from '../../../Services/Themes/Theme'
 
 const Company = () => {
   const token = localStorage.getItem("token");
@@ -44,7 +44,7 @@ const Company = () => {
         setClients(searchInput ? filterdata : response.data);
       }
     } catch (error) {
-   
+
     }
   };
 
@@ -55,12 +55,12 @@ const Company = () => {
         setThemes(response.data);
       }
     } catch (error) {
-   
+
     }
   };
 
   const updateCompany = async (row) => {
-    navigate("/admin/companyupdate/", { state: { row } });
+    navigate("/superadmin/companyupdate/", { state: { row } });
   };
 
   const DeleteCompanydata = async (_id) => {
@@ -146,7 +146,7 @@ const Company = () => {
   };
 
   const companydetail = async (_id) => {
-    navigate(`/admin/companydetail/${_id}`);
+    navigate(`/superadmin/companydetail/${_id}`);
   };
 
   const UpdateTheme = async (id, theme_id) => {
@@ -205,13 +205,13 @@ const Company = () => {
       sortable: true,
       selector: (row) => (
         <>
-        <select className="form-select" onChange={(e) => UpdateTheme(row._id, e.target.value)}>
-         {themes.map((item) => (
-           <option value={item._id} selected={item._id == row.theme_id}>
-             {item.ThemeName}
-           </option>
-         ))}
-        </select>
+          <select className="form-select" onChange={(e) => UpdateTheme(row._id, e.target.value)}>
+            {themes.map((item) => (
+              <option value={item._id} selected={item._id == row.theme_id}>
+                {item.ThemeName}
+              </option>
+            ))}
+          </select>
         </>
       )
     },
@@ -275,7 +275,7 @@ const Company = () => {
               <nav aria-label="breadcrumb">
                 <ol className="breadcrumb mb-0 p-0">
                   <li className="breadcrumb-item">
-                    <Link to="/admin/dashboard">
+                    <Link to="/superadmin/dashboard">
                       <i className="bx bx-home-alt" />
                     </Link>
                   </li>
@@ -301,7 +301,7 @@ const Company = () => {
                   </span>
                 </div>
                 <div className="ms-auto">
-                  <Link to="/admin/addcompany" className="btn btn-primary">
+                  <Link to="/superadmin/addcompany" className="btn btn-primary">
                     <i className="bx bxs-plus-square" aria-hidden="true" />
                     Add Company
                   </Link>

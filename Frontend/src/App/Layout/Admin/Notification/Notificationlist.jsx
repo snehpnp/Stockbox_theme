@@ -38,7 +38,7 @@ const Notificationlist = () => {
                 setClients(response.data);
             }
         } catch (error) {
-            console.error('Error fetching client data:', error);
+            console.log('Error fetching client data:', error);
         }
     };
 
