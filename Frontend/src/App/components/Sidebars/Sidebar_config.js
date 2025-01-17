@@ -234,6 +234,24 @@ const SuperAdmin = [
     link: "/superadmin/themes",
     children: [],
   },
+  {
+    label: "Signal",
+    icon: "Activity",
+    children: [
+      {
+        label: "Open Signal",
+        icon: "ScatterChart",
+        link: "/superadmin/signal",
+        name: "OpenSignal"
+      },
+      {
+        label: "Close Signal",
+        icon: "ScatterChart", link: "/superadmin/closesignal",
+        name: "CloseSignal"
+      },
+    ],
+    name: "Signal",
+  },
 ];
 
 
