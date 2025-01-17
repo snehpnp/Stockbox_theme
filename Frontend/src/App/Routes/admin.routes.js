@@ -65,6 +65,9 @@ import Planexpiry from "../Layout/Admin/PlanExpiry/Planexpiry";
 import Planexpirymonth from "../Layout/Admin/PlanExpiryMonth/Planexpirymonth";
 import Notificationlist from "../Layout/Admin/Notification/Notificationlist";
 import Stock from "../Layout/Admin/Stock/Stock";
+import Plan from "../Layout/Admin/Plans/Plan";
+import Addplan from "../Layout/Admin/Plans/Addplan";
+import Editplan from "../Layout/Admin/Plans/Editplan";
 
 
 
@@ -155,6 +158,11 @@ export default function App() {
       <Route path="/paymentrequest" element={<PaymentRequest />} />
 
       <Route path="/freetrialstatus" element={<FreetrialStatus />} />
+
+
+      <Route path="/plan" element={<Plan />} />
+      <Route path="/addplan" element={<Addplan />} />
+      <Route path="/plan/editplan/:id" element={<Editplan />} />
 
 
 
