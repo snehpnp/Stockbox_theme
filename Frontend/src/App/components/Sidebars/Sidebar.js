@@ -165,7 +165,7 @@ const Sidebar = () => {
                         }}
                       >
                         <IconComponent icon={tab.icon}  />
-                        {!isCollapsed ? tab?.name : ""}
+                        {!isCollapsed ? <span>{tab?.name}</span> : ""}
                       </Link>
                       {tab?.children?.length > 0 &&
                         (openTab === tab?.name ? (
@@ -205,7 +205,7 @@ const Sidebar = () => {
                               <IconComponent
                                 icon={child.icon}
                               />
-                              {child.name}
+                             <span> {child.name}</span>
                             </Link>
                           </li>
                         ))}

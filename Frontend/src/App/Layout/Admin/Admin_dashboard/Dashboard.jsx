@@ -165,7 +165,7 @@ const Dashbord = () => {
           <Dashboard monthexpiry={monthexpiry} data={data} />
         )}
 
-        <div className="card radius-10">
+        <div className="card radius-10 mt-4">
           <div className="card-body">
             <div className="d-flex align-items-center">
               <div>

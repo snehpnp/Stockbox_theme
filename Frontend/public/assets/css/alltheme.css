@@ -160,6 +160,7 @@ button.button_sell.active {
 }
 .sidebar-horizontal-container .content,.sidebar-vertical-container .content {
   padding-top: 90px;
+  height: 100vh;
 }
 
 /* Sidebar item */
@@ -207,11 +208,12 @@ li.sidebar-subitem {
 }
 .content-wrapper {
   display: flex;
-  height: 100vh;
+  height: 100%;
 }
 .sidebar-vertical-container.sidebar-open .content {
   width: calc(100% - 250px);
   margin-left: 250px;
+  height: 100vh;
 }
 .sidebar-vertical-container.sidebar-collapsed .content {
   width: calc(100% - 60px);
@@ -974,17 +976,13 @@ padding-left: 0;
   list-style-type: none;
 }
 .pricing-card {
-  background-color: white;
-  border: 1px solid  var(
-    --BtnBorderColor,
-    black
-  ) !important; ;
-  border-radius: 8px;
-  padding: 20px;
-  position: relative;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 .pricing-card li {
   list-style-type: none;
-  padding: 10px 0;
 }

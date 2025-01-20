@@ -379,7 +379,7 @@ function Trade() {
               </div>
             </div>
             <ul
-              className="nav nav-pills mb-3 justify-content-center"
+              className="nav nav-pills border-bottom mb-3 justify-content-center"
               role="tablist"
             >
               <li className="nav-item" role="presentation">
