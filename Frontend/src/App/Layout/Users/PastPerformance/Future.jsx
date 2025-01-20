@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import Table from "../../../components/Table";
+import Table from "../../../Extracomponents/Table";
 import { Bar, Doughnut } from "react-chartjs-2";
 import { Link } from "react-router-dom";
 import "chart.js/auto";
-import { GetPastPerformance } from "../../../Services/User";
+import { GetPastPerformance } from "../../../Services/UserService/User";
 
 const Future = () => {
   const [pastPerformance, setPastPerformance] = React.useState([]);

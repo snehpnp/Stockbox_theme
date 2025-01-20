@@ -1,7 +1,7 @@
 import {useState, React } from 'react';
 import { Link } from 'react-router-dom';
 import ReusableModal from "../../../components/Models/ReusableModal";
-import FormicForm from "../../../components/Newformicform";
+import FormicForm from "../../../Extracomponents/Newformicform";
 import { useFormik } from "formik";
 
 

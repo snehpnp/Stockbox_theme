@@ -905,12 +905,7 @@ ul.breadcrumb-links li a {
 ol.breadcrumb.mb-0.p-0 {
   box-shadow: none !important;
 }
-:root {
-  --btn-bg-color: #007bff; /* Default Blue */
-  --btn-txt-color: #ffffff; /* Default White */
-  --btn-secondary-bg-color: #007bff; /* Default Blue */
-  --btn-secondary-txt-color: #ffffff; /* Default White */
-}
+
 
 /* Primary button using CSS variables */
 .btn-primary {

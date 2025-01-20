@@ -46,7 +46,7 @@ const PastPerformance = () => {
         <div className="card">
         <div className="card-body">
           <h5>
-            <Link to="/client/cash" className="text-decoration-none text-dark">  Cash</Link>
+            <Link to="/user/past-performance/cash" className="text-decoration-none text-dark">  Cash</Link>
           
             </h5>
           <Bar
@@ -71,7 +71,7 @@ const PastPerformance = () => {
         <div className="col-md-4">
         <div className="card">
         <div className="card-body">
-          <h5> <Link to="/client/future" className="text-decoration-none text-dark">  Future</Link></h5>
+          <h5> <Link to="/user/past-performance/future" className="text-decoration-none text-dark">  Future</Link></h5>
           <Bar
             data={{
               ...chartData,
@@ -94,7 +94,7 @@ const PastPerformance = () => {
         <div className="col-md-4">
         <div className="card">
         <div className="card-body">
-          <h5> <Link to="/client/option" className="text-decoration-none text-dark">  Option</Link></h5>
+          <h5> <Link to="/user/past-performance/option" className="text-decoration-none text-dark">  Option</Link></h5>
           <Bar
             data={{
               ...chartData,
