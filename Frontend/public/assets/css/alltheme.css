@@ -149,7 +149,10 @@ button.button_sell.active {
   justify-content: flex-start;
   padding: 10px 0 10px 10px;
 }
-
+.sidebar-collapsed  .Sidebar-vertical .sidebar-menu .sidebar-link  span
+{
+  display: none;
+}
 .Sidebar-horizontal {
   transition: all 0.3s ease;
   padding: 0 20px;

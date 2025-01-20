@@ -119,7 +119,7 @@ const Sidebar = () => {
                 : "SidebarColored Sidebar-vertical"
             }
           >
-            <div>
+            {/* <div>
               {!isTopbar && (
                 <div className="sidebartoggle" onClick={toggleSidebar}>
                   <i
@@ -128,7 +128,7 @@ const Sidebar = () => {
                   ></i>
                 </div>
               )}
-            </div>
+            </div> */}
 
             <ul
               className="sidebar-menu"
