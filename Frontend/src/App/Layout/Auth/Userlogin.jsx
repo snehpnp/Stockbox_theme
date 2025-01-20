@@ -6,7 +6,7 @@ import { image_baseurl } from "../../../Utils/config";
 import { Link } from "react-router-dom";
 import { basicsettinglist } from "../../Services/Admin/Admin";
 import $ from "jquery";
-
+import BgImg from "./bg-login-img.png";
 const Userlogin = () => {
   const navigate = useNavigate();
   let logoSrc =
@@ -48,16 +48,16 @@ const Userlogin = () => {
 
     if (ResData.status) {
       localStorage.setItem("Token", ResData.data?.token);
-      localStorage.setItem("Id", ResData.data?.id);
+      localStorage.setItem("id", ResData.data?.id);
       localStorage.setItem(
         "Role",
         ResData?.data?.Role === 0
           ? "SUPERADMIN"
           : ResData?.data?.Role === 1
-          ? "ADMIN"
-          : ResData?.data?.Role === 2
-          ? "EMPLOYEE"
-          : "USER"
+            ? "ADMIN"
+            : ResData?.data?.Role === 2
+              ? "EMPLOYEE"
+              : "USER"
       );
 
       Swal.fire({
@@ -83,7 +83,7 @@ const Userlogin = () => {
       let token = "";
       const response = await basicsettinglist(token);
       if (response.status) {
-        console.log("response", response);
+        ;
         localStorage.setItem("theme", JSON.stringify(response?.Theme));
 
         const faviconElement = document.querySelector("link[rel='icon']");
@@ -107,12 +107,11 @@ const Userlogin = () => {
     getsettinglist();
   }, []);
 
-  console.log("information", information);
-
   return (
-    <div className="main-login">
+    <div className="main-login"  style={{ backgroundImage: `url(${BgImg})` }}>
       <div className="row align-items-center h-100">
-        <div className="col-lg-7 mx-auto">
+       
+        <div className="col-lg-12 mx-auto">
           {status === 1 ? (
             <div className="login-wrapper">
               <div className="background"></div>
@@ -217,9 +216,8 @@ const Userlogin = () => {
                                       className="input-group-text bg-transparent"
                                     >
                                       <i
-                                        className={`bx ${
-                                          showPassword ? "bx-show" : "bx-hide"
-                                        }`}
+                                        className={`bx ${showPassword ? "bx-show" : "bx-hide"
+                                          }`}
                                       />
                                     </a>
                                   </div>

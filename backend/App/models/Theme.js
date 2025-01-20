@@ -2,7 +2,7 @@ const { Schema, model } = require("mongoose");
 
 const themeSchema = new Schema(
   {
-    ThemeName: { type: String, required: true },
+    ThemeName: { type: String, required: true ,unique:true},
     sidebarColor: { type: String, required: true },
     navbarColor: { type: String, required: true },
     fontColor: { type: String, required: true },

@@ -143,9 +143,7 @@ const Addtheme = () => {
                           <option className="text-dark" value="2">
                             2
                           </option>
-                          <option className="text-dark" value="3">
-                            3
-                          </option>
+                   
                           <option className="text-dark" value="4">
                             4
                           </option>
@@ -488,6 +486,7 @@ const Addtheme = () => {
                           ></div>
                         </div>
                       )}
+
                       <div className="mt-3">
                         <label className="text-dark">Sidebar Position: </label>
                         <Field
@@ -504,24 +503,7 @@ const Addtheme = () => {
                         </Field>
                       </div>
 
-                      <div className="mt-3">
-                        <label className="text-dark">Sidebar Name: </label>
-                        <Field
-                          as="select"
-                          name="sidebarName"
-                          className="text-dark form-control"
-                        >
-                          <option className="text-dark" value="1">
-                            Main
-                          </option>
-                          <option className="text-dark" value="2">
-                            Card Sidebar
-                          </option>
-                          <option className="text-dark" value="3">
-                            New Sidebar
-                          </option>
-                        </Field>
-                      </div>
+                    
                     </Card.Body>
                   </Card>
                 </Col>
@@ -562,7 +544,6 @@ const Addtheme = () => {
                         </label>
                         <Field name="BtnSecTxtCol" type="color" />
                       </div>
-
                       <div className="mt-3">
                         <label className="text-dark">
                           Secondary Button Border Color:{" "}

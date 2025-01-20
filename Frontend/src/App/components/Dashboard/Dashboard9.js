@@ -12,7 +12,7 @@ const Dashboard1 = ({ data }) => {
       value: data && data.total_client,
       icon: 'la la-users',
       route: "/admin/allclients",
-      visible: false
+      visible: true
     },
     {
       index: 2,
@@ -120,7 +120,7 @@ const Dashboard1 = ({ data }) => {
       value: data && data.remaining_licence,
       icon: 'la la-users',
       route: "/admin/allLicence",
-      visible: false
+      visible: true
     }, {
       index: 15,
       name: "Used  License",

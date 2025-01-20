@@ -5,13 +5,17 @@ import { Link } from "react-router-dom";
 import { GetCategorylist, GetPlanByCategory, AddplanSubscription, GetCouponlist } from "../../../Services/UserService/User";
 import { IndianRupee } from "lucide-react";
 import { fa_time } from '../../../../Utils/Date_formate';
-
+import { loadScript } from "../../../../Utils/Razorpayment";
 
 
 
 function Service() {
+
+
   const token = localStorage.getItem("Token");
-  const userid = localStorage.getItem("Id");
+  const userid = localStorage.getItem("id");
+
+
 
   const [selectedPlan, setSelectedPlan] = useState("all");
   const [category, setCategory] = useState([]);
@@ -27,6 +31,8 @@ function Service() {
   const [coupons, setCoupon] = useState([])
 
 
+
+
   useEffect(() => {
     getCategory();
     getPlan();
@@ -35,14 +41,13 @@ function Service() {
 
 
   const handleCouponSelect = (coupon) => {
-
-
     setSelectedCouponCode(coupon);
     setManualCoupon(coupon.code);
   };
 
-  const applyCoupon = (coupon) => {
 
+
+  const applyCoupon = (coupon) => {
     const originalPrice = selectedPlanDetails?.plans[0]?.price || 0;
     const discount = selectedCouponCode.value || 0;
     const discountedPrice = originalPrice - discount;
@@ -50,6 +55,15 @@ function Service() {
     setAppliedCoupon(coupon);
     setDiscountedPrice(discountedPrice > 0 ? discountedPrice : originalPrice);
   };
+
+
+
+  const removeCoupon = () => {
+    setManualCoupon("");
+    setAppliedCoupon(null);
+    setDiscountedPrice(selectedPlanDetails?.plans[0]?.price || "N/A");
+  };
+
 
 
   const handleSelectChange = (event) => {
@@ -93,24 +107,53 @@ function Service() {
     }
   };
 
+
+
   const AddSubscribeplan = async (item) => {
     try {
-      const data = {
-        plan_id: item?.plans?._id,
-        client_id: userid,
-        coupon_code: couponCode,
-        orderid: "",
-        discount: "",
-        price: item?.plans?.price,
-      };
-      const response = await AddplanSubscription(data, token);
-      if (response.status) {
-        setShowModal(false);
+      if (!window.Razorpay) {
+        await loadScript("https://checkout.razorpay.com/v1/checkout.js");
       }
+      const options = {
+        key: "rzp_test_22mEHcDzJbcUmz",
+        amount: discountedPrice > 0 ? (Number(item?.plans[0]?.price) - Number(selectedCouponCode?.value)) * 100 : Number(item?.plans[0]?.price) * 100,
+        currency: "INR",
+        title: item?.plans[0]?.title || "Subscription Plan",
+
+        handler: async function (response1) {
+          const data = {
+            plan_id: item?.plans[0]?._id,
+            client_id: userid,
+            coupon_code: appliedCoupon?.code || "",
+            orderid: response1?.orderid,
+            discount: selectedCouponCode?.value || "",
+            price: item?.plans?.price,
+          };
+
+          try {
+            const response2 = await AddplanSubscription(data, 'token');
+            if (response2?.status) {
+              setShowModal(false)
+              window.location.reload();
+            }
+          } catch (error) {
+            console.error("Error while adding plan subscription:", error);
+          }
+        },
+        prefill: {},
+        theme: {
+          color: "#F37254",
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (error) {
-      console.error(error);
+      console.error("Subscription error:", error);
     }
   };
+
+
 
   const handleShowModal = (item) => {
     setSelectedPlanDetails(item);
@@ -124,11 +167,6 @@ function Service() {
   };
 
 
-
-
-
-
-
   const getFilteredPlans = () => {
     if (selectedPlan === "all") {
       return plan;
@@ -138,15 +176,10 @@ function Service() {
 
 
 
-
-
   const stripHtmlTags = (input) => {
     if (!input) return "";
     return input.replace(/<\/?[^>]+(>|$)/g, "");
   };
-
-
-
 
 
 
@@ -301,82 +334,69 @@ function Service() {
                         />
                         <button
                           className="btn btn-primary"
-                          onClick={() => applyCoupon({ code: manualCoupon, })}
+                          onClick={() => applyCoupon({ code: manualCoupon })}
                         >
                           Apply
                         </button>
+                        {appliedCoupon && (
+                          <button
+                            className="btn btn-danger ms-2"
+                            onClick={() => removeCoupon()}
+                          >
+                            Remove
+                          </button>
+                        )}
                       </div>
                     </div>
                     <div>
-
                       {coupons.map((coupon, index) => (
-                        <>
-                        <li className="d-flex align-items-center  pb-3">
+                        <li className="d-flex align-items-center pb-3" key={coupon.code}>
                           <div
                             className="rounded-circle p-2 border d-flex align-items-center justify-content-center"
                             style={{
-                              width: '70px',
-                              height: '70px',
-                              backgroundColor: '#f8f8f8',
-                              textAlign: 'center',
-                              fontSize: '16px',
-                              fontWeight: '500',
-                              color: '#333',
+                              width: "50px",
+                              height: "50px",
+                              backgroundColor: "#f8f8f8",
+                              textAlign: "center",
+                              fontSize: "16px",
+                              fontWeight: "500",
+                              color: "#333",
                             }}
                           >
                             {coupon.serviceName || "Premium Members"}
                           </div>
 
                           <div className="flex-grow-1 ms-3 text-start">
-                            <p className="mb-1 fs-6">
-                              <strong style={{ color: '#555'}}>Segment Name:</strong> {coupon.serviceName || "Premium Members"}
-                             
+                            <p className="use-cod mb-1" style={{ color: "#555" }}>
+                              Use code <span style={{ fontWeight: "600" }}>{coupon?.code}</span>{" "}
+                              | Valid till {fa_time(coupon?.enddate)}
                             </p>
-                            <p className="use-cod mb-1 " style={{ color: '#555' }}>
-                              Use code <span style={{ fontWeight: '600' }}>{coupon?.code}</span> | Valid till {fa_time(coupon?.enddate)}{" "}
-                            </p>
-                            <div className="fs-6" style={{ color: '#555' }}>
-                              <span className=" mb-1">{coupon?.validity}</span>
-                              <span className="mb-1 ">
+                            <div className="fs-6" style={{ color: "#555" }}>
+                              <span className="mb-1">{coupon?.validity}</span>
+                              <span className="mb-1">
                                 Save Upto <strong> ₹{coupon?.value}</strong>
                               </span>
-                              <span className=""> <strong>{coupon?.name}</strong> Offer</span>
+                              <span>
+                                {" "}
+                                <strong>{coupon?.name}</strong> Offer
+                              </span>
                             </div>
                           </div>
 
-                          <div
-                            className="d-flex justify-content-between align-items-center p-2"
-                            style={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                              padding: '10px 12px',
-                              
-                            }}
-                            key={coupon.code}
+                          <button
+                            className="btn btn-sm btn-primary ms-4"
+                            onClick={() => handleCouponSelect(coupon)}
+                            style={{ padding: "6px 12px", fontSize: "14px" }}
                           >
-                           
-                            <button
-                              className="btn btn-sm btn-primary"
-                              onClick={() => handleCouponSelect(coupon)}
-                              style={{ padding: '6px 12px', fontSize: '14px' }}
-                            >
-                              Select
-                            </button>
-                          </div>
-
-                          <div style={{ height: '1px', backgroundColor: '#e0e0e0', marginTop: '12px', marginBottom: '12px' }}></div>
+                            Select
+                          </button>
                         </li>
-                        <hr/>
-                        </>
                       ))}
-
-
-
                     </div>
                   </Accordion.Body>
                 </Accordion.Item>
               </Accordion>
+
 
               <hr />
               <div className="d-flex justify-content-between align-items-center">
@@ -386,9 +406,13 @@ function Service() {
                 </span>
               </div>
               <div className="mt-3">
-                <button className="btn btn-success w-100" onClick={AddSubscribeplan}>
+                <button
+                  className="btn btn-success w-100"
+                  onClick={() => { AddSubscribeplan(selectedPlanDetails) }}
+                >
                   Confirm & Subscribe
                 </button>
+
               </div>
             </>
           )}

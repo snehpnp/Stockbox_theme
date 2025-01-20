@@ -1,9 +1,10 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { LoginApi } from "../../Services/Auth/Login";
 import { image_baseurl } from "../../../Utils/config";
 import { Link } from "react-router-dom";
+import BgImg from "./bg-login-img.png";
 
 import { basicsettinglist } from "../../Services/Admin/Admin";
 import $ from "jquery";
@@ -37,16 +38,16 @@ const Login = () => {
 
     if (ResData.status) {
       localStorage.setItem("Token", ResData.data?.token);
-      localStorage.setItem("Id", ResData.data?.id);
+      localStorage.setItem("id", ResData.data?.id);
       localStorage.setItem(
         "Role",
         ResData?.data?.Role === 0
           ? "SUPERADMIN"
           : ResData?.data?.Role === 1
-          ? "ADMIN"
-          : ResData?.data?.Role === 2
-          ? "EMPLOYEE"
-          : ""
+            ? "ADMIN"
+            : ResData?.data?.Role === 2
+              ? "EMPLOYEE"
+              : ""
       );
 
       Swal.fire({
@@ -107,9 +108,9 @@ const Login = () => {
   };
 
   return (
-    <div className="main-login">
+    <div className="main-login" style={{ backgroundImage: `url(${BgImg})` }}>
       <div className="row align-items-center h-100">
-        <div className="col-lg-7 mx-auto">
+        <div className="col-lg-12 mx-auto">
           {status === 1 ? (
             <div className="login-wrapper">
               <div className="background"></div>
@@ -118,7 +119,7 @@ const Login = () => {
                 <div className="inner-div mt-4">
                   <form className="login-form" onSubmit={handleLogin}>
                     <div className="form-item">
-                      <label htmlFor="username-login">username</label>
+                      <label htmlFor="username-login">Username</label>
                       <input
                         id="username-login"
                         name="username"
@@ -153,7 +154,7 @@ const Login = () => {
               </div>
             </div>
           ) : status === 2 ? (
-            <div className="bg-login">
+            <div className="bg-login" style={{width: "100%", height: "100%"}}>
               <div className="section-authentication-signin d-flex align-items-center justify-content-center my-5 my-lg-0">
                 <div className="container-fluid ">
                   <div className="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
@@ -175,7 +176,7 @@ const Login = () => {
                                     htmlFor="inputEmailAddress"
                                     className="form-label"
                                   >
-                                    username
+                                    Username
                                   </label>
                                   <input
                                     type="text"
@@ -183,7 +184,9 @@ const Login = () => {
                                     id="username"
                                     placeholder="Enter Your Username"
                                     value={username}
-                                    onChange={(e) => setusername(e.target.value)}
+                                    onChange={(e) =>
+                                      setusername(e.target.value)
+                                    }
                                   />
                                 </div>
 
@@ -214,9 +217,8 @@ const Login = () => {
                                       className="input-group-text bg-transparent"
                                     >
                                       <i
-                                        className={`bx ${
-                                          showPassword ? "bx-show" : "bx-hide"
-                                        }`}
+                                        className={`bx ${showPassword ? "bx-show" : "bx-hide"
+                                          }`}
                                       />
                                     </a>
                                   </div>

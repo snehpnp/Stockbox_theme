@@ -75,22 +75,12 @@ function Theme() {
     <Contnet
       Page_title="Themes"
       button_title="Add Theme"
-      button_status={false}
+      button_status={true}
       route="/add-theme"
     >
       <div >
-        {/* Heading */}
-        <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Themes</h1>
 
-        {/* Add Theme Button */}
-        <div style={{ textAlign: "right", marginBottom: "10px" }}>
-          <button
-            onClick={handleAddTheme}
-            className="btn btn-main"
-          >
-            + Add Theme
-          </button>
-        </div>
+      
 
         {/* Table Wrapped in a Card */}
         <div style={cardStyle}>

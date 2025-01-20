@@ -9,7 +9,6 @@ const Dashboard1 = ({monthexpiry}) => {
     month: "long",
     year: "numeric",
   });
-  console.log(monthexpiry);
 
    const cardsData = [
       {
@@ -131,6 +130,8 @@ const Dashboard1 = ({monthexpiry}) => {
         progress: 55,
       },
     ];
+
+
 
   return (
     <>

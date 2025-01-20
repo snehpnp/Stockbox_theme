@@ -4,7 +4,7 @@ import { getplanlist, getcategoryplan, Deleteplan, changeplanstatus, getActiveca
 import { fDateTime } from '../../../../Utils/Date_formate';
 import Swal from 'sweetalert2';
 import Loader from '../../../../Utils/Loader'
-
+import Content from '../../../components/Contents/Content';
 
 
 
@@ -165,32 +165,8 @@ const Plan = () => {
 
 
     return (
-        <div className="page-content">
-            <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-                <div className="breadcrumb-title pe-3">Package
-
-
-                </div>
-                <div className="ps-3">
-                    <nav aria-label="breadcrumb">
-                        <ol className="breadcrumb mb-0 p-0">
-                            <li className="breadcrumb-item">
-                                <Link to="/admin/dashboard">
-                                    <i className="bx bx-home-alt" />
-                                </Link>
-                            </li>
-                        </ol>
-                    </nav>
-                </div>
-                <div className="ms-auto">
-                    <div className="btn-group">
-                        <Link to="/admin/addplan" className="btn btn-primary">
-                            Add Package
-                        </Link>
-                    </div>
-                </div>
-            </div>
-            <hr />
+        <Content Page_title="Package" route="/admin/addplan"
+            button_status={true} button_title="Add Package">
 
             <div className="card">
                 <div className="card-body">
@@ -413,7 +389,7 @@ const Plan = () => {
                     )}
                 </div>
             </div>
-        </div>
+        </Content>
 
     );
 };
