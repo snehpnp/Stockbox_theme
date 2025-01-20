@@ -165,7 +165,7 @@ export default function Setting_sidebar() {
         : values.navbarColor,
       fontColor: values.fontColor,
     };
-  
+
     Swal.fire({
       title: "Enter Your Theme Name",
       input: "text",
@@ -181,13 +181,13 @@ export default function Setting_sidebar() {
           Swal.showValidationMessage("Please enter a theme name");
           return false; // Prevent the submission
         }
-  
+
         // Merge the updated values with the theme name
         const finalValues = { ...updatedValues, ThemeName: themeName };
-  
+
         try {
           const response = await AddThemeApi(finalValues);
-          
+
           // Check if response status is successful
           if (response.status) {
             Swal.fire({ title: "Theme Created Successfully", icon: "success" });
@@ -202,7 +202,6 @@ export default function Setting_sidebar() {
       allowOutsideClick: () => !Swal.isLoading(),
     });
   };
-  
 
   return (
     <>
@@ -603,6 +602,7 @@ export default function Setting_sidebar() {
                     </div>
                   </Col>
                 </Row>
+                <div className="setting-sidebar-divider-line"></div>
 
                 <Button className="text-dark" type="submit">
                   Apply Changes
