@@ -438,13 +438,13 @@ const Viewclientdetail = () => {
                         <div className="d-flex justify-content-between mb-4">
                             <div className="btn-group">
                                 <button
-                                    className={`btn btn-outline-primary ${viewMode === "plan" ? "active" : ""}`}
+                                    className={`btn btn-secondary ${viewMode === "plan" ? "active" : ""}`}
                                     onClick={() => setViewMode("plan")}
                                 >
                                     Plan View
                                 </button>
                                 <button
-                                    className={`btn btn-outline-primary ${viewMode === "signal" ? "active" : ""}`}
+                                    className={`btn btn-secondary ${viewMode === "signal" ? "active" : ""}`}
                                     onClick={() => setViewMode("signal")}
                                 >
                                     Signal View

@@ -14,9 +14,10 @@ import Subscription from "../Layout/Users/Subscription/Subscription";
 import Privacy from "../Layout/Users/Privacy/Privacy";
 import Terms from "../Layout/Users/TermsCondition/Terms";
 import Profiles from "../Layout/Users/Profile/Profiles";
-// import Demat from "../Layout/Users/Demat/Demat";
-
-
+import Demat from "../Layout/Users/Demat/Demat";
+import Cash from "../Layout/Users/PastPerformance/Cash";
+import Future from "../Layout/Users/PastPerformance/Future";
+import Option from "../Layout/Users/PastPerformance/Option";
        
 
 export default function App() {
@@ -36,7 +37,10 @@ export default function App() {
       <Route path="/privacy-policy" element={<Privacy />} />
       <Route path="/terms-conditions" element={<Terms />} />
       <Route path="/profiles" element={<Profiles />} />
-      {/* <Route path="/demat" element={<Demat />} /> */}
+      <Route path="/demat" element={<Demat />} />
+      <Route path="/past-performance/cash" element={<Cash />} />
+      <Route path="/past-performance/future" element={<Future />} />
+      <Route path="/past-performance/option" element={<Option />} />
     </Routes>
   );
 }

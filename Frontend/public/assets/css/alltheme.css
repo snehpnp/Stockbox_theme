@@ -905,12 +905,7 @@ ul.breadcrumb-links li a {
 ol.breadcrumb.mb-0.p-0 {
   box-shadow: none !important;
 }
-:root {
-  --btn-bg-color: #007bff; /* Default Blue */
-  --btn-txt-color: #ffffff; /* Default White */
-  --btn-secondary-bg-color: #007bff; /* Default Blue */
-  --btn-secondary-txt-color: #ffffff; /* Default White */
-}
+
 
 /* Primary button using CSS variables */
 .btn-primary {
@@ -924,32 +919,32 @@ ol.breadcrumb.mb-0.p-0 {
   color: var(--btn-secondary-txt-color) !important;
 }
 .content-heading {
-  color: var(--dynamic-color, black) !important; /* Default color is black */
+  color: var(--dynamic-color, black) !important; 
 }
-.btn-primary {
+.btn-primary,.nav-link.active {
   background-color: var(
     --BtnPriBgCol,
     black
-  ) !important; /* Default color is black */
-  color: var(--BtnPriTxtCol, #fff) !important; /* Default color is black */
+  ) !important; 
+  color: var(--BtnPriTxtCol, #fff) !important; 
   border-color: var(
     --BtnBorderColor,
     black
-  ) !important; /* Default color is black */
+  ) !important; 
 }
 .btn-secoondary {
   background-color: var(
     --BtnPriBgCol,
     #fff
-  ) !important; /* Default color is black */
-  color: var(--BtnPriTxtCol, black) !important; /* Default color is black */
+  ) !important; 
+  color: var(--BtnPriTxtCol, black) !important; 
   border-color: var(
     --BtnSecBorderColor,
     black
-  ) !important; /* Default color is black */
+  ) !important; 
 }
 .primary-text {
-  color: var(--PrimaryColor, black) !important; /* Default color is black */
+  color: var(--PrimaryColor, black) !important; 
 }
 
 .sidebar-color,
@@ -960,7 +955,7 @@ ol.breadcrumb.mb-0.p-0 {
   color: var(
     --headSidebarFontCol,
     black
-  ) !important; /* Default color is black */
+  ) !important; 
 }
 
 .sidebar-color.sidebar-link.active,
@@ -968,11 +963,11 @@ a.sidebar-color.sidebar-sublink.active {
   background-color: var(
     --headSidebarFontActiveCol,
     white
-  ) !important; /* Default color is black */
+  ) !important; 
 }
 
 .heading-color {
-  color: var(--HeadingColor, black) !important; /* Default color is black */
+  color: var(--HeadingColor, black) !important; 
 }
 
 .sidebar-bg {
@@ -980,4 +975,13 @@ a.sidebar-color.sidebar-sublink.active {
     --sidebarColor,
     white
   ) !important; 
+}
+a.sidebar-color.sidebar-sublink.active {
+  padding: 10px;
+}
+.features {
+padding-left: 0;
+}
+.features li{
+  list-style-type: none;
 }

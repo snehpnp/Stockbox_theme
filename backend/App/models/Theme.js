@@ -31,6 +31,7 @@ const themeSchema = new Schema(
     wrapperMode: { type: String, required: true },
     headSidebarFontActiveCol: { type: String, required: true },
     headSidebarFontCol: { type: String, required: true },
+    tabelheadbgcolor: { type: String, required: true },
   },
   {
     timestamps: true,

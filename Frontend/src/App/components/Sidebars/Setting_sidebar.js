@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Formik, Form, Field } from "formik";
 import { Row, Col, Button } from "react-bootstrap";
-import { SketchPicker } from 'react-color';
+import { SketchPicker } from "react-color";
 
 export default function Setting_sidebar() {
   const [isGradient, setIsGradient] = useState({
@@ -30,6 +30,7 @@ export default function Setting_sidebar() {
     WrapperColor: "#ffffff",
     headSidebarFontCol: "#ffffff",
     headSidebarFontActiveCol: "#ffffff",
+    tabelheadbgcolor: "#f1f1f1",
   });
 
   const [isOpen, setIsOpen] = useState(false);
@@ -80,6 +81,7 @@ export default function Setting_sidebar() {
       headSidebarFontCol: theme.headSidebarFontCol || "#ffffff",
       headSidebarFontActiveCol: theme.headSidebarFontActiveCol || "#ffffff",
       WrapperColor: theme.WrapperColor || "#ffffff",
+      tabelheadbgcolor: theme.tabelheadbgcolor || "#f1f1f1",
     });
   }, []);
 
@@ -141,8 +143,6 @@ export default function Setting_sidebar() {
             >
               {({ values }) => (
                 <Form>
-
-
                   <Row>
                     <Col md={12} lg={12}>
                       <label className="text-dark setting-label">
@@ -303,15 +303,18 @@ export default function Setting_sidebar() {
                       </div>
 
                       <div className="color-input-div">
-                        <label className="text-dark">Sidebar/Navbar Color: </label>
+                        <label className="text-dark">
+                          Sidebar/Navbar Color:{" "}
+                        </label>
                         <Field name="headSidebarFontCol" type="color" />
                       </div>
 
                       <div className="color-input-div">
-                        <label className="text-dark">Sidebar/Navbar Active Color: </label>
+                        <label className="text-dark">
+                          Sidebar/Navbar Active Color:{" "}
+                        </label>
                         <Field name="headSidebarFontActiveCol" type="color" />
                       </div>
-
 
                       <div className="text-dark color-input-div">
 
@@ -442,20 +445,80 @@ export default function Setting_sidebar() {
 
                     <div className="setting-sidebar-divider-line"></div>
                     <Col md={12} lg={12}>
-                      <label className="text-dark setting-label">
-                        Wrapper Background Color
-                      </label>
-                      <div className="color-input-div">
+                      <div>
                         <label className="text-dark">
-                          Wrapper Solid Color:{" "}
+                          Wrapper Color Mode :{" "}
                         </label>
-                        <Field name="WrapperColor" type="color" />
+                        <br />
+                        <label className="text-dark">
+                          <input
+                            type="radio"
+                            name="wrapperMode"
+                            checked={!isGradient.font}
+                            onChange={() =>
+                              setIsGradient((prev) => ({
+                                ...prev,
+                                font: false,
+                              }))
+                            }
+                          />
+                          Solid
+                        </label>
+                        <label className="text-dark">
+                          <input
+                            type="radio"
+                            name="wrapperMode"
+                            checked={isGradient.font}
+                            onChange={() =>
+                              setIsGradient((prev) => ({
+                                ...prev,
+                                font: true,
+                              }))
+                            }
+                          />
+                          Gradient
+                        </label>
+                      </div>
+
+                      {!isGradient.font ? (
+                        <div className="mt-3">
+                          <label className="text-dark">
+                            Wrapper Solid Color:{" "}
+                          </label>
+                          <Field name="WrapperColor" type="color" />
+                        </div>
+                      ) : (
+                        <div className="mt-3">
+                          <label className="text-dark">
+                            Wrapper Gradient Start:{" "}
+                          </label>
+                          <Field name="wrapperGradientStart" type="color" />
+                          <br />
+                          <label className="text-dark">
+                            Wrapper Gradient End:{" "}
+                          </label>
+                          <Field name="wrapperGradientEnd" type="color" />
+                          <div
+                            style={{
+                              marginTop: "10px",
+                              height: "50px",
+                              background: `linear-gradient(to right, ${values.wrapperGradientStart}, ${values.wrapperGradientEnd})`,
+                              border: "1px solid #ccc",
+                            }}
+                          ></div>
+                        </div>
+                      )}
+
+                      <div className="mt-3">
+                        <label className="text-dark">
+                          Tabel Head bg Color:{" "}
+                        </label>
+                        <Field name="tabelheadbgcolor" type="color" />
                       </div>
                     </Col>
                   </Row>
 
                   <div className="setting-sidebar-divider-line"></div>
-
 
                   <Button className="text-dark" type="submit">
                     Apply Changes
