@@ -58,6 +58,13 @@ function Service() {
 
 
 
+  const removeCoupon = () => {
+    setManualCoupon("");
+    setAppliedCoupon(null);
+    setDiscountedPrice(selectedPlanDetails?.plans[0]?.price || "N/A");
+  };
+
+
 
   const handleSelectChange = (event) => {
     setSelectedPlan(event.target.value);
@@ -327,89 +334,69 @@ function Service() {
                         />
                         <button
                           className="btn btn-primary"
-                          onClick={() => applyCoupon({ code: manualCoupon, })}
+                          onClick={() => applyCoupon({ code: manualCoupon })}
                         >
                           Apply
                         </button>
+                        {appliedCoupon && (
+                          <button
+                            className="btn btn-danger ms-2"
+                            onClick={() => removeCoupon()}
+                          >
+                            Remove
+                          </button>
+                        )}
                       </div>
                     </div>
                     <div>
-
                       {coupons.map((coupon, index) => (
-                        <>
-                          <li className="d-flex align-items-center  pb-3">
-                            <div
-                              className="rounded-circle p-2 border d-flex align-items-center justify-content-center"
-                              style={{
-                                width: '50px',
-                                height: '50px',
-                                backgroundColor: '#f8f8f8',
-                                textAlign: 'center',
-                                fontSize: '16px',
-                                fontWeight: '500',
-                                color: '#333',
-                              }}
-                            >
-                              {coupon.serviceName || "Premium Members"}
+                        <li className="d-flex align-items-center pb-3" key={coupon.code}>
+                          <div
+                            className="rounded-circle p-2 border d-flex align-items-center justify-content-center"
+                            style={{
+                              width: "50px",
+                              height: "50px",
+                              backgroundColor: "#f8f8f8",
+                              textAlign: "center",
+                              fontSize: "16px",
+                              fontWeight: "500",
+                              color: "#333",
+                            }}
+                          >
+                            {coupon.serviceName || "Premium Members"}
+                          </div>
+
+                          <div className="flex-grow-1 ms-3 text-start">
+                            <p className="use-cod mb-1" style={{ color: "#555" }}>
+                              Use code <span style={{ fontWeight: "600" }}>{coupon?.code}</span>{" "}
+                              | Valid till {fa_time(coupon?.enddate)}
+                            </p>
+                            <div className="fs-6" style={{ color: "#555" }}>
+                              <span className="mb-1">{coupon?.validity}</span>
+                              <span className="mb-1">
+                                Save Upto <strong> ₹{coupon?.value}</strong>
+                              </span>
+                              <span>
+                                {" "}
+                                <strong>{coupon?.name}</strong> Offer
+                              </span>
                             </div>
+                          </div>
 
-                            <div className="flex-grow-1 ms-3 text-start">
-                              <p className="mb-1 fs-6">
-                                <strong style={{ color: '#555' }}>Segment Name:</strong> {coupon.serviceName || "Premium Members"}
-
-                              </p>
-                              <p className="use-cod mb-1 " style={{ color: '#555' }}>
-                                Use code <span style={{ fontWeight: '600' }}>{coupon?.code}</span> | Valid till {fa_time(coupon?.enddate)}{" "}
-                              </p>
-                              <div className="fs-6" style={{ color: '#555' }}>
-                                <span className=" mb-1">{coupon?.validity}</span>
-                                <span className="mb-1 ">
-                                  Save Upto <strong> ₹{coupon?.value}</strong>
-                                </span>
-                                <span className=""> <strong>{coupon?.name}</strong> Offer</span>
-                              </div>
-                            </div>
-                            <div>
-                              <div style={{ color: '#555' }}>
-                                <span className="d-block mb-1 text-start">{coupon?.validity}</span>
-                                <span className="d-block mb-1 text-start">
-                                  Save Upto <IndianRupee />{coupon?.value}
-                                </span>
-                                <span className="d-block text-start" style={{ fontSize: '12px' }}>{coupon?.name} Offer</span>
-                              </div>
-
-                            </div>
-                            <div
-                              className="d-flex justify-content-between align-items-center p-2"
-                              style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                padding: '10px 12px',
-
-                              }}
-                              key={coupon.code}
-                            >
-
-                              <button
-                                className="btn btn-sm btn-primary ms-4"
-                                onClick={() => handleCouponSelect(coupon)}
-                                style={{ padding: '6px 12px', fontSize: '14px' }}
-                              >
-                                Select
-                              </button>
-                            </div>
-
-                            <div style={{ height: '1px', backgroundColor: '#e0e0e0', marginTop: '12px', marginBottom: '12px' }}></div>
-                          </li>
-                          <hr />
-                        </>
+                          <button
+                            className="btn btn-sm btn-primary ms-4"
+                            onClick={() => handleCouponSelect(coupon)}
+                            style={{ padding: "6px 12px", fontSize: "14px" }}
+                          >
+                            Select
+                          </button>
+                        </li>
                       ))}
-
                     </div>
                   </Accordion.Body>
                 </Accordion.Item>
               </Accordion>
+
 
               <hr />
               <div className="d-flex justify-content-between align-items-center">
