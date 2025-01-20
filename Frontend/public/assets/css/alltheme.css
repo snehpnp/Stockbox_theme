@@ -896,11 +896,6 @@ ol.breadcrumb.mb-0.p-0 {
 }
 
 
-/* Primary button using CSS variables */
-.btn-primary {
-  background-color: var(--btn-bg-color) !important;
-  color: var(--btn-txt-color) !important;
-}
 
 /* Secondary button using CSS variables */
 .btn-secondary {
@@ -914,7 +909,7 @@ ol.breadcrumb.mb-0.p-0 {
 .content-heading {
   color: var(--dynamic-color, black) !important; 
 }
-.btn-primary,.nav-link.active {
+.btn-primary,.nav-link.active , .btn-primary i{
   background-color: var(
     --BtnPriBgCol,
     black
@@ -977,4 +972,19 @@ padding-left: 0;
 }
 .features li{
   list-style-type: none;
+}
+.pricing-card {
+  background-color: white;
+  border: 1px solid  var(
+    --BtnBorderColor,
+    black
+  ) !important; ;
+  border-radius: 8px;
+  padding: 20px;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.pricing-card li {
+  list-style-type: none;
+  padding: 10px 0;
 }
