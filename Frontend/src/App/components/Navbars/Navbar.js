@@ -7,9 +7,8 @@ import { Link } from "react-router-dom";
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
 
-  const Role = localStorage.getItem("Role")
+  const Role = localStorage.getItem("Role");
 
-  console.log("Role", Role)
 
   const Logout = () => {
     localStorage.clear();
@@ -18,9 +17,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     } else {
       window.location.href = "/login";
     }
-
-
-  }
+  };
   const toggleSidebar = () => {
     const body = document.body;
 
@@ -48,7 +45,6 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       >
         <div className="container-fluid">
           <div>
-
             <a className="navbar-brand" href="#">
               <img
                 src={Logo}
@@ -67,26 +63,25 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
             >
               <FaBars />
             </button>
-
           </div>
 
           <div className="d-flex align-items-center position-relative ml-auto">
-          <div className="d-flex">
-  <span className="switch-label p-1">
-    Trading Status:<span style={{ color: "red" }}>Off</span>
-  </span>
-  <div
-    className="form-check form-switch form-check-dark"
-    style={{ margin: "inherit", fontSize: 21 }}
-  >
-    <input
-      className="form-check-input"
-      type="checkbox"
-      role="switch"
-      id="flexSwitchCheckDark"
-    />
-  </div>
-</div>
+            {/* <div className="d-flex">
+              <span className="switch-label p-1">
+                Trading Status:<span style={{ color: "red" }}>Off</span>
+              </span>
+              <div
+                className="form-check form-switch form-check-dark"
+                style={{ margin: "inherit", fontSize: 21 }}
+              >
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="flexSwitchCheckDark"
+                />
+              </div>
+            </div> */}
 
             <div className="dropdown">
               <div
@@ -96,12 +91,19 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   marginLeft: "20px",
                   position: "relative",
                 }}
-                role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
+                role="button"
+                id="dropdownMenuLink"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
               >
                 <FaBell size={24} style={{ color: "#fff" }} />
               </div>
 
-              <div style={notificationDropdownStyle} className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <div
+                style={notificationDropdownStyle}
+                className="dropdown-menu"
+                aria-labelledby="dropdownMenuLink"
+              >
                 <div style={notificationHeaderStyle}>Notifications</div>
                 <ul style={notificationListStyle}>
                   <li style={notificationItemStyle}>
@@ -121,7 +123,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
               <div
                 className="profile-container dropdown-toggle"
                 style={{ cursor: "pointer", marginLeft: "20px" }}
-                role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
+                role="button"
+                id="dropdownMenuLink"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
               >
                 <img
                   src={ProfileImage}
@@ -136,19 +141,23 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                 />
               </div>
 
-              <div style={profileDropdownStyle} className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <div
+                style={profileDropdownStyle}
+                className="dropdown-menu"
+                aria-labelledby="dropdownMenuLink"
+              >
                 <ul style={dropdownListStyle}>
                   <li style={dropdownItemStyle}>
-                    <Link to='/user/profiles' >🛠️ Profile Settings</Link>
-
+                    <Link to="/user/profiles">🛠️ Profile Settings</Link>
                   </li>
                   <li style={dropdownItemStyle}>📦 Service</li>
                   <li style={dropdownItemStyle}>ℹ️ About</li>
-                  <li style={dropdownItemStyle} onClick={(e) => Logout()}>🚪 Logout</li>
+                  <li style={dropdownItemStyle} onClick={(e) => Logout()}>
+                    🚪 Logout
+                  </li>
                 </ul>
               </div>
             </div>
-
           </div>
         </div>
       </nav>
@@ -160,12 +169,12 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
 const profileDropdownStyle = {
   left: "-90px",
-}
+};
 
 const notificationDropdownStyle = {
   left: "-180px",
-  width: '230px',
-}
+  width: "230px",
+};
 
 const dropdownListStyle = {
   listStyle: "none",

@@ -38,7 +38,7 @@ const Edittheme = () => {
         window.location.href = "/superadmin/themes";
       } else {
       }
-    } catch (error) { }
+    } catch (error) {}
   };
 
   const GetTheme = async () => {
@@ -53,7 +53,7 @@ const Edittheme = () => {
           wrapperMode: response?.data?.WrapperColor?.includes("gradient"),
         }));
       }
-    } catch (error) { }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -131,46 +131,148 @@ const Edittheme = () => {
                             name="fontFamily"
                             className="text-dark form-control"
                           >
-                            <option className="text-dark" value="Arial">Arial</option>
-                            <option className="text-dark" value="Times New Roman">Times New Roman</option>
-                            <option className="text-dark" value="Courier New">Courier New</option>
-                            <option className="text-dark" value="Verdana">Verdana</option>
-                            <option className="text-dark" value="Georgia">Georgia</option>
-                            <option className="text-dark" value="Impact">Impact</option>
-                            <option className="text-dark" value="Comic Sans MS">Comic Sans MS</option>
-                            <option className="text-dark" value="Tahoma">Tahoma</option>
-                            <option className="text-dark" value="Trebuchet MS">Trebuchet MS</option>
-                            <option className="text-dark" value="Lucida Console">Lucida Console</option>
-                            <option className="text-dark" value="Palatino Linotype">Palatino Linotype</option>
-                            <option className="text-dark" value="Arial Black">Arial Black</option>
-                            <option className="text-dark" value="Consolas">Consolas</option>
-                            <option className="text-dark" value="Lucida Sans Unicode">Lucida Sans Unicode</option>
-                            <option className="text-dark" value="Garamond">Garamond</option>
-                            <option className="text-dark" value="Book Antiqua">Book Antiqua</option>
-                            <option className="text-dark" value="Copperplate">Copperplate</option>
-                            <option className="text-dark" value="Brush Script MT">Brush Script MT</option>
-                            <option className="text-dark" value="Arial Narrow">Arial Narrow</option>
-                            <option className="text-dark" value="Century Gothic">Century Gothic</option>
-                            <option className="text-dark" value="Rockwell">Rockwell</option>
-                            <option className="text-dark" value="Franklin Gothic Medium">Franklin Gothic Medium</option>
-                            <option className="text-dark" value="Arial Rounded MT Bold">Arial Rounded MT Bold</option>
-                            <option className="text-dark" value="Poppins">Poppins</option>
-                            <option className="text-dark" value="Roboto">Roboto</option>
-                            <option className="text-dark" value="Open Sans">Open Sans</option>
-                            <option className="text-dark" value="Lato">Lato</option>
-                            <option className="text-dark" value="Montserrat">Montserrat</option>
-                            <option className="text-dark" value="Oswald">Oswald</option>
-                            <option className="text-dark" value="Raleway">Raleway</option>
-                            <option className="text-dark" value="PT Sans">PT Sans</option>
-                            <option className="text-dark" value="Merriweather">Merriweather</option>
-                            <option className="text-dark" value="Nunito">Nunito</option>
-                            <option className="text-dark" value="Ubuntu">Ubuntu</option>
-                            <option className="text-dark" value="Playfair Display">Playfair Display</option>
-                            <option className="text-dark" value="Fira Sans">Fira Sans</option>
-                            <option className="text-dark" value="Inter">Inter</option>
-                            <option className="text-dark" value="Work Sans">Work Sans</option>
+                            <option className="text-dark" value="Arial">
+                              Arial
+                            </option>
+                            <option
+                              className="text-dark"
+                              value="Times New Roman"
+                            >
+                              Times New Roman
+                            </option>
+                            <option className="text-dark" value="Courier New">
+                              Courier New
+                            </option>
+                            <option className="text-dark" value="Verdana">
+                              Verdana
+                            </option>
+                            <option className="text-dark" value="Georgia">
+                              Georgia
+                            </option>
+                            <option className="text-dark" value="Impact">
+                              Impact
+                            </option>
+                            <option className="text-dark" value="Comic Sans MS">
+                              Comic Sans MS
+                            </option>
+                            <option className="text-dark" value="Tahoma">
+                              Tahoma
+                            </option>
+                            <option className="text-dark" value="Trebuchet MS">
+                              Trebuchet MS
+                            </option>
+                            <option
+                              className="text-dark"
+                              value="Lucida Console"
+                            >
+                              Lucida Console
+                            </option>
+                            <option
+                              className="text-dark"
+                              value="Palatino Linotype"
+                            >
+                              Palatino Linotype
+                            </option>
+                            <option className="text-dark" value="Arial Black">
+                              Arial Black
+                            </option>
+                            <option className="text-dark" value="Consolas">
+                              Consolas
+                            </option>
+                            <option
+                              className="text-dark"
+                              value="Lucida Sans Unicode"
+                            >
+                              Lucida Sans Unicode
+                            </option>
+                            <option className="text-dark" value="Garamond">
+                              Garamond
+                            </option>
+                            <option className="text-dark" value="Book Antiqua">
+                              Book Antiqua
+                            </option>
+                            <option className="text-dark" value="Copperplate">
+                              Copperplate
+                            </option>
+                            <option
+                              className="text-dark"
+                              value="Brush Script MT"
+                            >
+                              Brush Script MT
+                            </option>
+                            <option className="text-dark" value="Arial Narrow">
+                              Arial Narrow
+                            </option>
+                            <option
+                              className="text-dark"
+                              value="Century Gothic"
+                            >
+                              Century Gothic
+                            </option>
+                            <option className="text-dark" value="Rockwell">
+                              Rockwell
+                            </option>
+                            <option
+                              className="text-dark"
+                              value="Franklin Gothic Medium"
+                            >
+                              Franklin Gothic Medium
+                            </option>
+                            <option
+                              className="text-dark"
+                              value="Arial Rounded MT Bold"
+                            >
+                              Arial Rounded MT Bold
+                            </option>
+                            <option className="text-dark" value="Poppins">
+                              Poppins
+                            </option>
+                            <option className="text-dark" value="Roboto">
+                              Roboto
+                            </option>
+                            <option className="text-dark" value="Open Sans">
+                              Open Sans
+                            </option>
+                            <option className="text-dark" value="Lato">
+                              Lato
+                            </option>
+                            <option className="text-dark" value="Montserrat">
+                              Montserrat
+                            </option>
+                            <option className="text-dark" value="Oswald">
+                              Oswald
+                            </option>
+                            <option className="text-dark" value="Raleway">
+                              Raleway
+                            </option>
+                            <option className="text-dark" value="PT Sans">
+                              PT Sans
+                            </option>
+                            <option className="text-dark" value="Merriweather">
+                              Merriweather
+                            </option>
+                            <option className="text-dark" value="Nunito">
+                              Nunito
+                            </option>
+                            <option className="text-dark" value="Ubuntu">
+                              Ubuntu
+                            </option>
+                            <option
+                              className="text-dark"
+                              value="Playfair Display"
+                            >
+                              Playfair Display
+                            </option>
+                            <option className="text-dark" value="Fira Sans">
+                              Fira Sans
+                            </option>
+                            <option className="text-dark" value="Inter">
+                              Inter
+                            </option>
+                            <option className="text-dark" value="Work Sans">
+                              Work Sans
+                            </option>
                           </Field>
-
                         </div>
                       </Card.Body>
                     </Card>
@@ -178,10 +280,14 @@ const Edittheme = () => {
                   <Col md={6} lg={4} className="mb-4">
                     <Card>
                       <Card.Body>
-                        <Card.Title className="text-dark">Font Color</Card.Title>
+                        <Card.Title className="text-dark">
+                          Font Color
+                        </Card.Title>
 
                         <div className="mt-3">
-                          <label className="text-dark">Font Solid Color: </label>
+                          <label className="text-dark">
+                            Font Solid Color:{" "}
+                          </label>
                           <Field name="fontColor" type="color" />
                         </div>
 
@@ -190,17 +296,19 @@ const Edittheme = () => {
                           <Field name="HeadingColor" type="color" />
                         </div>
 
-
                         <div className="mt-3">
-                          <label className="text-dark">Sidebar/Navbar Color: </label>
+                          <label className="text-dark">
+                            Sidebar/Navbar Color:{" "}
+                          </label>
                           <Field name="headSidebarFontCol" type="color" />
                         </div>
 
                         <div className="mt-3">
-                          <label className="text-dark">Sidebar/Navbar Active Color: </label>
+                          <label className="text-dark">
+                            Sidebar/Navbar Active Color:{" "}
+                          </label>
                           <Field name="headSidebarFontActiveCol" type="color" />
                         </div>
-
                       </Card.Body>
                     </Card>
                   </Col>
@@ -213,7 +321,9 @@ const Edittheme = () => {
                           Navbar Color
                         </Card.Title>
                         <div>
-                          <label className="text-dark">Navbar Color Mode: </label>
+                          <label className="text-dark">
+                            Navbar Color Mode:{" "}
+                          </label>
                           <label className="text-dark">
                             <input
                               type="radio"
@@ -348,14 +458,20 @@ const Edittheme = () => {
                           </div>
                         )}
                         <div className="mt-3">
-                          <label className="text-dark">Sidebar Position: </label>
+                          <label className="text-dark">
+                            Sidebar Position:{" "}
+                          </label>
                           <Field
                             as="select"
                             name="sidebarPosition"
                             className="text-dark form-control"
                           >
-                            <option className="text-dark" value="Header">Header</option>
-                            <option className="text-dark" value="Sidebar">Sidebar</option>
+                            <option className="text-dark" value="Header">
+                              Header
+                            </option>
+                            <option className="text-dark" value="Sidebar">
+                              Sidebar
+                            </option>
                           </Field>
                         </div>
 
@@ -366,9 +482,15 @@ const Edittheme = () => {
                             name="sidebarName"
                             className="text-dark form-control"
                           >
-                            <option className="text-dark" value="1">Main</option>
-                            <option className="text-dark" value="2">Card Sidebar</option>
-                            <option className="text-dark" value="3">New Sidebar</option>
+                            <option className="text-dark" value="1">
+                              Main
+                            </option>
+                            <option className="text-dark" value="2">
+                              Card Sidebar
+                            </option>
+                            <option className="text-dark" value="3">
+                              New Sidebar
+                            </option>
                           </Field>
                         </div>
                       </Card.Body>
@@ -490,6 +612,13 @@ const Edittheme = () => {
                             ></div>
                           </div>
                         )}
+
+                        <div className="mt-3">
+                          <label className="text-dark">
+                            Tabel Head bg Color:{" "}
+                          </label>
+                          <Field name="tabelheadbgcolor" type="color" />
+                        </div>
                       </Card.Body>
                     </Card>
                   </Col>

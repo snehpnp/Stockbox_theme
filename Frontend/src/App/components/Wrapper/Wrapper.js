@@ -109,6 +109,7 @@ export default function App() {
         "--sidebarColor",
         theme?.sidebarColor
       );
+      document.documentElement.style.setProperty("--tabelheadbgcolor", theme?.tabelheadbgcolor);
 
 
     } else {
