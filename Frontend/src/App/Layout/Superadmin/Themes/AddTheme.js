@@ -143,9 +143,7 @@ const Addtheme = () => {
                           <option className="text-dark" value="2">
                             2
                           </option>
-                          <option className="text-dark" value="3">
-                            3
-                          </option>
+                   
                           <option className="text-dark" value="4">
                             4
                           </option>

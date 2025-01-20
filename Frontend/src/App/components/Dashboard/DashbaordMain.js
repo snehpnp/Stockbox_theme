@@ -2,17 +2,15 @@
 import React from "react";
 import Dashboard1 from "./Dashboard1";
 import Dashboard2 from "./Dashboard2";
-import Dashboard3 from "./Dashboard3";
 import Dashboard4 from "./Dashboard4";
 import Dashboard5 from "./Dashboard5";
 import Dashboard6 from "./Dashboard6";
 import Dashboard7 from "./Dashboard7";
 import Dashboard8 from "./Dashboard8";
-import Dashboard9 from "./Dashboard9";
 import Dashboard10 from "./Dashboard10";
 import Dashboard11 from "./Dashboard11";
+import Dashboard9 from "./Dashboard13";
 
-import Contnet from "../Contents/Content";
 
 const DashboardData = {
   total_client: 10,
@@ -40,19 +38,7 @@ const DashboardData = {
 const Dashboard = (monthexpiry, data) => {
   var GetThemeId = JSON.parse(localStorage.getItem("theme"));
 
-  return (
-    <>
-      <Contnet
-        Page_title="Dashboard"
-        button_title="Add Theme"
-        button_status={false}
-        backbutton_title={false}
-        route="/add-theme"
-      >
-        {CallDashboard(monthexpiry, GetThemeId?.themeId || 1)}
-      </Contnet>
-    </>
-  );
+  return <>{CallDashboard(monthexpiry, GetThemeId?.themeId || 1)}</>;
 };
 
 const CallDashboard = (monthexpiry, id) => {
@@ -60,24 +46,24 @@ const CallDashboard = (monthexpiry, id) => {
     return <Dashboard1 monthexpiry={monthexpiry} />;
   } else if (id == 2) {
     return <Dashboard2 monthexpiry={monthexpiry} />;
-  } else if (id == 3) {
-    return <Dashboard3 data={DashboardData} />;
-  } else if (id == 4) {
-    return <Dashboard4 data={DashboardData} />;
+  } 
+ 
+   else if (id == 4) {
+    return <Dashboard4 monthexpiry={monthexpiry} />;
   } else if (id == 5) {
-    return <Dashboard5 data={DashboardData} />;
+    return <Dashboard5 monthexpiry={monthexpiry} />;
   } else if (id == 6) {
-    return <Dashboard6 data={DashboardData} />;
+    return <Dashboard6 monthexpiry={monthexpiry} />;
   } else if (id == 7) {
-    return <Dashboard7 data={DashboardData} />;
+    return <Dashboard7 monthexpiry={monthexpiry} />;
   } else if (id == 8) {
-    return <Dashboard8 data={DashboardData} />;
+    return <Dashboard8 monthexpiry={monthexpiry} />;
   } else if (id == 9) {
-    return <Dashboard9 data={DashboardData} />;
+    return <Dashboard9 monthexpiry={monthexpiry} />; //Remove this line
   } else if (id == 10) {
-    return <Dashboard10 data={DashboardData} />;
+    return <Dashboard10 monthexpiry={monthexpiry} />;
   } else if (id == 11) {
-    return <Dashboard11 data={DashboardData} />;
+    return <Dashboard11 monthexpiry={monthexpiry} />;
   } else {
     return;
   }
