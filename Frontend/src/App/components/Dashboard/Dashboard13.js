@@ -1,12 +1,179 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
 import { Link } from "react-router-dom";
-import ReactApexChart from "react-apexcharts";
-import { Bar, Pie } from "react-chartjs-2"; // Import multiple chart types
 import "chart.js/auto"; // Enable auto Chart.js integration
-import { Users, CheckCircle, XCircle, FlaskConical, Hourglass } from "lucide-react"; // Import icons
 
-const Dashboard1 = ({ data }) => {
+import { fDateMonth } from "../../../Utils/Date_formate";
+import ReactApexChart from "react-apexcharts";
+import { Bar, Pie } from "react-chartjs-2";
+
+const Dashboard1 = ({ monthexpiry }) => {
+  const currentMonthYear = new Date().toLocaleString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+
+  const labelColors = {
+    "Current Month Active License": "#2ecc71", // Green
+    "Total Clients": "#3498db", // Blue
+    "Total Active Clients": "#1abc9c", // Turquoise
+    "Total Deactive Clients": "#e74c3c", // Red
+    "Today's Open Signal": "#f1c40f", // Yellow
+    "Today's Close Signal": "#e67e22", // Orange
+    "Total Open Signals": "#9b59b6", // Purple
+    "Total Close Signals": "#34495e", // Dark Blue
+    "Total Plan Active Clients": "#27ae60", // Dark Green
+    "Total Plan Expired": "#8e44ad", // Deep Purple
+    "Total Active Free Clients": "#16a085", // Teal
+    "Total Inactive Free Clients": "#d35400", // Dark Orange
+  };
+
+  // Map colors dynamically
+  const cardsData = [
+    {
+      link: "/admin/planexpirymonth",
+      bgClass: "bg-gradient-moonlit",
+      value1:
+        monthexpiry?.monthexpiry?.length > 0
+          ? monthexpiry?.monthexpiry?.some(
+              (item) => fDateMonth(item?.month) === currentMonthYear
+            )
+            ? monthexpiry?.monthexpiry.reduce((acc, item) => {
+                return fDateMonth(item?.month) === currentMonthYear
+                  ? acc + (item.noofclient || 0)
+                  : acc;
+              }, 0)
+            : 0
+          : 0,
+
+      label: "Current Month Active License",
+      icon: "bx-user-plus",
+      progress: 55,
+      visible: false,
+      color: labelColors["Current Month Active License"],
+    },
+    {
+      link: "/admin/client",
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.clientCountTotal,
+      label: "Total Clients",
+      icon: "bx-user",
+      progress: 55,
+      visible: true,
+      color: labelColors["Total Clients"],
+    },
+    {
+      link: "/admin/client",
+      state: { clientStatus: 1 },
+      bgClass: "bg-gradient-ohhappiness",
+      value1: monthexpiry?.data?.clientCountActive,
+      label: "Total Active Clients",
+      icon: "bx-user-circle",
+      progress: 55,
+      visible: true,
+      color: labelColors["Total Active Clients"],
+    },
+    {
+      link: "/admin/client",
+      state: { clientStatus: 0 },
+      bgClass: "bg-gradient-ibiza",
+      value1:
+        monthexpiry?.data.clientCountTotal -
+        monthexpiry?.data.clientCountActive,
+      label: "Total Deactive Clients",
+      icon: "bx-user-x",
+      progress: 55,
+      visible: true,
+      color: labelColors["Total Deactive Clients"],
+    },
+    {
+      link: "/admin/signal",
+      state: { clientStatus: "todayopensignal" },
+      bgClass: "bg-gradient-moonlit",
+      value1: monthexpiry?.data?.todayOpenSignal,
+      label: "Today's Open Signal",
+      icon: "bx-wifi-2",
+      progress: 55,
+      visible: true,
+      color: labelColors["Today's Open Signal"],
+    },
+    {
+      link: "/admin/closesignal",
+      state: { clientStatus: "todayclosesignal" },
+      bgClass: "bg-gradient-ibiza",
+      value1: monthexpiry?.data?.todayCloseSignal,
+      label: "Today's Close Signal",
+      icon: "bx-wifi-off",
+      progress: 55,
+      visible: true,
+      color: labelColors["Today's Close Signal"],
+    },
+    {
+      link: "/admin/signal",
+      bgClass: "bg-gradient-ohhappiness",
+      value1: monthexpiry?.data?.OpensignalCountTotal,
+      label: "Total Open Signals",
+      icon: "bxl-redux",
+      progress: 55,
+      visible: true,
+      color: labelColors["Total Open Signals"],
+    },
+    {
+      link: "/admin/closesignal",
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.CloseSignalCountTotal,
+      label: "Total Close Signals",
+      icon: "bx-wifi-2",
+      progress: 55,
+      visible: true,
+      color: labelColors["Total Close Signals"],
+    },
+    {
+      link: "/admin/client",
+      state: { clientStatus: "active" },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.activePlanclient,
+      label: "Total Plan Active Clients",
+      icon: "bx-wifi-2",
+      progress: 55,
+      visible: true,
+      color: labelColors["Total Plan Active Clients"],
+    },
+    {
+      link: "/admin/client",
+      state: { clientStatus: "expired" },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.inActivePlanclient,
+      label: "Total Plan Expired",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+      visible: true,
+      color: labelColors["Total Plan Expired"],
+    },
+    {
+      link: "/admin/freeclient",
+      state: { clientStatus: "active" },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.activeFreetrial,
+      label: "Total Active Free Clients",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+      visible: true,
+      color: labelColors["Total Active Free Clients"],
+    },
+    {
+      link: "/admin/freeclient",
+      state: { clientStatus: "expired" },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.inActiveFreetrial,
+      label: "Total Inactive Free Clients",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+      visible: true,
+      color: labelColors["Total Inactive Free Clients"],
+    },
+  ];
+
   const chartData = {
     labels: [
       "Total Clients",
@@ -19,11 +186,10 @@ const Dashboard1 = ({ data }) => {
       {
         label: "Client Statistics",
         data: [
-          data?.total_client || 0,
-          data?.total_active_client || 0,
-          data?.total_expired_client || 0,
-          data?.total_demo_client || 0,
-          data?.total_two_days || 0,
+          monthexpiry?.data?.clientCountTotal || 0,
+          monthexpiry?.data?.clientCountActive || 0,
+          monthexpiry?.data.clientCountTotal -
+            monthexpiry?.data.clientCountActive || 0,
         ],
         backgroundColor: [
           "#3498db",
@@ -44,9 +210,9 @@ const Dashboard1 = ({ data }) => {
       {
         label: "Client Distribution",
         data: [
-          data?.total_active_client || 0,
-          data?.total_expired_client || 0,
-          data?.total_demo_client || 0,
+          monthexpiry?.data?.clientCountActive || 0,
+          monthexpiry?.data.clientCountTotal -
+            monthexpiry?.data.clientCountActive || 0,
         ],
         backgroundColor: ["#2ecc71", "#e74c3c", "#f1c40f"],
       },
@@ -96,70 +262,14 @@ const Dashboard1 = ({ data }) => {
     },
   });
 
-  const arr = [
-    {
-      index: 1,
-      name: "Total Clients",
-      value: data?.total_client || 0,
-      icon: Users,
-      route: "/admin/allclients",
-      color: "#3498db",
-    },
-    {
-      index: 2,
-      name: "Active Clients",
-      value: data?.total_active_client || 0,
-      icon: CheckCircle,
-      route: "/admin/allclients?filter=111",
-      color: "#2ecc71",
-    },
-    {
-      index: 3,
-      name: "Expired Clients",
-      value: data?.total_expired_client || 0,
-      icon: XCircle,
-      route: "/admin/expiredclients?filter=000",
-      color: "#e74c3c",
-    },
-    {
-      index: 4,
-      name: "Demo Clients",
-      value: data?.total_demo_client || 0,
-      icon: FlaskConical,
-      route: "/admin/allclients?filter=1",
-      color: "#f1c40f",
-    },
-    {
-      index: 5,
-      name: "2 Days Clients",
-      value: data?.total_two_days || 0,
-      icon: Hourglass,
-      route: "/admin/allclients?filter=0",
-      color: "#9b59b6",
-    },
-  ];
-
   return (
     <div className="theme-1-dashboard" style={{ padding: "20px" }}>
       {/* Cards Section */}
-      <div className="row mb-4">
-      <div className="col-md-12 mb-4">
-          <div className="chart-container shadow p-3">
-           
-            <ReactApexChart
-              options={state.options}
-              series={state.series}
-              type="area"
-              height={350}
-            />
-          </div>
-        </div>
-      </div>
       <div className="row mb-5">
-        {arr.map((item) => (
+        {cardsData.map((item, index) => (
           <div
             className="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4"
-            key={item.index}
+            key={index + 1}
           >
             <div
               className="card shadow"
@@ -179,13 +289,14 @@ const Dashboard1 = ({ data }) => {
                   borderRadius: "50%",
                 }}
               >
-                <item.icon />
+                <i className={`bx ${item.icon} fs-3`} />
+                {/* <item.icon /> */}
               </div>
-              <h5 className="text-center ">{item.name}</h5>
-              <h3 className="my-3 text-center">{item.value}</h3>
+              <h5 className="text-center ">{item.label}</h5>
+              <h3 className="my-3 text-center">{item.value1}</h3>
               <div className="text-center">
                 <Link
-                  to={item.route}
+                  to={item.link}
                   className="btn btn-light"
                   style={{
                     borderRadius: "20px",
@@ -201,6 +312,19 @@ const Dashboard1 = ({ data }) => {
         ))}
       </div>
 
+      {/* <div className="row mb-4">
+        <div className="col-md-12 mb-4">
+          <div className="chart-container shadow p-3">
+            <ReactApexChart
+              options={state.options}
+              series={state.series}
+              type="area"
+              height={350}
+            />
+          </div>
+        </div>
+      </div> */}
+
       {/* Charts Section */}
       <div className="row">
         <div className="col-md-6 mb-4">
@@ -215,7 +339,6 @@ const Dashboard1 = ({ data }) => {
             <Pie data={pieData} />
           </div>
         </div>
-       
       </div>
     </div>
   );

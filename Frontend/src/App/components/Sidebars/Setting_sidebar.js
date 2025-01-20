@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { Formik, Form, Field } from "formik";
 import { Row, Col, Button } from "react-bootstrap";
 import { SketchPicker } from "react-color";
+import { AddThemeApi } from "../../Services/Themes/Theme";
 
+import Swal from "sweetalert2";
 export default function Setting_sidebar() {
   const [isGradient, setIsGradient] = useState({
     sidebar: false,
@@ -25,7 +27,6 @@ export default function Setting_sidebar() {
     navbarPosition: "Header",
     themeId: "1",
     sidebarName: "1",
-
     HeadingColor: "#ffffff",
     WrapperColor: "#ffffff",
     headSidebarFontCol: "#ffffff",
@@ -82,6 +83,15 @@ export default function Setting_sidebar() {
       headSidebarFontActiveCol: theme.headSidebarFontActiveCol || "#ffffff",
       WrapperColor: theme.WrapperColor || "#ffffff",
       tabelheadbgcolor: theme.tabelheadbgcolor || "#f1f1f1",
+      wrapperMode: theme.wrapperMode || "solid",
+      BtnSecBgCol: theme.BtnSecBgCol || "#ffffff",
+      BtnSecTxtCol: theme.BtnSecTxtCol || "#ffffff",
+      BtnSecBorderColor: theme.BtnSecBorderColor || "#ffffff",
+      BtnPriBgCol: theme.BtnPriBgCol || "#ffffff",
+      BtnPriTxtCol: theme.BtnPriTxtCol || "#ffffff",
+      BtnBorderColor: theme.BtnBorderColor ? theme.BtnBorderColor : "#ffffff",
+      wrapperGradientEnd: theme.wrapperGradientEnd || "#ffffff",
+      wrapperGradientStart: theme.wrapperGradientStart || "#ffffff",
     });
   }, []);
 
@@ -101,434 +111,518 @@ export default function Setting_sidebar() {
   const [color, setColor] = useState(
     () => localStorage.getItem("dynamicColor") || "#000000"
   );
+  const topFonts = [
+    "Arial",
+    "Times New Roman",
+    "Courier New",
+    "Verdana",
+    "Georgia",
+    "Comic Sans MS",
+    "Tahoma",
+    "Trebuchet MS",
+    "Lucida Console",
+    "Impact",
+  ];
+  const allFonts = [
+    ...topFonts,
+    "Palatino Linotype",
+    "Arial Black",
+    "Consolas",
+    "Lucida Sans Unicode",
+    "Garamond",
+    "Book Antiqua",
+    "Copperplate",
+    "Brush Script MT",
+    "Arial Narrow",
+    "Century Gothic",
+    "Rockwell",
+    "Franklin Gothic Medium",
+    "Arial Rounded MT Bold",
+    "Poppins",
+    "Roboto",
+    "Open Sans",
+    "Lato",
+    "Montserrat",
+    "Oswald",
+    "Raleway",
+    "PT Sans",
+    "Merriweather",
+    "Nunito",
+    "Ubuntu",
+    "Playfair Display",
+    "Fira Sans",
+    "Inter",
+    "Work Sans",
+  ];
+  const handleCreateNewTheme = async (values) => {
+    let updatedValues = {
+      ...values,
+      sidebarColor: isGradient.sidebar
+        ? `linear-gradient(to right, ${values.sidebarGradientStart}, ${values.sidebarGradientEnd})`
+        : values.sidebarColor,
+      navbarColor: isGradient.navbar
+        ? `linear-gradient(to right, ${values.navbarGradientStart}, ${values.navbarGradientEnd})`
+        : values.navbarColor,
+      fontColor: values.fontColor,
+    };
+
+    Swal.fire({
+      title: "Enter Your Theme Name",
+      input: "text",
+      inputAttributes: {
+        autocapitalize: "off",
+      },
+      showCancelButton: true,
+      confirmButtonText: "Submit",
+      showLoaderOnConfirm: true,
+      preConfirm: async (themeName) => {
+        // Ensure theme name is not empty
+        if (!themeName) {
+          Swal.showValidationMessage("Please enter a theme name");
+          return false; // Prevent the submission
+        }
+
+        // Merge the updated values with the theme name
+        const finalValues = { ...updatedValues, ThemeName: themeName };
+
+        try {
+          const response = await AddThemeApi(finalValues);
+
+          // Check if response status is successful
+          if (response.status) {
+            Swal.fire({ title: "Theme Created Successfully", icon: "success" });
+          } else {
+            Swal.fire({ title: "Theme Creation Failed", icon: "error" });
+          }
+        } catch (error) {
+          // Handle any errors during the API request
+          Swal.fire({ title: "Theme Creation Failed", icon: "error" });
+        }
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
+    });
+  };
 
 
 
 
   return (
     <>
-      {RoleData == "SUPERADMIN" && (
-        <>
-          <span
-            className="text-dark sidebar-setting-toggle-button"
-            onClick={toggleSidebar}
+      {/* {RoleData == "SUPERADMIN" && ( */}
+      <>
+        <span
+          className="text-dark sidebar-setting-toggle-button"
+          onClick={toggleSidebar}
+        >
+          <i className="text-dark fa-solid fa-gear fa-spin"></i>
+        </span>
+
+        <div
+          ref={sidebarRef}
+          className={`sidebar-setting ${isOpen ? "sidebar-setting-open" : ""}`}
+        >
+          <h1 className="text-dark">Settings</h1>
+          <Formik
+            initialValues={initialValues}
+            enableReinitialize={true}
+            onSubmit={(values) => {
+              const updatedValues = {
+                ...values,
+                sidebarColor: isGradient.sidebar
+                  ? `linear-gradient(to right, ${values.sidebarGradientStart}, ${values.sidebarGradientEnd})`
+                  : values.sidebarColor,
+                navbarColor: isGradient.navbar
+                  ? `linear-gradient(to right, ${values.navbarGradientStart}, ${values.navbarGradientEnd})`
+                  : values.navbarColor,
+                fontColor: values.fontColor,
+              };
+              localStorage.setItem("theme", JSON.stringify(updatedValues));
+              window.location.reload();
+            }}
           >
-            <i className="text-dark fa-solid fa-gear fa-spin"></i>
-          </span>
+            {({ values }) => (
+              <Form>
+                <Row>
+                  <Col md={12} lg={12} className="mb-4">
+                    <label className="text-dark setting-label">
+                      Theme Settings
+                    </label>
 
-          <div
-            ref={sidebarRef}
-            className={`sidebar-setting ${isOpen ? "sidebar-setting-open" : ""
-              }`}
-          >
-            <h1 className="text-dark">Settings</h1>
-            <Formik
-              initialValues={initialValues}
-              enableReinitialize={true}
-              onSubmit={(values) => {
-                const updatedValues = {
-                  ...values,
-                  sidebarColor: isGradient.sidebar
-                    ? `linear-gradient(to right, ${values.sidebarGradientStart}, ${values.sidebarGradientEnd})`
-                    : values.sidebarColor,
-                  navbarColor: isGradient.navbar
-                    ? `linear-gradient(to right, ${values.navbarGradientStart}, ${values.navbarGradientEnd})`
-                    : values.navbarColor,
-                  fontColor: values.fontColor
+                    <div className="color-input-div">
+                      <label className="text-dark">Dashboard Name: </label>
+                      <Field
+                        as="select"
+                        name="themeId"
+                        className="text-dark form-control"
+                      >
+                        { }
+                        {Array.from({ length: 11 }, (_, i) => (
+                          <option
+                            key={i + 1}
+                            className="text-dark"
+                            value={i + 1}
+                          >
+                            {i + 1}
+                          </option>
+                        ))}
+                      </Field>
+                    </div>
+                  </Col>
 
-                };
-                localStorage.setItem("theme", JSON.stringify(updatedValues));
-                window.location.reload();
-              }}
-            >
-              {({ values }) => (
-                <Form>
-                  <Row>
-                    <Col md={12} lg={12}>
-                      <label className="text-dark setting-label">
-                        Sidebar Color
+                  <div className="setting-sidebar-divider-line"></div>
+                  <Col md={12} lg={12}>
+                    <label className="text-dark setting-label">
+                      Sidebar Settings
+                    </label>
+                    <div className="setting-color-mode-input">
+                      <label className="text-dark">
+                        <input
+                          type="radio"
+                          name="sidebarMode"
+                          checked={!isGradient.sidebar}
+                          onChange={() =>
+                            setIsGradient((prev) => ({
+                              ...prev,
+                              sidebar: false,
+                            }))
+                          }
+                        />
+                        Solid
                       </label>
-                      <div className="setting-color-mode-input">
-                        <label className="text-dark">
-                          <input
-                            type="radio"
-                            name="sidebarMode"
-                            checked={!isGradient.sidebar}
-                            onChange={() =>
-                              setIsGradient((prev) => ({
-                                ...prev,
-                                sidebar: false,
-                              }))
-                            }
-                          />
-                          Solid
-                        </label>
-                        <label className="text-dark">
-                          <input
-                            type="radio"
-                            name="sidebarMode"
-                            checked={isGradient.sidebar}
-                            onChange={() =>
-                              setIsGradient((prev) => ({
-                                ...prev,
-                                sidebar: true,
-                              }))
-                            }
-                          />
-                          Gradient
-                        </label>
-                      </div>
-
-                      {!isGradient.sidebar ? (
-                        <div className="color-input-div">
-                          <label className="text-dark">
-                            Sidebar Solid Color:{" "}
-                          </label>
-                          <Field name="sidebarColor" type="color" />
-                        </div>
-                      ) : (
-                        <div>
-                          <div className="color-input-div">
-                            <label className="text-dark">
-                              Sidebar Gradient Start:{" "}
-                            </label>
-                            <Field name="sidebarGradientStart" type="color" />
-                          </div>
-                          <div className="color-input-div">
-                            <label className="text-dark">
-                              Sidebar Gradient End:{" "}
-                            </label>
-                            <Field name="sidebarGradientEnd" type="color" />
-                          </div>
-                          <div
-                            style={{
-                              marginTop: "10px",
-                              height: "50px",
-                              background: `linear-gradient(to right, ${values.sidebarGradientStart}, ${values.sidebarGradientEnd})`,
-                              border: "1px solid #ccc",
-                            }}
-                          ></div>
-                        </div>
-                      )}
-                    </Col>
-
-                    <div className="setting-sidebar-divider-line"></div>
-
-                    {/* Navbar Color Card */}
-                    <Col md={12} lg={12}>
-                      <label className="text-dark setting-label">
-                        Navbar Color
+                      <label className="text-dark">
+                        <input
+                          type="radio"
+                          name="sidebarMode"
+                          checked={isGradient.sidebar}
+                          onChange={() =>
+                            setIsGradient((prev) => ({
+                              ...prev,
+                              sidebar: true,
+                            }))
+                          }
+                        />
+                        Gradient
                       </label>
-                      {/* <label className='setting-color-mode-label'>Navbar Color Mode:</label> */}
-                      <div className="setting-color-mode-input">
-                        <label className="text-dark">
-                          <input
-                            type="radio"
-                            name="navbarMode"
-                            checked={!isGradient.navbar}
-                            onChange={() =>
-                              setIsGradient((prev) => ({
-                                ...prev,
-                                navbar: false,
-                              }))
-                            }
-                          />
-                          Solid
-                        </label>
-                        <label className="text-dark">
-                          <input
-                            type="radio"
-                            name="navbarMode"
-                            checked={isGradient.navbar}
-                            onChange={() =>
-                              setIsGradient((prev) => ({
-                                ...prev,
-                                navbar: true,
-                              }))
-                            }
-                          />
-                          Gradient
-                        </label>
-                      </div>
+                    </div>
 
-                      {!isGradient.navbar ? (
-                        <div className="color-input-div">
-                          <label className="text-dark">
-                            Navbar Solid Color:{" "}
-                          </label>
-                          <Field name="navbarColor" type="color" />
-                        </div>
-                      ) : (
-                        <div>
-                          <div className="color-input-div">
-                            <label className="text-dark">
-                              Navbar Gradient Start:{" "}
-                            </label>
-                            <Field name="navbarGradientStart" type="color" />
-                          </div>
-                          <div className="color-input-div">
-                            <label className="text-dark">
-                              Navbar Gradient End:{" "}
-                            </label>
-                            <Field name="navbarGradientEnd" type="color" />
-                          </div>
-                          <div
-                            style={{
-                              marginTop: "10px",
-                              height: "50px",
-                              background: `linear-gradient(to right, ${values.navbarGradientStart}, ${values.navbarGradientEnd})`,
-                              border: "1px solid #ccc",
-                            }}
-                          ></div>
-                        </div>
-                      )}
-                    </Col>
-
-                    <div className="setting-sidebar-divider-line"></div>
-
-                    {/* Font Color Card */}
-                    <Col md={12} lg={12}>
-                      <label className="text-dark setting-label">
-                        Font Color
-                      </label>
-
-                      <div className="color-input-div">
-                        <label className="text-dark">Font Solid Color: </label>
-                        <Field name="fontColor" type="color" />
-                      </div>
-
-                      <div className="color-input-div">
-                        <label className="text-dark">Heading Color: </label>
-                        <Field name="HeadingColor" type="color" />
-                      </div>
-
+                    {!isGradient.sidebar ? (
                       <div className="color-input-div">
                         <label className="text-dark">
-                          Sidebar/Navbar Color:{" "}
+                          Sidebar Solid Color:{" "}
                         </label>
-                        <Field name="headSidebarFontCol" type="color" />
+                        <Field name="sidebarColor" type="color" />
                       </div>
-
-                      <div className="color-input-div">
-                        <label className="text-dark">
-                          Sidebar/Navbar Active Color:{" "}
-                        </label>
-                        <Field name="headSidebarFontActiveCol" type="color" />
-                      </div>
-
-                      <div className="text-dark color-input-div">
-
-                        <label className="text-dark">Font: </label>
-                        <Field
-                          as="select"
-                          name="fontFamily"
-                          className="text-dark form-control"
-                        >
-                          <option className="text-dark" value="Arial">Arial</option>
-                          <option className="text-dark" value="Times New Roman">Times New Roman</option>
-                          <option className="text-dark" value="Courier New">Courier New</option>
-                          <option className="text-dark" value="Verdana">Verdana</option>
-                          <option className="text-dark" value="Georgia">Georgia</option>
-                          <option className="text-dark" value="Impact">Impact</option>
-                          <option className="text-dark" value="Comic Sans MS">Comic Sans MS</option>
-                          <option className="text-dark" value="Tahoma">Tahoma</option>
-                          <option className="text-dark" value="Trebuchet MS">Trebuchet MS</option>
-                          <option className="text-dark" value="Lucida Console">Lucida Console</option>
-                          <option className="text-dark" value="Palatino Linotype">Palatino Linotype</option>
-                          <option className="text-dark" value="Arial Black">Arial Black</option>
-                          <option className="text-dark" value="Consolas">Consolas</option>
-                          <option className="text-dark" value="Lucida Sans Unicode">Lucida Sans Unicode</option>
-                          <option className="text-dark" value="Garamond">Garamond</option>
-                          <option className="text-dark" value="Book Antiqua">Book Antiqua</option>
-                          <option className="text-dark" value="Copperplate">Copperplate</option>
-                          <option className="text-dark" value="Brush Script MT">Brush Script MT</option>
-                          <option className="text-dark" value="Arial Narrow">Arial Narrow</option>
-                          <option className="text-dark" value="Century Gothic">Century Gothic</option>
-                          <option className="text-dark" value="Rockwell">Rockwell</option>
-                          <option className="text-dark" value="Franklin Gothic Medium">Franklin Gothic Medium</option>
-                          <option className="text-dark" value="Arial Rounded MT Bold">Arial Rounded MT Bold</option>
-                          <option className="text-dark" value="Poppins">Poppins</option>
-                          <option className="text-dark" value="Roboto">Roboto</option>
-                          <option className="text-dark" value="Open Sans">Open Sans</option>
-                          <option className="text-dark" value="Lato">Lato</option>
-                          <option className="text-dark" value="Montserrat">Montserrat</option>
-                          <option className="text-dark" value="Oswald">Oswald</option>
-                          <option className="text-dark" value="Raleway">Raleway</option>
-                          <option className="text-dark" value="PT Sans">PT Sans</option>
-                          <option className="text-dark" value="Merriweather">Merriweather</option>
-                          <option className="text-dark" value="Nunito">Nunito</option>
-                          <option className="text-dark" value="Ubuntu">Ubuntu</option>
-                          <option className="text-dark" value="Playfair Display">Playfair Display</option>
-                          <option className="text-dark" value="Fira Sans">Fira Sans</option>
-                          <option className="text-dark" value="Inter">Inter</option>
-                          <option className="text-dark" value="Work Sans">Work Sans</option>
-                        </Field>
-                      </div>
-                    </Col>
-
-                    <div className="setting-sidebar-divider-line"></div>
-
-                    <Col md={12} lg={12}>
-                      <label className="text-dark setting-label">
-                        Sidebar Settings
-                      </label>
-
-                      <div className="color-input-div">
-                        <label className="text-dark">Sidebar Position: </label>
-                        <Field
-                          as="select"
-                          name="sidebarPosition"
-                          className="text-dark form-control"
-                        >
-                          <option className="text-dark" value="Header">
-                            Header
-                          </option>
-                          <option className="text-dark" value="Sidebar">
-                            Sidebar
-                          </option>
-                        </Field>
-                      </div>
-
-
-                    </Col>
-
-                    <div className="setting-sidebar-divider-line"></div>
-
-                    <Col md={12} lg={12} className="mb-4">
-                      <label className="text-dark setting-label">
-                        Theme Settings
-                      </label>
-
-                      <div className="color-input-div">
-                        <label className="text-dark">Dashboard Name: </label>
-                        <Field
-                          as="select"
-                          name="themeId"
-                          className="text-dark form-control"
-                        >
-                          <option className="text-dark" value="1">
-                            1
-                          </option>
-                          <option className="text-dark" value="2">
-                            2
-                          </option>
-                          <option className="text-dark" value="3">
-                            3
-                          </option>
-                          <option className="text-dark" value="4">
-                            4
-                          </option>
-                          <option className="text-dark" value="5">
-                            5
-                          </option>
-                          <option className="text-dark" value="6">
-                            6
-                          </option>
-                          <option className="text-dark" value="7">
-                            7
-                          </option>
-                          <option className="text-dark" value="8">
-                            8
-                          </option>
-                          <option className="text-dark" value="9">
-                            9
-                          </option>
-                          <option className="text-dark" value="10">
-                            10
-                          </option>
-                          <option className="text-dark" value="11">
-                            11
-                          </option>
-                        </Field>
-                      </div>
-                    </Col>
-
-                    <div className="setting-sidebar-divider-line"></div>
-                    <Col md={12} lg={12}>
+                    ) : (
                       <div>
-                        <label className="text-dark">
-                          Wrapper Color Mode :{" "}
-                        </label>
-                        <br />
-                        <label className="text-dark">
-                          <input
-                            type="radio"
-                            name="wrapperMode"
-                            checked={!isGradient.font}
-                            onChange={() =>
-                              setIsGradient((prev) => ({
-                                ...prev,
-                                font: false,
-                              }))
-                            }
-                          />
-                          Solid
-                        </label>
-                        <label className="text-dark">
-                          <input
-                            type="radio"
-                            name="wrapperMode"
-                            checked={isGradient.font}
-                            onChange={() =>
-                              setIsGradient((prev) => ({
-                                ...prev,
-                                font: true,
-                              }))
-                            }
-                          />
-                          Gradient
-                        </label>
-                      </div>
-
-                      {!isGradient.font ? (
-                        <div className="mt-3">
+                        <div className="color-input-div">
                           <label className="text-dark">
-                            Wrapper Solid Color:{" "}
+                            Sidebar Gradient Start:{" "}
                           </label>
-                          <Field name="WrapperColor" type="color" />
+                          <Field name="sidebarGradientStart" type="color" />
                         </div>
-                      ) : (
-                        <div className="mt-3">
+                        <div className="color-input-div">
                           <label className="text-dark">
-                            Wrapper Gradient Start:{" "}
+                            Sidebar Gradient End:{" "}
                           </label>
-                          <Field name="wrapperGradientStart" type="color" />
-                          <br />
-                          <label className="text-dark">
-                            Wrapper Gradient End:{" "}
-                          </label>
-                          <Field name="wrapperGradientEnd" type="color" />
-                          <div
-                            style={{
-                              marginTop: "10px",
-                              height: "50px",
-                              background: `linear-gradient(to right, ${values.wrapperGradientStart}, ${values.wrapperGradientEnd})`,
-                              border: "1px solid #ccc",
-                            }}
-                          ></div>
+                          <Field name="sidebarGradientEnd" type="color" />
                         </div>
-                      )}
-
-                      <div className="mt-3">
-                        <label className="text-dark">
-                          Tabel Head bg Color:{" "}
-                        </label>
-                        <Field name="tabelheadbgcolor" type="color" />
+                        <div
+                          style={{
+                            marginTop: "10px",
+                            height: "50px",
+                            background: `linear-gradient(to right, ${values.sidebarGradientStart}, ${values.sidebarGradientEnd})`,
+                            border: "1px solid #ccc",
+                          }}
+                        ></div>
                       </div>
-                    </Col>
-                  </Row>
+                    )}
+
+                    <div className="color-input-div">
+                      <label className="text-dark">Sidebar Position: </label>
+                      <Field
+                        as="select"
+                        name="sidebarPosition"
+                        className="text-dark form-control"
+                      >
+                        <option className="text-dark" value="Header">
+                          Header
+                        </option>
+                        <option className="text-dark" value="Sidebar">
+                          Sidebar
+                        </option>
+                      </Field>
+                    </div>
+                  </Col>
 
                   <div className="setting-sidebar-divider-line"></div>
 
-                  <Button className="text-dark" type="submit">
-                    Apply Changes
-                  </Button>
-                </Form>
-              )}
-            </Formik>
-          </div>
-        </>
-      )}
+                  {/* Navbar Color Card */}
+                  <Col md={12} lg={12}>
+                    <label className="text-dark setting-label">
+                      Navbar Color
+                    </label>
+                    {/* <label className='setting-color-mode-label'>Navbar Color Mode:</label> */}
+                    <div className="setting-color-mode-input">
+                      <label className="text-dark">
+                        <input
+                          type="radio"
+                          name="navbarMode"
+                          checked={!isGradient.navbar}
+                          onChange={() =>
+                            setIsGradient((prev) => ({
+                              ...prev,
+                              navbar: false,
+                            }))
+                          }
+                        />
+                        Solid
+                      </label>
+                      <label className="text-dark">
+                        <input
+                          type="radio"
+                          name="navbarMode"
+                          checked={isGradient.navbar}
+                          onChange={() =>
+                            setIsGradient((prev) => ({
+                              ...prev,
+                              navbar: true,
+                            }))
+                          }
+                        />
+                        Gradient
+                      </label>
+                    </div>
+
+                    {!isGradient.navbar ? (
+                      <div className="color-input-div">
+                        <label className="text-dark">
+                          Navbar Solid Color:{" "}
+                        </label>
+                        <Field name="navbarColor" type="color" />
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="color-input-div">
+                          <label className="text-dark">
+                            Navbar Gradient Start:{" "}
+                          </label>
+                          <Field name="navbarGradientStart" type="color" />
+                        </div>
+                        <div className="color-input-div">
+                          <label className="text-dark">
+                            Navbar Gradient End:{" "}
+                          </label>
+                          <Field name="navbarGradientEnd" type="color" />
+                        </div>
+                        <div
+                          style={{
+                            marginTop: "10px",
+                            height: "50px",
+                            background: `linear-gradient(to right, ${values.navbarGradientStart}, ${values.navbarGradientEnd})`,
+                            border: "1px solid #ccc",
+                          }}
+                        ></div>
+                      </div>
+                    )}
+                  </Col>
+
+                  <div className="setting-sidebar-divider-line"></div>
+
+                  {/* Font Color Card */}
+                  <Col md={12} lg={12}>
+                    <label className="text-dark setting-label">
+                      Font Color
+                    </label>
+
+                    <div className="color-input-div">
+                      <label className="text-dark">Font Solid Color: </label>
+                      <Field name="fontColor" type="color" />
+                    </div>
+
+                    <div className="color-input-div">
+                      <label className="text-dark">Heading Color: </label>
+                      <Field name="HeadingColor" type="color" />
+                    </div>
+
+                    <div className="color-input-div">
+                      <label className="text-dark">
+                        Sidebar/Navbar Color:{" "}
+                      </label>
+                      <Field name="headSidebarFontCol" type="color" />
+                    </div>
+
+                    <div className="color-input-div">
+                      <label className="text-dark">
+                        Sidebar/Navbar Active Color:{" "}
+                      </label>
+                      <Field name="headSidebarFontActiveCol" type="color" />
+                    </div>
+
+                    <div className="text-dark color-input-div">
+                      <label className="text-dark">Font: </label>
+                      <Field
+                        as="select"
+                        name="fontFamily"
+                        className="text-dark form-control"
+                      >
+                        {topFonts.map((font) => (
+                          <option key={font} className="text-dark" value={font}>
+                            {font}
+                          </option>
+                        ))}
+                        <option disabled>──────────</option>
+                        {allFonts
+                          .filter((font) => !topFonts.includes(font))
+                          .map((font) => (
+                            <option
+                              key={font}
+                              className="text-dark"
+                              value={font}
+                            >
+                              {font}
+                            </option>
+                          ))}
+                      </Field>
+                    </div>
+                  </Col>
+
+                  <div className="setting-sidebar-divider-line"></div>
+
+                  <Col md={12} lg={12}>
+                    <label className="text-dark setting-label">
+                      Wrapper Color Mode :
+                    </label>
+
+                    <div>
+                      <br />
+                      <label className="text-dark">
+                        <input
+                          type="radio"
+                          name="wrapperMode"
+                          checked={!isGradient.font}
+                          onChange={() =>
+                            setIsGradient((prev) => ({
+                              ...prev,
+                              font: false,
+                            }))
+                          }
+                        />
+                        Solid
+                      </label>
+                      <label className="text-dark">
+                        <input
+                          type="radio"
+                          name="wrapperMode"
+                          checked={isGradient.font}
+                          onChange={() =>
+                            setIsGradient((prev) => ({
+                              ...prev,
+                              font: true,
+                            }))
+                          }
+                        />
+                        Gradient
+                      </label>
+                    </div>
+
+                    {!isGradient.font ? (
+                      <div className="mt-3">
+                        <label className="text-dark">
+                          Wrapper Solid Color:{" "}
+                        </label>
+                        <Field name="WrapperColor" type="color" />
+                      </div>
+                    ) : (
+                      <div className="mt-3">
+                        <label className="text-dark">
+                          Wrapper Gradient Start:{" "}
+                        </label>
+                        <Field name="wrapperGradientStart" type="color" />
+                        <br />
+                        <label className="text-dark">
+                          Wrapper Gradient End:{" "}
+                        </label>
+                        <Field name="wrapperGradientEnd" type="color" />
+                        <div
+                          style={{
+                            marginTop: "10px",
+                            height: "50px",
+                            background: `linear-gradient(to right, ${values.wrapperGradientStart}, ${values.wrapperGradientEnd})`,
+                            border: "1px solid #ccc",
+                          }}
+                        ></div>
+                      </div>
+                    )}
+
+                    <div className="mt-3">
+                      <label className="text-dark">Tabel Head bg Color: </label>
+                      <Field name="tabelheadbgcolor" type="color" />
+                    </div>
+                  </Col>
+
+                  <div className="setting-sidebar-divider-line"></div>
+
+                  <Col md={12} lg={12}>
+                    <label className="text-dark setting-label">
+                      Buttons Settings :
+                    </label>
+
+                    <div className="mt-3">
+                      <label className="text-dark">
+                        primary Button Background Color{" "}
+                      </label>
+                      <Field name="BtnPriBgCol" type="color" />
+                    </div>
+                    <div className="mt-3">
+                      <label className="text-dark">
+                        primary Button Text Color:{" "}
+                      </label>
+                      <Field name="BtnPriTxtCol" type="color" />
+                    </div>
+                    <div className="mt-3">
+                      <label className="text-dark">
+                        Primary Button Border Color:{" "}
+                      </label>
+                      <Field name="BtnBorderColor" type="color" />
+                    </div>
+                    <div className="mt-3">
+                      <label className="text-dark">
+                        Secondary Button Background Color{" "}
+                      </label>
+                      <Field name="BtnSecBgCol" type="color" />
+                    </div>
+                    <div className="mt-3">
+                      <label className="text-dark">
+                        Secondary Button Text Color:{" "}
+                      </label>
+                      <Field name="BtnSecTxtCol" type="color" />
+                    </div>
+                    <div className="mt-3">
+                      <label className="text-dark">
+                        Secondary Button Border Color:{" "}
+                      </label>
+                      <Field name="BtnSecBorderColor" type="color" />
+                    </div>
+                  </Col>
+                </Row>
+                <div className="setting-sidebar-divider-line"></div>
+
+                <Button className="text-dark" type="submit">
+                  Apply Changes
+                </Button>
+                <Button
+                  className="text-dark"
+                  type="button"
+                  onClick={() => handleCreateNewTheme(values)}
+                >
+                  Create New Theme
+                </Button>
+              </Form>
+            )}
+          </Formik>
+        </div>
+      </>
+      {/* )} */}
     </>
   );
 }

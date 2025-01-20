@@ -6,7 +6,7 @@ import { image_baseurl } from "../../../Utils/config";
 import { Link } from "react-router-dom";
 import { basicsettinglist } from "../../Services/Admin/Admin";
 import $ from "jquery";
-
+import BgImg from "./bg-login-img.png";
 const Userlogin = () => {
   const navigate = useNavigate();
   let logoSrc =
@@ -107,12 +107,11 @@ const Userlogin = () => {
     getsettinglist();
   }, []);
 
-  console.log("information", information);
-
   return (
-    <div className="main-login">
+    <div className="main-login"  style={{ backgroundImage: `url(${BgImg})` }}>
       <div className="row align-items-center h-100">
-        <div className="col-lg-7 mx-auto">
+       
+        <div className="col-lg-12 mx-auto">
           {status === 1 ? (
             <div className="login-wrapper">
               <div className="background"></div>
