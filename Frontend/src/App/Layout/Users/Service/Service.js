@@ -224,7 +224,7 @@ function Service() {
                       </ul>
                       <div className="d-flex align-items-center justify-content-between mt-4">
                         <button
-                          className="btn btn-outline-primary rounded-1"
+                          className="btn btn-secondary rounded-1"
                         >
                           Know More
                         </button>

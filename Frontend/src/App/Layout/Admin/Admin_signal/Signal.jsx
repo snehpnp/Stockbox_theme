@@ -876,13 +876,13 @@ const Signal = () => {
                             <div className="d-flex justify-content-between mb-4">
                                 <div className="btn-group">
                                     <button
-                                        className={`btn btn-outline-primary ${viewMode === "table" ? "active" : ""}`}
+                                        className={`btn btn-secondary ${viewMode === "table" ? "active" : ""}`}
                                         onClick={() => setViewMode("table")}
                                     >
                                         Table View
                                     </button>
                                     <button
-                                        className={`btn btn-outline-primary ${viewMode === "card" ? "active" : ""}`}
+                                        className={`btn btn-secondary ${viewMode === "card" ? "active" : ""}`}
                                         onClick={() => setViewMode("card")}
                                     >
                                         Card View

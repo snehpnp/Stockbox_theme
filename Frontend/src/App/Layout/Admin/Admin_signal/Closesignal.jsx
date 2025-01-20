@@ -574,14 +574,14 @@ const Closesignal = () => {
               <div className="d-flex justify-content-between align-items-center mb-4">
                 <div className="btn-group">
                   <button
-                    className={`btn btn-outline-primary  ${activeTab === "table" ? "active" : ""
+                    className={`btn btn-secondary  ${activeTab === "table" ? "active" : ""
                       }`}
                     onClick={() => setActiveTab("table")}
                   >
                     Table View
                   </button>
                   <button
-                    className={`btn btn-outline-primary  ${activeTab === "card" ? "active" : ""
+                    className={`btn btn-secondary  ${activeTab === "card" ? "active" : ""
                       }`}
                     onClick={() => setActiveTab("card")}
                   >
