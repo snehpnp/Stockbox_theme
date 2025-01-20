@@ -1496,7 +1496,7 @@ const DynamicForm = ({
                                 <label htmlFor={field.name}>{field.label}</label>
                                 {field.star === true && <span style={{ color: 'red' }}>*</span>}
 
-                                <JoditEditor
+                                {/* <JoditEditor
                                   value={formik.values[field.name]}
                                   onChange={(value) => formik.setFieldValue(field.name, value)}
                                   config={config}
@@ -1510,7 +1510,7 @@ const DynamicForm = ({
                                     fontSize: 'inherit',
                                     overflow: 'hidden',
                                   }}
-                                />
+                                /> */}
 
                                 {formik.touched[field.name] && formik.errors[field.name] && (
                                   <div style={{ color: 'red' }}>{formik.errors[field.name]}</div>

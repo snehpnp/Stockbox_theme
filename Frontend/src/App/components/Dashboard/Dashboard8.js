@@ -54,8 +54,8 @@ const Dashboard1 = ({ monthexpiry }) => {
       state: { clientStatus: 0 },
       bgClass: "bg-gradient-ibiza",
       value1:
-        monthexpiry?.data.clientCountTotal -
-        monthexpiry?.data.clientCountActive,
+        monthexpiry?.data?.clientCountTotal -
+        monthexpiry?.data?.clientCountActive,
       label: "Total Deactive Clients",
       icon: "bx-user-x",
       progress: 55,
