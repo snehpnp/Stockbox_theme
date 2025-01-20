@@ -426,7 +426,7 @@ textarea {
 }
 
 .modal-header {
-  background: #004789;
+  background:var(--tabelheadbgcolor, #007bff) !important;
   border-radius: 10px 10px 0 0;
   color: #fff;
   font-size: 20px;
@@ -915,8 +915,12 @@ ol.breadcrumb.mb-0.p-0 {
 
 /* Secondary button using CSS variables */
 .btn-secondary {
-  background-color: var(--btn-secondary-bg-color) !important;
-  color: var(--btn-secondary-txt-color) !important;
+  background-color: var(--BtnSecBgCol) !important;
+  color: var(--BtnSecTxtCol) !important;
+  border-color: var(
+    --BtnSecBorderColor,
+    black
+  ) !important; 
 }
 .content-heading {
   color: var(--dynamic-color, black) !important; 

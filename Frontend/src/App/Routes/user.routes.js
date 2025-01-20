@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 
-import Dashboard from "../components/Dashboard/DashbaordMain";
+import Dashboard from "../Layout/Users/Dashboard/Dashboard";
 import Services from "../Layout/Users/Service/Service";
 import Trades from "../Layout/Users/Trades/Trade";   
 import Basket from "../Layout/Users/Basket/Basket";    
