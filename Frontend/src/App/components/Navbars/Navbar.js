@@ -38,9 +38,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
         style={{
           background:
             theme.navbarColor || "linear-gradient(to right, #1d37fc, #e81717)",
-          position: "sticky",
-          top: 0,
-          zIndex: 99,
+         
         }}
       >
         <div className="container-fluid">
