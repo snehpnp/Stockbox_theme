@@ -143,6 +143,8 @@ const Sidebar = () => {
                     {/* Parent Tab */}
                     <div
                       onClick={() => tab.children && toggleSubmenu(tab.name)}
+                      className={`sidebar-color sidebar-link ${location.pathname === tab.link ? "active" : ""
+                      }`}
                       style={{
                         display: "flex",
                         alignItems: "center",
