@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { getcouponlist } from '../../../Services/Admin';
-import Table from '../../../components/Table';
+import { getcouponlist } from '../../../Services/Admin/Admin';
+import Table from '../../../Extracomponents/Table';
 import { Eye, Pencil, Trash2, IndianRupee } from 'lucide-react';
 import Swal from 'sweetalert2';
-import { DeleteCoupon, UpdateClientStatus, CouponStatus, CouponShowstatus, GetService } from '../../../Services/Admin';
-import { image_baseurl } from '../../../Utils/config';
+import { DeleteCoupon, UpdateClientStatus, CouponStatus, CouponShowstatus, getstaffperuser, GetService } from '../../../Services/Admin/Admin';
+import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
-import { fDate, fDateTime } from '../../../Utils/Date_formate';
-import { getstaffperuser } from '../../../Services/Admin';
-import Loader from '../../../Utils/Loader';
+import { fDate, fDateTime } from '../../../../Utils/Date_formate';
+import Loader from '../../../../Utils/Loader';
+
+
 
 
 

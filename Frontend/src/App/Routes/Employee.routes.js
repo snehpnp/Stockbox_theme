@@ -14,6 +14,7 @@ import Blogs from '../Layout/Employee/Bloags/Blogs';
 import Addblogs from '../Layout/Employee/Bloags/Addblogs';
 import Updateblogs from '../Layout/Employee/Bloags/Updateblogs';
 import Viewblog from '../Layout/Employee/Bloags/Viewblog';
+import Category from '../Layout/Employee/Category/Category';
 
 
 
@@ -94,6 +95,9 @@ export default function Employee() {
             {permission.includes("addblogs") ? <Route path="/addblogs" element={<Addblogs />} /> : ""}
             {permission.includes("editblogs") ? <Route path="/updatebolgs" element={<Updateblogs />} /> : ""}
             {permission.includes("blogdetail") ? <Route path="/viewblog" element={<Viewblog />} /> : ""}
+
+
+            {permission.includes("viewcategory") ? <Route path="/category" element={<Category />} /> : ""}
 
 
 
