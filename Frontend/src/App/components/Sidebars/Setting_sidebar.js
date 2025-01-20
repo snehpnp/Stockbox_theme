@@ -104,7 +104,7 @@ export default function Setting_sidebar() {
 
   return (
     <>
-      {/* {RoleData == "SUPERADMIN" && ( */}
+      {RoleData == "SUPERADMIN" && (
         <>
           <span
             className="text-dark sidebar-setting-toggle-button"
@@ -524,7 +524,7 @@ export default function Setting_sidebar() {
             </Formik>
           </div>
         </>
-      {/* )} */}
+   )}
     </>
   );
 }

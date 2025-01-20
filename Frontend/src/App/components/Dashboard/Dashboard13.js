@@ -312,7 +312,7 @@ const Dashboard1 = ({ monthexpiry }) => {
         ))}
       </div>
 
-      <div className="row mb-4">
+      {/* <div className="row mb-4">
         <div className="col-md-12 mb-4">
           <div className="chart-container shadow p-3">
             <ReactApexChart
@@ -323,7 +323,7 @@ const Dashboard1 = ({ monthexpiry }) => {
             />
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Charts Section */}
       <div className="row">
