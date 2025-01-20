@@ -44,14 +44,7 @@ function Theme() {
       let themeData = response.data;
 
       localStorage.setItem("theme", JSON.stringify(themeData));
-      // BtnPriTxtCol: theme.BtnPriTxtCol || "#ffffff",
-      // BtnSecTxtCol: theme.BtnSecTxtCol || "#ffffff",
-      // BtnBorderColor: theme.BtnBorderColor || "#ffffff",
-      // BtnSecBorderColor: theme.BtnSecBorderColor || "#ffffff",
-      // BtnPriBgCol: theme.BtnPriBgCol || "#ffffff",
-      // BtnSecBgCol: theme.BtnSecBgCol || "#ffffff",
-
-      // console.log("themeData", themeData);
+  
 
 
 
@@ -61,12 +54,11 @@ function Theme() {
       document.documentElement.style.setProperty("--BtnSecBorderColor", themeData?.BtnSecBorderColor);
       document.documentElement.style.setProperty("--BtnPriBgCol", themeData?.BtnPriBgCol);
       document.documentElement.style.setProperty("--BtnSecBgCol", themeData?.BtnSecBgCol);
-      document.documentElement.style.setProperty("--PrimaryColor", themeData?.PrimaryColor);
-
-
-
-
-
+      document.documentElement.style.setProperty("--headSidebarFontCol",themeData?.headSidebarFontCol);
+      document.documentElement.style.setProperty("--headSidebarFontActiveCol",themeData?.headSidebarFontActiveCol);
+      document.documentElement.style.setProperty("--HeadingColor",themeData?.HeadingColor);
+      document.documentElement.style.setProperty("--sidebarColor",themeData?.sidebarColor);
+      document.documentElement.style.setProperty("--tabelheadbgcolor", themeData?.tabelheadbgcolor);
 
       window.location.reload();
 

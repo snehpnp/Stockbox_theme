@@ -37,7 +37,7 @@ const DashboardData = {
   used_licence: 10,
 };
 
-const Dashboard = (DashboardData) => {
+const Dashboard = (monthexpiry, data) => {
   var GetThemeId = JSON.parse(localStorage.getItem("theme"));
 
   return (
@@ -46,20 +46,20 @@ const Dashboard = (DashboardData) => {
         Page_title="Dashboard"
         button_title="Add Theme"
         button_status={false}
-        backbutton_title={false} // This will hide the back button
+        backbutton_title={false}
         route="/add-theme"
       >
-        {CallDashboard(GetThemeId?.themeId || 1)}
+        {CallDashboard(monthexpiry, GetThemeId?.themeId || 1)}
       </Contnet>
     </>
   );
 };
 
-const CallDashboard = (id) => {
+const CallDashboard = (monthexpiry, id) => {
   if (id == 1) {
-    return <Dashboard1 data={DashboardData} />;
+    return <Dashboard1 monthexpiry={monthexpiry} />;
   } else if (id == 2) {
-    return <Dashboard2 data={DashboardData} />;
+    return <Dashboard2 monthexpiry={monthexpiry} />;
   } else if (id == 3) {
     return <Dashboard3 data={DashboardData} />;
   } else if (id == 4) {
@@ -79,7 +79,7 @@ const CallDashboard = (id) => {
   } else if (id == 11) {
     return <Dashboard11 data={DashboardData} />;
   } else {
-    return <Dashboard1 data={DashboardData} />;
+    return;
   }
 };
 

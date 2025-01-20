@@ -6,7 +6,7 @@ function Dashboard() {
   return (
     <div>
 
-      <Dashboard1 />
+      {/* <Dashboard1 /> */}
     </div>
   )
 }

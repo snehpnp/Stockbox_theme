@@ -1,224 +1,175 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
+import { fDateTime, fDateMonth } from "../../../Utils/Date_formate";
 import { Link } from "react-router-dom";
-import ReactApexChart from "react-apexcharts";
-import { Bar, Pie } from "react-chartjs-2"; // Import multiple chart types
-import "chart.js/auto"; // Enable auto Chart.js integration
-import { Users, CheckCircle, XCircle, FlaskConical, Hourglass } from "lucide-react"; // Import icons
 
-const Dashboard1 = ({ data }) => {
-  const chartData = {
-    labels: [
-      "Total Clients",
-      "Active Clients",
-      "Expired Clients",
-      "Demo Clients",
-      "2 Days Clients",
-    ],
-    datasets: [
-      {
-        label: "Client Statistics",
-        data: [
-          data?.total_client || 0,
-          data?.total_active_client || 0,
-          data?.total_expired_client || 0,
-          data?.total_demo_client || 0,
-          data?.total_two_days || 0,
-        ],
-        backgroundColor: [
-          "#3498db",
-          "#2ecc71",
-          "#e74c3c",
-          "#f1c40f",
-          "#9b59b6",
-        ],
-        borderColor: "#ffffff",
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const pieData = {
-    labels: ["Active Clients", "Expired Clients", "Demo Clients"],
-    datasets: [
-      {
-        label: "Client Distribution",
-        data: [
-          data?.total_active_client || 0,
-          data?.total_expired_client || 0,
-          data?.total_demo_client || 0,
-        ],
-        backgroundColor: ["#2ecc71", "#e74c3c", "#f1c40f"],
-      },
-    ],
-  };
-
-  // ApexCharts area chart state
-  const [state] = React.useState({
-    series: [
-      {
-        name: "series1",
-        data: [31, 40, 28, 51, 42, 109, 100],
-      },
-      {
-        name: "series2",
-        data: [11, 32, 45, 32, 34, 52, 41],
-      },
-    ],
-    options: {
-      chart: {
-        height: 350,
-        type: "area",
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      stroke: {
-        curve: "smooth",
-      },
-      xaxis: {
-        type: "datetime",
-        categories: [
-          "2018-09-19T00:00:00.000Z",
-          "2018-09-19T01:30:00.000Z",
-          "2018-09-19T02:30:00.000Z",
-          "2018-09-19T03:30:00.000Z",
-          "2018-09-19T04:30:00.000Z",
-          "2018-09-19T05:30:00.000Z",
-          "2018-09-19T06:30:00.000Z",
-        ],
-      },
-      tooltip: {
-        x: {
-          format: "dd/MM/yy HH:mm",
-        },
-      },
-    },
+const DashboardCards = ({ monthexpiry }) => {
+  const currentMonthYear = new Date().toLocaleString("en-US", {
+    month: "long",
+    year: "numeric",
   });
 
-  const arr = [
+  const cardsData = [
     {
-      index: 1,
-      name: "Total Clients",
-      value: data?.total_client || 0,
-      icon: Users,
-      route: "/admin/allclients",
-      color: "#3498db",
+      link: "/admin/planexpirymonth",
+      bgClass: "bg-gradient-moonlit",
+      value1:
+        monthexpiry?.monthexpiry?.length > 0
+          ? monthexpiry?.monthexpiry?.some(
+              (item) => fDateMonth(item?.month) === currentMonthYear
+            )
+            ? monthexpiry?.monthexpiry.reduce((acc, item) => {
+                return fDateMonth(item?.month) === currentMonthYear
+                  ? acc + (item.noofclient || 0)
+                  : acc;
+              }, 0)
+            : 0
+          : 0,
+
+      label: "Current Month Active License",
+      icon: "bx-user-plus",
+      progress: 55,
     },
     {
-      index: 2,
-      name: "Active Clients",
-      value: data?.total_active_client || 0,
-      icon: CheckCircle,
-      route: "/admin/allclients?filter=111",
-      color: "#2ecc71",
+      link: "/admin/client",
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.clientCountTotal,
+      label: "Total Clients",
+      icon: "bx-user",
+      progress: 55,
     },
     {
-      index: 3,
-      name: "Expired Clients",
-      value: data?.total_expired_client || 0,
-      icon: XCircle,
-      route: "/admin/expiredclients?filter=000",
-      color: "#e74c3c",
+      link: "/admin/client",
+      state: { clientStatus: 1 },
+      bgClass: "bg-gradient-ohhappiness",
+      value1: monthexpiry?.data?.clientCountActive,
+      label: "Total Active Clients",
+      icon: "bx-user-circle",
+      progress: 55,
     },
     {
-      index: 4,
-      name: "Demo Clients",
-      value: data?.total_demo_client || 0,
-      icon: FlaskConical,
-      route: "/admin/allclients?filter=1",
-      color: "#f1c40f",
+      link: "/admin/client",
+      state: { clientStatus: 0 },
+      bgClass: "bg-gradient-ibiza",
+      value1:
+        monthexpiry?.data.clientCountTotal -
+        monthexpiry?.data.clientCountActive,
+      label: "Total Deactive Clients",
+      icon: "bx-user-x",
+      progress: 55,
     },
     {
-      index: 5,
-      name: "2 Days Clients",
-      value: data?.total_two_days || 0,
-      icon: Hourglass,
-      route: "/admin/allclients?filter=0",
-      color: "#9b59b6",
+      link: "/admin/signal",
+      state: { clientStatus: "todayopensignal" },
+      bgClass: "bg-gradient-moonlit",
+      value1: monthexpiry?.data?.todayOpenSignal,
+      label: "Today's Open Signal",
+      icon: "bx-wifi-2",
+      progress: 55,
+    },
+    {
+      link: "/admin/closesignal",
+      state: { clientStatus: "todayclosesignal" },
+      bgClass: "bg-gradient-ibiza",
+      value1: monthexpiry?.data?.todayCloseSignal,
+      label: "Today's Close Signal",
+      icon: "bx-wifi-off",
+      progress: 55,
+    },
+    {
+      link: "/admin/signal",
+      bgClass: "bg-gradient-ohhappiness",
+      value1: monthexpiry?.data?.OpensignalCountTotal,
+      label: "Total Open Signals",
+      icon: "bxl-redux",
+      progress: 55,
+    },
+    {
+      link: "/admin/closesignal",
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.CloseSignalCountTotal,
+      label: "Total Close Signals",
+      icon: "bx-wifi-2",
+      progress: 55,
+    },
+    {
+      link: "/admin/client",
+      state: { clientStatus: "active" },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.activePlanclient,
+      label: "Total Plan Active Clients",
+      icon: "bx-wifi-2",
+      progress: 55,
+    },
+    {
+      link: "/admin/client",
+      state: { clientStatus: "expired" },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.inActivePlanclient,
+      label: "Total Plan Expired ",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+    },
+    {
+      link: "/admin/freeclient",
+      state: { clientStatus: "active" },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.activeFreetrial,
+      label: "Total Active Free Clients",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+    },
+    {
+      link: "/admin/freeclient",
+      state: { clientStatus: "expired" },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.inActiveFreetrial,
+      label: "Total Inactive Free Clients",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
     },
   ];
 
   return (
-    <div className="theme-1-dashboard" style={{ padding: "20px" }}>
-      {/* Cards Section */}
-      <div className="row mb-4">
-      <div className="col-md-12 mb-4">
-          <div className="chart-container shadow p-3">
-           
-            <ReactApexChart
-              options={state.options}
-              series={state.series}
-              type="area"
-              height={350}
-            />
-          </div>
-        </div>
-      </div>
-      <div className="row mb-5">
-        {arr.map((item) => (
-          <div
-            className="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4"
-            key={item.index}
-          >
-            <div
-              className="card shadow"
-              style={{
-                background: `linear-gradient(135deg, ${item.color}, #ffffff20)`,
-                color: "#fff",
-                borderRadius: "15px",
-                padding: "20px",
-              }}
-            >
-              <div
-                className="icon mb-3 text-center"
-                style={{
-                  fontSize: "40px",
-                  background: "rgba(255, 255, 255, 0.3)",
-                  padding: "15px",
-                  borderRadius: "50%",
-                }}
-              >
-                <item.icon />
-              </div>
-              <h5 className="text-center ">{item.name}</h5>
-              <h3 className="my-3 text-center">{item.value}</h3>
-              <div className="text-center">
-                <Link
-                  to={item.route}
-                  className="btn btn-light"
-                  style={{
-                    borderRadius: "20px",
-                    fontSize: "14px",
-                    color: item.color,
-                  }}
+    <div className="row newbg">
+      {cardsData?.map((card, index) => (
+        <div className="col-md-3" key={index}>
+          <div className={`card radius-10 mb-4 ${card.bgClass}`}>
+            <Link to={card.link} state={card.state}>
+              <div className="card-body">
+                <div className="d-flex align-items-center">
+                  <h5 className="mb-0 primary-text">{card.value1}</h5>
+                  <div className="ms-auto">
+                    <i className={`bx ${card.icon} fs-3`} />
+                  </div>
+                </div>
+                <div
+                  className="progress my-2 bg-opacity-25"
+                  style={{ height: 4 }}
                 >
-                  View Details
-                </Link>
+                  <div
+                    className="progress-bar"
+                    role="progressbar"
+                    style={{ width: `${card.progress}%` }}
+                    aria-valuenow={25}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                  />
+                </div>
+                <div className="d-flex align-items-center">
+                  <p className="mb-0 content-heading">{card.label}</p>
+                  <p className="mb-0 ms-auto">
+                    <span>
+                      <i className="bx bx-up-arrow-alt" />
+                    </span>
+                  </p>
+                </div>
               </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Charts Section */}
-      <div className="row">
-        <div className="col-md-6 mb-4">
-          <div className="chart-container card shadow p-3">
-            <h4 className="mb-3">Bar Chart: Client Statistics</h4>
-            <Bar data={chartData} />
+            </Link>
           </div>
         </div>
-        <div className="col-md-6 mb-4">
-          <div className="chart-container card shadow p-3">
-            <h4 className="mb-3">Pie Chart: Client Distribution</h4>
-            <Pie data={pieData} />
-          </div>
-        </div>
-       
-      </div>
+      ))}
     </div>
   );
 };
 
-export default Dashboard1;
+export default DashboardCards;
