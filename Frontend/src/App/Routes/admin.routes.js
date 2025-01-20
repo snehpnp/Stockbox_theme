@@ -68,6 +68,11 @@ import Stock from "../Layout/Admin/Stock/Stock";
 import Plan from "../Layout/Admin/Plans/Plan";
 import Addplan from "../Layout/Admin/Plans/Addplan";
 import Editplan from "../Layout/Admin/Plans/Editplan";
+import News from "../Layout/Admin/News/News";
+import Addnews from "../Layout/Admin/News/Addnews";
+import Updatenews from "../Layout/Admin/News/Updatenews";
+import Condition from "../Layout/Admin/Termscondition/Condition";
+import Updatecondition from "../Layout/Admin/Termscondition/Updatecondition";
 
 
 
@@ -174,6 +179,14 @@ export default function App() {
       <Route path="/planexpiry" element={<Planexpiry />} />
       <Route path="/planexpirymonth" element={<Planexpirymonth />} />
       <Route path="/notificationlist" element={<Notificationlist />} />
+
+
+      <Route path="/news" element={<News />} />
+      <Route path="/addnews" element={<Addnews />} />
+      <Route path="/updatenews" element={<Updatenews />} />
+
+      <Route path="/termsandcondtion" element={<Condition />} />
+      <Route path="/updatecondition" element={<Updatecondition />} />
 
 
     </Routes>
