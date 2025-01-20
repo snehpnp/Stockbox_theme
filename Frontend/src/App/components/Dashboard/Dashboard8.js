@@ -1,17 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react'
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { fDateTime, fDateMonth } from "../../../Utils/Date_formate";
-
+import { fDateMonth } from "../../../Utils/Date_formate";
 
 const Dashboard1 = ({ monthexpiry }) => {
-
-
   const currentMonthYear = new Date().toLocaleString("en-US", {
     month: "long",
     year: "numeric",
   });
-
   const cardsData = [
     {
       link: "/admin/planexpirymonth",
@@ -145,41 +141,35 @@ const Dashboard1 = ({ monthexpiry }) => {
     },
   ];
 
-  return <>
-    <div className='theme-8-dashboard'>
-      <div className='row'>
-        {cardsData.map((item, index) => {
-          return <React.Fragment key={index}>
-            <div className="col-xl-3 col-xxl-3 col-lg-3 col-sm-6">
-              <div className="widget-stat card">
-                <div className="card-body p-4">
-                  <h3 className="card-title">{item.label}</h3>
-                  <h2>{item.value1}</h2>
-                  {item.visible ? <>
-                    <h6> <Link className="" to={item.link}>
-                      <i className="fa-regular fa-eye pe-1" ></i>View</Link></h6>
-                  </> : ""}
-
-                  <div className="progress mb-2">
-                    <div
-                      className="progress-bar progress-animated bg-success"
-                      style={{ width: item.value1 + "%" }}
-                    />
-                  </div>
-
+  return (
+    <div className="theme-8-dashboard">
+      <div className="row g-3">
+        {cardsData.map((item, index) => (
+          <div className="col-xl-3 col-lg-4 col-md-6 col-sm-12" key={index}>
+            <div className="widget-stat card h-100">
+              <div className={`card-body p-4 ${item.bgClass}`}>
+                <h6 className="card-title">{item.label}</h6>
+                <h2>{item.value1}</h2>
+                {item.visible && (
+                  <h6>
+                    <Link className="" to={item.link}>
+                      <i className="fa-regular fa-eye pe-1"></i>View
+                    </Link>
+                  </h6>
+                )}
+                <div className="progress mb-2">
+                  <div
+                    className="progress-bar progress-animated bg-success"
+                    style={{ width: `${item.progress}%` }}
+                  />
                 </div>
               </div>
-            </div >
-          </React.Fragment>
-        })}
+            </div>
+          </div>
+        ))}
       </div>
-    </div >
-  </>
-}
+    </div>
+  );
+};
 
-
-export default Dashboard1
-
-
-
-
+export default Dashboard1;
