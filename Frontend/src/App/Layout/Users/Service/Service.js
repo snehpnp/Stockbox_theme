@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import Content from "../../../components/Contents/Content";
 import { Modal, Accordion, Form } from "react-bootstrap";
 import {
@@ -10,7 +10,7 @@ import {
 import { IndianRupee } from "lucide-react";
 import { loadScript } from "../../../../Utils/Razorpayment";
 
-function Service() {
+const Service = () => {
   const token = localStorage.getItem("Token");
   const userid = localStorage.getItem("id");
 
@@ -27,6 +27,7 @@ function Service() {
   const [sortCriteria, setSortCriteria] = useState("price");
 
   useEffect(() => {
+    console.log("Fetching data...");
     getCategory();
     getPlan();
     getCoupon();
@@ -71,7 +72,12 @@ function Service() {
     }
   };
 
+  const isFetchingData = useRef(false); // Track if data is already being fetched
+
   const getCategory = async () => {
+    if (isFetchingData.current) return; // Prevent multiple calls
+    isFetchingData.current = true;
+
     try {
       const response = await GetCategorylist();
       if (response.status) {
@@ -79,6 +85,8 @@ function Service() {
       }
     } catch (error) {
       console.error("Error fetching categories:", error);
+    } finally {
+      isFetchingData.current = false; // Reset the flag
     }
   };
 
@@ -291,7 +299,7 @@ function Service() {
         </div>
       </div>
 
-      <Modal show={showModal} onHide={handleCloseModal} centered size="xl">
+      <Modal show={showModal} onHide={handleCloseModal} centered size="xxl">
         <Modal.Header closeButton>
           <Modal.Title className="text-center w-100">
             🌟 Plan Details
@@ -323,7 +331,7 @@ function Service() {
                   <Accordion.Header>🎟️ Apply Coupon Code</Accordion.Header>
                   <Accordion.Body
                     style={{
-                      maxHeight: "200px",
+                      maxHeight: "400px",
                       overflowY: "auto",
                       scrollbarWidth: "thin",
                     }}
@@ -358,66 +366,159 @@ function Service() {
 
                     {/* Available Coupons */}
                     <div>
-                      {coupons.map((coupon) => (
-                        <li
-                          className="d-flex align-items-center pb-3"
-                          key={coupon.code}
-                          style={{
-                            border: "1px solid #eaeaea",
-                            marginBottom: "10px",
-                            padding: "10px",
-                            borderRadius: "8px",
-                          }}
-                        >
-                          <div
-                            className="rounded-circle p-2 border d-flex align-items-center justify-content-center"
-                            style={{
-                              width: "50px",
-                              height: "50px",  
-                              backgroundColor: "#f8f8f8",
-                              textAlign: "center",
-                              fontSize: "16px",
-                              fontWeight: "500",
-                              color: "#333",
-                            }}
-                          >
-                            {coupon.serviceName || "Premium"}
-                          </div>
+  {coupons.map((coupon) => (
+    <li
+      key={coupon.code}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        border: "1px solid #dcdcdc",
+        backgroundColor: "#ffffff",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        marginBottom: "15px",
+        borderRadius: "12px",
+        padding: "15px 20px",
+        listStyle: "none",
+        transition: "transform 0.2s, box-shadow 0.2s",
+      }}
+      onMouseOver={(e) => {
+        e.currentTarget.style.transform = "scale(1.02)";
+        e.currentTarget.style.boxShadow =
+          "0 6px 12px rgba(0, 0, 0, 0.15)";
+      }}
+      onMouseOut={(e) => {
+        e.currentTarget.style.transform = "scale(1)";
+        e.currentTarget.style.boxShadow =
+          "0 4px 8px rgba(0, 0, 0, 0.1)";
+      }}
+    >
+      {/* First Section */}
+      <div
+        style={{
+          width: "40px",
+          height: "125px",
+          backgroundColor: "#007bff",
+          color: "#fff",
+          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          borderRadius: "12px",
 
-                          <div className="flex-grow-1 ms-3 text-start">
-                            <p
-                              className="use-cod mb-1"
-                              style={{ color: "#555" }}
-                            >
-                              Use code{" "}
-                              <span style={{ fontWeight: "600" }}>
-                                {coupon?.code}
-                              </span>{" "}
-                              | Valid till {coupon?.enddate}
-                            </p>
-                            <div className="fs-6" style={{ color: "#555" }}>
-                              <span className="mb-1">
-                                🛡️ {coupon?.validity}
-                              </span>
-                              <span className="mb-1">
-                                💸 Save Upto <strong>₹{coupon?.value}</strong>
-                              </span>
-                              <span>
-                                ✨ <strong>{coupon?.name}</strong> Offer
-                              </span>
-                            </div>
-                          </div>
+          padding: "0",
+          marginLeft: "-20px",
+          marginTop: "-20px",
+          marginBottom: "-20px",
+        }}
+      >
+        {coupon?.serviceName
+          ?.split("")
+          .map((char, index) => (
+            <span
+              key={index}
+              style={{
+                display: "block",
+                fontSize: "14px",
+                fontWeight: "bold",
+              }}
+            >
+              {char.toUpperCase()}
+            </span>
+          ))}
+      </div>
 
-                          <button
-                            className="btn btn-sm btn-primary ms-4"
-                            onClick={() => handleCouponSelect(coupon)}
-                            style={{ padding: "6px 12px", fontSize: "14px" }}
-                          >
-                            Apply
-                          </button>
-                        </li>
-                      ))}
-                    </div>
+      {/* Second Section */}
+      <div style={{ flexGrow: 1, marginLeft: "15px", textAlign: "left" }}>
+        <p
+          style={{
+            margin: "0 0 5px",
+            fontWeight: "500",
+            color: "#333",
+            fontSize: "16px",
+          }}
+        >
+          Use code{" "}
+          <span
+            style={{
+              fontWeight: "700",
+              color: "#007bff",
+              marginLeft: "5px",
+            }}
+          >
+            {coupon?.code}
+          </span>
+        </p>
+        <div style={{ fontSize: "14px", color: "#666" }}>
+          <span
+            style={{
+              display: "block",
+              marginBottom: "4px",
+            }}
+          >
+            🛡️ Validity:{" "}
+            <span
+              style={{
+                fontSize: "12px",
+                fontWeight: "bold",
+              }}
+            >
+              {coupon?.enddate?.split("T")[0]}
+            </span>
+          </span>
+          <span
+            style={{
+              display: "block",
+              marginBottom: "4px",
+            }}
+          >
+            💸 Save Upto: <strong>₹{coupon?.value}</strong>
+          </span>
+          {/* <span
+            style={{
+              display: "block",
+              marginBottom: "4px",
+            }}
+          >
+            ✨ Offer: <strong>{coupon?.name}</strong>
+          </span> */}
+          <span style={{ display: "block" }}>
+            🛒 Min Purchase:{" "}
+            <strong>₹{coupon?.minpurchasevalue}</strong>
+          </span>
+        </div>
+      </div>
+
+      {/* Third Section */}
+      <div>
+        <button
+          onClick={() => handleCouponSelect(coupon)}
+          style={{
+            padding: "8px 16px",
+            fontSize: "14px",
+            color: "#fff",
+            backgroundColor: "#007bff",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+            transition: "background-color 0.3s",
+          }}
+          onMouseOver={(e) =>
+            (e.currentTarget.style.backgroundColor = "#0056b3")
+          }
+          onMouseOut={(e) =>
+            (e.currentTarget.style.backgroundColor = "#007bff")
+          }
+        >
+          Apply
+        </button>
+      </div>
+    </li>
+  ))}
+</div>
+
                   </Accordion.Body>
                 </Accordion.Item>
               </Accordion>
@@ -471,6 +572,6 @@ function Service() {
       </Modal>
     </Content>
   );
-}
+};
 
 export default Service;
