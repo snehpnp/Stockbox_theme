@@ -554,13 +554,13 @@ const Signal = () => {
             name: 'S.No',
             selector: (row, index) => (currentPage - 1) * 10 + index + 1,
             sortable: false,
-            width: '78px',
+            width: '80px',
         },
         {
             name: 'Segment',
             selector: row => row.segment == "C" ? "CASH" : row.segment == "O" ? "OPTION" : "FUTURE",
             sortable: true,
-            width: '132px',
+            width: '140px',
         },
 
         {
