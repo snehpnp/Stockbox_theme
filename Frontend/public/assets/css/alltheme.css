@@ -442,8 +442,8 @@ textarea {
 }
 
 .modal-body {
-  padding: 50px !important;
-  text-align: center;
+ 
+
   color: #000;
   font-size: 18px;
   background: #fff;
@@ -942,8 +942,9 @@ ol.breadcrumb.mb-0.p-0 {
 
 .sidebar-color,
 .sidebar-color a,
+.sidebar-color span,
 .sidebar-color svg,
-.sidebar-color.sidebar-link svg path,
+.sidebar-color.sidebar-link svg path,.sidebar-color.sidebar-link svg rect,.sidebar-color.sidebar-link svg line,
 .sidebar-color.sidebar-link svg circle {
   color: var(
     --headSidebarFontCol,
