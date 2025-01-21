@@ -761,6 +761,7 @@ const Client = () => {
               </div>
 
 
+              {/* <Loader /> */}
 
               {clients ? (
                 <Table
