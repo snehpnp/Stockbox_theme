@@ -41,128 +41,138 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
         }}
       >
-        <div className="container-fluid">
-          <div>
-            <a className="navbar-brand" href="#">
-              <img
-                src={Logo}
-                alt="Logo"
-                style={{ width: "200px", height: "50px" }}
-              />
-            </a>
-            <button
-              className="btn btn-light me-2"
-              onClick={toggleSidebar}
-              style={{
-                border: "none",
-                fontSize: "18px",
-                cursor: "pointer",
-              }}
-            >
-              <FaBars />
-            </button>
-          </div>
-
-          <div className="d-flex align-items-center position-relative ml-auto">
-            {/* <div className="d-flex">
-              <span className="switch-label p-1">
-                Trading Status:<span style={{ color: "red" }}>Off</span>
-              </span>
-              <div
-                className="form-check form-switch form-check-dark"
-                style={{ margin: "inherit", fontSize: 21 }}
-              >
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  role="switch"
-                  id="flexSwitchCheckDark"
-                />
-              </div>
-            </div> */}
-
-            <div className="dropdown">
-              <div
-                className="notification-container dropdown-toggle"
-                style={{
-                  cursor: "pointer",
-                  marginLeft: "20px",
-                  position: "relative",
-                }}
-                role="button"
-                id="dropdownMenuLink"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <FaBell size={24} style={{ color: "#fff" }} />
-              </div>
-
-              <div
-                style={notificationDropdownStyle}
-                className="dropdown-menu"
-                aria-labelledby="dropdownMenuLink"
-              >
-                <div style={notificationHeaderStyle}>Notifications</div>
-                <ul style={notificationListStyle}>
-                  <li style={notificationItemStyle}>
-                    🔔 New message from admin
-                  </li>
-                  <li style={notificationItemStyle}>
-                    🔔 Your profile was updated
-                  </li>
-                  <li style={notificationItemStyle}>
-                    🔔 System maintenance scheduled
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="dropdown">
-              <div
-                className="profile-container dropdown-toggle"
-                style={{ cursor: "pointer", marginLeft: "20px" }}
-                role="button"
-                id="dropdownMenuLink"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <img
-                  src={ProfileImage}
-                  alt="Profile"
+        <div className="container-fluid justify-content-center">
+          <div className="row w-100">
+            <div className="col-5">
+              <div className="d-flex ">
+                <a className="navbar-brand" href="#">
+                  <img
+                    src={Logo}
+                    alt="Logo"
+                    style={{ width: "150px", height: "50px",objectFit: "contain" }}
+                  />
+                </a>
+                <button
+                  className="btn btn-light me-2"
+                  onClick={toggleSidebar}
                   style={{
-                    width: "40px",
-                    height: "40px",
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                    border: "2px solid #fff",
+                    border: "none",
+                    fontSize: "18px",
+                    cursor: "pointer",
+                    height: "30px",
                   }}
-                />
-              </div>
-
-              <div
-                style={profileDropdownStyle}
-                className="dropdown-menu"
-                aria-labelledby="dropdownMenuLink"
-              >
-                <ul style={dropdownListStyle}>
-                  <li style={dropdownItemStyle}>
-                    {Role === 'USER' && (
-                      <Link to="/user/profile">🛠️ Profile Settings</Link>
-                    )}
-                    {Role === 'ADMIN' && (
-                      <Link to="/admin/profile">🛠️ Profile Settings</Link>
-                    )}
-
-
-                  </li>
-
-                  <li style={dropdownItemStyle} onClick={(e) => Logout()}>
-                    🚪 Logout
-                  </li>
-                </ul>
+                >
+                  <FaBars />
+                </button>
               </div>
             </div>
+            <div className="col-7">
+              <div className="d-flex align-items-center position-relative justify-content-end">
+                <div className="d-sm-flex">
+                  <span className="switch-label p-1">
+                    Trading Status:
+                  </span>
+                  <div
+                    className="form-check form-switch form-check-dark"
+                    style={{ margin: "inherit", fontSize: 21 }}
+                  >
+                    <span style={{ color: "red",fontSize: 16 }}>Off</span>
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      role="switch"
+                      id="flexSwitchCheckDark"
+                    />
+                  </div>
+                </div>
+
+                <div className="dropdown">
+                  <div
+                    className="notification-container dropdown-toggle"
+                    style={{
+                      cursor: "pointer",
+                      marginLeft: "10px",
+                      position: "relative",
+                    }}
+                    role="button"
+                    id="dropdownMenuLink"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <FaBell size={24} />
+                  </div>
+
+                  <div
+                    style={notificationDropdownStyle}
+                    className="dropdown-menu"
+                    aria-labelledby="dropdownMenuLink"
+                  >
+                    <div style={notificationHeaderStyle}>Notifications</div>
+                    <ul style={notificationListStyle}>
+                      <li style={notificationItemStyle}>
+                        🔔 New message from admin
+                      </li>
+                      <li style={notificationItemStyle}>
+                        🔔 Your profile was updated
+                      </li>
+                      <li style={notificationItemStyle}>
+                        🔔 System maintenance scheduled
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="dropdown">
+                  <div
+                    className="profile-container dropdown-toggle"
+                    style={{ cursor: "pointer", marginLeft: "10px" }}
+                    role="button"
+                    id="dropdownMenuLink"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <img
+                      src={ProfileImage}
+                      alt="Profile"
+                      style={{
+                        width: "40px",
+                        height: "40px",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                        border: "2px solid #fff",
+                      }}
+                    />
+                  </div>
+
+                  <div
+                    style={profileDropdownStyle}
+                    className="dropdown-menu"
+                    aria-labelledby="dropdownMenuLink"
+                  >
+                    <ul style={dropdownListStyle}>
+                      <li style={dropdownItemStyle}>
+                        {Role === 'USER' && (
+                          <Link to="/user/profile">🛠️ Profile Settings</Link>
+                        )}
+                        {Role === 'ADMIN' && (
+                          <Link to="/admin/profile">🛠️ Profile Settings</Link>
+                        )}
+
+
+                      </li>
+
+                      <li style={dropdownItemStyle} onClick={(e) => Logout()}>
+                        🚪 Logout
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              </div>
           </div>
+
+
+
         </div>
       </nav>
     </>
