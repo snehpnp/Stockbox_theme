@@ -43,7 +43,7 @@ const Condition = () => {
         } catch (error) {
             console.log("Error fetching services:", error);
         }
-        setTimeout(() => {
+        setTimeout(()=>{
             setIsLoading(false)
         })
     };
@@ -144,54 +144,54 @@ const Condition = () => {
                 </div>
                 <hr />
                 <div className="row">
-                    {isLoading ? (
-                        <Loader />
-                    ) : (
-                        <>
-
-                            {clients.map((client, index) => (
-                                <div className="col-md-6 col-lg-12" key={index}>
-                                    <div className="mb-4 card radius-15">
-                                        <div className="card-body p-4 position-relative">
-                                            <div className='p-4 border radius-15'>
-                                                <div className='d-flex justify-content-between align-items-center'>
-                                                    <div>
-                                                        <h5 class="m-0">
-                                                            {client.title}</h5>
-                                                    </div>
-                                                    <div>
-
-                                                        <SquarePen onClick={() => {
-                                                            navigate("/admin/updatecondition", { state: { client } })
-                                                        }} />
-
-                                                    </div>
-
-                                                </div>
-                                                <hr />
-
-                                                <form className="row g-3">
-
-
-
-                                                    <div className="col-md-12">
-                                                        <label htmlFor={`mailContent${index}`} className="form-label">
-                                                            Description
-                                                        </label>
-
-                                                        <span
-                                                            dangerouslySetInnerHTML={{ __html: client.description }}
-                                                            style={{ display: 'block', marginTop: '0.5rem' }}
-                                                        />
-                                                    </div>
-                                                </form>
+                {isLoading ? (
+                                                <Loader />
+                                            ):(
+                                                <>
+                                               
+                    {clients.map((client, index) => (
+                        <div className="col-md-6 col-lg-12" key={index}>
+                            <div className="mb-4 card radius-15">
+                                <div className="card-body p-4 position-relative">
+                                    <div className='p-4 border radius-15'>
+                                        <div className='d-flex justify-content-between align-items-center'>
+                                            <div>
+                                                <h5 class="m-0">
+                                                    {client.title}</h5>
                                             </div>
+                                            <div>
+
+                                                <SquarePen onClick={() => {
+                                                    navigate("/admin/updatecondition", { state: { client } })
+                                                }} />
+
+                                            </div>
+
                                         </div>
+                                        <hr />
+
+                                        <form className="row g-3">
+                                            
+
+
+                                            <div className="col-md-12">
+                                                <label htmlFor={`mailContent${index}`} className="form-label">
+                                                    Description
+                                                </label>
+
+                                                <span
+                                                    dangerouslySetInnerHTML={{ __html: client.description }}
+                                                    style={{ display: 'block', marginTop: '0.5rem' }}
+                                                />
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
-                            ))}
-                        </>
-                    )}
+                            </div>
+                        </div>
+                    ))}
+                 </>
+                )}
                 </div>
             </div>
 
@@ -276,5 +276,4 @@ const Condition = () => {
         </div>
     );
 };
-
 export default Condition;

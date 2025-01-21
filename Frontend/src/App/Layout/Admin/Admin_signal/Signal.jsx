@@ -7,10 +7,11 @@ import { Eye, Trash2, RefreshCcw, SquarePen, IndianRupee, ArrowDownToLine } from
 import Swal from 'sweetalert2';
 import { GetSignallist, GetSignallistWithFilter, DeleteSignal, SignalCloseApi, GetService, GetStockDetail, UpdatesignalReport } from '../../../Services/Admin/Admin';
 import { fDateTimeH } from '../../../../Utils/Date_formate'
-import { exportToCSV } from '../../../../Utils/ExportData';
+import { exportToCSV, exportToCSV1 } from '../../../../Utils/ExportData';
 import Select from 'react-select';
 import { Tooltip } from 'antd';
 import { image_baseurl } from '../../../../Utils/config';
+import Loader from '../../../../Utils/Loader';
 
 
 
@@ -31,6 +32,10 @@ const Signal = () => {
     });
     const location = useLocation();
     const clientStatus = location?.state?.clientStatus;
+
+    //state for loading
+    const [isLoading, setIsLoading] = useState(true)
+
 
 
 
@@ -172,6 +177,8 @@ const Signal = () => {
     const getexportfile = async () => {
         try {
             const response = await GetSignallist(token);
+            console.log("GetSignallist", response);
+
             if (response.status) {
                 if (response.data?.length > 0) {
                     let filterdata = response.data.filter((item) => item.close_status === false);
@@ -191,6 +198,40 @@ const Signal = () => {
     }
 
 
+    const getexportfile1 = async () => {
+        try {
+            const response = await GetSignallist(token);
+            if (response.status) {
+                if (response.data?.length > 0) {
+                    let filterdata = response.data.filter(
+                        (item) => item.close_status === false
+                    );
+                    const csvArr = filterdata.map((item) => {
+
+                        const entryType = `${item?.calltype} ${item?.stock} ${item?.expirydate ? `Expiry: ${item.expirydate}` : ""} ${item?.optiontype ? `Option: ${item.optiontype}` : ""} Entry Type: ${item?.entrytype} Price: ${item?.price} Target: ${item?.tag1} ${item?.tag2 ? `/${item.tag2}` : ""} ${item?.tag3 ? `/${item.tag3}` : ""} Stop Loss: ${item?.stoploss}`;
+
+                        return {
+                            OpenSignal: `${fDateTimeH(item?.created_at)}\n\nSegment: ${item.segment === "C"
+                                ? "CASH"
+                                : item.segment === "O"
+                                    ? "OPTION"
+                                    : item.segment === "F"
+                                        ? "FUTURE"
+                                        : ""
+                                } \n\nEntry Type: ${entryType}`
+                        };
+                    });
+                    exportToCSV1(csvArr, "Open Signal");
+                }
+            }
+        } catch (error) {
+            console.log("Error:", error);
+        }
+    };
+
+
+
+
 
 
     const getAllSignal = async () => {
@@ -206,6 +247,8 @@ const Signal = () => {
             };
 
             const response = await GetSignallistWithFilter(data, token);
+            console.log("GetSignallistWithFilter", response);
+
 
             if (response && response.status) {
                 setTotalRows(response.pagination.totalRecords);
@@ -215,6 +258,7 @@ const Signal = () => {
         } catch (error) {
             console.log("Error:", error);
         }
+        setIsLoading(false)
     };
 
 
@@ -876,13 +920,13 @@ const Signal = () => {
                             <div className="d-flex justify-content-between mb-4">
                                 <div className="btn-group">
                                     <button
-                                        className={`btn btn-secondary ${viewMode === "table" ? "active" : ""}`}
+                                        className={`btn btn-outline-primary ${viewMode === "table" ? "active" : ""}`}
                                         onClick={() => setViewMode("table")}
                                     >
                                         Table View
                                     </button>
                                     <button
-                                        className={`btn btn-secondary ${viewMode === "card" ? "active" : ""}`}
+                                        className={`btn btn-outline-primary ${viewMode === "card" ? "active" : ""}`}
                                         onClick={() => setViewMode("card")}
                                     >
                                         Card View
@@ -909,10 +953,32 @@ const Signal = () => {
                                         <i className="bx bxs-plus-square" aria-hidden="true" /> Add Signal
                                     </Link>
                                 </div>
-                                <div className="ms-2" onClick={getexportfile}>
+                                {/* <div className="ms-2" onClick={getexportfile}>
                                     <button type="button" className="btn btn-primary float-end" title="Export To Excel">
                                         <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
                                     </button>
+                                </div> */}
+
+                                <div className="ms-2">
+                                    {viewMode === "table" ? (
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary float-end"
+                                            title="Export To Excel"
+                                            onClick={getexportfile}
+                                        >
+                                            <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
+                                        </button>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary float-end"
+                                            title="Export Card data"
+                                            onClick={getexportfile1}
+                                        >
+                                            <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
+                                        </button>
+                                    )}
                                 </div>
                             </div>
 
@@ -972,33 +1038,39 @@ const Signal = () => {
                             </div>
 
 
-                            {viewMode === "table" ? (
-                                <Table
-                                    columns={columns}
-                                    data={clients}
-                                    totalRows={totalRows}
-                                    currentPage={currentPage}
-                                    onPageChange={handlePageChange}
-                                />
-                            ) : (
-                                <div className="row mt-3">
-                                    {clients.map((client, index) => (
-                                        <div className="col-md-12" key={index}>
-                                            <div className="card radius-10 mb-3 border">
-                                                <div className="card-body">
-                                                    <p className='mb-1'><b>Date: {fDateTimeH(client?.created_at)}</b></p>
-                                                    <p className='mb-2'><b>Segment: {client?.segment == "C" ? "CASH" : client?.segment == "O" ? "OPTION" : "FUTURE"}</b></p>
-                                                    <p className='mb-1'> {client?.calltype} {client?.stock}  {client?.expirydate && `${client.expirydate}`} {client?.optiontype && `${client.optiontype}`} {client?.calltype} {client?.entrytype} {client?.price}  Target  {client?.tag1}{client?.tag2 && `/${client.tag2}`}
-                                                        {client?.tag3 && `/${client.tag3}`}  {client?.stoploss && `SL ${client.stoploss}`}
+                            {viewMode === "table" ?
+                                isLoading ? (
+                                    <Loader />
+                                ) : (
+                                    <>
+                                        <Table
+                                            columns={columns}
+                                            data={clients}
+                                            totalRows={totalRows}
+                                            currentPage={currentPage}
+                                            onPageChange={handlePageChange}
+                                        />
+                                    </>
 
-                                                    </p>
+                                ) : (
+                                    <div className="row mt-3">
+                                        {clients.map((client, index) => (
+                                            <div className="col-md-12" key={index}>
+                                                <div className="card radius-10 mb-3 border">
+                                                    <div className="card-body">
+                                                        <p className='mb-1'><b>Date: {fDateTimeH(client?.created_at)}</b></p>
+                                                        <p className='mb-2'><b>Segment: {client?.segment == "C" ? "CASH" : client?.segment == "O" ? "OPTION" : "FUTURE"}</b></p>
+                                                        <p className='mb-1'> {client?.calltype} {client?.stock}  {client?.expirydate && `${client.expirydate}`} {client?.optiontype && `${client.optiontype}`} {client?.calltype} {client?.entrytype} {client?.price}  Target  {client?.tag1}{client?.tag2 && `/${client.tag2}`}
+                                                            {client?.tag3 && `/${client.tag3}`}  {client?.stoploss && `SL ${client.stoploss}`}
 
+                                                        </p>
+
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                                        ))}
+                                    </div>
+                                )}
                         </div>
                     </div>
                 </div>

@@ -62,8 +62,8 @@ const Signaldetail = () => {
     const getsignaldetail = async () => {
         try {
             const response = await Signalperdetail(id, token);
-            console.log("Signalperdetail", response);
-
+            console.log("Signalperdetail",response);
+            
             if (response.status) {
                 const signalData = response.data;
                 let totalGain = 0;

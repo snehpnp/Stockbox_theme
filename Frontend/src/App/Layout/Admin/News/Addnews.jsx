@@ -16,8 +16,11 @@ const Addnews = () => {
     const token = localStorage.getItem("token");
 
 
+    const [loading, setLoading] = useState(false);
+  
 
-
+    
+     
 
     const validate = (values) => {
         let errors = {};
@@ -31,19 +34,20 @@ const Addnews = () => {
         if (!values.image) {
             errors.image = "Please Enter Image";
         }
-
+       
 
         return errors;
     };
 
     const onSubmit = async (values) => {
+    setLoading(!loading)
         const req = {
             title: values.title,
             description: values.description,
             image: values.image,
-            add_by: user_id,
+            add_by: user_id ,
         };
-
+       
         try {
             const response = await AddNewsbyadmin(req, token);
             if (response.status) {
@@ -65,8 +69,10 @@ const Addnews = () => {
                     timer: 1500,
                     timerProgressBar: true,
                 });
+                setLoading(false)
             }
         } catch (error) {
+            setLoading(false)
             Swal.fire({
                 title: "Error",
                 text: "An unexpected error occurred. Please try again later.",
@@ -81,14 +87,14 @@ const Addnews = () => {
         initialValues: {
             title: "",
             description: "",
-            image: "",
+            image: "", 
         },
         validate,
         onSubmit,
     });
 
     const fields = [
-
+       
         {
             name: "title",
             label: "Title",
@@ -96,7 +102,7 @@ const Addnews = () => {
             label_size: 12,
             col_size: 6,
             disable: false,
-            star: true
+            star:true
         },
         {
             name: "image",
@@ -106,16 +112,16 @@ const Addnews = () => {
             label_size: 12,
             col_size: 6,
             disable: false,
-            star: true
+            star:true
         },
         {
             name: "description",
             label: "Description",
-            type: "ckeditor",
+            type: "ckeditor", 
             label_size: 12,
             col_size: 12,
             disable: false,
-            star: true
+            star:true
         },
     ];
 
@@ -128,11 +134,12 @@ const Addnews = () => {
                 btn_name="Add News"
                 btn_name1="Cancel"
                 sumit_btn={true}
+                btnstatus={loading}
                 btn_name1_route={"/admin/news"}
                 additional_field={<></>}
             />
-
-
+           
+           
         </div>
     );
 };

@@ -4,6 +4,7 @@ import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Updatebasket, Viewbasket } from '../../../Services/Admin/Admin';
+import { image_baseurl } from '../../../../Utils/config';
 
 
 const Editbasket = () => {
@@ -17,6 +18,9 @@ const Editbasket = () => {
 
   const [data, setData] = useState("")
 
+  const [loading, setLoading] = useState(false);
+  
+
 
   useEffect(() => {
     getbasketdetail()
@@ -27,6 +31,8 @@ const Editbasket = () => {
   const getbasketdetail = async () => {
     try {
       const response = await Viewbasket(id, token);
+      console.log("Viewbasket",response);
+      
       if (response.status) {
         setData(response.data);
 
@@ -50,7 +56,12 @@ const Editbasket = () => {
         validity: data?.validity ? data?.validity : "",
         next_rebalance_date: data?.next_rebalance_date ? data?.next_rebalance_date : "",
         cagr: data?.cagr,
-        full_price: data?.full_price
+        full_price: data?.full_price,
+        type: data?.type,
+        image: data?.image,
+        short_description: data?.short_description,
+        rationale: data?.rationale,
+        methodology: data?.methodology,
       });
     }
   }, [data]);
@@ -69,11 +80,11 @@ const Editbasket = () => {
       errors.themename = "Please Enter Theme Name";
     }
     if (values.full_price && values.full_price <= values.basket_price) {
-      errors.full_price = "Please Enter Greater Basket Price";
+      errors.full_price = "Please Enter Greater Discounted/Net Basket price";
     }
 
     if (!values.basket_price) {
-      errors.basket_price = "Please Enter Basket Price";
+      errors.basket_price = "Please Enter Discounted/Net Basket price";
     }
     if (!values.mininvamount) {
       errors.mininvamount = "Please Enter Minimum Investment Amount";
@@ -96,12 +107,28 @@ const Editbasket = () => {
     if (!values.cagr) {
       errors.cagr = "Please Enter CAGR";
     }
+    if (!values.type) {
+      errors.type = "Please Enter type";
+    }
+    if (!values.image) {
+      errors.image = "Please Upload image";
+    }
+    if (!values.short_description) {
+      errors.short_description = "Please Enter Short Description";
+    }
+    if (!values.rationale) {
+      errors.rationale = "Please Enter Rationale";
+    }
+    if (!values.methodology) {
+      errors.methodology = "Please Enter Methodology";
+    }
+
 
     return errors;
   };
 
   const onSubmit = async (values) => {
-
+    setLoading(!loading)
     const req = {
       title: values.title,
       id: data._id,
@@ -113,7 +140,12 @@ const Editbasket = () => {
       validity: values.validity,
       next_rebalance_date: values.next_rebalance_date,
       cagr: values.cagr,
-      full_price: values.full_price || 0
+      full_price: values.full_price || 0,
+      type: values.type,
+      image: values.image,
+      short_description: values.short_description,
+      rationale: values.rationale,
+      methodology: values.methodology
     };
 
 
@@ -141,8 +173,10 @@ const Editbasket = () => {
           timer: 1500,
           timerProgressBar: true,
         });
+        setLoading(false)
       }
     } catch (error) {
+      setLoading(false)
       Swal.fire({
         title: "Error",
         text: "An unexpected error occurred. Please try again later.",
@@ -166,7 +200,12 @@ const Editbasket = () => {
       validity: "",
       next_rebalance_date: "",
       cagr: "",
-      full_price: ""
+      full_price: "",
+      type: "",
+      image: "",
+      short_description: "",
+      rationale: "",
+      methodology: "",
     },
     validate,
     onSubmit,
@@ -196,7 +235,7 @@ const Editbasket = () => {
     },
     {
       name: "full_price",
-      label: "Price",
+      label: "Actual Basket Price",
       type: "number",
       label_size: 12,
       col_size: 6,
@@ -206,7 +245,7 @@ const Editbasket = () => {
 
     {
       name: "basket_price",
-      label: "Basket Price",
+      label: "Discounted/Net Basket price",
       type: "number",
       label_size: 12,
       col_size: 6,
@@ -273,8 +312,63 @@ const Editbasket = () => {
       star: true
     },
     {
+      name: "type",
+      label: "Risk Type",
+      type: "select",
+      label_size: 12,
+      col_size: 6,
+      disable: false,
+      options: [
+        { value: "HIGH", label: "High" },
+        { value: "MEDIUM", label: "Medium" },
+        { value: "LOW", label: "Low" },
+      ],
+      star: true
+    },
+
+    {
+      name: "short_description",
+      label: "Short Discription",
+      type: "text",
+      label_size: 12,
+      col_size: 6,
+      disable: false,
+      star: true
+    },
+    {
+      name: "image",
+      label: "Upload Image",
+      type: "file3",
+      label_size: 12,
+      col_size: 6,
+      disable: false,
+      image: true,
+      imageWidth: "60px",
+      imageHeight: "auto",
+      src: `${image_baseurl}/uploads/basket/${data.image}`, 
+      star: true
+    },
+    {
       name: "description",
       label: "Description",
+      type: "ckeditor",
+      label_size: 12,
+      col_size: 12,
+      disable: false,
+      star: true
+    },
+    {
+      name: "rationale",
+      label: "Rationale",
+      type: "ckeditor",
+      label_size: 12,
+      col_size: 12,
+      disable: false,
+      star: true
+    },
+    {
+      name: "methodology",
+      label: "Methodology",
       type: "ckeditor",
       label_size: 12,
       col_size: 12,
@@ -296,6 +390,7 @@ const Editbasket = () => {
         btn_name="Edit Basket"
         btn_name1="Cancel"
         sumit_btn={true}
+        btnstatus={loading}
         btn_name1_route={"/admin/basket"}
         additional_field={<></>}
 
