@@ -221,7 +221,8 @@ export default function Setting_sidebar() {
           ref={sidebarRef}
           className={`sidebar-setting ${isOpen ? "sidebar-setting-open" : ""}`}
         >
-          <h1 className="text-dark">Settings</h1>
+          <h1 className="text-dark fs-2">Settings</h1>
+          <hr/>
           <Formik
             initialValues={initialValues}
             enableReinitialize={true}
@@ -607,11 +608,11 @@ export default function Setting_sidebar() {
                 </Row>
                 <div className="setting-sidebar-divider-line"></div>
 
-                <Button className="text-dark" type="submit">
+                <Button className="btn btn-primary me-3" type="submit">
                   Apply Changes
                 </Button>
                 <Button
-                  className="text-dark"
+                  className="btn btn-primary"
                   type="button"
                   onClick={() => handleCreateNewTheme(values)}
                 >

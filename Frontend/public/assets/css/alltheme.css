@@ -993,3 +993,64 @@ padding-left: 0;
 {
   background-color: var(--BtnPriBgCol, green) !important;
 }
+.rdt_TableHeadRow {
+  background:var(--tabelheadbgcolor, #f1f1f1) !important;
+}
+/* ---------------------------Responsive css------------------------------ */
+
+@media screen and (min-width: 1024px) {
+  .sidebar-vertical-container.sidebar-open .SidebarColored .sidebar-link tooltip{
+   display: none;
+}
+
+}
+@media screen and (max-width: 1024px) {
+  .sidebar-vertical-container.sidebar-open .SidebarColored {
+    left: -250px; 
+}
+.sidebar-vertical-container.sidebar-collapsed ul.submenu .sidebar-subitem span {
+  display: none;
+}
+.sidebar-vertical-container.sidebar-open .content {
+  width: calc(100% );
+  margin-left: 0;
+  height: 100vh;
+}
+}
+/* HTML: <div class="loader"></div> */
+/* Loader Text Animation */
+.loader {
+  width: fit-content;
+  font-weight: bold;
+  font-family: monospace !important;
+  font-size: 30px;
+  color: white;
+  clip-path: inset(0 100% 0 0);
+  animation: l5 2s steps(11) infinite;
+}
+
+.loader:before {
+  content: "Loading...";
+}
+
+/* Animation Keyframes */
+@keyframes l5 {
+  to {
+    clip-path: inset(0 -1ch 0 0);
+  }
+}
+
+/* Fullscreen Blur Background */
+.loader-container {
+  /* position: fixed;
+  top: 0;
+  left: 0; */
+  width: 100%;
+  height: 100%;
+  /* background: rgba(0, 0, 0, 0.5); 
+  backdrop-filter: blur(10px);  */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; 
+}

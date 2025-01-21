@@ -1,15 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useFormik } from 'formik';
-import DynamicForm from '../../../Extracomponents/FormicForm';
+import DynamicForm from '../../../components/FormicForm';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-import { AddClient } from '../../../Services/Admin/Admin';
-import { Link } from 'react-router-dom';
+import { AddClient } from '../../../Services/Admin';
 
 
-const AddUser = () => {
-
-
+const AddUser = () => { 
   const navigate = useNavigate();
 
   const user_id = localStorage.getItem("id");
@@ -18,13 +15,12 @@ const AddUser = () => {
   const validate = (values) => {
     let errors = {};
 
-    // Full Name validation: Only alphabets and one space between two words allowed
-    const fullNameRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)?$/;
 
     if (!values.FullName) {
       errors.FullName = "Please Enter Full Name";
-    } else if (!fullNameRegex.test(values.FullName)) {
-      errors.FullName = "Full Name should only contain alphabets and one space between first and last name";
+    }
+    if (/\d/.test(values.FullName)) {
+      errors.FullName = "Numbers are not allowed in the Full Name";
     }
     if (!values.Email) {
       errors.Email = "Please Enter Email";
@@ -33,32 +29,28 @@ const AddUser = () => {
       errors.PhoneNo = "Please Enter Phone Number";
     }
     if (!values.password) {
-      errors.password = "Please Enter Password";
+      errors.password = "Please Enter password";
     }
     if (!values.ConfirmPassword) {
       errors.ConfirmPassword = "Please Confirm Your Password";
     } else if (values.password !== values.ConfirmPassword) {
-      errors.ConfirmPassword = "Passwords Must Match";
+      errors.ConfirmPassword = "Password Must Match";
     }
 
     return errors;
   };
 
   const onSubmit = async (values) => {
-
     const req = {
       FullName: values.FullName,
       Email: values.Email,
       PhoneNo: values.PhoneNo,
       password: values.password,
       add_by: user_id,
-      freetrial: values.freetrial
     };
-
 
     try {
       const response = await AddClient(req, token);
-
       if (response.status) {
         Swal.fire({
           title: "Client Create Successfull !",
@@ -68,7 +60,7 @@ const AddUser = () => {
           timerProgressBar: true,
         });
         setTimeout(() => {
-          navigate("/admin/client");
+          navigate("/staff/client");
         }, 1500);
       } else {
         Swal.fire({
@@ -97,20 +89,11 @@ const AddUser = () => {
       PhoneNo: "",
       password: "",
       ConfirmPassword: "",
-      freetrial: 0,
       add_by: "",
     },
     validate,
     onSubmit,
   });
-
-
-  const traialStatus = formik.values.freetrial;
-  // console.log("traialStatus",traialStatus);
-
-  const handleToggleChange = () => {
-    console.log("Custom Clicked", traialStatus);
-  }
 
   const fields = [
     {
@@ -120,7 +103,6 @@ const AddUser = () => {
       label_size: 6,
       col_size: 6,
       disable: false,
-      star: true
     },
     {
       name: "Email",
@@ -129,8 +111,6 @@ const AddUser = () => {
       label_size: 12,
       col_size: 6,
       disable: false,
-      star: true
-
     },
     {
       name: "PhoneNo",
@@ -139,16 +119,14 @@ const AddUser = () => {
       label_size: 12,
       col_size: 6,
       disable: false,
-      star: true
     },
     {
       name: "password",
       label: "Password",
-      type: "password",
+      type: "password", 
       label_size: 12,
       col_size: 6,
       disable: false,
-      star: true
     },
     {
       name: "ConfirmPassword",
@@ -157,51 +135,38 @@ const AddUser = () => {
       label_size: 12,
       col_size: 6,
       disable: false,
-      star: true
     },
-    // {
-    //   name: "freetrial",
-    //   label: "Free trial status",
-    //   type: "togglebtn",
-    //   label_size: 6,
-    //   col_size: 4,
-    //   disable: false,
-    //   star: true,
-    // },
   ];
 
-
-
-  const handlefreeTrialChange = (e) => {
-    const currentValue = formik.values.freetrial; // Store current value
-
-    console.log("Current toggle value:", e.target.checked);
-
-    Swal.fire({
-      title: currentValue ? "Are you sure you want to disable the free trial?" : "Are you sure you want to enable the free trial?",
-      showDenyButton: true,
-      showCancelButton: false,
-      confirmButtonText: "Yes",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // If toggle is currently true (checked), and user clicks "Yes", set it to false
-        // If toggle is false (unchecked), and user clicks "Yes", set it to true
-        formik.setFieldValue("freetrial", !currentValue);
-        console.log("Updated toggle value:", !currentValue); // Log the updated value
-      } else if (result.isDenied) {
-        // If "No" (Deny) clicked, revert the value to its original state
-        formik.setFieldValue("freetrial", currentValue);
-        console.log("Value reverted to:", currentValue); // Log reverted value
-      }
-    });
-  };
-
-
+    const handlefreeTrialChange = (e) => {
+      const currentValue = formik.values.freetrial; // Store current value
+    
+      console.log("Current toggle value:", e.target.checked);
+    
+      Swal.fire({
+        title: currentValue ? "Are you sure you want to disable the free trial?" : "Are you sure you want to enable the free trial?",
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: "Yes",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // If toggle is currently true (checked), and user clicks "Yes", set it to false
+          // If toggle is false (unchecked), and user clicks "Yes", set it to true
+          formik.setFieldValue("freetrial", !currentValue);
+          console.log("Updated toggle value:", !currentValue); // Log the updated value
+        } else if (result.isDenied) {
+          // If "No" (Deny) clicked, revert the value to its original state
+          formik.setFieldValue("freetrial", currentValue);
+          console.log("Value reverted to:", currentValue); // Log reverted value
+        }
+      });
+    };
 
   return (
-    <div className="page-content">
-         <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-          <div className="breadcrumb-title pe-3">Add New Client</div>
+    <div style={{ marginTop: "100px" }}>
+      <div className="page-content">
+      <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+          <div className="breadcrumb-title pe-3">dd New Client</div>
           <div className="ps-3">
             <nav aria-label="breadcrumb">
               <ol className="breadcrumb mb-0 p-0">
@@ -215,18 +180,17 @@ const AddUser = () => {
           </div>
         </div>
         <hr />
-      <DynamicForm
+        <DynamicForm
         fields={fields}
         formik={formik}
-       
+      
         btn_name="Add Client"
         btn_name1="Cancel"
         sumit_btn={true}
-        btn_name1_route={"/admin/client"}
+        btn_name1_route={"/staff/client"}
         additional_field={<>
-
-
-          <div className={`col-lg-6`}>
+        
+        <div className={`col-lg-6`}>
             <div className="input-block row">
 
               <label htmlFor="freetrial" className={`col-lg-12 col-form-label`}>
@@ -243,17 +207,18 @@ const AddUser = () => {
                     }}
                     type="checkbox"
                     checked={formik.values["freetrial"] == 1}
-                    onChange={(e) => handlefreeTrialChange(e)}
+                    onChange={(e) =>handlefreeTrialChange(e)   }
                   />
                 </div>
               </div>
             </div>
           </div>
         </>}
-
+        
       />
       </div>
-   
+     
+    </div>
   );
 };
 

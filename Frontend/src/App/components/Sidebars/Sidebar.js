@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-
-import { SuperAdmin, Admin, User } from "../Sidebars/Sidebar_config";
+import { Tooltip } from 'antd';
+import { SuperAdmin, Admin, User, Employee } from "../Sidebars/Sidebar_config";
 
 import {
   UserRoundPlus,
@@ -38,6 +38,8 @@ import {
 import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
+
+
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isTopbar, setIsTopbar] = useState(false);
   const [openTab, setOpenTab] = useState(null);
@@ -48,7 +50,7 @@ const Sidebar = () => {
       ? SuperAdmin
       : localStorage.getItem("Role") == "ADMIN"
         ? Admin
-        : User
+        : localStorage.getItem("Role") == "USER" ? User : Employee
   );
 
   useEffect(() => {
@@ -144,7 +146,7 @@ const Sidebar = () => {
                     <div
                       onClick={() => tab.children && toggleSubmenu(tab.name)}
                       className={`sidebar-color sidebar-link ${location.pathname === tab.link ? "active" : ""
-                      }`}
+                        }`}
                       style={{
                         display: "flex",
                         alignItems: "center",
@@ -163,9 +165,15 @@ const Sidebar = () => {
                           display: "flex",
                           alignItems: "center",
                         }}
-                      >
-                        <IconComponent icon={tab.icon}  />
-                        {!isCollapsed ? <span>{tab?.name}</span> : ""}
+                      > 
+                        <Tooltip placement="top" title={tab?.name}>
+      <div>
+      <IconComponent icon={tab.icon} />
+      </div>
+    </Tooltip>
+                        {!isCollapsed ?     
+                        <span>{tab?.name}</span>
+                                : ""}
                       </Link>
                       {tab?.children?.length > 0 &&
                         (openTab === tab?.name ? (
@@ -201,11 +209,14 @@ const Sidebar = () => {
                                 alignItems: "center",
                                 gap: "10px",
                               }}
-                            >
-                              <IconComponent
-                                icon={child.icon}
-                              />
-                             <span> {child.name}</span>
+                            > <Tooltip placement="top" title={child.name}>
+                            <div>
+                              <IconComponent icon={child.icon} />
+                            </div>
+                          </Tooltip>
+                             
+                              <span> {child.name}</span>
+                               
                             </Link>
                           </li>
                         ))}
@@ -217,7 +228,7 @@ const Sidebar = () => {
           </div>
         )}
 
-    
+
       </div>
     </>
   );

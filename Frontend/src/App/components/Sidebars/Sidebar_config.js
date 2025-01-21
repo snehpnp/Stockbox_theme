@@ -5,7 +5,7 @@ const Admin = [
     link: "/admin/dashboard",
     name: "Dashboard"
   },
- 
+
   {
     label: "Client",
     icon: "Users",
@@ -378,176 +378,159 @@ const User = [
 ];
 
 
-export { SuperAdmin, Admin, User };
+const Employee = [
+  {
+    label: "Dashboard",
+    icon: "LayoutDashboard",
+    link: "/employee/dashboard",
+    name: "Dashboard"
+  },
+
+  {
+    label: "Client",
+    icon: "Users",
+    link: "/employee/client",
+    name: "Client"
+  },
+  {
+    label: "Client Request",
+    icon: "UserPen",
+    link: "/employee/clientrequest",
+    name: "ClientRequest"
+  },
+  {
+    label: "Free Trial Client",
+    icon: "UserPen",
+    link: "/employee/freeclient",
+    name: "FreeTrialClient"
+  },
+  {
+    label: "Plan",
+    icon: "Rocket",
+    children: [
+      { label: "Package", icon: "Repeat2", link: "/employee/plan", name: "Package" },
+      { label: "Segment", icon: "ScatterChart", link: "/employee/service", name: "Segment" },
+      { label: "Category", icon: "ClipboardType", link: "/employee/category", name: "Category" },
+      { label: "Free Trial Status", icon: "Boxes", link: "/employee/freetrialstatus", name: "FreeTrialStatus" },
+    ],
+    name: "Plan",
+  },
+  {
+    label: "Basket",
+    icon: "ShoppingCart",
+    children: [
+      {
+        label: "Basket Detail",
+        icon: "ShoppingCart",
+        link: "/employee/basket",
+        name: "BasketDetail"
+      },
+      {
+        label: "Basket Stock Published",
+        icon: "Boxes", link: "/employee/basket/basketstockpublish",
+        name: "BasketStockPublished"
+      },
+      {
+        label: "Subscription History",
+        icon: "FolderClock",
+        link: "/employee/purchasebaskethistory",
+        name: "SubscriptionHistory"
+      },
+    ],
+    name: "Basket",
+  },
+  {
+    label: "Signal",
+    icon: "Activity",
+    children: [
+      {
+        label: "Open Signal",
+        icon: "ScatterChart",
+        link: "/employee/signal",
+        name: "OpenSignal"
+      },
+      {
+        label: "Close Signal",
+        icon: "ScatterChart", link: "/employee/closesignal",
+        name: "CloseSignal"
+      },
+    ],
+    name: "Signal",
+  },
+  {
+    label: "Payment History",
+    icon: "WalletCards",
+    link: "/employee/paymenthistory",
+    name: "PaymentHistory"
+  },
+  {
+    label: "Withdrawal Request",
+    icon: "ArrowRightLeft",
+    link: "/employee/paymentrequest",
+    name: "WithdrawalRequest"
+  },
+  {
+    label: "Blogs",
+    icon: "Paintbrush",
+    link: "/employee/blogs",
+    name: "Blogs"
+  },
+  {
+    label: "News",
+    icon: "Vote",
+    link: "/employee/news",
+    name: "News"
+  },
+  {
+    label: "Coupon",
+    icon: "Copyright",
+    link: "/employee/coupon",
+    name: "Coupon"
+  },
+  {
+    label: "Banner",
+    icon: "Frame",
+    link: "/employee/banner",
+    name: "Banner"
+  },
+  {
+    label: "Client Plan Expiry",
+    icon: "FolderClock",
+    link: "/employee/planexpiry",
+    name: "ClientPlanExpiry"
+  },
+  {
+    label: "Performance",
+    icon: "ScatterChart",
+    link: "/employee/perfom",
+    name: "Performance"
+  },
+  {
+    label: "Broadcast SMS",
+    icon: "HelpingHand",
+    link: "/employee/message",
+    name: "BroadcastSMS"
+  },
+  {
+    label: "FAQ",
+    icon: "HelpingHand",
+    link: "/employee/faq",
+    name: "FAQ"
+  },
+  {
+    label: "Help Center",
+    icon: "HelpingHand",
+    link: "/employee/help",
+    name: "HelpCenter"
+  },
+  {
+    label: "Policy",
+    icon: "Wrench",
+    link: "/employee/termsandcondtion",
+    name: "Policy"
+  },
+];
 
 
+export { SuperAdmin, Admin, User, Employee };
 
-
-
-
-// const Admin = [
-//   {
-//     name: "Dashboard",
-//     label: "Dashboard",
-//     icon: "LayoutDashboard",
-//     link: "/dashboard",
-//     children: [],
-//   },
-//   {
-//     name: "Services",
-//     label: "Dashboard",
-//     icon: "Wrench",
-//     link: "/services",
-//     children: [],
-//   },
-//   {
-//     name: "Users",
-//     label: "Users",
-//     icon: "Users",
-//     link: "/users",
-//     children: [
-//       {
-//         name: "All Users",
-//         label: "All Users",
-//         icon: "Users",
-//         link: "/users",
-//       },
-//       {
-//         name: "Add User",
-//         label: "Add User",
-//         icon: "UserRoundPlus",
-//         link: "/users/add",
-//       },
-//       {
-//         name: "Edit User",
-//         label: "Edit User",
-//         icon: "UserPen",
-//         link: "/users/edit/:id",
-//       },
-//     ],
-//   },
-//   // {
-//   //   name: "Tables",
-//   //   label: "Tables",
-//   //   icon: "FolderClock",
-//   //   link: "/tables",
-//   //   children: [
-//   //     {
-//   //       name: "Basic Table",
-//   //       label: "Basic Table",
-//   //       icon: "FolderClock",
-//   //       link: "/tables/basic",
-//   //     },
-//   //     {
-//   //       name: "React Table",
-//   //       label: "React Table",
-//   //       icon: "FolderClock",
-//   //       link: "/tables/reacttable",
-//   //     },
-//   //     {
-//   //       name: "Bordered Table",
-//   //       label: "Bordered Table",
-//   //       icon: "FolderClock",
-//   //       link: "/tables/bordered",
-//   //     },
-//   //     {
-//   //       name: "Striped Table",
-//   //       label: "Striped Table",
-//   //       icon: "FolderClock",
-//   //       link: "/tables/striped",
-//   //     },
-//   //     {
-//   //       name: "Hover Table",
-//   //       label: "Hover Table",
-//   //       icon: "FolderClock",
-//   //       link: "/tables/hover",
-//   //     },
-//   //     {
-//   //       name: "Card Table",
-//   //       label: "Card Table",
-//   //       icon: "FolderClock",
-//   //       link: "/tables/card",
-//   //     },
-//   //   ],
-//   // },
-//   // {
-//   //   name: "Charts",
-//   //   label: "Charts",
-//   //   icon: "CandlestickChart",
-//   //   link: "/charts",
-//   //   children: [],
-//   // },
-//   // {
-//   //   name: "Modals",
-//   //   label: "Modals",
-//   //   icon: "EthernetPort",
-//   //   link: "/modals",
-//   //   children: [],
-//   // },
-//   // {
-//   //   name: "Forms",
-//   //   label: "Forms",
-//   //   icon: "ClipboardType",
-//   //   link: "/forms",
-//   //   children: [
-//   //     {
-//   //       name: "Basic Form",
-//   //       label: "Basic Form",
-//   //       icon: "ClipboardType",
-//   //       link: "/forms/classic",
-//   //     },
-//   //     {
-//   //       name: "Modern Form",
-//   //       label: "Modern Form",
-//   //       icon: "ClipboardType",
-//   //       link: "/forms/modern",
-//   //     },
-//   //     {
-//   //       name: "Glassmorphism Form",
-//   //       label: "Glassmorphism Form",
-//   //       icon: "ClipboardType",
-//   //       link: "/forms/glassmorphism",
-//   //     },
-//   //     {
-//   //       name: "Floating Form",
-//   //       label: "Floating Form",
-//   //       icon: "ClipboardType",
-//   //       link: "/forms/floating",
-//   //     },
-//   //     {
-//   //       name: "Dark Theme Form",
-//   //       label: "Dark Theme Form",
-//   //       icon: "ClipboardType",
-//   //       link: "/forms/darktheme",
-//   //     },
-//   //   ],
-//   // },
-//   // {
-//   //   name: "Products",
-//   //   label: "Products",
-//   //   icon: "ShoppingCart",
-//   //   link: "/products",
-//   //   children: [],
-//   // },
-//   // {
-//   //   name: "Settings",
-//   //   label: "Settings",
-//   //   icon: "Cog",
-//   //   link: "/settings",
-//   //   children: [],
-//   // },
-//   {
-//     name: "Themes",
-//     label: "Themes",
-//     icon: "Cog",
-//     link: "/themes",
-//     children: [],
-//   },
-//   {
-//     name: "Themes",
-//     label: "Themes",
-//     icon: "Cog",
-//     link: "/themes",
-//     children: [],
-//   },
-// ];
