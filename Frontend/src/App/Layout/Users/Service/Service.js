@@ -9,10 +9,14 @@ import {
 } from "../../../Services/UserService/User";
 import { IndianRupee } from "lucide-react";
 import { loadScript } from "../../../../Utils/Razorpayment";
+import { basicsettinglist } from "../../../Services/Admin/Admin";
 
 const Service = () => {
+
+
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
+
 
   const [selectedPlan, setSelectedPlan] = useState("all");
   const [category, setCategory] = useState([]);
@@ -24,13 +28,14 @@ const Service = () => {
   const [selectedCouponCode, setSelectedCouponCode] = useState("");
   const [discountedPrice, setDiscountedPrice] = useState(0);
   const [coupons, setCoupon] = useState([]);
+  const [getkey, setGetkey] = useState([]);
   const [sortCriteria, setSortCriteria] = useState("price");
 
   useEffect(() => {
-    console.log("Fetching data...");
     getCategory();
     getPlan();
     getCoupon();
+    getkeybydata()
   }, []);
 
   const handleCouponSelect = (coupon) => {
@@ -74,10 +79,24 @@ const Service = () => {
     }
   };
 
-  const isFetchingData = useRef(false); // Track if data is already being fetched
+
+  const getkeybydata = async () => {
+    try {
+      const response = await basicsettinglist();
+      if (response.status) {
+        setGetkey(response?.data[0]?.razorpay_key);
+      }
+    } catch (error) {
+      console.error("Error fetching coupons:", error);
+    }
+  };
+
+
+
+  const isFetchingData = useRef(false);
 
   const getCategory = async () => {
-    if (isFetchingData.current) return; // Prevent multiple calls
+    if (isFetchingData.current) return;
     isFetchingData.current = true;
 
     try {
@@ -88,7 +107,7 @@ const Service = () => {
     } catch (error) {
       console.error("Error fetching categories:", error);
     } finally {
-      isFetchingData.current = false; // Reset the flag
+      isFetchingData.current = false;
     }
   };
 
@@ -103,6 +122,10 @@ const Service = () => {
     }
   };
 
+
+
+
+
   const AddSubscribeplan = async (item) => {
 
 
@@ -111,8 +134,8 @@ const Service = () => {
         await loadScript("https://checkout.razorpay.com/v1/checkout.js");
       }
       const options = {
-        key: "rzp_test_22mEHcDzJbcUmz",
-        amount: discountedPrice || selectedPlanDetails?.plans[0]?.price * 100,
+        key: getkey,
+        amount: (discountedPrice || selectedPlanDetails?.plans[0]?.price) * 100,
         currency: "INR",
         title: item?.plans[0]?.title || "Subscription Plan",
         handler: async function (response1) {

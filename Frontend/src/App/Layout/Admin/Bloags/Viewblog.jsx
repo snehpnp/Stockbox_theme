@@ -6,6 +6,8 @@ import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 
 const Viewblog = () => {
+
+
     const navigate = useNavigate();
     const location = useLocation();
     const { row } = location.state;
@@ -53,7 +55,7 @@ const Viewblog = () => {
                             {({ values }) => (
                                 <Form className="card-body p-4">
                                     <div className="p-4 border radius-15">
-                                        {/* Title */}
+
                                         <div className="row mb-3 align-items-center">
                                             <label htmlFor="title" className="col-sm-3 col-form-label">
                                                 <b>Title</b>
