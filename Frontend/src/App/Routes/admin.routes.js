@@ -175,7 +175,7 @@ export default function App() {
       <Route path="/planexpirymonth" element={<Planexpirymonth />} />
       <Route path="/notificationlist" element={<Notificationlist />} />
 
-
+     <Route path="/profile" element={<Profile />} />
     </Routes>
   );
 }

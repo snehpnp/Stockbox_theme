@@ -993,3 +993,6 @@ padding-left: 0;
 {
   background-color: var(--BtnPriBgCol, green) !important;
 }
+.rdt_TableHeadRow {
+  background:var(--tabelheadbgcolor, #f1f1f1) !important;
+}

@@ -147,10 +147,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                 <ul style={dropdownListStyle}>
                   <li style={dropdownItemStyle}>
                     {Role === 'USER' && (
-                      <Link to="/user/profiles">🛠️ Profile Settings</Link>
+                      <Link to="/user/profile">🛠️ Profile Settings</Link>
                     )}
                     {Role === 'ADMIN' && (
-                      <Link to="/admin/profiles">🛠️ Profile Settings</Link>
+                      <Link to="/admin/profile">🛠️ Profile Settings</Link>
                     )}
 
 
