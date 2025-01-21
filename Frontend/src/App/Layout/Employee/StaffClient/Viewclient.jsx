@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import Table from '../../../components/Table';
-import Table1 from '../../../components/Table1';
+import Table from '../../../Extracomponents/Table';
+import Table1 from '../../../Extracomponents/Table1';
 import { Tooltip } from 'antd';
-import { clientdetailbyid, clientplandatabyid, getcategoryplan, getclientsubscription, GetClientSignaldetail, Getclientsignaltoexport, GetStockDetail, GetService } from '../../../Services/Admin';
-import { fDate, fDateTime, fDateTimeH, fDateTimeSuffix } from '../../../Utils/Date_formate';
+import { clientdetailbyid, clientplandatabyid, getcategoryplan, getclientsubscription, GetClientSignaldetail, Getclientsignaltoexport, GetStockDetail, GetService } from '../../../Services/Admin/Admin';
+import { fDate, fDateTime, fDateTimeH, fDateTimeSuffix } from '../../../../Utils/Date_formate';
 import { RefreshCcw, IndianRupee } from 'lucide-react';
-import { exportToCSV } from '../../../Utils/ExportData';
+import { exportToCSV } from '../../../../Utils/ExportData';
 import Select from 'react-select';
 
 
@@ -14,7 +14,7 @@ import Select from 'react-select';
 
 
 
-const Viewclientdetail = () => { 
+const Viewclientdetail = () => {
 
     const { id } = useParams();
     const token = localStorage?.getItem('token');
@@ -417,7 +417,7 @@ const Viewclientdetail = () => {
                             {service && service.map((item) => (
                                 <li key={item._id} className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                     <h6 className="mb-0">{item?.serviceName}</h6>
-                                    <span className="text-secondary">{ fDateTime(item?.enddate)}</span>
+                                    <span className="text-secondary">{fDateTime(item?.enddate)}</span>
                                 </li>
                             ))}
                         </ul>

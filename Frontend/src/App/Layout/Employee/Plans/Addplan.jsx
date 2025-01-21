@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
-import DynamicForm from '../../../components/FormicForm';
+import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-import { Addplanbyadmin, getcategoryplan, getplanlist, getActivecategoryplan } from '../../../Services/Admin';
+import { Addplanbyadmin, getcategoryplan, getplanlist, getActivecategoryplan } from '../../../Services/Admin/Admin';
+import Content from '../../../components/Contents/Content';
 
 
 
@@ -41,7 +42,7 @@ const Addplan = () => {
         let errors = {};
 
 
-        if (!values.description || values.description ==="<p><br></p>") {
+        if (!values.description || values.description === "<p><br></p>") {
             errors.description = "Please Enter Description";
         }
         if (!values.price) {
@@ -85,7 +86,7 @@ const Addplan = () => {
                     timerProgressBar: true,
                 });
                 setTimeout(() => {
-                    navigate("/staff/plan");
+                    navigate("/employee/plan");
                 }, 1500);
             } else {
                 Swal.fire({
@@ -178,7 +179,7 @@ const Addplan = () => {
         {
             name: "description",
             label: "Description",
-            type: "ckeditor", 
+            type: "ckeditor",
             label_size: 12,
             col_size: 12,
             disable: false,
@@ -220,7 +221,7 @@ const Addplan = () => {
                 btn_name="Add Package"
                 btn_name1="Cancel"
                 sumit_btn={true}
-                btn_name1_route={"/staff/plan"}
+                btn_name1_route={"/employee/plan"}
                 additional_field={<></>}
             />
         </div>

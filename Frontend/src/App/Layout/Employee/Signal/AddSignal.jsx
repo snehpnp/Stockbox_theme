@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
-import DynamicForm from '../../../components/FormicForm';
-import { AddSignalByAdmin, GetService, getstockbyservice, getexpirydate, getstockStrickprice } from '../../../Services/Admin';
+import DynamicForm from '../../../Extracomponents/FormicForm';
+import { AddSignalByAdmin, GetService, getstockbyservice, getexpirydate, getstockStrickprice } from '../../../Services/Admin/Admin';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-
 
 
 
@@ -182,7 +181,7 @@ const AddSignal = () => {
             timerProgressBar: true,
           });
           setTimeout(() => {
-            navigate('/staff/signal');
+            navigate('/employee/signal');
 
           }, 2000);
 
@@ -513,7 +512,7 @@ const AddSignal = () => {
         btn_name1="Cancel"
         formik={formik}
         sumit_btn={true}
-        btn_name1_route="/staff/signal"
+        btn_name1_route="/employee/signal"
         btnstatus={loading}
         additional_field1={
           <div className="mb-3">

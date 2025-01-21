@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getnewslist, AddNewsbyadmin, UpdateNewsbyadmin, changeNewsStatus, DeleteNews } from '../../../Services/Admin';
-import Table from '../../../components/Table';
+import { getnewslist, AddNewsbyadmin, UpdateNewsbyadmin, changeNewsStatus, getstaffperuser, DeleteNews } from '../../../Services/Admin/Admin';
+import Table from '../../../Extracomponents/Table';
 import { SquarePen, Trash2, PanelBottomOpen, Eye } from 'lucide-react';
 import Swal from 'sweetalert2';
-import { image_baseurl } from '../../../Utils/config';
+import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
-import { fDate , fDateTime} from '../../../Utils/Date_formate';
-import { getstaffperuser } from '../../../Services/Admin';
+import { fDate, fDateTime } from '../../../../Utils/Date_formate';
+import Loader from '../../../../Utils/Loader';
+
 
 
 
@@ -78,12 +79,12 @@ const News = () => {
 
     useEffect(() => {
         getNews();
-       
+
     }, [searchInput]);
 
 
     useEffect(() => {
-        getpermissioninfo()  
+        getpermissioninfo()
     }, []);
 
 
@@ -282,7 +283,7 @@ const News = () => {
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb mb-0 p-0">
                                 <li className="breadcrumb-item">
-                                    <Link to="/staff/dashboard">
+                                    <Link to="/employee/dashboard">
                                         <i className="bx bx-home-alt" />
                                     </Link>
                                 </li>
@@ -306,23 +307,23 @@ const News = () => {
                                     <i className="bx bx-search" />
                                 </span>
                             </div>
-                            {permission.includes("addnews") ?  <div className="ms-auto">
+                            {permission.includes("addnews") ? <div className="ms-auto">
                                 <Link
-                                    to="/staff/addnews"
+                                    to="/employee/addnews"
                                     type="button"
                                     className="btn btn-primary"
                                 // data-bs-toggle="modal"
                                 // data-bs-target="#exampleModal"
                                 >
                                     <i className="bx bxs-plus-square" />
-                                    Add News 
+                                    Add News
                                 </Link>
 
-                            </div> :"" }
+                            </div> : ""}
                         </div>
                         <div className="container py-2">
 
-                            
+
 
                             {clients.map((client, index) => (
                                 <div className="row g-0" key={index}>
@@ -333,23 +334,23 @@ const News = () => {
 
                                         <div className={`card ${client.borderClass || 'radius-15'} d-flex justify-content-center align-items-center`} >
 
-                                            <div className="card-body" style={{width:"100%"}}>
+                                            <div className="card-body" style={{ width: "100%" }}>
                                                 <div className="d-flex justify-content-between align-items-start">
 
                                                     <h4 className="card-title text-muted mb-0">{client.title}</h4>
 
                                                     <div>
 
-                                                    {permission.includes("editnews") ? <Tooltip placement="top" overlay="Update">
+                                                        {permission.includes("editnews") ? <Tooltip placement="top" overlay="Update">
                                                             <SquarePen
                                                                 onClick={() => {
-                                                                    navigate("/staff/updatenews", { state: { client } })
+                                                                    navigate("/employee/updatenews", { state: { client } })
                                                                 }}
                                                             />
-                                                        </Tooltip> : "" }
+                                                        </Tooltip> : ""}
                                                         {permission.includes("deletenews") ? <Tooltip placement="top" overlay="Delete">
                                                             <Trash2 onClick={() => DeleteService(client._id)} />
-                                                        </Tooltip> : "" }
+                                                        </Tooltip> : ""}
                                                     </div>
                                                 </div>
                                                 <hr />

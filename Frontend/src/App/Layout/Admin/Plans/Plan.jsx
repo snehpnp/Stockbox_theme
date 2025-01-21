@@ -169,7 +169,7 @@ const Plan = () => {
             button_status={true} button_title="Add Package">
 
             <div className="card">
-                <div className="card-body"> 
+                <div className="card-body">
                     <ul className="nav nav-pills  mb-1" role="tablist">
                         <li className="nav-item" role="presentation">
                             <a

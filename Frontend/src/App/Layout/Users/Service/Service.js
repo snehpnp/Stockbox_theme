@@ -12,7 +12,7 @@ import { loadScript } from "../../../../Utils/Razorpayment";
 function Service() {
 
 
-  const token = localStorage.getItem("Token");
+  const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
 

@@ -393,12 +393,6 @@ const Employee = [
     name: "Client"
   },
   {
-    label: "Client Request",
-    icon: "UserPen",
-    link: "/employee/clientrequest",
-    name: "ClientRequest"
-  },
-  {
     label: "Free Trial Client",
     icon: "UserPen",
     link: "/employee/freeclient",
@@ -409,9 +403,8 @@ const Employee = [
     icon: "Rocket",
     children: [
       { label: "Package", icon: "Repeat2", link: "/employee/plan", name: "Package" },
-      { label: "Segment", icon: "ScatterChart", link: "/employee/service", name: "Segment" },
       { label: "Category", icon: "ClipboardType", link: "/employee/category", name: "Category" },
-      { label: "Free Trial Status", icon: "Boxes", link: "/employee/freetrialstatus", name: "FreeTrialStatus" },
+
     ],
     name: "Plan",
   },
@@ -427,7 +420,8 @@ const Employee = [
       },
       {
         label: "Basket Stock Published",
-        icon: "Boxes", link: "/employee/basket/basketstockpublish",
+        icon: "Boxes",
+        link: "/employee/basket/basketstockpublish",
         name: "BasketStockPublished"
       },
       {
@@ -458,10 +452,16 @@ const Employee = [
     name: "Signal",
   },
   {
-    label: "Payment History",
+    label: "Plan Expiry",
+    icon: "FolderClock",
+    link: "/employee/planexpiry",
+    name: "PlanExpiry"
+  },
+  {
+    label: "Performance",
     icon: "WalletCards",
-    link: "/employee/paymenthistory",
-    name: "PaymentHistory"
+    link: "/employee/perform",
+    name: "Perform"
   },
   {
     label: "Withdrawal Request",
@@ -494,41 +494,11 @@ const Employee = [
     name: "Banner"
   },
   {
-    label: "Client Plan Expiry",
-    icon: "FolderClock",
-    link: "/employee/planexpiry",
-    name: "ClientPlanExpiry"
-  },
-  {
-    label: "Performance",
-    icon: "ScatterChart",
-    link: "/employee/perfom",
-    name: "Performance"
-  },
-  {
-    label: "Broadcast SMS",
-    icon: "HelpingHand",
-    link: "/employee/message",
-    name: "BroadcastSMS"
-  },
-  {
     label: "FAQ",
     icon: "HelpingHand",
     link: "/employee/faq",
     name: "FAQ"
-  },
-  {
-    label: "Help Center",
-    icon: "HelpingHand",
-    link: "/employee/help",
-    name: "HelpCenter"
-  },
-  {
-    label: "Policy",
-    icon: "Wrench",
-    link: "/employee/termsandcondtion",
-    name: "Policy"
-  },
+  }
 ];
 
 

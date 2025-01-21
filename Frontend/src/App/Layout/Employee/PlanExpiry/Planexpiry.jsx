@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { RefreshCcw } from 'lucide-react';
-import Table from '../../../components/Table1';
-import { exportToCSV } from '../../../Utils/ExportData';
-import { getclientPlanexpiry, getclientPlanexpirywithfilter, GetService } from '../../../Services/Admin';
-import { fDateTime } from '../../../Utils/Date_formate';
-import Loader from '../../../Utils/Loader';
+import Table from '../../../Extracomponents/Table1';
+import { exportToCSV } from '../../../../Utils/ExportData';
+import { getclientPlanexpiry, getclientPlanexpirywithfilter, GetService } from '../../../Services/Admin/Admin';
+import { fDateTime } from '../../../../Utils/Date_formate';
+import Loader from '../../../../Utils/Loader';
 
 
 

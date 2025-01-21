@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Table from '../../../components/Table1';
+import Table from '../../../Extracomponents/Table1';
 import { Settings2, Eye, SquarePen, Trash2, Download, ArrowDownToLine } from 'lucide-react';
 import Swal from 'sweetalert2';
-import { FreeClientList, FreeClientListWithFilter, getstaffperuser, PlanSubscription, BasketSubscription, DeleteFreeClient, getcategoryplan, getplanlist, getPlanbyUser, BasketAllActiveList } from '../../../Services/Admin';
+import { FreeClientList, FreeClientListWithFilter, getstaffperuser, PlanSubscription, BasketSubscription, DeleteFreeClient, getcategoryplan, getplanlist, getPlanbyUser, BasketAllActiveList } from '../../../Services/Admin/Admin';
 import { Tooltip } from 'antd';
-import { image_baseurl } from '../../../Utils/config';
-import { fDate, fDateTime } from '../../../Utils/Date_formate';
+import { image_baseurl } from '../../../../Utils/config';
+import { fDate, fDateTime } from '../../../../Utils/Date_formate';
 import { IndianRupee } from 'lucide-react';
-import { exportToCSV } from '../../../Utils/ExportData';
-import Loader from '../../../Utils/Loader';
-
-
+import { exportToCSV } from '../../../../Utils/ExportData';
+import Loader from '../../../../Utils/Loader';
 
 const Freeclient = () => {
 

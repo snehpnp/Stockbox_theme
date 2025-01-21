@@ -47,7 +47,7 @@ const Userlogin = () => {
     setIsLoading(false);
 
     if (ResData.status) {
-      localStorage.setItem("Token", ResData.data?.token);
+      localStorage.setItem("token", ResData.data?.token);
       localStorage.setItem("id", ResData.data?.id);
       localStorage.setItem(
         "Role",
@@ -108,9 +108,9 @@ const Userlogin = () => {
   }, []);
 
   return (
-    <div className="main-login"  style={{ backgroundImage: `url(${BgImg})` }}>
+    <div className="main-login" style={{ backgroundImage: `url(${BgImg})` }}>
       <div className="row align-items-center h-100">
-       
+
         <div className="col-lg-12 mx-auto">
           {status === 1 ? (
             <div className="login-wrapper">

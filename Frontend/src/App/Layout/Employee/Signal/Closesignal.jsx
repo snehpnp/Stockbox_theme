@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { GetClient } from "../../../Services/Admin";
-import Table from "../../../components/Table1";
+import { GetClient } from "../../../Services/Admin/Admin";
+import Table from "../../../Extracomponents/Table1";
 import {
     Eye,
     RefreshCcw,
@@ -18,18 +18,18 @@ import {
     GetSignallistWithFilter,
     DeleteSignal,
     SignalCloseApi,
+    getstaffperuser,
     GetService,
     GetStockDetail,
     UpdatesignalReport,
-    getstaffperuser
-} from "../../../Services/Admin";
-import { fDateTimeSuffix, fDateTimeH } from "../../../Utils/Date_formate";
+} from "../../../Services/Admin/Admin";
+import { fDateTimeSuffix, fDateTimeH } from "../../../../Utils/Date_formate";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { exportToCSV } from "../../../Utils/ExportData";
+import { exportToCSV } from "../../../../Utils/ExportData";
 import Select from "react-select";
 import { Tooltip } from "antd";
-import { image_baseurl } from "../../../Utils/config";
-import Loader from "../../../Utils/Loader";
+import { image_baseurl } from "../../../../Utils/config";
+import Loader from "../../../../Utils/Loader";
 
 const Closesignal = () => {
 
@@ -251,7 +251,7 @@ const Closesignal = () => {
 
 
     const Signaldetail = async (_id) => {
-        navigate(`/staff/signaldetaile/${_id}`, { state: { state: "closesignalpage" } });
+        navigate(`/employee/signaldetaile/${_id}`, { state: { state: "closesignalpage" } });
     };
 
 
@@ -488,7 +488,7 @@ const Closesignal = () => {
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb mb-0 p-0">
                                     <li className="breadcrumb-item">
-                                        <Link to="/staff/dashboard">
+                                        <Link to="/employee/dashboard">
                                             <i className="bx bx-home-alt" />
                                         </Link>
                                     </li>

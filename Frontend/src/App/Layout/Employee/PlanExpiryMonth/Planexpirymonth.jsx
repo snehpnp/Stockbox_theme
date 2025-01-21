@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import Table from '../../../components/Table';
+import Table from '../../../Extracomponents/Table';
 import { Tooltip } from 'antd';
-import { getExpiryByMonth} from '../../../Services/Admin';
-import { fDate, fDateTime  , fDateMonth} from '../../../Utils/Date_formate';
+import { getExpiryByMonth } from '../../../Services/Admin/Admin';
+import { fDate, fDateTime, fDateMonth } from '../../../../Utils/Date_formate';
 
 
 
 
 const Planexpirymonth = () => {
-    
+
     const { id } = useParams();
     const token = localStorage?.getItem('token');
 
     const [data, setData] = useState([]);
-   
+
 
     useEffect(() => {
         getclientservice()
@@ -22,7 +22,7 @@ const Planexpirymonth = () => {
 
 
 
-    
+
     const getclientservice = async () => {
         try {
             const response = await getExpiryByMonth(token);
@@ -34,13 +34,13 @@ const Planexpirymonth = () => {
         }
     };
 
-   
+
 
 
     const columns = [
         {
             name: 'S.No',
-            selector: (row, index) =>  index + 1,
+            selector: (row, index) => index + 1,
             sortable: false,
             width: '200px',
         },

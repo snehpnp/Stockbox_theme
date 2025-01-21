@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useFormik } from 'formik';
-import DynamicForm from '../../../components/FormicForm';
+import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-import { AddClient } from '../../../Services/Admin';
+import { AddClient } from '../../../Services/Admin/Admin';
 
 
-const AddUser = () => { 
+
+const AddUser = () => {
+
+
   const navigate = useNavigate();
 
   const user_id = localStorage.getItem("id");
@@ -60,7 +63,7 @@ const AddUser = () => {
           timerProgressBar: true,
         });
         setTimeout(() => {
-          navigate("/staff/client");
+          navigate("/employee/client");
         }, 1500);
       } else {
         Swal.fire({
@@ -123,7 +126,7 @@ const AddUser = () => {
     {
       name: "password",
       label: "Password",
-      type: "password", 
+      type: "password",
       label_size: 12,
       col_size: 6,
       disable: false,
@@ -138,29 +141,29 @@ const AddUser = () => {
     },
   ];
 
-    const handlefreeTrialChange = (e) => {
-      const currentValue = formik.values.freetrial; // Store current value
-    
-      console.log("Current toggle value:", e.target.checked);
-    
-      Swal.fire({
-        title: currentValue ? "Are you sure you want to disable the free trial?" : "Are you sure you want to enable the free trial?",
-        showDenyButton: true,
-        showCancelButton: false,
-        confirmButtonText: "Yes",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // If toggle is currently true (checked), and user clicks "Yes", set it to false
-          // If toggle is false (unchecked), and user clicks "Yes", set it to true
-          formik.setFieldValue("freetrial", !currentValue);
-          console.log("Updated toggle value:", !currentValue); // Log the updated value
-        } else if (result.isDenied) {
-          // If "No" (Deny) clicked, revert the value to its original state
-          formik.setFieldValue("freetrial", currentValue);
-          console.log("Value reverted to:", currentValue); // Log reverted value
-        }
-      });
-    };
+  const handlefreeTrialChange = (e) => {
+    const currentValue = formik.values.freetrial; // Store current value
+
+    console.log("Current toggle value:", e.target.checked);
+
+    Swal.fire({
+      title: currentValue ? "Are you sure you want to disable the free trial?" : "Are you sure you want to enable the free trial?",
+      showDenyButton: true,
+      showCancelButton: false,
+      confirmButtonText: "Yes",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // If toggle is currently true (checked), and user clicks "Yes", set it to false
+        // If toggle is false (unchecked), and user clicks "Yes", set it to true
+        formik.setFieldValue("freetrial", !currentValue);
+        console.log("Updated toggle value:", !currentValue); // Log the updated value
+      } else if (result.isDenied) {
+        // If "No" (Deny) clicked, revert the value to its original state
+        formik.setFieldValue("freetrial", currentValue);
+        console.log("Value reverted to:", currentValue); // Log reverted value
+      }
+    });
+  };
 
   return (
     <div style={{ marginTop: "100px" }}>
@@ -171,10 +174,10 @@ const AddUser = () => {
         btn_name="Add Client"
         btn_name1="Cancel"
         sumit_btn={true}
-        btn_name1_route={"/staff/client"}
+        btn_name1_route={"/employee/client"}
         additional_field={<>
-        
-        <div className={`col-lg-6`}>
+
+          <div className={`col-lg-6`}>
             <div className="input-block row">
 
               <label htmlFor="freetrial" className={`col-lg-12 col-form-label`}>
@@ -191,14 +194,14 @@ const AddUser = () => {
                     }}
                     type="checkbox"
                     checked={formik.values["freetrial"] == 1}
-                    onChange={(e) =>handlefreeTrialChange(e)   }
+                    onChange={(e) => handlefreeTrialChange(e)}
                   />
                 </div>
               </div>
             </div>
           </div>
         </>}
-        
+
       />
     </div>
   );

@@ -121,7 +121,7 @@ const Addcoupon = () => {
                     timerProgressBar: true,
                 });
                 setTimeout(() => {
-                    navigate("/staff/coupon");
+                    navigate("/employee/coupon");
                 }, 1500);
             } else {
                 Swal.fire({
@@ -312,7 +312,7 @@ const Addcoupon = () => {
                 btn_name="Add Coupon"
                 btn_name1="Cancel"
                 sumit_btn={true}
-                btn_name1_route={"/staff/coupon"}
+                btn_name1_route={"/employee/coupon"}
                 additional_field={<></>}
 
             />

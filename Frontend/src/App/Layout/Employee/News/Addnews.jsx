@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
-import DynamicForm from '../../../components/FormicForm';
+import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-import { AddNewsbyadmin} from '../../../Services/Admin';
+import { AddNewsbyadmin } from '../../../Services/Admin/Admin';
 
 
 const Addnews = () => {
@@ -14,10 +14,10 @@ const Addnews = () => {
 
     const user_id = localStorage.getItem("id");
     const token = localStorage.getItem("token");
-  
 
-    
-     
+
+
+
 
     const validate = (values) => {
         let errors = {};
@@ -41,9 +41,9 @@ const Addnews = () => {
             title: values.title,
             description: values.description,
             image: values.image,
-            add_by: user_id ,
+            add_by: user_id,
         };
-       
+
         try {
             const response = await AddNewsbyadmin(req, token);
             if (response.status) {
@@ -55,7 +55,7 @@ const Addnews = () => {
                     timerProgressBar: true,
                 });
                 setTimeout(() => {
-                    navigate("/staff/news");
+                    navigate("/employee/news");
                 }, 1500);
             } else {
                 Swal.fire({
@@ -81,14 +81,14 @@ const Addnews = () => {
         initialValues: {
             title: "",
             description: "",
-            image: "", 
+            image: "",
         },
         validate,
         onSubmit,
     });
 
     const fields = [
-       
+
         {
             name: "title",
             label: "Title",
@@ -96,25 +96,25 @@ const Addnews = () => {
             label_size: 12,
             col_size: 6,
             disable: false,
-            star:true
+            star: true
         },
         {
             name: "image",
             label: "Upload Image",
-            type: "file2", 
+            type: "file2",
             label_size: 12,
             col_size: 6,
             disable: false,
-            star:true
+            star: true
         },
         {
             name: "description",
             label: "Description",
-            type: "ckeditor", 
+            type: "ckeditor",
             label_size: 12,
             col_size: 12,
             disable: false,
-            star:true
+            star: true
         },
     ];
 
@@ -127,11 +127,11 @@ const Addnews = () => {
                 btn_name="Add News"
                 btn_name1="Cancel"
                 sumit_btn={true}
-                btn_name1_route={"/staff/news"}
+                btn_name1_route={"/employee/news"}
                 additional_field={<></>}
             />
-           
-           
+
+
         </div>
     );
 };
