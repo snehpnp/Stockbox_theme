@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { Tooltip } from 'antd';
 import { SuperAdmin, Admin, User, Employee } from "../Sidebars/Sidebar_config";
 
 import {
@@ -165,9 +165,15 @@ const Sidebar = () => {
                           display: "flex",
                           alignItems: "center",
                         }}
-                      >
-                        <IconComponent icon={tab.icon} />
-                        {!isCollapsed ? <span>{tab?.name}</span> : ""}
+                      > 
+                        <Tooltip placement="top" title={tab?.name}>
+      <div>
+      <IconComponent icon={tab.icon} />
+      </div>
+    </Tooltip>
+                        {!isCollapsed ?     
+                        <span>{tab?.name}</span>
+                                : ""}
                       </Link>
                       {tab?.children?.length > 0 &&
                         (openTab === tab?.name ? (
@@ -203,11 +209,14 @@ const Sidebar = () => {
                                 alignItems: "center",
                                 gap: "10px",
                               }}
-                            >
-                              <IconComponent
-                                icon={child.icon}
-                              />
+                            > <Tooltip placement="top" title={child.name}>
+                            <div>
+                              <IconComponent icon={child.icon} />
+                            </div>
+                          </Tooltip>
+                             
                               <span> {child.name}</span>
+                               
                             </Link>
                           </li>
                         ))}

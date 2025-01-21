@@ -186,6 +186,9 @@ export default function App() {
       <Route path="/notificationlist" element={<Notificationlist />} />
 
 
+     <Route path="/profile" element={<Profile />} />
+
+
       <Route path="/news" element={<News />} />
       <Route path="/addnews" element={<Addnews />} />
       <Route path="/updatenews" element={<Updatenews />} />
@@ -197,6 +200,7 @@ export default function App() {
 
       <Route path="/termsandcondtion" element={<Condition />} />
       <Route path="/updatecondition" element={<Updatecondition />} />
+
 
 
     </Routes>

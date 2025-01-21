@@ -21,7 +21,7 @@ const FormField = ({ name, label, type, placeholder, col_size, label_size, disab
 
 
 const BasketField = ({ push, remove, Stock, showRemoveButtons, disable, fieldTypes }) => (
-  <div className="container-fluid" data-aos="fade-left">
+  <div className="" data-aos="fade-left">
 
     {/* <div className="card-header d-flex justify-content-between align-items-center">
         <h5 className="card-title mb-0">
