@@ -213,12 +213,16 @@ const Addplan = () => {
 
     return (
         <Content
-            button_status={false} button_title="Add Package">
-            <div style={{ marginTop: "100px" }}>
+       Page_title="Add New Package"
+       backbutton_status={true}
+       backbutton_title={"Back"}
+            button_status={false}
+             button_title="Add Package">
+            <div >
                 <DynamicForm
                     fields={fields}
                     formik={formik}
-                    page_title="Add New Package"
+                    
                     btn_name="Add Package"
                     btn_name1="Cancel"
                     sumit_btn={true}

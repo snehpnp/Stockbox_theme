@@ -1,13 +1,3 @@
-:root {
-  --sidebar-color: #ffffff;
-  --navbar-color: #ffffff;
-  --font-color: #000000;
-  --wrapper-color: #ffffff;
-  --btn-bg-color: #ffffff;
-  --btn-txt-color: #000000;
-  --heading-color: #000000;
-}
-/* Primary Button Style */
 
 a {
   text-decoration: none !important;
@@ -16,17 +6,14 @@ a {
   background-color: var(--sidebar-color);
 }
 
-.navbar {
-  background-color: var(--navbar-color);
-}
 
+nav.navbar.navbar-expand-lg.TopNavbar {
+  position: fixed;
+  width: 100%;
+  z-index: 99;
+}
 .wrapper {
   background-color: var(--wrapper-color);
-}
-
-button {
-  background-color: var(--btn-bg-color);
-  color: var(--btn-txt-color);
 }
 
 h1,
@@ -133,6 +120,7 @@ button.button_sell.active {
   width: 250px;
   position: fixed;
   height: 100%;
+  top: 55px;
   transition: all 0.3s ease;
   padding-bottom: 70px !important;
 }
@@ -161,16 +149,21 @@ button.button_sell.active {
   justify-content: flex-start;
   padding: 10px 0 10px 10px;
 }
-
+.sidebar-collapsed  .Sidebar-vertical .sidebar-menu .sidebar-link  span
+{
+  display: none;
+}
 .Sidebar-horizontal {
   transition: all 0.3s ease;
   padding: 0 20px;
-  height: 64px;
+
   position: fixed;
   z-index: 9;
+  top: 60px;
 }
-.sidebar-horizontal-container .content {
+.sidebar-horizontal-container .content,.sidebar-vertical-container .content {
   padding-top: 90px;
+  height: 100vh;
 }
 
 /* Sidebar item */
@@ -218,11 +211,12 @@ li.sidebar-subitem {
 }
 .content-wrapper {
   display: flex;
-  height: 100vh;
+  height: 100%;
 }
 .sidebar-vertical-container.sidebar-open .content {
   width: calc(100% - 250px);
   margin-left: 250px;
+  height: 100vh;
 }
 .sidebar-vertical-container.sidebar-collapsed .content {
   width: calc(100% - 60px);
@@ -426,7 +420,7 @@ textarea {
 }
 
 .modal-header {
-  background: #004789;
+  background:var(--tabelheadbgcolor, #007bff) !important;
   border-radius: 10px 10px 0 0;
   color: #fff;
   font-size: 20px;
@@ -478,8 +472,8 @@ textarea {
   z-index: 99;
   background: #fff;
   height: 100vh;
-  width: 400px;
-  right: -420px;
+  width: 450px;
+  right: -450px;
   transition: ease-in-out 0.3s;
   overflow-y: auto;
   padding: 30px;
@@ -907,21 +901,20 @@ ol.breadcrumb.mb-0.p-0 {
 }
 
 
-/* Primary button using CSS variables */
-.btn-primary {
-  background-color: var(--btn-bg-color) !important;
-  color: var(--btn-txt-color) !important;
-}
 
 /* Secondary button using CSS variables */
 .btn-secondary {
-  background-color: var(--btn-secondary-bg-color) !important;
-  color: var(--btn-secondary-txt-color) !important;
+  background-color: var(--BtnSecBgCol) !important;
+  color: var(--BtnSecTxtCol) !important;
+  border-color: var(
+    --BtnSecBorderColor,
+    black
+  ) !important; 
 }
 .content-heading {
   color: var(--dynamic-color, black) !important; 
 }
-.btn-primary,.nav-link.active {
+.btn-primary,.nav-link.active , .btn-primary i{
   background-color: var(
     --BtnPriBgCol,
     black
@@ -984,4 +977,19 @@ padding-left: 0;
 }
 .features li{
   list-style-type: none;
+}
+.pricing-card {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.pricing-card li {
+  list-style-type: none;
+}
+.progress-bar.progress-animated
+{
+  background-color: var(--BtnPriBgCol, green) !important;
 }

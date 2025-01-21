@@ -58,7 +58,7 @@ const Coupon = () => {
 
                 button_status={false}
                 backbutton_title="Back"
-                backbutton_status={true}
+                backbutton_status={false}
             >
                 <div className="page-content">
 

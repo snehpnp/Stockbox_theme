@@ -49,7 +49,7 @@ const Dashboard1 = ({ monthexpiry }) => {
       label: "Current Month Active License",
       icon: "bx-user-plus",
       progress: 55,
-      visible: false,
+      visible: true,
       color: labelColors["Current Month Active License"],
     },
     {
