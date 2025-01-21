@@ -18,6 +18,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       window.location.href = "/login";
     }
   };
+
+
+
   const toggleSidebar = () => {
     const body = document.body;
 
@@ -30,15 +33,18 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
+
+
+
   return (
     <>
-      {/* Navbar */}
+
       <nav
         className="navbar navbar-expand-lg TopNavbar"
         style={{
           background:
             theme.navbarColor || "linear-gradient(to right, #1d37fc, #e81717)",
-         
+
         }}
       >
         <div className="container-fluid">
@@ -145,16 +151,25 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                 aria-labelledby="dropdownMenuLink"
               >
                 <ul style={dropdownListStyle}>
-                  <li style={dropdownItemStyle}>
-                    <Link to="/user/profiles">🛠️ Profile Settings</Link>
-                  </li>
-                  <li style={dropdownItemStyle}>📦 Service</li>
-                  <li style={dropdownItemStyle}>ℹ️ About</li>
+                  {Role === "ADMIN" ? (
+                    <li style={dropdownItemStyle}>
+                      <Link to="/admin/profiles">🛠️ Profile</Link>
+                    </li>
+                  ) : Role === "EMPLOYEE" ? (
+                    <li style={dropdownItemStyle}>
+                      <Link to="/employee/profiles">🛠️ Profile</Link>
+                    </li>
+                  ) : Role === "USER" ? (
+                    <li style={dropdownItemStyle}>
+                      <Link to="/user/profiles">🛠️ Profile</Link>
+                    </li>
+                  ) : ""}
                   <li style={dropdownItemStyle} onClick={(e) => Logout()}>
                     🚪 Logout
                   </li>
                 </ul>
               </div>
+
             </div>
           </div>
         </div>

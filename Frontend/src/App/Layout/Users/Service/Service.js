@@ -142,9 +142,9 @@ const Service = () => {
           const data = {
             plan_id: item?.plans[0]?._id,
             client_id: userid,
-            coupon_code: appliedCoupon?.code || "",
+            coupon_code: appliedCoupon?.code || 0,
             orderid: response1?.orderid,
-            discount: selectedCouponCode?.value || "",
+            discount: selectedCouponCode?.value || 0,
             price: discountedPrice || selectedPlanDetails?.plans[0]?.price || 0,
           };
 
@@ -163,7 +163,6 @@ const Service = () => {
           color: "#F37254",
         },
       };
-
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (error) {
