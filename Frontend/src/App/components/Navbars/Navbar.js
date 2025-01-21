@@ -38,7 +38,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
         style={{
           background:
             theme.navbarColor || "linear-gradient(to right, #1d37fc, #e81717)",
-         
+
         }}
       >
         <div className="container-fluid">
@@ -146,16 +146,16 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
               >
                 <ul style={dropdownListStyle}>
                   <li style={dropdownItemStyle}>
-                  {Role === 'USER' && (
-  <Link to="/user/profiles">🛠️ Profile Settings</Link>
-)}
-{Role === 'ADMIN' && (
-  <Link to="/admin/profiles">🛠️ Profile Settings</Link>
-)}
+                    {Role === 'USER' && (
+                      <Link to="/user/profiles">🛠️ Profile Settings</Link>
+                    )}
+                    {Role === 'ADMIN' && (
+                      <Link to="/admin/profiles">🛠️ Profile Settings</Link>
+                    )}
 
-                   
+
                   </li>
-                 
+
                   <li style={dropdownItemStyle} onClick={(e) => Logout()}>
                     🚪 Logout
                   </li>
