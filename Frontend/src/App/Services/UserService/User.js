@@ -192,3 +192,21 @@ export async function AddplanSubscription(data, token) {
         return err.response?.data || err.message;
     }
 }
+
+
+// FOR APPLY COUPON 
+
+export async function ApplyCoupondata(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/list/applycoupon`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
