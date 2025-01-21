@@ -154,10 +154,10 @@ const Client = () => {
             )
               ? "Active"
               : item?.plansStatus?.some(
-                  (statusItem) => statusItem.status === "expired"
-                )
-              ? "Expired"
-              : "N/A",
+                (statusItem) => statusItem.status === "expired"
+              )
+                ? "Expired"
+                : "N/A",
             ClientActiveSegment:
               item?.plansStatus
                 ?.filter((statusItem) => statusItem.status === "active")
@@ -223,12 +223,12 @@ const Client = () => {
           expired === "active"
             ? "active"
             : expired === "expired"
-            ? "expired"
-            : clientStatus === "active"
-            ? "active"
-            : clientStatus === "expired"
-            ? "expired"
-            : "",
+              ? "expired"
+              : clientStatus === "active"
+                ? "active"
+                : clientStatus === "expired"
+                  ? "expired"
+                  : "",
         add_by: "",
       };
       const response = await AllclientFilter(data, token);
@@ -316,14 +316,7 @@ const Client = () => {
     }
   };
 
-  // const handleSwitchChange = (event, id) => {
-  //     const isChecked = event.target.checked;
-  //     setTableData((prevData) =>
-  //         prevData.map((row) =>
-  //             row._id === id ? { ...row, ActiveStatus: isChecked ? 1 : 0 } : row
-  //         )
-  //     );
-  // };
+
 
   // update status
   const handleSwitchChange = async (event, id) => {
@@ -507,8 +500,8 @@ const Client = () => {
                     item.status === "active"
                       ? "green"
                       : item.status === "expired"
-                      ? "red"
-                      : "inherit",
+                        ? "red"
+                        : "inherit",
                   marginRight: "5px",
                 }}
               >
@@ -767,7 +760,8 @@ const Client = () => {
                 </div>
               </div>
 
-         
+
+              {/* <Loader /> */}
 
               {clients ? (
                 <Table
@@ -922,11 +916,10 @@ const Client = () => {
                                               id={`heading-${item._id}`}
                                             >
                                               <button
-                                                className={`accordion-button ${
-                                                  selectedPlanId === item._id
-                                                    ? ""
-                                                    : "collapsed"
-                                                } custom-accordion-button`}
+                                                className={`accordion-button ${selectedPlanId === item._id
+                                                  ? ""
+                                                  : "collapsed"
+                                                  } custom-accordion-button`}
                                                 type="button"
                                                 data-bs-toggle="collapse"
                                                 data-bs-target={`#collapse-${item._id}`}
@@ -952,11 +945,10 @@ const Client = () => {
                                             </h2>
                                             <div
                                               id={`collapse-${item._id}`}
-                                              className={`accordion-collapse collapse ${
-                                                selectedPlanId === item._id
-                                                  ? "show"
-                                                  : ""
-                                              }`}
+                                              className={`accordion-collapse collapse ${selectedPlanId === item._id
+                                                ? "show"
+                                                : ""
+                                                }`}
                                               aria-labelledby={`heading-${item._id}`}
                                               data-bs-parent={`#accordion-${selectcategory}`}
                                             >
@@ -1051,11 +1043,10 @@ const Client = () => {
                                           id={`heading-${item._id}`}
                                         >
                                           <button
-                                            className={`accordion-button ${
-                                              selectedPlanId === item._id
-                                                ? ""
-                                                : "collapsed"
-                                            } custom-accordion-button`}
+                                            className={`accordion-button ${selectedPlanId === item._id
+                                              ? ""
+                                              : "collapsed"
+                                              } custom-accordion-button`}
                                             type="button"
                                             data-bs-toggle="collapse"
                                             data-bs-target={`#collapse-${item._id}`}
@@ -1081,11 +1072,10 @@ const Client = () => {
                                         </h2>
                                         <div
                                           id={`collapse-${item._id}`}
-                                          className={`accordion-collapse collapse ${
-                                            selectedPlanId === item._id
-                                              ? "show"
-                                              : ""
-                                          }`}
+                                          className={`accordion-collapse collapse ${selectedPlanId === item._id
+                                            ? "show"
+                                            : ""
+                                            }`}
                                           aria-labelledby={`heading-${item._id}`}
                                           data-bs-parent={`#accordion-basket`}
                                         >

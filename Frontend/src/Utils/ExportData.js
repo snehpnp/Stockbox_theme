@@ -39,3 +39,19 @@ export const exportToCSV = (apiData, fileName) => {
     return
 };
 
+
+
+export const exportToCSV1 = (apiData, fileName) => {
+    const ws = XLSX.utils.json_to_sheet(apiData);
+    const wscols = [{ wpx: 1000 }];
+    ws["!cols"] = wscols;
+
+    const wsrows = apiData.map(() => ({ hpx: 40 }));
+    ws["!rows"] = wsrows;
+
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+
+    const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+    FileSaver.saveAs(data, `${fileName}.xlsx`);
+};

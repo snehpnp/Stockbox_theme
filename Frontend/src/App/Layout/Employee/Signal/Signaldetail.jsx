@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import Table from '../../../components/Table';
-import { Signalperdetail } from '../../../Services/Admin';
-import { image_baseurl } from '../../../Utils/config';
-import { fDateTime, fDateTimeH } from '../../../Utils/Date_formate';
+import Table from '../../../Extracomponents/Table';
+import { Signalperdetail } from '../../../Services/Admin/Admin';
+import { image_baseurl } from '../../../../Utils/config';
+import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
 import { Tooltip } from 'antd';
 import { ArrowDownToLine, } from 'lucide-react';
 import { IndianRupee } from 'lucide-react';
@@ -24,7 +24,7 @@ const Signaldetail = () => {
         }
     }, [location]);
 
-    const redirectTo = (currentlocation === "closesignalpage") ? "/staff/closesignal" : "/staff/signal";
+    const redirectTo = (currentlocation === "closesignalpage") ? "/employee/closesignal" : "/employee/signal";
 
     useEffect(() => {
         getsignaldetail();
@@ -99,7 +99,7 @@ const Signaldetail = () => {
                                 <nav aria-label="breadcrumb">
                                     <ol className="breadcrumb mb-0 p-0">
                                         <li className="breadcrumb-item">
-                                            <Link to="/staff/dashboard">
+                                            <Link to="/employee/dashboard">
                                                 <i className="bx bx-home-alt" />
                                             </Link>
                                         </li>

@@ -1,13 +1,13 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getFaqlist, AddFaq, UpdateFaq, changeFAQStatus, DeleteFAQ } from '../../../Services/Admin';
-import Table from '../../../components/Table';
+import { getFaqlist, AddFaq, UpdateFaq, changeFAQStatus, DeleteFAQ, getstaffperuser } from '../../../Services/Admin/Admin';
+import Table from '../../../Extracomponents/Table';
 import { SquarePen, Trash2, PanelBottomOpen, Eye } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { Tooltip } from 'antd';
-import { fDate, fDateTime } from '../../../Utils/Date_formate';
-import { getstaffperuser } from '../../../Services/Admin';
-import Loader from '../../../Utils/Loader';
+import { fDate, fDateTime } from '../../../../Utils/Date_formate';
+import Loader from '../../../../Utils/Loader';
+
 
 const Faq = () => {
 
@@ -28,6 +28,7 @@ const Faq = () => {
         id: "",
         description: "",
     });
+
 
     const [isLoading, setIsLoading] = useState(true)
 
@@ -244,7 +245,7 @@ const Faq = () => {
         } catch (error) {
             Swal.fire({
                 title: 'Error!',
-                text: 'There was an error deleting the staff.',
+                text: 'There was an error deleting the employee.',
                 icon: 'error',
                 confirmButtonText: 'Try Again',
             });
@@ -375,7 +376,7 @@ const Faq = () => {
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb mb-0 p-0">
                                 <li className="breadcrumb-item">
-                                    <Link to="/staff/dashboard">
+                                    <Link to="/employee/dashboard">
                                         <i className="bx bx-home-alt" />
                                     </Link>
                                 </li>

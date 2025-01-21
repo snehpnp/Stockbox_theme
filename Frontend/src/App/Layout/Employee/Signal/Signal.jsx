@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { GetClient } from '../../../Services/Admin';
-import Table from '../../../components/Table1';
+import { GetClient } from '../../../Services/Admin/Admin';
+import Table from '../../../Extracomponents/Table1';
 import { Eye, Trash2, RefreshCcw, SquarePen, IndianRupee, ArrowDownToLine } from 'lucide-react';
 import Swal from 'sweetalert2';
-import { GetSignallist, GetSignallistWithFilter, DeleteSignal, SignalCloseApi, getstaffperuser, GetService, GetStockDetail, UpdatesignalReport } from '../../../Services/Admin';
-import { fDateTimeH } from '../../../Utils/Date_formate'
-import { exportToCSV } from '../../../Utils/ExportData';
+import { GetSignallist, GetSignallistWithFilter, DeleteSignal, SignalCloseApi, getstaffperuser, GetService, GetStockDetail, UpdatesignalReport } from '../../../Services/Admin/Admin';
+import { fDateTimeH } from '../../../../Utils/Date_formate'
+import { exportToCSV } from '../../../../Utils/ExportData';
 import Select from 'react-select';
 import { Tooltip } from 'antd';
-import { image_baseurl } from '../../../Utils/config';
-import Loader from '../../../Utils/Loader';
+import { image_baseurl } from '../../../../Utils/config';
+import Loader from '../../../../Utils/Loader';
 
 
 
@@ -300,7 +300,7 @@ const Signal = () => {
 
 
     const Signaldetail = async (_id) => {
-        navigate(`/staff/signaldetaile/${_id}`)
+        navigate(`/employee/signaldetaile/${_id}`)
     }
 
 
@@ -310,7 +310,7 @@ const Signal = () => {
         try {
             const result = await Swal.fire({
                 title: 'Are you sure?',
-                text: 'Do you want to delete this staff member? This action cannot be undone.',
+                text: 'Do you want to delete this employee  member? This action cannot be undone.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, delete it!',
@@ -322,7 +322,7 @@ const Signal = () => {
                 if (response.status) {
                     Swal.fire({
                         title: 'Deleted!',
-                        text: 'The staff has been successfully deleted.',
+                        text: 'The Employee has been successfully deleted.',
                         icon: 'success',
                         confirmButtonText: 'OK',
                     });
@@ -333,7 +333,7 @@ const Signal = () => {
 
                 Swal.fire({
                     title: 'Cancelled',
-                    text: 'The staff deletion was cancelled.',
+                    text: 'The Employee deletion was cancelled.',
                     icon: 'info',
                     confirmButtonText: 'OK',
                 });
@@ -341,7 +341,7 @@ const Signal = () => {
         } catch (error) {
             Swal.fire({
                 title: 'Error!',
-                text: 'There was an error deleting the staff.',
+                text: 'There was an error deleting the Employee.',
                 icon: 'error',
                 confirmButtonText: 'Try Again',
             });
@@ -762,7 +762,7 @@ const Signal = () => {
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb mb-0 p-0">
                                     <li className="breadcrumb-item">
-                                        <Link to="/staff/dashboard">
+                                        <Link to="/employee/dashboard">
                                             <i className="bx bx-home-alt" />
                                         </Link>
                                     </li>
@@ -933,7 +933,7 @@ const Signal = () => {
                                     </span>
                                 </div>
                                 {permission.includes("addsignal") && <div className="ms-auto">
-                                    <Link to="/staff/addsignal" className="btn btn-primary">
+                                    <Link to="/employee/addsignal" className="btn btn-primary">
                                         <i className="bx bxs-plus-square" aria-hidden="true" /> Add Signal
                                     </Link>
                                 </div>}

@@ -131,6 +131,8 @@ const AddStock = () => {
   };
 
   const handleSubmit = async (status) => {
+    setLoading(true);
+
     if (Object.keys(formikValues).length === 0) {
       Swal.fire("Warning", "Please add stock", "warning");
       return;
@@ -170,6 +172,19 @@ const AddStock = () => {
       return;
     }
 
+    const emptyType = Object.values(formikValues).filter(
+      (stock) => stock.type === ""
+    );
+
+    if (emptyType.length > 0) {
+      Swal.fire(
+        "Warning",
+        "Please select type.",
+        "warning"
+      );
+      return;
+    }
+
     const stocksWithStatus = Object.values(formikValues).map((stock) => ({
       ...stock,
       status,
@@ -191,6 +206,8 @@ const AddStock = () => {
         Swal.fire("Error", response.message, "error");
       }
     } catch (error) {
+      setLoading(false);
+
       Swal.fire(
         "Error",
         "An unexpected error occurred. Please try again.",
@@ -220,6 +237,7 @@ const AddStock = () => {
 
 
   return (
+
     <div className="page-content">
       <div className="row">
         <div className="col-md-6">
@@ -237,9 +255,7 @@ const AddStock = () => {
               </nav>
             </div>
           </div>
-
         </div>
-
         <div className="col-md-6 d-flex justify-content-end">
           <Link to={redirectTo}>
             <Tooltip title="Back">
@@ -308,7 +324,9 @@ const AddStock = () => {
                           {fieldKey === "type" ? (
                             <select
                               className="form-control"
-                              value={formikValues[service.value]?.[fieldKey] || ""}
+                              // value={formikValues[service.value]?.[fieldKey] || ""}
+                              value={formikValues[service.value]?.type || ""}
+
                               onChange={(e) =>
                                 handleInputFieldChange(
                                   service.value,
@@ -353,15 +371,18 @@ const AddStock = () => {
               type="button"
               className="btn btn-primary mt-4"
               onClick={() => handleSubmit(0)}
+              disabled={loading}
             >
-              Submit
+              {loading ? "Submitting..." : "Submit"}
             </button>
             <button
               type="button"
               className="btn btn-primary mt-4 ms-2"
               onClick={() => handleSubmit(1)}
+              disabled={loading}
             >
-              Submit & Publish
+              {loading ? "Publishing..." : " Submit & Publish"}
+
             </button>
           </form>
         </div>

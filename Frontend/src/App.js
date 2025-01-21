@@ -9,7 +9,7 @@ const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const Token = localStorage.getItem("Token");
+  const Token = localStorage.getItem("token");
   const Role = localStorage.getItem("Role");
 
   useEffect(() => {
@@ -59,7 +59,7 @@ const App = () => {
 
 
 
-  
+
   return (
     <div className="App">
       {(location.pathname !== "/login" && location.pathname !== "/user-login") && <Wrapper />}

@@ -9,12 +9,10 @@ export default function App() {
 
   useEffect(() => {
     if (savedTheme) {
-      const theme = JSON.parse(savedTheme); // Parse the theme object
+      const theme = JSON.parse(savedTheme);
 
-      // Apply theme attributes to the root HTML element
       document.documentElement.setAttribute("data-theme", savedTheme);
 
-      // Apply background color to .container-fluid
       const container = document.querySelector(".navbar");
       const SidebarColored = document.querySelector(".SidebarColored");
 
@@ -27,7 +25,7 @@ export default function App() {
       const allFont = document.querySelectorAll("*");
       const fontColor = theme.fontColor;
       const contentColor = document.querySelector(".content");
-      // const all = document.querySelectorAll("*");
+
 
       const all = document.querySelectorAll(
         "*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(button):not(a)"
@@ -36,8 +34,8 @@ export default function App() {
       all.forEach((element) => {
         element.style.color = fontColor;
       });
-    
-   
+
+
 
       if (container) {
         if (navbar) {
@@ -55,7 +53,7 @@ export default function App() {
         }
       }
 
- 
+
 
       // ----------------------------------------------
       // NEW CHANGE ALL SOFTWARE FONT FAMILY

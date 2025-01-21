@@ -306,7 +306,7 @@ const Perform = () => {
                                 <div className="tab-content" id="myTabContent3">
                                     <div className="tab-pane fade show active" id="NavPills">
                                         <div className="card-body pt-0">
-                                            <ul className="nav nav-pills nav-pills1 mb-4 light border-bottom" id="pills-tab" role="tablist">
+                                            <ul className="nav nav-pills nav-pills1 mb-4 light">
                                                 {servicedata.map((service) => (
                                                     <li className="nav-item" key={service._id}>
                                                         <button
@@ -407,28 +407,28 @@ const Perform = () => {
                                 </div>
                             </div>
                         </div>
-
-                    </>
+                   
+                   </>
                 )}
+                   
 
 
 
+                        <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div className="modal-dialog">
+                                <div className="modal-content">
+                                    <div className="modal-header">
+                                        <h5 className="modal-title" id="exampleModalLabel">Description</h5>
+                                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div className="modal-body">
+                                        {description?.description}
+                                    </div>
 
-                <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">Description</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
                             </div>
-                            <div className="modal-body">
-                                {description?.description}
-                            </div>
-
                         </div>
-                    </div>
-                </div>
-
+                   
 
             </div>
         </div>

@@ -95,7 +95,7 @@ const PaymentRequest = () => {
             name: 'S.No',
             selector: (row, index) => index + 1,
             sortable: false,
-            width: '78px',
+            width: '80px',
         },
         {
             name: 'User name',
@@ -120,25 +120,25 @@ const PaymentRequest = () => {
             name: 'Available balance',
             selector: row => <div> <IndianRupee />{row.amount}</div>,
             sortable: true,
-            width: '200px',
+            width: '220px',
         },
         {
             name: 'Amount',
             selector: row => <div> <IndianRupee />{row.amount}</div>,
             sortable: true,
-            width: '120px',
+            width: '130px',
         },
         {
             name: 'Requested Date',
             selector: row => fDateTime(row.created_at),
             sortable: true,
-            width: '180px',
+            width: '195px',
         },
         {
             name: 'Updated At',
             selector: row => fDateTime(row.updated_at),
             sortable: true,
-            width: '150px',
+            width: '160px',
         },
         {
             name: 'Status',
@@ -149,7 +149,7 @@ const PaymentRequest = () => {
                     case 1:
                         return "Completed";
                     case 2:
-                        return "Rejectd";
+                        return "Rejected";
                     default:
                         return "Unknown";
                 }

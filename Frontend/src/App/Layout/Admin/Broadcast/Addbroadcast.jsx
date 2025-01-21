@@ -19,6 +19,9 @@ const Addbroadcast = () => {
     const user_id = localStorage.getItem("id");
     const token = localStorage.getItem("token");
 
+    const [loading, setLoading] = useState(false);
+
+
 
 
     const getservice = async () => {
@@ -52,6 +55,7 @@ const Addbroadcast = () => {
     };
 
     const onSubmit = async (values) => {
+        setLoading(!loading)
         const req = {
             service: values.service,
             subject: values.subject,
@@ -80,8 +84,10 @@ const Addbroadcast = () => {
                     timer: 1500,
                     timerProgressBar: true,
                 });
+                setLoading(false)
             }
         } catch (error) {
+            setLoading(false)
             // console.error("Error in API call:", error);
             Swal.fire({
                 title: "Error",
@@ -166,6 +172,7 @@ const Addbroadcast = () => {
                 btn_name="Add Broadcast"
                 btn_name1="Cancel"
                 sumit_btn={true}
+                btnstatus={loading}
                 btn_name1_route={"/admin/message"}
                 additional_field={<></>}
             />

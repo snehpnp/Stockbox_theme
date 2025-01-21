@@ -18,6 +18,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       window.location.href = "/login";
     }
   };
+
+
+
   const toggleSidebar = () => {
     const body = document.body;
 
@@ -30,9 +33,12 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
+
+
+
   return (
     <>
-      {/* Navbar */}
+
       <nav
         className="navbar navbar-expand-lg TopNavbar"
         style={{
@@ -49,7 +55,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   <img
                     src={Logo}
                     alt="Logo"
-                    style={{ width: "150px", height: "50px",objectFit: "contain" }}
+                    style={{ width: "150px", height: "50px", objectFit: "contain" }}
                   />
                 </a>
                 <button
@@ -61,10 +67,34 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                     cursor: "pointer",
                     height: "30px",
                   }}
-                >
-                  <FaBars />
-                </button>
+                />
               </div>
+
+              <div
+                style={profileDropdownStyle}
+                className="dropdown-menu"
+                aria-labelledby="dropdownMenuLink"
+              >
+                <ul style={dropdownListStyle}>
+                  {Role === "ADMIN" ? (
+                    <li style={dropdownItemStyle}>
+                      <Link to="/admin/profiles">🛠️ Profile</Link>
+                    </li>
+                  ) : Role === "EMPLOYEE" ? (
+                    <li style={dropdownItemStyle}>
+                      <Link to="/employee/profiles">🛠️ Profile</Link>
+                    </li>
+                  ) : Role === "USER" ? (
+                    <li style={dropdownItemStyle}>
+                      <Link to="/user/profiles">🛠️ Profile</Link>
+                    </li>
+                  ) : ""}
+                  <li style={dropdownItemStyle} onClick={(e) => Logout()}>
+                    🚪 Logout
+                  </li>
+                </ul>
+              </div>
+
             </div>
             <div className="col-7">
               <div className="d-flex align-items-center position-relative justify-content-end">
@@ -76,7 +106,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                     className="form-check form-switch form-check-dark"
                     style={{ margin: "inherit", fontSize: 21 }}
                   >
-                    <span style={{ color: "red",fontSize: 16 }}>Off</span>
+                    <span style={{ color: "red", fontSize: 16 }}>Off</span>
                     <input
                       className="form-check-input"
                       type="checkbox"
@@ -168,7 +198,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   </div>
                 </div>
               </div>
-              </div>
+            </div>
           </div>
 
 

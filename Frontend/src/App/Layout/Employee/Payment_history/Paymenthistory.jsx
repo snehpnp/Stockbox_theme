@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getPayementhistory, getPayementhistorywithfilter } from '../../../Services/Admin';
+import { getPayementhistory, getPayementhistorywithfilter } from '../../../Services/Admin/Admin';
 // import Table from '../../../components/Table';
-import Table from '../../../components/Table1';
+import Table from '../../../Extracomponents/Table1';
 import { SquarePen, Trash2, PanelBottomOpen, Eye, RefreshCcw, IndianRupee, ArrowDownToLine } from 'lucide-react';
 import Swal from 'sweetalert2';
-import { image_baseurl } from '../../../Utils/config';
+import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
-import { fDateTime } from '../../../Utils/Date_formate';
-import { exportToCSV } from '../../../Utils/ExportData';
-import Loader from '../../../Utils/Loader';
+import { fDateTime } from '../../../../Utils/Date_formate';
+import { exportToCSV } from '../../../../Utils/ExportData';
+import Loader from '../../../../Utils/Loader';
 
 
 
 
 
 const History = () => {
+
 
 
     const navigate = useNavigate();
@@ -31,12 +32,14 @@ const History = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRows, setTotalRows] = useState(0);
 
-    //state for loading
     const [isLoading, setIsLoading] = useState(true)
+
+
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
+
 
 
     const [updatetitle, setUpdatetitle] = useState({

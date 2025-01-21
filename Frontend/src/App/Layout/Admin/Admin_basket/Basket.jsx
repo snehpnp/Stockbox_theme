@@ -6,7 +6,8 @@ import { Tooltip } from 'antd';
 // import Table from "../../../components/Table";
 import Table from '../../../Extracomponents/Table1';
 import { BasketAllList, deletebasket, Basketstatus, changestatusrebalance, getstocklistById } from "../../../Services/Admin/Admin";
-import { fDate } from "../../../../Utils/Date_formate";
+import { fDate} from "../../../../Utils/Date_formate";
+import Loader from "../../../../Utils/Loader";
 
 
 
@@ -23,6 +24,10 @@ const Basket = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
 
+  //state for loading
+  const [isLoading, setIsLoading] = useState(true)
+
+
 
 
   const handlePageChange = (page) => {
@@ -36,6 +41,10 @@ const Basket = () => {
     try {
       const data = { page: currentPage, search: searchInput || "" }
       const response = await BasketAllList(data, token);
+      console.log("BasketAllList",response);
+      
+     
+
       if (response.status) {
         setClients(response.data);
         setTotalRows(response.pagination.total);
@@ -43,6 +52,7 @@ const Basket = () => {
     } catch (error) {
       console.log("error");
     }
+    setIsLoading(false)
   };
 
 
@@ -253,7 +263,19 @@ const Basket = () => {
       name: "Stock Quantity",
       selector: (row) => row.stock_details?.length || 0,
       sortable: true,
-      width: "180px",
+      width: "200px",
+    },
+    // {
+    //   name: "Type",
+    //   selector: (row) => row.type,
+    //   sortable: true,
+    //   width: '150px',
+    // },
+    {
+      name: "Created date",
+      selector: row => fDate(row.created_at),
+      sortable: true,
+      width: '250px',
     },
 
     {
@@ -357,13 +379,19 @@ const Basket = () => {
               </Link>
             </div> */}
           </div>
-          <Table
-            columns={columns}
-            data={clients}
-            totalRows={totalRows}
-            currentPage={currentPage}
-            onPageChange={handlePageChange}
-          />
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <>
+              <Table
+                columns={columns}
+                data={clients}
+                totalRows={totalRows}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+              />
+            </>
+          )}
         </div>
       </div>
     </div>

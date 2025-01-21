@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { GetClient } from '../../../Services/Admin';
+import { GetClient } from '../../../Services/Admin/Admin';
 // import Table from '../../../components/Table';
 import { Settings2, Eye, SquarePen, RadioTower, Trash2, Download, ArrowDownToLine, RefreshCcw } from 'lucide-react';
 import Swal from 'sweetalert2';
-import { deleteClient, UpdateClientStatus, PlanSubscription, getstaffperuser, getActivecategoryplan, getplanlist, BasketSubscription, BasketAllList, getcategoryplan, getPlanbyUser, AllclientFilter, getclientExportfile, BasketAllActiveList } from '../../../Services/Admin';
+import { deleteClient, UpdateClientStatus, PlanSubscription, getstaffperuser, getActivecategoryplan, getplanlist, BasketSubscription, BasketAllList, getcategoryplan, getPlanbyUser, AllclientFilter, getclientExportfile, BasketAllActiveList } from '../../../Services/Admin/Admin';
 import { Tooltip } from 'antd';
-import { fDateTime } from '../../../Utils/Date_formate';
-import { image_baseurl } from '../../../Utils/config';
+import { fDateTime } from '../../../../Utils/Date_formate';
+import { image_baseurl } from '../../../../Utils/config';
 import { IndianRupee } from 'lucide-react';
-import { exportToCSV } from '../../../Utils/ExportData';
-import Table from '../../../components/Table1';
-import Loader from '../../../Utils/Loader';
+import { exportToCSV } from '../../../../Utils/ExportData';
+import Table from '../../../Extracomponents/Table1';
+import Loader from '../../../../Utils/Loader';
 
 
 
@@ -65,7 +65,7 @@ const Client = () => {
 
     //state for loading
     const [isLoading, setIsLoading] = useState(true)
-    
+
 
 
     const handlePageChange = (page) => {
@@ -302,17 +302,17 @@ const Client = () => {
 
 
     const updateClient = async (row) => {
-        navigate("/staff/client/updateclient/" + row._id, { state: { row } })
+        navigate("/employee/client/updateclient/" + row._id, { state: { row } })
     }
 
 
     const signaldetail = async (row) => {
-        navigate("/staff/clientsignaldetail/" + row._id, { state: { row } })
+        navigate("/employee/clientsignaldetail/" + row._id, { state: { row } })
     }
 
 
     const Clientdetail = async (row) => {
-        navigate("/staff/client/clientdetail/" + row._id, { state: { row } })
+        navigate("/employee/client/clientdetail/" + row._id, { state: { row } })
     }
 
     const DeleteClient = async (_id) => {
@@ -703,7 +703,7 @@ const Client = () => {
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb mb-0 p-0">
                                     <li className="breadcrumb-item">
-                                        <Link to="/staff/dashboard">
+                                        <Link to="/employee/dashboard">
                                             <i className="bx bx-home-alt" />
                                         </Link>
                                     </li>
@@ -731,7 +731,7 @@ const Client = () => {
 
                                 {permission.includes("addclient") && <div className="ms-auto">
                                     <Link
-                                        to="/staff/addclient"
+                                        to="/employee/addclient"
                                         className="btn btn-primary"
                                     >
                                         <i
@@ -762,7 +762,7 @@ const Client = () => {
                                 </div>
                                 {/* <div className="">
                                     <Link
-                                        to="/staff/clientdeletehistory"
+                                        to="/employee/clientdeletehistory"
                                         className="btn btn-primary"
                                     >
                                         <i
@@ -836,7 +836,7 @@ const Client = () => {
                                 columns={columns}
                                 data={clients}
                             /> */}
-                           {isLoading ? (
+                            {isLoading ? (
                                 <Loader />
                             ) : (
                                 <>
@@ -1026,7 +1026,7 @@ const Client = () => {
                                                                                 }}
                                                                             />
                                                                             <label className="form-check-label mx-1" style={{ fontSize: "13px", fontWeight: "800" }} htmlFor={`input-plan-${index}`}>
-                                                                            {item.title} ({item.themename})
+                                                                                {item.title} ({item.themename})
                                                                             </label>
                                                                         </h5>
 

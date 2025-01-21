@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from "formik";
-import DynamicForm from "../../../components/FormicForm";
+import DynamicForm from "../../../Extracomponents/FormicForm";
 import Swal from "sweetalert2";
 import { useLocation, useNavigate } from "react-router-dom";
-import { updateCouponbyadmin, GetService } from "../../../Services/Admin";
+import { updateCouponbyadmin, GetService } from "../../../Services/Admin/Admin";
+
+
 
 const Updatecoupon = () => {
   const navigate = useNavigate();
@@ -117,13 +119,13 @@ const Updatecoupon = () => {
       limitation: values.limitation,
       id: row._id,
     };
-    console.log("req data",req);
-    
+    console.log("req data", req);
+
 
     try {
       const response = await updateCouponbyadmin(req, token);
-      console.log("datata",response);
-      
+      console.log("datata", response);
+
       if (response.status) {
         Swal.fire({
           title: "Update Successful!",
@@ -133,7 +135,7 @@ const Updatecoupon = () => {
           timerProgressBar: true,
         });
         setTimeout(() => {
-          navigate("/staff/coupon");
+          navigate("/employee/coupon");
         }, 1500);
       } else {
         Swal.fire({
@@ -326,7 +328,7 @@ const Updatecoupon = () => {
         btn_name1="Cancel"
         formik={formik}
         sumit_btn={true}
-        btn_name1_route={"/staff/coupon"}
+        btn_name1_route={"/employee/coupon"}
         additional_field={<></>}
       />
     </div>

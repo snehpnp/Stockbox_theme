@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
-import DynamicForm from '../../../components/FormicForm';
+import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getcategoryplan, getbyidplan, Updateplan } from '../../../Services/Admin';
+import { getcategoryplan, getbyidplan, Updateplan } from '../../../Services/Admin/Admin';
+
 
 const Editplan = () => {
 
@@ -81,7 +82,7 @@ const Editplan = () => {
                     timerProgressBar: true,
                 });
                 setTimeout(() => {
-                    navigate("/staff/plan");
+                    navigate("/employee/plan");
                 }, 1500);
             } else {
                 Swal.fire({
@@ -185,7 +186,7 @@ const Editplan = () => {
                 btn_name="Edit Plan"
                 btn_name1="Cancel"
                 sumit_btn={true}
-                btn_name1_route={"/staff/plan"}
+                btn_name1_route={"/employee/plan"}
                 additional_field={<></>}
             />
         </div>

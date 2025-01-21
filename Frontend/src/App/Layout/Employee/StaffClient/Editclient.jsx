@@ -1,9 +1,9 @@
 import React from 'react';
 import { useFormik } from 'formik';
-import DynamicForm from '../../../components/FormicForm';
+import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { UpdateClient } from '../../../Services/Admin';
+import { UpdateClient } from '../../../Services/Admin/Admin';
 
 
 
@@ -14,7 +14,7 @@ const EditClient = () => {
   const location = useLocation();
   const { row } = location.state;
 
- 
+
 
   const user_id = localStorage.getItem("id");
   const token = localStorage.getItem("token");
@@ -63,7 +63,7 @@ const EditClient = () => {
           timerProgressBar: true,
         });
         setTimeout(() => {
-          navigate("/staff/client");
+          navigate("/employee/client");
         }, 1500);
       } else {
         Swal.fire({
@@ -151,7 +151,7 @@ const EditClient = () => {
         btn_name1="Cancel"
         formik={formik}
         sumit_btn={true}
-        btn_name1_route={"/staff/client"}
+        btn_name1_route={"/employee/client"}
         additional_field={<></>}
       />
     </div>

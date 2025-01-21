@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
-import DynamicForm from '../../../components/FormicForm';
+import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { UpdateNewsbyadmin } from '../../../Services/Admin';
-import { image_baseurl } from '../../../Utils/config';
+import { UpdateNewsbyadmin } from '../../../Services/Admin/Admin';
+import { image_baseurl } from '../../../../Utils/config';
 
 
 const Updatenews = () => {
@@ -47,7 +47,7 @@ const Updatenews = () => {
                         timerProgressBar: true,
                     });
                     setTimeout(() => {
-                        navigate("/staff/news");
+                        navigate("/employee/news");
                     }, 1500);
                 } else {
                     Swal.fire({
@@ -80,7 +80,7 @@ const Updatenews = () => {
             label_size: 6,
             col_size: 6,
             disable: false,
-            star:true
+            star: true
 
         },
         {
@@ -94,7 +94,7 @@ const Updatenews = () => {
             imageWidth: "60px",
             imageHeight: "auto",
             src: `${image_baseurl}/uploads/news/${client.image}`,
-            star:true
+            star: true
         },
         {
             name: "description",
@@ -103,7 +103,7 @@ const Updatenews = () => {
             label_size: 12,
             col_size: 12,
             disable: false,
-            star:true
+            star: true
         },
     ];
 
@@ -116,7 +116,7 @@ const Updatenews = () => {
                 btn_name="Update News"
                 btn_name1="Cancel"
                 sumit_btn={true}
-                btn_name1_route={"/staff/news"}
+                btn_name1_route={"/employee/news"}
                 additional_field={<>
 
                 </>}

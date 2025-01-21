@@ -6,13 +6,19 @@ import {
   GetPlanByCategory,
   AddplanSubscription,
   GetCouponlist,
+  ApplyCoupondata
 } from "../../../Services/UserService/User";
 import { IndianRupee } from "lucide-react";
 import { loadScript } from "../../../../Utils/Razorpayment";
+import { basicsettinglist } from "../../../Services/Admin/Admin";
+import Swal from 'sweetalert2'
 
 const Service = () => {
-  const token = localStorage.getItem("Token");
+
+
+  const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
+
 
   const [selectedPlan, setSelectedPlan] = useState("all");
   const [category, setCategory] = useState([]);
@@ -24,13 +30,14 @@ const Service = () => {
   const [selectedCouponCode, setSelectedCouponCode] = useState("");
   const [discountedPrice, setDiscountedPrice] = useState(0);
   const [coupons, setCoupon] = useState([]);
+  const [getkey, setGetkey] = useState([]);
   const [sortCriteria, setSortCriteria] = useState("price");
 
   useEffect(() => {
-    console.log("Fetching data...");
     getCategory();
     getPlan();
     getCoupon();
+    getkeybydata()
   }, []);
 
   const handleCouponSelect = (coupon) => {
@@ -42,14 +49,46 @@ const Service = () => {
     setAppliedCoupon(coupon);
   };
 
-  const applyCoupon = (coupon) => {
-    const originalPrice = selectedPlanDetails?.plans[0]?.price || 0;
-    const discount = selectedCouponCode.value || 0;
-    const discountedPrice = originalPrice - discount;
 
-    setAppliedCoupon(coupon);
-    setDiscountedPrice(discountedPrice > 0 ? discountedPrice : originalPrice);
+  const applyCoupon = async (coupon) => {
+    console.log("selectedPlanDetails", selectedPlanDetails)
+    console.log("selectedPlanDetails[0]?._id", selectedPlanDetails?.plans[0]?._id)
+    try {
+      const data = { code: coupon, purchaseValue: selectedPlanDetails?.plans?.[0]?.price, planid: selectedPlanDetails?.plans[0]?._id };
+      const response = await ApplyCoupondata(data, token)
+
+      if (response.status) {
+        const originalPrice = selectedPlanDetails?.plans?.[0]?.price || 0;
+        const discount = response.discount || 0;
+        const discountedPrice = Math.max(0, originalPrice - discount);
+
+        setAppliedCoupon(coupon);
+        setDiscountedPrice(discountedPrice);
+
+        Swal.fire({
+          title: 'Coupon Applied!',
+          text: response.message || 'Your discount has been applied successfully.',
+          icon: 'success',
+          confirmButtonText: 'OK',
+        });
+      } else {
+        Swal.fire({
+          title: 'Coupon Error',
+          text: response.message || 'Failed to apply coupon. Please try again.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Something went wrong. Please try again later.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    }
   };
+
 
   const removeCoupon = () => {
     setManualCoupon("");
@@ -74,10 +113,24 @@ const Service = () => {
     }
   };
 
-  const isFetchingData = useRef(false); // Track if data is already being fetched
+
+  const getkeybydata = async () => {
+    try {
+      const response = await basicsettinglist();
+      if (response.status) {
+        setGetkey(response?.data[0]?.razorpay_key);
+      }
+    } catch (error) {
+      console.error("Error fetching coupons:", error);
+    }
+  };
+
+
+
+  const isFetchingData = useRef(false);
 
   const getCategory = async () => {
-    if (isFetchingData.current) return; // Prevent multiple calls
+    if (isFetchingData.current) return;
     isFetchingData.current = true;
 
     try {
@@ -88,7 +141,7 @@ const Service = () => {
     } catch (error) {
       console.error("Error fetching categories:", error);
     } finally {
-      isFetchingData.current = false; // Reset the flag
+      isFetchingData.current = false;
     }
   };
 
@@ -103,6 +156,10 @@ const Service = () => {
     }
   };
 
+
+
+
+
   const AddSubscribeplan = async (item) => {
 
 
@@ -111,17 +168,17 @@ const Service = () => {
         await loadScript("https://checkout.razorpay.com/v1/checkout.js");
       }
       const options = {
-        key: "rzp_test_22mEHcDzJbcUmz",
-        amount:discountedPrice || selectedPlanDetails?.plans[0]?.price * 100, 
+        key: getkey,
+        amount: (discountedPrice || selectedPlanDetails?.plans[0]?.price) * 100,
         currency: "INR",
         title: item?.plans[0]?.title || "Subscription Plan",
         handler: async function (response1) {
           const data = {
             plan_id: item?.plans[0]?._id,
             client_id: userid,
-            coupon_code: appliedCoupon?.code || "",
+            coupon_code: appliedCoupon?.code || 0,
             orderid: response1?.orderid,
-            discount: selectedCouponCode?.value || "",
+            discount: selectedCouponCode?.value || 0,
             price: discountedPrice || selectedPlanDetails?.plans[0]?.price || 0,
           };
 
@@ -140,7 +197,6 @@ const Service = () => {
           color: "#F37254",
         },
       };
-
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (error) {
@@ -239,16 +295,16 @@ const Service = () => {
                         <div className="text-left">
                           <span className="price-original">
                             {Array.isArray(item?.services) &&
-                            item.services.length > 0
+                              item.services.length > 0
                               ? item.services
-                                  .map((service) =>
-                                    typeof service.title === "string"
-                                      ? service.title
-                                          .split(/(?=[A-Z])/)
-                                          .join(" + ")
-                                      : "N/A"
-                                  )
-                                  .join(" + ")
+                                .map((service) =>
+                                  typeof service.title === "string"
+                                    ? service.title
+                                      .split(/(?=[A-Z])/)
+                                      .join(" + ")
+                                    : "N/A"
+                                )
+                                .join(" + ")
                               : "N/A"}
                           </span>
                           <h5 className="mb-0">{item?.title}</h5>
@@ -335,7 +391,7 @@ const Service = () => {
                       scrollbarWidth: "thin",
                     }}
                   >
-                    {/* Manual Coupon Input */}
+
                     <div className="mb-3">
                       <div className="d-flex align-items-center">
                         <input
@@ -513,12 +569,12 @@ const Service = () => {
                                 transition: "background-color 0.3s",
                               }}
                               onMouseOver={(e) =>
-                                (e.currentTarget.style.backgroundColor =
-                                  "#0056b3")
+                              (e.currentTarget.style.backgroundColor =
+                                "#0056b3")
                               }
                               onMouseOut={(e) =>
-                                (e.currentTarget.style.backgroundColor =
-                                  "#007bff")
+                              (e.currentTarget.style.backgroundColor =
+                                "#007bff")
                               }
                             >
                               Apply
