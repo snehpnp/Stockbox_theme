@@ -6,10 +6,12 @@ import {
   GetPlanByCategory,
   AddplanSubscription,
   GetCouponlist,
+  ApplyCoupondata
 } from "../../../Services/UserService/User";
 import { IndianRupee } from "lucide-react";
 import { loadScript } from "../../../../Utils/Razorpayment";
 import { basicsettinglist } from "../../../Services/Admin/Admin";
+import Swal from 'sweetalert2'
 
 const Service = () => {
 
@@ -47,14 +49,46 @@ const Service = () => {
     setAppliedCoupon(coupon);
   };
 
-  const applyCoupon = (coupon) => {
-    const originalPrice = selectedPlanDetails?.plans[0]?.price || 0;
-    const discount = selectedCouponCode.value || 0;
-    const discountedPrice = originalPrice - discount;
 
-    setAppliedCoupon(coupon);
-    setDiscountedPrice(discountedPrice > 0 ? discountedPrice : originalPrice);
+  const applyCoupon = async (coupon) => {
+    console.log("selectedPlanDetails", selectedPlanDetails)
+    console.log("selectedPlanDetails[0]?._id", selectedPlanDetails?.plans[0]?._id)
+    try {
+      const data = { code: coupon, purchaseValue: selectedPlanDetails?.plans?.[0]?.price, planid: selectedPlanDetails?.plans[0]?._id };
+      const response = await ApplyCoupondata(data, token)
+
+      if (response.status) {
+        const originalPrice = selectedPlanDetails?.plans?.[0]?.price || 0;
+        const discount = response.discount || 0;
+        const discountedPrice = Math.max(0, originalPrice - discount);
+
+        setAppliedCoupon(coupon);
+        setDiscountedPrice(discountedPrice);
+
+        Swal.fire({
+          title: 'Coupon Applied!',
+          text: response.message || 'Your discount has been applied successfully.',
+          icon: 'success',
+          confirmButtonText: 'OK',
+        });
+      } else {
+        Swal.fire({
+          title: 'Coupon Error',
+          text: response.message || 'Failed to apply coupon. Please try again.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Something went wrong. Please try again later.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    }
   };
+
 
   const removeCoupon = () => {
     setManualCoupon("");
@@ -357,7 +391,7 @@ const Service = () => {
                       scrollbarWidth: "thin",
                     }}
                   >
-                    {/* Manual Coupon Input */}
+
                     <div className="mb-3">
                       <div className="d-flex align-items-center">
                         <input
