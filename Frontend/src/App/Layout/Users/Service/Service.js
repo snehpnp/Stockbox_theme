@@ -104,18 +104,15 @@ const Service = () => {
   };
 
   const AddSubscribeplan = async (item) => {
+
+
     try {
       if (!window.Razorpay) {
         await loadScript("https://checkout.razorpay.com/v1/checkout.js");
       }
       const options = {
         key: "rzp_test_22mEHcDzJbcUmz",
-        amount:
-          discountedPrice > 0
-            ? (Number(item?.plans[0]?.price) -
-                Number(selectedCouponCode?.value)) *
-              100
-            : Number(item?.plans[0]?.price) * 100,
+        amount:discountedPrice || selectedPlanDetails?.plans[0]?.price * 100, 
         currency: "INR",
         title: item?.plans[0]?.title || "Subscription Plan",
         handler: async function (response1) {
@@ -125,7 +122,7 @@ const Service = () => {
             coupon_code: appliedCoupon?.code || "",
             orderid: response1?.orderid,
             discount: selectedCouponCode?.value || "",
-            price: item?.plans?.price,
+            price: discountedPrice || selectedPlanDetails?.plans[0]?.price || 0,
           };
 
           try {
