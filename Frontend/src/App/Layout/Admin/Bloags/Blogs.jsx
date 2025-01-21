@@ -117,7 +117,7 @@ const Blogs = () => {
 
     const viewblog = async (row) => {
         navigate("/admin/viewblog", { state: { row } })
-    }
+    } 
 
 
 
@@ -164,7 +164,7 @@ const Blogs = () => {
 
 
     const viewDetails = async (row) => {
-        navigate("/admin/viewblog/", { state: { row } })
+        navigate("/admin/viewblog", { state: { row } })
     }
 
 

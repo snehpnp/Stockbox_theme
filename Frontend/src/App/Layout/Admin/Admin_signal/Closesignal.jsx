@@ -24,12 +24,15 @@ import {
 } from "../../../Services/Admin/Admin";
 import { fDateTimeSuffix, fDateTimeH } from "../../../../Utils/Date_formate";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { exportToCSV } from "../../../../Utils/ExportData";
+import { exportToCSV, exportToCSV1 } from "../../../../Utils/ExportData";
 import Select from "react-select";
 import { Tooltip } from "antd";
 import { image_baseurl } from "../../../../Utils/config";
 
 const Closesignal = () => {
+
+
+
   const [activeTab, setActiveTab] = useState("table");
 
   const token = localStorage.getItem("token");
@@ -138,6 +141,65 @@ const Closesignal = () => {
       console.log("Error:", error);
     }
   };
+
+
+
+  const getexportfile1 = async () => {
+    try {
+      const response = await GetSignallist(token);
+      if (response.status) {
+        if (response.data?.length > 0) {
+          let filterdata = response.data.filter(
+            (item) => item.close_status === true
+          );
+          const csvArr = filterdata.map((item) => {
+            let profitAndLossPercentage = 0;
+            if (item.calltype === "BUY") {
+              profitAndLossPercentage = (
+                ((item.closeprice - item.price) / item.price) *
+                100
+              ).toFixed(2);
+            } else if (item.calltype === "SELL") {
+              profitAndLossPercentage = (
+                ((item.price - item.closeprice) / item.price) *
+                100
+              ).toFixed(2);
+            }
+
+            const entryType = `BUY POSITION CLOSED IN ${item.tradesymbol || ""} ${item.expirydate || ""
+              } ${item.optiontype || ""} SL ${item.stoploss || ""}, ${(() => {
+                const count = [item.tag1, item.tag2, item.tag3].filter(Boolean).length;
+                return count === 1
+                  ? "1st"
+                  : count === 2
+                    ? "2nd"
+                    : count === 3
+                      ? "3rd"
+                      : "";
+              })()
+              } Target Achieved Exit Price ${item?.closeprice}`;
+
+            return {
+              CloseSignal: `${fDateTimeH(item?.created_at)}\nSegment: ${item.segment === "C"
+                ? "CASH"
+                : item.segment === "O"
+                  ? "OPTION"
+                  : item.segment === "F"
+                    ? "FUTURE"
+                    : ""
+                } \nP/L: ${profitAndLossPercentage}% \n\nEntry Type: ${entryType}`,
+            }
+          });
+          exportToCSV1(csvArr, "Close Signal");
+        }
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  };
+
+
+
 
 
 
@@ -574,14 +636,14 @@ const Closesignal = () => {
               <div className="d-flex justify-content-between align-items-center mb-4">
                 <div className="btn-group">
                   <button
-                    className={`btn btn-secondary  ${activeTab === "table" ? "active" : ""
+                    className={`btn btn-outline-primary  ${activeTab === "table" ? "active" : ""
                       }`}
                     onClick={() => setActiveTab("table")}
                   >
                     Table View
                   </button>
                   <button
-                    className={`btn btn-secondary  ${activeTab === "card" ? "active" : ""
+                    className={`btn btn-outline-primary  ${activeTab === "card" ? "active" : ""
                       }`}
                     onClick={() => setActiveTab("card")}
                   >
@@ -604,7 +666,7 @@ const Closesignal = () => {
                     <i className="bx bx-search" />
                   </span>
                 </div>
-                <div className="ms-2" onClick={(e) => getexportfile()}>
+                {/* <div className="ms-2" onClick={(e) => getexportfile()}>
                   <button
                     type="button"
                     className="btn btn-primary float-end"
@@ -613,6 +675,29 @@ const Closesignal = () => {
                     <i className="bx bxs-download" aria-hidden="true"></i>
                     Export-Excel
                   </button>
+                </div> */}
+
+                <div className="ms-2">
+                  {activeTab === "table" ? (
+                    <button
+                      type="button"
+                      className="btn btn-primary float-end"
+                      title="Export To Excel"
+                      onClick={getexportfile}
+                    >
+                      <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="btn btn-primary float-end"
+                      title="Export Card data"
+                      onClick={getexportfile1}
+
+                    >
+                      <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -734,7 +819,7 @@ const Closesignal = () => {
                             </div>
 
                           </div>
-                          <p className='mb-1'> {client?.calltype}  POSITION CLOSED IN {client?.stock}  {client?.expirydate && `${client.expirydate}`} {client?.optiontype && `${client.optiontype}`} {client?.stoploss && `SL ${client.stoploss}`}  {(() => {
+                          <p className='mb-1'> Entry Type {client?.calltype}  POSITION CLOSED IN {client?.stock}  {client?.expirydate && `${client.expirydate}`} {client?.optiontype && `${client.optiontype}`} {client?.stoploss && `SL ${client.stoploss}`}  {(() => {
                             const count = [client?.tag1, client?.tag2, client?.tag3].filter(Boolean).length;
                             if (count === 1) return "1st";
                             if (count === 2) return "2nd";

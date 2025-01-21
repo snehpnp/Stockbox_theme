@@ -128,7 +128,7 @@ const ClientRequest = () => {
             width: '100px',
         },
         {
-            name: 'FullName',
+            name: 'Full Name',
             selector: row => row?.FullName,
             sortable: true,
             width: '200px',
@@ -154,30 +154,7 @@ const ClientRequest = () => {
         },
         {
             name: 'Entry time',
-            selector: row => {
-                const createdAt = row?.created_at;
-                if (createdAt) {
-                    // Extract date and time
-                    const [datePart, timePart] = createdAt.split('T');
-                    const [year, month, date] = datePart.split('-'); // Split year, month, and date
-                    const time = timePart.replace('Z', ''); // Remove 'Z' from time
-                    let [hours, minutes, seconds] = time.split(':'); // Split hours, minutes, seconds
-                    seconds = seconds.split('.')[0]; // Remove milliseconds
-
-                    // Convert month number to name
-                    const monthNames = [
-                        "Jan", "Feb", "March", "April", "May", "June",
-                        "July", "August", "September", "October", "November", "December"
-                    ];
-                    const monthName = monthNames[parseInt(month, 10) - 1]; // Get month name
-
-
-
-                    // Return formatted date and time
-                    return `${date} ${monthName}, ${year} ${hours}:${minutes}:${seconds}`;
-                }
-                return 'N/A';
-            },
+            selector: row => fDateTime(row.created_at),
             sortable: true,
             width: '250px',
         },

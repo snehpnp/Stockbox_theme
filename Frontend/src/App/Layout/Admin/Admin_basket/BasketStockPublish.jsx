@@ -8,6 +8,7 @@ import Table from '../../../Extracomponents/Table1';
 
 import { BasketAllActiveList, BasketAllActiveListbyfilter, changestatusrebalance, deletebasket, Basketstatusofdetail } from "../../../Services/Admin/Admin";
 import { fDate } from "../../../../Utils/Date_formate";
+import Loader from "../../../../Utils/Loader";
 
 
 
@@ -24,6 +25,10 @@ const BasketStockPublish = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
 
+  //state for loading
+  const [isLoading, setIsLoading] = useState(true)
+
+
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -36,7 +41,7 @@ const BasketStockPublish = () => {
     try {
       const data = { page: currentPage, search: searchInput || "" }
       const response = await BasketAllActiveListbyfilter(data, token);
-      // console.log("BasketAllActiveListbyfilter",response);
+      console.log("BasketAllActiveListbyfilter",response);
 
       if (response.status) {
         setTotalRows(response.pagination.total);
@@ -46,6 +51,7 @@ const BasketStockPublish = () => {
       console.log("error", JSON.stringify(error));
 
     }
+    setIsLoading(false)
   };
 
 
@@ -278,7 +284,7 @@ const BasketStockPublish = () => {
         </div>
       ),
       sortable: true,
-      width: '165px',
+      width: '180px',
     },
     {
       name: 'Rebalancing',
@@ -300,6 +306,7 @@ const BasketStockPublish = () => {
 
       ),
       sortable: true,
+      width: '180px',
 
     },
     {
@@ -391,13 +398,20 @@ const BasketStockPublish = () => {
               </Link>
             </div> */}
           </div>
-          <Table
-            columns={columns}
-            data={clients}
-            totalRows={totalRows}
-            currentPage={currentPage}
-            onPageChange={handlePageChange}
-          />
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <>
+              <Table
+                columns={columns}
+                data={clients}
+                totalRows={totalRows}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+              />
+            </>
+          )}
+          
         </div>
       </div>
     </div>

@@ -14,7 +14,7 @@ import Select from 'react-select';
 
 
 
-const Viewclientdetail = () => {
+const Viewclientdetail = () => { 
 
     const { id } = useParams();
     const token = localStorage?.getItem('token');
@@ -22,6 +22,8 @@ const Viewclientdetail = () => {
     const [data, setData] = useState([]);
     const [client, setClient] = useState([]);
     const [service, setService] = useState([]);
+    console.log("service",service);
+    
     const [clients, setClients] = useState([]);
 
 
@@ -120,7 +122,8 @@ const Viewclientdetail = () => {
     const getclientservice = async () => {
         try {
             const response = await getclientsubscription(id, token);
-
+            console.log("getclientsubscription",response);
+            
             if (response.status) {
                 setService(response.data);
             }
@@ -132,6 +135,8 @@ const Viewclientdetail = () => {
     const fetchAdminServices = async () => {
         try {
             const response = await GetService(token);
+            console.log("GetService",response);
+            
             if (response.status) {
                 setServiceList(response.data);
             }
@@ -417,7 +422,7 @@ const Viewclientdetail = () => {
                             {service && service.map((item) => (
                                 <li key={item._id} className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                     <h6 className="mb-0">{item?.serviceName}</h6>
-                                    {/* <span className="text-secondary">{ fDateTime(item?.enddate)}</span> */}
+                                    <span className="text-secondary">{ fDateTime(item?.enddate)}</span>
                                 </li>
                             ))}
                         </ul>
@@ -438,13 +443,13 @@ const Viewclientdetail = () => {
                         <div className="d-flex justify-content-between mb-4">
                             <div className="btn-group">
                                 <button
-                                    className={`btn btn-secondary ${viewMode === "plan" ? "active" : ""}`}
+                                    className={`btn btn-outline-primary ${viewMode === "plan" ? "active" : ""}`}
                                     onClick={() => setViewMode("plan")}
                                 >
                                     Plan View
                                 </button>
                                 <button
-                                    className={`btn btn-secondary ${viewMode === "signal" ? "active" : ""}`}
+                                    className={`btn btn-outline-primary ${viewMode === "signal" ? "active" : ""}`}
                                     onClick={() => setViewMode("signal")}
                                 >
                                     Signal View
@@ -578,6 +583,6 @@ const Viewclientdetail = () => {
             </div>
         </div>
     );
-};
+};;
 
 export default Viewclientdetail;

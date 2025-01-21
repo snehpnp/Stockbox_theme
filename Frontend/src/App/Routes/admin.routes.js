@@ -73,7 +73,11 @@ import Addnews from "../Layout/Admin/News/Addnews";
 import Updatenews from "../Layout/Admin/News/Updatenews";
 import Condition from "../Layout/Admin/Termscondition/Condition";
 import Updatecondition from "../Layout/Admin/Termscondition/Updatecondition";
+import PaymentHistory from "../Layout/Admin/Payment_history/Paymenthistory"
 
+import Coupon from "../Layout/Admin/Coupon/Coupon";
+import Addcoupon from "../Layout/Admin/Coupon/Addcoupon";
+import Updatecoupon from "../Layout/Admin/Coupon/Updatecoupon";
 
 
 
@@ -115,6 +119,7 @@ export default function App() {
 
 
       <Route path="/faq" element={<Faq />} />
+      <Route path="/paymenthistory" element={<PaymentHistory />} />
       <Route path="/kyc" element={<Kyc />} />
       <Route path="/perfom" element={<Perform />} />
       <Route path="/service" element={<Service />} />
@@ -184,6 +189,11 @@ export default function App() {
       <Route path="/news" element={<News />} />
       <Route path="/addnews" element={<Addnews />} />
       <Route path="/updatenews" element={<Updatenews />} />
+
+
+      <Route path="/coupon" element={<Coupon />} />
+      <Route path="/addcoupon" element={<Addcoupon />} />
+      <Route path="/coupon/updatecoupon/:id" element={<Updatecoupon />} />
 
       <Route path="/termsandcondtion" element={<Condition />} />
       <Route path="/updatecondition" element={<Updatecondition />} />
