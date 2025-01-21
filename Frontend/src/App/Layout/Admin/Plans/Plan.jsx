@@ -169,8 +169,8 @@ const Plan = () => {
             button_status={true} button_title="Add Package">
 
             <div className="card">
-                <div className="card-body">
-                    <ul className="nav nav-pills mb-1" role="tablist">
+                <div className="card-body"> 
+                    <ul className="nav nav-pills  mb-1" role="tablist">
                         <li className="nav-item" role="presentation">
                             <a
                                 className={`nav-link ${selectedCategoryId === 'all' ? 'active' : 'No data'}`}
@@ -273,7 +273,7 @@ const Plan = () => {
                                                                 <div className="button-group">
                                                                     <button
                                                                         type="button"
-                                                                        className="btnsecond"
+                                                                        className="btnsecond btn btn-primary w-50"
                                                                         data-bs-toggle="modal"
                                                                         data-bs-target={`#modal-${client._id}`}
                                                                     >
@@ -367,7 +367,7 @@ const Plan = () => {
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    <Link to={`editplan/${client._id}`} className="btnprime" style={{ color: 'inherit', textDecoration: 'none' }}>
+                                                                    <Link to={`editplan/${client._id}`} className="btnprime btn btn-secondary ms-2" style={{ color: 'inherit', textDecoration: 'none' }}>
                                                                         Edit
                                                                     </Link>
                                                                 </div>

@@ -216,7 +216,7 @@ const DynamicForm = ({
 
 
   return (
-    <div className="content container-fluid" data-aos="fade-left">
+    <div className="container-fluid" data-aos="fade-left">
       <div className="card mb-0">
         {page_title ? (
           <div className="card-header">

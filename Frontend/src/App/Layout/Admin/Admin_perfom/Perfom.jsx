@@ -306,7 +306,7 @@ const Perform = () => {
                                 <div className="tab-content" id="myTabContent3">
                                     <div className="tab-pane fade show active" id="NavPills">
                                         <div className="card-body pt-0">
-                                            <ul className="nav nav-pills nav-pills1 mb-4 light">
+                                            <ul className="nav nav-pills nav-pills1 mb-4 light border-bottom" id="pills-tab" role="tablist">
                                                 {servicedata.map((service) => (
                                                     <li className="nav-item" key={service._id}>
                                                         <button
