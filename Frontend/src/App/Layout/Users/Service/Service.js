@@ -37,6 +37,8 @@ const Service = () => {
     const originalPrice = selectedPlanDetails?.plans[0]?.price || 0;
     const discount = coupon?.value || 0;
     setDiscountedPrice(originalPrice - discount);
+
+    setManualCoupon(coupon?.code);
     setAppliedCoupon(coupon);
   };
 
@@ -347,12 +349,14 @@ const Service = () => {
                           value={manualCoupon}
                           onChange={(e) => setManualCoupon(e.target.value)}
                         />
-                        <button
-                          className="btn btn-primary"
-                          onClick={() => applyCoupon({ code: manualCoupon })}
-                        >
-                          Apply
-                        </button>
+                        {manualCoupon && (
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => applyCoupon({ code: manualCoupon })}
+                          >
+                            Apply
+                          </button>
+                        )}
                         {appliedCoupon && (
                           <button
                             className="btn btn-danger ms-2"
@@ -366,116 +370,122 @@ const Service = () => {
 
                     {/* Available Coupons */}
                     <div>
-  {coupons.map((coupon) => (
-    <li
-      key={coupon.code}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        border: "1px solid #dcdcdc",
-        backgroundColor: "#ffffff",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-        marginBottom: "15px",
-        borderRadius: "12px",
-        padding: "15px 20px",
-        listStyle: "none",
-        transition: "transform 0.2s, box-shadow 0.2s",
-      }}
-      onMouseOver={(e) => {
-        e.currentTarget.style.transform = "scale(1.02)";
-        e.currentTarget.style.boxShadow =
-          "0 6px 12px rgba(0, 0, 0, 0.15)";
-      }}
-      onMouseOut={(e) => {
-        e.currentTarget.style.transform = "scale(1)";
-        e.currentTarget.style.boxShadow =
-          "0 4px 8px rgba(0, 0, 0, 0.1)";
-      }}
-    >
-      {/* First Section */}
-      <div
-        style={{
-          width: "40px",
-          height: "125px",
-          backgroundColor: "#007bff",
-          color: "#fff",
-          textAlign: "center",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          borderRadius: "12px",
+                      {coupons.map((coupon) => (
+                        <li
+                          key={coupon.code}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            border: "1px solid #dcdcdc",
+                            backgroundColor: "#ffffff",
+                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                            marginBottom: "15px",
+                            borderRadius: "12px",
+                            padding: "15px 20px",
+                            listStyle: "none",
+                            transition: "transform 0.2s, box-shadow 0.2s",
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.transform = "scale(1.02)";
+                            e.currentTarget.style.boxShadow =
+                              "0 6px 12px rgba(0, 0, 0, 0.15)";
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.transform = "scale(1)";
+                            e.currentTarget.style.boxShadow =
+                              "0 4px 8px rgba(0, 0, 0, 0.1)";
+                          }}
+                        >
+                          {/* First Section */}
+                          <div
+                            style={{
+                              width: "40px",
+                              height: "125px",
+                              backgroundColor: "#007bff",
+                              color: "#fff",
+                              textAlign: "center",
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              borderRadius: "12px",
 
-          padding: "0",
-          marginLeft: "-20px",
-          marginTop: "-20px",
-          marginBottom: "-20px",
-        }}
-      >
-        {coupon?.serviceName
-          ?.split("")
-          .map((char, index) => (
-            <span
-              key={index}
-              style={{
-                display: "block",
-                fontSize: "14px",
-                fontWeight: "bold",
-              }}
-            >
-              {char.toUpperCase()}
-            </span>
-          ))}
-      </div>
+                              padding: "0",
+                              marginLeft: "-20px",
+                              marginTop: "-20px",
+                              marginBottom: "-20px",
+                            }}
+                          >
+                            {coupon?.serviceName
+                              ?.split("")
+                              .map((char, index) => (
+                                <span
+                                  key={index}
+                                  style={{
+                                    display: "block",
+                                    fontSize: "14px",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  {char.toUpperCase()}
+                                </span>
+                              ))}
+                          </div>
 
-      {/* Second Section */}
-      <div style={{ flexGrow: 1, marginLeft: "15px", textAlign: "left" }}>
-        <p
-          style={{
-            margin: "0 0 5px",
-            fontWeight: "500",
-            color: "#333",
-            fontSize: "16px",
-          }}
-        >
-          Use code{" "}
-          <span
-            style={{
-              fontWeight: "700",
-              color: "#007bff",
-              marginLeft: "5px",
-            }}
-          >
-            {coupon?.code}
-          </span>
-        </p>
-        <div style={{ fontSize: "14px", color: "#666" }}>
-          <span
-            style={{
-              display: "block",
-              marginBottom: "4px",
-            }}
-          >
-            🛡️ Validity:{" "}
-            <span
-              style={{
-                fontSize: "12px",
-                fontWeight: "bold",
-              }}
-            >
-              {coupon?.enddate?.split("T")[0]}
-            </span>
-          </span>
-          <span
-            style={{
-              display: "block",
-              marginBottom: "4px",
-            }}
-          >
-            💸 Save Upto: <strong>₹{coupon?.value}</strong>
-          </span>
-          {/* <span
+                          {/* Second Section */}
+                          <div
+                            style={{
+                              flexGrow: 1,
+                              marginLeft: "15px",
+                              textAlign: "left",
+                            }}
+                          >
+                            <p
+                              style={{
+                                margin: "0 0 5px",
+                                fontWeight: "500",
+                                color: "#333",
+                                fontSize: "16px",
+                              }}
+                            >
+                              Use code{" "}
+                              <span
+                                style={{
+                                  fontWeight: "700",
+                                  color: "#007bff",
+                                  marginLeft: "5px",
+                                }}
+                              >
+                                {coupon?.code}
+                              </span>
+                            </p>
+                            <div style={{ fontSize: "14px", color: "#666" }}>
+                              <span
+                                style={{
+                                  display: "block",
+                                  marginBottom: "4px",
+                                }}
+                              >
+                                🛡️ Validity:{" "}
+                                <span
+                                  style={{
+                                    fontSize: "12px",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  {coupon?.enddate?.split("T")[0]}
+                                </span>
+                              </span>
+                              <span
+                                style={{
+                                  display: "block",
+                                  marginBottom: "4px",
+                                }}
+                              >
+                                💸 Save Upto: <strong>₹{coupon?.value}</strong>
+                              </span>
+                              {/* <span
             style={{
               display: "block",
               marginBottom: "4px",
@@ -483,42 +493,43 @@ const Service = () => {
           >
             ✨ Offer: <strong>{coupon?.name}</strong>
           </span> */}
-          <span style={{ display: "block" }}>
-            🛒 Min Purchase:{" "}
-            <strong>₹{coupon?.minpurchasevalue}</strong>
-          </span>
-        </div>
-      </div>
+                              <span style={{ display: "block" }}>
+                                🛒 Min Purchase:{" "}
+                                <strong>₹{coupon?.minpurchasevalue}</strong>
+                              </span>
+                            </div>
+                          </div>
 
-      {/* Third Section */}
-      <div>
-        <button
-          onClick={() => handleCouponSelect(coupon)}
-          style={{
-            padding: "8px 16px",
-            fontSize: "14px",
-            color: "#fff",
-            backgroundColor: "#007bff",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-            transition: "background-color 0.3s",
-          }}
-          onMouseOver={(e) =>
-            (e.currentTarget.style.backgroundColor = "#0056b3")
-          }
-          onMouseOut={(e) =>
-            (e.currentTarget.style.backgroundColor = "#007bff")
-          }
-        >
-          Apply
-        </button>
-      </div>
-    </li>
-  ))}
-</div>
-
+                          {/* Third Section */}
+                          <div>
+                            <button
+                              onClick={() => handleCouponSelect(coupon)}
+                              style={{
+                                padding: "8px 16px",
+                                fontSize: "14px",
+                                color: "#fff",
+                                backgroundColor: "#007bff",
+                                border: "none",
+                                borderRadius: "6px",
+                                cursor: "pointer",
+                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                                transition: "background-color 0.3s",
+                              }}
+                              onMouseOver={(e) =>
+                                (e.currentTarget.style.backgroundColor =
+                                  "#0056b3")
+                              }
+                              onMouseOut={(e) =>
+                                (e.currentTarget.style.backgroundColor =
+                                  "#007bff")
+                              }
+                            >
+                              Apply
+                            </button>
+                          </div>
+                        </li>
+                      ))}
+                    </div>
                   </Accordion.Body>
                 </Accordion.Item>
               </Accordion>
