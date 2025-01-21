@@ -14,8 +14,6 @@ import { Modal } from 'react-bootstrap';
 function cleanHtmlContent(html) {
 
 
-
-
   const div = document.createElement("div");
   div.innerHTML = html;
 

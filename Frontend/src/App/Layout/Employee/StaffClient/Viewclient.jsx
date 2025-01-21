@@ -362,7 +362,7 @@ const Viewclientdetail = () => {
                                 <nav aria-label="breadcrumb">
                                     <ol className="breadcrumb mb-0 p-0">
                                         <li className="breadcrumb-item">
-                                            <Link to="/staff/dashboard">
+                                            <Link to="/employee/dashboard">
                                                 <i className="bx bx-home-alt" />
                                             </Link>
                                         </li>
@@ -372,11 +372,13 @@ const Viewclientdetail = () => {
                         </div>
                     </div>
                     <div className="col-md-6 d-flex justify-content-end">
-                        <Link to="/staff/client">
+                        <Link to="/employee/client">
                             <Tooltip title="Back">
                                 <i className="lni lni-arrow-left-circle" style={{ fontSize: "2rem" }} />
                             </Tooltip>
+                            
                         </Link>
+                        
                     </div>
                 </div>
 

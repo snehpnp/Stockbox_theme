@@ -63,7 +63,7 @@ const Editfreeclient = () => {
           timerProgressBar: true,
         });
         setTimeout(() => {
-          navigate("/staff/freeclient");
+          navigate("/employee/freeclient");
         }, 1500);
       } else {
         Swal.fire({
@@ -151,7 +151,7 @@ const Editfreeclient = () => {
         btn_name1="Cancel"
         formik={formik}
         sumit_btn={true}
-        btn_name1_route={"/staff/freeclient"}
+        btn_name1_route={"/employee/freeclient"}
         additional_field={<></>}
       />
     </div>
