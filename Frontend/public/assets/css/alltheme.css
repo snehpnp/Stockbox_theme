@@ -472,8 +472,8 @@ textarea {
   z-index: 99;
   background: #fff;
   height: 100vh;
-  width: 400px;
-  right: -420px;
+  width: 450px;
+  right: -450px;
   transition: ease-in-out 0.3s;
   overflow-y: auto;
   padding: 30px;
@@ -988,4 +988,8 @@ padding-left: 0;
 }
 .pricing-card li {
   list-style-type: none;
+}
+.progress-bar.progress-animated
+{
+  background-color: var(--BtnPriBgCol, green) !important;
 }
