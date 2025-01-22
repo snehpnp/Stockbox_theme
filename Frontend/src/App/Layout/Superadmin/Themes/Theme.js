@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Contnet from "../../../components/Contents/Content";
 import { GetAllThemesApi, GetThemeByIdApi, DeleteThemeApi } from "../../../Services/Themes/Theme";
+import Swal from "sweetalert2";
+
 
 function Theme() {
   const navigate = useNavigate();
@@ -12,16 +14,36 @@ function Theme() {
     navigate(`/superadmin/edit-theme/${id}`);
   };
 
-  const handleDelete = (id) => {
 
-    DeleteThemeApi(id)
-      .then((response) => {
-        GetAllThemes();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't To Delete This Theme!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        DeleteThemeApi(id)
+          .then((response) => {
+            Swal.fire("Deleted!",
+              "Your theme has been deleted.",
+              "success");
+            GetAllThemes();
+          })
+          .catch((error) => {
+            console.error(error);
+            Swal.fire("Error!",
+              "There was an error deleting the theme.",
+              "error");
+          });
+      }
+    });
   };
+  ;
 
   const handleAddTheme = () => {
     navigate("/superadmin/add-theme");
@@ -44,9 +66,6 @@ function Theme() {
       let themeData = response.data;
 
       localStorage.setItem("theme", JSON.stringify(themeData));
-  
-
-
 
       document.documentElement.style.setProperty("--BtnPriTxtCol", themeData?.BtnPriTxtCol);
       document.documentElement.style.setProperty("--BtnSecTxtCol", themeData?.BtnSecTxtCol);
@@ -54,10 +73,10 @@ function Theme() {
       document.documentElement.style.setProperty("--BtnSecBorderColor", themeData?.BtnSecBorderColor);
       document.documentElement.style.setProperty("--BtnPriBgCol", themeData?.BtnPriBgCol);
       document.documentElement.style.setProperty("--BtnSecBgCol", themeData?.BtnSecBgCol);
-      document.documentElement.style.setProperty("--headSidebarFontCol",themeData?.headSidebarFontCol);
-      document.documentElement.style.setProperty("--headSidebarFontActiveCol",themeData?.headSidebarFontActiveCol);
-      document.documentElement.style.setProperty("--HeadingColor",themeData?.HeadingColor);
-      document.documentElement.style.setProperty("--sidebarColor",themeData?.sidebarColor);
+      document.documentElement.style.setProperty("--headSidebarFontCol", themeData?.headSidebarFontCol);
+      document.documentElement.style.setProperty("--headSidebarFontActiveCol", themeData?.headSidebarFontActiveCol);
+      document.documentElement.style.setProperty("--HeadingColor", themeData?.HeadingColor);
+      document.documentElement.style.setProperty("--sidebarColor", themeData?.sidebarColor);
       document.documentElement.style.setProperty("--tabelheadbgcolor", themeData?.tabelheadbgcolor);
 
       window.location.reload();
@@ -76,11 +95,12 @@ function Theme() {
       Page_title="Themes"
       button_title="Add Theme"
       button_status={true}
-      route="/add-theme"
+      route="/superadmin/add-theme"
+
     >
       <div >
 
-      
+
 
         {/* Table Wrapped in a Card */}
         <div style={cardStyle}>

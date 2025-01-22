@@ -111,7 +111,11 @@ const Addtheme = () => {
   };
 
   return (
-    <Contnet Page_title="Add Theme" button_title="Back" button_status={false}>
+    <Contnet Page_title="Add Theme"
+      button_title="Back"
+      button_status={false}
+      backForword={true}
+    >
       <Container id="app" style={{ marginTop: "50px", color: "black" }}>
         <h2 className="text-dark my-4">Add Theme</h2>
 
@@ -143,7 +147,7 @@ const Addtheme = () => {
                           <option className="text-dark" value="2">
                             2
                           </option>
-                   
+
                           <option className="text-dark" value="4">
                             4
                           </option>
@@ -503,7 +507,7 @@ const Addtheme = () => {
                         </Field>
                       </div>
 
-                    
+
                     </Card.Body>
                   </Card>
                 </Col>

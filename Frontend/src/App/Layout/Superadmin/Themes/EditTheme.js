@@ -38,7 +38,7 @@ const Edittheme = () => {
         window.location.href = "/superadmin/themes";
       } else {
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const GetTheme = async () => {
@@ -53,7 +53,7 @@ const Edittheme = () => {
           wrapperMode: response?.data?.WrapperColor?.includes("gradient"),
         }));
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
@@ -61,7 +61,11 @@ const Edittheme = () => {
   }, []);
 
   return (
-    <Contnet Page_title="Edit Theme" button_title="Back" button_status={false}>
+    <Contnet Page_title="Edit Theme"
+      button_title="Back"
+      button_status={false}
+      backForword={true}
+    >
       {initialValues && (
         <Container id="app" style={{ marginTop: "50px", color: "black" }}>
           <h2 className="my-4">Edit Theme</h2>
@@ -94,7 +98,7 @@ const Edittheme = () => {
                             <option className="text-dark" value="2">
                               2
                             </option>
-                          
+
                             <option className="text-dark" value="4">
                               4
                             </option>
