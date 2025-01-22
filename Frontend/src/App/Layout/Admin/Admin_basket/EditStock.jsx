@@ -6,11 +6,13 @@ import Swal from "sweetalert2";
 import { Tooltip } from 'antd';
 import axios from "axios";
 import * as Config from "../../../../Utils/config";
-
+import Content from "../../../components/Contents/Content";
 
 
 
 const EditStock = () => {
+
+
     const location = useLocation();
 
 
@@ -267,48 +269,12 @@ const EditStock = () => {
 
 
     return (
-
-        <div className="page-content">
-            <div className="row">
-                <div className="col-md-6">
-                    <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-                        <div className="breadcrumb-title pe-3">Edit Stock</div>
-                        <div className="ps-3">
-                            <nav aria-label="breadcrumb">
-                                <ol className="breadcrumb mb-0 p-0">
-                                    <li className="breadcrumb-item">
-                                        <Link to="/admin/dashboard">
-                                            <i className="bx bx-home-alt" />
-                                        </Link>
-                                    </li>
-                                </ol>
-                            </nav>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div className="col-md-6 d-flex justify-content-end">
-                    {/* <Link to={redirectTo}>
-                        <Tooltip title="Back">
-                            <i
-                                className="lni lni-arrow-left-circle"
-                                style={{ fontSize: "2rem", color: "#000" }}
-                            />
-                        </Tooltip>
-                    </Link> */}
-
-                    <div >
-                        <Tooltip title="Back" onClick={() => window.history.back()}>
-                            <i
-                                className="lni lni-arrow-left-circle"
-                                style={{ fontSize: "2rem", color: "#000" }}
-                            />
-                        </Tooltip>
-                    </div>
-                </div>
-            </div>
-            <hr />
+        <Content
+            Page_title="Edit Stock"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
 
             <div className="card">
 
@@ -411,7 +377,8 @@ const EditStock = () => {
 
                 </div>
             </div>
-        </div>
+
+        </Content>
     );
 };
 

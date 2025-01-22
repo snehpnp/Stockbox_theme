@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Updatebasket, Viewbasket } from '../../../Services/Admin/Admin';
 import { image_baseurl } from '../../../../Utils/config';
+import Content from '../../../components/Contents/Content';
 
 
 const Editbasket = () => {
@@ -19,7 +20,7 @@ const Editbasket = () => {
   const [data, setData] = useState("")
 
   const [loading, setLoading] = useState(false);
-  
+
 
 
   useEffect(() => {
@@ -31,8 +32,6 @@ const Editbasket = () => {
   const getbasketdetail = async () => {
     try {
       const response = await Viewbasket(id, token);
-      console.log("Viewbasket",response);
-      
       if (response.status) {
         setData(response.data);
 
@@ -345,7 +344,7 @@ const Editbasket = () => {
       image: true,
       imageWidth: "60px",
       imageHeight: "auto",
-      src: `${image_baseurl}/uploads/basket/${data.image}`, 
+      src: `${image_baseurl}/uploads/basket/${data.image}`,
       star: true
     },
     {
@@ -382,7 +381,13 @@ const Editbasket = () => {
 
 
   return (
-    <div style={{ marginTop: "100px" }}>
+    <Content
+      Page_title="Edit Basket"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
+
       <DynamicForm
         fields={fields}
         formik={formik}
@@ -395,7 +400,7 @@ const Editbasket = () => {
         additional_field={<></>}
 
       />
-    </div>
+    </Content>
   );
 };
 

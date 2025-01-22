@@ -8,6 +8,7 @@ import { Tooltip } from 'antd';
 import { SquarePen, Eye } from 'lucide-react';
 import { image_baseurl } from "../../../../Utils/config";
 import { Modal } from 'react-bootstrap';
+import Content from "../../../components/Contents/Content";
 
 
 
@@ -347,159 +348,153 @@ const Viewbasketdetail = () => {
 
 
   return (
-    <div className="page-content">
-      <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-        <div className="breadcrumb-title pe-3">View Basket</div>
-        <div className="ps-3">
-          <nav aria-label="breadcrumb">
-            <ol className="breadcrumb mb-0 p-0">
-              <li className="breadcrumb-item">
-                <Link to="/admin/dashboard"><i className="bx bx-home-alt" /></Link>
-              </li>
-            </ol>
-          </nav>
-        </div>
-      </div>
-      <hr />
-      <div className="card">
-        <div className="card-body">
-          <Formik
-            initialValues={initialValues}
-            validationSchema={validationSchema}
-            enableReinitialize
-          >
-            {({ values }) => (
-              <div>
-                <h4>Basket Details</h4>
-                <div className="row">
-                  {fieldConfigurations?.map((field) =>
-                    field.type !== "Stock" ? (
-                      <div key={field.name} className={`col-md-${field.col_size}`}>
-                        <label>{field.label}</label>
 
-                        {field.name === "description" || field.name === "rationale" || field.name === "methodology" ? (
-                          <div
-                            className="form-control basket_img"
-                            dangerouslySetInnerHTML={{
-                              __html: values[field.name] || "",
-                            }}
-                          />
-                        ) : field.name === "image" ? (
-                          <div className="mt-2">
-                            {values[field.name] ? (
-                              <>
-                                {/* <img
+    <Content
+      Page_title="View Basket"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
+      <>
+        <div className="card">
+          <div className="card-body">
+            <Formik
+              initialValues={initialValues}
+              validationSchema={validationSchema}
+              enableReinitialize
+            >
+              {({ values }) => (
+                <div>
+                  <h4>Basket Details</h4>
+                  <div className="row">
+                    {fieldConfigurations?.map((field) =>
+                      field.type !== "Stock" ? (
+                        <div key={field.name} className={`col-md-${field.col_size}`}>
+                          <label>{field.label}</label>
+
+                          {field.name === "description" || field.name === "rationale" || field.name === "methodology" ? (
+                            <div
+                              className="form-control basket_img"
+                              dangerouslySetInnerHTML={{
+                                __html: values[field.name] || "",
+                              }}
+                            />
+                          ) : field.name === "image" ? (
+                            <div className="mt-2">
+                              {values[field.name] ? (
+                                <>
+                                  {/* <img
                                   src={`${image_baseurl}/uploads/basket/${values[field.name]}`}
                                   alt="Basket"
                                   className="img-thumbnail"
                                   style={{ width: "100%", maxWidth: "300px", height: "100px" }}
                                 /> */}
-                                <div style={{display:'flex'}}>
-                                  <p>View image</p><Eye onClick={imageViewModel} />
-                                </div>
-                              </>
-                            ) : (
-                              <div>No Image Available</div>
-                            )}
-                            <Modal show={showModal} onHide={closeModal} centered>
-                              <Modal.Header closeButton>
-                                <Modal.Title>Image</Modal.Title>
-                              </Modal.Header>
-                              <Modal.Body>
-                                {values[field.name] ? (
-                                  <img
-                                    src={`${image_baseurl}/uploads/basket/${values[field.name]}`}
-                                    alt="Basket"
-                                    style={{ width: "100%" }}
-                                  />
-                                ) : (
-                                  <div>No Image Available</div>
-                                )}
-                              </Modal.Body>
-                            </Modal>
+                                  <div style={{ display: 'flex' }}>
+                                    <p>View image</p><Eye onClick={imageViewModel} />
+                                  </div>
+                                </>
+                              ) : (
+                                <div>No Image Available</div>
+                              )}
+                              <Modal show={showModal} onHide={closeModal} centered>
+                                <Modal.Header closeButton>
+                                  <Modal.Title>Image</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                  {values[field.name] ? (
+                                    <img
+                                      src={`${image_baseurl}/uploads/basket/${values[field.name]}`}
+                                      alt="Basket"
+                                      style={{ width: "100%" }}
+                                    />
+                                  ) : (
+                                    <div>No Image Available</div>
+                                  )}
+                                </Modal.Body>
+                              </Modal>
 
-                          </div>
-
-                        ) : (
-                          <input
-                            type={field.type}
-                            className="form-control"
-                            value={values[field.name] || ""}
-                            disabled
-                          />
-                        )}
-                      </div>
-                    ) : (
-                      <div key={field.name} className="col-md-12">
-                        {Object.keys(
-                          (Array.isArray(stockdata) ? stockdata : Object.values(stockdata)).reduce((acc, stock) => {
-                            if (!acc[stock.version]) {
-                              acc[stock.version] = [];
-                            }
-                            acc[stock.version].push(stock);
-                            return acc;
-                          }, {})
-                        ).map((version) => {
-                          const versionStocks = (Array.isArray(stockdata) ? stockdata : Object.values(stockdata)).filter(
-                            (stock) => stock.version === parseInt(version)
-                          );
-
-                          return (
-                            <div key={version}>
-                              <h5 className="mt-4 mb-3">Stock Details</h5>
-                              <div className="d-flex justify-content-between align-items-center">
-                                <h6>Version {version}</h6>
-                                {versionStocks[0].status === 0 ? (
-                                  <Tooltip title="Update All">
-                                    <SquarePen className="cursor-pointer" onClick={() => updateStock(versionStocks)} />
-                                  </Tooltip>
-                                ) : (
-                                  ""
-                                )}
-                              </div>
-                              <table className="table table-bordered">
-                                <thead>
-                                  <tr>
-                                    <th>Stock Name</th>
-                                    <th>Weightage</th>
-                                    <th>Price</th>
-                                    <th>Type</th>
-                                    <th>Quantity</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {versionStocks.map((stock, index) => (
-                                    <tr key={index}>
-                                      <td>{stock?.name}</td>
-                                      <td>{stock?.weightage}</td>
-                                      <td>{stock?.price}</td>
-                                      <td>{stock?.type}</td>
-                                      <td>{stock?.quantity}</td>
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
                             </div>
-                          );
-                        })}
-                      </div>
-                    )
-                  )}
 
-                </div>
-                <div className="mt-3">
-                  <Link to={redirectTo} className="btn btn-secondary">
-                    Back
-                  </Link>
-                </div>
-              </div>
-            )}
-          </Formik>
+                          ) : (
+                            <input
+                              type={field.type}
+                              className="form-control"
+                              value={values[field.name] || ""}
+                              disabled
+                            />
+                          )}
+                        </div>
+                      ) : (
+                        <div key={field.name} className="col-md-12">
+                          {Object.keys(
+                            (Array.isArray(stockdata) ? stockdata : Object.values(stockdata)).reduce((acc, stock) => {
+                              if (!acc[stock.version]) {
+                                acc[stock.version] = [];
+                              }
+                              acc[stock.version].push(stock);
+                              return acc;
+                            }, {})
+                          ).map((version) => {
+                            const versionStocks = (Array.isArray(stockdata) ? stockdata : Object.values(stockdata)).filter(
+                              (stock) => stock.version === parseInt(version)
+                            );
 
+                            return (
+                              <div key={version}>
+                                <h5 className="mt-4 mb-3">Stock Details</h5>
+                                <div className="d-flex justify-content-between align-items-center">
+                                  <h6>Version {version}</h6>
+                                  {versionStocks[0].status === 0 ? (
+                                    <Tooltip title="Update All">
+                                      <SquarePen className="cursor-pointer" onClick={() => updateStock(versionStocks)} />
+                                    </Tooltip>
+                                  ) : (
+                                    ""
+                                  )}
+                                </div>
+                                <table className="table table-bordered">
+                                  <thead>
+                                    <tr>
+                                      <th>Stock Name</th>
+                                      <th>Weightage</th>
+                                      <th>Price</th>
+                                      <th>Type</th>
+                                      <th>Quantity</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {versionStocks.map((stock, index) => (
+                                      <tr key={index}>
+                                        <td>{stock?.name}</td>
+                                        <td>{stock?.weightage}</td>
+                                        <td>{stock?.price}</td>
+                                        <td>{stock?.type}</td>
+                                        <td>{stock?.quantity}</td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )
+                    )}
+
+                  </div>
+                  <div className="mt-3">
+                    <Link to={redirectTo} className="btn btn-secondary">
+                      Back
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </Formik>
+
+          </div>
         </div>
-      </div>
-
-    </div>
+      </>
+    </Content>
   );
 };
 

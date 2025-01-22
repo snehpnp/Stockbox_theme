@@ -376,7 +376,7 @@ const Plan = () => {
                                                                     <Link to={`editplan/${client._id}`} className="btnprime btn btn-secondary ms-2" style={{ color: 'inherit', textDecoration: 'none' }}>
                                                                         Edit
                                                                     </Link>
-                                                                // </div> */} 
+                                                                // </div> */}
 
                                                                 {/* end code */}
 
@@ -446,7 +446,7 @@ const Plan = () => {
 
                                                                     <Link
                                                                         to={`editplan/${client._id}`}
-                                                                        className="btnprime btn btn-secondary ms-2"
+                                                                        className="btnsecond btn btn-primary w-50"
                                                                         style={{ color: 'inherit', textDecoration: 'none' }}
                                                                     >
                                                                         Edit

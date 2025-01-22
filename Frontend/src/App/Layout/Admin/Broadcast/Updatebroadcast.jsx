@@ -4,6 +4,7 @@ import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SendBroadCast, GetService, UpdateCastmessage } from '../../../Services/Admin/Admin';
+import Content from '../../../components/Contents/Content';
 
 const Updatebroadcast = () => {
     const location = useLocation();
@@ -137,7 +138,12 @@ const Updatebroadcast = () => {
     ];
 
     return (
-        <div style={{ marginTop: "100px" }}>
+        <Content
+            Page_title="Update Broadcast"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
             {servicedata && servicedata.length > 0 && (
                 <DynamicForm
                     fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
@@ -150,7 +156,7 @@ const Updatebroadcast = () => {
                     additional_field={<></>}
                 />
             )}
-        </div>
+        </Content>
     );
 };
 

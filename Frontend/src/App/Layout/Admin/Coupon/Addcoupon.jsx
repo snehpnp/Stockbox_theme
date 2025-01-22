@@ -4,6 +4,7 @@ import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { Addcouponbyadmin, GetService } from '../../../Services/Admin/Admin';
+import Content from '../../../components/Contents/Content';
 
 
 const Addcoupon = () => {
@@ -306,7 +307,12 @@ const Addcoupon = () => {
 
 
     return (
-        <div style={{ marginTop: "100px" }}>
+        <Content
+            Page_title="Add Coupon Code"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
             <DynamicForm
                 fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
                 formik={formik}
@@ -318,7 +324,7 @@ const Addcoupon = () => {
                 additional_field={<></>}
 
             />
-        </div>
+        </Content>
     );
 };
 

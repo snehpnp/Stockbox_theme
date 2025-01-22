@@ -25,6 +25,12 @@ const Admin = [
     name: "FreeTrialClient"
   },
   {
+    label: "Employee",
+    icon: "UserPen",
+    link: "/admin/staff",
+    name: "Employee"
+  },
+  {
     label: "Plan",
     icon: "Rocket",
     children: [

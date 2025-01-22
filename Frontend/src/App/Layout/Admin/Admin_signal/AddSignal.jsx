@@ -4,6 +4,7 @@ import DynamicForm from '../../../Extracomponents/FormicForm';
 import { AddSignalByAdmin, GetService, getstockbyservice, getexpirydate, getstockStrickprice } from '../../../Services/Admin/Admin';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import Content from '../../../components/Contents/Content';
 
 
 
@@ -92,7 +93,7 @@ const AddSignal = () => {
         if (values.tag3 && values.tag2 && values.tag2 > values.tag3) {
           errors.tag3 = "Please Enter Greater Than Target2";
         }
-        
+
         if (values.stoploss && values.price < values.stoploss) {
           errors.stoploss = "Please Enter Less Than Entry Price";
         }
@@ -461,7 +462,7 @@ const AddSignal = () => {
       type: 'number',
       label_size: 12,
       col_size: 3,
-      star:true,
+      star: true,
     },
     {
       name: 'report',
@@ -505,7 +506,12 @@ const AddSignal = () => {
 
 
   return (
-    <div style={{ marginTop: '100px' }}>
+    <Content
+      Page_title="Add Signal"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
       <DynamicForm
         fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
         page_title="Add Signal"
@@ -565,7 +571,7 @@ const AddSignal = () => {
           </div>
         }
       />
-    </div>
+    </Content>
   );
 };
 

@@ -14,7 +14,7 @@ import { fDateTime } from "../../../../Utils/Date_formate";
 import { image_baseurl } from "../../../../Utils/config";
 import { Tooltip } from "antd";
 import Loader from "../../../../Utils/Loader";
-import ReusableModal from "../../../components/Models/ReusableModal"; 
+import ReusableModal from "../../../components/Models/ReusableModal";
 
 const Banner = () => {
   const navigate = useNavigate();
@@ -372,7 +372,6 @@ const Banner = () => {
                   Add Banner
                 </button>
 
-                {/* ADD BANNER */}
                 <ReusableModal
                   show={showModal}
                   onClose={() => setShowModal(false)}
@@ -435,7 +434,7 @@ const Banner = () => {
                   }
                 />
 
-                {/* UPDATE BANNER */}
+
                 <ReusableModal
                   show={model}
                   onClose={() => setModel(false)}
@@ -515,7 +514,7 @@ const Banner = () => {
                     </>
                   }
                 />
-                
+
               </div>
             </div>
             {isLoading ? (

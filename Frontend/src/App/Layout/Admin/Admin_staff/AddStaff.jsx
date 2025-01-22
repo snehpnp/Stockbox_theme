@@ -172,12 +172,12 @@ const AddStaff = () => {
     <div style={{ marginTop: "100px" }}>
       <DynamicForm
         fields={fields}
-        page_title="Add New Staff"
-        btn_name="Add Staff"
+        page_title="Add New Employee"
+        btn_name="Add Employee"
         btn_name1="Cancel"
         formik={formik}
         sumit_btn={true}
-        btn_name1_route={"/admin/employee"}
+        btn_name1_route={"/admin/staff"}
         additional_field={<></>}
       />
     </div>

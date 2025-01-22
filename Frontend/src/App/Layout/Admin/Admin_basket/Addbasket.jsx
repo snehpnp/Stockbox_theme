@@ -4,6 +4,7 @@ import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { Addbasketplan } from '../../../Services/Admin/Admin';
+import Content from '../../../components/Contents/Content';
 
 
 const AddBasket = () => {
@@ -334,7 +335,13 @@ const AddBasket = () => {
 
 
   return (
-    <div style={{ marginTop: "100px" }}>
+    <Content
+      Page_title="Add Basket"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
+
       <DynamicForm
         fields={fields}
         formik={formik}
@@ -347,7 +354,8 @@ const AddBasket = () => {
         additional_field={<></>}
 
       />
-    </div>
+
+    </Content>
   );
 };
 
