@@ -9,6 +9,7 @@ import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { getstaffperuser } from '../../../Services/Admin/Admin';
 import Loader from '../../../../Utils/Loader';
+import ReusableModal from '../../../components/Models/ReusableModal';
 
 
 const Banner = () => {
@@ -25,6 +26,9 @@ const Banner = () => {
 
     //state for loading
     const [isLoading, setIsLoading] = useState(true)
+
+    const [showModal, setShowModal] = useState(false);
+    
 
     const [isAddSubmittion, setIsAddSubmittion] = useState(false);
 
@@ -421,91 +425,164 @@ const Banner = () => {
                                     <i className="bx bx-search" />
                                 </span>
                             </div> */}
-                            {permission.includes("addbanner") ? <div className="ms-auto">
-                                <button
+                            {permission.includes("addbanner") ? 
+                            <div className="ms-auto">
+                            <button
+                              type="button"
+                              className="btn btn-primary"
+                              onClick={(e) => {
+                                setShowModal(true);
+                              }}
+                            >
+                              <i className="bx bxs-plus-square" />
+                              Add Banner
+                            </button>
+            
+                            {/* ADD BANNER */}
+                            <ReusableModal
+                              show={showModal}
+                              onClose={() => setShowModal(false)}
+                              title={<>Add Banner</>}
+                              body={
+                                <>
+                                  <div className="">
+                                    <div className="col-md-12">
+                                      <label htmlFor="imageUpload">Upload Image</label>
+                                      <span className="text-danger">*</span>
+                                      <input
+                                        ref={fileInputRef}
+                                        className="form-control mb-3"
+                                        type="file"
+                                        accept="image/*"
+                                        id="imageUpload"
+                                        onChange={(e) =>
+                                          setTitle({
+                                            ...title,
+                                            image: e.target.files[0],
+                                          })
+                                        }
+                                      />
+                                    </div>
+                                    <div className="col-md-12">
+                                      <label htmlFor="hyperlink">HyperLink</label>
+                                      <input
+                                        className="form-control mb-2"
+                                        type="text"
+                                        id="hyperlink"
+                                        placeholder="Enter link"
+                                        value={title.hyperlink}
+                                        onChange={(e) =>
+                                          setTitle({
+                                            ...title,
+                                            hyperlink: e.target.value,
+                                          })
+                                        }
+                                      />
+                                    </div>
+                                  </div>
+                                </>
+                              }
+                              footer={
+                                <>
+                                  <button
                                     type="button"
                                     className="btn btn-primary"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal"
-                                >
-                                    <i className="bx bxs-plus-square" />
-                                    Add Banner
-                                </button>
-
-                                <div
-                                    className="modal fade"
-                                    id="exampleModal"
-                                    tabIndex={-1}
-                                    aria-labelledby="exampleModalLabel"
-                                    aria-hidden="true"
-                                >
-                                    <div className="modal-dialog">
-                                        <div className="modal-content">
-                                            <div className="modal-header">
-                                                <h5 className="modal-title" id="exampleModalLabel">
-                                                    Add Banner
-                                                </h5>
-                                                <button
-                                                    type="button"
-                                                    className="btn-close"
-                                                    data-bs-dismiss="modal"
-                                                    aria-label="Close"
-                                                />
-                                            </div>
-                                            <div className="modal-body">
-                                                <form>
-                                                    <div className="row">
-                                                        <div className="col-md-12">
-                                                            <label htmlFor="imageUpload">Upload Image</label>
-                                                            <span className="text-danger">*</span>
-                                                            <input
-                                                                ref={fileInputRef}
-                                                                className="form-control mb-3"
-                                                                type="file"
-                                                                accept="image/*"
-                                                                id="imageUpload"
-                                                                onChange={(e) => setTitle({ ...title, image: e.target.files[0] })}
-                                                            />
-                                                        </div>
-                                                        <div className="col-md-12">
-                                                            <label htmlFor="hyperlink">HyperLink</label>
-                                                            <input
-                                                                className="form-control mb-2"
-                                                                type="text"
-                                                                id="hyperlink"
-                                                                placeholder="Enter link"
-                                                                value={title.hyperlink}
-                                                                onChange={(e) => setTitle({ ...title, hyperlink: e.target.value })}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div className="modal-footer">
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-secondary"
-                                                    data-bs-dismiss="modal"
-                                                >
-                                                    Close
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-primary"
-                                                    onClick={AddBanner}
-                                                    disabled={isAddSubmittion} // Disable button during submission
-                                                >
-                                                    {isAddSubmittion ? "Adding..." : "Add Banner"}
-                                                </button>
-                                            </div>
-                                        </div>
+                                    onClick={AddBanner}
+                                  >
+                                    Save
+                                  </button>
+                                  <button
+                                    className="btn btn-primary rounded-1"
+                                    onClick={() => setShowModal(false)}
+                                  >
+                                    Cancel
+                                  </button>
+                                </>
+                              }
+                            />
+            
+                            {/* UPDATE BANNER */}
+                            <ReusableModal
+                              show={model}
+                              onClose={() => setModel(false)}
+                              title={<> Update Banner</>}
+                              body={
+                                <>
+                                  <div className="row">
+                                    <div className="col-md-12">
+                                      <label htmlFor="imageUpload">Image</label>
+                                      <span className="text-danger">*</span>
+                                      <input
+                                        className="form-control mb-3"
+                                        type="file"
+                                        accept="image/*"
+                                        id="imageUpload"
+                                        onChange={(e) => {
+                                          const file = e.target.files[0];
+                                          if (file) {
+                                            updateServiceTitle({ image: file });
+                                          }
+                                        }}
+                                      />
                                     </div>
-                                </div>
-
-
-
-
-                            </div> : ""}
+                                    <div className="col-md-2">
+                                      {updatetitle.image && (
+                                        <div className="file-preview">
+                                          <img
+                                            src={
+                                              typeof updatetitle.image === "string"
+                                                ? `${image_baseurl}uploads/banner/${updatetitle.image}`
+                                                : URL.createObjectURL(updatetitle.image)
+                                            }
+                                            alt="Image Preview"
+                                            className="image-preview mt-4"
+                                            style={{
+                                              width: "68px",
+                                              height: "auto",
+                                            }}
+                                          />
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div className="row">
+                                    <div className="col-md-12">
+                                      <label htmlFor="hyperlink">HyperLink</label>
+                                      <input
+                                        className="form-control mb-2"
+                                        type="text"
+                                        placeholder="Enter blog Title"
+                                        value={updatetitle.hyperlink}
+                                        onChange={(e) =>
+                                          updateServiceTitle({
+                                            hyperlink: e.target.value,
+                                          })
+                                        }
+                                      />
+                                    </div>
+                                  </div>
+                                </>
+                              }
+                              footer={
+                                <>
+                                  <button
+                                    type="button"
+                                    className="btn btn-primary"
+                                    onClick={updatebanner}
+                                  >
+                                    Save
+                                  </button>
+                                  <button
+                                    className="btn btn-primary rounded-1"
+                                    onClick={() => setModel(false)}
+                                  >
+                                    Cancel
+                                  </button>
+                                </>
+                              }
+                            />
+                            
+                          </div> : ""}
                         </div>
 
                         {isLoading ? (
@@ -527,7 +604,7 @@ const Banner = () => {
                     </div>
                 </div>
             </div>
-            {model && (
+            {/* {model && (
                 <>
                     <div className="modal-backdrop fade show"></div>
                     <div
@@ -623,7 +700,7 @@ const Banner = () => {
                         </div>
                     </div>
                 </>
-            )}
+            )} */}
         </div>
     );
 };

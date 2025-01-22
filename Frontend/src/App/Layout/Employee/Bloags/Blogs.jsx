@@ -184,7 +184,7 @@ const Blogs = () => {
 
 
     const viewDetails = async (row) => {
-        navigate("/employee/viewblog/", { state: { row } })
+        navigate("/employee/viewblog", { state: { row } })
     }
 
 

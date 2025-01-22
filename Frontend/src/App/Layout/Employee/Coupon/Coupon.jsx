@@ -10,6 +10,7 @@ import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDate, fDateTime } from '../../../../Utils/Date_formate';
 import Loader from '../../../../Utils/Loader';
+import ReusableModal from '../../../components/Models/ReusableModal';
 
 
 
@@ -34,6 +35,9 @@ const Coupon = () => {
 
     //state for loading
     const [isLoading, setIsLoading] = useState(true)
+
+    const [showModal, setShowModal] = useState(false);
+    
 
 
     const getcoupon = async () => {
@@ -418,9 +422,8 @@ const Coupon = () => {
                                     <Tooltip placement="top" overlay="View">
                                         <Eye
                                             style={{ marginRight: "10px" }}
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#example2"
-                                            onClick={() => setViewpage(row)}
+                                            
+                                            onClick={() => {setShowModal(true);setViewpage(row)}}
                                         />
                                     </Tooltip>
                                 </div> : ""}
@@ -510,7 +513,7 @@ const Coupon = () => {
                         />
                     </>
                 )}
-                <div className="button-group">
+                {/* <div className="button-group">
 
                     <div
                         className="modal fade"
@@ -585,7 +588,7 @@ const Coupon = () => {
                                                 </div>
                                             </div>
                                         </li> */}
-                                        <li>
+                                        {/* <li>
                                             <div className="row justify-content-between">
                                                 <div className="col-md-8">
                                                     {viewpage?.startdate ? (
@@ -608,7 +611,7 @@ const Coupon = () => {
                                                 </div>
                                                 <div className="col-md-6"></div>
                                             </div>
-                                        </li>
+                                        </li> */}
 
                                         {/* <li>
                                             <div className="row justify-content-between">
@@ -621,13 +624,88 @@ const Coupon = () => {
                                             </div>
                                         </li> */}
 
-                                    </ul>
+                                    {/* </ul>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
 
-                </div>
+                {/* </div>  */}
+
+                <ReusableModal
+                    show={showModal}
+                    onClose={() => setShowModal(false)}
+                    title={<>
+                        Coupon Details
+                    </>}
+                    body={
+                        <>
+                            <ul>
+                                <li>
+                                    <div className="row justify-content-between">
+                                        <div className="col-md-6">
+                                            <b>Name : {viewpage?.name}</b>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div className="row justify-content-between">
+                                        <div className="col-md-6">
+                                            <b>Code : {viewpage?.code}</b>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div className="row justify-content-between">
+                                        <div className="col-md-6">
+                                            <b>Min Purchase Value : {viewpage?.minpurchasevalue}</b>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div className="row justify-content-between">
+                                        <div className="col-md-6">
+                                            <b>Max Discount Value : {viewpage?.mincouponvalue}</b>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div className="row justify-content-between">
+                                        <div className="col-md-6">
+                                            {viewpage?.startdate ? (
+                                                <b>Start Date: {fDateTime(viewpage.startdate)}</b>
+                                            ) : (
+                                                <b>Start Date: Not available</b>
+                                            )}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div className="row justify-content-between">
+                                        <div className="col-md-6">
+                                            {viewpage?.enddate ? (
+                                                <b>End Date: {fDateTime(viewpage.enddate)}</b>
+                                            ) : (
+                                                <b>End Date: Not available</b>
+                                            )}
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </>
+                    }
+                    footer={
+                        <>
+                            <button
+                                type="button"
+                                className="btn btn-primary"
+                                onClick={() => setShowModal(false)}
+                            >
+                                Close
+                            </button>
+                        </>
+                    }
+                />;
             </div>
         </div>
     );

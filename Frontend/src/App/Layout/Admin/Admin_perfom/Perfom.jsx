@@ -29,6 +29,8 @@ const Perform = () => {
     //state for loading
     const [isLoading, setIsLoading] = useState(true)
 
+    const [model, setModel] = useState(false)
+
 
 
     useEffect(() => {
