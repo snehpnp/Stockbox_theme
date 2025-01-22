@@ -19,6 +19,8 @@ const Service = () => {
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
+  const applyButtonRef = useRef(null);
+
 
   const [selectedPlan, setSelectedPlan] = useState("all");
   const [category, setCategory] = useState([]);
@@ -44,6 +46,9 @@ const Service = () => {
   const handleCouponSelect = (coupon) => {
     setManualCoupon(coupon?.code);
     setCouponData(coupon);
+    if (applyButtonRef.current) {
+      applyButtonRef.current.focus();
+    }
 
 
   };
@@ -397,6 +402,7 @@ const Service = () => {
                         />
                         {manualCoupon && (
                           <button
+                            ref={applyButtonRef}
                             className="btn btn-primary"
                             onClick={() => applyCoupon({ code: manualCoupon })}
                           >

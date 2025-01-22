@@ -71,7 +71,7 @@ export async function getFaq(token) {
 
 
 
-export async function getMySubscription(token, id) {
+export async function getMySubscription(id, token) {
     try {
         const res = await axios.get(`${Config.base_url}api/list/myplan/${id}`, {
             headers: {
