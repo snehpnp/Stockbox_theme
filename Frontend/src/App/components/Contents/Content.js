@@ -5,6 +5,7 @@ import { House, ChevronRight } from "lucide-react";
 const Content = ({
   Page_title,
   button_title,
+  backForword,
   Page_title_showClient,
   backbutton_title,
   button_status,
@@ -16,13 +17,13 @@ const Content = ({
   const navigate = useNavigate();
 
   const handleHomeClick = () => {
-    navigate("/"); 
+    navigate("/");
   };
 
   const handleBackClick = () => {
     if (backbutton_title === "Back") {
-      window.history.back(); 
-    } 
+      window.history.back();
+    }
   };
   return (
     <div className="content-body">
@@ -41,13 +42,14 @@ const Content = ({
                 </li>
                 <li>
                   <div className="breadcrumb-box">
-                    <h6 className="heading-color mb-0 breadcrumb-text">{Page_title}</h6>
+                    <h6 className="heading-color mb-0 breadcrumb-text">
+                      {Page_title}
+                    </h6>
                   </div>
                 </li>
               </ul>
             </div>
             <div className="col-lg-6">
-              {/* Back button */}
               {backbutton_status && backbutton_title && (
                 <button
                   onClick={handleBackClick} // Handle back button click
@@ -76,6 +78,14 @@ const Content = ({
                   ></i>{" "}
                   {button_title}
                 </Link>
+              )}
+              {backForword && (
+                <button
+                  onClick={() => window.history.back()} // Handle back button click
+                  className="btn btn-primary float-lg-end ms-3"
+                >
+                  <i className={`fa-solid fa-arrow-left`}></i> Back
+                </button>
               )}
             </div>
           </nav>

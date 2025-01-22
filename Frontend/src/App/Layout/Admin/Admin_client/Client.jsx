@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { GetClient } from "../../../Services/Admin/Admin";
+import ReusableModal from "../../../components/Models/ReusableModal";
 // import Table from '../../../components/Table';
 import {
   Settings2,
@@ -767,8 +767,6 @@ const Client = () => {
                 </div>
               </div>
 
-         
-
               {clients ? (
                 <Table
                   columns={columns}
@@ -785,7 +783,7 @@ const Client = () => {
         </div>
       </div>
 
-      {isModalVisible && (
+      {/* {isModalVisible && (
         <>
           <div className="modal-backdrop fade show"></div>
           <div
@@ -1159,7 +1157,362 @@ const Client = () => {
             </div>
           </div>
         </>
-      )}
+      )} */}
+
+      {/* ADD BANNER */}
+      <ReusableModal
+        show={isModalVisible}
+        onClose={() => handleCancel()}
+        title={<> Assign Package</>}
+        size="xl"
+        body={
+          <>
+            <div className="card">
+              <div className="d-flex justify-content-center align-items-center card-body">
+                {["Plan", "Basket"].map((tab, index) => (
+                  <label key={index} className="labelfont mx-3">
+                    <input
+                      style={{ marginLeft: "12px" }}
+                      type="radio"
+                      name="tab"
+                      checked={checkedIndex === index}
+                      onChange={() => handleTabChange(index)}
+                      aria-label={`Select ${tab}`}
+                    />
+                    <span className="ps-2 text-secondary">{tab}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="card">
+              {checkedIndex === 0 && (
+                <>
+                  <div className="row my-3">
+                    {category &&
+                      category
+                        .filter((cat) =>
+                          planlist.some((plan) => plan.category._id === cat._id)
+                        )
+                        .map((item, index) => (
+                          <div className="col-lg-4 mb-3" key={index}>
+                            <input
+                              style={{
+                                border: "1px solid #ddd",
+                                margin: "0 8px",
+                              }}
+                              className="form-check-input"
+                              type="radio"
+                              name="planSelection"
+                              id={`proplus-${index}`}
+                              onClick={() => handleCategoryChange(item._id)}
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor={`proplus-${index}`}
+                              style={{
+                                fontSize: "14px",
+                                fontWeight: "600",
+                                color: "#333",
+                              }}
+                            >
+                              {item.title} (
+                              {item.servicesDetails
+                                .map((service) => service.title)
+                                .join(", ")}
+                              )
+                            </label>
+                          </div>
+                        ))}
+                  </div>
+
+                  {selectcategory && (
+                    <form
+                      className="card-body my-3"
+                      style={{ height: "40vh", overflowY: "scroll" }}
+                    >
+                      <div className="row">
+                        {planlist
+                          .filter(
+                            (item) => item.category._id === selectcategory
+                          )
+                          .map((item, index) => (
+                            <div className="col-md-6 mb-3" key={index}>
+                              <div className="card mb-0 shadow-sm">
+                                <div className="card-body p-2">
+                                  <h5 className="card-title d-flex align-items-center">
+                                    <input
+                                      style={{
+                                        height: "13px",
+                                        width: "13px",
+                                        marginTop: "0.52rem",
+                                        border: "1px solid #ddd",
+                                      }}
+                                      className="form-check-input"
+                                      type="radio"
+                                      name="planSelection"
+                                      id={`input-plan-${index}`}
+                                      checked={selectedPlanId === item._id}
+                                      onClick={() => {
+                                        setSelectedPlanId(item._id);
+                                        setUpdatetitle({
+                                          plan_id: item._id,
+                                          price: item.price,
+                                        });
+                                      }}
+                                    />
+                                    <label
+                                      className="form-check-label mx-2"
+                                      style={{
+                                        fontSize: "14px",
+                                        fontWeight: "700",
+                                        color: "#333",
+                                      }}
+                                      htmlFor={`input-plan-${index}`}
+                                    >
+                                      {item.validity}
+                                    </label>
+                                  </h5>
+
+                                  <div
+                                    className="accordion"
+                                    id={`accordion-${selectcategory}`}
+                                  >
+                                    <div className="accordion-item">
+                                      <h2
+                                        className="accordion-header"
+                                        id={`heading-${item._id}`}
+                                      >
+                                        <button
+                                          className={`accordion-button ${
+                                            selectedPlanId === item._id
+                                              ? ""
+                                              : "collapsed"
+                                          } custom-accordion-button`}
+                                          type="button"
+                                          data-bs-toggle="collapse"
+                                          data-bs-target={`#collapse-${item._id}`}
+                                          aria-expanded={
+                                            selectedPlanId === item._id
+                                          }
+                                          aria-controls={`collapse-${item._id}`}
+                                        >
+                                          <div className="d-flex justify-content-between w-100">
+                                            <div>
+                                              <strong className="text-secondary m-2">
+                                                Detail
+                                              </strong>
+                                              <strong className="text-success m-2 activestrong">
+                                                {item?.subscription?.status ===
+                                                "active"
+                                                  ? "Active"
+                                                  : ""}
+                                              </strong>
+                                            </div>
+                                          </div>
+                                        </button>
+                                      </h2>
+                                      <div
+                                        id={`collapse-${item._id}`}
+                                        className={`accordion-collapse collapse ${
+                                          selectedPlanId === item._id
+                                            ? "show"
+                                            : ""
+                                        }`}
+                                        aria-labelledby={`heading-${item._id}`}
+                                        data-bs-parent={`#accordion-${selectcategory}`}
+                                      >
+                                        <div className="accordion-body">
+                                          <div className="d-flex justify-content-between">
+                                            <strong>Price:</strong>
+                                            <span>
+                                              <IndianRupee /> {item.price}
+                                            </span>
+                                          </div>
+                                          <div className="d-flex justify-content-between">
+                                            <strong>Validity:</strong>
+                                            <span>{item.validity}</span>
+                                          </div>
+                                          <div className="d-flex justify-content-between">
+                                            <strong>Created At:</strong>
+                                            <span>
+                                              {fDateTime(item.created_at)}
+                                            </span>
+                                          </div>
+                                          <div className="d-flex justify-content-between">
+                                            <strong>Updated At:</strong>
+                                            <span>
+                                              {fDateTime(item.updated_at)}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </form>
+                  )}
+                </>
+              )}
+
+              {checkedIndex === 1 && (
+                <>
+                  <div
+                    className="card-body my-3"
+                    style={{ height: "40vh", overflowY: "scroll" }}
+                  >
+                    <div className="row">
+                      {getBasket.map((item, index) => (
+                        <div className="col-md-6 mb-3" key={index}>
+                          <div className="card mb-0 shadow-sm">
+                            <div className="card-body p-2">
+                              <h5 className="card-title d-flex align-items-center">
+                                <input
+                                  style={{
+                                    height: "13px",
+                                    width: "13px",
+                                    marginTop: "0.52rem",
+                                    border: "1px solid #ddd",
+                                  }}
+                                  className="form-check-input"
+                                  type="radio"
+                                  name="planSelection"
+                                  id={`input-plan-${index}`}
+                                  checked={selectedPlanId === item._id}
+                                  onClick={() => {
+                                    setSelectedPlanId(item._id);
+                                    setBasketdetail({
+                                      basket_id: item._id,
+                                      price: item.basket_price,
+                                    });
+                                  }}
+                                />
+                                <label
+                                  className="form-check-label mx-2"
+                                  style={{
+                                    fontSize: "14px",
+                                    fontWeight: "700",
+                                    color: "#333",
+                                  }}
+                                  htmlFor={`input-plan-${index}`}
+                                >
+                                  {item.validity}
+                                </label>
+                              </h5>
+
+                              <div
+                                className="accordion"
+                                id={`accordion-basket`}
+                              >
+                                <div className="accordion-item">
+                                  <h2
+                                    className="accordion-header"
+                                    id={`heading-${item._id}`}
+                                  >
+                                    <button
+                                      className={`accordion-button ${
+                                        selectedPlanId === item._id
+                                          ? ""
+                                          : "collapsed"
+                                      } custom-accordion-button`}
+                                      type="button"
+                                      data-bs-toggle="collapse"
+                                      data-bs-target={`#collapse-${item._id}`}
+                                      aria-expanded={
+                                        selectedPlanId === item._id
+                                      }
+                                      aria-controls={`collapse-${item._id}`}
+                                    >
+                                      <div className="d-flex justify-content-between w-100">
+                                        <div>
+                                          <strong className="text-secondary m-2">
+                                            Detail
+                                          </strong>
+                                          <strong className="text-success m-2 activestrong">
+                                            {item?.subscription?.status ===
+                                            "active"
+                                              ? "Active"
+                                              : ""}
+                                          </strong>
+                                        </div>
+                                      </div>
+                                    </button>
+                                  </h2>
+                                  <div
+                                    id={`collapse-${item._id}`}
+                                    className={`accordion-collapse collapse ${
+                                      selectedPlanId === item._id ? "show" : ""
+                                    }`}
+                                    aria-labelledby={`heading-${item._id}`}
+                                    data-bs-parent={`#accordion-basket`}
+                                  >
+                                    <div className="accordion-body">
+                                      <div className="d-flex justify-content-between">
+                                        <strong>Price:</strong>
+                                        <span>
+                                          <IndianRupee /> {item.basket_price}
+                                        </span>
+                                      </div>
+                                      <div className="d-flex justify-content-between">
+                                        <strong>Validity:</strong>
+                                        <span>{item.validity}</span>
+                                      </div>
+                                      <div className="d-flex justify-content-between">
+                                        <strong>
+                                          Minimum Investment Amount:
+                                        </strong>
+                                        <span>
+                                          <IndianRupee /> {item?.mininvamount}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </>
+        }
+        footer={
+          <>
+            <button
+              className="btn btn-primary rounded-1"
+              onClick={() => handleCancel()}
+            >
+              Cancel
+            </button>
+            {checkedIndex === 0 && (
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => Updateplansubscription()}
+              >
+                Save Plan
+              </button>
+            )}
+            {checkedIndex === 1 && (
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => UpdateBasketservice()}
+              >
+                Save Plan
+              </button>
+            )}
+          </>
+        }
+      />
     </div>
   );
 };
