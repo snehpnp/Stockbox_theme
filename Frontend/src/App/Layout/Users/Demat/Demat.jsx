@@ -93,7 +93,7 @@ let fieldtype =[
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb mb-0 p-0">
                                 <li className="breadcrumb-item">
-                                    <Link href="/client/dashboard">
+                                    <Link href="/user/dashboard">
                                         <i className="bx bx-home-alt" />
                                     </Link>
                                 </li>

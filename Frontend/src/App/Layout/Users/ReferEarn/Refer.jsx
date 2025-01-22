@@ -198,7 +198,7 @@ const Refer = () => {
                   {" "}
                   Withdrawal
                 </button>
-                <Link to="/client/viewwithdrawal" className="card-link">
+                <Link to="/user/viewwithdrawal" className="card-link">
                   {" "}
                   <ins>View History </ins>
                 </Link>

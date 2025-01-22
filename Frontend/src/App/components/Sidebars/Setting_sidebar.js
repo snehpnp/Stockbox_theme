@@ -13,25 +13,34 @@ export default function Setting_sidebar() {
   });
 
   const [initialValues, setInitialValues] = useState({
-    sidebarColor: "#ffffff",
+    sidebarColor: "linear-gradient(to right, #1a053e, #623256)",
     navbarColor: "#ffffff",
-    fontColor: "#ffffff",
-    sidebarGradientStart: "#ffffff",
-    sidebarGradientEnd: "#000000",
-    navbarGradientStart: "#ffffff",
-    navbarGradientEnd: "#000000",
+    fontColor: "#000000",
+    sidebarGradientStart: "#1a053e",
+    sidebarGradientEnd: "#623256",
+    navbarGradientStart: "#4dfee9",
+    navbarGradientEnd: "#fffafa",
     fontGradientStart: "#ffffff",
     fontGradientEnd: "#000000",
-    sidebarPosition: "Header",
+    sidebarPosition: "Sidebar",
     fontFamily: "Arial",
     navbarPosition: "Header",
     themeId: "1",
     sidebarName: "1",
-    HeadingColor: "#ffffff",
-    WrapperColor: "#ffffff",
-    headSidebarFontCol: "#ffffff",
-    headSidebarFontActiveCol: "#ffffff",
-    tabelheadbgcolor: "#f1f1f1",
+    HeadingColor: "#000000",
+    headSidebarFontCol: "#fef1f1",
+    headSidebarFontActiveCol: "#887c7c",
+    WrapperColor: "#edf7f6",
+    tabelheadbgcolor: "#c5c4c4",
+    wrapperMode: "false",
+    BtnSecBgCol: "#ffffff",
+    BtnSecTxtCol: "#0d6efd",
+    BtnSecBorderColor: "#0d6efd",
+    BtnPriBgCol: "#0d6efd",
+    BtnPriTxtCol: "#ffffff",
+    BtnBorderColor: "#0d6efd",
+    wrapperGradientEnd: "#fafafa",
+    wrapperGradientStart: "#13fbe0",
   });
 
   const [isOpen, setIsOpen] = useState(false);
@@ -64,34 +73,35 @@ export default function Setting_sidebar() {
     });
 
     setInitialValues({
-      sidebarColor: theme.sidebarColor || "#ffffff",
+      sidebarColor:
+        theme.sidebarColor || "linear-gradient(to right, #1a053e, #623256)",
       navbarColor: theme.navbarColor || "#ffffff",
-      fontColor: theme.fontColor || "#ffffff",
-      sidebarGradientStart: theme.sidebarGradientStart || "#ffffff",
-      sidebarGradientEnd: theme.sidebarGradientEnd || "#000000",
-      navbarGradientStart: theme.navbarGradientStart || "#ffffff",
-      navbarGradientEnd: theme.navbarGradientEnd || "#000000",
+      fontColor: theme.fontColor || "#000000",
+      sidebarGradientStart: theme.sidebarGradientStart || "#1a053e",
+      sidebarGradientEnd: theme.sidebarGradientEnd || "#623256",
+      navbarGradientStart: theme.navbarGradientStart || "#4dfee9",
+      navbarGradientEnd: theme.navbarGradientEnd || "#fffafa",
       fontGradientStart: theme.fontGradientStart || "#ffffff",
       fontGradientEnd: theme.fontGradientEnd || "#000000",
-      sidebarPosition: theme.sidebarPosition || "Header",
+      sidebarPosition: theme.sidebarPosition || "Sidebar",
       fontFamily: theme.fontFamily || "Arial",
       navbarPosition: theme.navbarPosition || "Header",
       themeId: theme.themeId || "1",
       sidebarName: theme.sidebarName || "1",
-      HeadingColor: theme.HeadingColor || "#ffffff",
-      headSidebarFontCol: theme.headSidebarFontCol || "#ffffff",
-      headSidebarFontActiveCol: theme.headSidebarFontActiveCol || "#ffffff",
-      WrapperColor: theme.WrapperColor || "#ffffff",
-      tabelheadbgcolor: theme.tabelheadbgcolor || "#f1f1f1",
-      wrapperMode: theme.wrapperMode || "solid",
+      HeadingColor: theme.HeadingColor || "#000000",
+      headSidebarFontCol: theme.headSidebarFontCol || "#fef1f1",
+      headSidebarFontActiveCol: theme.headSidebarFontActiveCol || "#887c7c",
+      WrapperColor: theme.WrapperColor || "#edf7f6",
+      tabelheadbgcolor: theme.tabelheadbgcolor || "#c5c4c4",
+      wrapperMode: theme.wrapperMode || "false",
       BtnSecBgCol: theme.BtnSecBgCol || "#ffffff",
-      BtnSecTxtCol: theme.BtnSecTxtCol || "#ffffff",
-      BtnSecBorderColor: theme.BtnSecBorderColor || "#ffffff",
-      BtnPriBgCol: theme.BtnPriBgCol || "#ffffff",
+      BtnSecTxtCol: theme.BtnSecTxtCol || "#0d6efd",
+      BtnSecBorderColor: theme.BtnSecBorderColor || "#0d6efd",
+      BtnPriBgCol: theme.BtnPriBgCol || "#0d6efd",
       BtnPriTxtCol: theme.BtnPriTxtCol || "#ffffff",
-      BtnBorderColor: theme.BtnBorderColor ? theme.BtnBorderColor : "#ffffff",
-      wrapperGradientEnd: theme.wrapperGradientEnd || "#ffffff",
-      wrapperGradientStart: theme.wrapperGradientStart || "#ffffff",
+      BtnBorderColor: theme.BtnBorderColor ? theme.BtnBorderColor : "#0d6efd",
+      wrapperGradientEnd: theme.wrapperGradientEnd || "#fafafa",
+      wrapperGradientStart: theme.wrapperGradientStart || "#13fbe0",
     });
   }, []);
 
@@ -103,7 +113,7 @@ export default function Setting_sidebar() {
 
       const wrapper = document.querySelector(".wrapper");
       if (wrapper) {
-        wrapper.style.backgroundColor = theme.WrapperColor || "#ffffff";
+        wrapper.style.backgroundColor = theme.WrapperColor || "#edf7f6";
       }
     }
   }, []);
@@ -176,13 +186,11 @@ export default function Setting_sidebar() {
       confirmButtonText: "Submit",
       showLoaderOnConfirm: true,
       preConfirm: async (themeName) => {
-        // Ensure theme name is not empty
         if (!themeName) {
           Swal.showValidationMessage("Please enter a theme name");
-          return false; // Prevent the submission
+          return false;
         }
 
-        // Merge the updated values with the theme name
         const finalValues = { ...updatedValues, ThemeName: themeName };
 
         try {
@@ -203,9 +211,6 @@ export default function Setting_sidebar() {
     });
   };
 
-
-
-
   return (
     <>
       {/* {RoleData == "SUPERADMIN" && ( */}
@@ -222,7 +227,7 @@ export default function Setting_sidebar() {
           className={`sidebar-setting ${isOpen ? "sidebar-setting-open" : ""}`}
         >
           <h1 className="text-dark fs-2">Settings</h1>
-          <hr/>
+          <hr />
           <Formik
             initialValues={initialValues}
             enableReinitialize={true}
@@ -256,7 +261,7 @@ export default function Setting_sidebar() {
                         name="themeId"
                         className="text-dark form-control"
                       >
-                        { }
+                        {}
                         {Array.from({ length: 11 }, (_, i) => (
                           <option
                             key={i + 1}

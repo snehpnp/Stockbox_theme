@@ -26,7 +26,6 @@ export default function App() {
       const fontColor = theme.fontColor;
       const contentColor = document.querySelector(".content");
 
-
       const all = document.querySelectorAll(
         "*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(button):not(a)"
       );
@@ -112,23 +111,34 @@ export default function App() {
 
     } else {
       let data = {
-        sidebarColor: "linear-gradient(to right, #1fa9ff, #000000)",
-        navbarColor: "linear-gradient(to right, #f13b3b, #000000)",
-        fontColor: "#1d1b1b",
-        sidebarGradientStart: "#1fa9ff",
-        sidebarGradientEnd: "#000000",
-        navbarGradientStart: "#f13b3b",
-        navbarGradientEnd: "#000000",
+        sidebarColor: "linear-gradient(to right, #1a053e, #623256)",
+        navbarColor: "#ffffff",
+        fontColor: "#000000",
+        sidebarGradientStart: "#1a053e",
+        sidebarGradientEnd: "#623256",
+        navbarGradientStart: "#4dfee9",
+        navbarGradientEnd: "#fffafa",
         fontGradientStart: "#ffffff",
         fontGradientEnd: "#000000",
         sidebarPosition: "Sidebar",
-        fontFamily: "Comic Sans MS",
+        fontFamily: "Arial",
         navbarPosition: "Header",
         themeId: "1",
         sidebarName: "1",
-        HeadingColor: "#ffffff",
-        contentColor: "#8f8f8f",
-        WrapperColor: "#000000",
+        HeadingColor: "#000000",
+        headSidebarFontCol: "#fef1f1",
+        headSidebarFontActiveCol: "#887c7c",
+        WrapperColor: "#edf7f6",
+        tabelheadbgcolor: "#c5c4c4",
+        wrapperMode: "false",
+        BtnSecBgCol: "#ffffff",
+        BtnSecTxtCol: "#0d6efd",
+        BtnSecBorderColor: "#0d6efd",
+        BtnPriBgCol: "#0d6efd",
+        BtnPriTxtCol: "#ffffff",
+        BtnBorderColor: "#0d6efd",
+        wrapperGradientEnd: "#fafafa",
+        wrapperGradientStart: "#13fbe0",
       };
 
       localStorage.setItem("theme", JSON.stringify(data));
