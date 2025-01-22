@@ -8,6 +8,7 @@ import { fDate, fDateTime, fDateTimeH, fDateTimeSuffix } from '../../../../Utils
 import { RefreshCcw, IndianRupee } from 'lucide-react';
 import { exportToCSV } from '../../../../Utils/ExportData';
 import Select from 'react-select';
+import Content from '../../../components/Contents/Content';
 
 
 
@@ -352,9 +353,15 @@ const Viewclientdetail = () => {
 
 
     return (
+        <Content
+        Page_title="Client Detail"
+        button_status={false}
+        backbutton_status={true}
+        backForword={true}
+      >
         <div>
             <div className="page-content">
-                <div className="row">
+                {/* <div className="row">
                     <div className="col-md-6">
                         <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
                             <div className="breadcrumb-title pe-3">Client Detail</div>
@@ -380,7 +387,7 @@ const Viewclientdetail = () => {
                         </Link>
                         
                     </div>
-                </div>
+                </div> */}
 
                 <div className="card radius-15">
                     <div className="card-body">
@@ -579,6 +586,7 @@ const Viewclientdetail = () => {
 
             </div>
         </div>
+        </Content>
     );
 };
 

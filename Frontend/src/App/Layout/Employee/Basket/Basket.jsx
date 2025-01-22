@@ -366,7 +366,7 @@ const Basket = () => {
           </nav>
         </div>
       </div>
-      <hr />
+      
       <div className="card">
         <div className="card-body">
           <div className="d-lg-flex align-items-center mb-4 gap-3">

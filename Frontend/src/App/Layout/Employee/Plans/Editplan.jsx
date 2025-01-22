@@ -4,6 +4,7 @@ import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getcategoryplan, getbyidplan, Updateplan } from '../../../Services/Admin/Admin';
+import Content from '../../../components/Contents/Content';
 
 
 const Editplan = () => {
@@ -178,7 +179,12 @@ const Editplan = () => {
     ];
 
     return (
-        <div style={{ marginTop: "100px" }}>
+        <Content
+        Page_title="Edit Plan"
+        button_status={false}
+        backbutton_status={true}
+        backForword={true}
+      >
             <DynamicForm
                 fields={fields}
                 formik={formik}
@@ -189,7 +195,8 @@ const Editplan = () => {
                 btn_name1_route={"/employee/plan"}
                 additional_field={<></>}
             />
-        </div>
+            </Content>
+        
     );
 };
 

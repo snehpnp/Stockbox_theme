@@ -4,6 +4,7 @@ import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { AddNewsbyadmin } from '../../../Services/Admin/Admin';
+import Content from '../../../components/Contents/Content';
 
 
 const Addnews = () => {
@@ -119,7 +120,12 @@ const Addnews = () => {
     ];
 
     return (
-        <div style={{ marginTop: "100px" }}>
+        <Content
+        Page_title="Add News"
+        button_status={false}
+        backbutton_status={true}
+        backForword={true}
+      >
             <DynamicForm
                 fields={fields}
                 formik={formik}
@@ -130,9 +136,9 @@ const Addnews = () => {
                 btn_name1_route={"/employee/news"}
                 additional_field={<></>}
             />
+            </Content>
 
 
-        </div>
     );
 };
 

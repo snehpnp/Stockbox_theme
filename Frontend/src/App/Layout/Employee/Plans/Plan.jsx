@@ -174,7 +174,7 @@ const Plan = () => {
                 <div className="breadcrumb-title pe-3">Package
 
 
-                </div>
+                </div> 
                 <div className="ps-3">
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb mb-0 p-0">
@@ -194,7 +194,7 @@ const Plan = () => {
                     </div>
                 </div>
             </div>
-            <hr />
+            
 
             <div className="card">
                 <div className="card-body">
