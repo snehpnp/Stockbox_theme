@@ -2,9 +2,31 @@ import React, { useState } from "react";
 import Logo from "../Images/LOGO.png";
 import ProfileImage from "../Images/logo1.png";
 import { FaBell, FaBars } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { ReadNotificationStatus, getDashboardNotification, GetAllNotificationRead } from '../../Services/Admin/Admin'
+import Swal from 'sweetalert2';
+import { formatDistanceToNow } from 'date-fns';
+
 
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
+
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem('token');
+  const FullName = localStorage.getItem('FullName');
+
+
+
+  const [clients, setClients] = useState([]);
+  const [isDisabled, setIsDisabled] = useState(false);
+
+
+
+  const [model, setModel] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+  const [getstatus, setGetstatus] = useState([]);
+  const [badgecount, setBadgecount] = useState([]);
+
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
 
   const Role = localStorage.getItem("Role");
@@ -18,6 +40,71 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       window.location.href = "/login";
     }
   };
+
+  const handleNotificationClick = async (event, notification) => {
+
+    const user_active_status = "1";
+    const data = { id: notification._id, status: user_active_status };
+
+    try {
+      const response = await ReadNotificationStatus(data, token);
+      if (response.status) {
+        if (notification.type === "payout") {
+          navigate("/admin/paymentrequest")
+          getdemoclient()
+        } else if (notification.type === "add client") {
+          navigate("/admin/client")
+          getdemoclient()
+        } else if (notification.type === "plan purchase") {
+          navigate("/admin/paymenthistory")
+          getdemoclient()
+        } else if (notification.type === "plan expire") {
+          navigate("/admin/planexpiry")
+          getdemoclient()
+        } else {
+          navigate("/admin/client")
+          getdemoclient()
+
+        }
+      } else {
+        Swal.fire(
+          "Error",
+          "Failed to update the notification status.",
+          "error"
+        );
+      }
+    } catch (error) {
+      Swal.fire(
+        "Error",
+        "There was an error processing your request.",
+        "error"
+      );
+    }
+  };
+
+  const getdemoclient = async () => {
+    try {
+      const response = await getDashboardNotification(token);
+      if (response.status) {
+        setBadgecount(response?.unreadCount)
+        setClients(response?.data);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+
+  const getAllMessageRead = async () => {
+    try {
+      const response = await GetAllNotificationRead(token);
+      navigate("/admin/notificationlist");
+      getdemoclient()
+    } catch (error) {
+      console.error("Error while marking notifications as read:", error);
+    }
+  };
+
 
 
 
@@ -116,7 +203,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   </div>
                 </div>
 
-                <div className="dropdown">
+                {/* <div className="dropdown">
                   <div
                     className="notification-container dropdown-toggle"
                     style={{
@@ -150,7 +237,131 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       </li>
                     </ul>
                   </div>
-                </div>
+                </div> */}
+                {Role !== "EMPLOYEE" && (
+                  <div className="dropdown">
+                    <div
+                      className="notification-container dropdown-toggle"
+                      style={{
+                        cursor: "pointer",
+                        marginLeft: "10px",
+                        position: "relative",
+                      }}
+                      role="button"
+                      id="dropdownMenuLink"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      {badgecount ? (
+                        <span className="alert-count">
+                          {badgecount > 100 ? "99+" : badgecount}
+                        </span>
+                      ) : null}
+                      <FaBell size={24} />
+                    </div>
+
+                    <div
+                      style={{
+                        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                        borderRadius: "8px",
+                        minWidth: "300px",
+                        zIndex: 1050,
+                        padding: "10px",
+                      }}
+                      className="dropdown-menu dropdown-menu-end"
+                      aria-labelledby="dropdownMenuLink"
+                    >
+                      <div className="msg-header d-flex justify-content-between">
+                        <p className="msg-header-title">
+                          Notifications
+                        </p>
+                        <p className="msg-header-badge">
+                          {/* New notifications count */}
+                          {clients.filter(notification => notification.status === 0).length}
+                        </p>
+                      </div>
+                      <div
+                        className="header-notifications-list"
+                        style={{ overflowY: "scroll", maxHeight: "300px" }}
+                      >
+                        {clients.length > 0 ? (
+                          clients.map((notification, index) => (
+                            <a
+                              key={index}
+                              className={`dropdown-item notification ${notification.status === 1
+                                  ? "text-info font-bold"
+                                  : "text-muted bg-dark" // Highlight unread notifications (status 0)
+                                }`}
+                              onClick={(event) =>
+                                handleNotificationClick(event, notification)
+                              }
+                            >
+                              <div className="d-flex align-items-center">
+                                <div className="flex-grow-1">
+                                  <h6
+                                    className={`msg-name ${notification.status === 1
+                                        ? "font-bold"
+                                        : "text-muted"
+                                      }`}
+                                  >
+                                    {notification?.title}
+                                    <span className="msg-time float-end">
+                                      {notification.createdAt
+                                        ? formatDistanceToNow(
+                                          new Date(notification.createdAt),
+                                          {
+                                            addSuffix: true,
+                                          }
+                                        )
+                                        : "Empty Message"}
+                                    </span>
+                                  </h6>
+                                  <p
+                                    className="msg-info"
+                                    title={notification.message}
+                                    style={{
+                                      fontWeight:
+                                        notification.status === 0 ? "bold" : "normal", // Bold for unread
+                                    }}
+                                  >
+                                    {notification.message}
+                                  </p>
+                                </div>
+                              </div>
+                            </a>
+                          ))
+                        ) : (
+                          <span
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              height: "100%",
+                              color: "#6c757d",
+                            }}
+                          >
+                            <h4>No Notifications</h4>
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-center msg-footer">
+                        <button
+                          className="btn btn-primary w-100"
+                          onClick={() => getAllMessageRead()}
+                        >
+                          View All Notifications
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+
+
+
+
+
+
 
                 <div className="dropdown">
                   <div
