@@ -443,7 +443,7 @@ const Banner = () => {
                   body={
                     <>
                       <div className="row">
-                        <div className="col-md-10">
+                        <div className="col-md-12">
                           <label htmlFor="imageUpload">Image</label>
                           <span className="text-danger">*</span>
                           <input

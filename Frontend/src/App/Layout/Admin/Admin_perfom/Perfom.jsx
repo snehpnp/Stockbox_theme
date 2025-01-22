@@ -8,6 +8,7 @@ import { Settings2, Eye, IndianRupee } from 'lucide-react';
 import { Tooltip } from 'antd';
 import { exportToCSV } from '../../../../Utils/ExportData';
 import Loader from '../../../../Utils/Loader';
+import ReusableModal from '../../../components/Models/ReusableModal';
 
 
 
@@ -27,6 +28,8 @@ const Perform = () => {
 
     //state for loading
     const [isLoading, setIsLoading] = useState(true)
+
+    const [model,setModel] = useState(false)
 
 
 
@@ -229,8 +232,8 @@ const Perform = () => {
                     <Tooltip title="view">
                         <Eye
 
-                            data-bs-toggle="modal" data-bs-target="#exampleModal"
-                            onClick={() => handleViewClick([row.description])} />
+                           
+                            onClick={() => { setModel(true);handleViewClick([row.description])}} />
                     </Tooltip>
 
 
@@ -407,14 +410,14 @@ const Perform = () => {
                                 </div>
                             </div>
                         </div>
-                   
-                   </>
+
+                    </>
                 )}
-                   
 
 
 
-                        <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+                {/* <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div className="modal-dialog">
                                 <div className="modal-content">
                                     <div className="modal-header">
@@ -427,8 +430,35 @@ const Perform = () => {
 
                                 </div>
                             </div>
-                        </div>
-                   
+                        </div> */}
+
+                <ReusableModal
+                    show={model}
+                    onClose={() => setModel(false)}
+                    title={<strong>Description</strong>}
+                    body={
+                        <>
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <label htmlFor="description">Description</label>
+                                    <p>{description?.description || 'No description available'}</p>
+                                </div>
+                            </div>
+                        </>
+                    }
+                    footer={
+                        <>
+                            <button
+                                className="btn btn-secondary"
+                                onClick={() => setModel(false)}
+                            >
+                                Close
+                            </button>
+                        </>
+                    }
+                />
+
+
 
             </div>
         </div>
