@@ -19,6 +19,8 @@ const Service = () => {
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
+  const applyButtonRef = useRef(null);
+
 
   const [selectedPlan, setSelectedPlan] = useState("all");
   const [category, setCategory] = useState([]);
@@ -27,11 +29,12 @@ const Service = () => {
   const [selectedPlanDetails, setSelectedPlanDetails] = useState(null);
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [manualCoupon, setManualCoupon] = useState("");
-  const [selectedCouponCode, setSelectedCouponCode] = useState("");
+  const [coupondata, setCouponData] = useState("");
   const [discountedPrice, setDiscountedPrice] = useState(0);
   const [coupons, setCoupon] = useState([]);
   const [getkey, setGetkey] = useState([]);
   const [sortCriteria, setSortCriteria] = useState("price");
+
 
   useEffect(() => {
     getCategory();
@@ -41,36 +44,34 @@ const Service = () => {
   }, []);
 
   const handleCouponSelect = (coupon) => {
-    const originalPrice = selectedPlanDetails?.plans[0]?.price || 0;
-    const discount = coupon?.value || 0;
-    setDiscountedPrice(originalPrice - discount);
-
     setManualCoupon(coupon?.code);
-    setAppliedCoupon(coupon);
+    setCouponData(coupon);
+    if (applyButtonRef.current) {
+      applyButtonRef.current.focus();
+    }
+
+
   };
 
 
   const applyCoupon = async (coupon) => {
-    console.log("selectedPlanDetails", selectedPlanDetails)
-    console.log("selectedPlanDetails[0]?._id", selectedPlanDetails?.plans[0]?._id)
     try {
-      const data = { code: coupon, purchaseValue: selectedPlanDetails?.plans?.[0]?.price, planid: selectedPlanDetails?.plans[0]?._id };
+      const data = { code: coupon?.code, purchaseValue: selectedPlanDetails?.plans?.[0]?.price, planid: selectedPlanDetails?._id };
       const response = await ApplyCoupondata(data, token)
 
       if (response.status) {
-        const originalPrice = selectedPlanDetails?.plans?.[0]?.price || 0;
-        const discount = response.discount || 0;
-        const discountedPrice = Math.max(0, originalPrice - discount);
-
-        setAppliedCoupon(coupon);
-        setDiscountedPrice(discountedPrice);
-
         Swal.fire({
           title: 'Coupon Applied!',
           text: response.message || 'Your discount has been applied successfully.',
           icon: 'success',
           confirmButtonText: 'OK',
         });
+        const originalPrice = selectedPlanDetails?.plans?.[0]?.price || 0;
+        const discount = coupondata?.value || 0;
+        const discountedPrice = (originalPrice - discount);
+        setDiscountedPrice(originalPrice - discount);
+        setAppliedCoupon(coupondata);
+        setDiscountedPrice(discountedPrice);
       } else {
         Swal.fire({
           title: 'Coupon Error',
@@ -94,7 +95,6 @@ const Service = () => {
     setManualCoupon("");
     setAppliedCoupon(null);
     setDiscountedPrice(selectedPlanDetails?.plans[0]?.price || "N/A");
-
     setAppliedCoupon(null);
   };
 
@@ -161,8 +161,6 @@ const Service = () => {
 
 
   const AddSubscribeplan = async (item) => {
-
-
     try {
       if (!window.Razorpay) {
         await loadScript("https://checkout.razorpay.com/v1/checkout.js");
@@ -178,7 +176,7 @@ const Service = () => {
             client_id: userid,
             coupon_code: appliedCoupon?.code || 0,
             orderid: response1?.orderid,
-            discount: selectedCouponCode?.value || 0,
+            discount: appliedCoupon?.value || 0,
             price: discountedPrice || selectedPlanDetails?.plans[0]?.price || 0,
           };
 
@@ -404,6 +402,7 @@ const Service = () => {
                         />
                         {manualCoupon && (
                           <button
+                            ref={applyButtonRef}
                             className="btn btn-primary"
                             onClick={() => applyCoupon({ code: manualCoupon })}
                           >
@@ -450,7 +449,6 @@ const Service = () => {
                               "0 4px 8px rgba(0, 0, 0, 0.1)";
                           }}
                         >
-                          {/* First Section */}
                           <div
                             style={{
                               width: "40px",
@@ -552,8 +550,6 @@ const Service = () => {
                               </span>
                             </div>
                           </div>
-
-                          {/* Third Section */}
                           <div>
                             <button
                               onClick={() => handleCouponSelect(coupon)}
@@ -577,7 +573,7 @@ const Service = () => {
                                 "#007bff")
                               }
                             >
-                              Apply
+                              Select
                             </button>
                           </div>
                         </li>
@@ -598,7 +594,6 @@ const Service = () => {
                   </span>
                 </div>
 
-                {/* Coupon Discount */}
                 {appliedCoupon && (
                   <div className="d-flex justify-content-between align-items-center text-danger mb-2">
                     <b>🎟️ Coupon Discount:</b>

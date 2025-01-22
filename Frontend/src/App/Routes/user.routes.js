@@ -18,6 +18,7 @@ import Demat from "../Layout/Users/Demat/Demat";
 import Cash from "../Layout/Users/PastPerformance/Cash";
 import Future from "../Layout/Users/PastPerformance/Future";
 import Option from "../Layout/Users/PastPerformance/Option";
+import Userkyc from "../Layout/Users/Profile/Kyc";
        
 
 export default function App() {
@@ -36,11 +37,12 @@ export default function App() {
       <Route path="/subscription" element={<Subscription />} />
       <Route path="/privacy-policy" element={<Privacy />} />
       <Route path="/terms-conditions" element={<Terms />} />
-      <Route path="/profiles" element={<Profiles />} />
+      <Route path="/profile" element={<Profiles />} />
       <Route path="/demat" element={<Demat />} />
       <Route path="/past-performance/cash" element={<Cash />} />
       <Route path="/past-performance/future" element={<Future />} />
       <Route path="/past-performance/option" element={<Option />} />
+      <Route path="/kyc" element={<Userkyc />} />
     </Routes>
   );
 }
