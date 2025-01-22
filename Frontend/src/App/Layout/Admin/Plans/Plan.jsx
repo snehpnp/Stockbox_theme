@@ -5,6 +5,7 @@ import { fDateTime } from '../../../../Utils/Date_formate';
 import Swal from 'sweetalert2';
 import Loader from '../../../../Utils/Loader'
 import Content from '../../../components/Contents/Content';
+import ReusableModal from '../../../components/Models/ReusableModal';
 
 
 
@@ -17,6 +18,9 @@ const Plan = () => {
 
     //set state for loding
     const [isLoading, setIsLoading] = useState(true)
+
+    const [showViewModal, setShowViewModal] = useState(false);
+
 
 
 
@@ -270,7 +274,9 @@ const Plan = () => {
                                                                     <li><b className='mb-1'>Description</b>:<textarea className='form-control' value={stripHtmlTags(client.description || '')} >{client.description}</textarea></li>
                                                                     <li><b>Created At</b>: {fDateTime(client.created_at)}</li>
                                                                 </ul>
-                                                                <div className="button-group">
+
+                                                                {/* comment code for start  */}
+                                                                {/* <div className="button-group">
                                                                     <button
                                                                         type="button"
                                                                         className="btnsecond btn btn-primary w-50"
@@ -311,7 +317,7 @@ const Plan = () => {
                                                                                         </div>
                                                                                     </div>
                                                                                 </li> */}
-                                                                                        <li>
+                                                                {/* <li>
                                                                                             <div className="row justify-content-between">
                                                                                                 <div className="col-md-3">
                                                                                                     <b>Price</b>
@@ -370,7 +376,87 @@ const Plan = () => {
                                                                     <Link to={`editplan/${client._id}`} className="btnprime btn btn-secondary ms-2" style={{ color: 'inherit', textDecoration: 'none' }}>
                                                                         Edit
                                                                     </Link>
+                                                                // </div> */} 
+
+                                                                {/* end code */}
+
+
+                                                                <div className="button-group">
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btnsecond btn btn-primary w-50"
+                                                                        onClick={() => setShowViewModal(client._id)}
+                                                                    >
+                                                                        View More
+                                                                    </button>
+
+                                                                    {showViewModal === client._id && (
+                                                                        <ReusableModal
+                                                                            show={true}
+                                                                            onClose={() => setShowViewModal(null)}
+                                                                            title={<>Plan Detail</>}
+                                                                            body={
+                                                                                <ul>
+                                                                                    <li>
+                                                                                        <div className="row justify-content-between">
+                                                                                            <div className="col-md-3">
+                                                                                                <b>Price</b>
+                                                                                            </div>
+                                                                                            <div className="col-md-9">{client.price}</div>
+                                                                                        </div>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <div className="row justify-content-between">
+                                                                                            <div className="col-md-3">
+                                                                                                <b>Validity</b>
+                                                                                            </div>
+                                                                                            <div className="col-md-9">{client.validity}</div>
+                                                                                        </div>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <div className="row justify-content-between">
+                                                                                            <div className="col-md-3">
+                                                                                                <b>Created At</b>
+                                                                                            </div>
+                                                                                            <div className="col-md-9">{fDateTime(client.created_at)}</div>
+                                                                                        </div>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <div className="row justify-content-between">
+                                                                                            <div className="col-md-3">
+                                                                                                <b>Updated At</b>
+                                                                                            </div>
+                                                                                            <div className="col-md-9">{fDateTime(client.updated_at)}</div>
+                                                                                        </div>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <div className="row justify-content-between">
+                                                                                            <div className="col-md-3">
+                                                                                                <b>Description</b>
+                                                                                            </div>
+                                                                                            <div className="col-md-9">
+                                                                                                {stripHtmlTags(client.description || '')}
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </li>
+                                                                                </ul>
+                                                                            }
+                                                                        />
+                                                                    )}
+
+                                                                    <Link
+                                                                        to={`editplan/${client._id}`}
+                                                                        className="btnprime btn btn-secondary ms-2"
+                                                                        style={{ color: 'inherit', textDecoration: 'none' }}
+                                                                    >
+                                                                        Edit
+                                                                    </Link>
                                                                 </div>
+
+
+
+
+
                                                             </div>
                                                         </div>
                                                         : ""
