@@ -14,7 +14,7 @@ const Subscription = () => {
     const token = localStorage.getItem("token");
 
 
-    console.log("planData", planData)
+
 
 
     const fetchMySubscription = async () => {
