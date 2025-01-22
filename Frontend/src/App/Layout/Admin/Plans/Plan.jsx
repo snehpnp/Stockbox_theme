@@ -275,7 +275,7 @@ const Plan = () => {
                                                                     <li><b>Created At</b>: {fDateTime(client.created_at)}</li>
                                                                 </ul>
 
-                                                                {/* comment code for start  */}
+                                                                {/* comment code for view  */}
                                                                 {/* <div className="button-group">
                                                                     <button
                                                                         type="button"
