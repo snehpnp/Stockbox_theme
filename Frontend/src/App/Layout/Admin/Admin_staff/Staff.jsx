@@ -323,7 +323,7 @@ const Staff = () => {
 
                         <div className="card">
                             <div className="card-body">
-                                <div className="d-lg-flex align-items-center mb-4 gap-3">
+                                <div className="d-lg-flex align-items-center gap-3">
                                     <div className="position-relative">
                                         <input
                                             type="text"
@@ -336,7 +336,8 @@ const Staff = () => {
                                             <i className="bx bx-search" />
                                         </span>
                                     </div>
-                                    <div className="ms-auto">
+                                    <div className="d-sm-flex gap-3 justify-content-lg-end w-100 mt-3 mt-lg-0">
+                                    <div className="flaot-lg-end">
                                         <Link
                                             to="/admin/addstaff"
                                             className="btn btn-primary"
@@ -348,7 +349,7 @@ const Staff = () => {
                                             Add Employee
                                         </Link>
                                     </div>
-                                    <div className="ms-2" >
+                                    <div className="ms-0 ms-sm-0" >
                                         <ExportToExcel
                                             className="btn btn-primary "
                                             apiData={ForGetCSV}
@@ -356,6 +357,8 @@ const Staff = () => {
 
                                     </div>
                                 </div>
+                                    </div>
+                                    
 
                                 <Table
                                     columns={columns}
