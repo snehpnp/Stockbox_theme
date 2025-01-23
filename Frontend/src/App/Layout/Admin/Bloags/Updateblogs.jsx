@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Updateblogsbyadmin } from '../../../Services/Admin/Admin';
 import { image_baseurl } from '../../../../Utils/config';
+import Content from '../../../components/Contents/Content';
 
 
 const Updateblogs = () => {
@@ -123,7 +124,12 @@ const Updateblogs = () => {
     ];
 
     return (
-        <div style={{ marginTop: "100px" }}>
+        <Content
+            Page_title="Update Blog"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
             <DynamicForm
                 fields={fields}
                 formik={formik}
@@ -136,7 +142,7 @@ const Updateblogs = () => {
 
                 </>}
             />
-        </div>
+        </Content>
     );
 };
 

@@ -4,7 +4,10 @@ import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { Addblogsbyadmin } from '../../../Services/Admin/Admin';
+
 import { Link } from 'react-router-dom';
+import Content from '../../../components/Contents/Content';
+
 
 const Addblogs = () => {
 
@@ -15,14 +18,14 @@ const Addblogs = () => {
     const user_id = localStorage.getItem("id");
     const token = localStorage.getItem("token");
     const [loading, setLoading] = useState(false);
-    
 
-    
-     
+
+
+
 
     const validate = (values) => {
-        console.log("blogs",values);
-        
+        console.log("blogs", values);
+
         let errors = {};
 
         if (!values.title) {
@@ -34,20 +37,20 @@ const Addblogs = () => {
         if (!values.image) {
             errors.image = "Please Select Image";
         }
-      
+
 
         return errors;
     };
 
     const onSubmit = async (values) => {
-      setLoading(!loading)
+        setLoading(!loading)
         const req = {
             title: values.title,
             description: values.description,
             image: values.image,
-            add_by: user_id ,
+            add_by: user_id,
         };
-       
+
         try {
             const response = await Addblogsbyadmin(req, token);
             if (response.status) {
@@ -69,11 +72,11 @@ const Addblogs = () => {
                     timer: 1500,
                     timerProgressBar: true,
                 });
-          setLoading(false)
+                setLoading(false)
 
             }
         } catch (error) {
-          setLoading(false)
+            setLoading(false)
 
             Swal.fire({
                 title: "Error",
@@ -89,14 +92,14 @@ const Addblogs = () => {
         initialValues: {
             title: "",
             description: "",
-            image: "", 
+            image: "",
         },
         validate,
         onSubmit,
     });
 
     const fields = [
-       
+
         {
             name: "title",
             label: "Title",
@@ -104,7 +107,7 @@ const Addblogs = () => {
             label_size: 12,
             col_size: 6,
             disable: false,
-            star:true
+            star: true
         },
         {
             name: "image",
@@ -114,16 +117,16 @@ const Addblogs = () => {
             label_size: 12,
             col_size: 6,
             disable: false,
-            star:true
+            star: true
         },
         {
             name: "description",
             label: "Description",
-            type: "ckeditor", 
+            type: "ckeditor",
             label_size: 12,
             col_size: 12,
             disable: false,
-            star:true
+            star: true
         },
     ];
 
@@ -154,8 +157,7 @@ const Addblogs = () => {
                 btnstatus={loading}
                 btn_name1_route={"/admin/blogs"}
                 additional_field={<></>}
-            />           
-           
+            />
         </div>
     );
 };

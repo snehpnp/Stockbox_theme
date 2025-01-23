@@ -68,7 +68,7 @@ const AddStaff = () => {
           timerProgressBar: true,
         });
         setTimeout(() => {
-          navigate("/admin/staff");
+          navigate("/admin/employee");
         }, 1500);
       } else {
         Swal.fire({
@@ -172,8 +172,8 @@ const AddStaff = () => {
     <div style={{ marginTop: "100px" }}>
       <DynamicForm
         fields={fields}
-        page_title="Add New Staff"
-        btn_name="Add Staff"
+        page_title="Add New Employee"
+        btn_name="Add Employee"
         btn_name1="Cancel"
         formik={formik}
         sumit_btn={true}

@@ -1,47 +1,47 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Table from "../../../components/Tabels/Table";
+import Table from "../../../Extracomponents/Table";
 import { getMySubscription } from "../../../Services/UserService/User";
 import Content from "../../../components/Contents/Content";
 
 const Subscription = () => {
-    // States
-    const [planData, setPlanData] = useState([]); // State for storing subscription data
+
+
+
+    const [planData, setPlanData] = useState([]);
+
     const id = localStorage.getItem("id");
     const token = localStorage.getItem("token");
 
-    console.log("ID:", id, "Token:", token);
 
-    // Function to fetch subscription data
+
+
+
     const fetchMySubscription = async () => {
-        // Check if id and token are available
-        if (!id || !token) {
-            console.error("Missing id or token in localStorage");
-            return;
-        }
-
         try {
-            const res = await getMySubscription({ id, token }); // Call the API
-            console.log("Response:", res);
-
-            if (res?.status === true) {
-                setPlanData(res.data); // Update state with the fetched data
+            const res = await getMySubscription(id, token);
+            if (res?.status) {
+                setPlanData(res.data);
             } else {
-                console.error("API response status is false.");
-                setPlanData([]); // Set to empty if response is false
+                setPlanData([]);
             }
         } catch (err) {
-            console.error("Error fetching subscription:", err);
-            setPlanData([]); // Handle error case
+            setPlanData([]);
         }
     };
 
     useEffect(() => {
-        fetchMySubscription(); // Fetch data when component mounts
+        fetchMySubscription();
     }, []);
 
-    // Define table columns
+
     const columns = [
+        {
+            name: "Basket Name",
+            selector: (row) => row.categoryDetails,
+            sortable: true,
+            width: '200px',
+        },
         {
             name: "Title",
             selector: (row) => row.title,
@@ -54,62 +54,62 @@ const Subscription = () => {
 
     return (
         <div>
-                <Content
-      Page_title="Subscription"
-      button_title="Add Basket"
-      button_status={false}
-       backbutton_title="Back"
-      backbutton_status={false}>
-      <div className="page-content">
-     
+            <Content
+                Page_title="Subscription"
+                button_title="Add Basket"
+                button_status={false}
+                backbutton_title="Back"
+                backbutton_status={false}>
+                <div className="page-content">
 
-      {/* Cards Section */}
-      <div className="row">
-          <div className="col-md-4">
-              <div className="card">
-                  <ul className="list-group list-group-flush mt-0">
-                      <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
-                          Cash<span></span>
-                      </li>
-                      <li className="list-group-item d-flex justify-content-between align-items-center">
-                          Expiry Date<span className="badge bg-primary rounded-pill badgespan">28 Sep 2025</span>
-                      </li>
-                  </ul>
-              </div>
-          </div>
-          <div className="col-md-4">
-              <div className="card">
-                  <ul className="list-group list-group-flush mt-0">
-                      <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
-                          Future<span></span>
-                      </li>
-                      <li className="list-group-item d-flex justify-content-between align-items-center">
-                          Expiry Date<span className="badge bg-primary rounded-pill badgespan">28 Sep 2025</span>
-                      </li>
-                  </ul>
-              </div>
-          </div>
-          <div className="col-md-4">
-              <div className="card">
-                  <ul className="list-group list-group-flush mt-0">
-                      <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
-                          Option<span></span>
-                      </li>
-                      <li className="list-group-item d-flex justify-content-between align-items-center">
-                          Expiry Date<span className="badge bg-primary rounded-pill badgespan">28 Sep 2025</span>
-                      </li>
-                  </ul>
-              </div>
-          </div>
-      </div>
 
-      {/* Table Section */}
-      <div className="card">
-          <Table columns={columns} data={planData} /> {/* Use fetched data */}
-      </div>
-  </div>
-   
-          
+                    {/* Cards Section */}
+                    <div className="row">
+                        <div className="col-md-4">
+                            <div className="card">
+                                <ul className="list-group list-group-flush mt-0">
+                                    <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
+                                        Cash<span></span>
+                                    </li>
+                                    <li className="list-group-item d-flex justify-content-between align-items-center">
+                                        Expiry Date<span className="badge bg-primary rounded-pill badgespan">28 Sep 2025</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div className="col-md-4">
+                            <div className="card">
+                                <ul className="list-group list-group-flush mt-0">
+                                    <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
+                                        Future<span></span>
+                                    </li>
+                                    <li className="list-group-item d-flex justify-content-between align-items-center">
+                                        Expiry Date<span className="badge bg-primary rounded-pill badgespan">28 Sep 2025</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div className="col-md-4">
+                            <div className="card">
+                                <ul className="list-group list-group-flush mt-0">
+                                    <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
+                                        Option<span></span>
+                                    </li>
+                                    <li className="list-group-item d-flex justify-content-between align-items-center">
+                                        Expiry Date<span className="badge bg-primary rounded-pill badgespan">28 Sep 2025</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div className="card">
+                        <Table columns={columns} data={planData} />
+                    </div>
+                </div>
+
+
             </Content>
         </div>
     );

@@ -4,7 +4,8 @@ import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { AddNewsbyadmin } from '../../../Services/Admin/Admin';
-import { Link } from 'react-router-dom';
+import Content from '../../../components/Contents/Content';
+
 
 const Addnews = () => {
 
@@ -17,10 +18,10 @@ const Addnews = () => {
 
 
     const [loading, setLoading] = useState(false);
-  
 
-    
-     
+
+
+
 
     const validate = (values) => {
         let errors = {};
@@ -34,20 +35,20 @@ const Addnews = () => {
         if (!values.image) {
             errors.image = "Please Enter Image";
         }
-       
+
 
         return errors;
     };
 
     const onSubmit = async (values) => {
-    setLoading(!loading)
+        setLoading(!loading)
         const req = {
             title: values.title,
             description: values.description,
             image: values.image,
-            add_by: user_id ,
+            add_by: user_id,
         };
-       
+
         try {
             const response = await AddNewsbyadmin(req, token);
             if (response.status) {
@@ -87,14 +88,14 @@ const Addnews = () => {
         initialValues: {
             title: "",
             description: "",
-            image: "", 
+            image: "",
         },
         validate,
         onSubmit,
     });
 
     const fields = [
-       
+
         {
             name: "title",
             label: "Title",
@@ -102,7 +103,7 @@ const Addnews = () => {
             label_size: 12,
             col_size: 6,
             disable: false,
-            star:true
+            star: true
         },
         {
             name: "image",
@@ -112,36 +113,26 @@ const Addnews = () => {
             label_size: 12,
             col_size: 6,
             disable: false,
-            star:true
+            star: true
         },
         {
             name: "description",
             label: "Description",
-            type: "ckeditor", 
+            type: "ckeditor",
             label_size: 12,
             col_size: 12,
             disable: false,
-            star:true
+            star: true
         },
     ];
 
     return (
-        <div className="page-content">
-        <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-          <div className="breadcrumb-title pe-3">Add News</div>
-          <div className="ps-3">
-            <nav aria-label="breadcrumb">
-              <ol className="breadcrumb mb-0 p-0">
-                <li className="breadcrumb-item">
-                  <Link to="/admin/dashboard">
-                    <i className="bx bx-home-alt" />
-                  </Link>
-                </li>
-              </ol>
-            </nav>
-          </div>
-        </div>
-        <hr />
+        <Content
+            Page_title="Add News"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
             <DynamicForm
                 fields={fields}
                 formik={formik}
@@ -153,9 +144,9 @@ const Addnews = () => {
                 btn_name1_route={"/admin/news"}
                 additional_field={<></>}
             />
-           
-           
-        </div>
+        </Content>
+
+
     );
 };
 

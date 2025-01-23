@@ -8,7 +8,7 @@ import { Settings2, Eye, IndianRupee } from 'lucide-react';
 import { Tooltip } from 'antd';
 import { exportToCSV } from '../../../../Utils/ExportData';
 import Loader from '../../../../Utils/Loader';
-
+import ReusableModal from '../../../components/Models/ReusableModal';
 
 
 
@@ -24,9 +24,12 @@ const Perform = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRows, setTotalRows] = useState(0);
     const [service, setserviceid] = useState("66d2c3bebf7e6dc53ed07626");
+    const [showModal, setShowModal] = useState(false);
 
     //state for loading
     const [isLoading, setIsLoading] = useState(true)
+
+    const [model, setModel] = useState(false)
 
 
 
@@ -228,9 +231,10 @@ const Perform = () => {
 
                     <Tooltip title="view">
                         <Eye
-
-                            data-bs-toggle="modal" data-bs-target="#exampleModal"
-                            onClick={() => handleViewClick([row.description])} />
+                            onClick={() => {
+                                handleViewClick([row.description]);
+                                setShowModal(true);
+                            }} />
                     </Tooltip>
 
 
@@ -407,28 +411,17 @@ const Perform = () => {
                                 </div>
                             </div>
                         </div>
-                   
-                   </>
+
+                    </>
                 )}
-                   
 
 
-
-                        <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div className="modal-dialog">
-                                <div className="modal-content">
-                                    <div className="modal-header">
-                                        <h5 className="modal-title" id="exampleModalLabel">Description</h5>
-                                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div className="modal-body">
-                                        {description?.description}
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                   
+                <ReusableModal
+                    show={showModal}
+                    onClose={() => setShowModal(false)}
+                    title="Description"
+                    body={<p>{description?.description || "No description available."}</p>}
+                />
 
             </div>
         </div>

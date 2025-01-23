@@ -372,7 +372,6 @@ const Banner = () => {
                   Add Banner
                 </button>
 
-                {/* ADD BANNER */}
                 <ReusableModal
                   show={showModal}
                   onClose={() => setShowModal(false)}
@@ -435,7 +434,7 @@ const Banner = () => {
                   }
                 />
 
-                {/* UPDATE BANNER */}
+
                 <ReusableModal
                   show={model}
                   onClose={() => setModel(false)}
@@ -443,7 +442,7 @@ const Banner = () => {
                   body={
                     <>
                       <div className="row">
-                        <div className="col-md-10">
+                        <div className="col-md-12">
                           <label htmlFor="imageUpload">Image</label>
                           <span className="text-danger">*</span>
                           <input
@@ -515,7 +514,7 @@ const Banner = () => {
                     </>
                   }
                 />
-                
+
               </div>
             </div>
             {isLoading ? (

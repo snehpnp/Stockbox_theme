@@ -7,6 +7,7 @@ import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
 import { Tooltip } from 'antd';
 import { ArrowDownToLine, } from 'lucide-react';
 import { IndianRupee } from 'lucide-react';
+import Content from '../../../components/Contents/Content';
 
 const Signaldetail = () => {
 
@@ -89,9 +90,15 @@ const Signaldetail = () => {
 
 
     return (
+        <Content
+        Page_title="Signal Detail"
+        button_status={false}
+        backbutton_status={true}
+        backForword={true}
+      >
         <div>
             <div className="page-content">
-                <div className="row">
+                {/* <div className="row">
                     <div className="col-md-6">
                         <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
                             <div className="breadcrumb-title pe-3">Signal Detail</div>
@@ -110,14 +117,15 @@ const Signaldetail = () => {
                     </div>
                     <div className="col-md-6 d-flex justify-content-end">
                         <Link to={redirectTo}>
+                            
                             <Tooltip title="Back">
-                                <i className="lni lni-arrow-left-circle" style={{ fontSize: "2rem", color: "#000" }} />
+                                <i className="lni lni-arrow-left-circle" style={{ fontSize: "2rem",color:"#000"}}/>
                             </Tooltip>
                         </Link>
                     </div>
                 </div>
 
-                <hr />
+                <hr /> */}
 
                 <div className="row justify-content-center">
                     <div className="col-lg-10">
@@ -247,6 +255,7 @@ const Signaldetail = () => {
                 </div>
             </div>
         </div>
+        </Content>
     );
 };
 

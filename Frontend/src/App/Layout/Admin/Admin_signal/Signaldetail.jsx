@@ -7,6 +7,7 @@ import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
 import { Tooltip } from 'antd';
 import { ArrowDownToLine, } from 'lucide-react';
 import { IndianRupee } from 'lucide-react';
+import Content from '../../../components/Contents/Content';
 
 const Signaldetail = () => {
 
@@ -62,8 +63,8 @@ const Signaldetail = () => {
     const getsignaldetail = async () => {
         try {
             const response = await Signalperdetail(id, token);
-            console.log("Signalperdetail",response);
-            
+            console.log("Signalperdetail", response);
+
             if (response.status) {
                 const signalData = response.data;
                 let totalGain = 0;
@@ -91,36 +92,14 @@ const Signaldetail = () => {
 
 
     return (
-        <div>
-            <div className="page-content">
-                <div className="row">
-                    <div className="col-md-6">
-                        <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-                            <div className="breadcrumb-title pe-3">Signal Detail</div>
-                            <div className="ps-3">
-                                <nav aria-label="breadcrumb">
-                                    <ol className="breadcrumb mb-0 p-0">
-                                        <li className="breadcrumb-item">
-                                            <Link to="/admin/dashboard">
-                                                <i className="bx bx-home-alt" />
-                                            </Link>
-                                        </li>
-                                    </ol>
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-md-6 d-flex justify-content-end">
-                        <Link to={redirectTo}>
-                            <Tooltip title="Back">
-                                <i className="lni lni-arrow-left-circle" style={{ fontSize: "2rem", color: "#000" }} />
-                            </Tooltip>
-                        </Link>
-                    </div>
-                </div>
 
-                <hr />
-
+        <Content
+            Page_title="Signal Detail"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
+            <div>
                 <div className="row justify-content-center">
                     <div className="col-lg-10">
                         <div className="card radius-15">
@@ -248,7 +227,7 @@ const Signaldetail = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </Content>
     );
 };
 

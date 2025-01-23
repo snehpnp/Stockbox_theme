@@ -4,6 +4,7 @@ import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { UpdateClient } from '../../../Services/Admin/Admin';
+import Content from '../../../components/Contents/Content';
 
 
 
@@ -143,7 +144,13 @@ const EditClient = () => {
   ];
 
   return (
-    <div style={{ marginTop: "100px" }}>
+    <Content
+        Page_title="Update Client"
+        button_status={false}
+        backbutton_status={true}
+        backForword={true}
+      >
+    
       <DynamicForm
         fields={fields}
         page_title="Update Client"
@@ -154,7 +161,8 @@ const EditClient = () => {
         btn_name1_route={"/employee/client"}
         additional_field={<></>}
       />
-    </div>
+    
+    </Content>
   );
 };
 

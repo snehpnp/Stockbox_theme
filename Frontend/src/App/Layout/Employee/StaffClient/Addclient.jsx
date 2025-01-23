@@ -1,18 +1,20 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { AddClient } from '../../../Services/Admin/Admin';
 import { Link } from 'react-router-dom';
+import Content from '../../../components/Contents/Content';
 
-const AddUser = () => {
-
-
+const AddUser = () => { 
   const navigate = useNavigate();
 
   const user_id = localStorage.getItem("id");
   const token = localStorage.getItem("token");
+
+  const [loading, setLoading] = useState(false);
+
 
   const validate = (values) => {
     let errors = {};
@@ -43,6 +45,7 @@ const AddUser = () => {
   };
 
   const onSubmit = async (values) => {
+    setLoading(!loading)
     const req = {
       FullName: values.FullName,
       Email: values.Email,
@@ -72,8 +75,10 @@ const AddUser = () => {
           timer: 1500,
           timerProgressBar: true,
         });
+        setLoading(false)
       }
     } catch (error) {
+      setLoading(false)
       Swal.fire({
         title: "Error",
         text: "An unexpected error occurred. Please try again later.",
@@ -125,7 +130,7 @@ const AddUser = () => {
     {
       name: "password",
       label: "Password",
-      type: "password",
+      type: "password", 
       label_size: 12,
       col_size: 6,
       disable: false,
@@ -140,48 +145,38 @@ const AddUser = () => {
     },
   ];
 
-  const handlefreeTrialChange = (e) => {
-    const currentValue = formik.values.freetrial; // Store current value
-
-    console.log("Current toggle value:", e.target.checked);
-
-    Swal.fire({
-      title: currentValue ? "Are you sure you want to disable the free trial?" : "Are you sure you want to enable the free trial?",
-      showDenyButton: true,
-      showCancelButton: false,
-      confirmButtonText: "Yes",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // If toggle is currently true (checked), and user clicks "Yes", set it to false
-        // If toggle is false (unchecked), and user clicks "Yes", set it to true
-        formik.setFieldValue("freetrial", !currentValue);
-        console.log("Updated toggle value:", !currentValue); // Log the updated value
-      } else if (result.isDenied) {
-        // If "No" (Deny) clicked, revert the value to its original state
-        formik.setFieldValue("freetrial", currentValue);
-        console.log("Value reverted to:", currentValue); // Log reverted value
-      }
-    });
-  };
+    const handlefreeTrialChange = (e) => {
+      const currentValue = formik.values.freetrial; // Store current value
+    
+      console.log("Current toggle value:", e.target.checked);
+    
+      Swal.fire({
+        title: currentValue ? "Are you sure you want to disable the free trial?" : "Are you sure you want to enable the free trial?",
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: "Yes",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // If toggle is currently true (checked), and user clicks "Yes", set it to false
+          // If toggle is false (unchecked), and user clicks "Yes", set it to true
+          formik.setFieldValue("freetrial", !currentValue);
+          console.log("Updated toggle value:", !currentValue); // Log the updated value
+        } else if (result.isDenied) {
+          // If "No" (Deny) clicked, revert the value to its original state
+          formik.setFieldValue("freetrial", currentValue);
+          console.log("Value reverted to:", currentValue); // Log reverted value
+        }
+      });
+    };
 
   return (
-    <div style={{ marginTop: "100px" }}>
-      <div className="page-content">
-        <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-          <div className="breadcrumb-title pe-3">dd New Client</div>
-          <div className="ps-3">
-            <nav aria-label="breadcrumb">
-              <ol className="breadcrumb mb-0 p-0">
-                <li className="breadcrumb-item">
-                  <Link to="/admin/dashboard">
-                    <i className="bx bx-home-alt" />
-                  </Link>
-                </li>
-              </ol>
-            </nav>
-          </div>
-        </div>
-        <hr />
+    <Content
+    Page_title="New Client"
+    button_status={false}
+    backbutton_status={true}
+    backForword={true}
+  >
+    
         <DynamicForm
           fields={fields}
           formik={formik}
@@ -218,9 +213,8 @@ const AddUser = () => {
           </>}
 
         />
-      </div>
-
-    </div>
+      
+    </Content>
   );
 };
 

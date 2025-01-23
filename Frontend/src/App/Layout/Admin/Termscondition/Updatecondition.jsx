@@ -4,7 +4,8 @@ import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { UpdateCondition } from '../../../Services/Admin/Admin';
-import { Link } from 'react-router-dom';
+import Content from '../../../components/Contents/Content';
+
 
 const Updatecondition = () => {
 
@@ -91,22 +92,12 @@ const Updatecondition = () => {
     ];
 
     return (
-        <div className="page-content">
-        <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-          <div className="breadcrumb-title pe-3">Update Condition</div>
-          <div className="ps-3">
-            <nav aria-label="breadcrumb">
-              <ol className="breadcrumb mb-0 p-0">
-                <li className="breadcrumb-item">
-                  <Link to="/admin/dashboard">
-                    <i className="bx bx-home-alt" />
-                  </Link>
-                </li>
-              </ol>
-            </nav>
-          </div>
-        </div>
-        <hr />
+        <Content
+            Page_title="Update Condition"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
             <DynamicForm
                 fields={fields}
                 formik={formik}
@@ -119,7 +110,7 @@ const Updatecondition = () => {
 
                 </>}
             />
-        </div>
+        </Content>
     );
 };
 

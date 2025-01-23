@@ -8,7 +8,7 @@ import { fDateTime } from '../../../../../Utils/Date_formate';
 import { image_baseurl } from '../../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { AddQRdetaildata, getQrdetails, UpdateQrcodelist, DeleteQRCode, changeQRstatuscode } from '../../../../Services/Admin/Admin';
-
+import ReusableModal from '../../../../components/Models/ReusableModal';
 
 const QRDetails = () => {
 
@@ -18,6 +18,8 @@ const QRDetails = () => {
     const [model, setModel] = useState(false);
     const [serviceid, setServiceid] = useState({});
     const [searchInput, setSearchInput] = useState("");
+    const [showModal, setShowModal] = useState(false);
+
 
 
     const [updatetitle, setUpdatetitle] = useState({
@@ -367,48 +369,23 @@ const QRDetails = () => {
                     <div className="card-body">
                         <div className="d-lg-flex align-items-center mb-4 gap-3">
                             <div className="position-relative">
-                                {/* <input
-                                    type="text"
-                                    className="form-control ps-5 radius-10"
-                                    placeholder="Search Banner"
-                                    onChange={(e) => setSearchInput(e.target.value)}
-                                    value={searchInput}
-                                /> */}
-                                {/* <span className="position-absolute top-50 product-show translate-middle-y">
-                                    <i className="bx bx-search" />
-                                </span> */}
                             </div>
                             <div className="ms-auto">
                                 <button
-                                    type="button"
                                     className="btn btn-primary"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal"
+                                    onClick={() => { setShowModal(true) }}
+
                                 >
                                     <i className="bx bxs-plus-square" />
                                     Add QR Code
                                 </button>
 
-                                <div
-                                    className="modal fade"
-                                    id="exampleModal"
-                                    tabIndex={-1}
-                                    aria-labelledby="exampleModalLabel"
-                                    aria-hidden="true"
-                                >
-                                    <div className="modal-dialog">
-                                        <div className="modal-content">
-                                            <div className="modal-header">
-                                                <h5 className="modal-title" id="exampleModalLabel">
-                                                    Add QR Code
-                                                </h5>
-                                                <button
-                                                    type="button"
-                                                    className="btn-close"
-                                                    data-bs-dismiss="modal"
-                                                    aria-label="Close"
-                                                />
-                                            </div>
+                                <ReusableModal
+                                    show={showModal}
+                                    onClose={() => setShowModal(false)}
+                                    title={<>Add QR</>}
+                                    body={
+                                        <>
                                             <div className="modal-body">
                                                 <form>
                                                     <div className="row">
@@ -426,112 +403,102 @@ const QRDetails = () => {
                                                     </div>
                                                 </form>
                                             </div>
-                                            <div className="modal-footer">
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-secondary"
-                                                    data-bs-dismiss="modal"
-                                                >
-                                                    Close
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-primary"
-                                                    onClick={AddQR}
-                                                >
-                                                    Save
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+
+                                        </>
+                                    }
+                                    footer={
+                                        <>
+                                            <button
+                                                type="button"
+                                                className="btn btn-primary"
+                                                onClick={AddQR}
+                                            >
+                                                Add QR
+                                            </button>
+                                            <button
+                                                className="btn btn-primary rounded-1"
+                                                onClick={() => setShowModal(false)}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </>
+                                    }
+                                />
 
 
-                                {model && (
-                                    <>
-                                        <div className="modal-backdrop fade show"></div>
-                                        <div
-                                            className="modal fade show"
-                                            style={{ display: 'block' }}
-                                            tabIndex={-1}
-                                            aria-labelledby="exampleModalLabel"
-                                            aria-hidden="true"
-                                        >
-                                            <div className="modal-dialog">
-                                                <div className="modal-content">
-                                                    <div className="modal-header">
-                                                        <h5 className="modal-title" id="exampleModalLabel">
-                                                            Update QR Code
-                                                        </h5>
-                                                        <button
-                                                            type="button"
-                                                            className="btn-close"
-                                                            onClick={() => setModel(false)}
-                                                        />
-                                                    </div>
-                                                    <div className="modal-body">
-                                                        <form>
-                                                            <div className="row">
-                                                                <div className="col-md-10">
-                                                                    <label htmlFor="imageUpload">Image</label>
-                                                                    <input
-                                                                        className="form-control mb-3"
-                                                                        type="file"
-                                                                        accept="image/*"
-                                                                        id="imageUpload"
-                                                                        onChange={(e) => {
-                                                                            const file = e.target.files[0];
-                                                                            if (file) {
-                                                                                updateServiceTitle({ image: file });
-                                                                            }
 
-                                                                        }}
+                                <ReusableModal
+                                    show={model}
+                                    onClose={() => setModel(false)}
+                                    title={<>Update QR Code</>}
+                                    body={
+                                        <>
+
+
+                                            <div className="modal-body">
+                                                <form>
+                                                    <div className="row">
+                                                        <div className="col-md-10">
+                                                            <label htmlFor="imageUpload">Image</label>
+                                                            <input
+                                                                className="form-control mb-3"
+                                                                type="file"
+                                                                accept="image/*"
+                                                                id="imageUpload"
+                                                                onChange={(e) => {
+                                                                    const file = e.target.files[0];
+                                                                    if (file) {
+                                                                        updateServiceTitle({ image: file });
+                                                                    }
+
+                                                                }}
+                                                            />
+                                                        </div>
+                                                        <div className="col-md-2">
+
+                                                            {updatetitle.image && (
+                                                                <div className="file-preview">
+                                                                    <img
+                                                                        src={
+                                                                            typeof updatetitle.image === 'string'
+                                                                                ? `${image_baseurl}uploads/bank/${updatetitle.image}`
+                                                                                : URL.createObjectURL(updatetitle.image)
+                                                                        }
+                                                                        alt="Image Preview"
+                                                                        className="image-preview mt-4"
+                                                                        style={{ width: "68px", height: "auto" }}
                                                                     />
                                                                 </div>
-                                                                <div className="col-md-2">
-
-                                                                    {updatetitle.image && (
-                                                                        <div className="file-preview">
-                                                                            <img
-                                                                                src={
-                                                                                    typeof updatetitle.image === 'string'
-                                                                                        ? `${image_baseurl}uploads/bank/${updatetitle.image}`
-                                                                                        : URL.createObjectURL(updatetitle.image)
-                                                                                }
-                                                                                alt="Image Preview"
-                                                                                className="image-preview mt-4"
-                                                                                style={{ width: "68px", height: "auto" }}
-                                                                            />
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-
-                                                        </form>
-
-
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                    <div className="modal-footer">
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-secondary"
-                                                            onClick={() => setModel(false)}
-                                                        >
-                                                            Close
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-primary"
-                                                            onClick={updateQr}
-                                                        >
-                                                            Update QR Code
-                                                        </button>
-                                                    </div>
-                                                </div>
+
+                                                </form>
+
+
                                             </div>
-                                        </div>
-                                    </>
-                                )}
+
+                                        </>
+                                    }
+                                    footer={
+                                        <>
+                                            <button
+                                                type="button"
+                                                className="btn btn-primary"
+                                                onClick={updateQr}
+                                            >
+                                                Update QR Code
+                                            </button>
+                                            <button
+                                                className="btn btn-primary rounded-1"
+                                                onClick={() => setModel(false)}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </>
+                                    }
+                                />
+
 
                             </div>
                         </div>

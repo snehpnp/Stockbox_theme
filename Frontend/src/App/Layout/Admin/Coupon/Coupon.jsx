@@ -10,6 +10,7 @@ import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDate, fDateTime } from '../../../../Utils/Date_formate';
 import Loader from '../../../../Utils/Loader';
+import ReusableModal from '../../../components/Models/ReusableModal';
 
 
 
@@ -28,6 +29,10 @@ const Coupon = () => {
 
     //state for Loading
     const [isLoading, setIsLoading] = useState(true)
+
+
+    const [showModal, setShowModal] = useState(false);
+
 
 
     const token = localStorage.getItem('token');
@@ -392,9 +397,8 @@ const Coupon = () => {
                                     <Tooltip placement="top" overlay="View">
                                         <Eye
                                             style={{ marginRight: "10px" }}
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#example2"
-                                            onClick={() => setViewpage(row)}
+                                          
+                                            onClick={() => {setShowModal(true);setViewpage(row)}}
                                         />
                                     </Tooltip>
                                 </div>
@@ -483,124 +487,83 @@ const Coupon = () => {
                         />
                     </>
                 )}
-                <div className="button-group">
+                {/* // ReusableModal usage */}
+                <ReusableModal
+                    show={showModal}
+                    onClose={() => setShowModal(false)}
+                    title={<>
+                        Coupon Details
+                    </>}
+                    body={
+                        <>
+                            <ul>
+                                <li>
+                                    <div className="row justify-content-between">
+                                        <div className="col-md-6">
+                                            <b>Name : {viewpage?.name}</b>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div className="row justify-content-between">
+                                        <div className="col-md-6">
+                                            <b>Code : {viewpage?.code}</b>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div className="row justify-content-between">
+                                        <div className="col-md-6">
+                                            <b>Min Purchase Value : {viewpage?.minpurchasevalue}</b>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div className="row justify-content-between">
+                                        <div className="col-md-6">
+                                            <b>Max Discount Value : {viewpage?.mincouponvalue}</b>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div className="row justify-content-between">
+                                        <div className="col-md-6">
+                                            {viewpage?.startdate ? (
+                                                <b>Start Date: {fDateTime(viewpage.startdate)}</b>
+                                            ) : (
+                                                <b>Start Date: Not available</b>
+                                            )}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div className="row justify-content-between">
+                                        <div className="col-md-6">
+                                            {viewpage?.enddate ? (
+                                                <b>End Date: {fDateTime(viewpage.enddate)}</b>
+                                            ) : (
+                                                <b>End Date: Not available</b>
+                                            )}
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </>
+                    }
+                    footer={
+                        <>
+                            <button
+                                type="button"
+                                className="btn btn-primary"
+                                onClick={() => setShowModal(false)}
+                            >
+                                Close
+                            </button>
+                        </>
+                    }
+                />;
 
-                    <div
-                        className="modal fade"
-                        id="example2"
-                        tabIndex={-1}
-                        aria-labelledby="example2"
-                        aria-hidden="true"
-                    >
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title" id="example1">
-                                        Coupon Details
-                                    </h5>
-                                    <button
-                                        type="button"
-                                        className="btn-close"
-                                        data-bs-dismiss="modal"
-                                        aria-label="Close"
-                                    />
-                                </div>
-                                <div className="modal-body">
-                                    <ul>
-                                        <li>
-                                            <div className="row justify-content-between">
-                                                <div className="col-md-6">
-                                                    <b>Name : {viewpage?.name}</b>
-                                                </div>
-                                                <div className="col-md-6">
 
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div className="row justify-content-between">
-                                                <div className="col-md-6">
-                                                    <b>Code : {viewpage?.code}</b>
-                                                </div>
-                                                <div className="col-md-6">
-
-                                                </div>
-                                            </div>
-                                        </li>
-
-                                        <li>
-                                            <div className="row justify-content-between">
-                                                <div className="col-md-6">
-                                                    <b>Min Purchase Value : {viewpage?.minpurchasevalue}</b>
-                                                </div>
-                                                <div className="col-md-6">
-
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div className="row justify-content-between">
-                                                <div className="col-md-6">
-                                                    <b>Max Discount Value  : {viewpage?.mincouponvalue}</b>
-                                                </div>
-                                                <div className="col-md-6">
-
-                                                </div>
-                                            </div>
-                                        </li>
-                                        {/* <li>
-                                            <div className="row justify-content-between">
-                                                <div >
-                                                    <b>Discription : {viewpage?.description}</b>
-                                                </div>
-                                                <div className="col-md-6">
-
-                                                </div>
-                                            </div>
-                                        </li> */}
-                                        <li>
-                                            <div className="row justify-content-between">
-                                                <div className="col-md-8">
-                                                    {viewpage?.startdate ? (
-                                                        <b>Start Date: {fDateTime(viewpage.startdate)}</b>
-                                                    ) : (
-                                                        <b>Start Date: Not available</b>
-                                                    )}
-                                                </div>
-                                                <div className="col-md-6"></div>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div className="row justify-content-between">
-                                                <div className="col-md-6">
-                                                    {viewpage?.enddate ? (
-                                                        <b>End Date: {fDateTime(viewpage.enddate)}</b>
-                                                    ) : (
-                                                        <b>End Date: Not available</b>
-                                                    )}
-                                                </div>
-                                                <div className="col-md-6"></div>
-                                            </div>
-                                        </li>
-
-                                        {/* <li>
-                                            <div className="row justify-content-between">
-                                                <div className="col-md-6">
-                                                    <b>Image </b>
-                                                </div>
-                                                <div className="col-md-6">
-
-                                                </div>
-                                            </div>
-                                        </li> */}
-
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
             </div>
         </div>
     );

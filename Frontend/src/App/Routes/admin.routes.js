@@ -78,6 +78,7 @@ import PaymentHistory from "../Layout/Admin/Payment_history/Paymenthistory"
 import Coupon from "../Layout/Admin/Coupon/Coupon";
 import Addcoupon from "../Layout/Admin/Coupon/Addcoupon";
 import Updatecoupon from "../Layout/Admin/Coupon/Updatecoupon";
+import Apiinfo from "../Layout/Admin/BasicSetting/Apiinfo";
 
 
 
@@ -149,7 +150,7 @@ export default function App() {
 
 
       <Route path="/generalsettings" element={<Generalsettings />} />
-      {/* <Route path="/Apiinfo" element={<Apiinfo />} /> */}
+      <Route path="/Apiinfo" element={<Apiinfo />} />
       <Route path="/paymentgeteway" element={<Payementgateway />} />
       <Route path="/emailsetting" element={<Emailsettings />} />
       <Route path="/emailtemplate" element={<Emailtemplate />} />
@@ -186,7 +187,7 @@ export default function App() {
       <Route path="/notificationlist" element={<Notificationlist />} />
 
 
-     <Route path="/profile" element={<Profile />} />
+      <Route path="/profile" element={<Profile />} />
 
 
       <Route path="/news" element={<News />} />

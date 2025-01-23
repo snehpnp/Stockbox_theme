@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
+import Content from '../../../components/Contents/Content';
 
 
 const Viewblog = () => {
@@ -12,8 +13,14 @@ const Viewblog = () => {
     const { row } = location.state;
 
     return (
+        <Content
+        Page_title="Blog Details"
+        button_status={false}
+        backbutton_status={true}
+        backForword={true}
+      >
         <div className="page-content">
-            <div className="row">
+            {/* <div className="row">
                 <div className="col-md-6">
                     <div className="page-breadcrumb d-none d-sm-flex align-items-center">
                         <div className="breadcrumb-title pe-3">Blog Details</div>
@@ -39,7 +46,7 @@ const Viewblog = () => {
                 </div>
             </div>
 
-            <hr />
+            <hr /> */}
             <div className="row">
                 <div className="col-lg-8 mx-auto">
                     <div className="card radius-15">
@@ -157,6 +164,7 @@ const Viewblog = () => {
 }
             `}</style>
         </div>
+        </Content>
     );
 };
 

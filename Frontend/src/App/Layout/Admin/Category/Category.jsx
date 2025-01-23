@@ -9,6 +9,7 @@ import { Tooltip } from 'antd';
 import styled from 'styled-components';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import Loader from '../../../../Utils/Loader'
+import ReusableModal from '../../../components/Models/ReusableModal';
 
 
 const Category = () => {
@@ -22,6 +23,8 @@ const Category = () => {
 
     //set state for loding
     const [isLoading, setIsLoading] = useState(true)
+
+    const [showAddModal, setShowAddModal] = useState(false);
 
 
     const [updatetitle, setUpdatetitle] = useState({
@@ -253,7 +256,7 @@ const Category = () => {
     };
 
     const columns = [
-   
+
         {
             name: 'Title',
             selector: row => row.title,
@@ -353,7 +356,7 @@ const Category = () => {
 
     return (
         <div>
-            {/* <div className="page-content">
+            <div className="page-content">
 
                 <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
                     <div className="breadcrumb-title pe-3">Category</div>
@@ -386,7 +389,7 @@ const Category = () => {
                                     <i className="bx bx-search" />
                                 </span>
                             </div>
-                            <div className="ms-auto">
+                            {/* <div className="ms-auto">
                                 <button
                                     type="button"
                                     className="btn btn-primary"
@@ -585,7 +588,149 @@ const Category = () => {
 
 
 
+                            </div> */}
+                            <div className="ms-auto">
+                                <button
+                                    type="button"
+                                    className="btn btn-primary"
+                                    onClick={() => setShowAddModal(true)}
+                                >
+                                    <i className="bx bxs-plus-square" />
+                                    Add Category
+                                </button>
+
+                                <ReusableModal
+                                    show={showAddModal}
+                                    onClose={() => setShowAddModal(false)}
+                                    title={<span>Add Category</span>}
+                                    body={
+                                        <>
+                                            <div className="row">
+                                                <div className="col-md-12">
+                                                    <label htmlFor="service">Segment</label>
+                                                    <span className="text-danger">*</span>
+                                                    {servicedata.length > 0 && (
+                                                        <DropdownMultiselect
+                                                            name="Service"
+                                                            options={servicedata.map((item) => ({
+                                                                key: item._id,
+                                                                label: item.title,
+                                                            }))}
+                                                            placeholder="Select Segment"
+                                                            handleOnChange={(selected) => {
+                                                                const selectedService = selected;
+                                                                setTitle({ ...title, service: selectedService });
+                                                            }}
+                                                        />
+                                                    )}
+                                                </div>
+                                                <div className="col-md-12">
+                                                    <label htmlFor="categoryTitle">Category</label>
+                                                    <span className="text-danger">*</span>
+                                                    <input
+                                                        id="categoryTitle"
+                                                        className="form-control mb-3"
+                                                        type="text"
+                                                        placeholder="Enter Category Title"
+                                                        value={title.title}
+                                                        onChange={(e) => setTitle({ ...title, title: e.target.value })}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </>
+                                    }
+                                    footer={
+                                        <>
+                                            <button
+                                                type="button"
+                                                className="btn btn-secondary"
+                                                onClick={() => setShowAddModal(false)}
+                                            >
+                                                Close
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="btn btn-primary"
+                                                onClick={addcategory}
+                                            >
+                                                Save
+                                            </button>
+                                        </>
+                                    }
+                                />
+
+                                {model && (
+                                    <ReusableModal
+                                        show={model}
+                                        onClose={() => setModel(false)}
+                                        title={<span>Update Category</span>}
+                                        body={
+                                            <form>
+                                                <div className="row">
+                                                    <div className="col-md-12">
+                                                        <label htmlFor="category">Category</label>
+                                                        <span className="text-danger">*</span>
+                                                        <input
+                                                            className="form-control mb-2"
+                                                            type="text"
+                                                            placeholder="Enter Category Title"
+                                                            id="category"
+                                                            value={updatetitle.title}
+                                                            onChange={(e) => updateServiceTitle('title', e.target.value)}
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="row">
+                                                    <div className="col-md-12">
+                                                        <label htmlFor="service">Segment</label>
+                                                        <span className="text-danger">*</span>
+                                                        {servicedata.length > 0 && (
+                                                            <div className="form-group">
+                                                                {servicedata.map((item) => (
+                                                                    <div key={item._id} className="form-check">
+                                                                        <input
+                                                                            className="form-check-input"
+                                                                            type="checkbox"
+                                                                            id={`service_${item._id}`}
+                                                                            value={item._id}
+                                                                            checked={updatetitle.service.includes(item._id)}
+                                                                            onChange={(e) => handleServiceChange(item._id, e.target.checked)}
+                                                                        />
+                                                                        <label className="form-check-label" htmlFor={`service_${item._id}`}>
+                                                                            {item.title}
+                                                                        </label>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        }
+                                        footer={
+                                            <>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-secondary"
+                                                    onClick={() => setModel(false)}
+                                                >
+                                                    Close
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-primary"
+                                                    onClick={Updatecategory}
+                                                    disabled={!updatetitle.title || !updatetitle.service}
+                                                >
+                                                    Update Service
+                                                </button>
+                                            </>
+                                        }
+                                    />
+                                )}
                             </div>
+
                         </div>
 
                         {isLoading ? (
@@ -605,7 +750,7 @@ const Category = () => {
                         )}
                     </div>
                 </div>
-            </div> */}
+            </div>
         </div>
     );
 };

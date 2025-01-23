@@ -157,8 +157,8 @@ const Update = () => {
     <div style={{ marginTop: "100px" }}>
       <DynamicForm
         fields={fields}
-        page_title="Edit Staff"
-        btn_name="Edit Staff"
+        page_title="Edit Employee"
+        btn_name="Edit Employee"
         btn_name1="Cancel"
         formik={formik}
         sumit_btn={true}

@@ -1452,13 +1452,13 @@ class List {
       const endDateOnly = new Date(coupon.enddate.getFullYear(), coupon.enddate.getMonth(), coupon.enddate.getDate());
 
       if (currentDateOnly < startDateOnly || currentDateOnly > endDateOnly) {
-        return res.status(400).json({ message: 'Coupon is not valid at this time' });
+        return res.status(400).json({ status: false, message: 'Coupon is not valid at this time' });
       }
 
 
       // Check if the purchase meets the minimum purchase value requirement
       if (purchaseValue < coupon.minpurchasevalue) {
-        return res.status(400).json({ message: `Minimum purchase value required is ${coupon.minpurchasevalue}` });
+        return res.status(400).json({ status: false, message: `Minimum purchase value required is ${coupon.minpurchasevalue}` });
       }
       // Calculate the discount based on the coupon type
       let discount = 0;
@@ -1469,12 +1469,12 @@ class List {
       }
 
       if (discount > purchaseValue) {
-        return res.status(400).json({ message: "Discount should be less than the purchase value." });
+        return res.status(400).json({ status: false, message: "Discount should be less than the purchase value." });
       }
 
 
       if (coupon.limitation <= 0) {
-        return res.status(400).json({ message: 'Coupon usage limit has been reached' });
+        return res.status(400).json({ status: false, message: 'Coupon usage limit has been reached' });
       }
       if (coupon.service && coupon.service != 0) {
         const plan = await Plan_Modal.findById(planid)
@@ -1482,7 +1482,7 @@ class List {
           .exec();
         if (coupon.service != plan.category?.service) {
 
-          return res.status(404).json({ message: 'Service Does not match' });
+          return res.status(404).json({ status: false, message: 'Service Does not match' });
         }
       }
 
@@ -1498,13 +1498,14 @@ class List {
       const finalPrice = purchaseValue - discount;
 
       return res.status(200).json({
+        status: true,
         message: 'Coupon applied successfully',
         originalPrice: purchaseValue,
         discount,
         finalPrice
       });
     } catch (error) {
-      return res.status(500).json({ message: 'Server error', error: error.message });
+      return res.status(500).json({ status: false, message: 'Server error', error: error.message });
     }
   }
 

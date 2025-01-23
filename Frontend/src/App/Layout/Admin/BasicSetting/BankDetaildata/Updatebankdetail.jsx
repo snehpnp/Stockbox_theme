@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UpdateBankDetailbyadmin } from "../../../../Services/Admin/Admin";
 import { image_baseurl } from "../../../../../Utils/config";
+import Content from "../../../../components/Contents/Content";
 
 const Updatebankdetail = () => {
 
@@ -145,18 +146,23 @@ const Updatebankdetail = () => {
   ];
 
   return (
-    <div style={{ marginTop: "100px" }}>
+    <Content
+      Page_title="Update Bank Account"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
       <DynamicForm
         fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
-        page_title="Update Detail Code"
-        btn_name="Update Detail"
+        page_title="Update Bank Account"
+        btn_name="Update Bank Account"
         btn_name1="Cancel"
         formik={formik}
         sumit_btn={true}
         btn_name1_route={"/admin/bankdetail"}
         additional_field={<></>}
       />
-    </div>
+    </Content>
   );
 };
 

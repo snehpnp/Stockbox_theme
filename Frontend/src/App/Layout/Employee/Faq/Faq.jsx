@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import { Tooltip } from 'antd';
 import { fDate, fDateTime } from '../../../../Utils/Date_formate';
 import Loader from '../../../../Utils/Loader';
+import ReusableModal from '../../../components/Models/ReusableModal';
 
 
 const Faq = () => {
@@ -31,6 +32,11 @@ const Faq = () => {
 
 
     const [isLoading, setIsLoading] = useState(true)
+
+    const [showModal, setShowModal] = useState(false);
+    
+    const [showAddModal, setShowAddModal] = useState(false);
+    
 
 
     const [title, setTitle] = useState({
@@ -316,9 +322,9 @@ const Faq = () => {
                 <>
                     {permission.includes("viewfaq") ? <div>
                         <Tooltip placement="top" overlay="View">
-                            <Eye style={{ marginRight: "10px" }} data-bs-toggle="modal"
-                                data-bs-target="#example1"
-                                onClick={() => setviewdetail([row])}
+                            <Eye style={{ marginRight: "10px" }} 
+                            
+                                onClick={() => {setShowModal(true);setviewdetail([row])}}
                             />
                         </Tooltip>
                     </div> : ""}
@@ -401,73 +407,62 @@ const Faq = () => {
                                     <i className="bx bx-search" />
                                 </span>
                             </div>
-                            {permission.includes("addfaq") ? <div className="ms-auto">
-                                <button
-                                    type="button"
-                                    className="btn btn-primary"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal"
-                                >
-                                    <i className="bx bxs-plus-square" />
-                                    Add FAQ
-                                </button>
+                            {permission.includes("addfaq") ?
+                                <div className="ms-auto">
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        onClick={() => setShowAddModal(true)}
+                                    >
+                                        <i className="bx bxs-plus-square" />
+                                        Add FAQ
+                                    </button>
 
-                                <div
-                                    className="modal fade"
-                                    id="exampleModal"
-                                    tabIndex={-1}
-                                    aria-labelledby="exampleModalLabel"
-                                    aria-hidden="true"
-                                >
-                                    <div className="modal-dialog">
-                                        <div className="modal-content">
-                                            <div className="modal-header">
-                                                <h5 className="modal-title" id="exampleModalLabel">
-                                                    Add FAQ
-                                                </h5>
-                                                <button
-                                                    type="button"
-                                                    className="btn-close"
-                                                    data-bs-dismiss="modal"
-                                                    aria-label="Close"
-                                                />
-                                            </div>
-                                            <div className="modal-body">
+                                    <ReusableModal
+                                        show={showAddModal}
+                                        onClose={() => setShowAddModal(false)}
+                                        title={<>
+                                            Add FAQ
+                                        </>}
+                                        body={
+                                            <>
                                                 <form>
                                                     <div className="row">
                                                         <div className="col-md-12">
-                                                            <label htmlFor="">Title</label>
+                                                            <label htmlFor="addFaqTitle">Title</label>
                                                             <span className="text-danger">*</span>
                                                             <input
+                                                                id="addFaqTitle"
                                                                 className="form-control mb-3"
                                                                 type="text"
-                                                                placeholder='Enter Faq Title'
+                                                                placeholder="Enter FAQ Title"
                                                                 value={title.title}
                                                                 onChange={(e) => setTitle({ ...title, title: e.target.value })}
                                                             />
                                                         </div>
                                                     </div>
-
                                                     <div className="row">
                                                         <div className="col-md-12">
-                                                            <label htmlFor="">description</label>
+                                                            <label htmlFor="addFaqDescription">Description</label>
                                                             <span className="text-danger">*</span>
                                                             <textarea
+                                                                id="addFaqDescription"
                                                                 className="form-control mb-3"
-                                                                type="text"
-                                                                placeholder='Enter description'
+                                                                placeholder="Enter Description"
                                                                 value={title.description}
                                                                 onChange={(e) => setTitle({ ...title, description: e.target.value })}
                                                             />
                                                         </div>
                                                     </div>
                                                 </form>
-                                            </div>
-                                            <div className="modal-footer">
+                                            </>
+                                        }
+                                        footer={
+                                            <>
                                                 <button
                                                     type="button"
                                                     className="btn btn-secondary"
-                                                    data-bs-dismiss="modal"
+                                                    onClick={() => setShowAddModal(false)}
                                                 >
                                                     Close
                                                 </button>
@@ -478,15 +473,15 @@ const Faq = () => {
                                                 >
                                                     Save
                                                 </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                            </>
+                                        }
+                                    />
 
 
 
 
-                            </div> : ""}
+
+                                </div> : ""}
                         </div>
                         {isLoading ? (
                             <Loader />
@@ -507,159 +502,121 @@ const Faq = () => {
                     </div>
                 </div>
             </div>
-            <div className="button-group">
+            <ReusableModal
+                show={showModal}
+                onClose={() => setShowModal(false)}
+                title={<>
+                    FAQ Details
+                </>}
+                body={
+                    <>
+                        <ul>
+                            {viewdetail && viewdetail.map((item) => (
+                                <Fragment key={item.id || item.title}>
+                                    <li>
+                                        <div className="row justify-content-between">
+                                            <div className="col-md-6">
+                                                <b>Title : {item.title}</b>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div className="row justify-content-between">
+                                            <div className="">
+                                                <b>Description : {item.description}</b>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div className="row justify-content-between">
+                                            <div className="col-md-6">
+                                                <b>Created At : {fDateTime(item.created_at)}</b>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div className="row justify-content-between">
+                                            <div className="col-md-6">
+                                                <b>Updated At : {fDateTime(item.updated_at)}</b>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </Fragment>
+                            ))}
+                        </ul>
+                    </>
+                }
+                footer={
+                    <>
+                        <button
+                            type="button"
+                            className="btn btn-primary"
+                            onClick={() => setShowModal(false)}
+                        >
+                            Close
+                        </button>
+                    </>
+                }
+            />
 
-                <div
-                    className="modal fade"
-                    id="example1"
-                    tabIndex={-1}
-                    aria-labelledby="example1"
-                    aria-hidden="true"
-                >
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="example1">
-                                    FAQ Details
-                                </h5>
-                                <button
-                                    type="button"
-                                    className="btn-close"
-                                    data-bs-dismiss="modal"
-                                    aria-label="Close"
-                                />
-                            </div>
-                            <div className="modal-body">
-                                <ul>
-                                    {viewdetail && viewdetail.map((item) => (
-                                        <Fragment>
-                                            <li>
-                                                <div className="row justify-content-between">
-                                                    <div className="col-md-6">
-                                                        <b>Title : {item.title}</b>
-                                                    </div>
-                                                    <div className="col-md-6">
-
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div className="row justify-content-between">
-                                                    <div className="">
-                                                        <b>Discription : {item.description}</b>
-                                                    </div>
-                                                    <div className="col-md-6">
-
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div className="row justify-content-between">
-                                                    <div className="col-md-6">
-                                                        <b>Created At : {fDateTime(item.created_at)} </b>
-                                                    </div>
-                                                    <div className="col-md-6">
-
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div className="row justify-content-between">
-                                                    <div className="col-md-6">
-                                                        <b>Updated At : {fDateTime(item.updated_at)}</b>
-                                                    </div>
-                                                    <div className="col-md-6">
-
-                                                    </div>
-                                                </div>
-                                            </li>
-
-                                        </Fragment>
-                                    ))}
-
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            {model && (
-                <>
-                    <div className="modal-backdrop fade show"></div>
-                    <div
-                        className="modal fade show"
-                        style={{ display: 'block' }}
-                        tabIndex={-1}
-                        aria-labelledby="exampleModalLabel"
-                        aria-hidden="true"
-                    >
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title" id="exampleModalLabel">
-                                        Update FAQ
-                                    </h5>
-                                    <button
-                                        type="button"
-                                        className="btn-close"
-                                        onClick={() => setModel(false)}
+            <ReusableModal
+                show={model}
+                onClose={() => setModel(false)}
+                title={<>
+                    Update FAQ
+                </>}
+                body={
+                    <>
+                        <form>
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <label htmlFor="faqTitle">Title</label>
+                                    <span className="text-danger">*</span>
+                                    <input
+                                        id="faqTitle"
+                                        className="form-control mb-2"
+                                        type="text"
+                                        placeholder="Enter FAQ Title"
+                                        value={updatetitle.title}
+                                        onChange={(e) => updateServiceTitle({ title: e.target.value })}
                                     />
                                 </div>
-                                <div className="modal-body">
-                                    <form>
-                                        <div className="row">
-                                            <div className="col-md-12">
-                                                <label htmlFor="">Title</label>
-                                                <span className="text-danger">*</span>
-                                                <input
-                                                    className="form-control mb-2"
-                                                    type="text"
-                                                    placeholder='Enter Faq Title'
-                                                    value={updatetitle.title}
-                                                    onChange={(e) => updateServiceTitle({ title: e.target.value })}
-                                                />
-                                            </div>
-                                        </div>
-
-
-                                        <div className="row">
-                                            <div className="col-md-12">
-                                                <label htmlFor="">Description</label>
-                                                <span className="text-danger">*</span>
-                                                <textarea
-                                                    className="form-control mb-2"
-                                                    type="text"
-                                                    placeholder='Enter  Description'
-                                                    value={updatetitle.description}
-                                                    onChange={(e) => updateServiceTitle({ description: e.target.value })}
-                                                />
-                                            </div>
-                                        </div>
-                                    </form>
-
-                                </div>
-                                <div className="modal-footer">
-                                    <button
-                                        type="button"
-                                        className="btn btn-secondary"
-                                        onClick={() => setModel(false)}
-                                    >
-                                        Close
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary"
-                                        onClick={updateFaqbyadmin}
-                                    >
-                                        Update FAQ
-                                    </button>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <label htmlFor="faqDescription">Description</label>
+                                    <span className="text-danger">*</span>
+                                    <textarea
+                                        id="faqDescription"
+                                        className="form-control mb-2"
+                                        placeholder="Enter Description"
+                                        value={updatetitle.description}
+                                        onChange={(e) => updateServiceTitle({ description: e.target.value })}
+                                    />
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </>
-            )}
+                        </form>
+                    </>
+                }
+                footer={
+                    <>
+                        <button
+                            type="button"
+                            className="btn btn-secondary"
+                            onClick={() => setModel(false)}
+                        >
+                            Close
+                        </button>
+                        <button
+                            type="button"
+                            className="btn btn-primary"
+                            onClick={updateFaqbyadmin}
+                        >
+                            Update FAQ
+                        </button>
+                    </>
+                }
+            />
         </div>
     );
 };

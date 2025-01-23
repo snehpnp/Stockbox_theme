@@ -86,7 +86,7 @@ const Staff = () => {
         try {
             const result = await Swal.fire({
                 title: 'Are you sure?',
-                text: 'Do you want to delete this staff member? This action cannot be undone.',
+                text: 'Do you want to delete this Employee member? This action cannot be undone.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, delete it!',
@@ -99,7 +99,7 @@ const Staff = () => {
                 if (response.status) {
                     Swal.fire({
                         title: 'Deleted!',
-                        text: 'The staff has been successfully deleted.',
+                        text: 'The Employee has been successfully deleted.',
                         icon: 'success',
                         confirmButtonText: 'OK',
                     });
@@ -109,7 +109,7 @@ const Staff = () => {
 
                 Swal.fire({
                     title: 'Cancelled',
-                    text: 'The staff deletion was cancelled.',
+                    text: 'The Employee deletion was cancelled.',
                     icon: 'info',
                     confirmButtonText: 'OK',
                 });
@@ -117,7 +117,7 @@ const Staff = () => {
         } catch (error) {
             Swal.fire({
                 title: 'Error!',
-                text: 'There was an error deleting the staff.',
+                text: 'There was an error deleting the Employee.',
                 icon: 'error',
                 confirmButtonText: 'Try Again',
             });
@@ -306,7 +306,7 @@ const Staff = () => {
                     <div className="page-content">
 
                         <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-                            <div className="breadcrumb-title pe-3">Staff</div>
+                            <div className="breadcrumb-title pe-3">Employee</div>
                             <div className="ps-3">
                                 <nav aria-label="breadcrumb">
                                     <ol className="breadcrumb mb-0 p-0">
@@ -328,7 +328,7 @@ const Staff = () => {
                                         <input
                                             type="text"
                                             className="form-control ps-5 radius-10"
-                                            placeholder="Search Staff"
+                                            placeholder="Search Employee"
                                             onChange={(e) => setSearchInput(e.target.value)}
                                             value={searchInput}
                                         />
@@ -345,7 +345,7 @@ const Staff = () => {
                                                 className="bx bxs-plus-square"
                                                 aria-hidden="true"
                                             />
-                                            Add Staff
+                                            Add Employee
                                         </Link>
                                     </div>
                                     <div className="ms-2" >

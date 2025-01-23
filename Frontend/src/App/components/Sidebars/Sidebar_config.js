@@ -25,6 +25,12 @@ const Admin = [
     name: "FreeTrialClient"
   },
   {
+    label: "Employee",
+    icon: "UserPen",
+    link: "/admin/staff",
+    name: "Employee"
+  },
+  {
     label: "Plan",
     icon: "Rocket",
     children: [
@@ -234,24 +240,7 @@ const SuperAdmin = [
     link: "/superadmin/themes",
     children: [],
   },
-  {
-    label: "Signal",
-    icon: "Activity",
-    children: [
-      {
-        label: "Open Signal",
-        icon: "ScatterChart",
-        link: "/superadmin/signal",
-        name: "OpenSignal"
-      },
-      {
-        label: "Close Signal",
-        icon: "ScatterChart", link: "/superadmin/closesignal",
-        name: "CloseSignal"
-      },
-    ],
-    name: "Signal",
-  },
+
 ];
 
 

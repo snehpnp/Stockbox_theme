@@ -4,6 +4,7 @@ import DynamicForm from '../../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { AddBankDetailbyadmin } from '../../../../Services/Admin/Admin';
+import Content from '../../../../components/Contents/Content';
 
 
 const Addbankdetail = () => {
@@ -165,11 +166,16 @@ const Addbankdetail = () => {
 
 
     return (
-        <div style={{ marginTop: "100px" }}>
+        <Content
+            Page_title="Add Bank Account"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
             <DynamicForm
                 fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
                 formik={formik}
-                page_title="Add Bank Detail"
+                page_title="Add Bank Account"
                 btn_name="Add Bank Account"
                 btn_name1="Cancel"
                 sumit_btn={true}
@@ -177,7 +183,7 @@ const Addbankdetail = () => {
                 additional_field={<></>}
 
             />
-        </div>
+        </Content>
     );
 };
 

@@ -8,6 +8,7 @@ import { Viewbasket, getstocklistById } from "../../../Services/Admin/Admin";
 import Swal from "sweetalert2";
 import { Tooltip } from 'antd';
 import { SquarePen, Eye } from 'lucide-react';
+import Content from '../../../components/Contents/Content';
 
 
 
@@ -353,8 +354,14 @@ const Viewbasketdetail = () => {
 
 
   return (
+    <Content
+        Page_title="View Basket"
+        button_status={false}
+        backbutton_status={true}
+        backForword={true}
+      >
     <div className="page-content">
-      <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+      {/* <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
         <div className="breadcrumb-title pe-3">View Basket</div>
         <div className="ps-3">
           <nav aria-label="breadcrumb">
@@ -365,8 +372,8 @@ const Viewbasketdetail = () => {
             </ol>
           </nav>
         </div>
-      </div>
-      <hr />
+      </div> 
+      <hr />*/}
       <div className="card">
         <div className="card-body">
           <Formik
@@ -506,6 +513,7 @@ const Viewbasketdetail = () => {
       </div>
 
     </div>
+    </Content>
   );
 };
 

@@ -4,6 +4,7 @@ import DynamicForm from "../../../Extracomponents/FormicForm";
 import Swal from "sweetalert2";
 import { useLocation, useNavigate } from "react-router-dom";
 import { updateCouponbyadmin, GetService } from "../../../Services/Admin/Admin";
+import Content from '../../../components/Contents/Content';
 
 const Updatecoupon = () => {
   const navigate = useNavigate();
@@ -318,7 +319,12 @@ const Updatecoupon = () => {
 
 
   return (
-    <div style={{ marginTop: "100px" }}>
+    <Content
+      Page_title="Update Coupon Code"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
       <DynamicForm
         fields={fields.filter((field) => !field.showWhen || field.showWhen(formik.values))}
         page_title="Update Coupon Code"
@@ -329,7 +335,7 @@ const Updatecoupon = () => {
         btn_name1_route={"/admin/coupon"}
         additional_field={<></>}
       />
-    </div>
+    </Content>
   );
 };
 

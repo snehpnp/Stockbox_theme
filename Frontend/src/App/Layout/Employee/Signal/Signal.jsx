@@ -12,6 +12,7 @@ import Select from 'react-select';
 import { Tooltip } from 'antd';
 import { image_baseurl } from '../../../../Utils/config';
 import Loader from '../../../../Utils/Loader';
+import ReusableModal from '../../../components/Models/ReusableModal';
 
 
 
@@ -554,13 +555,13 @@ const Signal = () => {
             name: 'S.No',
             selector: (row, index) => (currentPage - 1) * 10 + index + 1,
             sortable: false,
-            width: '78px',
+            width: '80px',
         },
         {
             name: 'Segment',
             selector: row => row.segment == "C" ? "CASH" : row.segment == "O" ? "OPTION" : "FUTURE",
             sortable: true,
-            width: '132px',
+            width: '140px',
         },
 
         {
@@ -1413,7 +1414,7 @@ const Signal = () => {
             )}
 
 
-            {model1 && (
+            {/* {model1 && (
                 <>
                     <div className="modal-backdrop fade show"></div>
                     <div
@@ -1506,7 +1507,66 @@ const Signal = () => {
                         </div>
                     </div>
                 </>
-            )}
+            )} */}
+
+            <ReusableModal
+                show={model1}
+                onClose={() => setModel1(false)}
+                title="Upload Report"
+                body={
+                    <form>
+                        <div className="row">
+                            <div className="col-md-12">
+                                <label htmlFor="imageUpload">Upload Report</label>
+                                <span className="text-danger">*</span>
+                                <input
+                                    className="form-control mb-3"
+                                    type="file"
+                                    accept="application/pdf"
+                                    id="imageUpload"
+                                    onChange={(e) => {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                            if (file.type !== "application/pdf") {
+                                                Swal.fire({
+                                                    title: 'Error!',
+                                                    text: 'Only PDF files are allowed!',
+                                                    icon: 'error',
+                                                    confirmButtonText: 'Try Again',
+                                                });
+                                                return;
+                                            }
+                                            updateServiceTitle({ report: file });
+                                        }
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-md-12">
+                                <label htmlFor="description">Description</label>
+                                <input
+                                    className="form-control mb-2"
+                                    type="text"
+                                    placeholder="Enter Description Title"
+                                    value={updatetitle.description}
+                                    onChange={(e) => updateServiceTitle({ description: e.target.value })}
+                                />
+                            </div>
+                        </div>
+                    </form>
+                }
+                footer={
+                    <>
+                        <button type="button" className="btn btn-secondary" onClick={() => setModel1(false)}>
+                            Close
+                        </button>
+                        <button type="button" className="btn btn-primary" onClick={updateReportpdf}>
+                            Update File
+                        </button>
+                    </>
+                }
+            />
 
 
         </div>

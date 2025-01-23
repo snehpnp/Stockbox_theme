@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import DynamicForm from '../../../Extracomponents/FormicForm';
 import { useNavigate } from 'react-router-dom';
 import { SendBroadCast, GetService } from '../../../Services/Admin/Admin';
+import Content from '../../../components/Contents/Content';
 
 const Addbroadcast = () => {
 
@@ -164,7 +165,12 @@ const Addbroadcast = () => {
     ];
 
     return (
-        <div style={{ marginTop: "100px" }}>
+        <Content
+            Page_title="Add Broadcast"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
             <DynamicForm
                 fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
                 formik={formik}
@@ -176,7 +182,7 @@ const Addbroadcast = () => {
                 btn_name1_route={"/admin/message"}
                 additional_field={<></>}
             />
-        </div>
+        </Content >
     );
 };
 
