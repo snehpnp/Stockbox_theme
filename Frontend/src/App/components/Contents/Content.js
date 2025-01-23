@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { House, ChevronRight } from "lucide-react";
+import { House, Tally1  } from "lucide-react";
 
 const Content = ({
   Page_title,
@@ -38,7 +38,7 @@ const Content = ({
                   <a href="/" className="breadcrumb-box" />
                 </li>
                 <li>
-                  <ChevronRight />
+                  <Tally1  />
                 </li>
                 <li>
                   <div className="breadcrumb-box">
