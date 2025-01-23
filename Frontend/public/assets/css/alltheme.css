@@ -1037,7 +1037,10 @@ padding-left: 0;
   justify-content: center;
   z-index: 9999; 
 }
-.dasg,.gl.g`mm{{}}
+.dashboard-card
+{
+  height: 100% !important; 
+}
 /* ---------------------------Responsive css------------------------------ */
 
 @media screen and (min-width: 1024px) {
