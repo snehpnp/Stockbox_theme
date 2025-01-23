@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Table from "../../../components/Tabels/Table";
 import { GetPrivacyPolicy } from "../../../Services/UserService/User";
 import Content from "../../../components/Contents/Content";
+import Loader from "../../../../Utils/Loader";
 
 const Privacy = () => {
 
@@ -10,6 +11,8 @@ const Privacy = () => {
   const userid = localStorage.getItem('Id');
 
   const [privacyPolicy, setPrivacyPolicy] = useState("");
+  const [isLoading, setIsLoading] = useState(true)
+
 
   const fetchPrivacyPolicy = async () => {
     try {
@@ -21,6 +24,7 @@ const Privacy = () => {
     } catch (error) {
       console.error("Error fetching privacy policy:", error);
     }
+    setIsLoading(false)
   };
 
   useEffect(() => {
@@ -37,11 +41,11 @@ const Privacy = () => {
         <div className="page-content">
 
           <div className="card">
-            <div className="card-body">
+            {isLoading ? <Loader /> : <div className="card-body">
               <h5 className="card-title">Privacy & Policy</h5>
               <hr />
               <div dangerouslySetInnerHTML={{ __html: privacyPolicy }} />
-            </div>
+            </div>}
           </div>
         </div>
       </Content>

@@ -1001,40 +1001,35 @@ padding-left: 0;
 }
 
 /* HTML: <div class="loader"></div> */
+/* HTML: <div class="loader"></div> */
 .loader {
-  width: 45px;
+  width: 50px;
   aspect-ratio: 1;
-  --c: no-repeat linear-gradient(#000 0 0);
-  background:
-    var(--c) 0% 50%,
-    var(--c) 50% 50%,
-    var(--c) 100% 50%;
-  background-size: 20% 100%;
-  animation: l1 1s infinite linear;
+  display: grid;
+  animation: l14 4s infinite;
 }
 
-@keyframes l1 {
-  0% {
-    background-size: 20% 100%, 20% 100%, 20% 100%
-  }
+.loader::before,
+.loader::after {
+  content: "";
+  grid-area: 1/1;
+  border: 8px solid;
+  border-radius: 50%;
+  border-color: red red #0000 #0000;
+  mix-blend-mode: darken;
+  animation: l14 1s infinite linear;
+}
 
-  33% {
-    background-size: 20% 10%, 20% 100%, 20% 100%
-  }
+.loader::after {
+  border-color: #0000 #0000 blue blue;
+  animation-direction: reverse;
+}
 
-  50% {
-    background-size: 20% 100%, 20% 10%, 20% 100%
-  }
-
-  66% {
-    background-size: 20% 100%, 20% 100%, 20% 10%
-  }
-
+@keyframes l14 {
   100% {
-    background-size: 20% 100%, 20% 100%, 20% 100%
+    transform: rotate(1turn)
   }
 }
-
 /* Fullscreen Blur Background */
 .loader-container {
   /* position: fixed;

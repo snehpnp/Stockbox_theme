@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { House, Tally1  } from "lucide-react";
+import { House, Tally1 } from "lucide-react";
 
 const Content = ({
   Page_title,
@@ -38,7 +38,7 @@ const Content = ({
                   <a href="/" className="breadcrumb-box" />
                 </li>
                 <li>
-                  <Tally1  />
+                  <Tally1 />
                 </li>
                 <li>
                   <div className="breadcrumb-box">
@@ -52,15 +52,14 @@ const Content = ({
             <div className="col-lg-6">
               {backbutton_status && backbutton_title && (
                 <button
-                  onClick={handleBackClick} // Handle back button click
+                  onClick={handleBackClick}
                   className="btn btn-primary float-lg-end ms-3"
                 >
                   <i
-                    className={`fa-solid ${
-                      backbutton_title === "Back"
-                        ? "fa-arrow-left"
-                        : "fa-arrow-left"
-                    }`}
+                    className={`fa-solid ${backbutton_title === "Back"
+                      ? "fa-arrow-left"
+                      : "fa-arrow-left"
+                      }`}
                   ></i>{" "}
                   {backbutton_title}
                 </button>
@@ -72,16 +71,15 @@ const Content = ({
                   style={{ padding: "10px !important" }}
                 >
                   <i
-                    className={`fa-solid  ${
-                      button_title === "Back" ? "fa-arrow-left" : "fa-plus"
-                    } `}
+                    className={`fa-solid  ${button_title === "Back" ? "fa-arrow-left" : "fa-plus"
+                      } `}
                   ></i>{" "}
                   {button_title}
                 </Link>
               )}
               {backForword && (
                 <button
-                  onClick={() => window.history.back()} // Handle back button click
+                  onClick={() => window.history.back()}
                   className="btn btn-primary float-lg-end ms-3"
                 >
                   <i className={`fa-solid fa-arrow-left`}></i> Back
@@ -97,7 +95,7 @@ const Content = ({
               <div className="col-xl-12">
                 <div className="card form-card">
                   <div className="card-body">
-                    <div className="form-validation">{rest.children}</div>
+                    <div className="form-validation" style={{ minHeight: "500px" }}>{rest.children}</div>
                   </div>
                 </div>
               </div>

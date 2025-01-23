@@ -36,7 +36,7 @@ const Service = () => {
   const [getkey, setGetkey] = useState([]);
   const [sortCriteria, setSortCriteria] = useState("price");
 
-
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     getPlan();
@@ -142,6 +142,7 @@ const Service = () => {
     } catch (error) {
       console.error("Error fetching plans:", error);
     }
+    setIsLoading(false)
   };
 
 
@@ -272,7 +273,7 @@ const Service = () => {
               </div>
             </div>
           </div>
-          {plan ? <div className="pricing-container price1 row mt-4">
+          {isLoading ? <Loader /> : <div className="pricing-container price1 row mt-4">
             <div className="row row-cols-1 row-cols-md-1 row-cols-lg-3 row-cols-xl-3">
               {getFilteredPlans.map((item) => (
                 <div className="col" key={item?._id}>
@@ -337,7 +338,7 @@ const Service = () => {
                 </div>
               ))}
             </div>
-          </div> : <Loader />}
+          </div>}
         </div>
       </div>
 

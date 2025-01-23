@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { getFaq } from "../../../Services/UserService/User";
 import Content from "../../../components/Contents/Content";
+import Loader from "../../../../Utils/Loader";
 
 const Faq = () => {
 
 
   const [faq, setFaq] = useState([]);
+  const [isLoading, setIsLoading] = useState(true)
+
   let token = localStorage.getItem("token");
+
 
   const fetchFaq = async () => {
     try {
@@ -20,6 +24,7 @@ const Faq = () => {
       console.log('Error fetching FAQ:', err);
       setFaq([]);
     }
+    setIsLoading(false)
   };
 
 
@@ -42,7 +47,7 @@ const Faq = () => {
             <div className="card-body">
               <h5 className="card-title">Need Help ?</h5>
               <hr />
-              <div className="accordion accordion-flush" id="accordionExample2">
+              {isLoading ? <Loader /> : <div className="accordion accordion-flush" id="accordionExample2">
                 {faq && faq.length > 0 ? (
 
                   faq.map((item, index) => (
@@ -75,7 +80,7 @@ const Faq = () => {
                   <p>No FAQs available.</p>
                 )}
 
-              </div>
+              </div>}
             </div>
           </div>
         </div>
