@@ -33,6 +33,11 @@ import {
   ClipboardType,
   ShoppingCart,
   Cog,
+  UserCheck ,
+  FileUser,
+  MessageCircleMore,
+  FileQuestion,
+  CircleUserRound
 } from "lucide-react";
 
 import { Link, useLocation } from "react-router-dom";
@@ -262,6 +267,11 @@ const IconComponent = ({ icon }) => {
     ClipboardType,
     ShoppingCart,
     Cog,
+    FileUser,
+    MessageCircleMore,
+    FileQuestion,
+    CircleUserRound
+
   };
 
   const Icon = icons[icon] || null;

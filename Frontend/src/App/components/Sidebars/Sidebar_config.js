@@ -20,13 +20,13 @@ const Admin = [
   },
   {
     label: "Free Trial Client",
-    icon: "UserPen",
+    icon: "FileUser",
     link: "/admin/freeclient",
     name: "FreeTrialClient"
   },
   {
     label: "Employee",
-    icon: "UserPen",
+    icon: "CircleUserRound",
     link: "/admin/staff",
     name: "Employee"
   },
@@ -193,13 +193,13 @@ const Admin = [
   },
   {
     label: "Broadcast SMS",
-    icon: "HelpingHand",
+    icon: "MessageCircleMore",
     link: "/admin/message",
     name: "BroadcastSMS"
   },
   {
     label: "FAQ",
-    icon: "HelpingHand",
+    icon: "FileQuestion",
     link: "/admin/faq",
     name: "FAQ"
   },

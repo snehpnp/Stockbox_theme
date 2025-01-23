@@ -945,7 +945,9 @@ ol.breadcrumb.mb-0.p-0 {
 .sidebar-color,
 .sidebar-color a,
 .sidebar-color span,
+
 .sidebar-color svg,
+.sidebar-color svg *,
 .sidebar-color.sidebar-link svg path,.sidebar-color.sidebar-link svg rect,.sidebar-color.sidebar-link svg line,
 .sidebar-color.sidebar-link svg circle {
   color: var(
@@ -1041,6 +1043,9 @@ padding-left: 0;
 {
   height: 100% !important; 
 }
+.dropdown-item.notification {
+  white-space: break-spaces;
+}
 /* ---------------------------Responsive css------------------------------ */
 
 @media screen and (min-width: 1024px) {
@@ -1060,5 +1065,26 @@ padding-left: 0;
   width: calc(100% );
   margin-left: 0;
   height: 100vh;
+}
+}
+@media screen and (max-width: 768px) {
+  .btn.btn-primary {
+    font-size: 14px !important;
+}
+}
+@media screen and (max-width: 575px) {
+  span.switch-label,.form-check.form-switch.form-check-dark span {
+    font-size: 12px !important;
+}
+.form-check.form-switch.form-check-dark.mb-0 {
+  font-size: 16px !important;
+}
+div#dropdownMenuLink svg{
+  width: 15px !important;
+}
+.navbar-brand img {
+  width: 100px !important;
+  height: 30px !important;
+  object-fit: contain;
 }
 }

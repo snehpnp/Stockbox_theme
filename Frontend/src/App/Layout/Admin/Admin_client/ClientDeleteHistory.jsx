@@ -337,7 +337,7 @@ const ClientDeleteHistory = () => {
             <div>
                 <div className="page-content">
 
-                    <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3 w-100">
+                    <div className="page-breadcrumb  d-flex align-items-center mb-3 w-100">
                         <div className="breadcrumb-title pe-3 col-md-3">Client Delete History</div>
                         <div className="ps-3 col-md-1">
                             <nav aria-label="breadcrumb">
