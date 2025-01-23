@@ -367,42 +367,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   </div>
                 </div>
 
-                {/* <div className="dropdown">
-                  <div
-                    className="notification-container dropdown-toggle"
-                    style={{
-                      cursor: "pointer",
-                      marginLeft: "10px",
-                      position: "relative",
-                    }}
-                    role="button"
-                    id="dropdownMenuLink"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <FaBell size={24} />
-                  </div>
 
-                  <div
-                    style={notificationDropdownStyle}
-                    className="dropdown-menu"
-                    aria-labelledby="dropdownMenuLink"
-                  >
-                    <div style={notificationHeaderStyle}>Notifications</div>
-                    <ul style={notificationListStyle}>
-                      <li style={notificationItemStyle}>
-                        🔔 New message from admin
-                      </li>
-                      <li style={notificationItemStyle}>
-                        🔔 Your profile was updated
-                      </li>
-                      <li style={notificationItemStyle}>
-                        🔔 System maintenance scheduled
-                      </li>
-                    </ul>
-                  </div>
-                </div> */}
-                {Role === "ADMIN" && (
+                {Role === "ADMIN" ? (
                   <div className="dropdown">
                     <div
                       className="notification-container dropdown-toggle"
@@ -573,16 +539,43 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       </div>
                     </div>
                   </div>
-                )}
+                ) : Role === "USER" ? (
+                  <div className="dropdown">
+                    <div
+                      className="notification-container dropdown-toggle"
+                      style={{
+                        cursor: "pointer",
+                        marginLeft: "10px",
+                        position: "relative",
+                      }}
+                      role="button"
+                      id="dropdownMenuLink"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <FaBell size={24} />
+                    </div>
 
-
-
-
-
-
-
-
-
+                    <div
+                      style={notificationDropdownStyle}
+                      className="dropdown-menu"
+                      aria-labelledby="dropdownMenuLink"
+                    >
+                      <div style={notificationHeaderStyle}>Notifications</div>
+                      <ul style={notificationListStyle}>
+                        <li style={notificationItemStyle}>
+                          🔔 New message from admin
+                        </li>
+                        <li style={notificationItemStyle}>
+                          🔔 Your profile was updated
+                        </li>
+                        <li style={notificationItemStyle}>
+                          🔔 System maintenance scheduled
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                ) : ""}
 
                 <div className="dropdown">
                   <div

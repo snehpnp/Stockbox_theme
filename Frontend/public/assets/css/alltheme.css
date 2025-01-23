@@ -1001,25 +1001,37 @@ padding-left: 0;
 }
 
 /* HTML: <div class="loader"></div> */
-/* Loader Text Animation */
 .loader {
-  width: fit-content;
-  font-weight: bold;
-  font-family: monospace !important;
-  font-size: 30px;
-  color: white;
-  clip-path: inset(0 100% 0 0);
-  animation: l5 2s steps(11) infinite;
+  width: 45px;
+  aspect-ratio: 1;
+  --c: no-repeat linear-gradient(#000 0 0);
+  background:
+    var(--c) 0% 50%,
+    var(--c) 50% 50%,
+    var(--c) 100% 50%;
+  background-size: 20% 100%;
+  animation: l1 1s infinite linear;
 }
 
-.loader:before {
-  content: "Loading...";
-}
+@keyframes l1 {
+  0% {
+    background-size: 20% 100%, 20% 100%, 20% 100%
+  }
 
-/* Animation Keyframes */
-@keyframes l5 {
-  to {
-    clip-path: inset(0 -1ch 0 0);
+  33% {
+    background-size: 20% 10%, 20% 100%, 20% 100%
+  }
+
+  50% {
+    background-size: 20% 100%, 20% 10%, 20% 100%
+  }
+
+  66% {
+    background-size: 20% 100%, 20% 100%, 20% 10%
+  }
+
+  100% {
+    background-size: 20% 100%, 20% 100%, 20% 100%
   }
 }
 

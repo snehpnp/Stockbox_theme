@@ -12,6 +12,7 @@ import { IndianRupee } from "lucide-react";
 import { loadScript } from "../../../../Utils/Razorpayment";
 import { basicsettinglist } from "../../../Services/Admin/Admin";
 import Swal from 'sweetalert2'
+import Loader from "../../../../Utils/Loader";
 
 const Service = () => {
 
@@ -36,12 +37,14 @@ const Service = () => {
   const [sortCriteria, setSortCriteria] = useState("price");
 
 
+
   useEffect(() => {
-    getCategory();
     getPlan();
     getCoupon();
     getkeybydata()
   }, []);
+
+
 
   const handleCouponSelect = (coupon) => {
     setManualCoupon(coupon?.code);
@@ -49,8 +52,6 @@ const Service = () => {
     if (applyButtonRef.current) {
       applyButtonRef.current.focus();
     }
-
-
   };
 
 
@@ -98,9 +99,11 @@ const Service = () => {
     setAppliedCoupon(null);
   };
 
+
   const handleSelectChange = (event) => {
     setSelectedPlan(event.target.value);
   };
+
 
   const getCoupon = async () => {
     try {
@@ -127,29 +130,14 @@ const Service = () => {
 
 
 
-  const isFetchingData = useRef(false);
 
-  const getCategory = async () => {
-    if (isFetchingData.current) return;
-    isFetchingData.current = true;
-
-    try {
-      const response = await GetCategorylist();
-      if (response.status) {
-        setCategory(response?.data);
-      }
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    } finally {
-      isFetchingData.current = false;
-    }
-  };
 
   const getPlan = async () => {
     try {
       const response = await GetPlanByCategory(token);
       if (response.status) {
         setPlan(response.data);
+        setCategory(response?.data);
       }
     } catch (error) {
       console.error("Error fetching plans:", error);
@@ -201,6 +189,7 @@ const Service = () => {
       console.error("Subscription error:", error);
     }
   };
+
 
   const handleShowModal = (item) => {
     setSelectedPlanDetails(item);
@@ -283,7 +272,7 @@ const Service = () => {
               </div>
             </div>
           </div>
-          <div className="pricing-container price1 row mt-4">
+          {plan ? <div className="pricing-container price1 row mt-4">
             <div className="row row-cols-1 row-cols-md-1 row-cols-lg-3 row-cols-xl-3">
               {getFilteredPlans.map((item) => (
                 <div className="col" key={item?._id}>
@@ -348,7 +337,7 @@ const Service = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </div> : <Loader />}
         </div>
       </div>
 
