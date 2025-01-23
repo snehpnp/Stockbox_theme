@@ -336,34 +336,27 @@ const ClientDeleteHistory = () => {
         <div>
             <div>
                 <div className="page-content">
-
-                    <div className="page-breadcrumb  d-flex align-items-center mb-3 w-100">
-                        <div className="breadcrumb-title pe-3 col-md-3">Client Delete History</div>
-                        <div className="ps-3 col-md-1">
-                            <nav aria-label="breadcrumb">
-                                <ol className="breadcrumb mb-0 p-0">
-                                    <li className="breadcrumb-item">
-                                        <Link to="/admin/dashboard">
-                                            <i className="bx bx-home-alt" />
-                                        </Link>
-                                    </li>
-                                </ol>
-                            </nav>
+   <div className="page-breadcrumb  d-flex align-items-center mb-3 ">
+                            <div className="breadcrumb-title pe-3">Client Delete History</div>
+                            <div className="ps-3">
+                                <nav aria-label="breadcrumb">
+                                    <ol className="breadcrumb mb-0 p-0">
+                                        <li className="breadcrumb-item">
+                                            <Link to="/admin/dashboard">
+                                                <i className="bx bx-home-alt" />
+                                            </Link>
+                                        </li>
+                                    </ol>
+                                </nav>
+                            </div>
                         </div>
-                        <div className="col-md-8 d-flex justify-content-end ">
-                            <Link to="/admin/client">
-                                <Tooltip title="Back">
-                                    <i className="lni lni-arrow-left-circle" style={{ fontSize: "2rem" }} />
-                                </Tooltip>
-                            </Link>
-                        </div>
-                    </div>
+                 
 
                     <hr />
 
                     <div className="card">
                         <div className="card-body">
-                            <div className="d-lg-flex align-items-center mb-4 gap-3">
+                            <div className="d-lg-flex align-items-center  gap-3">
                                 <div className="position-relative">
                                     <input
                                         type="text"
@@ -401,7 +394,7 @@ const ClientDeleteHistory = () => {
 
                             </div>
                             <div className="row mb-4">
-                                <div className="col-md-4 ">
+                                <div className="col-md-4 mt-3">
                                     <div>
                                         <label htmlFor="kycSelect">Select Kyc</label>
                                         <select
@@ -416,7 +409,7 @@ const ClientDeleteHistory = () => {
                                         </select>
                                     </div>
                                 </div>
-                                <div className="col-md-4">
+                                <div className="col-md-4 mt-3">
                                     <div >
                                         <label htmlFor="kycSelect">Select CreatedBy</label>
                                         <select
@@ -431,7 +424,7 @@ const ClientDeleteHistory = () => {
                                         </select>
                                     </div>
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-md-3 mt-3">
                                     <div>
                                         <label htmlFor="kycSelect">Select Client</label>
                                         <select

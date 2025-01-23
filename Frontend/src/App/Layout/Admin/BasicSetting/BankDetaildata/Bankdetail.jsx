@@ -278,7 +278,7 @@ const Bankdetail = () => {
                     <hr />
                     <div className="card">
                         <div className="card-body">
-                            <div className="d-lg-flex align-items-center mb-4 gap-3">
+                            <div className="d-sm-flex align-items-center mb-4 gap-3">
                                 <div className="position-relative">
                                     <input
                                         type="text"
@@ -294,7 +294,7 @@ const Bankdetail = () => {
                                 <div className="ms-auto">
                                     <Link
                                         to="/admin/addbankdetail"
-                                        className="btn btn-primary"
+                                        className="btn btn-primary mt-2 mt-sm-0"
                                     >
                                         <i
                                             className="bx bxs-plus-square"

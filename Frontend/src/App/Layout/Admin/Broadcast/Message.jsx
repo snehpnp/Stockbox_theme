@@ -119,7 +119,7 @@ const Message = () => {
                     <>
                         <div className="card">
                             <div className="card-body">
-                                <div className="d-flex justify-content-end">
+                                <div className="d-flex ">
                                     <div className='me-2 mb-3'>
                                         <Link to="/admin/addbroadcast" className="btn btn-primary">
                                             <i className="bx bxs-plus-square" />

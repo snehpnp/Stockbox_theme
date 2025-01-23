@@ -212,7 +212,7 @@ const Apiinfo = () => {
                 <hr />
 
                 <div className="row row-cols-1 row-cols-md-3 row-cols-lg-3 row-cols-xl-3 justify-content-center">
-                    <div className="col" style={{ width: "50%" }}>
+                    <div className="col" >
                         <div className="card">
                             <div className="card-header mt-2">
                                 <div className="row justify-content-end mb-3">

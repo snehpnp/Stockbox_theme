@@ -550,12 +550,13 @@ textarea {
 .breadcrumb {
   display: flex;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
-    rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+  rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
   padding: 0.75rem 1.25rem;
   border-radius: 5px !important;
   background-color: #fff !important;
   align-items: center;
   padding: 10px 15px !important;
+  justify-content: space-between;
 }
 
 .breadcrumb-links {
@@ -1046,6 +1047,14 @@ padding-left: 0;
 .dropdown-item.notification {
   white-space: break-spaces;
 }
+.table-responsive
+{
+  width: 100%;
+}
+.policy-content h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
 /* ---------------------------Responsive css------------------------------ */
 
 @media screen and (min-width: 1024px) {
@@ -1070,6 +1079,13 @@ padding-left: 0;
 @media screen and (max-width: 768px) {
   .btn.btn-primary {
     font-size: 14px !important;
+}
+.content {
+  padding: 30px;
+}
+.sidebar-vertical-container.sidebar-collapsed .content {
+
+  margin-left: 70px;
 }
 }
 @media screen and (max-width: 575px) {

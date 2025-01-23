@@ -91,14 +91,14 @@ const Help = () => {
                                         <Loader/>
                                     ):(
                                         <>
-                                        <div className="container py-2">
+                                        <div className="container ">
                                         <div className="row">
-                                            <div className="col py-2">
+                                            <div className="col ">
                                                 {clients.length > 0 ? (
                                                     clients.map((item) => (
-                                                        <div key={item.id} className="card radius-15">
-                                                            <div className="card-body p-4 position-relative">
-                                                                <div className="p-4 border radius-15">
+                                                        <div key={item.id} className="card radius-15 mb-3">
+                                                            <div className="card-body   position-relative">
+                                                                <div className="p-2  radius-15">
                                                                     <div className="float-end text-muted">
                                                                         {fDateTime(item.created_at)}
                                                                     </div>
