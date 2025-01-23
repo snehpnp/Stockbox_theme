@@ -229,117 +229,117 @@ const Service = () => {
 
   return (
     <Content Page_title="Service" button_title="Back" button_status={false}>
-      <div className="card">
-        <div className="card-body">
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <div className="row w-100">
-              <div className="col-md-6">
-                <label htmlFor="planSelect" className="mb-1">
-                  Plans For You
-                </label>
-                <div className="d-flex">
-                  <select
-                    id="planSelect"
-                    className="form-select"
-                    onChange={handleSelectChange}
-                    value={selectedPlan}
-                  >
-                    <option value="" disabled>
-                      Select Plans
-                    </option>
-                    <option value="all">All</option>
-                    {category.map((item) => (
-                      <option value={item?._id} key={item?._id}>
-                        {item?.title}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div className="col-md-6">
-                <label htmlFor="sortSelect" className="mb-1">
-                  Sort By
-                </label>
+      {/* <div className="card"> */}
+      <div className="card-body">
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <div className="row w-100">
+            <div className="col-md-6">
+              <label htmlFor="planSelect" className="mb-1">
+                Plans For You
+              </label>
+              <div className="d-flex">
                 <select
-                  id="sortSelect"
+                  id="planSelect"
                   className="form-select"
-                  onChange={(e) => setSortCriteria(e.target.value)}
-                  value={sortCriteria}
+                  onChange={handleSelectChange}
+                  value={selectedPlan}
                 >
-                  <option value="price">Price</option>
-                  <option value="title">Title</option>
-                  <option value="validity">Validity</option>
+                  <option value="" disabled>
+                    Select Plans
+                  </option>
+                  <option value="all">All</option>
+                  {category.map((item) => (
+                    <option value={item?._id} key={item?._id}>
+                      {item?.title}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
+            <div className="col-md-6">
+              <label htmlFor="sortSelect" className="mb-1">
+                Sort By
+              </label>
+              <select
+                id="sortSelect"
+                className="form-select"
+                onChange={(e) => setSortCriteria(e.target.value)}
+                value={sortCriteria}
+              >
+                <option value="price">Price</option>
+                <option value="title">Title</option>
+                <option value="validity">Validity</option>
+              </select>
+            </div>
           </div>
-          {isLoading ? <Loader /> : <div className="pricing-container price1 row mt-4">
-            <div className="row row-cols-1 row-cols-md-1 row-cols-lg-3 row-cols-xl-3">
-              {getFilteredPlans.map((item) => (
-                <div className="col" key={item?._id}>
-                  <div className="card card1 mb-4">
-                    <div className="card-body">
-                      <div className="d-flex align-items-center">
-                        <div className="text-left">
-                          <span className="price-original">
-                            {Array.isArray(item?.services) &&
-                              item.services.length > 0
-                              ? item.services
-                                .map((service) =>
-                                  typeof service.title === "string"
-                                    ? service.title
-                                      .split(/(?=[A-Z])/)
-                                      .join(" + ")
-                                    : "N/A"
-                                )
-                                .join(" + ")
-                              : "N/A"}
+        </div>
+        {isLoading ? <Loader /> : <div className="pricing-container price1 row mt-4">
+          <div className="row row-cols-1 row-cols-md-1 row-cols-lg-3 row-cols-xl-3">
+            {getFilteredPlans.map((item) => (
+              <div className="col" key={item?._id}>
+                <div className="card card1 mb-4">
+                  <div className="card-body">
+                    <div className="d-flex align-items-center">
+                      <div className="text-left">
+                        <span className="price-original">
+                          {Array.isArray(item?.services) &&
+                            item.services.length > 0
+                            ? item.services
+                              .map((service) =>
+                                typeof service.title === "string"
+                                  ? service.title
+                                    .split(/(?=[A-Z])/)
+                                    .join(" + ")
+                                  : "N/A"
+                              )
+                              .join(" + ")
+                            : "N/A"}
+                        </span>
+                        <h5 className="mb-0">{item?.title}</h5>
+                      </div>
+                      <div className="ms-auto">
+                        <div className="price">
+                          <span className="price-current">
+                            <IndianRupee />
+                            {item?.plans[0]?.price}
                           </span>
-                          <h5 className="mb-0">{item?.title}</h5>
-                        </div>
-                        <div className="ms-auto">
-                          <div className="price">
-                            <span className="price-current">
-                              <IndianRupee />
-                              {item?.plans[0]?.price}
-                            </span>
-                          </div>
                         </div>
                       </div>
-                      <hr />
-                      <ul className="features">
-                        <li>
-                          <b>Validity</b>: {item?.plans[0]?.validity}{" "}
-                        </li>
-                        <li>
-                          <b>Description</b>:
-                          <textarea
-                            className="form-control"
-                            value={stripHtmlTags(
-                              item?.plans[0]?.description || ""
-                            )}
-                            readOnly
-                          />
-                        </li>
-                      </ul>
-                      <div className="d-flex align-items-center justify-content-between mt-4">
-                        <button className="btn btn-secondary rounded-1">
-                          Know More
-                        </button>
-                        <button
-                          className="btn btn-primary rounded-1"
-                          onClick={() => handleShowModal(item)}
-                        >
-                          Subscribe Now
-                        </button>
-                      </div>
+                    </div>
+                    <hr />
+                    <ul className="features">
+                      <li>
+                        <b>Validity</b>: {item?.plans[0]?.validity}{" "}
+                      </li>
+                      <li>
+                        <b>Description</b>:
+                        <textarea
+                          className="form-control"
+                          value={stripHtmlTags(
+                            item?.plans[0]?.description || ""
+                          )}
+                          readOnly
+                        />
+                      </li>
+                    </ul>
+                    <div className="d-flex align-items-center justify-content-between mt-4">
+                      <button className="btn btn-secondary rounded-1">
+                        Know More
+                      </button>
+                      <button
+                        className="btn btn-primary rounded-1"
+                        onClick={() => handleShowModal(item)}
+                      >
+                        Subscribe Now
+                      </button>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>}
-        </div>
+              </div>
+            ))}
+          </div>
+        </div>}
+        {/* </div> */}
       </div>
 
       <Modal show={showModal} onHide={handleCloseModal} centered size="xxl">
