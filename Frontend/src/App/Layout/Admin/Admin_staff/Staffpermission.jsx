@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { addStaffpermission, getstaffperuser } from '../../../Services/Admin/Admin';
 import { Subscript } from 'lucide-react';
+import Content from '../../../components/Contents/Content';
 
 const Staffpermission = () => {
     const navigate = useNavigate();
@@ -1624,7 +1625,12 @@ const Staffpermission = () => {
     ];
 
     return (
-        <div style={{ marginTop: '100px' }}>
+        <Content
+      Page_title="Edit Permission"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
             <DynamicForm
                 fields={fields}
                 page_title="Edit Permission"
@@ -1635,7 +1641,7 @@ const Staffpermission = () => {
                 btn_name1_route={'/admin/staff'}
                 additional_field={<></>}
             />
-        </div>
+        </Content>
     );
 
 };
