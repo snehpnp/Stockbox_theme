@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Logo from "../Images/LOGO.png";
 import ProfileImage from "../Images/logo1.png";
 import { FaBell, FaBars } from "react-icons/fa";
@@ -10,26 +10,25 @@ import { formatDistanceToNow } from 'date-fns';
 
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
+
+  useEffect(() => {
+    getdemoclient()
+  }, [])
+
   const navigate = useNavigate();
 
+  const theme = JSON.parse(localStorage.getItem("theme")) || {};
+  const Role = localStorage.getItem("Role");
   const token = localStorage.getItem('token');
-  const FullName = localStorage.getItem('FullName');
-
-
 
   const [clients, setClients] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
-
-
-
   const [model, setModel] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [getstatus, setGetstatus] = useState([]);
   const [badgecount, setBadgecount] = useState([]);
 
-  const theme = JSON.parse(localStorage.getItem("theme")) || {};
 
-  const Role = localStorage.getItem("Role");
 
 
   const Logout = () => {
@@ -41,8 +40,13 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
-  const handleNotificationClick = async (event, notification) => {
 
+
+
+
+
+
+  const handleNotificationClick = async (event, notification) => {
     const user_active_status = "1";
     const data = { id: notification._id, status: user_active_status };
 
@@ -82,6 +86,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
+
+
   const getdemoclient = async () => {
     try {
       const response = await getDashboardNotification(token);
@@ -93,6 +99,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       console.log("error", error);
     }
   };
+
+
 
 
   const getAllMessageRead = async () => {
@@ -238,7 +246,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                     </ul>
                   </div>
                 </div> */}
-                {Role !== "EMPLOYEE" && (
+                {Role === "ADMIN" && (
                   <div className="dropdown">
                     <div
                       className="notification-container dropdown-toggle"
@@ -253,7 +261,21 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       aria-expanded="false"
                     >
                       {badgecount ? (
-                        <span className="alert-count">
+                        <span
+                          className="alert-count"
+                          style={{
+                            position: "absolute",
+                            top: "-5px",
+                            right: "-5px",
+                            background: "red",
+                            color: "white",
+                            fontSize: "12px",
+                            fontWeight: "bold",
+                            borderRadius: "50%",
+                            padding: "4px 8px",
+                            zIndex: 1051,
+                          }}
+                        >
                           {badgecount > 100 ? "99+" : badgecount}
                         </span>
                       ) : null}
@@ -263,56 +285,92 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                     <div
                       style={{
                         boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                        borderRadius: "8px",
-                        minWidth: "300px",
+                        borderRadius: "10px",
+                        minWidth: "320px",
+                        maxWidth: "400px",
                         zIndex: 1050,
                         padding: "10px",
+                        overflow: "hidden",
                       }}
                       className="dropdown-menu dropdown-menu-end"
                       aria-labelledby="dropdownMenuLink"
                     >
-                      <div className="msg-header d-flex justify-content-between">
-                        <p className="msg-header-title">
+                      <div
+                        className="msg-header d-flex justify-content-between align-items-center"
+                        style={{
+                          borderBottom: "1px solid #ddd",
+                          paddingBottom: "8px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <p
+                          className="msg-header-title"
+                          style={{ fontSize: "18px", fontWeight: "600", margin: 0 }}
+                        >
                           Notifications
                         </p>
-                        <p className="msg-header-badge">
-                          {/* New notifications count */}
-                          {clients.filter(notification => notification.status === 0).length}
-                        </p>
+                        <span
+                          className="msg-header-badge"
+                          style={{
+                            backgroundColor: "#007bff",
+                            color: "white",
+                            fontSize: "14px",
+                            fontWeight: "500",
+                            borderRadius: "12px",
+                            padding: "2px 8px",
+                          }}
+                        >
+                          {clients.filter((notification) => notification.status === 0).length}
+                        </span>
                       </div>
                       <div
                         className="header-notifications-list"
-                        style={{ overflowY: "scroll", maxHeight: "300px" }}
+                        style={{
+                          overflowY: "auto",
+                          maxHeight: "300px",
+                          paddingRight: "10px",
+                          scrollbarWidth: "thin",
+                          scrollbarColor: "#c1c1c1 transparent",
+                        }}
                       >
                         {clients.length > 0 ? (
                           clients.map((notification, index) => (
-                            <a
+                            <div
                               key={index}
                               className={`dropdown-item notification ${notification.status === 1
-                                  ? "text-info font-bold"
-                                  : "text-muted bg-dark" // Highlight unread notifications (status 0)
+                                ? "text-info font-bold"
+                                : "text-muted bg-light"
                                 }`}
                               onClick={(event) =>
                                 handleNotificationClick(event, notification)
                               }
+                              style={{
+                                padding: "10px",
+                                marginBottom: "5px",
+                                borderRadius: "6px",
+                                background: notification.status === 0 ? "#f8f9fa" : "white",
+                                cursor: "pointer",
+                                transition: "all 0.3s ease",
+                              }}
                             >
                               <div className="d-flex align-items-center">
                                 <div className="flex-grow-1">
                                   <h6
-                                    className={`msg-name ${notification.status === 1
-                                        ? "font-bold"
-                                        : "text-muted"
-                                      }`}
+                                    className="msg-name"
+                                    style={{
+                                      margin: 0,
+                                      fontWeight: notification.status === 1 ? "normal" : "bold",
+                                    }}
                                   >
                                     {notification?.title}
-                                    <span className="msg-time float-end">
+                                    <span
+                                      className="msg-time float-end"
+                                      style={{ fontSize: "12px", color: "#6c757d" }}
+                                    >
                                       {notification.createdAt
-                                        ? formatDistanceToNow(
-                                          new Date(notification.createdAt),
-                                          {
-                                            addSuffix: true,
-                                          }
-                                        )
+                                        ? formatDistanceToNow(new Date(notification.createdAt), {
+                                          addSuffix: true,
+                                        })
                                         : "Empty Message"}
                                     </span>
                                   </h6>
@@ -320,18 +378,19 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                                     className="msg-info"
                                     title={notification.message}
                                     style={{
-                                      fontWeight:
-                                        notification.status === 0 ? "bold" : "normal", // Bold for unread
+                                      fontSize: "14px",
+                                      color: "#6c757d",
+                                      margin: "4px 0 0",
                                     }}
                                   >
                                     {notification.message}
                                   </p>
                                 </div>
                               </div>
-                            </a>
+                            </div>
                           ))
                         ) : (
-                          <span
+                          <div
                             style={{
                               display: "flex",
                               justifyContent: "center",
@@ -341,13 +400,17 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                             }}
                           >
                             <h4>No Notifications</h4>
-                          </span>
+                          </div>
                         )}
                       </div>
-                      <div className="text-center msg-footer">
+                      <div className="text-center msg-footer mt-2">
                         <button
                           className="btn btn-primary w-100"
                           onClick={() => getAllMessageRead()}
+                          style={{
+                            borderRadius: "6px",
+                            fontWeight: "500",
+                          }}
                         >
                           View All Notifications
                         </button>
@@ -355,6 +418,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                     </div>
                   </div>
                 )}
+
+
 
 
 
