@@ -4,6 +4,7 @@ import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { UpdateClient } from '../../../Services/Admin/Admin';
+import Content from '../../../components/Contents/Content';
 
 
 
@@ -21,34 +22,34 @@ const Editfreeclient = () => {
     let errors = {};
 
     // Full Name Validation
-  if (!values.FullName) {
-    errors.FullName = "Please Enter Full Name";
-  } else if (!/^[A-Za-z\s]+$/.test(values.FullName)) {
-    errors.FullName = "Full Name should contain only alphabetic characters";
-  } else if (values.FullName.length < 3) {
-    errors.FullName = "Full Name should be at least 3 characters long";
-  } else if (values.FullName.length > 50) {
-    errors.FullName = "Full Name should not exceed 50 characters";
-  }
+    if (!values.FullName) {
+      errors.FullName = "Please Enter Full Name";
+    } else if (!/^[A-Za-z\s]+$/.test(values.FullName)) {
+      errors.FullName = "Full Name should contain only alphabetic characters";
+    } else if (values.FullName.length < 3) {
+      errors.FullName = "Full Name should be at least 3 characters long";
+    } else if (values.FullName.length > 50) {
+      errors.FullName = "Full Name should not exceed 50 characters";
+    }
 
 
- // Email Validation
- if (!values.Email) {
-  errors.Email = "Please Enter Email";
-} else if (
-  !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(values.Email)
-) {
-  errors.Email = "Please Enter a Valid Email Address";
-}
+    // Email Validation
+    if (!values.Email) {
+      errors.Email = "Please Enter Email";
+    } else if (
+      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(values.Email)
+    ) {
+      errors.Email = "Please Enter a Valid Email Address";
+    }
 
     // Phone Number Validation
-  if (!values.PhoneNo) {
-    errors.PhoneNo = "Please Enter Phone Number";
-  } else if (!/^\d{10}$/.test(values.PhoneNo)) {
-    errors.PhoneNo = "Phone Number should be exactly 10 digits";
-  } else if (!/^[6-9]\d{9}$/.test(values.PhoneNo)) {
-    errors.PhoneNo = "Phone Number should start with digits 6-9";
-  }
+    if (!values.PhoneNo) {
+      errors.PhoneNo = "Please Enter Phone Number";
+    } else if (!/^\d{10}$/.test(values.PhoneNo)) {
+      errors.PhoneNo = "Phone Number should be exactly 10 digits";
+    } else if (!/^[6-9]\d{9}$/.test(values.PhoneNo)) {
+      errors.PhoneNo = "Phone Number should start with digits 6-9";
+    }
 
     return errors;
   };
@@ -66,7 +67,7 @@ const Editfreeclient = () => {
     try {
       const response = await UpdateClient(req, token);
       // console.log("Resoonse",response)
-      
+
 
       if (response.status) {
         Swal.fire({
@@ -159,7 +160,13 @@ const Editfreeclient = () => {
   ];
 
   return (
-    <div style={{ marginTop: "100px" }}>
+    <Content
+      Page_title="Update Free Client"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
+
       <DynamicForm
         fields={fields}
         page_title="Update Free Client"
@@ -170,7 +177,8 @@ const Editfreeclient = () => {
         btn_name1_route={"/admin/freeclient"}
         additional_field={<></>}
       />
-    </div>
+    </Content>
+
   );
 };
 

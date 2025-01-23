@@ -7,6 +7,7 @@ import { GetClient } from "../../../Services/Admin/Admin";
 import { fDateTime, fDateMonth } from "../../../../Utils/Date_formate";
 import Table from "../../../Extracomponents/Table";
 import Dashboard from "../../../components/Dashboard/DashbaordMain";
+import Loader from "../../../../Utils/Loader";
 
 const Dashbord = () => {
   useEffect(() => {
@@ -20,6 +21,9 @@ const Dashbord = () => {
   const [data, setData] = useState([]);
   const [clients, setClients] = useState([]);
   const [monthexpiry, setMonthexpiry] = useState([]);
+
+  //state for loading
+  const [loading, setLoading] = useState(true);
 
   const currentMonthYear = new Date().toLocaleString("en-US", {
     month: "long",
@@ -35,6 +39,7 @@ const Dashbord = () => {
     } catch (error) {
       console.log("Error fetching services:", error);
     }
+    setLoading(false)
   };
 
   const getExpirydata = async () => {
@@ -46,6 +51,7 @@ const Dashbord = () => {
     } catch (error) {
       console.log("Error fetching services:", error);
     }
+    setLoading(false)
   };
 
   const getAdminclient = async () => {
@@ -58,6 +64,7 @@ const Dashbord = () => {
     } catch (error) {
       console.log("error");
     }
+    setLoading(false)
   };
 
   const columns = [
@@ -160,6 +167,11 @@ const Dashbord = () => {
 
   return (
     <div>
+      {loading ?(
+        <Loader/>
+      ):
+      (<>   
+      
       <div className="page-content">
         {data && monthexpiry && currentMonthYear && (
           <Dashboard monthexpiry={monthexpiry} data={data} />
@@ -172,6 +184,7 @@ const Dashbord = () => {
                 <h5 className="mb-0">Recent Clients</h5>
               </div>
             </div>
+
             <hr />
 
             <div className="table-responsive d-flex justify-content-center">
@@ -180,6 +193,7 @@ const Dashbord = () => {
           </div>
         </div>
       </div>
+      </>)}
     </div>
   );
 };
