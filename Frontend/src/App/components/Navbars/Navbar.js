@@ -476,7 +476,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                             padding: "2px 8px",
                           }}
                         >
-                          {clients.filter((notification) => notification.status === 0).length}
+                          {clients?.filter((notification) => notification?.status === 0)?.length}
                         </span>
                       </div>
                       <div
@@ -489,8 +489,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                           scrollbarColor: "#c1c1c1 transparent",
                         }}
                       >
-                        {clients.length > 0 ? (
-                          clients.map((notification, index) => (
+                        {clients?.length > 0 ? (
+                          clients?.map((notification, index) => (
                             <div
                               key={index}
                               className={`dropdown-item notification ${notification.status === 1
@@ -708,7 +708,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   );
 };
 
-// 🎨 **Styles**
+
 
 const profileDropdownStyle = {
   left: "-90px",
