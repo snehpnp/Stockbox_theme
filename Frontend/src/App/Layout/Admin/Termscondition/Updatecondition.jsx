@@ -101,7 +101,7 @@ const Updatecondition = () => {
             <DynamicForm
                 fields={fields}
                 formik={formik}
-                page_title="Update Condition"
+               
                 btn_name="Update Condition"
                 btn_name1="Cancel"
                 sumit_btn={true}

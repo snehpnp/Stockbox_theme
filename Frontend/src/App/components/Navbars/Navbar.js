@@ -284,10 +284,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
         }}
       >
         <div className="container-fluid justify-content-center">
-          <div className="row w-100">
+          <div className="row w-100 align-items-center">
             <div className="col-5">
-              <div className="d-flex ">
-                <a className="navbar-brand" href="#">
+              <div className="d-flex align-items-center">
+                <a className="navbar-brand me-1" href="#">
                   <img
                     src={Logo}
                     alt="Logo"
@@ -295,15 +295,17 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   />
                 </a>
                 <button
-                  className="btn btn-light me-2"
+                  className="btn btn-light me-2 px-1 pb-1"
                   onClick={toggleSidebar}
                   style={{
                     border: "none",
                     fontSize: "18px",
                     cursor: "pointer",
-                    height: "30px",
+                    height: "40px",
                   }}
-                />
+                >
+                  <i className="bx bx-menu" style={{ fontSize: "24px" }}></i>
+                </button>
               </div>
 
               <div
@@ -341,8 +343,11 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       {isChecked ? "On" : "Off"}
                     </span>
                   </span>
-
-                  <div className="form-check form-switch form-check-dark" style={{ margin: "inherit", fontSize: "21px" }}>
+                  <div
+                    className="form-check form-switch form-check-dark mb-0"
+                    style={{ margin: "inherit", fontSize: 21 }}
+                  >
+                    <span style={{ color: "red", fontSize: 16 }}>Off</span>
                     <input
                       className="form-check-input"
                       type="checkbox"

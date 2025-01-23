@@ -142,7 +142,7 @@ const Dashboard11 = ({ monthexpiry }) => {
   ];
 
   return (
-    <div className="theme-10-dashboard">
+    <div className="theme-10-dashboard dashboard-card">
       <div className="row mt-2">
         {cardsData
         

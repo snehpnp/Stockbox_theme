@@ -263,7 +263,7 @@ const Dashboard1 = ({ monthexpiry }) => {
   });
 
   return (
-    <div className="theme-1-dashboard" style={{ padding: "20px" }}>
+    <div className="theme-1-dashboard dashboard-card" style={{ padding: "20px" }}>
       {/* Cards Section */}
       <div className="row mb-5">
         {cardsData.map((item, index) => (

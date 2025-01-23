@@ -390,7 +390,7 @@ const Service = () => {
                 )}
               </div>
             </div>
-            <div className="table-responsive d-flex justify-content-center">
+            <div className="table-responsive ">
               <Table
                 columns={columns}
                 data={clients}

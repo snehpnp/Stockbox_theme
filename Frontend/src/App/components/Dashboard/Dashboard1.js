@@ -130,7 +130,7 @@ const DashboardCards = ({ monthexpiry }) => {
   ];
 
   return (
-    <div className="row newbg">
+    <div className="row newbg dashboard-card">
       {cardsData?.map((card, index) => (
         <div className="col-md-3" key={index}>
           <div className={`card radius-10 mb-4 ${card.bgClass}`}>

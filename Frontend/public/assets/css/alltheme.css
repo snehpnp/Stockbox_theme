@@ -212,6 +212,8 @@ li.sidebar-subitem {
 .content-wrapper {
   display: flex;
   height: 100%;
+  width: 100%;
+  overflow-x: hidden;
 }
 .sidebar-vertical-container.sidebar-open .content {
   width: calc(100% - 250px);
@@ -997,27 +999,7 @@ padding-left: 0;
 .rdt_TableHeadRow {
   background:var(--tabelheadbgcolor, #f1f1f1) !important;
 }
-/* ---------------------------Responsive css------------------------------ */
 
-@media screen and (min-width: 1024px) {
-  .sidebar-vertical-container.sidebar-open .SidebarColored .sidebar-link tooltip{
-   display: none;
-}
-
-}
-@media screen and (max-width: 1024px) {
-  .sidebar-vertical-container.sidebar-open .SidebarColored {
-    left: -250px; 
-}
-.sidebar-vertical-container.sidebar-collapsed ul.submenu .sidebar-subitem span {
-  display: none;
-}
-.sidebar-vertical-container.sidebar-open .content {
-  width: calc(100% );
-  margin-left: 0;
-  height: 100vh;
-}
-}
 /* HTML: <div class="loader"></div> */
 /* Loader Text Animation */
 .loader {
@@ -1054,4 +1036,29 @@ padding-left: 0;
   align-items: center;
   justify-content: center;
   z-index: 9999; 
+}
+.dashboard-card
+{
+  height: 100% !important; 
+}
+/* ---------------------------Responsive css------------------------------ */
+
+@media screen and (min-width: 1024px) {
+  .sidebar-vertical-container.sidebar-open .SidebarColored .sidebar-link tooltip{
+   display: none;
+}
+
+}
+@media screen and (max-width: 1024px) {
+  .sidebar-vertical-container.sidebar-open .SidebarColored {
+    left: -250px; 
+}
+.sidebar-vertical-container.sidebar-collapsed ul.submenu .sidebar-subitem span {
+  display: none;
+}
+.sidebar-vertical-container.sidebar-open .content {
+  width: calc(100% );
+  margin-left: 0;
+  height: 100vh;
+}
 }
