@@ -17,6 +17,9 @@ const Addcoupon = () => {
 
     const today = new Date().toISOString().slice(0, 10);
 
+    const [loading, setLoading] = useState(false);
+
+
     useEffect(() => {
         getservice();
     }, [])
@@ -94,6 +97,7 @@ const Addcoupon = () => {
 
 
     const onSubmit = async (values) => {
+        setLoading(!loading);
         const req = {
             name: values.name,
             code: values.code,
@@ -132,8 +136,10 @@ const Addcoupon = () => {
                     timer: 1500,
                     timerProgressBar: true,
                 });
+                setLoading(false)
             }
         } catch (error) {
+            setLoading(false)
             Swal.fire({
                 title: "Error",
                 text: "An unexpected error occurred. Please try again later.",
@@ -306,11 +312,11 @@ const Addcoupon = () => {
 
     return (
         <Content
-        Page_title="Add Coupon Code"
-        button_status={false}
-        backbutton_status={true}
-        backForword={true}
-      >
+            Page_title="Add Coupon Code"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
             <DynamicForm
                 fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
                 formik={formik}
@@ -318,12 +324,13 @@ const Addcoupon = () => {
                 btn_name="Add Coupon"
                 btn_name1="Cancel"
                 sumit_btn={true}
+                btnstatus={loading}
                 btn_name1_route={"/employee/coupon"}
                 additional_field={<></>}
 
             />
-            </Content>
-        
+        </Content>
+
     );
 };
 

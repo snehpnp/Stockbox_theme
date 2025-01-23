@@ -4,6 +4,7 @@ import DynamicForm from '../../../Extracomponents/FormicForm';
 import { AddSignalByAdmin, GetService, getstockbyservice, getexpirydate, getstockStrickprice } from '../../../Services/Admin/Admin';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import Content from '../../../components/Contents/Content';
 
 
 
@@ -23,6 +24,8 @@ const AddSignal = () => {
   const [searchItem, setSearchItem] = useState("");
   const [selectitem, setSelectitem] = useState("");
   const [showDropdown, setShowDropdown] = useState(true);
+
+  
 
 
 
@@ -504,7 +507,12 @@ const AddSignal = () => {
 
 
   return (
-    <div style={{ marginTop: '100px' }}>
+    <Content
+        Page_title="Add Signal"
+        button_status={false}
+        backbutton_status={true}
+        backForword={true}
+      >
       <DynamicForm
         fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
         page_title="Add Signal"
@@ -564,7 +572,8 @@ const AddSignal = () => {
           </div>
         }
       />
-    </div>
+      </Content>
+    
   );
 };
 
