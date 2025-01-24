@@ -188,7 +188,7 @@ const Plan = () => {
                 </div>
                 <div className="ms-auto">
                     <div className="btn-group">
-                        <Link to="/admin/addplan" className="btn btn-primary">
+                        <Link to="/employee/addplan" className="btn btn-primary">
                             Add Package
                         </Link>
                     </div>

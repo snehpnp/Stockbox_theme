@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { House, ChevronRight } from "lucide-react";
+import { House, Tally1 } from "lucide-react";
 
 const Content = ({
   Page_title,
@@ -38,7 +38,7 @@ const Content = ({
                   <a href="/" className="breadcrumb-box" />
                 </li>
                 <li>
-                  <ChevronRight />
+                  <Tally1 />
                 </li>
                 <li>
                   <div className="breadcrumb-box">
@@ -54,13 +54,14 @@ const Content = ({
                 <button
                   onClick={handleBackClick} // Handle back button click
                   className="btn btn-primary float-sm-end ms-0 ms-sm-3  mt-3 mt-sm-0"
+                 
+                  
                 >
                   <i
-                    className={`fa-solid ${
-                      backbutton_title === "Back"
-                        ? "fa-arrow-left"
-                        : "fa-arrow-left"
-                    }`}
+                    className={`fa-solid ${backbutton_title === "Back"
+                      ? "fa-arrow-left"
+                      : "fa-arrow-left"
+                      }`}
                   ></i>{" "}
                   {backbutton_title}
                 </button>
@@ -72,9 +73,8 @@ const Content = ({
                   style={{ padding: "10px !important" }}
                 >
                   <i
-                    className={`fa-solid  ${
-                      button_title === "Back" ? "fa-arrow-left" : "fa-plus"
-                    } `}
+                    className={`fa-solid  ${button_title === "Back" ? "fa-arrow-left" : "fa-plus"
+                      } `}
                   ></i>{" "}
                   {button_title}
                 </Link>
@@ -83,6 +83,8 @@ const Content = ({
                 <button
                   onClick={() => window.history.back()} // Handle back button click
                   className="btn btn-primary float-sm-end ms-0 ms-sm-3 mt-3 mt-sm-0"
+                 
+                
                 >
                   <i className={`fa-solid fa-arrow-left`}></i> Back
                 </button>
@@ -97,7 +99,7 @@ const Content = ({
               <div className="col-xl-12">
                 <div className="card form-card">
                   <div className="card-body">
-                    <div className="form-validation">{rest.children}</div>
+                    <div className="form-validation" style={{ minHeight: "500px" }}>{rest.children}</div>
                   </div>
                 </div>
               </div>

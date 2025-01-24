@@ -16,6 +16,9 @@ const Addplan = () => {
     const [clients, setClients] = useState([]);
     const [plan, setPlan] = useState([]);
 
+    const [loading, setLoading] = useState(false);
+
+
  
 
     const getcategoryplanlist = async () => {
@@ -61,6 +64,7 @@ const Addplan = () => {
     };
 
     const onSubmit = async (values) => {
+        setLoading(!loading)
 
         const req = {
             title: "",
@@ -95,8 +99,10 @@ const Addplan = () => {
                     timer: 1500,
                     timerProgressBar: true,
                 });
+                setLoading(false)
             }
         } catch (error) {
+            setLoading(false)
             Swal.fire({
                 title: "Error",
                 text: "An unexpected error occurred. Please try again later.",
@@ -226,6 +232,7 @@ const Addplan = () => {
                     btn_name="Add Package"
                     btn_name1="Cancel"
                     sumit_btn={true}
+                    btnstatus={loading}
                     btn_name1_route={"/admin/plan"}
                     additional_field={<></>}
                 />

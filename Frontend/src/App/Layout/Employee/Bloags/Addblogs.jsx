@@ -121,11 +121,11 @@ const Addblogs = () => {
 
     return (
         <Content
-        Page_title="Add Blog"
-        button_status={false}
-        backbutton_status={true}
-        backForword={true}
-      >
+            Page_title="Add Blog"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
             <DynamicForm
                 fields={fields}
                 formik={formik}
@@ -133,12 +133,13 @@ const Addblogs = () => {
                 btn_name="Add Blog"
                 btn_name1="Cancel"
                 sumit_btn={true}
+                btnstatus={loading}
                 btn_name1_route={"/employee/blogs"}
                 additional_field={<></>}
             />
-</Content>
+        </Content>
 
-       
+
     );
 };
 

@@ -21,7 +21,7 @@ const Subscription = () => {
         try {
             const res = await getMySubscription(id, token);
             if (res?.status) {
-                setPlanData(res.data);
+                setPlanData(res?.data);
             } else {
                 setPlanData([]);
             }
@@ -30,25 +30,25 @@ const Subscription = () => {
         }
     };
 
-    useEffect(() => {
-        fetchMySubscription();
-    }, []);
+    // useEffect(() => {
+    //     fetchMySubscription();
+    // }, []);
 
 
     const columns = [
         {
             name: "Basket Name",
-            selector: (row) => row.categoryDetails,
+            selector: (row) => row?.categoryDetails,
             sortable: true,
             width: '200px',
         },
         {
             name: "Title",
-            selector: (row) => row.title,
+            selector: (row) => row?.title,
         },
         {
             name: "Year",
-            selector: (row) => row.year,
+            selector: (row) => row?.year,
         },
     ];
 

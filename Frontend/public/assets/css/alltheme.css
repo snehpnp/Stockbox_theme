@@ -1004,28 +1004,35 @@ padding-left: 0;
 }
 
 /* HTML: <div class="loader"></div> */
-/* Loader Text Animation */
+/* HTML: <div class="loader"></div> */
 .loader {
-  width: fit-content;
-  font-weight: bold;
-  font-family: monospace !important;
-  font-size: 30px;
-  color: white;
-  clip-path: inset(0 100% 0 0);
-  animation: l5 2s steps(11) infinite;
+  width: 50px;
+  aspect-ratio: 1;
+  display: grid;
+  animation: l14 4s infinite;
 }
 
-.loader:before {
-  content: "Loading...";
+.loader::before,
+.loader::after {
+  content: "";
+  grid-area: 1/1;
+  border: 8px solid;
+  border-radius: 50%;
+  border-color: red red #0000 #0000;
+  mix-blend-mode: darken;
+  animation: l14 1s infinite linear;
 }
 
-/* Animation Keyframes */
-@keyframes l5 {
-  to {
-    clip-path: inset(0 -1ch 0 0);
+.loader::after {
+  border-color: #0000 #0000 blue blue;
+  animation-direction: reverse;
+}
+
+@keyframes l14 {
+  100% {
+    transform: rotate(1turn)
   }
 }
-
 /* Fullscreen Blur Background */
 .loader-container {
   /* position: fixed;
