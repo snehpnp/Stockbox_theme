@@ -45,7 +45,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
   const Logout = () => {
     localStorage.clear();
-    if (Role == "USER") {
+    if (Role === "USER") {
       window.location.href = "/user-login";
     } else {
       window.location.href = "/login";
