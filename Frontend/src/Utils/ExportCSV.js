@@ -41,7 +41,7 @@ export default function ExportToExport({ apiData, fileName }) {
     <button
       onClick={(e) => exportToCSV(apiData, fileName)}
       type="button"
-      className="btn btn-primary float-end"
+      className="btn btn-primary "
       data-toggle="tooltip"
       data-placement="top"
       title="Export To Excel"

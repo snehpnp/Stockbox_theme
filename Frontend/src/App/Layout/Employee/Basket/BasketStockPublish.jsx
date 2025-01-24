@@ -382,7 +382,7 @@ const BasketStockPublish = () => {
 
   return (
     <div className="page-content">
-      <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+      <div className="page-breadcrumb  d-flex align-items-center mb-3">
         <div className="breadcrumb-title pe-3">Basket-Stock Published List </div>
         <div className="ps-3">
           <nav aria-label="breadcrumb">

@@ -30,7 +30,7 @@ const Content = ({
       <div className="container-fluid">
         <div className="page-titles">
           <nav className="breadcrumb">
-            <div className="col-lg-6">
+            <div className="col-lg-6 col-sm-6 col-12">
               <ul className="breadcrumb-links">
                 <li>
                   <House onClick={handleHomeClick}></House>
@@ -49,11 +49,13 @@ const Content = ({
                 </li>
               </ul>
             </div>
-            <div className="col-lg-6">
+            <div className="col-lg-6 col-sm-6  col-12">
               {backbutton_status && backbutton_title && (
                 <button
-                  onClick={handleBackClick}
-                  className="btn btn-primary float-lg-end ms-3"
+                  onClick={handleBackClick} // Handle back button click
+                  className="btn btn-primary float-sm-end ms-0 ms-sm-3  mt-3 mt-sm-0"
+                 
+                  
                 >
                   <i
                     className={`fa-solid ${backbutton_title === "Back"
@@ -67,7 +69,7 @@ const Content = ({
               {button_status === false ? null : (
                 <Link
                   to={route}
-                  className="btn btn-primary float-lg-end"
+                  className="btn btn-primary float-sm-end"
                   style={{ padding: "10px !important" }}
                 >
                   <i
@@ -79,8 +81,10 @@ const Content = ({
               )}
               {backForword && (
                 <button
-                  onClick={() => window.history.back()}
-                  className="btn btn-primary float-lg-end ms-3"
+                  onClick={() => window.history.back()} // Handle back button click
+                  className="btn btn-primary float-sm-end ms-0 ms-sm-3 mt-3 mt-sm-0"
+                 
+                
                 >
                   <i className={`fa-solid fa-arrow-left`}></i> Back
                 </button>

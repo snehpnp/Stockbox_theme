@@ -171,7 +171,7 @@ const Planexpiry = () => {
 
     return (
         <div className="page-content">
-            <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+            <div className="page-breadcrumb  d-flex align-items-center mb-3">
                 <div className="breadcrumb-title pe-3">Plan Expiry</div>
                 <div className="ps-3">
                     <Link to="/admin/dashboard">

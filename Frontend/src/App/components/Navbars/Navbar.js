@@ -285,9 +285,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       >
         <div className="container-fluid justify-content-center">
           <div className="row w-100 align-items-center">
-            <div className="col-5">
+            <div className="col-5 ps-0">
               <div className="d-flex align-items-center">
-                <a className="navbar-brand me-1" href="#">
+                <a className="navbar-brand me-1 p-0" href="#">
                   <img
                     src={Logo}
                     alt="Logo"
@@ -295,13 +295,13 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   />
                 </a>
                 <button
-                  className="btn btn-light me-2 px-1 pb-1"
+                  className="btn btn-light ms-1 me-2 px-1 pb-1"
                   onClick={toggleSidebar}
                   style={{
                     border: "none",
                     fontSize: "18px",
                     cursor: "pointer",
-                    height: "40px",
+                    height: "35px",
                   }}
                 >
                   <i className="bx bx-menu" style={{ fontSize: "24px" }}></i>
@@ -334,7 +334,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
               </div>
 
             </div>
-            <div className="col-7">
+            <div className="col-7 pe-0">
               <div className="d-flex align-items-center position-relative justify-content-end">
                 <div className='d-flex'>
                   <span className="switch-label p-1">

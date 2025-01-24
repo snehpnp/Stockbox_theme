@@ -522,7 +522,7 @@ const Freeclient = () => {
             <div>
                 <div>
                     <div className="page-content">
-                        <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3 ">
+                        <div className="page-breadcrumb  d-flex align-items-center mb-3 ">
                             <div className="breadcrumb-title pe-3">{header}</div>
                             <div className="ps-3">
                                 <nav aria-label="breadcrumb">
@@ -539,7 +539,7 @@ const Freeclient = () => {
                         <hr />
                         <div className="card">
                             <div className="card-body">
-                                <div className="d-lg-flex align-items-center mb-4 gap-3 justify-content-between">
+                                <div className="d-sm-flex align-items-center mb-4 gap-3 justify-content-between">
                                     <div className="position-relative">
                                         <input
                                             type="text"
@@ -554,12 +554,12 @@ const Freeclient = () => {
                                     </div>
 
                                     <div
-                                        className="ms-2"
+                                        className="ms-0 ms-sm-2 mt-2 mt-sm-0"
                                         onClick={(e) => getexportfile()}
                                     >
                                         <button
                                             type="button"
-                                            className="btn btn-primary float-end"
+                                            className="btn btn-primary float-sm-end"
                                             data-toggle="tooltip"
                                             data-placement="top"
                                             title="Export To Excel"
@@ -575,7 +575,7 @@ const Freeclient = () => {
 
 
                                 </div>
-
+                               <div>
                                 {isLoading ? (
                                     <Loader />
                                 ) : (
@@ -590,6 +590,7 @@ const Freeclient = () => {
                                         />
                                     </>
                                 )}
+                                </div>
                             </div>
                         </div>
                     </div>
