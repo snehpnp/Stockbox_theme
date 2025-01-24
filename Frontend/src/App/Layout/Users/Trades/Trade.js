@@ -16,21 +16,24 @@ function Trade() {
 
   const [selectedPlan, setSelectedPlan] = useState("all");
   const [model, setModel] = useState(false);
-
+  const [service, setService] = useState([]);
+  const [selectedValue, setSelectedValue] = useState("");
 
 
   useEffect(() => {
     getClientdata()
+    getServicedata()
   }, [])
 
-
+  console.log("aaaa", service)
 
   const getServicedata = async () => {
     try {
-      const data = { page: 1, service_id: "", client_id: userid, search: "" }
-      const response = await GetServicedata(data, token);
+
+      const response = await GetServicedata(token);
       if (response.status) {
-        console.log("response.data", response.data)
+        console.log("getServicedata", response.data)
+        setService(response.data)
       }
     } catch (error) {
       console.error("Error fetching plans:", error);
@@ -40,18 +43,24 @@ function Trade() {
 
 
 
-
   const getClientdata = async () => {
     try {
-      const data = { page: 1, service_id: "", client_id: userid, search: "" }
+      const data = { page: 1, service_id: "66d2c3bebf7e6dc53ed07626", client_id: userid, search: "" }
       const response = await GetSignalClient(data, token);
       if (response.status) {
         console.log("response.data", response.data)
+
+
       }
     } catch (error) {
       console.error("Error fetching plans:", error);
     }
 
+  };
+
+
+  const handleChange = (e) => {
+    setSelectedValue(e.target.value);
   };
 
 
@@ -62,8 +71,6 @@ function Trade() {
 
 
   return (
-
-
 
     <Content
       Page_title="Trade"
@@ -89,9 +96,9 @@ function Trade() {
                     Select Plans
                   </option>
                   <option value="all">All</option>
-                  <option value="cash">Cash</option>
-                  <option value="future">Future</option>
-                  <option value="option">Option</option>
+                  {service.map((item) => (
+                    <option value={item._id} >{item?.title}</option>
+                  ))}
                 </select>
               </div>
             </div>
