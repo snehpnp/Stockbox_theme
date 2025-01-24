@@ -225,35 +225,35 @@ function Trade() {
                         </div>
                       </dv>
                       <div className="col-md-3 d-flex align-items-center">
-                        <div className="">
-                          <button
-                            className="btn btn-success w-100"
-                            onClick={() => { setModel(true) }}
-                          >
-                            BUY
-                          </button>
-                          <button
-                            className="btn btn-success w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal1"
-                          >
-                            View Detail
-                          </button>
-                          <button
-                            className="btn btn-success w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal1"
-                          >
-                            View Ananlysis
-                          </button>
-                          <button
-                            className="btn btn-success w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal1"
-                          >
-                            Broker Response
-                          </button>
-                        </div>
+                      <div className=" d-flex flex-column w-100 h-100 justify-content-evenly"> 
+                            <button
+                              className="btn btn-primary w-100"
+                              onClick={() => { setModel(true) }}
+                            >
+                              BUY
+                            </button>
+                            <button
+                              className="btn btn-secondary w-100"
+                              data-bs-toggle="modal"
+                              data-bs-target="#exampleModal1"
+                            >
+                              View Detail
+                            </button>
+                            <button
+                              className="btn btn-secondary w-100"
+                              data-bs-toggle="modal"
+                              data-bs-target="#exampleModal1"
+                            >
+                              View Ananlysis
+                            </button>
+                            <button
+                              className="btn btn-secondary w-100"
+                              data-bs-toggle="modal"
+                              data-bs-target="#exampleModal1"
+                            >
+                              Broker Response
+                            </button>
+                          </div>
                       </div>
                     </div>
                   </div>
