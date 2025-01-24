@@ -209,11 +209,17 @@ const Service = () => {
     setShowModal(true);
   };
 
+
+
+
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedPlanDetails(null);
     setDiscountedPrice(0);
   };
+
+
+
 
   const getFilteredPlans = useMemo(() => {
     let filteredPlans =
@@ -234,14 +240,22 @@ const Service = () => {
     return filteredPlans;
   }, [plan, selectedPlan, sortCriteria]);
 
+
+
   const stripHtmlTags = (input) => {
     if (!input) return "";
     return input.replace(/<\/?[^>]+(>|$)/g, "");
   };
 
+
+
+
+
+
   return (
+
     <Content Page_title="Service" button_title="Back" button_status={false}>
-      {/* <div className="card"> */}
+
       <div className="card-body">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <div className="row w-100">
