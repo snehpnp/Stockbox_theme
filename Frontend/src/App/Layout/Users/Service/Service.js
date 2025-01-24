@@ -17,10 +17,12 @@ import Loader from "../../../../Utils/Loader";
 const Service = () => {
 
 
+
+
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
-
   const applyButtonRef = useRef(null);
+
 
 
   const [selectedPlan, setSelectedPlan] = useState("all");
@@ -35,8 +37,11 @@ const Service = () => {
   const [coupons, setCoupon] = useState([]);
   const [getkey, setGetkey] = useState([]);
   const [sortCriteria, setSortCriteria] = useState("price");
-
   const [isLoading, setIsLoading] = useState(true)
+
+
+
+
 
   useEffect(() => {
     getPlan();
@@ -53,6 +58,7 @@ const Service = () => {
       applyButtonRef.current.focus();
     }
   };
+
 
 
   const applyCoupon = async (coupon) => {
@@ -92,6 +98,7 @@ const Service = () => {
   };
 
 
+
   const removeCoupon = () => {
     setManualCoupon("");
     setAppliedCoupon(null);
@@ -100,9 +107,15 @@ const Service = () => {
   };
 
 
+
+
+
+
   const handleSelectChange = (event) => {
     setSelectedPlan(event.target.value);
   };
+
+
 
 
   const getCoupon = async () => {
@@ -115,6 +128,7 @@ const Service = () => {
       console.error("Error fetching coupons:", error);
     }
   };
+
 
 
   const getkeybydata = async () => {
@@ -131,7 +145,6 @@ const Service = () => {
 
 
 
-
   const getPlan = async () => {
     try {
       const response = await GetPlanByCategory(token);
@@ -144,8 +157,6 @@ const Service = () => {
     }
     setIsLoading(false)
   };
-
-
 
 
 
@@ -190,6 +201,7 @@ const Service = () => {
       console.error("Subscription error:", error);
     }
   };
+
 
 
   const handleShowModal = (item) => {
