@@ -31,6 +31,7 @@ module.exports = function (app) {
     app.use(require("./Superadmin/Company"))
     app.use(require("./Superadmin/Theme"))
 
+    app.use(require("./Stockrating"))
 
 
 

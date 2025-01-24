@@ -86,6 +86,8 @@ const Adminnotification_Modal = db.Adminnotification;
 const Basketstock_Modal = db.Basketstock;
 const Liveprice_Modal = db.Liveprice;
 const Requestclient_Modal = db.Requestclient;
+const Stockrating_Modal = db.Stockrating;
+
 
 const { Alice_Socket } = require("./App/Utils/AliceSocket.js");
 
