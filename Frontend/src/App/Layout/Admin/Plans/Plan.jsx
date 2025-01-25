@@ -188,7 +188,6 @@ const Plan = () => {
                                 </div>
                             </a>
                         </li>
-
                         {category.map((cat) => (
                             <li className="nav-item" role="presentation" key={cat._id}>
                                 <a
