@@ -274,7 +274,7 @@ const Service = () => {
                     Select Plans
                   </option>
                   <option value="all">All</option>
-                  {category.map((item) => (
+                  {category?.map((item) => (
                     <option value={item?._id} key={item?._id}>
                       {item?.title}
                     </option>
@@ -302,7 +302,7 @@ const Service = () => {
         {isLoading ? <Loader /> : <div className="pricing-container price1 row mt-4">
           <div className="row row-cols-1 row-cols-md-1 row-cols-lg-3 row-cols-xl-3">
             {getFilteredPlans?.map((item) => (
-              <div className="col" key={item?._id}>
+              <div className="col col-md-6" key={item?._id}>
                 <div className="card card1 mb-4">
                   <div className="card-body">
                     <div className="d-flex align-items-center">
