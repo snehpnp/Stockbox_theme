@@ -1133,14 +1133,8 @@ div#dropdownMenuLink svg{
   font-size: 20px;
 }
 
-.table-primary,.accordion-button:not(.collapsed)
-{
-  background:var(--tabelheadbgcolor, #007bff) !important;
-  --bs-table-bg:var(--tabelheadbgcolor, #007bff) !important;
-}
-.activity-card .progress, .activity-card .progress-stacked {
-  --bs-progress-height: 1.5rem !important;
-}
+
+
 
 
 
