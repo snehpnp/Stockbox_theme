@@ -1164,12 +1164,11 @@ div#dropdownMenuLink svg{
   font-weight: bold;
   font-size: 20px;
 }
-
-
-
-
-
-
-
-
-
+span.alert-count {
+  top: -5px !important;
+  right: -10px !important;
+  width: 15px;
+  height: 15px;
+  padding: 2px 5px !important;
+  line-height: 13px !important;
+}
