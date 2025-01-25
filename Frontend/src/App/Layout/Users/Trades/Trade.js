@@ -12,6 +12,11 @@ import { image_baseurl } from "../../../../Utils/config";
 
 
 function Trade() {
+
+
+
+
+
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
@@ -82,9 +87,12 @@ function Trade() {
     setSelectedValue(e.target.value);
   };
 
+
+
   const handleTabClick = (tab) => {
     setSelectedTab(tab);
   };
+
 
 
   const handleDownload = (item) => {
@@ -102,6 +110,8 @@ function Trade() {
 
 
   return (
+
+
     <Content Page_title="Trade" button_title="Add Trade" button_status={true}>
       <div className="card">
         <div className="card-body">
@@ -372,7 +382,7 @@ function Trade() {
               </div>
             )}
 
-            
+
           </div>
         </div>
       </div>
@@ -452,6 +462,7 @@ function Trade() {
 
 
     </Content>
+
 
   );
 }

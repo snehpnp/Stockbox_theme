@@ -7,6 +7,7 @@ import { ReadNotificationStatus, getDashboardNotification, GetAllNotificationRea
 import Swal from 'sweetalert2';
 import { formatDistanceToNow } from 'date-fns';
 import { image_baseurl } from "../../../Utils/config";
+import BrokerLogin from "../../../Utils/Brokerintergate";
 
 
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
@@ -108,7 +109,6 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       console.log("error", error);
     }
   };
-
 
 
 
@@ -336,7 +336,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
             </div>
             <div className="col-7 pe-0">
               <div className="d-flex align-items-center position-relative justify-content-end">
-                <div className='d-flex'>
+                {Role === "ADMIN" ? < div className='d-flex'>
                   <span className="switch-label p-1">
                     Trading Status:
                     <span style={{ color: isChecked ? 'green' : 'red' }}>
@@ -365,7 +365,34 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       }}
                     />
                   </div>
-                </div>
+                </div> :
+                  < div className='d-flex'>
+                    <span className="switch-label p-1">
+                      Trading Status:
+                      <span style={{ color: isChecked ? 'green' : 'red' }}>
+                        {isChecked ? "On" : "Off"}
+                      </span>
+                    </span>
+                    <div
+                      className="form-check form-switch form-check-dark mb-0"
+                      style={{ margin: "inherit", fontSize: 21 }}
+                    >
+                      <span style={{ color: "red", fontSize: 16 }}>Off</span>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        role="switch"
+                        id="flexSwitchCheckDark"
+                        // disabled={isDisabled}
+                        // checked={isChecked}
+                        onChange={(e) => {
+                          BrokerLogin("1", "Asd")
+                        }}
+                      />
+                    </div>
+                  </div>
+                }
+
 
 
                 {Role === "ADMIN" ? (
@@ -696,6 +723,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
             </div>
           </>
         )}
+        \
       </nav>
     </>
   );
