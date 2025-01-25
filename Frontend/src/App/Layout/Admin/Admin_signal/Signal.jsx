@@ -178,7 +178,6 @@ const Signal = () => {
     const getexportfile = async () => {
         try {
             const response = await GetSignallist(token);
-            console.log("GetSignallist", response);
 
             if (response.status) {
                 if (response.data?.length > 0) {
@@ -727,7 +726,7 @@ const Signal = () => {
         try {
             const data = { id: serviceid._id, report: updatetitle.report, description: updatetitle.description };
 
-            const response = await UpdatesignalReport(data, token);            
+            const response = await UpdatesignalReport(data, token);
 
             if (response && response.status) {
                 Swal.fire({
@@ -756,7 +755,7 @@ const Signal = () => {
                 icon: 'error',
                 confirmButtonText: 'Try Again',
             });
-            
+
         }
     };
 
@@ -1550,7 +1549,7 @@ const Signal = () => {
             )} */}
 
 
-            
+
             <ReusableModal
                 show={model1}
                 onClose={() => setModel1(false)}
