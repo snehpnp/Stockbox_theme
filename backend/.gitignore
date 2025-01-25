@@ -29,3 +29,7 @@ yarn-error.log*
 /.env.test.local
 /.env.production.local
 /.env
+
+Backend\.env
+
+D:\Stockbox_theme\Backend\.env
