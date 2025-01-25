@@ -4,11 +4,14 @@ import axios from "axios";
 import Contnet from "../../../components/Contents/Content";
 import { GetAllThemesApi, GetThemeByIdApi, DeleteThemeApi } from "../../../Services/Themes/Theme";
 import Swal from "sweetalert2";
+import Loader from "../../../../Utils/Loader";
 
 
 function Theme() {
   const navigate = useNavigate();
   const [themes, setThemes] = useState([]);
+
+  const [isLoader,setIsLoader] = useState(true)
 
   const handleEdit = (id) => {
     navigate(`/superadmin/edit-theme/${id}`);
@@ -53,6 +56,7 @@ function Theme() {
     try {
       const response = await GetAllThemesApi();
       setThemes(response.data);
+      setIsLoader(false)
     } catch (error) {
       console.error(error);
     }
@@ -101,6 +105,9 @@ function Theme() {
       <div >
 
 
+      {isLoader?(
+    <Loader/>
+  ):(<>
 
         {/* Table Wrapped in a Card */}
         <div style={cardStyle}>
@@ -147,6 +154,7 @@ function Theme() {
             </tbody>
           </table>
         </div>
+        </>)}
       </div>
     </Contnet>
   );
