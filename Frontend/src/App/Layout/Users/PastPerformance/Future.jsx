@@ -4,6 +4,7 @@ import { Bar, Doughnut } from "react-chartjs-2";
 import { Link } from "react-router-dom";
 import "chart.js/auto";
 import { GetPastPerformance } from "../../../Services/UserService/User";
+import Content from "../../../components/Contents/Content";
 
 const Future = () => {
   const [pastPerformance, setPastPerformance] = React.useState([]);
@@ -81,22 +82,14 @@ const Future = () => {
   };
 
   return (
-    <div className="page-content">
-      <div className="page-breadcrumb  d-flex align-items-center mb-3">
-        <div className="breadcrumb-title pe-3">Cash</div>
-        <div className="ps-3">
-          <nav aria-label="breadcrumb">
-            <ol className="breadcrumb mb-0 p-0">
-              <li className="breadcrumb-item">
-                <a href="/admin/dashboard">
-                  <i className="bx bx-home-alt" />
-                </a>
-              </li>
-            </ol>
-          </nav>
-        </div>
-      </div>
-      <hr />
+
+    <Content
+    Page_title="Future"
+    button_status={false}
+    backbutton_status={false}
+  >
+     <div className="page-content">
+    
       <div className="row">
         <div className="col-md-3">
           <div className="card">
@@ -105,7 +98,7 @@ const Future = () => {
                 1 Month Average<span></span>
               </li>
               <li className="list-group-item d-flex  align-items-center fs-5 fw-bold">
-                <span className="badge bg-primary  badgespan me-1">
+                <span className="badge btn-primary  badgespan me-1">
                   <i className="bx bx-rupee fs-5"></i>
                 </span>{" "}
                 249,711
@@ -120,7 +113,7 @@ const Future = () => {
                 3 Month Average<span></span>
               </li>
               <li className="list-group-item d-flex  align-items-center fs-5 fw-bold">
-                <span className="badge bg-primary  badgespan me-1">
+                <span className="badge btn-primary  badgespan me-1">
                   <i className="bx bx-rupee fs-5"></i>
                 </span>{" "}
                 249,711
@@ -135,7 +128,7 @@ const Future = () => {
                 6 Month Average<span></span>
               </li>
               <li className="list-group-item d-flex  align-items-center fs-5 fw-bold">
-                <span className="badge bg-primary  badgespan me-1">
+                <span className="badge btn-primary  badgespan me-1">
                   <i className="bx bx-rupee fs-5"></i>
                 </span>{" "}
                 249,711
@@ -150,7 +143,7 @@ const Future = () => {
                 1 Year Average<span></span>
               </li>
               <li className="list-group-item d-flex  align-items-center fs-5 fw-bold">
-                <span className="badge bg-primary  badgespan me-1">
+                <span className="badge btn-primary  badgespan me-1">
                   <i className="bx bx-rupee fs-5"></i>
                 </span>{" "}
                 249,711
@@ -204,7 +197,7 @@ const Future = () => {
           </div>
         </div>
         <div className="col-md-8">
-          <div className="card radius-10 overflow-hidden w-100">
+          <div className="card radius-10 overflow-hidden w-100 h-100">
             <div className="card-body">
             <Bar
                 className=""
@@ -217,7 +210,7 @@ const Future = () => {
           </div>
         </div>
       </div>
-<div className="">
+<div className="mty-4">
   <div className="d-flex gap-3">
     <div className="card-body card">
       <h5 className="mb-1">Total Calls
@@ -361,6 +354,8 @@ const Future = () => {
                 </div>
                
                 </div>
+    </Content>
+   
                 
       
   );
