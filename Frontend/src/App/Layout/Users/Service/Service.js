@@ -302,7 +302,7 @@ const Service = () => {
         {isLoading ? <Loader /> : <div className="pricing-container price1 row mt-4">
           <div className="row row-cols-1 row-cols-md-1 row-cols-lg-3 row-cols-xl-3">
             {getFilteredPlans.map((item) => (
-              <div className="col" key={item?._id}>
+              <div className="col col-md-6" key={item?._id}>
                 <div className="card card1 mb-4">
                   <div className="card-body">
                     <div className="d-flex align-items-center">
@@ -348,12 +348,12 @@ const Service = () => {
                         />
                       </li>
                     </ul>
-                    <div className="d-flex align-items-center justify-content-between mt-4">
-                      <button className="btn btn-secondary rounded-1">
+                    <div className="d-block d-md-flex align-items-center justify-content-between mt-4">
+                      <button className="btn btn-secondary rounded-1 ">
                         Know More
                       </button>
                       <button
-                        className="btn btn-primary rounded-1"
+                        className="btn btn-primary rounded-1 mt-3 mt-md-0"
                         onClick={() => handleShowModal(item)}
                       >
                         Subscribe Now
