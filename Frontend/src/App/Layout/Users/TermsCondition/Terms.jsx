@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { getTermsCondition } from '../../../Services/UserService/User';
 import Content from "../../../components/Contents/Content";
+import Loader from '../../../../Utils/Loader';
+
+
 
 const Terms = () => {
 
@@ -11,6 +14,7 @@ const Terms = () => {
 
 
     const [termsCondition, setTermsCondition] = useState('');
+    const [isLoading, setIsLoading] = useState(true)
 
     const fetchTermsCondition = async () => {
         try {
@@ -21,6 +25,7 @@ const Terms = () => {
         } catch (error) {
             console.log('Error fetching Terms Condition:', error);
         }
+        setIsLoading(false)
     };
 
     useEffect(() => {
@@ -40,14 +45,14 @@ const Terms = () => {
                     <div className="page-content">
 
                         <div className="card">
-                            <div className="card-body">
+                            {isLoading ? <Loader /> : <div className="card-body">
                                 <h5 className="card-title">Terms & Condition</h5>
                                 <hr />
                                 {/* Render HTML content safely */}
                                 <div
                                     dangerouslySetInnerHTML={{ __html: termsCondition }}
                                 />
-                            </div>
+                            </div>}
                         </div>
                     </div>
                 </div>

@@ -1,358 +1,108 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
 import { Link } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import { Eye } from "lucide-react";
 import { Button, Tooltip } from "antd";
 import ReusableModal from "../../../components/Models/ReusableModal";
+import { GetSignalClient, GetServicedata, GetCloseSignalClient } from "../../../Services/UserService/User";
+import { fDateTime, fDate } from "../../../../Utils/Date_formate";
+import { image_baseurl } from "../../../../Utils/config";
+
+
 
 function Trade() {
+  const token = localStorage.getItem("token");
+  const userid = localStorage.getItem("id");
 
-  const [selectedPlan, setSelectedPlan] = useState("all");
   const [model, setModel] = useState(false);
+  const [viewmodel, setViewModel] = useState(false);
+  const [service, setService] = useState([]);
+  const [gettradedata, setGettradedata] = useState([]);
+  const [getclosedata, setGetclosedata] = useState([]);
+  const [discription, setDiscription] = useState("");
+
+  const [selectedValue, setSelectedValue] = useState("66d2c3bebf7e6dc53ed07626");
+  const [selectedTab, setSelectedTab] = useState("live");
 
 
-  const handleSelectChange = (event) => {
-    setSelectedPlan(event.target.value);
-  };
 
-  const data = [
-    {
-      id: 1,
-      sno: "1",
-      segment: "Cash ",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 2,
-      sno: "2",
-      segment: "Future",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 3,
-      sno: "3",
-      segment: "Option",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 4,
-      sno: "4",
-      segment: "Cash",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 5,
-      sno: "5",
-      segment: "Future",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 6,
-      sno: "6",
-      segment: "Option",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 7,
-      sno: "7",
-      segment: "Cash",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 8,
-      sno: "8",
-      segment: "Future",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 9,
-      sno: "9",
-      segment: "Option",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 10,
-      sno: "10",
-      segment: "Cash",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 11,
-      sno: "11",
-      segment: "Future",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 12,
-      sno: "12",
-      segment: "Option",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-  ];
+  useEffect(() => {
+    getClientdata();
+    getServicedata();
+    getGetCloseSignaldata()
+  }, [selectedValue]);
 
-  const columns1 = [
-    { name: "S.NO.", selector: (row) => row.sno, sortable: true },
-    {
-      name: "Segment",
-      selector: (row) => row.segment,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Type",
-      selector: (row) => row.type,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Trading Symbol",
-      selector: (row) => row.symbol,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Entry Price",
-      selector: (row) => row.price,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Entry Date",
-      selector: (row) => row.date,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Entry Time",
-      selector: (row) => row.time,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Target1",
-      selector: (row) => row.target1,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Target2",
-      selector: (row) => row.target2,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Target3",
-      selector: (row) => row.target3,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Stoploss",
-      selector: (row) => row.stoploss,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Hold Duration",
-      selector: (row) => row.hold,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Buy/Sell",
-      selector: (row) => (
-        <div>
-          <button className="btn btn-success">Buy</button>
-        </div>
-      ),
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Action",
-      selector: (row) => (
-        <div>
-          <Tooltip placement="top" title="View">
-            <Eye
-              style={{ marginRight: "10px" }}
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
-            />
-          </Tooltip>
-        </div>
-      ),
-    },
-  ];
 
-  const customStyles = {
-    header: {
-      style: {
-        fontSize: "20px",
-        fontWeight: "bold",
-        color: "#4A4A4A",
-        borderRadius: "20px",
-      },
-    },
-    rows: {
-      style: {
-        minHeight: "72px",
-        "&:hover": {
-          backgroundColor: "#e0e0e0",
-        },
-      },
-    },
-    headCells: {
-      style: {
-        fontSize: "16px",
-        fontWeight: "bold",
-        backgroundColor: "#0092e4 !important",
-        color: "#fff",
-      },
-    },
-    cells: {
-      style: {
-        fontSize: "15px",
-        color: "#4A4A4A",
-      },
-    },
-  };
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filteredData, setFilteredData] = useState(data);
-
-  // Function to handle search input changes
-  const handleSearch = (event) => {
-    const query = event.target.value;
-    setSearchQuery(query);
-
-    // Filter the data based on the search query
-    if (query) {
-      const filteredResults = data.filter((item) =>
-        item.segment.toLowerCase().includes(query.toLowerCase())
-      );
-      setFilteredData(filteredResults);
-    } else {
-      // If the query is empty, reset to the original data
-      setFilteredData(data);
+  const getServicedata = async () => {
+    try {
+      const response = await GetServicedata(token);
+      if (response.status) {
+        setService(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching plans:", error);
     }
   };
 
-  return (
-    <Content
-      Page_title="Trade"
-      button_title="Add Trade"
-      button_status={true}
-    >
 
+
+  const getClientdata = async () => {
+    try {
+      const data = { page: 1, service_id: selectedValue, client_id: userid, search: "" };
+      const response = await GetSignalClient(data, token);
+      if (response.status) {
+        setGettradedata(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching plans:", error);
+    }
+  };
+
+
+
+  const getGetCloseSignaldata = async () => {
+    try {
+      const data = { page: 1, service_id: selectedValue, client_id: userid, search: "" };
+      const response = await GetCloseSignalClient(data, token);
+      if (response.status) {
+        setGetclosedata(response.data);
+        console.log("response.data", response.data)
+      }
+    } catch (error) {
+      console.error("Error fetching plans:", error);
+    }
+  };
+
+
+
+
+  const handleChange = (e) => {
+    setSelectedValue(e.target.value);
+  };
+
+  const handleTabClick = (tab) => {
+    setSelectedTab(tab);
+  };
+
+
+  const handleDownload = (item) => {
+    const url = `${image_baseurl}uploads/report/${item.report}`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+
+
+
+  return (
+    <Content Page_title="Trade" button_title="Add Trade" button_status={true}>
       <div className="card">
         <div className="card-body">
           <div>
@@ -364,29 +114,24 @@ function Trade() {
                 <select
                   id="planSelect"
                   className="form-select"
-                  onChange={handleSelectChange}
-                  value={selectedPlan}
+                  value={selectedValue}
+                  onChange={handleChange}
                 >
-                  <option value="" disabled>
-                    Select Plans
-                  </option>
-                  <option value="all">All</option>
-                  <option value="cash">Cash</option>
-                  <option value="future">Future</option>
-                  <option value="option">Option</option>
+                  {service.map((item) => (
+                    <option key={item._id} value={item._id}>
+                      {item?.title}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
           </div>
-          <ul
-            className="nav nav-pills border-bottom mb-3 justify-content-center"
-            role="tablist"
-          >
+
+          <ul className="nav nav-pills border-bottom mb-3 justify-content-center" role="tablist">
             <li className="nav-item" role="presentation">
               <a
-                className="nav-link active"
-                data-bs-toggle="pill"
-                href="#primary-pills-home"
+                className={`nav-link ${selectedTab === "live" ? "active" : ""}`}
+                onClick={() => handleTabClick("live")}
                 role="tab"
                 aria-selected="true"
               >
@@ -394,15 +139,14 @@ function Trade() {
                   <div className="tab-icon">
                     <i className="bx bx-home font-18 me-1" />
                   </div>
-                  <div className="tab-title">Live Trade </div>
+                  <div className="tab-title">Live Trade</div>
                 </div>
               </a>
             </li>
             <li className="nav-item" role="presentation">
               <a
-                className="nav-link"
-                data-bs-toggle="pill"
-                href="#primary-pills-profile"
+                className={`nav-link ${selectedTab === "close" ? "active" : ""}`}
+                onClick={() => handleTabClick("close")}
                 role="tab"
                 aria-selected="false"
                 tabIndex={-1}
@@ -416,1117 +160,299 @@ function Trade() {
               </a>
             </li>
           </ul>
+
           <div className="tab-content" id="pills-tabContent">
-            <div
-              className="tab-pane fade show active"
-              id="primary-pills-home"
-              role="tabpanel"
-            >
-              {selectedPlan === "all" && (
-                <div className="row">
-                  <div className="col-md-12">
-                    <div className="trade-card shadow">
-                      <div className="row">
-                        <div className="col-md-2 d-flex align-items-center">
-                          <div className="trade-header ">
-                            <div>
-                              <span className="trade-time tradetime1">
-                                <b>18 Nov 2024</b>
-                                <p>17:08:20</p>
-                              </span>
-                            </div>
-                            <div className="mb-3">
-                              <span className="trade-type">Short Term</span>
-                            </div>
-                            <div>
-                              <span className="trade-type1">
-                                Cash,Future,Option
-                              </span>
+            {selectedTab === "live" && (
+              <div className="tab-pane fade show active" id="primary-pills-home" role="tabpanel">
+                {gettradedata?.map((item, index) => (
+                  <div className="row" key={item._id || index}>
+                    <div className="col-md-12">
+                      <div className="trade-card shadow">
+                        <div className="row">
+
+                          <div className="col-md-2 d-flex align-items-center">
+                            <div className="trade-header">
+                              <div>
+                                <span className="trade-time tradetime1">
+                                  <b>{fDate(item?.created_at)}</b>
+                                </span>
+                              </div>
+                              <div className="mb-3">
+                                <span className="trade-type">{item?.callduration}</span>
+                              </div>
+                              <div>
+                                <span className="trade-type1">
+                                  {service?.find((srv) => srv?._id === item?.service)?.title}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <dv className="col-md-7">
-                          <div className="trade-content">
-                            <div className="d-flex justify-content-between tradehead mb-3">
-                              <h3>THERMAX-EQ</h3>
-                              <span className="trade-type1 mb-2">open</span>
-                            </div>
 
-                            <div className="trade-details">
-                              <div className="row justify-content-center">
-                                <div className="col-md-6">
-                                  <div>
-                                    <strong>Entry price:</strong>
-                                    <p> (₹100)</p>
+                          <div className="col-md-7">
+                            <div className="trade-content">
+                              <div className="d-flex justify-content-between tradehead mb-3">
+                                <h3>{item.tradesymbol || "Trade Symbol"}</h3>
+                                <span className="trade-type1 mb-2">{item?.stock}</span>
+                              </div>
+                              <div className="trade-details">
+                                <div className="row justify-content-center">
+                                  <div className="col-md-6">
+                                    <div>
+                                      <strong>Entry price:</strong>
+                                      <p>₹{item?.price}</p>
+                                    </div>
                                   </div>
-                                </div>
+                                  <div className="col-md-6 d-flex justify-content-end">
+                                    <div>
+                                      <strong>Call Type:</strong>
+                                      <p>{item?.calltype || "15-30 days"}</p>
+                                    </div>
+                                  </div>
+                                  <div className="col-md-3">
+                                    <div>
+                                      <strong>Stoploss:</strong>
+                                      <p>{item?.stoploss || "--"}</p>
+                                    </div>
+                                  </div>
 
-                                <div className="col-md-6 d-flex justify-content-end">
-                                  <div>
-                                    <strong>Hold duration:</strong>
-                                    <p>(15-30 days)</p>
+                                  <div className="col-md-3 d-flex justify-content-center">
+                                    <div>
+                                      <strong>Target:</strong>
+                                      <p>{item?.tag1 || "--"}</p>
+                                    </div>
                                   </div>
-                                </div>
-                                <div className="col-md-3">
-                                  <div>
-                                    <strong>Stoploss:</strong>
-                                    <p>--</p>
+                                  <div className="col-md-3 d-flex justify-content-center">
+                                    <div>
+                                      <strong>Target:</strong>
+                                      <p>{item?.tag2 || "--"}</p>
+                                    </div>
                                   </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
+                                  <div className="col-md-3 d-flex justify-content-center">
+                                    <div>
+                                      <strong>Target:</strong>
+                                      <p>{item?.tag3 || "--"}</p>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
                           </div>
-                        </dv>
-                        <div className="col-md-3 d-flex align-items-center">
-                          <div className="">
-                            <button
-                              className="btn btn-success w-100"
-                              onClick={() => { setModel(true) }}
-                            >
-                              BUY
-                            </button>
-                            <button
-                              className="btn btn-success w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Detail
-                            </button>
-                            <button
-                              className="btn btn-success w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Ananlysis
-                            </button>
-                            <button
-                              className="btn btn-success w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              Broker Response
-                            </button>
+
+                          <div className="col-md-3 d-flex align-items-center">
+                            <div className="d-flex flex-column w-100 h-100 justify-content-evenly">
+                              <button className="btn btn-primary w-100" onClick={() => setModel(true)}>
+                                BUY
+                              </button>
+                              <button
+                                className="btn btn-secondary w-100"
+                                onClick={() => {
+                                  setViewModel(true);
+                                  setDiscription(item?.description);
+                                }}
+                              >
+                                View Detail
+                              </button>
+
+                              <button className="btn btn-secondary w-100" onClick={() => handleDownload(item)} >
+                                View Analysis
+                              </button>
+                              <button className="btn btn-secondary w-100" >
+                                Broker Response
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
-              {selectedPlan === "cash" && (
-                <div className="row">
-                  <div className="col-md-12">
-                    <div className="trade-card shadow">
-                      <div className="row">
-                        <div className="col-md-2 d-flex align-items-center">
-                          <div className="trade-header ">
-                            <div>
-                              <span className="trade-time tradetime1">
-                                <b>18 Nov 2024</b>
-                                <p>17:08:20</p>
-                              </span>
-                            </div>
-                            <div className="mb-3">
-                              <span className="trade-type">Short Term</span>
-                            </div>
-                            <div>
-                              <span className="trade-type1">
-                                Cash,Future,Option
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <dv className="col-md-7">
-                          <div className="trade-content">
-                            <div className="d-flex justify-content-between tradehead mb-3">
-                              <h3>THERMAX-EQ</h3>
-                              <span className="trade-type1 mb-2">open</span>
-                            </div>
-
-                            <div className="trade-details">
-                              <div className="row justify-content-center">
-                                <div className="col-md-6">
-                                  <div>
-                                    <strong>Entry price:</strong>
-                                    <p> (₹100)</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-6 d-flex justify-content-end">
-                                  <div>
-                                    <strong>Hold duration:</strong>
-                                    <p>(15-30 days)</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3">
-                                  <div>
-                                    <strong>Stoploss:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </dv>
-                        <div className="col-md-3 d-flex align-items-center">
-                          <div className="">
-                            <button
-                              className="btn btn-buy mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal"
-                            >
-                              BUY
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Detail
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Ananlysis
-                            </button>
-                            <button
-                              className="btn btn-view-detail w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              Broker Response
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="trade-card shadow">
-                      <div className="row">
-                        <div className="col-md-2 d-flex align-items-center">
-                          <div className="trade-header ">
-                            <div>
-                              <span className="trade-time tradetime1">
-                                <b>18 Nov 2024</b>
-                                <p>17:08:20</p>
-                              </span>
-                            </div>
-                            <div className="mb-3">
-                              <span className="trade-type">Short Term</span>
-                            </div>
-                            <div>
-                              <span className="trade-type1">
-                                Cash,Future,Option
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <dv className="col-md-7">
-                          <div className="trade-content">
-                            <div className="d-flex justify-content-between tradehead mb-3">
-                              <h3>THERMAX-EQ</h3>
-                              <span className="trade-type1 mb-2">open</span>
-                            </div>
-
-                            <div className="trade-details">
-                              <div className="row justify-content-center">
-                                <div className="col-md-6">
-                                  <div>
-                                    <strong>Entry price:</strong>
-                                    <p> (₹100)</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-6 d-flex justify-content-end">
-                                  <div>
-                                    <strong>Hold duration:</strong>
-                                    <p>(15-30 days)</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3">
-                                  <div>
-                                    <strong>Stoploss:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </dv>
-                        <div className="col-md-3 d-flex align-items-center">
-                          <div className="">
-                            <button
-                              className="btn btn-buy mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal"
-                            >
-                              BUY
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Detail
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Ananlysis
-                            </button>
-                            <button
-                              className="btn btn-view-detail w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              Broker Response
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {selectedPlan === "future" && (
-                <div className="row">
-                  <div className="col-md-12">
-                    {/* Card 1 */}
-                    <div className="trade-card shadow">
-                      <div className="row">
-                        <div className="col-md-2 d-flex align-items-center">
-                          <div className="trade-header ">
-                            <div>
-                              <span className="trade-time tradetime1">
-                                <b>18 Nov 2024</b>
-                                <p>17:08:20</p>
-                              </span>
-                            </div>
-                            <div className="mb-3">
-                              <span className="trade-type">Short Term</span>
-                            </div>
-                            <div>
-                              <span className="trade-type1">
-                                Cash,Future,Option
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <dv className="col-md-7">
-                          <div className="trade-content">
-                            <div className="d-flex justify-content-between tradehead mb-3">
-                              <h3>THERMAX-EQ</h3>
-                              <span className="trade-type1 mb-2">open</span>
-                            </div>
-
-                            <div className="trade-details">
-                              <div className="row justify-content-center">
-                                <div className="col-md-6">
-                                  <div>
-                                    <strong>Entry price:</strong>
-                                    <p> (₹100)</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-6 d-flex justify-content-end">
-                                  <div>
-                                    <strong>Hold duration:</strong>
-                                    <p>(15-30 days)</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3">
-                                  <div>
-                                    <strong>Stoploss:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </dv>
-                        <div className="col-md-3 d-flex align-items-center">
-                          <div className="">
-                            <button
-                              className="btn btn-buy mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal"
-                            >
-                              BUY
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Detail
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Ananlysis
-                            </button>
-                            <button
-                              className="btn btn-view-detail w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              Broker Response
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="trade-card shadow">
-                      <div className="row">
-                        <div className="col-md-2 d-flex align-items-center">
-                          <div className="trade-header ">
-                            <div>
-                              <span className="trade-time tradetime1">
-                                <b>18 Nov 2024</b>
-                                <p>17:08:20</p>
-                              </span>
-                            </div>
-                            <div className="mb-3">
-                              <span className="trade-type">Short Term</span>
-                            </div>
-                            <div>
-                              <span className="trade-type1">
-                                Cash,Future,Option
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <dv className="col-md-7">
-                          <div className="trade-content">
-                            <div className="d-flex justify-content-between tradehead mb-3">
-                              <h3>THERMAX-EQ</h3>
-                              <span className="trade-type1 mb-2">open</span>
-                            </div>
-
-                            <div className="trade-details">
-                              <div className="row justify-content-center">
-                                <div className="col-md-6">
-                                  <div>
-                                    <strong>Entry price:</strong>
-                                    <p> (₹100)</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-6 d-flex justify-content-end">
-                                  <div>
-                                    <strong>Hold duration:</strong>
-                                    <p>(15-30 days)</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3">
-                                  <div>
-                                    <strong>Stoploss:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </dv>
-                        <div className="col-md-3 d-flex align-items-center">
-                          <div className="">
-                            <button
-                              className="btn btn-buy mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal"
-                            >
-                              BUY
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Detail
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Ananlysis
-                            </button>
-                            <button
-                              className="btn btn-view-detail w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              Broker Response
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {selectedPlan === "option" && (
-                <div className="row">
-                  <div className="col-md-12">
-                    {/* Card 1 */}
-                    <div className="trade-card shadow">
-                      <div className="row">
-                        <div className="col-md-2 d-flex align-items-center">
-                          <div className="trade-header ">
-                            <div>
-                              <span className="trade-time tradetime1">
-                                <b>18 Nov 2024</b>
-                                <p>17:08:20</p>
-                              </span>
-                            </div>
-                            <div className="mb-3">
-                              <span className="trade-type">Short Term</span>
-                            </div>
-                            <div>
-                              <span className="trade-type1">
-                                Cash,Future,Option
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <dv className="col-md-7">
-                          <div className="trade-content">
-                            <div className="d-flex justify-content-between tradehead mb-3">
-                              <h3>THERMAX-EQ</h3>
-                              <span className="trade-type1 mb-2">open</span>
-                            </div>
-
-                            <div className="trade-details">
-                              <div className="row justify-content-center">
-                                <div className="col-md-6">
-                                  <div>
-                                    <strong>Entry price:</strong>
-                                    <p> (₹100)</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-6 d-flex justify-content-end">
-                                  <div>
-                                    <strong>Hold duration:</strong>
-                                    <p>(15-30 days)</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3">
-                                  <div>
-                                    <strong>Stoploss:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </dv>
-                        <div className="col-md-3 d-flex align-items-center">
-                          <div className="">
-                            <button
-                              className="btn btn-buy mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal"
-                            >
-                              BUY
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Detail
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Ananlysis
-                            </button>
-                            <button
-                              className="btn btn-view-detail w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              Broker Response
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="trade-card shadow">
-                      <div className="row">
-                        <div className="col-md-2 d-flex align-items-center">
-                          <div className="trade-header ">
-                            <div>
-                              <span className="trade-time tradetime1">
-                                <b>18 Nov 2024</b>
-                                <p>17:08:20</p>
-                              </span>
-                            </div>
-                            <div className="mb-3">
-                              <span className="trade-type">Short Term</span>
-                            </div>
-                            <div>
-                              <span className="trade-type1">
-                                Cash,Future,Option
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <dv className="col-md-7">
-                          <div className="trade-content">
-                            <div className="d-flex justify-content-between tradehead mb-3">
-                              <h3>THERMAX-EQ</h3>
-                              <span className="trade-type1 mb-2">open</span>
-                            </div>
-
-                            <div className="trade-details">
-                              <div className="row justify-content-center">
-                                <div className="col-md-6">
-                                  <div>
-                                    <strong>Entry price:</strong>
-                                    <p> (₹100)</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-6 d-flex justify-content-end">
-                                  <div>
-                                    <strong>Hold duration:</strong>
-                                    <p>(15-30 days)</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3">
-                                  <div>
-                                    <strong>Stoploss:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </dv>
-                        <div className="col-md-3 d-flex align-items-center">
-                          <div className="">
-                            <button
-                              className="btn btn-buy mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal"
-                            >
-                              BUY
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Detail
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Ananlysis
-                            </button>
-                            <button
-                              className="btn btn-view-detail w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              Broker Response
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-
-              <ReusableModal
-                show={model}
-                onClose={() => setModel(false)}
-                title={<>Kyc</>}
-                body={
-                  <>
-                    <div className="modal-body ">
-                      <div className="p-2">
-                        <form className="row g-3">
-                          <div className="col-md-12">
-                            <label htmlFor="input1" className="form-label">
-                              Name
-                            </label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              id="input1"
-                              placeholder="Name"
-                            />
-                          </div>
-                          <div className="col-md-12">
-                            <label htmlFor="input4" className="form-label">
-                              Email
-                            </label>
-                            <input
-                              type="email"
-                              className="form-control"
-                              id="input4"
-                              placeholder="Email"
-                            />
-                          </div>
-
-                          <div className="col-md-12">
-                            <label htmlFor="input3" className="form-label">
-                              Phone
-                            </label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              id="input3"
-                              placeholder="Phone"
-                            />
-                          </div>
-
-                          <div className="col-md-12">
-                            <label htmlFor="input5" className="form-label">
-                              Aadhaar No.
-                            </label>
-                            <input
-                              type="password"
-                              className="form-control"
-                              id="input5"
-                              placeholder="Aadhaar No."
-                            />
-                          </div>
-                          <div className="col-md-12">
-                            <label htmlFor="input5" className="form-label">
-                              PAN No.
-                            </label>
-                            <input
-                              type="password"
-                              className="form-control"
-                              id="input5"
-                              placeholder="PAN No."
-                            />
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-
-                  </>
-                }
-                footer={
-                  <>
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-
-                    >
-                      Save
-                    </button>
-                    <button
-                      className="btn btn-primary rounded-1"
-                      onClick={() => setModel(false)}
-                    >
-                      Cancel
-                    </button>
-                  </>
-                }
-              />
-
-
-              <div
-                className="modal fade"
-                id="exampleModal"
-                tabIndex={-1}
-                aria-labelledby="exampleModalLabel"
-                aria-hidden="true"
-              >
-
+                ))}
               </div>
-            </div>
-            <div
-              className="tab-pane fade"
-              id="primary-pills-profile"
-              role="tabpanel"
-            >
+            )}
 
-              <div className="row">
-                <div className="col-md-12">
-                  <div className="trade-card shadow">
-                    <div className="row">
-                      <div className="col-md-2 d-flex align-items-center">
-                        <div className="trade-header ">
-                          <div>
-                            <span className="trade-time tradetime1">
-                              <b>18 Nov 2024</b>
-                              <p>17:08:20</p>
-                            </span>
-                          </div>
-                          <div className="mb-3">
-                            <span className="trade-type">Short Term</span>
-                          </div>
-                          <div>
-                            <span className="trade-type1">
-                              Cash,Future,Option
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <dv className="col-md-7">
-                        <div className="trade-content">
-                          <div className="d-flex justify-content-between tradehead mb-3">
-                            <h3>THERMAX-EQ</h3>
-                            <span className="trade-type2 mb-2">Close</span>
+            {selectedTab === "close" && (
+              <div className="tab-pane d-block" id="primary-pills-profile" role="tabpanel">
+                {getclosedata?.map((item, index) => (
+                  <div className="row" key={item._id || index}>
+                    <div className="col-md-12">
+                      <div className="trade-card shadow">
+                        <div className="row">
+
+                          <div className="col-md-2 d-flex align-items-center">
+                            <div className="trade-header">
+                              <div>
+                                <span className="trade-time tradetime1">
+                                  <b>{fDate(item?.created_at)}</b>
+                                </span>
+                              </div>
+                              <div className="mb-3">
+                                <span className="trade-type">{item?.callduration}</span>
+                              </div>
+                              <div>
+                                <span className="trade-type1">
+                                  {service?.find((srv) => srv?._id === item?.service)?.title}
+                                </span>
+                              </div>
+                            </div>
                           </div>
 
-                          <div className="trade-details">
-                            <div className="row justify-content-center">
-                              <div className="col-md-6">
-                                <div>
-                                  <strong>Entry price:</strong>
-                                  <p> (₹100)</p>
-                                </div>
+                          <div className="col-md-7">
+                            <div className="trade-content">
+                              <div className="d-flex justify-content-between tradehead mb-3">
+                                <h3>{item.tradesymbol || "Trade Symbol"}</h3>
+                                <span className="trade-type1 mb-2">{item?.stock}</span>
                               </div>
+                              <div className="trade-details">
+                                <div className="row justify-content-center">
+                                  <div className="col-md-6">
+                                    <div>
+                                      <strong>Entry price:</strong>
+                                      <p>₹{item?.price}</p>
+                                    </div>
+                                  </div>
+                                  <div className="col-md-6 d-flex justify-content-end">
+                                    <div>
+                                      <strong>Call Type:</strong>
+                                      <p>{item?.calltype || "15-30 days"}</p>
+                                    </div>
+                                  </div>
+                                  <div className="col-md-3">
+                                    <div>
+                                      <strong>Stoploss:</strong>
+                                      <p>{item?.stoploss || "--"}</p>
+                                    </div>
+                                  </div>
 
-                              <div className="col-md-6 d-flex justify-content-end">
-                                <div>
-                                  <strong>Hold duration:</strong>
-                                  <p>(15-30 days)</p>
-                                </div>
-                              </div>
-                              <div className="col-md-3">
-                                <div>
-                                  <strong>Stoploss:</strong>
-                                  <p>--</p>
-                                </div>
-                              </div>
-
-                              <div className="col-md-3 d-flex justify-content-center">
-                                <div>
-                                  <strong>Target:</strong>
-                                  <p>--</p>
-                                </div>
-                              </div>
-
-                              <div className="col-md-3 d-flex justify-content-center">
-                                <div>
-                                  <strong>Target:</strong>
-                                  <p>--</p>
-                                </div>
-                              </div>
-                              <div className="col-md-3 d-flex justify-content-center">
-                                <div>
-                                  <strong>Target:</strong>
-                                  <p>--</p>
+                                  <div className="col-md-3 d-flex justify-content-center">
+                                    <div>
+                                      <strong>Target:</strong>
+                                      <p>{item?.tag1 || "--"}</p>
+                                    </div>
+                                  </div>
+                                  <div className="col-md-3 d-flex justify-content-center">
+                                    <div>
+                                      <strong>Target:</strong>
+                                      <p>{item?.tag2 || "--"}</p>
+                                    </div>
+                                  </div>
+                                  <div className="col-md-3 d-flex justify-content-center">
+                                    <div>
+                                      <strong>Target:</strong>
+                                      <p>{item?.tag3 || "--"}</p>
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </dv>
-                      <div className="col-md-3 d-flex align-items-center">
-                        <div className="">
-                          <button
-                            className="btn btn-buy mb-2 w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal"
-                          >
-                            BUY
-                          </button>
-                          <button
-                            className="btn btn-view-detail mb-2 w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal1"
-                          >
-                            View Detail
-                          </button>
-                          <button
-                            className="btn btn-view-detail mb-2 w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal1"
-                          >
-                            View Ananlysis
-                          </button>
-                          <Link
-                            to={'/brokerresponse'}
-                            className="btn btn-view-detail w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal1"
-                          >
-                            Broker Response
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
 
-                  <div className="trade-card shadow">
-                    <div className="row">
-                      <div className="col-md-2 d-flex align-items-center">
-                        <div className="trade-header ">
-                          <div>
-                            <span className="trade-time tradetime1">
-                              <b>18 Nov 2024</b>
-                              <p>17:08:20</p>
-                            </span>
-                          </div>
-                          <div className="mb-3">
-                            <span className="trade-type">Short Term</span>
-                          </div>
-                          <div>
-                            <span className="trade-type1">
-                              Cash,Future,Option
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <dv className="col-md-7">
-                        <div className="trade-content">
-                          <div className="d-flex justify-content-between tradehead mb-3">
-                            <h3>THERMAX-EQ</h3>
-                            <span className="trade-type2 mb-2">Close</span>
-                          </div>
-
-                          <div className="trade-details">
-                            <div className="row justify-content-center">
-                              <div className="col-md-6">
-                                <div>
-                                  <strong>Entry price:</strong>
-                                  <p> (₹100)</p>
-                                </div>
-                              </div>
-
-                              <div className="col-md-6 d-flex justify-content-end">
-                                <div>
-                                  <strong>Hold duration:</strong>
-                                  <p>(15-30 days)</p>
-                                </div>
-                              </div>
-                              <div className="col-md-3">
-                                <div>
-                                  <strong>Stoploss:</strong>
-                                  <p>--</p>
-                                </div>
-                              </div>
-
-                              <div className="col-md-3 d-flex justify-content-center">
-                                <div>
-                                  <strong>Target:</strong>
-                                  <p>--</p>
-                                </div>
-                              </div>
-
-                              <div className="col-md-3 d-flex justify-content-center">
-                                <div>
-                                  <strong>Target:</strong>
-                                  <p>--</p>
-                                </div>
-                              </div>
-                              <div className="col-md-3 d-flex justify-content-center">
-                                <div>
-                                  <strong>Target:</strong>
-                                  <p>--</p>
-                                </div>
-                              </div>
+                          <div className="col-md-3 d-flex align-items-center">
+                            <div className="d-flex flex-column w-100 h-100 justify-content-evenly">
+                              <button className="btn btn-primary w-100" onClick={() => setModel(true)}>
+                                BUY
+                              </button>
+                              <button className="btn btn-secondary w-100" onClick={() => {
+                                setViewModel(true);
+                                setDiscription(item?.description);
+                              }} >
+                                View Detail
+                              </button>
+                              <button className="btn btn-secondary w-100" onClick={() => handleDownload(item)} >
+                                View Analysis
+                              </button>
+                              <button className="btn btn-secondary w-100" >
+                                Broker Response
+                              </button>
                             </div>
                           </div>
                         </div>
-                      </dv>
-                      <div className="col-md-3 d-flex align-items-center">
-                        <div className="">
-                          <button
-                            className="btn btn-buy mb-2 w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal"
-                          >
-                            BUY
-                          </button>
-                          <button
-                            className="btn btn-view-detail mb-2 w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal1"
-                          >
-                            View Detail
-                          </button>
-                          <button
-                            className="btn btn-view-detail mb-2 w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal1"
-                          >
-                            View Ananlysis
-                          </button>
-                          <button
-                            className="btn btn-view-detail w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal1"
-                          >
-                            Broker Response
-                          </button>
-                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                ))}
               </div>
-            </div>
+            )}
+
+            
           </div>
         </div>
       </div>
 
+      <ReusableModal
+        show={model}
+        onClose={() => setModel(false)}
+        title={<>Kyc</>}
+        body={
+          <>
+            <div className="modal-body ">
+              <div className="p-2">
+                <form className="row g-3">
+                  <div className="col-md-12">
+                    <label htmlFor="input1" className="form-label">Name</label>
+                    <input type="text" className="form-control" id="input1" placeholder="Name" />
+                  </div>
+                  <div className="col-md-12">
+                    <label htmlFor="input4" className="form-label">Email</label>
+                    <input type="email" className="form-control" id="input4" placeholder="Email" />
+                  </div>
 
-    </Content >
+                  <div className="col-md-12">
+                    <label htmlFor="input3" className="form-label">Phone</label>
+                    <input type="text" className="form-control" id="input3" placeholder="Phone" />
+                  </div>
+
+                  <div className="col-md-12">
+                    <label htmlFor="input6" className="form-label">Aadhaar No.</label>
+                    <input type="password" className="form-control" id="input6" placeholder="Aadhaar No." />
+                  </div>
+                  <div className="col-md-12">
+                    <label htmlFor="input7" className="form-label">PAN No.</label>
+                    <input type="password" className="form-control" id="input7" placeholder="PAN No." />
+                  </div>
+                </form>
+              </div>
+            </div>
+          </>
+        }
+        footer={
+          <>
+            <button type="button" className="btn btn-primary">Save</button>
+            <button className="btn btn-primary rounded-1" onClick={() => setModel(false)}>Cancel</button>
+          </>
+        }
+      />
+
+      <ReusableModal
+        show={viewmodel}
+        onClose={() => setViewModel(false)}
+        title={<>Detail</>}
+        body={
+          <>
+            <div className="modal-body">
+              <div className="p-2">
+                <div dangerouslySetInnerHTML={{ __html: discription }} />
+              </div>
+            </div>
+          </>
+        }
+        footer={
+          <>
+            <button type="button" className="btn btn-primary">
+              Save
+            </button>
+            <button
+              className="btn btn-primary rounded-1"
+              onClick={() => setViewModel(false)}
+            >
+              Cancel
+            </button>
+          </>
+        }
+      />
+
+
+
+    </Content>
+
   );
 }
 

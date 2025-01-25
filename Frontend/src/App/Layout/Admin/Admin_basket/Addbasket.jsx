@@ -4,9 +4,8 @@ import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { Addbasketplan } from '../../../Services/Admin/Admin';
+import { Link } from 'react-router-dom';
 import Content from '../../../components/Contents/Content';
-
-
 const AddBasket = () => {
 
 
@@ -345,7 +344,7 @@ const AddBasket = () => {
       <DynamicForm
         fields={fields}
         formik={formik}
-        page_title="Add Basket"
+       
         btn_name="Add Basket"
         btn_name1="Cancel"
         sumit_btn={true}

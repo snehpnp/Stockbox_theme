@@ -645,7 +645,7 @@ const Client = () => {
     <div>
       <div>
         <div className="page-content">
-          <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+          <div className="page-breadcrumb  d-flex align-items-center mb-3">
             <div className="breadcrumb-title pe-3">{header}</div>
             <div className="ps-3">
               <nav aria-label="breadcrumb">
@@ -676,18 +676,18 @@ const Client = () => {
                     <i className="bx bx-search" />
                   </span>
                 </div>
-
-                <div className="ms-auto">
+            <div className="d-sm-flex gap-3 justify-content-lg-end w-100 mt-3 mt-lg-0">
+                <div className="flaot-lg-auto">
                   <Link to="/admin/addclient" className="btn btn-primary">
                     <i className="bx bxs-plus-square" aria-hidden="true" />
                     Add Client
                   </Link>
                 </div>
 
-                <div className="ms-2" onClick={(e) => getexportfile()}>
+                <div className="" onClick={(e) => getexportfile()}>
                   <button
                     type="button"
-                    className="btn btn-primary float-end"
+                    className="btn btn-primary my-2 my-sm-0"
                     data-toggle="tooltip"
                     data-placement="top"
                     title="Export To Excel"
@@ -706,6 +706,7 @@ const Client = () => {
                     Deleted Client
                   </Link>
                 </div>
+              </div>
               </div>
               <div className="row mb-4">
                 <div className="col-md-4 ">

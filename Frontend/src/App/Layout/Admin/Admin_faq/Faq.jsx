@@ -366,7 +366,7 @@ const Faq = () => {
         <div>
             <div className="page-content">
 
-                <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                <div className="page-breadcrumb  d-flex align-items-center mb-3">
                     <div className="breadcrumb-title pe-3">FAQ</div>
                     <div className="ps-3">
                         <nav aria-label="breadcrumb">
@@ -384,7 +384,7 @@ const Faq = () => {
 
                 <div className="card">
                     <div className="card-body">
-                        <div className="d-lg-flex align-items-center mb-4 gap-3">
+                        <div className="d-sm-flex align-items-center mb-4 gap-3">
                             <div className="position-relative">
                                 <input
                                     type="text"
@@ -400,7 +400,7 @@ const Faq = () => {
                             <div className="ms-auto">
                                 <button
                                     type="button"
-                                    className="btn btn-primary"
+                                    className="btn btn-primary mt-2 mt-sm-0"
                                     onClick={() => setShowAddModal(true)}
                                 >
                                     <i className="bx bxs-plus-square" />

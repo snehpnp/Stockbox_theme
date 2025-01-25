@@ -98,7 +98,7 @@ const Message = () => {
     return (
         <div>
             <div className="page-content">
-                <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                <div className="page-breadcrumb  d-flex align-items-center mb-3">
                     <div className="breadcrumb-title pe-3">Message Broadcast</div>
                     <div className="ps-3">
                         <nav aria-label="breadcrumb">
@@ -119,7 +119,7 @@ const Message = () => {
                     <>
                         <div className="card">
                             <div className="card-body">
-                                <div className="d-flex justify-content-end">
+                                <div className="d-flex ">
                                     <div className='me-2 mb-3'>
                                         <Link to="/admin/addbroadcast" className="btn btn-primary">
                                             <i className="bx bxs-plus-square" />

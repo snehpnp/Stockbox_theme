@@ -210,3 +210,42 @@ export async function ApplyCoupondata(data, token) {
         return err.response?.data || err.message;
     }
 }
+
+
+// get open client signal
+
+
+
+export async function GetSignalClient(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/list/signalclient`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// close client signal
+
+export async function GetCloseSignalClient(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/list/closesignalclient`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}

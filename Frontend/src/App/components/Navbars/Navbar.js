@@ -45,10 +45,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
   const Logout = () => {
     localStorage.clear();
-    if (Role == "USER") {
-      window.location.href = "/user-login";
+    if (Role === "USER") {
+      window.location.href = "/#/user-login";
     } else {
-      window.location.href = "/login";
+      window.location.href = "/#/login";
     }
   };
 
@@ -284,10 +284,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
         }}
       >
         <div className="container-fluid justify-content-center">
-          <div className="row w-100">
-            <div className="col-5">
-              <div className="d-flex ">
-                <a className="navbar-brand" href="#">
+          <div className="row w-100 align-items-center">
+            <div className="col-5 ps-0">
+              <div className="d-flex align-items-center">
+                <a className="navbar-brand me-1 p-0" href="#">
                   <img
                     src={Logo}
                     alt="Logo"
@@ -295,15 +295,17 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   />
                 </a>
                 <button
-                  className="btn btn-light me-2"
+                  className="btn btn-light ms-1 me-2 px-1 pb-1"
                   onClick={toggleSidebar}
                   style={{
                     border: "none",
                     fontSize: "18px",
                     cursor: "pointer",
-                    height: "30px",
+                    height: "35px",
                   }}
-                />
+                >
+                  <i className="bx bx-menu" style={{ fontSize: "24px" }}></i>
+                </button>
               </div>
 
               <div
@@ -332,7 +334,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
               </div>
 
             </div>
-            <div className="col-7">
+            <div className="col-7 pe-0">
               <div className="d-flex align-items-center position-relative justify-content-end">
                 <div className='d-flex'>
                   <span className="switch-label p-1">
@@ -341,8 +343,11 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       {isChecked ? "On" : "Off"}
                     </span>
                   </span>
-
-                  <div className="form-check form-switch form-check-dark" style={{ margin: "inherit", fontSize: "21px" }}>
+                  <div
+                    className="form-check form-switch form-check-dark mb-0"
+                    style={{ margin: "inherit", fontSize: 21 }}
+                  >
+                    <span style={{ color: "red", fontSize: 16 }}>Off</span>
                     <input
                       className="form-check-input"
                       type="checkbox"
@@ -362,42 +367,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   </div>
                 </div>
 
-                {/* <div className="dropdown">
-                  <div
-                    className="notification-container dropdown-toggle"
-                    style={{
-                      cursor: "pointer",
-                      marginLeft: "10px",
-                      position: "relative",
-                    }}
-                    role="button"
-                    id="dropdownMenuLink"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <FaBell size={24} />
-                  </div>
 
-                  <div
-                    style={notificationDropdownStyle}
-                    className="dropdown-menu"
-                    aria-labelledby="dropdownMenuLink"
-                  >
-                    <div style={notificationHeaderStyle}>Notifications</div>
-                    <ul style={notificationListStyle}>
-                      <li style={notificationItemStyle}>
-                        🔔 New message from admin
-                      </li>
-                      <li style={notificationItemStyle}>
-                        🔔 Your profile was updated
-                      </li>
-                      <li style={notificationItemStyle}>
-                        🔔 System maintenance scheduled
-                      </li>
-                    </ul>
-                  </div>
-                </div> */}
-                {Role === "ADMIN" && (
+                {Role === "ADMIN" ? (
                   <div className="dropdown">
                     <div
                       className="notification-container dropdown-toggle"
@@ -471,7 +442,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                             padding: "2px 8px",
                           }}
                         >
-                          {clients.filter((notification) => notification.status === 0).length}
+                          {clients?.filter((notification) => notification?.status === 0)?.length}
                         </span>
                       </div>
                       <div
@@ -484,8 +455,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                           scrollbarColor: "#c1c1c1 transparent",
                         }}
                       >
-                        {clients.length > 0 ? (
-                          clients.map((notification, index) => (
+                        {clients?.length > 0 ? (
+                          clients?.map((notification, index) => (
                             <div
                               key={index}
                               className={`dropdown-item notification ${notification.status === 1
@@ -568,16 +539,43 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       </div>
                     </div>
                   </div>
-                )}
+                ) : Role === "USER" ? (
+                  <div className="dropdown">
+                    <div
+                      className="notification-container dropdown-toggle"
+                      style={{
+                        cursor: "pointer",
+                        marginLeft: "10px",
+                        position: "relative",
+                      }}
+                      role="button"
+                      id="dropdownMenuLink"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <FaBell size={24} />
+                    </div>
 
-
-
-
-
-
-
-
-
+                    <div
+                      style={notificationDropdownStyle}
+                      className="dropdown-menu"
+                      aria-labelledby="dropdownMenuLink"
+                    >
+                      <div style={notificationHeaderStyle}>Notifications</div>
+                      <ul style={notificationListStyle}>
+                        <li style={notificationItemStyle}>
+                          🔔 New message from admin
+                        </li>
+                        <li style={notificationItemStyle}>
+                          🔔 Your profile was updated
+                        </li>
+                        <li style={notificationItemStyle}>
+                          🔔 System maintenance scheduled
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                ) : ""}
 
                 <div className="dropdown">
                   <div
@@ -703,7 +701,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   );
 };
 
-// 🎨 **Styles**
+
 
 const profileDropdownStyle = {
   left: "-90px",

@@ -20,13 +20,13 @@ const Admin = [
   },
   {
     label: "Free Trial Client",
-    icon: "UserPen",
+    icon: "FileUser",
     link: "/admin/freeclient",
     name: "FreeTrialClient"
   },
   {
     label: "Employee",
-    icon: "UserPen",
+    icon: "CircleUserRound",
     link: "/admin/staff",
     name: "Employee"
   },
@@ -193,13 +193,13 @@ const Admin = [
   },
   {
     label: "Broadcast SMS",
-    icon: "HelpingHand",
+    icon: "MessageCircleMore",
     link: "/admin/message",
     name: "BroadcastSMS"
   },
   {
     label: "FAQ",
-    icon: "HelpingHand",
+    icon: "FileQuestion",
     link: "/admin/faq",
     name: "FAQ"
   },
@@ -287,13 +287,13 @@ const User = [
     link: "/user/demat",
     children: [],
   },
-  {
-    name: "TradeResponse",
-    label: "Trade Response",
-    icon: "ArrowRightLeft",
-    link: "/user/trade-response",
-    children: [],
-  },
+  // {
+  //   name: "TradeResponse",
+  //   label: "Trade Response",
+  //   icon: "ArrowRightLeft",
+  //   link: "/user/trade-response",
+  //   children: [],
+  // },
   {
     name: "BasketResponse",
     label: "Basket Response",
@@ -343,13 +343,13 @@ const User = [
     link: "/user/help-desk",
     children: [],
   },
-  {
-    name: "Brodcast",
-    label: "Broadcast",
-    icon: "HelpingHand",
-    link: "/user/brodcast",
-    children: [],
-  },
+  // {
+  //   name: "Brodcast",
+  //   label: "Broadcast",
+  //   icon: "HelpingHand",
+  //   link: "/user/brodcast",
+  //   children: [],
+  // },
   {
     name: "PaymentHistory",
     label: "Payment History",

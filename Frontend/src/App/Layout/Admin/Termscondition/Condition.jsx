@@ -126,9 +126,9 @@ const Condition = () => {
 
 
     return (
-        <div>
+        <div className='policy-content'>
             <div className="page-content">
-                <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                <div className="page-breadcrumb  d-flex align-items-center mb-3">
                     <div className="breadcrumb-title pe-3">Policy page</div>
                     <div className="ps-3">
                         <nav aria-label="breadcrumb">
@@ -152,7 +152,7 @@ const Condition = () => {
                     {clients.map((client, index) => (
                         <div className="col-md-6 col-lg-12" key={index}>
                             <div className="mb-4 card radius-15">
-                                <div className="card-body p-4 position-relative">
+                                <div className="card-body p-md-4 p-2 position-relative">
                                     <div className='p-4 border radius-15'>
                                         <div className='d-flex justify-content-between align-items-center'>
                                             <div>

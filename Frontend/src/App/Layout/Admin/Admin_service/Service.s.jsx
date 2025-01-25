@@ -234,7 +234,7 @@ const Service = () => {
   return (
     <div>
       <div className="page-content">
-        <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+        <div className="page-breadcrumb  d-flex align-items-center mb-3">
           <div className="breadcrumb-title pe-3">Segment</div>
           <div className="ps-3">
             <nav aria-label="breadcrumb">
@@ -390,7 +390,7 @@ const Service = () => {
                 )}
               </div>
             </div>
-            <div className="table-responsive d-flex justify-content-center">
+            <div className="table-responsive ">
               <Table
                 columns={columns}
                 data={clients}

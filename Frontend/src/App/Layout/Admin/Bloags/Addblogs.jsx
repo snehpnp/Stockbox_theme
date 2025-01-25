@@ -4,6 +4,8 @@ import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { Addblogsbyadmin } from '../../../Services/Admin/Admin';
+
+import { Link } from 'react-router-dom';
 import Content from '../../../components/Contents/Content';
 
 
@@ -129,16 +131,26 @@ const Addblogs = () => {
     ];
 
     return (
-        <Content
-            Page_title="Add Blog"
-            button_status={false}
-            backbutton_status={true}
-            backForword={true}
-        >
+        <div className="page-content">
+        <div className="page-breadcrumb  d-flex align-items-center mb-3">
+          <div className="breadcrumb-title pe-3">Add Blog</div>
+          <div className="ps-3">
+            <nav aria-label="breadcrumb">
+              <ol className="breadcrumb mb-0 p-0">
+                <li className="breadcrumb-item">
+                  <Link to="/admin/dashboard">
+                    <i className="bx bx-home-alt" />
+                  </Link>
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+        <hr />
             <DynamicForm
                 fields={fields}
                 formik={formik}
-                page_title="Add Blog"
+                
                 btn_name="Add Blog"
                 btn_name1="Cancel"
                 sumit_btn={true}
@@ -146,7 +158,7 @@ const Addblogs = () => {
                 btn_name1_route={"/admin/blogs"}
                 additional_field={<></>}
             />
-        </Content>
+        </div>
     );
 };
 

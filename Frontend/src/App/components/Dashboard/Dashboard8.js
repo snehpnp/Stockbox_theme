@@ -142,7 +142,7 @@ const Dashboard1 = ({ monthexpiry }) => {
   ];
 
   return (
-    <div className="theme-8-dashboard">
+    <div className="theme-8-dashboard dashboard-card">
       <div className="row g-3">
         {cardsData.map((item, index) => (
           <div className="col-xl-3 col-lg-4 col-md-6 col-sm-12" key={index}>

@@ -178,7 +178,6 @@ const Signal = () => {
     const getexportfile = async () => {
         try {
             const response = await GetSignallist(token);
-            console.log("GetSignallist", response);
 
             if (response.status) {
                 if (response.data?.length > 0) {
@@ -727,7 +726,7 @@ const Signal = () => {
         try {
             const data = { id: serviceid._id, report: updatetitle.report, description: updatetitle.description };
 
-            const response = await UpdatesignalReport(data, token);            
+            const response = await UpdatesignalReport(data, token);
 
             if (response && response.status) {
                 Swal.fire({
@@ -756,7 +755,7 @@ const Signal = () => {
                 icon: 'error',
                 confirmButtonText: 'Try Again',
             });
-            
+
         }
     };
 
@@ -774,7 +773,7 @@ const Signal = () => {
         <div>
             <div>
                 <div className="page-content">
-                    <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                    <div className="page-breadcrumb  d-flex align-items-center mb-3">
                         <div className="breadcrumb-title pe-3">{header}</div>
                         <div className="ps-3">
                             <nav aria-label="breadcrumb">
@@ -1550,7 +1549,7 @@ const Signal = () => {
             )} */}
 
 
-            
+
             <ReusableModal
                 show={model1}
                 onClose={() => setModel1(false)}

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { House, Tally1  } from "lucide-react";
+import { House, Tally1 } from "lucide-react";
 
 const Content = ({
   Page_title,
@@ -30,7 +30,7 @@ const Content = ({
       <div className="container-fluid">
         <div className="page-titles">
           <nav className="breadcrumb">
-            <div className="col-lg-6">
+            <div className="col-lg-6 col-sm-6 col-12">
               <ul className="breadcrumb-links">
                 <li>
                   <House onClick={handleHomeClick}></House>
@@ -38,7 +38,7 @@ const Content = ({
                   <a href="/" className="breadcrumb-box" />
                 </li>
                 <li>
-                  <Tally1  />
+                  <Tally1 />
                 </li>
                 <li>
                   <div className="breadcrumb-box">
@@ -49,18 +49,19 @@ const Content = ({
                 </li>
               </ul>
             </div>
-            <div className="col-lg-6">
+            <div className="col-lg-6 col-sm-6  col-12">
               {backbutton_status && backbutton_title && (
                 <button
                   onClick={handleBackClick} // Handle back button click
-                  className="btn btn-primary float-lg-end ms-3"
+                  className="btn btn-primary float-sm-end ms-0 ms-sm-3  mt-3 mt-sm-0"
+                 
+                  
                 >
                   <i
-                    className={`fa-solid ${
-                      backbutton_title === "Back"
-                        ? "fa-arrow-left"
-                        : "fa-arrow-left"
-                    }`}
+                    className={`fa-solid ${backbutton_title === "Back"
+                      ? "fa-arrow-left"
+                      : "fa-arrow-left"
+                      }`}
                   ></i>{" "}
                   {backbutton_title}
                 </button>
@@ -68,13 +69,12 @@ const Content = ({
               {button_status === false ? null : (
                 <Link
                   to={route}
-                  className="btn btn-primary float-lg-end"
+                  className="btn btn-primary float-sm-end"
                   style={{ padding: "10px !important" }}
                 >
                   <i
-                    className={`fa-solid  ${
-                      button_title === "Back" ? "fa-arrow-left" : "fa-plus"
-                    } `}
+                    className={`fa-solid  ${button_title === "Back" ? "fa-arrow-left" : "fa-plus"
+                      } `}
                   ></i>{" "}
                   {button_title}
                 </Link>
@@ -82,7 +82,9 @@ const Content = ({
               {backForword && (
                 <button
                   onClick={() => window.history.back()} // Handle back button click
-                  className="btn btn-primary float-lg-end ms-3"
+                  className="btn btn-primary float-sm-end ms-0 ms-sm-3 mt-3 mt-sm-0"
+                 
+                
                 >
                   <i className={`fa-solid fa-arrow-left`}></i> Back
                 </button>
@@ -97,7 +99,7 @@ const Content = ({
               <div className="col-xl-12">
                 <div className="card form-card">
                   <div className="card-body">
-                    <div className="form-validation">{rest.children}</div>
+                    <div className="form-validation" style={{ minHeight: "500px" }}>{rest.children}</div>
                   </div>
                 </div>
               </div>
