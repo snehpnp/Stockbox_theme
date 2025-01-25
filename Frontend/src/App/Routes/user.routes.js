@@ -19,6 +19,7 @@ import Cash from "../Layout/Users/PastPerformance/Cash";
 import Future from "../Layout/Users/PastPerformance/Future";
 import Option from "../Layout/Users/PastPerformance/Option";
 import Userkyc from "../Layout/Users/Profile/Kyc";
+import HelpDesk from "../Layout/Users/HelpDesk/HelpDesk";
        
 
 export default function App() {
@@ -43,6 +44,7 @@ export default function App() {
       <Route path="/past-performance/future" element={<Future />} />
       <Route path="/past-performance/option" element={<Option />} />
       <Route path="/kyc" element={<Userkyc />} />
+      <Route path="/help-desk" element={<HelpDesk />} />
     </Routes>
   );
 }
