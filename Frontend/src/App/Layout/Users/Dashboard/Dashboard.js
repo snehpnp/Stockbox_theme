@@ -355,7 +355,7 @@ const Dashboard = () => {
 
                 <a href="/" className="breadcrumb-box" />
               </li>
-              <li>
+              <li style={{ width: "3px" }}>
                 <Tally1 />
               </li>
               <li>
@@ -385,11 +385,11 @@ const Dashboard = () => {
                   <div class="d-flex justify-content-end align-items-center mb-3">
 
                     <div class="time-selector d-flex gap-2 ">
-                      <button class="btn btn-outline-primary active" data-period="1D">1D</button>
-                      <button class="btn btn-outline-primary" data-period="1W">1W</button>
-                      <button class="btn btn-outline-primary" data-period="1M">1M</button>
-                      <button class="btn btn-outline-primary" data-period="1Y">1Y</button>
-                      <button class="btn btn-outline-primary" data-period="ALL">ALL</button>
+                      <button class="btn btn-secondary active" data-period="1D">1D</button>
+                      <button class="btn btn-secondary" data-period="1W">1W</button>
+                      <button class="btn btn-secondary" data-period="1M">1M</button>
+                      <button class="btn btn-secondary" data-period="1Y">1Y</button>
+                      <button class="btn btn-secondary" data-period="ALL">ALL</button>
                     </div>
                   </div>
                 </div>
@@ -582,8 +582,8 @@ const Dashboard = () => {
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="h5 fw-semibold">Tokens</h3>
             <div>
-              <button class="btn btn-outline-primary me-2">Filter</button>
-              <button class="btn btn-outline-primary">Customize</button>
+              <button class="btn btn-secondary me-2">Filter</button>
+              <button class="btn btn-secondary">Customize</button>
             </div>
           </div>
           <div class="table-responsive">

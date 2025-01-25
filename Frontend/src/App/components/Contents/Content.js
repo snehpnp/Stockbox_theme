@@ -37,7 +37,7 @@ const Content = ({
 
                   <a href="/" className="breadcrumb-box" />
                 </li>
-                <li>
+                <li style={{ width: "3px" }}>
                   <Tally1 />
                 </li>
                 <li>
