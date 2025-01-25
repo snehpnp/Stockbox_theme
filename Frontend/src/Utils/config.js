@@ -8,6 +8,6 @@ export const image_baseurl = `https://stockboxpnp.pnpuniverse.com/`;
 
 
 
-// export const soket_url = `https://stockbox.pnpuniverse.com:1001/`;
+// export const soket_url = `https://stockboxpnp.pnpuniverse.com:1001/`;
 // export const base_url = `${window.location.origin}/backend/`
 // export const image_baseurl = `${window.location.origin}/`;
