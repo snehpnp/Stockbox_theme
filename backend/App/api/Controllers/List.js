@@ -4489,6 +4489,273 @@ class List {
   }
 
 
+
+  async SignalClientWithPlan(req, res) {
+    try {
+      const { service_id, client_id, search, page = 1 } = req.body;
+      const limit = 10;
+      const skip = (parseInt(page) - 1) * parseInt(limit); // Calculate how many items to skip
+      const limitValue = parseInt(limit); // Items per page
+
+    
+      const subscriptions = await PlanSubscription_Modal.find({ client_id });
+      if (subscriptions.length === 0) {
+        return res.json({
+          status: false,
+          message: "No plan subscriptions found for the given service and client IDs",
+          data: []
+        });
+      }
+
+
+      const planIds = subscriptions.map(sub => sub.plan_id);
+      const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
+
+
+
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+    
+      
+      const query = {
+        service: service_id,
+        close_status: false,
+        $or: planIds.map((planId, index) => ({
+          planid: { $regex: `(^|,)${planId}($|,)` }, // Match plan_id in the signal's comma-separated list
+          created_at: { $lte: planEnds[index] } // Compare created_at with the plan_end date of each subscription
+        }))
+      };
+
+
+      const protocol = req.protocol; // Will be 'http' or 'https'
+
+      const baseUrl = `${protocol}://${req.headers.host}`; // Construct the base URL
+
+
+
+      if (search && search.trim() !== '') {
+        query.$or = [
+          { tradesymbol: { $regex: search, $options: 'i' } },
+          { calltype: { $regex: search, $options: 'i' } },
+          { price: { $regex: search, $options: 'i' } },
+          { closeprice: { $regex: search, $options: 'i' } }
+        ];
+      }
+
+      const signals = await Signal_Modal.find(query)
+        .sort({ created_at: -1 })
+        .skip(skip)
+        .limit(limitValue)
+        .lean();
+    
+
+
+      const totalSignals = await Signal_Modal.countDocuments(query);
+
+      const signalsWithReportUrls = await Promise.all(signals.map(async (signal) => {
+        // Check if the signal was bought by the client
+        const order = await Order_Modal.findOne({
+          clientid: client_id,
+          signalid: signal._id
+        }).lean();
+
+       
+        return {
+          ...signal,
+          report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null, // Append full report URL
+          purchased: order ? true : false,
+          order_quantity: order ? order.quantity : 0
+        };
+      }));
+
+
+      return res.json({
+        status: true,
+        message: "Signals retrieved successfully",
+        data: signalsWithReportUrls,
+        pagination: {
+          total: totalSignals,
+          page: parseInt(page), // Current page
+          limit: parseInt(limit), // Items per page
+          totalPages: Math.ceil(totalSignals / limit), // Total number of pages
+        }
+      });
+
+    } catch (error) {
+      console.error("Error fetching signals:", error);
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
+  
+  async NotificationWithPlan(req, res) {
+    try {
+      const { id } = req.params;
+      const { page = 1 } = req.query; // Default values for page and limit
+      const limit = 10;
+      const today = new Date();
+  
+      // Fetch the client's creation date
+      const client = await Clients_Modal.findById(id).select('createdAt');
+      if (!client) {
+        return res.status(404).json({ status: false, message: "Client not found" });
+      }
+      const clientCreatedAt = client.createdAt;
+  
+      // Fetch subscriptions
+      const subscriptions = await PlanSubscription_Modal.find({ client_id: id });
+  
+      // Initialize status variables
+      const hasActiveSubscriptions = subscriptions.some(
+        sub => new Date(sub.plan_start) <= today && new Date(sub.plan_end) >= today
+      );
+      const hasExpiredSubscriptions = subscriptions.some(
+        sub => new Date(sub.plan_end) < today
+      );
+      const noSubscriptions = subscriptions.length === 0;
+  
+      // Fetch active and expired plans for broadcast notifications
+      const activePlans = await Planmanage.find({
+        clientid: id,
+        startdate: { $lte: today },
+        enddate: { $gte: today }
+      }).distinct('serviceid');
+  
+      const expiredPlans = await Planmanage.find({
+        clientid: id,
+        enddate: { $lt: today }
+      }).distinct('serviceid');
+  
+      // Construct query conditions
+      const queryConditions = {
+        createdAt: { $gte: clientCreatedAt }, // Notifications created after client creation date
+        $or: [
+          // Notifications specific to the client
+          { clientid: id },
+  
+          // Global notifications
+          {
+            clientid: null,
+            $or: [
+              // Global notifications for 'close signal' and 'open signal'
+              {
+                type: { $in: ['close signal', 'open signal'] },
+                $or: subscriptions.map((sub) => ({
+                  segmentid: { $regex: `(^|,)${sub.plan_id}($|,)` }, // Match plan_id in segmentid
+                  createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
+                }))
+              },
+              // Global notifications for 'add broadcast'
+            //  { type: 'add broadcast' },
+              // Include all other types of notifications (e.g., add coupon, blogs, news, etc.)
+              { type: { $nin: ['close signal', 'open signal', 'add broadcast'] } }
+            ]
+          },
+  
+          // Broadcast notifications based on client type
+          {
+            clienttype: { $in: ['active', 'expired', 'nonsubscribe', 'all'] },
+            $or: [
+              // For active clients with active subscriptions
+              ...(hasActiveSubscriptions ? [{ clienttype: 'active', segmentid: { $in: activePlans } }] : []),
+  
+              // For expired clients with expired subscriptions
+              ...(hasExpiredSubscriptions ? [{ clienttype: 'expired', segmentid: { $in: expiredPlans } }] : []),
+  
+              // For clients with no subscriptions
+              ...(noSubscriptions ? [{ clienttype: 'nonsubscribe' }] : []),
+  
+              // For all clients
+              { clienttype: 'all' }
+            ]
+          }
+        ]
+      };
+  
+      // Fetch notifications based on constructed query
+      const result = await Notification_Modal.find(queryConditions)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit) // Pagination
+        .limit(parseInt(limit)); // Limit the number of records
+  
+      // Return the response with notifications
+      return res.json({
+        status: true,
+        message: "Notifications fetched successfully",
+        data: result
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ status: false, message: "Server error", data: [] });
+    }
+  }
+  
+
+  async getCompanyAndBseData(req, res) {
+    try {
+      // Fetch data from CompanyMaster API
+      const companyResponse = await axios.get('http://stockboxapis.cmots.com/api/CompanyMaster');
+      const companyData = companyResponse.data.data;  // Accessing the 'data' field which is an array
+  
+      // Get the search query from the request (if any)
+      const searchQuery = req.query.search || '';
+  
+      // Filter companyData by CompanyName if searchQuery is provided
+      const filteredCompanyData = companyData.filter(company =>
+        company.CompanyName.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+  
+      // Fetch data from BseNseDelayedData API
+      const bseResponse = await axios.get('http://stockboxapis.cmots.com/api/BseNseDelayedData/NSE');
+      const bseData = bseResponse.data.data;
+  
+      // Combine data by matching BSECode from companyData and co_code from bseData
+      const combinedData = filteredCompanyData.map(company => {
+        // Find the matching BSE data using co_code from companyData and co_code from bseData
+        const bseMatch = bseData.find(bse => bse.co_code === company.co_code);
+  
+        if (bseMatch) {
+          return {
+            co_code: company.co_code,
+            BSECode: company.BSECode,
+            NSESymbol: company.NSESymbol,
+            CompanyName: company.CompanyName,
+            CompanyShortName: company.CompanyShortName,
+            CategoryName: company.CategoryName,
+            isin: company.isin,
+            BSEGroup: company.BSEGroup,
+            mcaptype: company.mcaptype,
+            SectorCode: company.SectorCode,
+            SectorName: company.SectorName,
+            BSEListed: company.BSEListed,
+            NSEListed: company.NSEListed,
+            DisplayType: company.DisplayType,
+            price: bseMatch.price,
+            Open: bseMatch.Open,
+            High: bseMatch.High,
+            Low: bseMatch.Low,
+            prevclose: bseMatch.prevclose,
+            Volume: bseMatch.Volume,
+            Tr_Date: bseMatch.Tr_Date
+          };
+        }
+      }).filter(Boolean);  // Remove undefined results if no match was found
+  
+      console.log("Combined Data:", combinedData);  // Log the combined data
+  
+      return res.json({
+        status: true,
+        data: combinedData
+      });
+  
+    } catch (error) {
+      console.error('Error fetching or merging data:', error);
+      return res.status(500).json({ status: false, message: "Server error", data: error });
+    }
+  }
+  
+  
+  
+
 }
 
 
@@ -4504,6 +4771,10 @@ function formatDate(date) {
   return `${day}/${month}/${year}`;
 
 }
+
+
+
+ 
 
 
 
