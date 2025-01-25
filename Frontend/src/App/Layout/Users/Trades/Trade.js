@@ -269,6 +269,8 @@ function Trade() {
               </div>
             )}
 
+
+
             {selectedTab === "close" && (
               <div className="tab-pane d-block" id="primary-pills-profile" role="tabpanel">
                 {getclosedata?.map((item, index) => (
