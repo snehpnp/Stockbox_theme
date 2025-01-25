@@ -319,7 +319,7 @@ class BasicSetting {
 
   async UpdateThemeCompany(req, res) {
     try {
-      const { theme_id } = req.body;
+      const { theme_id, ThemeData } = req.body;
 
       if (!theme_id) {
         return res.status(400).json({
@@ -327,8 +327,6 @@ class BasicSetting {
           message: "Please provide a theme ID",
         });
       }
-
-      console.log("theme_id-----------", theme_id);
 
       // Find the company record (assuming there is only one company)
       let getCompany = await BasicSetting_Modal.findOne(); // Use findOne to get a single document
@@ -345,6 +343,26 @@ class BasicSetting {
 
       // Save the updated record
       await getCompany.save();
+
+      if (ThemeData) {
+        const existingTheme = await ThemeModal.findOne({ _id: theme_id });
+
+        const UpdateTheme = await ThemeModal.updateOne(
+          { _id: theme_id },
+          ThemeData,
+          { upsert: true }
+        );
+        console.log("UpdateTheme", UpdateTheme);
+        if (existingTheme) {
+          const message = "Theme Update";
+          const newactivity = new Activitylogs_Modal({
+            olddays: existingTheme,
+            newdays: ThemeData,
+            message,
+          });
+          await newactivity.save();
+        }
+      }
 
       return res.status(200).json({
         status: true,
