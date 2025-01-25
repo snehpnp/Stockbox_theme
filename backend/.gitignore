@@ -23,3 +23,9 @@ yarn-error.log*
 # Ignoring environment files
 .env
 /Backend/.env
+
+/.env.local
+/.env.development.local
+/.env.test.local
+/.env.production.local
+/.env

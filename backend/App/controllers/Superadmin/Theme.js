@@ -161,6 +161,9 @@ exports.updateThemeCompany = async (req, res) => {
       });
     }
 
+    console.log("FindCompany",FindCompany);
+  
+
     if (FindCompany) {
       if (FindCompany?.url.includes("localhost")) {
         const response = await axios.post(

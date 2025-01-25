@@ -141,6 +141,7 @@ class BasicSetting {
       const settings = await BasicSetting_Modal.find();
       let Theme;
 
+
       if (settings[0]?.theme_id) {
         const ThemeModalData = await ThemeModal.find({
           _id: settings[0]?.theme_id,
