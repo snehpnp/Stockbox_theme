@@ -2188,7 +2188,7 @@ export async function getPayementhistorywithfilter(data, token) {
                 'Authorization': `${token}`
             },
         });
-        console.log("response data from backend",res);
+
         
         return res?.data;
     } catch (err) {

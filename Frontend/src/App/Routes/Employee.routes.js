@@ -95,7 +95,7 @@ export default function Employee() {
                 setPermission(response.data.permissions);
             }
         } catch (error) {
-            console.log("error", error);
+            console.log("Error", error);
         }
     };
 

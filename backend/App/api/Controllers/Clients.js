@@ -183,20 +183,7 @@ class Clients {
       });
 
 
-      // const apiUrl = "http://smsjust.com/sms/user/urlsms.php";
-      // const params = {
-      //   username: "Esign",         // API Key provided by the SMS gateway
-      //   pass: "Esign@2024",             // Recipient's phone number
-      //   senderid: "OTPPNP", // Message content
-      //   message: `One Time Password is ${otpmobile} This is usable once and expire in 10 minutes. Please do not share this with anyone. Infotech`,        // Optional: Sender ID (if supported)
-      //   dest_mobileno:result.PhoneNo,
-      //   msgtype:"TXT",
-      //   response:"Y",
-      //   dlttempid:"1507166333401681654"
-      // };
-
-      // const response = await axios.get(apiUrl, { params });
-      // console.log(response.data); 
+     
 
 
       return res.json({
