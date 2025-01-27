@@ -91,7 +91,7 @@ const PaymentHistory = () => {
   const gethistory = async () => {
     try {
       const response = await GETPlanList(userid, token);
-      console.log("response", response);
+  
 
       if (response.status) {
         let filteredData = response?.data;

@@ -70,7 +70,7 @@ function Trade() {
       const response = await GetCloseSignalClient(data, token);
       if (response.status) {
         setGetclosedata(response.data);
-        console.log("response.data", response.data)
+       
       }
     } catch (error) {
       console.error("Error fetching plans:", error);

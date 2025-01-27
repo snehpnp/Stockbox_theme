@@ -7,9 +7,6 @@ import { base_url } from "./config";
 
 export const BrokerLogin = async (broker_id, statusinfo, userid) => {
 
-    console.log("broker_id", broker_id)
-    console.log("broker_data", statusinfo)
-    console.log("userid", userid)
 
     if (broker_id == 1) {
         if (statusinfo) {
