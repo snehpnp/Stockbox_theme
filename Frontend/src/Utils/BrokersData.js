@@ -46,23 +46,26 @@ function BrokersData({ data }) {
   const handleSave = async () => {
     setLoading(true);
     try {
-  
       let data = { ...statusInfo, brokerid: brokerId, id: userId };
-      let loginData 
+      let loginData;
 
-       loginData = await UpdateBroker(data, token);
-   
+      loginData = await UpdateBroker(data, token);
 
       if (loginData.status) {
         if (brokerId == 1) {
           window.location.href = loginData.url;
         } else if (brokerId == 2) {
           window.location.href = loginData.url;
-        }else if (brokerId == 3) {
+        } else if (brokerId == 3) {
           console.log("Kotak Neo", loginData);
         }
-      }else{
-        Swal.fire({ icon: "error", title: "Oops...", text: loginData.message ,timer: 2000});
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: loginData.message,
+          timer: 2000,
+        });
       }
     } catch (error) {
       console.error("Error during broker login", error);
@@ -108,32 +111,63 @@ function BrokersData({ data }) {
         <>
           {!brokerStatus ? (
             <div className="page-content flex flex-col items-center">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6 d-flex justify-content-center">
+              <div className="form-control row d-flex justify-content-center">
                 {brokers.map((broker) => (
                   <div
                     key={broker.id}
-                    className="card bg-white shadow-lg rounded-xl p-4 cursor-pointer hover:shadow-2xl transition-transform transform hover:-translate-y-2"
+                    className="col-lg-2 card card-body d-flex flex-column align-items-center justify-content-center m-2"
                     onClick={() => {
                       setBrokerId(broker.id);
                       setShowModal(true);
                     }}
+                    style={{
+                      cursor: "pointer",
+                      transition: "transform 0.3s ease-in-out",
+                      transform: "scale(1)",
+                      borderRadius: "15px",
+                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                      padding: "20px",
+                      marginBottom: "20px",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "scale(1.05)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "scale(1)")
+                    }
                   >
-                    <div className="flex flex-col items-center">
+                    <div
+                      className="card-image d-flex justify-content-center mb-3"
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        marginBottom: "15px",
+                      }}
+                    >
                       <img
                         src={broker.img}
                         alt={broker.name}
-                        className="w-28 h-28 rounded-full object-cover mb-4"
                         style={{
-                          objectPosition: "center",
-                          objectFit: "contain",
-                          height: "100px",
-                          width: "100px",
+                          height: "80px",
+                          width: "80px",
+                          objectFit: "cover",
+                          borderRadius: "50%",
+                          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.2)",
                         }}
                       />
-                      <h5 className="text-lg font-medium text-center">
-                        {broker.name}
-                      </h5>
                     </div>
+                    <h5
+                      className="text-center font-weight-bold"
+                      style={{
+                        fontSize: "1.1rem",
+                        fontWeight: "600",
+                        color: "#333",
+                        textAlign: "center",
+                        marginTop: "10px",
+                      }}
+                    >
+                      {broker.name}
+                    </h5>
                   </div>
                 ))}
               </div>
@@ -144,13 +178,13 @@ function BrokersData({ data }) {
             <div className="modal-body mt-6">
               <div>
                 {fields.map((field, index) => (
-                  <div key={index} className="mb-4">
+                  <div key={index} className="mb-4 ">
                     <label className="block text-sm font-medium mb-2">
                       {field.label}
                     </label>
                     <input
                       type={field.type || "text"}
-                      className="form-control w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="form-control"
                       value={statusInfo[field.key] || ""}
                       onChange={(e) =>
                         handleFieldChange(field.key, e.target.value)
@@ -159,7 +193,7 @@ function BrokersData({ data }) {
                   </div>
                 ))}
                 <button
-                  className="btn btn-primary w-full py-2 px-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition"
+                  className="btn btn-primary"
                   onClick={handleSave}
                   disabled={loading}
                 >

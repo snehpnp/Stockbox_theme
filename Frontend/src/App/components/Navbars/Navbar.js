@@ -399,7 +399,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                         id="flexSwitchCheckDark"
                         disabled={isDisabled}
                         checked={isChecked}
-                        onChange={(e) => TradingBtnCall()}
+                        onClick={(e) => TradingBtnCall()}
                       />
                     </div>
                   </div>
