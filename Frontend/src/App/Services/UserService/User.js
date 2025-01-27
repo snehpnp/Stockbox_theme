@@ -130,7 +130,7 @@ export async function GetCategorylist(token) {
 
 export async function GETPlanList(id, token) {
 
-    
+
     try {
         const res = await axios.get(`${Config.base_url}api/list/myplan/${id}`, {
             headers: {
@@ -138,8 +138,8 @@ export async function GETPlanList(id, token) {
             },
         });
 
-        console.log("response data from backend",res);
-        
+        console.log("response data from backend", res);
+
 
         return res?.data;
     } catch (err) {
@@ -261,6 +261,26 @@ export async function GetCloseSignalClient(data, token) {
 export async function SendHelpRequest(data, token) {
     try {
         const res = await axios.post(`${Config.base_url}api/list/addhelpdesk`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// broker response 
+  
+
+export async function BrokerResponsedata(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/orderlist`, data, {
             headers: {
                 data: {},
                 'Authorization': `${token}`,

@@ -264,7 +264,9 @@ function Trade() {
                                 View Analysis
                               </button>
                               <button className="btn btn-secondary w-100 my-1" >
-                                Broker Response
+                                <Link to="/user/broker-response" >
+                                  Broker Response
+                                </Link>
                               </button>
                             </div>
                           </div>
@@ -291,10 +293,10 @@ function Trade() {
                                   <b>{fDate(item?.created_at)}</b>
                                 </span>
                               </div>
-                              <div className="mb-3">
-                                <span className="trade-type">{item?.callduration}</span>
-                              </div></div>
-                              
+                                <div className="mb-3">
+                                  <span className="trade-type">{item?.callduration}</span>
+                                </div></div>
+
                               <div>
                                 <span className="trade-type1">
                                   {service?.find((srv) => srv?._id === item?.service)?.title}
@@ -367,9 +369,10 @@ function Trade() {
                               <button className="btn btn-secondary w-100 my-1" onClick={() => handleDownload(item)} >
                                 View Analysis
                               </button>
-                              <button className="btn btn-secondary w-100 my-1" >
+                              <Link to="/user/broke-response" >
                                 Broker Response
-                              </button>
+                              </Link>
+
                             </div>
                           </div>
                         </div>
@@ -430,7 +433,7 @@ function Trade() {
       />
 
       <ReusableModal
-        show={viewmodel} 
+        show={viewmodel}
         onClose={() => setViewModel(false)}
         title={<>Detail</>}
         body={
@@ -442,22 +445,8 @@ function Trade() {
             </div>
           </>
         }
-        footer={
-          <>
-            <button type="button" className="btn btn-primary">
-              Save
-            </button>
-            <button
-              className="btn btn-primary rounded-1"
-              onClick={() => setViewModel(false)}
-            >
-              Cancel
-            </button>
-          </>
-        }
+
       />
-
-
 
     </Content>
 
