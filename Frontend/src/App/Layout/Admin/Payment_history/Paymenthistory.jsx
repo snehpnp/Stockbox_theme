@@ -331,7 +331,7 @@ const History = () => {
                 
                 <div className="card">
                     <div className="card-body">
-                        <div className="d-lg-flex align-items-center mb-4 gap-3 justify-content-between">
+                        <div className="d-sm-flex align-items-center mb-4 gap-3 justify-content-between">
 
                             <div className="position-relative">
                                 <input
@@ -351,12 +351,12 @@ const History = () => {
                             <div>
 
                                 <div
-                                    className="ms-2"
+                                    className="ms-sm-2 mt-2 mt-sm-0"
                                     onClick={(e) => getexportfile()}
                                 >
                                     <button
                                         type="button"
-                                        className="btn btn-primary float-end"
+                                        className="btn btn-primary float-md-end"
                                         data-toggle="tooltip"
                                         data-placement="top"
                                         title="Export To Excel"
@@ -371,7 +371,7 @@ const History = () => {
                             </div>
                         </div>
                         <div className='row mb-2'>
-                            <div className="col-md-3">
+                            <div className="col-md-3 col-sm-4 mb-3 mb-sm-0">
                                 <input
                                     type="date"
                                     className="form-control"
@@ -381,7 +381,7 @@ const History = () => {
                             </div>
 
 
-                            <div className='col-md-3'>
+                            <div className='col-md-3 col-sm-4 mb-3 mb-sm-0'>
                                 <input
                                     type="date"
                                     className="form-control"
@@ -390,7 +390,7 @@ const History = () => {
                                 />
                             </div>
 
-                            <div className="col-md-1">
+                            <div className="col-md-1 col-sm-2">
                                 <div className="refresh-icon mt-1">
                                     <RefreshCcw onClick={resethandle} />
                                 </div>

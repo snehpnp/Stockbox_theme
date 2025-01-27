@@ -376,7 +376,7 @@ const Category = () => {
 
                 <div className="card">
                     <div className="card-body">
-                        <div className="d-lg-flex align-items-center mb-4 gap-3">
+                        <div className="d-md-flex align-items-center mb-4 gap-3">
                             <div className="position-relative">
                                 <input
                                     type="text"
@@ -589,7 +589,7 @@ const Category = () => {
 
 
                             </div> */}
-                            <div className="ms-auto">
+                            <div className="ms-auto mt-2 mt-md-0">
                                 <button
                                     type="button"
                                     className="btn btn-primary"
