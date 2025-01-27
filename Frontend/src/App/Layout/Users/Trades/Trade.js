@@ -263,11 +263,11 @@ function Trade() {
                               <button className="btn btn-secondary w-100 my-1" onClick={() => handleDownload(item)} >
                                 View Analysis
                               </button>
-                              <button className="btn btn-secondary w-100 my-1" >
-                                <Link to="/user/broker-response" >
+                              <Link to="/user/broker-response" >
+                                <button className="btn btn-secondary w-100 my-1" >
                                   Broker Response
-                                </Link>
-                              </button>
+                                </button>
+                              </Link>
                             </div>
                           </div>
                         </div>
@@ -369,10 +369,12 @@ function Trade() {
                               <button className="btn btn-secondary w-100 my-1" onClick={() => handleDownload(item)} >
                                 View Analysis
                               </button>
-                              <Link to="/user/broke-response" >
-                                Broker Response
-                              </Link>
 
+                              <Link to="/user/broker-response" >
+                                <button className="btn btn-secondary w-100 my-1" >
+                                  Broker Response
+                                </button>
+                              </Link>
                             </div>
                           </div>
                         </div>
