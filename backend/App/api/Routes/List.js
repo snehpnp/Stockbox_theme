@@ -1,6 +1,6 @@
 const router = require("express").Router()
 
-const {Blogslist,Newslist,Bannerlist,Plancategorysist,getPlansByPlancategoryId,addPlanSubscription,myPlan,Couponlist,Signallist,applyCoupon,showSignalsToClients,Servicelist,Faqlist,detailContent,showSignalsToClientsClose,BasketList,pastPerformance,addBasketSubscription,getallPlan,addFreeTrail,BroadcastList,myFreetrial,basicSetting,pastPerformances,myService,CloseSignal,showSignalsToClientsCloses,Notification,Bank,Qrcode,BlogslistwithPagination,NewslistwithPagination,Refer,BasketLists,BasketstockList,myBasketPlan,placeOrder,exitPlaceOrder,checkBasketSell,BasketListss,BasketstockLists,getLivePrice,MyPorfolio,BasketstockListBalance,getBasketVersionOrder,Logout,addRequest,SignalClientWithPlan,NotificationWithPlan,getCompanyAndBseData} = require('../Controllers/List')
+const {Blogslist,Newslist,Bannerlist,Plancategorysist,getPlansByPlancategoryId,addPlanSubscription,myPlan,Couponlist,Signallist,applyCoupon,showSignalsToClients,Servicelist,Faqlist,detailContent,showSignalsToClientsClose,BasketList,pastPerformance,addBasketSubscription,getallPlan,addFreeTrail,BroadcastList,myFreetrial,basicSetting,pastPerformances,myService,CloseSignal,showSignalsToClientsCloses,Notification,Bank,Qrcode,BlogslistwithPagination,NewslistwithPagination,Refer,BasketLists,BasketstockList,myBasketPlan,placeOrder,exitPlaceOrder,checkBasketSell,BasketListss,BasketstockLists,getLivePrice,MyPorfolio,BasketstockListBalance,getBasketVersionOrder,Logout,addRequest,SignalClientWithPlan,NotificationWithPlan,getCompanyAndBseData,addPlanSubscriptionAddToCart,PurchasedBasketList} = require('../Controllers/List')
 
 
 router.get('/api/list/blogs',Blogslist);
@@ -37,6 +37,9 @@ router.get('/api/list/content/:id', detailContent);
 router.get('/api/list/basket/:clientId', BasketList);
 router.get('/api/list/basket', BasketLists);
 router.post('/api/list/baskets', BasketListss);
+
+router.post('/api/list/mybasketpurchaselist', PurchasedBasketList);
+
 router.get('/api/list/basketstock/:id', BasketstockList);
 router.get('/api/list/myportfolio/:id/:clientid', MyPorfolio);
 
@@ -68,8 +71,8 @@ router.get('/api/list/logout/:id', Logout);
 
 router.post('/api/list/signalclientwithplan', SignalClientWithPlan);
 router.post('/api/list/notificationwithplan/:id', NotificationWithPlan);
-
 router.get('/api/list/getcompanyandbsedata', getCompanyAndBseData);
+router.post('/api/list/addplansubscriptionaddtocart', addPlanSubscriptionAddToCart); 
 
 
 
