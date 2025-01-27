@@ -7,7 +7,10 @@ import { ReadNotificationStatus, getDashboardNotification, GetAllNotificationRea
 import Swal from 'sweetalert2';
 import { formatDistanceToNow } from 'date-fns';
 import { image_baseurl } from "../../../Utils/config";
-import BrokerLogin from "../../../Utils/Brokerintergate";
+import { BrokerLogin } from "../../../Utils/Brokerintergate";
+import ReusableModal from "../Models/ReusableModal";
+import { BrokerData } from "../../../Utils/BrokerForm";
+
 
 
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
@@ -21,11 +24,12 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
 
 
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
   const Role = localStorage.getItem("Role");
   const token = localStorage.getItem('token');
+  const userid = localStorage.getItem('id');
 
   const [clients, setClients] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -33,6 +37,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const [isChecked, setIsChecked] = useState(false);
   const [getstatus, setGetstatus] = useState([]);
   const [badgecount, setBadgecount] = useState([]);
+  const [viewmodel, setViewModel] = useState(false);
+  const [showBrokerData, setShowBrokerData] = useState(false);
+
 
   const [statusinfo, setStatusinfo] = useState({
     aliceuserid: "",
@@ -383,10 +390,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                         type="checkbox"
                         role="switch"
                         id="flexSwitchCheckDark"
-                        // disabled={isDisabled}
-                        // checked={isChecked}
+                        disabled={isDisabled}
+                        checked={isChecked}
                         onChange={(e) => {
-                          BrokerLogin("1", "Asd")
+                          setViewModel(true)
                         }}
                       />
                     </div>
@@ -723,7 +730,27 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
             </div>
           </>
         )}
-        \
+
+        <ReusableModal
+          show={viewmodel}
+          onClose={() => setViewModel(false)}
+          title={<>Broker</>}
+          body={
+            <>
+
+              <div className="modal-body">
+                <img
+                  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAMAAABF0y+mAAAAUVBMVEVHcEwRr0sRr0sPsEsQr0sMsEsRr0sRr0sRr0sMsEsNs04Psk3/cgD/cwD4dAf/cwD/cwARr0v/cwD/cwD/cwD/cwD/cwD/cwD/cwD/bgD/cwD3YDkBAAAAG3RSTlMA3DBO//RrkaTKF4Tj/0ApxpymFZHuV9K1ZX1347CMAAAAxklEQVR4Aa3ORxbCMBRDUQHpidLcvf+F8k0niRmhwRvqXPxnpzOyuxQnZFcWRYXM6kKWf5U1yKwtZDlTV8iypr4ojk0DybHMmCZyvpsW7LdSPUwd9tMpB6aRpJkkw810wddm0t5zYFJ09xya9JSisDOtzjl7i5ONhaz94tyjSYf62+QZkskCpAKKb5NJpkFiVzxMNWRKxxjH+JnwNg3kAJI+RStJ7F6miZxgSSCmaBp8mLyXDFHCkDLiw6SUZMJXzpWsw69dAYQEDIteLZuzAAAAAElFTkSuQmCC"
+                  alt="Angel One Logo"
+                  style={{ width: "100px", height: "auto" }}
+                  onClick={() => setShowBrokerData(true)}
+                />
+                <label>Angel</label>
+                {showBrokerData && <BrokerData broker_id={1} />}
+              </div>
+            </>
+          }
+        />
       </nav>
     </>
   );

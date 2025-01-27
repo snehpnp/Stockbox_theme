@@ -18,8 +18,6 @@ import ReusableModal from "../../../components/Models/ReusableModal";
 const Service = () => {
 
 
-
-
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
   const applyButtonRef = useRef(null);
@@ -43,7 +41,9 @@ const Service = () => {
   const [viewmodel, setViewModel] = useState(false);
 
   const [discription, setDiscription] = useState("");
- 
+
+
+
 
   useEffect(() => {
     getPlan();
@@ -659,24 +659,12 @@ const Service = () => {
             <div className="modal-body">
               <div className="p-2 dynamic-content">
                 <div dangerouslySetInnerHTML={{ __html: discription }} />
-                
+
               </div>
             </div>
           </>
         }
-        footer={
-          <>
-            <button type="button" className="btn btn-primary">
-              Save
-            </button>
-            <button
-              className="btn btn-primary rounded-1"
-              onClick={() => setViewModel(false)}
-            >
-              Cancel
-            </button>
-          </>
-        }
+
       />
 
 
