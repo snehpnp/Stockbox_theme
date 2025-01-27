@@ -1134,8 +1134,24 @@ div#dropdownMenuLink svg{
 }
 
 
+.table-primary,.accordion-button:not(.collapsed)
+{
+  background:var(--tabelheadbgcolor, #007bff) !important;
+  --bs-table-bg:var(--tabelheadbgcolor, #007bff) !important;
+}
+.activity-card .progress, .activity-card .progress-stacked {
+  --bs-progress-height: 1.5rem !important;
+}
 
 
+span.alert-count {
+  top: -5px !important;
+  right: -10px !important;
+  width: 15px;
+  height: 15px;
+  padding: 2px 5px !important;
+  line-height: 13px !important;
+}
 
 
 
