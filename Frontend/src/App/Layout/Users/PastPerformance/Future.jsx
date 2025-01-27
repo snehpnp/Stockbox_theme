@@ -211,7 +211,7 @@ const Future = () => {
         </div>
       </div>
 <div className="mty-4">
-  <div className="d-flex gap-3">
+  <div className="d-md-flex gap-3">
     <div className="card-body card">
       <h5 className="mb-1">Total Calls
       </h5>

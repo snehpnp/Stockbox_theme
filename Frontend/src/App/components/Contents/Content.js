@@ -53,7 +53,7 @@ const Content = ({
               {backbutton_status && backbutton_title && (
                 <button
                   onClick={handleBackClick} // Handle back button click
-                  className="btn btn-primary float-sm-end ms-0 ms-sm-3  mt-3 mt-sm-0"
+                  className="btn btn-primary float-sm-end  ms-3  mt-3 mt-sm-0 "
                  
                   
                 >
@@ -69,7 +69,7 @@ const Content = ({
               {button_status === false ? null : (
                 <Link
                   to={route}
-                  className="btn btn-primary float-sm-end"
+                  className="btn btn-primary  float-sm-end  float-start mt-3 mt-sm-0"
                   style={{ padding: "10px !important" }}
                 >
                   <i

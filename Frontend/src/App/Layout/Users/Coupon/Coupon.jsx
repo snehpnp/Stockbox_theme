@@ -63,13 +63,12 @@ const Coupon = () => {
                 <div className="page-content">
 
 
-                    <div className="card radius-5">
-                        <div className="card-body">
+                 
                             <ul className="list-unstyled">
                                 {coupon &&
                                     coupon?.map((item, index) => (
                                         <li
-                                            className="d-flex align-items-center border-bottom pb-2"
+                                            className=" d-sm-flex align-items-center border-bottom py-4"
                                             key={index}
                                         >
                                             <div
@@ -84,7 +83,7 @@ const Coupon = () => {
                                                 {item.serviceName}
                                             </div>
 
-                                            <div className="flex-grow-1 ms-3">
+                                            <div className="flex-grow-1 ms-sm-3">
                                                 <p className="mb-2">
                                                     <strong>Segment Name:</strong> {item.serviceName || "Premium Members"}
                                                 </p>
@@ -108,8 +107,7 @@ const Coupon = () => {
                                     ))}
                             </ul>
 
-                        </div>
-                    </div>
+                       
                 </div>
             </Content>
 

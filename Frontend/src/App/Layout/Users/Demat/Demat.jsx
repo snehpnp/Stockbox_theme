@@ -94,7 +94,7 @@ let fieldtype =[
 
 
 <div className="row row-cols-1 row-cols-lg-2 row-cols-xl-4 justify-content-center align-items-center">
-    <div className="col">
+    <div className="col mb-3">
 
         <div className="card radius-5">
             <div className="card-body text-center cursor-pointer"  onClick={AliceHandleShowModal} >
@@ -114,7 +114,7 @@ let fieldtype =[
             </div>
         </div>
     </div>
-    <div className="col">
+    <div className="col mb-3">
         <div className="card radius-5">
             <div className="card-body text-center cursor-pointer" onClick={AngelHandleShowModal}>
                 <div className="p-4 border radius-5">

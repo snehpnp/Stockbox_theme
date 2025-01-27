@@ -49,9 +49,9 @@ function Basket() {
     >
 
       
-      <div className="card p-4 bg-light">
+    
     <div className="row">
-    <div className="col-md-4">
+    <div className="col-md-12 col-lg-4 mb-3">
         <div className="card radius-10 overflow-hidden">
           <div className="card-body">
             <h5>Test(test)</h5>
@@ -97,7 +97,7 @@ function Basket() {
           </div>
         </div>
       </div>
-      <div className="col-md-4">
+      <div className="col-md-12 col-lg-4 mb-3">
         <div className="card radius-10 overflow-hidden">
           <div className="card-body">
             <h5>Test(test)</h5>
@@ -143,7 +143,7 @@ function Basket() {
           </div>
         </div>
       </div>
-      <div className="col-md-4">
+      <div className="col-md-12 col-lg-4 mb-3">
         <div className="card radius-10 overflow-hidden">
           <div className="card-body">
             <h5>Test(test)</h5>
@@ -190,8 +190,8 @@ function Basket() {
         </div>
       </div>
     </div>
-  </div>
-  <div className="card p-4 bg-light">
+ 
+  <div className='mt-4'>
     <div
       className="accordion accordion-flush"
       id="accordionFlushExample"
@@ -220,60 +220,30 @@ function Basket() {
           <div className="accordion-body">
             <div className="row  align-items-center">
               <div className="col-md-12">
-                <table className="table">
-                  <tr className="">
-                    <td>
-                      <div className="">
-                        <p className="mb-1">Plan duration</p>
-                        <p className="mb-0">
-                          <b>6 Months</b>
-                        </p>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="">
-                        <p className="mb-1">Purchased on</p>
-                        <p className="mb-0">
-                          <b>28 oct 2024</b>
-                        </p>
-                      </div>
-                    </td>
+                <div className='table-responsive'>
+                <table className="table table-bordered">
+                  <thead>
+            <tr>
+              <td> <p className="mb-1">Plan duration</p></td>  
+             <td><p className="mb-1">Purchased on</p></td>
+             <td><p className="mb-1">Purchased Price</p></td>
+             <td><p className="mb-1">Expires on</p></td>
+            <td> <p className="mb-1">Plan Price</p></td>
+            <td> <p className="mb-1">Discount Price</p></td></tr>
 
-                    <td>
-                      <div className=" ">
-                        <p className="mb-1">Purchased Price</p>
-                        <p className="mb-0">
-                          <b>51999</b>
-                        </p>
-                      </div>
-                    </td>
+                  </thead>
+                  <tbody>
+                  <tr className=""> <td><b>6 Months</b></td>
+                  <td>  <b>28 oct 2024</b></td>
+                  <td>  <b>51999</b></td>
+                  <td>  <b>28 apr 2025</b></td>
+                  <td>  <b>51999</b></td>
+                  <td>  <b>0</b></td></tr>
 
-                    <td>
-                      <div className="">
-                        <p className="mb-1">Expires on</p>
-                        <p className="mb-0">
-                          <b>28 apr 2025</b>
-                        </p>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="">
-                        <p className="mb-1">Plan Price</p>
-                        <p className="mb-0">
-                          <b>51999</b>
-                        </p>
-                      </div>
-                    </td>
-                    <td>
-                      <div className=" Order Id">
-                        <p className="mb-1">Discount Price</p>
-                        <p className="mb-0">
-                          <b>0</b>
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
+                  </tbody>
+                  
                 </table>
+                </div>
               </div>
             </div>
           </div>
@@ -303,60 +273,30 @@ function Basket() {
           <div className="accordion-body">
             <div className="row  align-items-center">
               <div className="col-md-12">
-                <table className="table">
-                  <tr className="">
-                    <td>
-                      <div className="">
-                        <p className="mb-1">Plan duration</p>
-                        <p className="mb-0">
-                          <b>6 Months</b>
-                        </p>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="">
-                        <p className="mb-1">Purchased on</p>
-                        <p className="mb-0">
-                          <b>28 oct 2024</b>
-                        </p>
-                      </div>
-                    </td>
+              <div className='table-responsive'>
+                <table className="table table-bordered">
+                  <thead>
+            <tr>
+              <td> <p className="mb-1">Plan duration</p></td>  
+             <td><p className="mb-1">Purchased on</p></td>
+             <td><p className="mb-1">Purchased Price</p></td>
+             <td><p className="mb-1">Expires on</p></td>
+            <td> <p className="mb-1">Plan Price</p></td>
+            <td> <p className="mb-1">Discount Price</p></td></tr>
 
-                    <td>
-                      <div className=" ">
-                        <p className="mb-1">Purchased Price</p>
-                        <p className="mb-0">
-                          <b>51999</b>
-                        </p>
-                      </div>
-                    </td>
+                  </thead>
+                  <tbody>
+                  <tr className=""> <td><b>6 Months</b></td>
+                  <td>  <b>28 oct 2024</b></td>
+                  <td>  <b>51999</b></td>
+                  <td>  <b>28 apr 2025</b></td>
+                  <td>  <b>51999</b></td>
+                  <td>  <b>0</b></td></tr>
 
-                    <td>
-                      <div className="">
-                        <p className="mb-1">Expires on</p>
-                        <p className="mb-0">
-                          <b>28 apr 2025</b>
-                        </p>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="">
-                        <p className="mb-1">Plan Price</p>
-                        <p className="mb-0">
-                          <b>51999</b>
-                        </p>
-                      </div>
-                    </td>
-                    <td>
-                      <div className=" Order Id">
-                        <p className="mb-1">Discount Price</p>
-                        <p className="mb-0">
-                          <b>0</b>
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
+                  </tbody>
+                  
                 </table>
+                </div>
               </div>
             </div>
           </div>
@@ -386,67 +326,38 @@ function Basket() {
           <div className="accordion-body">
             <div className="row  align-items-center">
               <div className="col-md-12">
-                <table className="table">
-                  <tr className="">
-                    <td>
-                      <div className="">
-                        <p className="mb-1">Plan duration</p>
-                        <p className="mb-0">
-                          <b>6 Months</b>
-                        </p>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="">
-                        <p className="mb-1">Purchased on</p>
-                        <p className="mb-0">
-                          <b>28 oct 2024</b>
-                        </p>
-                      </div>
-                    </td>
+              <div className='table-responsive'>
+                <table className="table table-bordered">
+                  <thead>
+            <tr>
+              <td> <p className="mb-1">Plan duration</p></td>  
+             <td><p className="mb-1">Purchased on</p></td>
+             <td><p className="mb-1">Purchased Price</p></td>
+             <td><p className="mb-1">Expires on</p></td>
+            <td> <p className="mb-1">Plan Price</p></td>
+            <td> <p className="mb-1">Discount Price</p></td></tr>
 
-                    <td>
-                      <div className=" ">
-                        <p className="mb-1">Purchased Price</p>
-                        <p className="mb-0">
-                          <b>51999</b>
-                        </p>
-                      </div>
-                    </td>
+                  </thead>
+                  <tbody>
+                  <tr className=""> <td><b>6 Months</b></td>
+                  <td>  <b>28 oct 2024</b></td>
+                  <td>  <b>51999</b></td>
+                  <td>  <b>28 apr 2025</b></td>
+                  <td>  <b>51999</b></td>
+                  <td>  <b>0</b></td></tr>
 
-                    <td>
-                      <div className="">
-                        <p className="mb-1">Expires on</p>
-                        <p className="mb-0">
-                          <b>28 apr 2025</b>
-                        </p>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="">
-                        <p className="mb-1">Plan Price</p>
-                        <p className="mb-0">
-                          <b>51999</b>
-                        </p>
-                      </div>
-                    </td>
-                    <td>
-                      <div className=" Order Id">
-                        <p className="mb-1">Discount Price</p>
-                        <p className="mb-0">
-                          <b>0</b>
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
+                  </tbody>
+                  
                 </table>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div></Content>
+    </div>
+ </Content>
   )
 }
 

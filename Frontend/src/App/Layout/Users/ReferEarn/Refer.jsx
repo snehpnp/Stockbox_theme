@@ -141,6 +141,7 @@ const Refer = () => {
                       id="primary-pills-profile"
                       role="tabpanel"
                     >
+                      <div className="table-responsive">
                       <table className="table mb-0">
                         <thead className="table-primary">
                           <tr>
@@ -159,13 +160,14 @@ const Refer = () => {
                           </tr>
                         </tbody>
                       </table>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div className="col-md-4 d-flex justify-content-center align-items-center">
+          <div className="col-md-4 d-flex justify-content-center align-items-center mt-md-0 mt-3">
             <div className="card">
               <div className="card-body">
                 <h5 className="card-title">Credit available </h5>

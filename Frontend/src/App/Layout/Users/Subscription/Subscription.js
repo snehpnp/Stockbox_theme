@@ -65,7 +65,7 @@ const Subscription = () => {
 
                     {/* Cards Section */}
                     <div className="row">
-                        <div className="col-md-4">
+                        <div className="col-md-4 mb-3">
                             <div className="card">
                                 <ul className="list-group list-group-flush mt-0">
                                     <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
@@ -77,7 +77,7 @@ const Subscription = () => {
                                 </ul>
                             </div>
                         </div>
-                        <div className="col-md-4">
+                        <div className="col-md-4 mb-3">
                             <div className="card">
                                 <ul className="list-group list-group-flush mt-0">
                                     <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
@@ -89,7 +89,7 @@ const Subscription = () => {
                                 </ul>
                             </div>
                         </div>
-                        <div className="col-md-4">
+                        <div className="col-md-4 mb-3">
                             <div className="card">
                                 <ul className="list-group list-group-flush mt-0">
                                     <li className="list-group-item d-flex justify-content-between align-items-center headingfont">

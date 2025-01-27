@@ -1152,7 +1152,12 @@ span.alert-count {
   padding: 2px 5px !important;
   line-height: 13px !important;
 }
-
+span.trade-type1 {
+  background: #00cd00;
+  color: #fff;
+  border-radius: 5px;
+  padding: 2px 4px;
+}
 
 
 
