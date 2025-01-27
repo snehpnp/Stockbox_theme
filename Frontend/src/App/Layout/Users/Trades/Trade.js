@@ -14,6 +14,8 @@ import { image_baseurl } from "../../../../Utils/config";
 function Trade() {
 
 
+
+
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
@@ -28,6 +30,8 @@ function Trade() {
   const [selectedTab, setSelectedTab] = useState("live");
 
 
+
+  
 
   useEffect(() => {
     getClientdata();
