@@ -34,7 +34,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const [clients, setClients] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
   const [model, setModel] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(true);
   const [getstatus, setGetstatus] = useState([]);
   const [badgecount, setBadgecount] = useState([]);
   const [viewmodel, setViewModel] = useState(false);
@@ -386,15 +386,15 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   <div className="d-flex">
                     <span className="switch-label p-1">
                       Trading Status:
-                      <span style={{ color: isChecked ? "green" : "red" }}>
-                        {isChecked ? "On" : "Off"}
-                      </span>
+                     
                     </span>
                     <div
                       className="form-check form-switch form-check-dark mb-0"
                       style={{ margin: "inherit", fontSize: 21 }}
                     >
-                      <span style={{ color: "red", fontSize: 16 }}>Off</span>
+                         <span style={{ color: isChecked ? "green" : "red" }}>
+                        {isChecked ? "On" : "Off"}
+                      </span>
                       <input
                         className="form-check-input"
                         type="checkbox"
