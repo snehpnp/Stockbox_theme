@@ -1,16 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReusableModal from "../App/components/Models/ReusableModal";
 import { BrokerLogin } from "./Brokerintergate";
 
-export const BrokerData = ({ broker_id }) => {
+export const BrokerData = ({ broker_id, userid }) => {
+
     const [viewModel, setViewModel] = useState(true);
     const [statusinfo, setStatusinfo] = useState({});
     const [showBrokerData, setShowBrokerData] = useState(false);
+    const [brokerLoginData, setBrokerLoginData] = useState(null);
+    const [loading, setLoading] = useState(false);
+
 
     const brokerFieldsMap = {
         1: [
-            { key: "name", label: "Broker Name", type: "text" },
-            { key: "email", label: "Email", type: "email" },
+            { key: "signalid", label: "Signal Id", type: "text" },
+            { key: "quantity", label: "Quantity", type: "text" },
+            { key: "price", label: "Price", type: "text" },
+            { key: "tsprice", label: "TS Price", type: "text" },
+            { key: "slprice", label: "Sl Price", type: "text" },
+            { key: "exitquantity", label: "Exit Quantity", type: "text" }
         ],
         2: [
             { key: "name", label: "Broker Name", type: "text" },
@@ -32,6 +40,18 @@ export const BrokerData = ({ broker_id }) => {
         }));
     };
 
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+            const loginData = await BrokerLogin(broker_id, statusinfo, userid);
+            setBrokerLoginData(loginData);
+            setShowBrokerData(true);
+        } catch (error) {
+            console.error("Error during broker login", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <ReusableModal
@@ -60,14 +80,16 @@ export const BrokerData = ({ broker_id }) => {
                                 <button
                                     type="button"
                                     className="btn btn-primary"
-                                    onClick={() => { setShowBrokerData(true) }}
+                                    onClick={handleSave}
+                                    disabled={loading}
                                 >
                                     Save
                                 </button>
-                                {showBrokerData && (
+                                {loading && <div>Loading...</div>}
+                                {showBrokerData && brokerLoginData && (
                                     <BrokerLogin
                                         broker_id={broker_id}
-                                        broker_data={statusinfo}
+                                        broker_data={brokerLoginData}
                                     />
                                 )}
                             </div>

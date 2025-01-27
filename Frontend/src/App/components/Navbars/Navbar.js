@@ -7,7 +7,6 @@ import { ReadNotificationStatus, getDashboardNotification, GetAllNotificationRea
 import Swal from 'sweetalert2';
 import { formatDistanceToNow } from 'date-fns';
 import { image_baseurl } from "../../../Utils/config";
-import { BrokerLogin } from "../../../Utils/Brokerintergate";
 import ReusableModal from "../Models/ReusableModal";
 import { BrokerData } from "../../../Utils/BrokerForm";
 
@@ -400,8 +399,6 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   </div>
                 }
 
-
-
                 {Role === "ADMIN" ? (
                   <div className="dropdown">
                     <div
@@ -646,10 +643,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                         {Role === 'ADMIN' && (
                           <Link to="/admin/profile">🛠️ Profile Settings</Link>
                         )}
-
-
                       </li>
-
                       <li style={dropdownItemStyle} onClick={(e) => Logout()}>
                         🚪 Logout
                       </li>
@@ -746,7 +740,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   onClick={() => setShowBrokerData(true)}
                 />
                 <label>Angel</label>
-                {showBrokerData && <BrokerData broker_id={1} />}
+                {showBrokerData && <BrokerData broker_id={1} userid={userid} />}
               </div>
             </>
           }
