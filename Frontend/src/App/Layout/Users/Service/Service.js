@@ -13,6 +13,7 @@ import { loadScript } from "../../../../Utils/Razorpayment";
 import { basicsettinglist } from "../../../Services/Admin/Admin";
 import Swal from 'sweetalert2'
 import Loader from "../../../../Utils/Loader";
+import ReusableModal from "../../../components/Models/ReusableModal";
 
 const Service = () => {
 
@@ -39,9 +40,10 @@ const Service = () => {
   const [sortCriteria, setSortCriteria] = useState("price");
   const [isLoading, setIsLoading] = useState(true)
 
+  const [viewmodel, setViewModel] = useState(false);
 
-
-
+  const [discription, setDiscription] = useState("");
+ 
 
   useEffect(() => {
     getPlan();
@@ -348,7 +350,11 @@ const Service = () => {
                       </li>
                     </ul>
                     <div className="d-block d-md-flex align-items-center justify-content-between mt-4">
-                      <button className="btn btn-secondary rounded-1 ">
+                      <button className="btn btn-secondary rounded-1 "
+                        onClick={() => {
+                          setViewModel(true);
+                          setDiscription(item?.plans[0]?.description);
+                        }} >
                         Know More
                       </button>
                       <button
@@ -643,6 +649,35 @@ const Service = () => {
           )}
         </Modal.Body>
       </Modal>
+
+      <ReusableModal
+        show={viewmodel}
+        onClose={() => setViewModel(false)}
+        title={<>Detail</>}
+        body={
+          <>
+            <div className="modal-body">
+              <div className="p-2 dynamic-content">
+                <div dangerouslySetInnerHTML={{ __html: discription }} />
+                
+              </div>
+            </div>
+          </>
+        }
+        footer={
+          <>
+            <button type="button" className="btn btn-primary">
+              Save
+            </button>
+            <button
+              className="btn btn-primary rounded-1"
+              onClick={() => setViewModel(false)}
+            >
+              Cancel
+            </button>
+          </>
+        }
+      />
 
 
     </Content>
