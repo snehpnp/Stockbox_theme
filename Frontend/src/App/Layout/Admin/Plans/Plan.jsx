@@ -172,8 +172,7 @@ const Plan = () => {
         <Content Page_title="Package" route="/admin/addplan"
             button_status={true} button_title="Add Package">
 
-            <div className="card">
-                <div className="card-body">
+         
                     <ul className="nav nav-pills  mb-1" role="tablist">
                         <li className="nav-item" role="presentation">
                             <a
@@ -381,10 +380,10 @@ const Plan = () => {
                                                                 {/* end code */}
 
 
-                                                                <div className="button-group">
+                                                                <div className="button-group gap-2 d-sm-flex">
                                                                     <button
                                                                         type="button"
-                                                                        className="btnsecond btn btn-primary w-50"
+                                                                        className="btnsecond btn btn-primary w-100 w-sm-50"
                                                                         onClick={() => setShowViewModal(client._id)}
                                                                     >
                                                                         View More
@@ -446,7 +445,7 @@ const Plan = () => {
 
                                                                     <Link
                                                                         to={`editplan/${client._id}`}
-                                                                        className="btnsecond btn btn-primary w-50"
+                                                                        className="btnsecond btn btn-secondary w-100 w-sm-50 mt-3 mt-sm-0"
                                                                         style={{ color: 'inherit', textDecoration: 'none' }}
                                                                     >
                                                                         Edit
@@ -473,8 +472,7 @@ const Plan = () => {
                             </div>
                         </div>
                     )}
-                </div>
-            </div>
+              
         </Content>
 
     );
