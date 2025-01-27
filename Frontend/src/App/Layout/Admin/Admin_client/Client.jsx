@@ -708,8 +708,8 @@ const Client = () => {
                 </div>
               </div>
               </div>
-              <div className="row mb-4">
-                <div className="col-md-4 ">
+              <div className="row ">
+                <div className="col-sm-6 col-md-4 mb-3">
                   <div>
                     <label htmlFor="kycSelect">Select Kyc</label>
                     <select
@@ -724,7 +724,7 @@ const Client = () => {
                     </select>
                   </div>
                 </div>
-                <div className="col-md-4">
+                <div className="col-sm-6  col-md-4 mb-3">
                   <div>
                     <label htmlFor="kycSelect">Select CreatedBy</label>
                     <select
@@ -739,7 +739,7 @@ const Client = () => {
                     </select>
                   </div>
                 </div>
-                <div className="col-md-3">
+                <div className="col-sm-6  col-md-3 mb-3">
                   <div>
                     <label htmlFor="kycSelect">Select Client</label>
                     <select
@@ -754,8 +754,8 @@ const Client = () => {
                     </select>
                   </div>
                 </div>
-                <div className="col-md-1">
-                  <div className="refresh-icon mt-4">
+                <div className="col-sm-6 col-md-1">
+                  <div className="refresh-icon ">
                     <RefreshCcw onClick={resethandle} />
                   </div>
                 </div>

@@ -349,7 +349,7 @@ const Staff = () => {
                                             Add Employee
                                         </Link>
                                     </div>
-                                    <div className="ms-0 ms-sm-0" >
+                                    <div className="ms-0 ms-sm-0 mt-2 mt-sm-0" >
                                         <ExportToExcel
                                             className="btn btn-primary "
                                             apiData={ForGetCSV}
