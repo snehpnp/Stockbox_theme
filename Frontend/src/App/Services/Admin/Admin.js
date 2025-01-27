@@ -772,7 +772,7 @@ export async function updateStockList(data, token) {
 // plan list 
 
 
-export async function getplanlist(token) {
+export async function getplanlist(token) { 
 
     try {
         const res = await axios.get(`${Config.base_url}plan/list`, {
@@ -2188,6 +2188,8 @@ export async function getPayementhistorywithfilter(data, token) {
                 'Authorization': `${token}`
             },
         });
+        console.log("response data from backend",res);
+        
         return res?.data;
     } catch (err) {
         return err;

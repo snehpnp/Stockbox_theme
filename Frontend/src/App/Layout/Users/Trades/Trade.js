@@ -432,7 +432,7 @@ function Trade() {
       />
 
       <ReusableModal
-        show={viewmodel}
+        show={viewmodel} 
         onClose={() => setViewModel(false)}
         title={<>Detail</>}
         body={

@@ -41,7 +41,7 @@ const BasketStockPublish = () => {
     try {
       const data = { page: currentPage, search: searchInput || "" }
       const response = await BasketAllActiveListbyfilter(data, token);
-      console.log("BasketAllActiveListbyfilter",response);
+      // console.log("BasketAllActiveListbyfilter",response);
 
       if (response.status) {
         setTotalRows(response.pagination.total);
