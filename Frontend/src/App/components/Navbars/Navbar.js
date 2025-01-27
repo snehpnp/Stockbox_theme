@@ -280,6 +280,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       console.log("UserDetail", UserDetail.brokerid);
     }
   };
+  const closeBrokerModal = () => {
+    setViewModel(false); // Close the modal
+  };
 
   return (
     <>
@@ -768,7 +771,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
           </>
         )}
 
-        {viewmodel && <BrokersData data={UserDetail} />}
+        {viewmodel && <BrokersData closeModal={closeBrokerModal} data={UserDetail} />}
       </nav>
     </>
   );

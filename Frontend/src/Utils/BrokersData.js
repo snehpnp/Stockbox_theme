@@ -3,7 +3,7 @@ import ReusableModal from "../App/components/Models/ReusableModal";
 import { UpdateBroker } from "../App/Services/UserService/User";
 import Swal from "sweetalert2";
 
-function BrokersData({ data }) {
+function BrokersData({ data, closeModal }) {
   const [viewModel, setViewModel] = useState(true);
   const userId = localStorage.getItem("id");
   const token = localStorage.getItem("token");
@@ -104,7 +104,7 @@ function BrokersData({ data }) {
   return (
     <ReusableModal
       show={viewModel}
-      onClose={() => setViewModel(false)}
+      onClose={closeModal} // Use the passed closeModal function to close
       title={<span className="text-xl font-semibold">Select Broker</span>}
       size="xl"
       body={
