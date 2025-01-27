@@ -110,8 +110,8 @@ function Trade() {
 
 
     <Content Page_title="Trade" button_title="Add Trade" button_status={true}>
-      <div className="card">
-        <div className="card-body">
+      <div className="">
+        <div className="page-content">
           <div>
             <div>
               <label htmlFor="planSelect" className="mb-1">
@@ -134,7 +134,7 @@ function Trade() {
             </div>
           </div>
 
-          <ul className="nav nav-pills border-bottom mb-3 justify-content-center" role="tablist">
+          <ul className="nav nav-pills border-bottom my-3 justify-content-center" role="tablist">
             <li className="nav-item" role="presentation">
               <a
                 className={`nav-link ${selectedTab === "live" ? "active" : ""}`}
@@ -197,9 +197,9 @@ function Trade() {
 
                           <div className="col-md-7">
                             <div className="trade-content">
-                              <div className="d-flex justify-content-between tradehead mb-3">
+                              <div className="d-sm-flex justify-content-between tradehead mb-3">
                                 <h3>{item.tradesymbol || "Trade Symbol"}</h3>
-                                <span className="trade-type1 mb-2">{item?.stock}</span>
+                                <span className=" mb-2">{item?.stock}</span>
                               </div>
                               <div className="trade-details">
                                 <div className="row justify-content-center">
@@ -209,7 +209,7 @@ function Trade() {
                                       <p>₹{item?.price}</p>
                                     </div>
                                   </div>
-                                  <div className="col-md-6 d-flex justify-content-end">
+                                  <div className="col-md-6 d-flex justify-md-content-end">
                                     <div>
                                       <strong>Call Type:</strong>
                                       <p>{item?.calltype || "15-30 days"}</p>
@@ -222,19 +222,19 @@ function Trade() {
                                     </div>
                                   </div>
 
-                                  <div className="col-md-3 d-flex justify-content-center">
+                                  <div className="col-md-3 d-flex justify-md-content-center">
                                     <div>
                                       <strong>Target:</strong>
                                       <p>{item?.tag1 || "--"}</p>
                                     </div>
                                   </div>
-                                  <div className="col-md-3 d-flex justify-content-center">
+                                  <div className="col-md-3 d-flex justify-md-content-center">
                                     <div>
                                       <strong>Target:</strong>
                                       <p>{item?.tag2 || "--"}</p>
                                     </div>
                                   </div>
-                                  <div className="col-md-3 d-flex justify-content-center">
+                                  <div className="col-md-3 d-flex justify-md-content-center">
                                     <div>
                                       <strong>Target:</strong>
                                       <p>{item?.tag3 || "--"}</p>
@@ -246,12 +246,12 @@ function Trade() {
                           </div>
 
                           <div className="col-md-3 d-flex align-items-center">
-                            <div className="d-flex flex-column w-100 h-100 justify-content-evenly">
-                              <button className="btn btn-primary w-100" onClick={() => setModel(true)}>
+                            <div className="d-flex flex-column w-100 ">
+                              <button className="btn btn-primary w-100 my-1" onClick={() => setModel(true)}>
                                 BUY
                               </button>
                               <button
-                                className="btn btn-secondary w-100"
+                                className="btn btn-secondary w-100 my-1"
                                 onClick={() => {
                                   setViewModel(true);
                                   setDiscription(item?.description);
@@ -260,10 +260,10 @@ function Trade() {
                                 View Detail
                               </button>
 
-                              <button className="btn btn-secondary w-100" onClick={() => handleDownload(item)} >
+                              <button className="btn btn-secondary w-100 my-1" onClick={() => handleDownload(item)} >
                                 View Analysis
                               </button>
-                              <button className="btn btn-secondary w-100" >
+                              <button className="btn btn-secondary w-100 my-1" >
                                 Broker Response
                               </button>
                             </div>
@@ -284,16 +284,17 @@ function Trade() {
                       <div className="trade-card shadow">
                         <div className="row">
 
-                          <div className="col-md-2 d-flex align-items-center">
-                            <div className="trade-header">
-                              <div>
+                          <div className="col-md-12 col-lg-2  align-items-center">
+                            <div className="trade-header d-sm-flex justify-content-between">
+                              <div><div>
                                 <span className="trade-time tradetime1">
                                   <b>{fDate(item?.created_at)}</b>
                                 </span>
                               </div>
                               <div className="mb-3">
                                 <span className="trade-type">{item?.callduration}</span>
-                              </div>
+                              </div></div>
+                              
                               <div>
                                 <span className="trade-type1">
                                   {service?.find((srv) => srv?._id === item?.service)?.title}
@@ -302,11 +303,11 @@ function Trade() {
                             </div>
                           </div>
 
-                          <div className="col-md-7">
+                          <div className="col-md-12 col-lg-7">
                             <div className="trade-content">
-                              <div className="d-flex justify-content-between tradehead mb-3">
+                              <div className="d-sm-flex justify-content-between tradehead mb-3">
                                 <h3>{item.tradesymbol || "Trade Symbol"}</h3>
-                                <span className="trade-type1 mb-2">{item?.stock}</span>
+                                <span className=" mb-2">{item?.stock}</span>
                               </div>
                               <div className="trade-details">
                                 <div className="row justify-content-center">
@@ -316,7 +317,7 @@ function Trade() {
                                       <p>₹{item?.price}</p>
                                     </div>
                                   </div>
-                                  <div className="col-md-6 d-flex justify-content-end">
+                                  <div className="col-md-6 d-flex justify-content-md-end">
                                     <div>
                                       <strong>Call Type:</strong>
                                       <p>{item?.calltype || "15-30 days"}</p>
@@ -329,19 +330,19 @@ function Trade() {
                                     </div>
                                   </div>
 
-                                  <div className="col-md-3 d-flex justify-content-center">
+                                  <div className="col-md-3 d-flex justify-content-md-center">
                                     <div>
                                       <strong>Target:</strong>
                                       <p>{item?.tag1 || "--"}</p>
                                     </div>
                                   </div>
-                                  <div className="col-md-3 d-flex justify-content-center">
+                                  <div className="col-md-3 d-flex justify-content-md-center">
                                     <div>
                                       <strong>Target:</strong>
                                       <p>{item?.tag2 || "--"}</p>
                                     </div>
                                   </div>
-                                  <div className="col-md-3 d-flex justify-content-center">
+                                  <div className="col-md-3 d-flex justify-content-md-center">
                                     <div>
                                       <strong>Target:</strong>
                                       <p>{item?.tag3 || "--"}</p>
@@ -352,21 +353,21 @@ function Trade() {
                             </div>
                           </div>
 
-                          <div className="col-md-3 d-flex align-items-center">
-                            <div className="d-flex flex-column w-100 h-100 justify-content-evenly">
-                              <button className="btn btn-primary w-100" onClick={() => setModel(true)}>
+                          <div className="col-md-12 col-lg-3 d-flex align-items-center">
+                            <div className="d-flex flex-column w-100 ">
+                              <button className="btn btn-primary w-100 my-1" onClick={() => setModel(true)}>
                                 BUY
                               </button>
-                              <button className="btn btn-secondary w-100" onClick={() => {
+                              <button className="btn btn-secondary w-100 my-1" onClick={() => {
                                 setViewModel(true);
                                 setDiscription(item?.description);
                               }} >
                                 View Detail
                               </button>
-                              <button className="btn btn-secondary w-100" onClick={() => handleDownload(item)} >
+                              <button className="btn btn-secondary w-100 my-1" onClick={() => handleDownload(item)} >
                                 View Analysis
                               </button>
-                              <button className="btn btn-secondary w-100" >
+                              <button className="btn btn-secondary w-100 my-1" >
                                 Broker Response
                               </button>
                             </div>
