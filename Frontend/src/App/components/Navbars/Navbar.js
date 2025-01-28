@@ -16,12 +16,17 @@ import { formatDistanceToNow } from "date-fns";
 import { image_baseurl } from "../../../Utils/config";
 import BrokersData from "../../../Utils/BrokersData";
 import axios from "axios";
+import { GetUserData } from "../../Services/UserService/User";
 
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   useEffect(() => {
     getdemoclient();
     gettradedetail();
+
   }, []);
+
+
+
 
   const navigate = useNavigate();
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
@@ -53,6 +58,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       window.location.href = "/#/login";
     }
   };
+
+
 
   const handleNotificationClick = async (event, notification) => {
     const user_active_status = "1";
@@ -158,6 +165,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
+
+
+
   const getstatusdetaile = async () => {
     if (
       !statusinfo.aliceuserid ||
@@ -241,35 +251,26 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   };
 
   useEffect(() => {
-    GetUserProfile();
+    getuserdetail();
     if (getstatus[0]?.brokerloginstatus === 1) {
       setIsChecked(true);
     }
   }, [getstatus]);
 
-  const GetUserProfile = async () => {
-    try {
-      let config = {
-        method: "get",
-        maxBodyLength: Infinity,
-        url:
-          "https://stockboxpnp.pnpuniverse.com/backend/api/client/detail/" +
-          userid,
-        headers: {},
-      };
 
-      axios
-        .request(config)
-        .then((response) => {
-          setUserDetail(response.data?.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+
+  const getuserdetail = async () => {
+    try {
+      const response = await GetUserData(userid, token);
+      if (response.status) {
+        setUserDetail(response.data);
+      }
     } catch (error) {
-      console.error("Error while fetching user profile:", error);
+      console.log("error", error);
     }
   };
+
+
 
   const TradingBtnCall = async (e) => {
     if (UserDetail.dlinkstatus == 0) {
@@ -509,11 +510,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                           clients?.map((notification, index) => (
                             <div
                               key={index}
-                              className={`dropdown-item notification ${
-                                notification.status === 1
-                                  ? "text-info font-bold"
-                                  : "text-muted bg-light"
-                              }`}
+                              className={`dropdown-item notification ${notification.status === 1
+                                ? "text-info font-bold"
+                                : "text-muted bg-light"
+                                }`}
                               onClick={(event) =>
                                 handleNotificationClick(event, notification)
                               }
@@ -551,11 +551,11 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                                     >
                                       {notification.createdAt
                                         ? formatDistanceToNow(
-                                            new Date(notification.createdAt),
-                                            {
-                                              addSuffix: true,
-                                            }
-                                          )
+                                          new Date(notification.createdAt),
+                                          {
+                                            addSuffix: true,
+                                          }
+                                        )
                                         : "Empty Message"}
                                     </span>
                                   </h6>

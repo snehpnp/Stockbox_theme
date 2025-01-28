@@ -166,6 +166,25 @@ export async function GetCouponlist(token) {
     }
 }
 
+
+// get user detail  
+
+
+
+export async function GetUserData(id, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}api/client/detail/${id}`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
 // add subscribe plan
 
 export async function AddplanSubscription(data, token) {
@@ -323,9 +342,21 @@ export async function BrokerResponsedata(data, token) {
 
 
 
-export async function PlaceOrderApi(data, token) {
+export async function PlaceOrderApi(data, token, brokerstatus) {
     try {
-        const res = await axios.post(`${Config.base_url}api/placeorder`, data, {
+
+        let url;
+        if (brokerstatus == 1) {
+            url = `${Config.base_url}angle/placeorder`;
+        } else if (brokerstatus == 2) {
+            url = `${Config.base_url}alice/placeorder`;
+        } else if (brokerstatus == 3) {
+            url = `${Config.base_url}kotakneo/placeorder`;
+        } else if (brokerstatus == 4) {
+            url = `${Config.base_url}markethub/placeorder`;
+        }
+
+        const res = await axios.post(url, data, {
             headers: {
                 data: {},
                 'Authorization': `${token}`,
@@ -336,7 +367,6 @@ export async function PlaceOrderApi(data, token) {
     } catch (err) {
         return err.response?.data || err.message;
     }
-
 }
 
 

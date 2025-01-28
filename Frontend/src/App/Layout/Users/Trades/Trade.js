@@ -7,23 +7,49 @@ import {
   GetServicedata,
   GetCloseSignalClient,
   PlaceOrderApi,
+  GetUserData
 } from "../../../Services/UserService/User";
 import { fDate } from "../../../../Utils/Date_formate";
 import { image_baseurl } from "../../../../Utils/config";
+import Swal from "sweetalert2";
+
+
+
 
 function Trade() {
+
+
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
   const [model, setModel] = useState(false);
+  const [calltypedata, setCalltypedata] = useState("");
   const [viewModel, setViewModel] = useState(false);
   const [service, setService] = useState([]);
   const [tradeData, setTradeData] = useState({ live: [], close: [] });
   const [description, setDescription] = useState("");
+  const [brokerstatus, setBrokerstatus] = useState([])
+
+  const [targetEnabled, setTargetEnabled] = React.useState(false);
+
+
+  const [orderdata, setOrderdata] = useState({
+    id: "",
+    signalid: "",
+    quantity: "",
+    price: "",
+    tsprice: "",
+    tsstatus: "",
+    slprice: "",
+    exitquantity: ""
+  })
 
   const [selectedService, setSelectedService] = useState(
     "66d2c3bebf7e6dc53ed07626"
   );
+
+
+
   const [selectedTab, setSelectedTab] = useState("live");
 
   const [page, setPage] = useState(1);
@@ -32,15 +58,21 @@ function Trade() {
   useEffect(() => {
     fetchServiceData();
     fetchData();
+    fetchuserDetail()
   }, [selectedService]);
 
   useEffect(() => {
     fetchData();
   }, [page, selectedTab]);
 
+
+
   useEffect(() => {
     setPage(1);
   }, [selectedTab]);
+
+
+
 
   const fetchData = async () => {
     if (selectedTab === "live") {
@@ -50,14 +82,76 @@ function Trade() {
     }
   };
 
+
+
+
+
   const fetchServiceData = async () => {
     try {
       const response = await GetServicedata(token);
-      if (response.status) setService(response.data);
+      if (response.status)
+        setService(response.data);
     } catch (error) {
       console.error("Error fetching services:", error);
     }
   };
+
+
+
+  const fetchuserDetail = async () => {
+    try {
+      const response = await GetUserData(userid, token);
+      if (response.status)
+        setBrokerstatus(response?.data?.brokerid);
+
+    } catch (error) {
+      console.error("Error fetching services:", error);
+    }
+  };
+
+
+
+  const PlanceOrderdata = async () => {
+    try {
+      const data = {
+        id: userid,
+        signalid: calltypedata?._id,
+        quantity: orderdata?.quantity,
+        price: orderdata?.price,
+        tsprice: orderdata?.tsprice,
+        tsstatus: targetEnabled,
+        slprice: orderdata?.slprice,
+        exitquantity: orderdata?.exitquantity,
+      };
+
+      const response = await PlaceOrderApi(data, token, brokerstatus);
+
+      if (response.status) {
+        Swal.fire({
+          icon: "success",
+          title: response.message || "Order Placed Successfully!",
+          text: "Your order has been placed successfully.",
+          confirmButtonText: "OK",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: response.message || "Order Failed",
+          text: "Failed to place the order. Please try again.",
+          confirmButtonText: "Retry",
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An error occurred while placing the order. Please check your network or try again later.",
+        confirmButtonText: "Retry",
+      });
+    }
+  };
+
+
 
   const fetchTradeData = async () => {
     try {
@@ -77,6 +171,9 @@ function Trade() {
     }
   };
 
+
+
+
   const fetchCloseData = async () => {
     try {
       const data = {
@@ -95,6 +192,9 @@ function Trade() {
     }
   };
 
+
+
+
   const handleDownload = (item) => {
     const url = `${image_baseurl}uploads/report/${item.report}`;
     const link = document.createElement("a");
@@ -104,6 +204,8 @@ function Trade() {
     link.click();
     document.body.removeChild(link);
   };
+
+
 
   const renderTradeCard = (item) => (
     <div className="row" key={item._id}>
@@ -147,9 +249,8 @@ function Trade() {
                     { label: "Target", value: item?.tag3 || "--" },
                   ].map((detail, idx) => (
                     <div
-                      className={`col-md-${
-                        idx < 2 ? 6 : 3
-                      } d-flex justify-content-md-$
+                      className={`col-md-${idx < 2 ? 6 : 3
+                        } d-flex justify-content-md-$
                         {idx < 2 ? "end" : "center"}`}
                       key={idx}
                     >
@@ -167,7 +268,11 @@ function Trade() {
               <div className="d-flex flex-column w-100">
                 <button
                   className="btn btn-primary w-100 my-1"
-                  onClick={() => setModel(true)}
+                  onClick={() => {
+                    setModel(true);
+                    setCalltypedata(item)
+
+                  }}
                 >
                   {item?.calltype}
                 </button>
@@ -176,6 +281,7 @@ function Trade() {
                   onClick={() => {
                     setViewModel(true);
                     setDescription(item?.description);
+
                   }}
                 >
                   View Detail
@@ -199,6 +305,8 @@ function Trade() {
     </div>
   );
 
+
+
   const handlePageChange = (direction) => {
     if (direction === "prev" && page > 1) {
       setPage(page - 1);
@@ -206,6 +314,9 @@ function Trade() {
       setPage(page + 1);
     }
   };
+
+
+
 
   return (
     <Content Page_title="Trade" button_title="Add Trade" button_status={true}>
@@ -240,9 +351,8 @@ function Trade() {
           ].map(({ tab, icon, label }) => (
             <li className="nav-item" role="presentation" key={tab}>
               <a
-                className={`nav-link ${
-                  selectedTab === tab ? "btn-primary active" : ""
-                }`}
+                className={`nav-link ${selectedTab === tab ? "btn-primary active" : ""
+                  }`}
                 onClick={() => setSelectedTab(tab)}
                 role="tab"
               >
@@ -251,9 +361,8 @@ function Trade() {
                     <i className={`bx ${icon} font-18 me-1`} />
                   </div>
                   <div
-                    className={`tab-title ${
-                      selectedTab === tab ? "btn-primary" : ""
-                    }`}
+                    className={`tab-title ${selectedTab === tab ? "btn-primary" : ""
+                      }`}
                   >
                     {label}
                   </div>
@@ -290,40 +399,118 @@ function Trade() {
       <ReusableModal
         show={model}
         onClose={() => setModel(false)}
-        title={<span>BUY</span>}
+        title={<span>{calltypedata?.calltype}</span>}
         body={
           <form className="row g-3">
-            {["Name", "Email", "Phone", "Aadhaar No.", "PAN No."].map(
-              (field, idx) => (
-                <div className="col-md-12" key={idx}>
-                  <label htmlFor={`input${idx}`} className="form-label">
-                    {field}
-                  </label>
-                  <input
-                    type={field.includes("No.") ? "password" : "text"}
-                    className="form-control"
-                    id={`input${idx}`}
-                    placeholder={field}
-                  />
-                </div>
-              )
-            )}
+            <div className="col-md-12">
+              <label htmlFor="inputName" className="form-label">
+                Price
+              </label>
+              <input
+                type="number"
+                className="form-control"
+                id="inputName"
+                placeholder="Price"
+                value={orderdata?.price}
+                onChange={(e) => {
+                  setOrderdata({ ...orderdata, price: e.target.value });
+                }}
+              />
+            </div>
+            <div className="col-md-12">
+              <label htmlFor="inputQuantity" className="form-label">
+                Quantity
+              </label>
+              <input
+                type="number"
+                className="form-control"
+                id="inputQuantity"
+                placeholder="Quantity"
+                value={orderdata?.quantity}
+                onChange={(e) => {
+                  setOrderdata({ ...orderdata, quantity: e.target.value });
+                }}
+              />
+            </div>
+
+            <div className="col-md-12">
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="targetCheckbox"
+                  checked={targetEnabled === 1}
+                  onChange={(e) => setTargetEnabled(e.target.checked ? 1 : 0)}
+                />
+                <label className="form-check-label" htmlFor="targetCheckbox">
+                  Target
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="stoplossCheckbox"
+                  checked={targetEnabled === 2}
+                  onChange={(e) => setTargetEnabled(e.target.checked ? 2 : 0)}
+                />
+                <label className="form-check-label" htmlFor="stoplossCheckbox">
+                  Stoploss
+                </label>
+              </div>
+              <input
+                type="text"
+                className="form-control"
+                id="sharedInput"
+                placeholder={targetEnabled === 1 ? "Target Price" : targetEnabled === 2 ? "Stoploss Price" : "Select Target/Stoploss"}
+                disabled={targetEnabled === 0}
+                value={targetEnabled === 1 ? orderdata.tsprice : targetEnabled === 2 ? orderdata.slprice : ""}
+                onChange={(e) => {
+                  if (targetEnabled === 1) {
+                    setOrderdata({ ...orderdata, tsprice: e.target.value });
+                  } else if (targetEnabled === 2) {
+                    setOrderdata({ ...orderdata, slprice: e.target.value });
+                  }
+                }}
+              />
+            </div>
+            <div className="col-md-12">
+              <label htmlFor="inputQuantity" className="form-label">
+                EXit Price
+              </label>
+              <input
+                type="number"
+                className="form-control"
+                id="inputQuantity"
+                placeholder="Quantity"
+                value={orderdata?.exitquantity}
+                onChange={(e) => {
+                  setOrderdata({ ...orderdata, exitquantity: e.target.value });
+                }}
+              />
+            </div>
           </form>
         }
         footer={
           <>
-            <button type="button" className="btn btn-primary">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => {
+                PlanceOrderdata();
+              }}
+            >
               Save
             </button>
-            <button
-              className="btn btn-secondary"
-              onClick={() => setModel(false)}
-            >
+            <button className="btn btn-secondary" onClick={() => setModel(false)}>
               Cancel
             </button>
           </>
         }
       />
+
+
+
 
       <ReusableModal
         show={viewModel}
