@@ -305,7 +305,7 @@ const News = () => {
                                 <Link
                                     to="/admin/addnews"
                                     type="button"
-                                    className="btn btn-primary"
+                                    className="btn btn-primary mt-2 mt-sm-0"
                                 // data-bs-toggle="modal"
                                 // data-bs-target="#exampleModal"
                                 >
@@ -323,11 +323,11 @@ const News = () => {
                                     {clients.length > 0 ? (
                                         clients.map((client, index) => (
                                             <div className="row g-0" key={index}>
-                                                <div className="col-sm py-2">
+                                                <div className="col-sm ">
                                                     <div className={`card ${client.borderClass || 'radius-15'} d-flex justify-content-center align-items-center`}>
                                                         <div className="card-body" style={{ width: "100%" }}>
                                                             <div className="d-flex justify-content-between align-items-start">
-                                                                <h4 className="card-title text-muted mb-0">{client.title}</h4>
+                                                                <h5 className="card-title text-muted mb-0">{client.title}</h5 >
                                                                 <div>
                                                                     <Tooltip placement="top" overlay="Update">
                                                                         <SquarePen

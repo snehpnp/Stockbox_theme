@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Content from "../../../components/Contents/Content";
-import { UserBasketData } from "../../../Services/UserService/User";
+import { Doughnut } from "react-chartjs-2";
+import ReusableModal from "../../../components/Models/ReusableModal";
 
 function Basket() {
   const [showModal, setShowModal] = useState(false);

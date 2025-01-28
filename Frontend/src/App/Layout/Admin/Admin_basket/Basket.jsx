@@ -353,7 +353,7 @@ const Basket = () => {
       
       <div className="card">
         <div className="card-body">
-          <div className="d-lg-flex align-items-center mb-4 gap-3">
+          <div className="d-sm-flex align-items-center mb-4 gap-3">
             <div className="position-relative">
               <input
                 type="text"
@@ -366,7 +366,7 @@ const Basket = () => {
                 <i className="bx bx-search" />
               </span>
             </div>
-            <div className="ms-auto">
+            <div className="ms-auto mt-2 mt-sm-0">
               <Link to="/admin/addbasket" className="btn btn-primary">
                 <i className="bx bxs-plus-square" aria-hidden="true" />
                 Add Basket

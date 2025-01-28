@@ -516,7 +516,7 @@ const AddSignal = () => {
     >
       <DynamicForm
         fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
-        page_title="Add Signal"
+        // page_title="Add Signal"
         btn_name="Add Signal"
         btn_name1="Cancel"
         formik={formik}

@@ -63,7 +63,7 @@ const Emailsettings = () => {
       </div>
       <hr />
       <div className="row">
-        <div className="col-lg-8 mx-auto">
+        <div className="col-lg-12 mx-auto">
           <div className="card radius-15">
 
             <Formik
@@ -123,7 +123,7 @@ const Emailsettings = () => {
             >
               {({ values, dirty, isSubmitting }) => (
                 <Form className="card-body">
-                  <div className='p-4 border radius-15'>
+                  <div className=''>
 
                     <div className="row">
 
