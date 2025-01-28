@@ -38,6 +38,10 @@ function Trade() {
     fetchData();
   }, [page, selectedTab]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [selectedTab]);
+
   const fetchData = async () => {
     if (selectedTab === "live") {
       await fetchTradeData();
@@ -236,7 +240,9 @@ function Trade() {
           ].map(({ tab, icon, label }) => (
             <li className="nav-item" role="presentation" key={tab}>
               <a
-                className={`nav-link ${selectedTab === tab ? "active" : ""}`}
+                className={`nav-link ${
+                  selectedTab === tab ? "btn-primary active" : ""
+                }`}
                 onClick={() => setSelectedTab(tab)}
                 role="tab"
               >
@@ -244,7 +250,13 @@ function Trade() {
                   <div className="tab-icon">
                     <i className={`bx ${icon} font-18 me-1`} />
                   </div>
-                  <div className="tab-title">{label}</div>
+                  <div
+                    className={`tab-title ${
+                      selectedTab === tab ? "btn-primary" : ""
+                    }`}
+                  >
+                    {label}
+                  </div>
                 </div>
               </a>
             </li>
