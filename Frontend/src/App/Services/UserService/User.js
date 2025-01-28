@@ -303,7 +303,7 @@ export async function UpdateBroker(data, token) {
 
 
 
-// broker response 
+// broker response  
 
 
 export async function BrokerResponsedata(data, token) {
@@ -323,11 +323,26 @@ export async function BrokerResponsedata(data, token) {
 
 
 
-// place order 
-
 export async function PlaceOrderApi(data, token) {
     try {
         const res = await axios.post(`${Config.base_url}api/placeorder`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+
+}
+
+
+export async function UserBasketData(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/list/baskets`, data, {
             headers: {
                 data: {},
                 'Authorization': `${token}`,
