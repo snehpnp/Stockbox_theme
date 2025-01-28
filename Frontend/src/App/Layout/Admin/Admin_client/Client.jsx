@@ -190,7 +190,7 @@ const Client = () => {
   const getcategoryplanlist = async () => {
     try {
       const response = await getActivecategoryplan(token);
-      console.log("getActivecategoryplan", response);
+      // console.log("getActivecategoryplan", response);
 
       if (response.status) {
         setCategory(response.data);
@@ -1018,7 +1018,7 @@ const Client = () => {
                                   }}
                                   htmlFor={`input-plan-${index}`}
                                 >
-                                  {item.validity}
+                                   {item.title} ({item.themename})
                                 </label>
                               </h5>
 

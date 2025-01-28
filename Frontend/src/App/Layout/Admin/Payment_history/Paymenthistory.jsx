@@ -109,6 +109,8 @@ const History = () => {
             const response = await getPayementhistorywithfilter(data, token);
             if (response.status) {
                 let filteredData = response.data;
+                console.log("response response",response);
+                
                 setTotalRows(response.pagination.total)
                 setClients(filteredData);
             }

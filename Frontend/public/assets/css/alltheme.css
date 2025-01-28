@@ -218,7 +218,7 @@ li.sidebar-subitem {
 .sidebar-vertical-container.sidebar-open .content {
   width: calc(100% - 250px);
   margin-left: 250px;
-  height: 100vh;
+  height: 100%;
 }
 .sidebar-vertical-container.sidebar-collapsed .content {
   width: calc(100% - 60px);
@@ -1099,6 +1099,10 @@ div#dropdownMenuLink svg{
   height: 30px !important;
   object-fit: contain;
 }
+}
+
+.dynamic-content img {
+  width: 350px;
 }
 
 

@@ -119,10 +119,10 @@ class Kotakneo {
                 return res.status(500).json({ status: false, message: "OTP generation failed" });
             }
         } catch (error) {
-            // Handle Errors
+         console.log(error.response.data);
             if (error.response && error.response.data) {
                 const errorMessage = error.response.data.error
-                    ? error.response.data.error[0]?.message || "Error occurred"
+                    ? error.response.data.error[0]?.message || error.response.data.error ||  "Error occurred"
                     : JSON.stringify(error.response.data);
                 return res.status(500).json({ status: false, message: errorMessage });
             }

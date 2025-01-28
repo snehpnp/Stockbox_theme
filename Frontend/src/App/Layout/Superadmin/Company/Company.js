@@ -16,6 +16,7 @@ import {
 import { Tooltip } from "antd";
 import { fDate } from "../../../../Utils/Date_formate";
 import { GetAllThemesNameApi } from '../../../Services/Themes/Theme'
+import Loader from "../../../../Utils/Loader";
 
 const Company = () => {
   const token = localStorage.getItem("token");
@@ -24,6 +25,8 @@ const Company = () => {
   const [clients, setClients] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [themes, setThemes] = useState([]);
+
+  const [isLoader,setIsLoader] = useState(true)
 
   useEffect(() => {
     getAdminclient();
@@ -42,6 +45,7 @@ const Company = () => {
             item.phone.toLowerCase().includes(searchInput.toLowerCase())
         );
         setClients(searchInput ? filterdata : response.data);
+        setIsLoader(false);
       }
     } catch (error) {
 
@@ -307,8 +311,13 @@ const Company = () => {
                   </Link>
                 </div>
               </div>
-
+              {isLoader?(
+                <Loader/>
+              ):(
+                <>
               <Table columns={columns} data={clients} />
+              </>
+              )}
             </div>
           </div>
         </div>

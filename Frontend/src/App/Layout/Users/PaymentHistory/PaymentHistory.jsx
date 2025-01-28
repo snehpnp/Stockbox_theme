@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GETPlanList } from '../../../Services/UserService/User';
-import Table from '../../../Extracomponents/Table1';
+import Table from '../../../Extracomponents/Table';
 import { SquarePen, Trash2, PanelBottomOpen, Eye, RefreshCcw, IndianRupee, ArrowDownToLine } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import { exportToCSV } from '../../../../Utils/ExportData';
+import Loader from '../../../../Utils/Loader';
 
 
 
@@ -16,7 +17,7 @@ const PaymentHistory = () => {
 
 
   const token = localStorage.getItem('Token');
-  const userid = localStorage.getItem('Id');
+  const userid = localStorage.getItem('id');
 
   const navigate = useNavigate();
   const [clients, setClients] = useState([]);
@@ -34,6 +35,8 @@ const PaymentHistory = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+
+  const [isLoading, setIsLoading] = useState(true);
 
 
 
@@ -88,9 +91,12 @@ const PaymentHistory = () => {
   const gethistory = async () => {
     try {
       const response = await GETPlanList(userid, token);
+  
+
       if (response.status) {
         let filteredData = response?.data;
         setClients(filteredData);
+        setIsLoading(false)
       }
     } catch (error) {
       console.log("Error fetching services:", error);
@@ -260,15 +266,23 @@ const PaymentHistory = () => {
                 </div>
               </div>
             </div> */}
-            <div className="table-responsive">
-              <Table
-                columns={columns}
-                data={clients}
-                totalRows={totalRows}
-                currentPage={currentPage}
-                onPageChange={handlePageChange}
-              />
-            </div>
+            {isLoading ? (
+              <Loader />
+            ) : (
+              <>
+
+
+                <div className="table-responsive">
+                  <Table
+                    columns={columns}
+                    data={clients}
+                    totalRows={totalRows}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

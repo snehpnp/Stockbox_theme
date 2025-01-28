@@ -3,28 +3,33 @@ import Logo from "../Images/LOGO.png";
 import ProfileImage from "../Images/logo1.png";
 import { FaBell, FaBars } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { ReadNotificationStatus, getDashboardNotification, GetAllNotificationRead, gettradestatus, basicsettinglist, UpdateLogin_status } from '../../Services/Admin/Admin'
-import Swal from 'sweetalert2';
-import { formatDistanceToNow } from 'date-fns';
+import {
+  ReadNotificationStatus,
+  getDashboardNotification,
+  GetAllNotificationRead,
+  gettradestatus,
+  basicsettinglist,
+  UpdateLogin_status,
+} from "../../Services/Admin/Admin";
+import Swal from "sweetalert2";
+import { formatDistanceToNow } from "date-fns";
 import { image_baseurl } from "../../../Utils/config";
-
+import ReusableModal from "../Models/ReusableModal";
+import { BrokerData } from "../../../Utils/BrokerForm";
+import BrokersData from "../../../Utils/BrokersData";
+import axios from "axios";
 
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
-
-
   useEffect(() => {
-    getdemoclient()
+    getdemoclient();
     gettradedetail();
-  }, [])
-
-
-
+  }, []);
 
   const navigate = useNavigate();
-
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
   const Role = localStorage.getItem("Role");
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
+  const userid = localStorage.getItem("id");
 
   const [clients, setClients] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -32,16 +37,15 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const [isChecked, setIsChecked] = useState(false);
   const [getstatus, setGetstatus] = useState([]);
   const [badgecount, setBadgecount] = useState([]);
+  const [viewmodel, setViewModel] = useState(false);
+  const [showBrokerData, setShowBrokerData] = useState(false);
+  const [UserDetail, setUserDetail] = useState([]);
 
   const [statusinfo, setStatusinfo] = useState({
     aliceuserid: "",
     apikey: "",
-    secretkey: ""
+    secretkey: "",
   });
-
-
-
-
 
   const Logout = () => {
     localStorage.clear();
@@ -52,9 +56,6 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
-
-
-
   const handleNotificationClick = async (event, notification) => {
     const user_active_status = "1";
     const data = { id: notification._id, status: user_active_status };
@@ -63,21 +64,20 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       const response = await ReadNotificationStatus(data, token);
       if (response.status) {
         if (notification.type === "payout") {
-          navigate("/admin/paymentrequest")
-          getdemoclient()
+          navigate("/admin/paymentrequest");
+          getdemoclient();
         } else if (notification.type === "add client") {
-          navigate("/admin/client")
-          getdemoclient()
+          navigate("/admin/client");
+          getdemoclient();
         } else if (notification.type === "plan purchase") {
-          navigate("/admin/paymenthistory")
-          getdemoclient()
+          navigate("/admin/paymenthistory");
+          getdemoclient();
         } else if (notification.type === "plan expire") {
-          navigate("/admin/planexpiry")
-          getdemoclient()
+          navigate("/admin/planexpiry");
+          getdemoclient();
         } else {
-          navigate("/admin/client")
-          getdemoclient()
-
+          navigate("/admin/client");
+          getdemoclient();
         }
       } else {
         Swal.fire(
@@ -95,13 +95,11 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
-
-
   const getdemoclient = async () => {
     try {
       const response = await getDashboardNotification(token);
       if (response.status) {
-        setBadgecount(response?.unreadCount)
+        setBadgecount(response?.unreadCount);
         setClients(response?.data);
       }
     } catch (error) {
@@ -109,21 +107,15 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
-
-
-
   const getAllMessageRead = async () => {
     try {
       const response = await GetAllNotificationRead(token);
       navigate("/admin/notificationlist");
-      getdemoclient()
+      getdemoclient();
     } catch (error) {
       console.error("Error while marking notifications as read:", error);
     }
   };
-
-
-
 
   const toggleSidebar = () => {
     const body = document.body;
@@ -136,9 +128,6 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       body.classList.add("sidebar-open");
     }
   };
-
-
-
 
   const gettradedetail = async () => {
     try {
@@ -154,7 +143,6 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
           } else {
             console.warn("Favicon element not found");
           }
-
 
           const companyNameElement = document.querySelector(".companyName");
           if (companyNameElement) {
@@ -172,17 +160,17 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
-
-
-
-
   const getstatusdetaile = async () => {
-    if (!statusinfo.aliceuserid || !statusinfo.apikey || !statusinfo.secretkey) {
+    if (
+      !statusinfo.aliceuserid ||
+      !statusinfo.apikey ||
+      !statusinfo.secretkey
+    ) {
       Swal.fire({
-        title: 'Warning!',
+        title: "Warning!",
         text: "Please fill in all fields",
-        icon: 'warning',
-        confirmButtonText: 'OK',
+        icon: "warning",
+        confirmButtonText: "OK",
         timer: 2000,
       });
       return;
@@ -190,7 +178,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     const data = {
       aliceuserid: statusinfo.aliceuserid || getstatus[0].aliceuserid,
       apikey: statusinfo.apikey || getstatus[0].apikey,
-      secretkey: statusinfo.secretkey || getstatus[0].secretkey
+      secretkey: statusinfo.secretkey || getstatus[0].secretkey,
     };
     try {
       const response = await gettradestatus(data, token);
@@ -202,20 +190,16 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
-
-
-
-
   const UpdateloginOff = async (e) => {
     const dataoff = e.target.checked ? 1 : 0;
     Swal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: "Do you really want to log off?",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: 'Yes, log off',
-      cancelButtonText: 'Cancel',
-      reverseButtons: true
+      confirmButtonText: "Yes, log off",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -225,18 +209,18 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
           const response = await UpdateLogin_status(data, token);
           if (response?.status) {
             Swal.fire({
-              icon: 'success',
-              title: 'Successful!',
-              text: 'Status Log Out Successful',
+              icon: "success",
+              title: "Successful!",
+              text: "Status Log Out Successful",
               timer: 1500,
               timerProgressBar: true,
             });
           }
         } catch (error) {
           Swal.fire({
-            icon: 'error',
-            title: 'Update Failed',
-            text: 'There was an error logging out',
+            icon: "error",
+            title: "Update Failed",
+            text: "There was an error logging out",
             timer: 1500,
             timerProgressBar: true,
           });
@@ -245,42 +229,68 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     });
   };
 
-
-
   const handleToggle = () => {
     if (getstatus[0]?.brokerloginstatus === 1) {
       setIsChecked(!isChecked);
-
     } else {
       setModel(true);
       setStatusinfo({
         aliceuserid: getstatus[0]?.aliceuserid || "",
         apikey: getstatus[0]?.apikey || "",
-        secretkey: getstatus[0]?.secretkey || ""
+        secretkey: getstatus[0]?.secretkey || "",
       });
     }
   };
 
-
-
-
   useEffect(() => {
+    GetUserProfile();
     if (getstatus[0]?.brokerloginstatus === 1) {
       setIsChecked(true);
     }
   }, [getstatus]);
 
+  const GetUserProfile = async () => {
+    try {
+      let config = {
+        method: "get",
+        maxBodyLength: Infinity,
+        url:
+          "https://stockboxpnp.pnpuniverse.com/backend/api/client/detail/" +
+          userid,
+        headers: {},
+      };
 
+      axios
+        .request(config)
+        .then((response) => {
+          setUserDetail(response.data?.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.error("Error while fetching user profile:", error);
+    }
+  };
+
+  const TradingBtnCall = async () => {
+    if (UserDetail.dlinkstatus == 0) {
+      setViewModel(true);
+    } else {
+      console.log("UserDetail", UserDetail.brokerid);
+    }
+  };
+  const closeBrokerModal = () => {
+    setViewModel(false); // Close the modal
+  };
 
   return (
     <>
-
       <nav
         className="navbar navbar-expand-lg TopNavbar"
         style={{
           background:
             theme.navbarColor || "linear-gradient(to right, #1d37fc, #e81717)",
-
         }}
       >
         <div className="container-fluid justify-content-center">
@@ -291,7 +301,11 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   <img
                     src={Logo}
                     alt="Logo"
-                    style={{ width: "150px", height: "50px", objectFit: "contain" }}
+                    style={{
+                      width: "150px",
+                      height: "50px",
+                      objectFit: "contain",
+                    }}
                   />
                 </a>
                 <button
@@ -326,46 +340,73 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                     <li style={dropdownItemStyle}>
                       <Link to="/user/profiles">🛠️ Profile</Link>
                     </li>
-                  ) : ""}
+                  ) : (
+                    ""
+                  )}
                   <li style={dropdownItemStyle} onClick={(e) => Logout()}>
                     🚪 Logout
                   </li>
                 </ul>
               </div>
-
             </div>
             <div className="col-7 pe-0">
               <div className="d-flex align-items-center position-relative justify-content-end">
-                <div className='d-flex'>
-                  <span className="switch-label p-1">
-                    Trading Status:
-                    <span style={{ color: isChecked ? 'green' : 'red' }}>
-                      {isChecked ? "On" : "Off"}
+                {Role === "ADMIN" ? (
+                  <div className="d-flex">
+                    <span className="switch-label p-1">
+                      Trading Status:
+                      <span style={{ color: isChecked ? "green" : "red" }}>
+                        {isChecked ? "On" : "Off"}
+                      </span>
                     </span>
-                  </span>
-                  <div
-                    className="form-check form-switch form-check-dark mb-0"
-                    style={{ margin: "inherit", fontSize: 21 }}
-                  >
-                    <span style={{ color: "red", fontSize: 16 }}>Off</span>
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      role="switch"
-                      id="flexSwitchCheckDark"
-                      disabled={isDisabled}
-                      checked={isChecked}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          handleToggle();
-                        } else {
-                          setIsDisabled(true);
-                          // UpdateloginOff(e);
-                        }
-                      }}
-                    />
+                    <div
+                      className="form-check form-switch form-check-dark mb-0"
+                      style={{ margin: "inherit", fontSize: 21 }}
+                    >
+                      <span style={{ color: "red", fontSize: 16 }}>Off</span>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        role="switch"
+                        id="flexSwitchCheckDark"
+                        disabled={isDisabled}
+                        checked={isChecked}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            handleToggle();
+                          } else {
+                            setIsDisabled(true);
+                            // UpdateloginOff(e);
+                          }
+                        }}
+                      />
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="d-flex">
+                    <span className="switch-label p-1">
+                      Trading Status:
+
+                    </span>
+                    <div
+                      className="form-check form-switch form-check-dark mb-0"
+                      style={{ margin: "inherit", fontSize: 21 }}
+                    >
+                      <span style={{ color: isChecked ? "green" : "red" }}>
+                        {isChecked ? "On" : "Off"}
+                      </span>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        role="switch"
+                        id="flexSwitchCheckDark"
+                        disabled={isDisabled}
+                        checked={isChecked}
+                        onClick={(e) => TradingBtnCall()}
+                      />
+                    </div>
+                  </div>
+                )}
 
 
                 {Role === "ADMIN" ? (
@@ -427,7 +468,11 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       >
                         <p
                           className="msg-header-title"
-                          style={{ fontSize: "18px", fontWeight: "600", margin: 0 }}
+                          style={{
+                            fontSize: "18px",
+                            fontWeight: "600",
+                            margin: 0,
+                          }}
                         >
                           Notifications
                         </p>
@@ -442,7 +487,11 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                             padding: "2px 8px",
                           }}
                         >
-                          {clients?.filter((notification) => notification?.status === 0)?.length}
+                          {
+                            clients?.filter(
+                              (notification) => notification?.status === 0
+                            )?.length
+                          }
                         </span>
                       </div>
                       <div
@@ -470,7 +519,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                                 padding: "10px",
                                 marginBottom: "5px",
                                 borderRadius: "6px",
-                                background: notification.status === 0 ? "#f8f9fa" : "white",
+                                background:
+                                  notification.status === 0
+                                    ? "#f8f9fa"
+                                    : "white",
                                 cursor: "pointer",
                                 transition: "all 0.3s ease",
                               }}
@@ -481,18 +533,27 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                                     className="msg-name"
                                     style={{
                                       margin: 0,
-                                      fontWeight: notification.status === 1 ? "normal" : "bold",
+                                      fontWeight:
+                                        notification.status === 1
+                                          ? "normal"
+                                          : "bold",
                                     }}
                                   >
                                     {notification?.title}
                                     <span
                                       className="msg-time float-end"
-                                      style={{ fontSize: "12px", color: "#6c757d" }}
+                                      style={{
+                                        fontSize: "12px",
+                                        color: "#6c757d",
+                                      }}
                                     >
                                       {notification.createdAt
-                                        ? formatDistanceToNow(new Date(notification.createdAt), {
-                                          addSuffix: true,
-                                        })
+                                        ? formatDistanceToNow(
+                                          new Date(notification.createdAt),
+                                          {
+                                            addSuffix: true,
+                                          }
+                                        )
                                         : "Empty Message"}
                                     </span>
                                   </h6>
@@ -575,7 +636,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       </ul>
                     </div>
                   </div>
-                ) : ""}
+                ) : (
+                  ""
+                )}
 
                 <div className="dropdown">
                   <div
@@ -606,16 +669,13 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   >
                     <ul style={dropdownListStyle}>
                       <li style={dropdownItemStyle}>
-                        {Role === 'USER' && (
+                        {Role === "USER" && (
                           <Link to="/user/profile">🛠️ Profile Settings</Link>
                         )}
-                        {Role === 'ADMIN' && (
+                        {Role === "ADMIN" && (
                           <Link to="/admin/profile">🛠️ Profile Settings</Link>
                         )}
-
-
                       </li>
-
                       <li style={dropdownItemStyle} onClick={(e) => Logout()}>
                         🚪 Logout
                       </li>
@@ -626,12 +686,13 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
             </div>
           </div>
         </div>
+
         {model && (
           <>
             <div className="modal-backdrop fade show"></div>
             <div
               className="modal fade show"
-              style={{ display: 'block' }}
+              style={{ display: "block" }}
               tabIndex={-1}
               aria-labelledby="exampleModalLabel"
               aria-hidden="true"
@@ -655,25 +716,38 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                         type="text"
                         className="form-control"
                         value={statusinfo.aliceuserid}
-                        onChange={(e) => setStatusinfo({ ...statusinfo, aliceuserid: e.target.value })}
+                        onChange={(e) =>
+                          setStatusinfo({
+                            ...statusinfo,
+                            aliceuserid: e.target.value,
+                          })
+                        }
                       />
                       <label> API Key </label>
                       <input
                         type="text"
                         className="form-control"
                         value={statusinfo.apikey}
-                        onChange={(e) => setStatusinfo({ ...statusinfo, apikey: e.target.value })}
+                        onChange={(e) =>
+                          setStatusinfo({
+                            ...statusinfo,
+                            apikey: e.target.value,
+                          })
+                        }
                       />
                       <label> Secret Key </label>
                       <input
                         type="text"
                         className="form-control"
                         value={statusinfo.secretkey}
-                        onChange={(e) => setStatusinfo({ ...statusinfo, secretkey: e.target.value })}
+                        onChange={(e) =>
+                          setStatusinfo({
+                            ...statusinfo,
+                            secretkey: e.target.value,
+                          })
+                        }
                       />
                     </form>
-
-
                   </div>
                   <div className="modal-footer">
                     <button
@@ -696,12 +770,12 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
             </div>
           </>
         )}
+
+        {viewmodel && <BrokersData closeModal={closeBrokerModal} data={UserDetail} />}
       </nav>
     </>
   );
 };
-
-
 
 const profileDropdownStyle = {
   left: "-90px",

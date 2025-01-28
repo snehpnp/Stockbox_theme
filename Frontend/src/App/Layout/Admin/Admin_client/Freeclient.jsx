@@ -837,7 +837,7 @@ const Freeclient = () => {
                                                                     }}
                                                                     htmlFor={`input-plan-${index}`}
                                                                 >
-                                                                    {item.validity}
+                                                                     {item.title} ({item.themename})
                                                                 </label>
                                                             </h5>
 

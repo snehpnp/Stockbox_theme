@@ -3,7 +3,12 @@ import { Link } from "react-router-dom";
 import Content from "../../../components/Contents/Content";
 
 const BrokerResponse = () => {
+
+
   return (
+
+
+    
     <div>
        <Content
       Page_title="Basket"

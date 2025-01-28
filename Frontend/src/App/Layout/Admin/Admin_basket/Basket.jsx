@@ -41,7 +41,7 @@ const Basket = () => {
     try {
       const data = { page: currentPage, search: searchInput || "" }
       const response = await BasketAllList(data, token);
-      console.log("BasketAllList",response);
+      // console.log("BasketAllList",response);
       
      
 
@@ -350,7 +350,7 @@ const Basket = () => {
           </nav>
         </div>
       </div>
-      <hr />
+      
       <div className="card">
         <div className="card-body">
           <div className="d-sm-flex align-items-center mb-4 gap-3">

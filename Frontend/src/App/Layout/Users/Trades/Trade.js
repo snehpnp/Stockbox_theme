@@ -12,6 +12,10 @@ import { image_baseurl } from "../../../../Utils/config";
 
 
 function Trade() {
+
+
+
+
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
@@ -26,6 +30,8 @@ function Trade() {
   const [selectedTab, setSelectedTab] = useState("live");
 
 
+
+  
 
   useEffect(() => {
     getClientdata();
@@ -68,7 +74,7 @@ function Trade() {
       const response = await GetCloseSignalClient(data, token);
       if (response.status) {
         setGetclosedata(response.data);
-        console.log("response.data", response.data)
+       
       }
     } catch (error) {
       console.error("Error fetching plans:", error);
@@ -82,9 +88,12 @@ function Trade() {
     setSelectedValue(e.target.value);
   };
 
+
+
   const handleTabClick = (tab) => {
     setSelectedTab(tab);
   };
+
 
 
   const handleDownload = (item) => {
@@ -102,6 +111,8 @@ function Trade() {
 
 
   return (
+
+
     <Content Page_title="Trade" button_title="Add Trade" button_status={true}>
       <div className="">
         <div className="page-content">
@@ -256,9 +267,11 @@ function Trade() {
                               <button className="btn btn-secondary w-100 my-1" onClick={() => handleDownload(item)} >
                                 View Analysis
                               </button>
-                              <button className="btn btn-secondary w-100 my-1" >
-                                Broker Response
-                              </button>
+                              <Link to="/user/broker-response" >
+                                <button className="btn btn-secondary w-100 my-1" >
+                                  Broker Response
+                                </button>
+                              </Link>
                             </div>
                           </div>
                         </div>
@@ -284,10 +297,10 @@ function Trade() {
                                   <b>{fDate(item?.created_at)}</b>
                                 </span>
                               </div>
-                              <div className="mb-3">
-                                <span className="trade-type">{item?.callduration}</span>
-                              </div></div>
-                              
+                                <div className="mb-3">
+                                  <span className="trade-type">{item?.callduration}</span>
+                                </div></div>
+
                               <div>
                                 <span className="trade-type1">
                                   {service?.find((srv) => srv?._id === item?.service)?.title}
@@ -360,9 +373,12 @@ function Trade() {
                               <button className="btn btn-secondary w-100 my-1" onClick={() => handleDownload(item)} >
                                 View Analysis
                               </button>
-                              <button className="btn btn-secondary w-100 my-1" >
-                                Broker Response
-                              </button>
+
+                              <Link to="/user/broker-response" >
+                                <button className="btn btn-secondary w-100 my-1" >
+                                  Broker Response
+                                </button>
+                              </Link>
                             </div>
                           </div>
                         </div>
@@ -373,7 +389,7 @@ function Trade() {
               </div>
             )}
 
-            
+
           </div>
         </div>
       </div>
@@ -435,24 +451,11 @@ function Trade() {
             </div>
           </>
         }
-        footer={
-          <>
-            <button type="button" className="btn btn-primary">
-              Save
-            </button>
-            <button
-              className="btn btn-primary rounded-1"
-              onClick={() => setViewModel(false)}
-            >
-              Cancel
-            </button>
-          </>
-        }
+
       />
 
-
-
     </Content>
+
 
   );
 }
