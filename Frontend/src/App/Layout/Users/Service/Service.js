@@ -102,7 +102,6 @@ const Service = () => {
   };
 
 
-
   const removeCoupon = () => {
     setManualCoupon("");
     setAppliedCoupon(null);

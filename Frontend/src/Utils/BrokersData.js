@@ -14,7 +14,10 @@ function BrokersData({ data }) {
   const [loading, setLoading] = useState(false);
   const [brokerId, setBrokerId] = useState(null);
 
+
+
   const brokerFieldsMap = {
+
     1: [{ key: "apikey", label: "API Key", type: "text" }],
     2: [
       { key: "AppCode", label: "App Code", type: "text" },
@@ -34,6 +37,7 @@ function BrokersData({ data }) {
     ],
   };
 
+
   const fields = brokerFieldsMap[brokerId] || [];
 
   const handleFieldChange = (key, value) => {
@@ -42,6 +46,8 @@ function BrokersData({ data }) {
       [key]: value,
     }));
   };
+
+
 
   const handleSave = async () => {
     setLoading(true);
@@ -52,7 +58,6 @@ function BrokersData({ data }) {
 
        loginData = await UpdateBroker(data, token);
    
-
       if (loginData.status) {
         if (brokerId == 1) {
           window.location.href = loginData.url;
@@ -70,6 +75,8 @@ function BrokersData({ data }) {
       setLoading(false);
     }
   };
+
+  
 
   const brokers = [
     {
