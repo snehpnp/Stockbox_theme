@@ -34,7 +34,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const [clients, setClients] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
   const [model, setModel] = useState(false);
-  const [isChecked, setIsChecked] = useState(true);
+  const [isChecked, setIsChecked] = useState(false);
   const [getstatus, setGetstatus] = useState([]);
   const [badgecount, setBadgecount] = useState([]);
   const [viewmodel, setViewModel] = useState(false);
@@ -386,13 +386,13 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   <div className="d-flex">
                     <span className="switch-label p-1">
                       Trading Status:
-                     
+
                     </span>
                     <div
                       className="form-check form-switch form-check-dark mb-0"
                       style={{ margin: "inherit", fontSize: 21 }}
                     >
-                         <span style={{ color: isChecked ? "green" : "red" }}>
+                      <span style={{ color: isChecked ? "green" : "red" }}>
                         {isChecked ? "On" : "Off"}
                       </span>
                       <input
@@ -407,7 +407,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                     </div>
                   </div>
                 )}
-              
+
 
                 {Role === "ADMIN" ? (
                   <div className="dropdown">
@@ -508,11 +508,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                           clients?.map((notification, index) => (
                             <div
                               key={index}
-                              className={`dropdown-item notification ${
-                                notification.status === 1
-                                  ? "text-info font-bold"
-                                  : "text-muted bg-light"
-                              }`}
+                              className={`dropdown-item notification ${notification.status === 1
+                                ? "text-info font-bold"
+                                : "text-muted bg-light"
+                                }`}
                               onClick={(event) =>
                                 handleNotificationClick(event, notification)
                               }
@@ -550,11 +549,11 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                                     >
                                       {notification.createdAt
                                         ? formatDistanceToNow(
-                                            new Date(notification.createdAt),
-                                            {
-                                              addSuffix: true,
-                                            }
-                                          )
+                                          new Date(notification.createdAt),
+                                          {
+                                            addSuffix: true,
+                                          }
+                                        )
                                         : "Empty Message"}
                                     </span>
                                   </h6>
