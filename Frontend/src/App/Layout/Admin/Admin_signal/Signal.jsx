@@ -936,7 +936,7 @@ const Signal = () => {
                             </div>
 
 
-                            <div className="d-lg-flex align-items-center mb-4 gap-3">
+                            <div className="d-md-flex align-items-center mb-4 gap-3">
                                 <div className="position-relative">
                                     <input
                                         type="text"
@@ -949,7 +949,7 @@ const Signal = () => {
                                         <i className="bx bx-search" />
                                     </span>
                                 </div>
-                                <div className="ms-auto">
+                                <div className="ms-sm-auto mt-2 mt-md-0">
                                     <Link to="/admin/addsignal" className="btn btn-primary">
                                         <i className="bx bxs-plus-square" aria-hidden="true" /> Add Signal
                                     </Link>
@@ -960,11 +960,11 @@ const Signal = () => {
                                     </button>
                                 </div> */}
 
-                                <div className="ms-2">
+                                <div className="ms-0 ms-md-2 mt-2 mt-md-0">
                                     {viewMode === "table" ? (
                                         <button
                                             type="button"
-                                            className="btn btn-primary float-end"
+                                            className="btn btn-primary float-md-end"
                                             title="Export To Excel"
                                             onClick={getexportfile}
                                         >
@@ -973,7 +973,7 @@ const Signal = () => {
                                     ) : (
                                         <button
                                             type="button"
-                                            className="btn btn-primary float-end"
+                                            className="btn btn-primary float-md-end"
                                             title="Export Card data"
                                             onClick={getexportfile1}
                                         >
@@ -984,7 +984,7 @@ const Signal = () => {
                             </div>
 
                             <div className="row">
-                                <div className="col-md-3">
+                                <div className="col-md-3 mb-3">
                                     <label>From date</label>
                                     <input
                                         type="date"
@@ -994,7 +994,7 @@ const Signal = () => {
                                         onChange={handleFilterChange}
                                     />
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-md-3 mb-3">
                                     <label>To Date</label>
                                     <input
                                         type="date"
@@ -1005,7 +1005,7 @@ const Signal = () => {
                                         min={filters.from}
                                     />
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-md-3 mb-3">
                                     <label>Select Service</label>
                                     <select
                                         name="service"

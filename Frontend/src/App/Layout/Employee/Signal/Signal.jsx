@@ -939,7 +939,7 @@ const Signal = () => {
                                     </Link>
                                 </div>}
                                 <div className="ms-2" onClick={getexportfile}>
-                                    <button type="button" className="btn btn-primary float-end" title="Export To Excel">
+                                    <button type="button" className="btn btn-primary float-sm-end" title="Export To Excel">
                                         <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
                                     </button>
                                 </div>

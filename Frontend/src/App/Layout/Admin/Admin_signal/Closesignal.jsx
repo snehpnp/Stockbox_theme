@@ -657,7 +657,7 @@ const Closesignal = () => {
               </div>
 
               {/* Search and Filters */}
-              <div className="d-lg-flex align-items-center mb-4 gap-3 justify-content-between">
+              <div className="d-sm-flex align-items-center mb-4 gap-3 justify-content-between">
                 <div className="position-relative">
                   <input
                     type="text"
@@ -681,11 +681,11 @@ const Closesignal = () => {
                   </button>
                 </div> */}
 
-                <div className="ms-2">
+                <div className="mt-2 mt-sm-0">
                   {activeTab === "table" ? (
                     <button
                       type="button"
-                      className="btn btn-primary float-end"
+                      className="btn btn-primary float-sm-end"
                       title="Export To Excel"
                       onClick={getexportfile}
                     >
@@ -694,7 +694,7 @@ const Closesignal = () => {
                   ) : (
                     <button
                       type="button"
-                      className="btn btn-primary float-end"
+                      className="btn btn-primary float-sm-end"
                       title="Export Card data"
                       onClick={getexportfile1}
 

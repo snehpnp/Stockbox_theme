@@ -56,7 +56,7 @@ const Generalsettings = () => {
             </div>
             <hr />
             <div className="row">
-                <div className="col-lg-8 mx-auto">
+                <div className="col-lg-12 mx-auto">
                     <div className="card radius-15">
 
                         <Formik
@@ -119,7 +119,7 @@ const Generalsettings = () => {
 
 
                                     <Form className="card-body p-4" onChange={() => setIsModified(true)}>
-                                        <div className="p-4 border radius-15 ">
+                                        <div className=" ">
 
                                             <div className="row mb-3 align-items-center">
                                                 <label htmlFor="from_name" className="col-sm-3 col-form-label">

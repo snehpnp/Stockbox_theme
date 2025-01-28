@@ -211,7 +211,7 @@ const Apiinfo = () => {
                 </div>
                 <hr />
 
-                <div className="row row-cols-1 row-cols-md-3 row-cols-lg-3 row-cols-xl-3 justify-content-center">
+                <div className="row row-cols-12 justify-content-center">
                     <div className="col" >
                         <div className="card">
                             <div className="card-header mt-2">
@@ -314,7 +314,7 @@ const Apiinfo = () => {
                                     </div>
                                 </form>
                             </div>
-                            <div className="card-footer text-center">
+                            <div className="card-footer text-end">
                                 <button
                                     type="button"
                                     className="btn btn-primary mb-2"

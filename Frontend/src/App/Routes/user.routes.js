@@ -21,7 +21,7 @@ import Option from "../Layout/Users/PastPerformance/Option";
 import Userkyc from "../Layout/Users/Profile/Kyc";
 import HelpDesk from "../Layout/Users/HelpDesk/HelpDesk";
 import BrokerReponse from "../Layout/Users/Trades/BrokerReponse";
-
+import BasketDetail from "../Layout/Users/Basket/BasketDetail";
 
 export default function App() {
   return (
@@ -47,6 +47,7 @@ export default function App() {
       <Route path="/kyc" element={<Userkyc />} />
       <Route path="/help-desk" element={<HelpDesk />} />
       <Route path="/broker-response" element={<BrokerReponse />} />
+      <Route path="/basketdetail" element={<BasketDetail />} />
     </Routes>
   );
 }
