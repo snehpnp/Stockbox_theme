@@ -239,19 +239,19 @@ function Trade() {
                 <div className="trade-details row justify-content-center">
                   {[
                     { label: "Entry price", value: `₹${item?.price}` },
-                    {
-                      label: "Call Type",
-                      value: item?.calltype || "15-30 days",
-                    },
+                    ...(selectedTab === "close"
+                      ? [{ label: "Exit Price", value: item?.closeprice || "--" }]
+                      : []),
+                    { label: "Call Type", value: item?.calltype || "15-30 days" },
                     { label: "Stoploss", value: item?.stoploss || "--" },
                     { label: "Target", value: item?.tag1 || "--" },
                     { label: "Target", value: item?.tag2 || "--" },
                     { label: "Target", value: item?.tag3 || "--" },
+
                   ].map((detail, idx) => (
                     <div
-                      className={`col-md-${idx < 2 ? 6 : 3
-                        } d-flex justify-content-md-$
-                        {idx < 2 ? "end" : "center"}`}
+                      className={`col-md-${idx < 2 ?4 : 4} d-flex justify-content-md-${idx < 2 ? "start" : "start"
+                        }`}
                       key={idx}
                     >
                       <div>
@@ -261,6 +261,7 @@ function Trade() {
                     </div>
                   ))}
                 </div>
+
               </div>
             </div>
 
