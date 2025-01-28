@@ -22,7 +22,6 @@ const BrokerReponse = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRows, setTotalRows] = useState(0);
 
-    
 
     const getbrokerhistory = async () => {
         try {
@@ -48,7 +47,6 @@ const BrokerReponse = () => {
     useEffect(() => {
         getbrokerhistory();
     }, []);
-
 
 
 
