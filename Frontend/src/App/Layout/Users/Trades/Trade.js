@@ -13,8 +13,7 @@ import {
 import { fDate } from "../../../../Utils/Date_formate";
 import { image_baseurl } from "../../../../Utils/config";
 import Swal from "sweetalert2";
-
-
+import Loader from "../../../../Utils/Loader";
 
 
 function Trade() {
@@ -22,6 +21,8 @@ function Trade() {
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
+
+  const [isLoading, setIsLoading] = useState(true)
 
   const [model, setModel] = useState(false);
   const [calltypedata, setCalltypedata] = useState("");
@@ -222,6 +223,7 @@ function Trade() {
     } catch (error) {
       console.error("Error fetching trade data:", error);
     }
+    setIsLoading(false)
   };
 
 
@@ -238,12 +240,12 @@ function Trade() {
       const response = await GetCloseSignalClient(data, token);
       if (response.status) {
         setTradeData((prev) => ({ ...prev, close: response.data }));
-        console.log("response.data", response.data)
         setTotalPages(response.pagination?.totalPages || 1);
       }
     } catch (error) {
       console.error("Error fetching close trade data:", error);
     }
+    setIsLoading(false)
   };
 
 
@@ -443,7 +445,7 @@ function Trade() {
         </ul>
 
         <div className="tab-content">
-          {tradeData[selectedTab]?.map(renderTradeCard)}
+          {isLoading ? <Loader /> : tradeData[selectedTab]?.map(renderTradeCard)}
         </div>
         <div className="pagination-controls d-flex justify-content-between mt-3">
           <button
