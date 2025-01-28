@@ -351,13 +351,16 @@ const Service = () => {
                       </li>
                     </ul>
                     <div className="d-block d-sm-flex  align-items-center justify-content-between mt-4">
-                      <button className="btn btn-secondary rounded-1 mt-2 mt-sm-0 me-2 me-sm-0"
-                        onClick={() => setViewModel(true)
-
-                        }
+                      <button
+                        className="btn btn-secondary rounded-1 mt-2 mt-sm-0 me-2 me-sm-0"
+                        onClick={() => {
+                          setViewModel(true);
+                          setDiscription(item?.plans[0]?.description);
+                        }}
                       >
                         Know More
                       </button>
+
                       <button
                         className="btn btn-primary rounded-1 mt-2 mt-sm-0"
                         onClick={() => handleShowModal(item)}

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react'
 import Content from "../../../components/Contents/Content";
 import { Doughnut } from "react-chartjs-2";
@@ -422,18 +421,7 @@ function Basket() {
               <div className="col-md-6"> <Doughnut data={chartData} /></div>
 
             </div>
-
-
-
-
-
           </div>
-
-
-
-
-
-
         </div>
         }
 

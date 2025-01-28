@@ -166,6 +166,25 @@ export async function GetCouponlist(token) {
     }
 }
 
+
+// get user detail  
+
+
+
+export async function GetUserData(id, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}api/client/detail/${id}`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
 // add subscribe plan
 
 export async function AddplanSubscription(data, token) {
@@ -250,6 +269,8 @@ export async function GetCloseSignalClient(data, token) {
     }
 }
 
+
+
 //help desk api for add
 
 export async function SendHelpRequest(data, token) {
@@ -270,6 +291,9 @@ export async function SendHelpRequest(data, token) {
         return err.response?.data || err.message;
     }
 }
+
+
+
 
 export async function UpdateBroker(data, token) {
     try {
@@ -298,12 +322,57 @@ export async function UpdateBroker(data, token) {
 
 
 
-// broker response 
+// broker response  
 
 
 export async function BrokerResponsedata(data, token) {
     try {
         const res = await axios.post(`${Config.base_url}api/client/orderlist`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+export async function PlaceOrderApi(data, token, brokerstatus) {
+    try {
+
+        let url;
+        if (brokerstatus == 1) {
+            url = `${Config.base_url}angle/placeorder`;
+        } else if (brokerstatus == 2) {
+            url = `${Config.base_url}alice/placeorder`;
+        } else if (brokerstatus == 3) {
+            url = `${Config.base_url}kotakneo/placeorder`;
+        } else if (brokerstatus == 4) {
+            url = `${Config.base_url}markethub/placeorder`;
+        }
+
+        const res = await axios.post(url, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
+export async function UserBasketData(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/list/baskets`, data, {
             headers: {
                 data: {},
                 'Authorization': `${token}`,

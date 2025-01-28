@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Logo from "../Images/LOGO.png";
 import ProfileImage from "../Images/logo1.png";
-import { FaBell, FaBars } from "react-icons/fa";
+import { FaBell } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ReadNotificationStatus,
@@ -14,16 +14,19 @@ import {
 import Swal from "sweetalert2";
 import { formatDistanceToNow } from "date-fns";
 import { image_baseurl } from "../../../Utils/config";
-import ReusableModal from "../Models/ReusableModal";
-import { BrokerData } from "../../../Utils/BrokerForm";
 import BrokersData from "../../../Utils/BrokersData";
 import axios from "axios";
+import { GetUserData } from "../../Services/UserService/User";
 
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   useEffect(() => {
     getdemoclient();
     gettradedetail();
+
   }, []);
+
+
+
 
   const navigate = useNavigate();
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
@@ -55,6 +58,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       window.location.href = "/#/login";
     }
   };
+
+
 
   const handleNotificationClick = async (event, notification) => {
     const user_active_status = "1";
@@ -160,6 +165,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
+
+
+
   const getstatusdetaile = async () => {
     if (
       !statusinfo.aliceuserid ||
@@ -243,41 +251,39 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   };
 
   useEffect(() => {
-    GetUserProfile();
+    getuserdetail();
     if (getstatus[0]?.brokerloginstatus === 1) {
       setIsChecked(true);
     }
   }, [getstatus]);
 
-  const GetUserProfile = async () => {
-    try {
-      let config = {
-        method: "get",
-        maxBodyLength: Infinity,
-        url:
-          "https://stockboxpnp.pnpuniverse.com/backend/api/client/detail/" +
-          userid,
-        headers: {},
-      };
 
-      axios
-        .request(config)
-        .then((response) => {
-          setUserDetail(response.data?.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+
+  const getuserdetail = async () => {
+    try {
+      const response = await GetUserData(userid, token);
+      if (response.status) {
+        setUserDetail(response.data);
+      }
     } catch (error) {
-      console.error("Error while fetching user profile:", error);
+      console.log("error", error);
     }
   };
 
-  const TradingBtnCall = async () => {
+
+
+  const TradingBtnCall = async (e) => {
     if (UserDetail.dlinkstatus == 0) {
       setViewModel(true);
     } else {
-      console.log("UserDetail", UserDetail.brokerid);
+      // console.log(UserDetail);
+      if (UserDetail.brokerid == 1) {
+        window.location.href = `https://smartapi.angelone.in/publisher-login?api_key=${UserDetail.apikey}`;
+      } else if (UserDetail.brokerid == 2) {
+        window.location.href = `https://ant.aliceblueonline.com/?appcode=${UserDetail.apikey}`;
+      } else if (UserDetail.brokerid == 3) {
+      } else if (UserDetail.brokerid == 4) {
+      }
     }
   };
   const closeBrokerModal = () => {
@@ -384,10 +390,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   </div>
                 ) : (
                   <div className="d-flex">
-                    <span className="switch-label p-1">
-                      Trading Status:
-
-                    </span>
+                    <span className="switch-label p-1">Trading Status:</span>
                     <div
                       className="form-check form-switch form-check-dark mb-0"
                       style={{ margin: "inherit", fontSize: 21 }}
@@ -400,14 +403,13 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                         type="checkbox"
                         role="switch"
                         id="flexSwitchCheckDark"
-                        disabled={isDisabled}
+                        disabled={isChecked}
                         checked={isChecked}
                         onClick={(e) => TradingBtnCall()}
                       />
                     </div>
                   </div>
                 )}
-
 
                 {Role === "ADMIN" ? (
                   <div className="dropdown">
@@ -771,7 +773,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
           </>
         )}
 
-        {viewmodel && <BrokersData closeModal={closeBrokerModal} data={UserDetail} />}
+        {viewmodel && (
+          <BrokersData closeModal={closeBrokerModal} data={UserDetail} />
+        )}
       </nav>
     </>
   );

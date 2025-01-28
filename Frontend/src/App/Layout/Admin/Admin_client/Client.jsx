@@ -35,6 +35,9 @@ import { exportToCSV } from "../../../../Utils/ExportData";
 import Table from "../../../Extracomponents/Table1";
 import Loader from "../../../../Utils/Loader";
 
+
+
+
 const Client = () => {
   useEffect(() => {
     getbasketlist();
@@ -676,37 +679,37 @@ const Client = () => {
                     <i className="bx bx-search" />
                   </span>
                 </div>
-            <div className="d-sm-flex gap-3 justify-content-lg-end w-100 mt-3 mt-lg-0">
-                <div className="flaot-lg-auto">
-                  <Link to="/admin/addclient" className="btn btn-primary">
-                    <i className="bx bxs-plus-square" aria-hidden="true" />
-                    Add Client
-                  </Link>
-                </div>
+                <div className="d-sm-flex gap-3 justify-content-lg-end w-100 mt-3 mt-lg-0">
+                  <div className="flaot-lg-auto">
+                    <Link to="/admin/addclient" className="btn btn-primary">
+                      <i className="bx bxs-plus-square" aria-hidden="true" />
+                      Add Client
+                    </Link>
+                  </div>
 
-                <div className="" onClick={(e) => getexportfile()}>
-                  <button
-                    type="button"
-                    className="btn btn-primary my-2 my-sm-0"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="Export To Excel"
-                    delay={{ show: "0", hide: "100" }}
-                  >
-                    <i className="bx bxs-download" aria-hidden="true"></i>
-                    Export-Excel
-                  </button>
+                  <div className="" onClick={(e) => getexportfile()}>
+                    <button
+                      type="button"
+                      className="btn btn-primary my-2 my-sm-0"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="Export To Excel"
+                      delay={{ show: "0", hide: "100" }}
+                    >
+                      <i className="bx bxs-download" aria-hidden="true"></i>
+                      Export-Excel
+                    </button>
+                  </div>
+                  <div className="">
+                    <Link
+                      to="/admin/clientdeletehistory"
+                      className="btn btn-primary"
+                    >
+                      <i className="bx bxs-trash" aria-hidden="true" />
+                      Deleted Client
+                    </Link>
+                  </div>
                 </div>
-                <div className="">
-                  <Link
-                    to="/admin/clientdeletehistory"
-                    className="btn btn-primary"
-                  >
-                    <i className="bx bxs-trash" aria-hidden="true" />
-                    Deleted Client
-                  </Link>
-                </div>
-              </div>
               </div>
               <div className="row ">
                 <div className="col-sm-6 col-md-4 mb-3">
@@ -1018,7 +1021,7 @@ const Client = () => {
                                   }}
                                   htmlFor={`input-plan-${index}`}
                                 >
-                                   {item.title} ({item.themename})
+                                  {item.title} ({item.themename})
                                 </label>
                               </h5>
 
