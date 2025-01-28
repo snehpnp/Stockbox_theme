@@ -370,6 +370,39 @@ export async function PlaceOrderApi(data, token, brokerstatus) {
 }
 
 
+// exit place order
+
+
+export async function ExitPlaceOrderData(data, token, brokerstatus) {
+    try {
+
+        let url;
+        if (brokerstatus == 1) {
+            url = `${Config.base_url}angle/exitplaceorder`;
+        } else if (brokerstatus == 2) {
+            url = `${Config.base_url}alice/exitplaceorder`;
+        } else if (brokerstatus == 3) {
+            url = `${Config.base_url}kotakneo/exitplaceorder`;
+        } else if (brokerstatus == 4) {
+            url = `${Config.base_url}markethub/exitplaceorder`;
+        }
+
+        const res = await axios.post(url, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+
 export async function UserBasketData(data, token) {
     try {
         const res = await axios.post(`${Config.base_url}api/list/baskets`, data, {

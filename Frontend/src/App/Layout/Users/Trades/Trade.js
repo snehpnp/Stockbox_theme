@@ -7,7 +7,8 @@ import {
   GetServicedata,
   GetCloseSignalClient,
   PlaceOrderApi,
-  GetUserData
+  GetUserData,
+  ExitPlaceOrderData
 } from "../../../Services/UserService/User";
 import { fDate } from "../../../../Utils/Date_formate";
 import { image_baseurl } from "../../../../Utils/config";
@@ -25,12 +26,13 @@ function Trade() {
   const [model, setModel] = useState(false);
   const [calltypedata, setCalltypedata] = useState("");
   const [viewModel, setViewModel] = useState(false);
+  const [exitModel, setExitModel] = useState(false);
   const [service, setService] = useState([]);
   const [tradeData, setTradeData] = useState({ live: [], close: [] });
   const [description, setDescription] = useState("");
   const [brokerstatus, setBrokerstatus] = useState([])
-
   const [targetEnabled, setTargetEnabled] = React.useState(false);
+
 
 
   const [orderdata, setOrderdata] = useState({
@@ -43,6 +45,16 @@ function Trade() {
     slprice: "",
     exitquantity: ""
   })
+
+
+  const [exitorderdata, setExitOrderdata] = useState({
+    id: "",
+    signalid: "",
+    quantity: "",
+    price: "",
+  })
+
+
 
   const [selectedService, setSelectedService] = useState(
     "66d2c3bebf7e6dc53ed07626"
@@ -153,6 +165,47 @@ function Trade() {
 
 
 
+  const ExitPlaceOrder = async () => {
+    try {
+      const data = {
+        id: userid,
+        signalid: calltypedata?._id,
+        quantity: exitorderdata?.quantity,
+        price: exitorderdata?.price,
+
+      };
+
+      const response = await ExitPlaceOrderData(data, token, brokerstatus);
+
+      if (response.status) {
+        Swal.fire({
+          icon: "success",
+          title: response.message || "Order Exit Successfully!",
+          text: "Your order has been Exit  successfully.",
+          confirmButtonText: "OK",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: response.message || "Order Failed",
+          text: "Failed to place the order. Please try again.",
+          confirmButtonText: "Retry",
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An error occurred while placing the order. Please check your network or try again later.",
+        confirmButtonText: "Retry",
+      });
+    }
+  };
+
+
+
+
+
   const fetchTradeData = async () => {
     try {
       const data = {
@@ -185,6 +238,7 @@ function Trade() {
       const response = await GetCloseSignalClient(data, token);
       if (response.status) {
         setTradeData((prev) => ({ ...prev, close: response.data }));
+        console.log("response.data", response.data)
         setTotalPages(response.pagination?.totalPages || 1);
       }
     } catch (error) {
@@ -250,7 +304,7 @@ function Trade() {
 
                   ].map((detail, idx) => (
                     <div
-                      className={`col-md-${idx < 2 ?4 : 4} d-flex justify-content-md-${idx < 2 ? "start" : "start"
+                      className={`col-md-${idx < 2 ? 4 : 4} d-flex justify-content-md-${idx < 2 ? "start" : "start"
                         }`}
                       key={idx}
                     >
@@ -267,16 +321,31 @@ function Trade() {
 
             <div className="col-md-12 col-lg-3 d-flex align-items-center">
               <div className="d-flex flex-column w-100">
-                <button
-                  className="btn btn-primary w-100 my-1"
-                  onClick={() => {
-                    setModel(true);
-                    setCalltypedata(item)
 
-                  }}
-                >
-                  {item?.calltype}
-                </button>
+                {selectedTab === "close" ? (
+                  <button
+                    className="btn btn-primary w-100 my-1"
+                    disabled={
+                      item?.purchased === false ||
+                      new Date(item?.created_at) > new Date()
+                    }
+                    onClick={() => { setExitModel(true); setCalltypedata(item) }}
+                  >
+                    EXIT
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-primary w-100 my-1"
+                    onClick={() => {
+                      setModel(true);
+                      setCalltypedata(item);
+                    }}
+                  >
+                    {item?.calltype}
+                  </button>
+                )}
+
+
                 <button
                   className="btn btn-secondary w-100 my-1"
                   onClick={() => {
@@ -499,6 +568,64 @@ function Trade() {
               className="btn btn-primary"
               onClick={() => {
                 PlanceOrderdata();
+              }}
+            >
+              Save
+            </button>
+            <button className="btn btn-secondary" onClick={() => setModel(false)}>
+              Cancel
+            </button>
+          </>
+        }
+      />
+
+
+
+      <ReusableModal
+        show={exitModel}
+        onClose={() => setExitModel(false)}
+        title={<span>{calltypedata?.tradesymbol}</span>}
+        body={
+          <form className="row g-3">
+            <div className="col-md-12">
+              <label htmlFor="inputName" className="form-label">
+                Price
+              </label>
+              <input
+                type="number"
+                className="form-control"
+                id="inputName"
+                placeholder="Price"
+                value={exitorderdata?.price}
+                onChange={(e) => {
+                  setExitOrderdata({ ...exitorderdata, price: e.target.value });
+                }}
+              />
+            </div>
+            <div className="col-md-12">
+              <label htmlFor="inputQuantity" className="form-label">
+                Quantity
+              </label>
+              <input
+                type="number"
+                className="form-control"
+                id="inputQuantity"
+                placeholder="Quantity"
+                value={exitorderdata?.quantity}
+                onChange={(e) => {
+                  setExitOrderdata({ ...exitorderdata, quantity: e.target.value });
+                }}
+              />
+            </div>
+          </form>
+        }
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => {
+                ExitPlaceOrder();
               }}
             >
               Save
