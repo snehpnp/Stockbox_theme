@@ -158,6 +158,11 @@ const signalModel = Schema({
         type: String,
         default: "0"
     },
+    planid: {
+        type: String,
+        trim: true,
+        default: null
+    },
     del: {
         type: Number,
         enum: [1, 0],

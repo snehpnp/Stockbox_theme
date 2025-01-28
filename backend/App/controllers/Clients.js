@@ -15,6 +15,7 @@ const PlanSubscription_Modal = db.PlanSubscription;
 const Planmanage = db.Planmanage;
 const Service_Modal = db.Service;
 const Requestclient_Modal = db.Requestclient;
+const Order_Modal = db.Order;
 
 
 
@@ -2486,6 +2487,112 @@ class Clients {
       });
     }
   }
+
+  async orderListDetail(req, res) {
+    try {
+      const { clientid, signalid, page = 1 } = req.body; // Default pagination values
+      const limit = 1;
+      const pageSize = parseInt(limit);
+      const skip = (parseInt(page) - 1) * pageSize;
+  
+      // Build dynamic match conditions
+      const matchCondition = {};
+      if (clientid) matchCondition.clientid = clientid;
+      if (signalid) matchCondition.signalid = signalid;
+  
+      const result = await Order_Modal.aggregate([
+        {
+          $match: matchCondition, // Dynamically match based on provided filters
+        },
+        {
+          $addFields: {
+            signalObjectId: { $toObjectId: "$signalid" }, // Convert signalid to ObjectId
+            clientObjectId: { $toObjectId: "$clientid" }, // Convert clientid to ObjectId
+          },
+        },
+        {
+          $lookup: {
+            from: "signals", // Join with the 'signals' collection
+            localField: "signalObjectId",
+            foreignField: "_id",
+            as: "signalDetails",
+          },
+        },
+        {
+          $lookup: {
+            from: "clients",
+            localField: "clientObjectId",
+            foreignField: "_id",
+            as: "clientDetails",
+          },
+        },
+        {
+          $unwind: {
+            path: "$signalDetails",
+            preserveNullAndEmptyArrays: true, // Optional: keep orders even if no signal match
+          },
+        },
+        {
+          $unwind: {
+            path: "$clientDetails",
+            preserveNullAndEmptyArrays: true, // Optional: keep orders even if no client match
+          },
+        },
+        {
+          $project: {
+            orderid: 1,
+            clientid: 1,
+            signalid: 1,
+            uniqueorderid: 1,
+            quantity: 1,
+            status: 1,
+            borkerid: 1,
+            ordertype: 1,
+            data: 1,
+            signalDetails: 1, // Include all signal fields
+            "clientDetails.FullName": 1, // Include only FullName from clientDetails
+            "clientDetails.Email": 1,   // Include only Email from clientDetails
+            "clientDetails.PhoneNo": 1, // Include only PhoneNo from clientDetails
+            createdAt: 1,
+          },
+        },
+        {
+          $sort: {
+            createdAt: -1, // Sort by creation date in descending order
+          },
+        },
+        {
+          $skip: skip, // Skip documents for pagination
+        },
+        {
+          $limit: pageSize, // Limit documents per page
+        },
+      ]);
+  
+      // Get total count for pagination metadata
+      const totalRecords = await Order_Modal.countDocuments(matchCondition);
+  
+      return res.json({
+        status: true,
+        message: "Data retrieved successfully",
+        data: result,
+        pagination: {
+          totalRecords,
+          currentPage: parseInt(page),
+          totalPages: Math.ceil(totalRecords / pageSize),
+        },
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: false,
+        message: "Server error",
+        error: error.message,
+        data: [],
+      });
+    }
+  }
+  
+
 
 
 }
