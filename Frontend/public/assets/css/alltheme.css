@@ -1164,5 +1164,7 @@ span.trade-type1 {
 }
 
 
-
+.btn-primary i, .btn-secondary i {
+  padding-right: 5px;
+}
 
