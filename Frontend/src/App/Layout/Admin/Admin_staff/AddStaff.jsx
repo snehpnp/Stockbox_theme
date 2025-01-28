@@ -182,7 +182,7 @@ const AddStaff = () => {
   >
       <DynamicForm
         fields={fields}
-        page_title="Add New Employee"
+        // page_title="Add New Employee"
         btn_name="Add Employee"
         btn_name1="Cancel"
         formik={formik}
