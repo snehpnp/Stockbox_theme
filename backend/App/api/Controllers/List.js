@@ -5405,6 +5405,249 @@ class List {
     }
   }
   
+  async addBasketSubscriptionAddToCart(req, res) {
+    try {
+      const { basket_ids, client_id, price, discount, orderid, coupon } = req.body;
+
+      // Validate input
+      if (!basket_ids || !Array.isArray(basket_ids) || basket_ids.length === 0 || !client_id) {
+        return res.status(400).json({ status: false, message: 'Missing required fields' });
+      }
+
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return console.log('Client not found or inactive.');
+      }
+
+      const settings = await BasicSetting_Modal.findOne();
+
+
+      const length = 6;
+      const digits = '0123456789';
+      let orderNumber = '';
+
+      for (let i = 0; i < length; i++) {
+        orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
+      }
+
+
+
+
+      for (const basket_id of basket_ids) {
+
+      const basket = await Basket_Modal.findOne({
+        _id: basket_id,
+        del: false
+      });
+
+
+      // Map plan validity to months
+      const validityMapping = {
+        '1 month': 1,
+        '3 months': 3,
+        '6 months': 6,
+        '9 months': 9,
+        '1 year': 12,
+        '2 years': 24,
+        '3 years': 36,
+        '4 years': 48,
+        '5 years': 60,
+      };
+
+      const monthsToAdd = validityMapping[basket.validity];
+      if (monthsToAdd === undefined) {
+        return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+      }
+
+      const start = new Date();
+      const end = new Date(start);
+      end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+      end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+
+      const numberOfPlans = basket_ids.length;
+      const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
+
+
+      // Create a new subscription
+      const newSubscription = new BasketSubscription_Modal({
+        basket_id,
+        client_id,
+        total: basket.basket_price-discountPerPlan,
+        plan_price: basket.basket_price,
+        discount: discountPerPlan,
+        coupon: coupon,
+        startdate: start,
+        enddate: end,
+        validity: basket.validity,
+        orderid: orderid,
+        ordernumber : `INV-${orderNumber}`,
+        invoice : `INV-${orderNumber}.pdf`,
+      });
+
+      // Save to the database
+      const savedSubscription = await newSubscription.save();
+    }
+
+      if (settings.invoicestatus == 1) {
+
+     
+
+        let payment_type;
+        if (orderid) {
+          payment_type = "Online";
+        }
+        else {
+          payment_type = "Offline";
+
+        }
+
+        const templatePath = path.join(__dirname, '../../../template', 'invoicenew.html');
+        let htmlContent = fs.readFileSync(templatePath, 'utf8');
+
+        let planDetailsHtml = '';
+
+        for (const basket_id of basket_ids) {
+
+          const basket = await Basket_Modal.findOne({
+            _id: basket_id,
+            del: false
+          });
+    
+    
+          // Map plan validity to months
+          const validityMapping = {
+            '1 month': 1,
+            '3 months': 3,
+            '6 months': 6,
+            '9 months': 9,
+            '1 year': 12,
+            '2 years': 24,
+            '3 years': 36,
+            '4 years': 48,
+            '5 years': 60,
+          };
+    
+          const monthsToAdd = validityMapping[basket.validity];
+          if (monthsToAdd === undefined) {
+            return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+          }
+    
+          const start = new Date();
+          const end = new Date(start);
+          end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+          end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+    
+
+        planDetailsHtml += `
+            <tr>
+              <td>${basket.title}</td>
+              <td>${basket.validity}</td>
+              <td>${basket.basket_price}</td>
+              <td>${formatDate(start)}</td>
+              <td>${formatDate(end)}</td>
+            </tr>`;
+        }
+
+
+        const todays = new Date(); 
+
+        htmlContent = htmlContent
+          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+          .replace(/{{created_at}}/g, formatDate(todays))
+          .replace(/{{payment_type}}/g, payment_type)
+          .replace(/{{clientname}}/g, client.FullName)
+          .replace(/{{email}}/g, client.Email)
+          .replace(/{{PhoneNo}}/g, client.PhoneNo)
+          .replace(/{{total}}/g, price)
+          .replace(/{{discount}}/g, discount)
+          .replace(/{{plan_details}}/g, planDetailsHtml)
+          .replace(/{{plantype}}/g, "Basket");
+
+
+        const browser = await puppeteer.launch({
+          args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+        const page = await browser.newPage();
+        await page.setContent(htmlContent);
+
+        // Define the path to save the PDF
+        const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+
+        // Generate PDF and save to the specified path
+        await page.pdf({
+          path: pdfPath,
+          format: 'A4',
+          printBackground: true,
+          margin: {
+            top: '20mm',
+            right: '10mm',
+            bottom: '50mm',
+            left: '10mm',
+          },
+        });
+
+        await browser.close();
+
+     
+
+
+        const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
+        if (!mailtemplate || !mailtemplate.mail_body) {
+          throw new Error('Mail template not found');
+        }
+
+
+
+        const templatePaths = path.join(__dirname, '../../../template', 'mailtemplate.html');
+
+        fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
+          if (err) {
+            console.error('Error reading HTML template:', err);
+            return;
+          }
+
+          let finalMailBody = mailtemplate.mail_body
+            .replace('{clientName}', `${client.FullName}`);
+
+          const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+
+          // Replace placeholders with actual values
+          const finalHtml = htmlTemplate
+            .replace(/{{company_name}}/g, settings.website_title)
+            .replace(/{{body}}/g, finalMailBody)
+            .replace(/{{logo}}/g, logo);
+
+          const mailOptions = {
+            to: client.Email,
+            from: `${settings.from_name} <${settings.from_mail}>`,
+            subject: `${mailtemplate.mail_subject}`,
+            html: finalHtml,
+            attachments: [
+              {
+                filename: `INV-${orderNumber}.pdf`, // PDF file name
+                path: pdfPath, // Path to the PDF file
+              }
+            ]
+          };
+
+          // Send email
+          await sendEmail(mailOptions);
+        });
+
+      }
+      // Respond with the created subscription
+      return res.status(201).json({
+        status: true,
+        message: 'Subscription added successfully',
+      });
+
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ status: false, message: 'Server error', data: [] });
+    }
+  }
 
 
 
