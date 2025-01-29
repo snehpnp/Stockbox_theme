@@ -296,7 +296,7 @@ const Subscription = () => {
     <div>
       <Content
         Page_title="Plan / Basket Subscription"
-        
+
         button_status={false}
         backbutton_title="Back"
         backbutton_status={false}
