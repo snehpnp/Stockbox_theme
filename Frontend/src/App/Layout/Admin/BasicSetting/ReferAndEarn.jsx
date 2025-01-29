@@ -27,16 +27,18 @@ const ReferAndEarn = () => {
   }, []);
 
   const handleFieldChange = (fieldName, value, setFieldValue) => {
-    // Ensure value is less than or equal to 100
     if (value === "" || (Number(value) <= 100 && !isNaN(value))) {
-      setFieldValue(fieldName, value); // Update the specific field's value
+      setFieldValue(fieldName, value); 
     }
-    setIsChanged(true); // Mark as changed
+    setIsChanged(true); 
   };
 
   if (!clients) {
     return <div>Loading...</div>;
   }
+
+
+
 
   return (
     <div className="page-content">
@@ -67,8 +69,8 @@ const ReferAndEarn = () => {
                 refer_description: clients[0]?.refer_description || "",
                 refer_status: clients[0]?.refer_status || "",
                 refer_image: null,
-                Multipletime: clients[0]?.refer_status === 1, // Multiple time checkbox default
-                Singletime: clients[0]?.refer_status === 0, // Single time checkbox default
+                Multipletime: clients[0]?.refer_status === 1, 
+                Singletime: clients[0]?.refer_status === 0, 
               }}
               onSubmit={async (values) => {
                 const req = {

@@ -86,6 +86,26 @@ export async function getMySubscription(id, token) {
     }
 }
 
+
+
+export async function getMyBasketSubscription(id, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}api/list/mybasketplan/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        console.log("Error fetching plan data:", err);
+        throw err;
+    }
+}
+
+
+
+
 // get service data
 
 export async function GetServicedata(token) {
@@ -275,8 +295,7 @@ export async function GetCloseSignalClient(data, token) {
 
 export async function SendHelpRequest(data, token) {
     try {
-        const res = await axios.post(
-            `${Config.base_url}api/list/addhelpdesk`,
+        const res = await axios.post(`${Config.base_url}api/client/addhelpdesk`,
             data,
             {
                 headers: {
@@ -293,6 +312,22 @@ export async function SendHelpRequest(data, token) {
 }
 
 
+
+// get help message 
+
+export async function GetHelpMessage(id, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}api/client/helpdesk/${id}`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
 
 
 export async function UpdateBroker(data, token) {
@@ -406,6 +441,42 @@ export async function ExitPlaceOrderData(data, token, brokerstatus) {
 export async function UserBasketData(data, token) {
     try {
         const res = await axios.post(`${Config.base_url}api/list/baskets`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
+// get service 
+
+export async function GETServiceData(id, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}api/list/myservice/${id}`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+// refer and earn data 
+
+
+export async function ReferAndEarnData(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/referearn`, data, {
             headers: {
                 data: {},
                 'Authorization': `${token}`,
