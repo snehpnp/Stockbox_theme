@@ -18,6 +18,9 @@
                   <h4 className="mb-3">Test User</h4>
                 </div>
                 <ul className="list-group list-group-flush">
+                <li className="list-group-item">
+                    <Link to="/user/subscription">Change Password</Link>
+                  </li>
                   <li className="list-group-item">
                     <Link to="/user/subscription">My Subscription</Link>
                   </li>
@@ -29,6 +32,9 @@
                   </li>
                   <li className="list-group-item">
                     <Link to="">My Basket Subscription</Link>
+                  </li>
+                  <li className="list-group-item">
+                    <Link to="" className="btn btn-primary w-100">Delete Account</Link>
                   </li>
                 </ul>
               </div>

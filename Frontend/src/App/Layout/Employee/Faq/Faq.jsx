@@ -394,7 +394,7 @@ const Faq = () => {
 
                 <div className="card">
                     <div className="card-body">
-                        <div className="d-lg-flex align-items-center mb-4 gap-3">
+                        <div className="d-sm-flex align-items-center mb-4 gap-3">
                             <div className="position-relative">
                                 <input
                                     type="text"
@@ -408,7 +408,7 @@ const Faq = () => {
                                 </span>
                             </div>
                             {permission.includes("addfaq") ?
-                                <div className="ms-auto">
+                                <div className="ms-auto mt-2 mt-sm-0">
                                     <button
                                         type="button"
                                         className="btn btn-primary"
