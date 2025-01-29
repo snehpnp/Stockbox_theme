@@ -75,10 +75,10 @@ const Subscription = () => {
           >
             <div className="d-flex justify-content-between align-items-center w-100">
               <div>
-                <h4 className="m-0">
+                <h5 className="mb-2">
                   {accordion?.categoryDetails?.title} (
                   {accordion?.serviceNames?.map((value) => value).join("+ ")})
-                </h4>
+                </h5>
                 <p className="m-0 pe-2">
                   Expires on: {fDateTime(accordion?.plan_end) || "-"}
                 </p>
@@ -162,8 +162,8 @@ const Subscription = () => {
   return (
     <div>
       <Content
-        Page_title="Subscription"
-        button_title="Add Basket"
+        Page_title="Plan / Basket Subscription"
+        
         button_status={false}
         backbutton_title="Back"
         backbutton_status={false}
@@ -230,7 +230,7 @@ const Subscription = () => {
             <div>
 
               <div className="card">
-                <h1 className="card-header">Basket Subscription</h1>
+                {/* <h1 className="card-header">Basket Subscription</h1> */}
                 <Table columns={columns} data={planData} />
               </div>
             </div>
