@@ -129,7 +129,7 @@ const Addblogs = () => {
             <DynamicForm
                 fields={fields}
                 formik={formik}
-                page_title="Add Blog"
+                // page_title="Add Blog"
                 btn_name="Add Blog"
                 btn_name1="Cancel"
                 sumit_btn={true}

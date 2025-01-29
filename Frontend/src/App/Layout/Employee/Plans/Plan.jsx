@@ -5,7 +5,7 @@ import { fDateTime } from '../../../../Utils/Date_formate';
 import Swal from 'sweetalert2';
 import Loader from '../../../../Utils/Loader'
 import ReusableModal from '../../../components/Models/ReusableModal';
-
+import Content from '../../../components/Contents/Content';
 
 
 
@@ -169,31 +169,10 @@ const Plan = () => {
 
 
     return (
+        <Content Page_title="Package" route="/employee/addplan"
+            button_status={true} button_title="Add Package">
         <div className="page-content">
-            <div className="page-breadcrumb  d-flex align-items-center mb-3">
-                <div className="breadcrumb-title pe-3">Package
-
-
-                </div> 
-                <div className="ps-3">
-                    <nav aria-label="breadcrumb">
-                        <ol className="breadcrumb mb-0 p-0">
-                            <li className="breadcrumb-item">
-                                <Link to="/admin/dashboard">
-                                    <i className="bx bx-home-alt" />
-                                </Link>
-                            </li>
-                        </ol>
-                    </nav>
-                </div>
-                <div className="ms-auto">
-                    <div className="btn-group">
-                        <Link to="/employee/addplan" className="btn btn-primary">
-                            Add Package
-                        </Link>
-                    </div>
-                </div>
-            </div>
+        
             
 
             <div className="card">
@@ -388,7 +367,7 @@ const Plan = () => {
                 </div>
             </div>
         </div>
-
+        </Content>
     );
 };
 

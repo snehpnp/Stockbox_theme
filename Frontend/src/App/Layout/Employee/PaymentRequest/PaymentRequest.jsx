@@ -241,7 +241,7 @@ const PaymentRequest = () => {
 
                                     </div>
 
-                                    <ul className="nav nav-pills nav-pills1 mb-4 light">
+                                    <ul className="nav nav-pills nav-pills1 mb-4 light justify-content-center" id="pills-tab" role="tablist">
                                         <li className="nav-item">
                                             <a
                                                 className={`nav-link navlink ${activeTab === 'Pending' ? 'active' : ''}`}

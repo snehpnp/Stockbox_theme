@@ -474,18 +474,19 @@ const Service = () => {
                           }}
                         >
                           <div
+                          className="btn-primary"
                             style={{
                               width: "40px",
-                              height: "125px",
-                              backgroundColor: "#007bff",
+                              height: "130px",
+                             
                               color: "#fff",
                               textAlign: "center",
                               display: "flex",
                               flexDirection: "column",
                               justifyContent: "center",
                               alignItems: "center",
-                              borderRadius: "12px",
-
+                              borderTopLeftRadius: "12px",
+                              borderBottomLeftRadius: "12px",
                               padding: "0",
                               marginLeft: "-20px",
                               marginTop: "-20px",
@@ -577,25 +578,7 @@ const Service = () => {
                           <div>
                             <button
                               onClick={() => handleCouponSelect(coupon)}
-                              style={{
-                                padding: "8px 16px",
-                                fontSize: "14px",
-                                color: "#fff",
-                                backgroundColor: "#007bff",
-                                border: "none",
-                                borderRadius: "6px",
-                                cursor: "pointer",
-                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                                transition: "background-color 0.3s",
-                              }}
-                              onMouseOver={(e) =>
-                              (e.currentTarget.style.backgroundColor =
-                                "#0056b3")
-                              }
-                              onMouseOut={(e) =>
-                              (e.currentTarget.style.backgroundColor =
-                                "#007bff")
-                              }
+                              className="btn btn-secondary"
                             >
                               Select
                             </button>
