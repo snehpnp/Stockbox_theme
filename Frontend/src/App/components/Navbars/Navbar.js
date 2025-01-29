@@ -264,6 +264,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       const response = await GetUserData(userid, token);
       if (response.status) {
         setUserDetail(response.data);
+
       }
     } catch (error) {
       console.log("error", error);

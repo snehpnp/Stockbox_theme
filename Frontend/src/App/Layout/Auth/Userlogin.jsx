@@ -8,6 +8,7 @@ import { basicsettinglist } from "../../Services/Admin/Admin";
 import $ from "jquery";
 import BgImg from "./bg-login-img.png";
 const Userlogin = () => {
+
   const navigate = useNavigate();
   let logoSrc =
     "https://www.pms.crmplus.in/files/system/_file5c2e1123e834d-site-logo.png";
@@ -78,6 +79,9 @@ const Userlogin = () => {
     }
   };
 
+
+
+
   const getsettinglist = async () => {
     try {
       let token = "";
@@ -103,9 +107,15 @@ const Userlogin = () => {
     }
   };
 
+
+
+
   useEffect(() => {
     getsettinglist();
   }, []);
+
+
+
 
   return (
     <div className="main-login" style={{ backgroundImage: `url(${BgImg})` }}>
@@ -120,19 +130,17 @@ const Userlogin = () => {
                 <div className="inner-div mt-4">
                   <form className="login-form" onSubmit={handleLogin}>
                     <div className="form-item">
-                      {/* <label htmlFor="email-login">Email</label> */}
                       <input
                         id="email-login"
                         placeholder="Email"
                         type="textemail"
-                        // aria-label="Enter your email"
                         value={email}
                         onChange={(e) => setemail(e.target.value)}
                         required
                       />
                     </div>
                     <div className="form-item">
-                      {/* <label htmlFor="password-login">Password</label> */}
+
                       <input
                         id="password-login"
                         placeholder="Password"
@@ -177,7 +185,7 @@ const Userlogin = () => {
                                     htmlFor="inputEmailAddress"
                                     className="form-label"
                                   >
-                                    Email
+                                    Email / Mobile
                                   </label>
                                   <input
                                     type="text"
@@ -258,19 +266,19 @@ const Userlogin = () => {
                 <div className="inner-div mt-4">
                   <form className="login-form" onSubmit={handleLogin}>
                     <div className="form-item">
-                      {/* <label htmlFor="email-login">Email</label> */}
+
                       <input
                         id="email-login"
                         placeholder="Email"
                         type="textemail"
-                        // aria-label="Enter your email"
+
                         value={email}
                         onChange={(e) => setemail(e.target.value)}
                         required
                       />
                     </div>
                     <div className="form-item">
-                      {/* <label htmlFor="password-login">Password</label> */}
+
                       <input
                         id="password-login"
                         placeholder="Password"

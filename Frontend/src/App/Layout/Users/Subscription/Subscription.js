@@ -1,20 +1,34 @@
 import React, { useEffect, useState } from "react";
 import Table from "../../../Extracomponents/Table";
-import { getMySubscription } from "../../../Services/UserService/User";
+import { getMySubscription, GETServiceData, getMyBasketSubscription } from "../../../Services/UserService/User";
 import Content from "../../../components/Contents/Content";
-import { fDateTime } from "../../../../Utils/Date_formate";
+import { fDate, fDateTime } from "../../../../Utils/Date_formate";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import Loader from "../../../../Utils/Loader";
 
 
 const Subscription = () => {
+
+
   const [planData, setPlanData] = useState([]);
+  const [basketData, setBasketData] = useState([]);
   const [activeTab, setActiveTab] = useState("plan");
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [discription, setDiscription] = useState("");
   const id = localStorage.getItem("id");
   const token = localStorage.getItem("token");
   const [isLoading, setIsLoading] = useState(true)
+  const [servicedata, setServicedata] = useState([])
+
+
+  useEffect(() => {
+    fetchMySubscription();
+    fetchMyService()
+    fetchBasketMySubscription()
+  }, []);
+
+
+
 
 
   const fetchMySubscription = async () => {
@@ -26,10 +40,42 @@ const Subscription = () => {
         setPlanData([]);
       }
     } catch (err) {
-      setPlanData([]);
+      console.log("erorr")
     }
     setIsLoading(false)
   };
+
+
+  const fetchBasketMySubscription = async () => {
+    try {
+      const res = await getMyBasketSubscription(id, token);
+      if (res?.status) {
+        setBasketData(res?.data);
+      } else {
+        setBasketData([]);
+      }
+    } catch (err) {
+      console.log("erorr")
+    }
+    setIsLoading(false)
+  };
+
+
+
+
+  const fetchMyService = async () => {
+    try {
+      const res = await GETServiceData(id, token);
+      if (res?.status) {
+        setServicedata(res?.data)
+      }
+    } catch (err) {
+      console.log("erorr")
+    }
+    setIsLoading(false)
+  };
+
+
 
   const columns = [
     {
@@ -48,9 +94,6 @@ const Subscription = () => {
     },
   ];
 
-  useEffect(() => {
-    fetchMySubscription();
-  }, []);
 
   const handleViewClick = (plan) => {
     setDiscription(plan);
@@ -59,7 +102,7 @@ const Subscription = () => {
 
 
   const renderAccordionItems = () => {
-    return planData.map((accordion) => (
+    return planData?.map((accordion) => (
       <div
         key={accordion._id}
         className="accordion-item rounded-3 border-0 shadow mb-2"
@@ -91,7 +134,6 @@ const Subscription = () => {
             </div>
           </button>
         </h2>
-        {/* Accordion Collapse */}
         <div
           id={`flush-collapse${accordion._id}`}
           className="accordion-collapse collapse"
@@ -159,6 +201,97 @@ const Subscription = () => {
     ));
   };
 
+
+
+  const renderAccordionItems1 = () => {
+    return basketData?.map((accordion) => (
+      <div
+        key={accordion._id}
+        className="accordion-item rounded-3 border-0 shadow mb-2"
+      >
+        <h2 className="accordion-header">
+          <button
+            className="accordion-button border-bottom collapsed fw-semibold"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target={`#flush-collapse${accordion._id}`}
+            aria-expanded="false"
+            aria-controls={`flush-collapse${accordion._id}`}
+          >
+            <div className="d-flex justify-content-between align-items-center w-100">
+              <div>
+                <h4 className="m-0">
+                  {accordion?.basketDetails?.title || "No Title"}
+                </h4>
+                <p className="m-0 pe-2">
+                  Expires on: {fDateTime(accordion?.enddate) || "-"}
+                </p>
+              </div>
+              <p className="m-0 pe-2">
+                <span className="badge bg-primary rounded-pill">
+                  {/* {accordion?.planDetails.status} */}
+                </span>
+              </p>
+            </div>
+          </button>
+        </h2>
+
+        <div
+          id={`flush-collapse${accordion._id}`}
+          className="accordion-collapse collapse"
+          data-bs-parent="#accordionFlushExample"
+        >
+          <div className="accordion-body">
+            <div className="card shadow-sm mb-3">
+              <div className="card-header d-flex justify-content-between align-items-center">
+                <h5 className="mb-0">{accordion?.basketDetails?.title}</h5>
+                <button
+                  className="btn btn-primary"
+                  onClick={() =>
+                    handleViewClick(accordion?.basketDetails?.description)
+                  }
+                >
+                  View
+                </button>
+
+              </div>
+              <div className="card-body">
+                <table className="table table-bordered mb-0">
+                  <tbody>
+                    <tr>
+                      <td><strong>Plan Duration:</strong></td>
+                      <td>{accordion?.validity || "--"}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Purchase On:</strong></td>
+                      <td>{fDateTime(accordion?.startdate) || "--"}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Purchase Price:</strong></td>
+                      <td>₹{accordion?.plan_price || "--"}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Expired On:</strong></td>
+                      <td>{fDateTime(accordion?.enddate) || "--"}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Minimum Investment:</strong></td>
+                      <td>₹{accordion?.basketDetails?.mininvamount || "--"}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    ));
+  };
+
+
+
+
+
   return (
     <div>
       <Content
@@ -194,18 +327,17 @@ const Subscription = () => {
           {isLoading ? <Loader /> : activeTab === "plan" && (
             <div>
               <div className="row">
-                {/* Static Plan Cards */}
-                {["Cash", "Future", "Option"].map((item, index) => (
+                {servicedata?.map((item, index) => (
                   <div key={index} className="col-md-4 mb-3">
                     <div className="card">
                       <ul className="list-group list-group-flush mt-0">
                         <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
-                          {item} <span></span>
+                          {item?.serviceName} <span></span>
                         </li>
                         <li className="list-group-item d-flex justify-content-between align-items-center">
                           Expiry Date
                           <span className="badge bg-primary rounded-pill badgespan">
-                            28 Sep 2025
+                            {fDate(item?.enddate)}
                           </span>
                         </li>
                       </ul>
@@ -214,7 +346,6 @@ const Subscription = () => {
                 ))}
               </div>
 
-              {/* Dynamic Accordion Section */}
               <div className="mt-4">
                 <div
                   className="accordion accordion-flush"
@@ -226,12 +357,16 @@ const Subscription = () => {
             </div>
           )}
 
-          {activeTab === "basket" && (
-            <div>
 
-              <div className="card">
-                {/* <h1 className="card-header">Basket Subscription</h1> */}
-                <Table columns={columns} data={planData} />
+
+
+          {activeTab === "basket" && (
+            <div className="mt-4">
+              <div
+                className="accordion accordion-flush"
+                id="accordionFlushExample"
+              >
+                {renderAccordionItems1()}
               </div>
             </div>
           )}
@@ -260,7 +395,7 @@ const Subscription = () => {
 
       </Content>
 
-      {/* Modal for Plan Details */}
+
       {selectedPlan && (
         <div
           className="modal fade"

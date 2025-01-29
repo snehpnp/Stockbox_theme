@@ -6,11 +6,16 @@ import { useFormik } from "formik";
 import Content from "../../../components/Contents/Content";
 
 const Demat = () => {
+
+
+  
   const [showModal, setShowModal] = useState(false);
 
   const AliceHandleShowModal = () => setShowModal(true);
   const AngelHandleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
+
+
 
   const formik = useFormik({
     initialValues: {
@@ -42,7 +47,10 @@ const Demat = () => {
     onSubmit: (values) => {
       console.log("Form data", values);
     },
+
   });
+
+
 
   const brokerFieldsMap = {
     1: [{ key: "apikey", label: "API Key", type: "text" }],

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BrokerResponsedata } from '../../../Services/UserService/User';
-import Table from '../../../Extracomponents/Table1';
+import Table from '../../../Extracomponents/Table';
 import { RefreshCcw, IndianRupee } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { fDateTime } from '../../../../Utils/Date_formate';
@@ -28,7 +28,7 @@ const BrokerReponse = () => {
             const data = { clientid: userid }
             const response = await BrokerResponsedata(data, token);
             if (response.status) {
-                console.log("response response", response?.data);
+                // console.log("response response", response);
                 setResponseData(response?.data)
             }
         } catch (error) {
@@ -59,20 +59,20 @@ const BrokerReponse = () => {
             width: '100px',
         },
         {
-            name: 'Name',
-            selector: row => row.clientName,
+            name: 'Email',
+            selector: row => row?.Email,
             sortable: true,
             width: '200px',
         },
         {
             name: 'Email',
-            selector: row => row.clientEmail,
+            selector: row => row?.clientEmail,
             sortable: true,
             width: '300px',
         },
         {
             name: 'Phone',
-            selector: row => row.clientPhoneNo,
+            selector: row => row?.clientPhoneNo,
             sortable: true,
             width: '200px',
         },
