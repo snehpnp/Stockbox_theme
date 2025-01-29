@@ -4489,6 +4489,1169 @@ class List {
   }
 
 
+
+  async SignalClientWithPlan(req, res) {
+    try {
+      const { service_id, client_id, search, page = 1 } = req.body;
+      const limit = 10;
+      const skip = (parseInt(page) - 1) * parseInt(limit); // Calculate how many items to skip
+      const limitValue = parseInt(limit); // Items per page
+
+    
+      const subscriptions = await PlanSubscription_Modal.find({ client_id });
+      if (subscriptions.length === 0) {
+        return res.json({
+          status: false,
+          message: "No plan subscriptions found for the given service and client IDs",
+          data: []
+        });
+      }
+
+
+      const planIds = subscriptions.map(sub => sub.plan_id);
+      const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
+
+
+
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+    
+      
+      const query = {
+        service: service_id,
+        close_status: false,
+        $or: planIds.map((planId, index) => ({
+          planid: { $regex: `(^|,)${planId}($|,)` }, // Match plan_id in the signal's comma-separated list
+          created_at: { $lte: planEnds[index] } // Compare created_at with the plan_end date of each subscription
+        }))
+      };
+
+
+      const protocol = req.protocol; // Will be 'http' or 'https'
+
+      const baseUrl = `${protocol}://${req.headers.host}`; // Construct the base URL
+
+
+
+      if (search && search.trim() !== '') {
+        query.$or = [
+          { tradesymbol: { $regex: search, $options: 'i' } },
+          { calltype: { $regex: search, $options: 'i' } },
+          { price: { $regex: search, $options: 'i' } },
+          { closeprice: { $regex: search, $options: 'i' } }
+        ];
+      }
+
+      const signals = await Signal_Modal.find(query)
+        .sort({ created_at: -1 })
+        .skip(skip)
+        .limit(limitValue)
+        .lean();
+    
+
+
+      const totalSignals = await Signal_Modal.countDocuments(query);
+
+      const signalsWithReportUrls = await Promise.all(signals.map(async (signal) => {
+        // Check if the signal was bought by the client
+        const order = await Order_Modal.findOne({
+          clientid: client_id,
+          signalid: signal._id
+        }).lean();
+
+       
+        return {
+          ...signal,
+          report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null, // Append full report URL
+          purchased: order ? true : false,
+          order_quantity: order ? order.quantity : 0
+        };
+      }));
+
+
+      return res.json({
+        status: true,
+        message: "Signals retrieved successfully",
+        data: signalsWithReportUrls,
+        pagination: {
+          total: totalSignals,
+          page: parseInt(page), // Current page
+          limit: parseInt(limit), // Items per page
+          totalPages: Math.ceil(totalSignals / limit), // Total number of pages
+        }
+      });
+
+    } catch (error) {
+      console.error("Error fetching signals:", error);
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
+  
+  async NotificationWithPlan(req, res) {
+    try {
+      const { id } = req.params;
+      const { page = 1 } = req.query; // Default values for page and limit
+      const limit = 10;
+      const today = new Date();
+  
+      // Fetch the client's creation date
+      const client = await Clients_Modal.findById(id).select('createdAt');
+      if (!client) {
+        return res.status(404).json({ status: false, message: "Client not found" });
+      }
+      const clientCreatedAt = client.createdAt;
+  
+      // Fetch subscriptions
+      const subscriptions = await PlanSubscription_Modal.find({ client_id: id });
+  
+      // Initialize status variables
+      const hasActiveSubscriptions = subscriptions.some(
+        sub => new Date(sub.plan_start) <= today && new Date(sub.plan_end) >= today
+      );
+      const hasExpiredSubscriptions = subscriptions.some(
+        sub => new Date(sub.plan_end) < today
+      );
+      const noSubscriptions = subscriptions.length === 0;
+  
+      // Fetch active and expired plans for broadcast notifications
+      const activePlans = await Planmanage.find({
+        clientid: id,
+        startdate: { $lte: today },
+        enddate: { $gte: today }
+      }).distinct('serviceid');
+  
+      const expiredPlans = await Planmanage.find({
+        clientid: id,
+        enddate: { $lt: today }
+      }).distinct('serviceid');
+  
+      // Construct query conditions
+      const queryConditions = {
+        createdAt: { $gte: clientCreatedAt }, // Notifications created after client creation date
+        $or: [
+          // Notifications specific to the client
+          { clientid: id },
+  
+          // Global notifications
+          {
+            clientid: null,
+            $or: [
+              // Global notifications for 'close signal' and 'open signal'
+              {
+                type: { $in: ['close signal', 'open signal'] },
+                $or: subscriptions.map((sub) => ({
+                  segmentid: { $regex: `(^|,)${sub.plan_id}($|,)` }, // Match plan_id in segmentid
+                  createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
+                }))
+              },
+              // Global notifications for 'add broadcast'
+            //  { type: 'add broadcast' },
+              // Include all other types of notifications (e.g., add coupon, blogs, news, etc.)
+              { type: { $nin: ['close signal', 'open signal', 'add broadcast'] } }
+            ]
+          },
+  
+          // Broadcast notifications based on client type
+          {
+            clienttype: { $in: ['active', 'expired', 'nonsubscribe', 'all'] },
+            $or: [
+              // For active clients with active subscriptions
+              ...(hasActiveSubscriptions ? [{ clienttype: 'active', segmentid: { $in: activePlans } }] : []),
+  
+              // For expired clients with expired subscriptions
+              ...(hasExpiredSubscriptions ? [{ clienttype: 'expired', segmentid: { $in: expiredPlans } }] : []),
+  
+              // For clients with no subscriptions
+              ...(noSubscriptions ? [{ clienttype: 'nonsubscribe' }] : []),
+  
+              // For all clients
+              { clienttype: 'all' }
+            ]
+          }
+        ]
+      };
+  
+      // Fetch notifications based on constructed query
+      const result = await Notification_Modal.find(queryConditions)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit) // Pagination
+        .limit(parseInt(limit)); // Limit the number of records
+  
+      // Return the response with notifications
+      return res.json({
+        status: true,
+        message: "Notifications fetched successfully",
+        data: result
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ status: false, message: "Server error", data: [] });
+    }
+  }
+  
+
+  async getCompanyAndBseData(req, res) {
+    try {
+      // Fetch data from CompanyMaster API
+      const companyResponse = await axios.get('http://stockboxapis.cmots.com/api/CompanyMaster');
+      const companyData = companyResponse.data.data;  // Accessing the 'data' field which is an array
+  
+      // Get the search query from the request (if any)
+      const searchQuery = req.query.search || '';
+  
+      // Filter companyData by CompanyName if searchQuery is provided
+      const filteredCompanyData = companyData.filter(company =>
+        company.CompanyName.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+  
+      // Fetch data from BseNseDelayedData API
+      const bseResponse = await axios.get('http://stockboxapis.cmots.com/api/BseNseDelayedData/NSE');
+      const bseData = bseResponse.data.data;
+  
+      // Combine data by matching BSECode from companyData and co_code from bseData
+      const combinedData = filteredCompanyData.map(company => {
+        // Find the matching BSE data using co_code from companyData and co_code from bseData
+        const bseMatch = bseData.find(bse => bse.co_code === company.co_code);
+  
+        if (bseMatch) {
+          return {
+            co_code: company.co_code,
+            BSECode: company.BSECode,
+            NSESymbol: company.NSESymbol,
+            CompanyName: company.CompanyName,
+            CompanyShortName: company.CompanyShortName,
+            CategoryName: company.CategoryName,
+            isin: company.isin,
+            BSEGroup: company.BSEGroup,
+            mcaptype: company.mcaptype,
+            SectorCode: company.SectorCode,
+            SectorName: company.SectorName,
+            BSEListed: company.BSEListed,
+            NSEListed: company.NSEListed,
+            DisplayType: company.DisplayType,
+            price: bseMatch.price,
+            Open: bseMatch.Open,
+            High: bseMatch.High,
+            Low: bseMatch.Low,
+            prevclose: bseMatch.prevclose,
+            Volume: bseMatch.Volume,
+            Tr_Date: bseMatch.Tr_Date
+          };
+        }
+      }).filter(Boolean);  // Remove undefined results if no match was found
+  
+      console.log("Combined Data:", combinedData);  // Log the combined data
+  
+      return res.json({
+        status: true,
+        data: combinedData
+      });
+  
+    } catch (error) {
+      console.error('Error fetching or merging data:', error);
+      return res.status(500).json({ status: false, message: "Server error", data: error });
+    }
+  }
+  
+
+  async addPlanSubscriptionAddToCart(req, res) {
+    try {
+      const { plan_ids, client_id, price, discount, orderid, coupon_code } = req.body;
+
+      // Validate input
+      if (!plan_ids || !Array.isArray(plan_ids) || plan_ids.length === 0 || !client_id) {
+          return res.status(400).json({ status: false, message: 'Missing required fields' });
+      }
+
+
+      const length = 6;
+      const digits = '0123456789';
+      let orderNumber = '';
+
+      for (let i = 0; i < length; i++) {
+        orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
+      }
+
+
+      for (const plan_id of plan_ids) {
+      // Fetch the plan and populate the category
+      const plan = await Plan_Modal.findById(plan_id)
+        .populate('category')
+        .exec();
+
+      if (!plan) {
+        return res.status(404).json({ status: false, message: 'Plan not found' });
+      }
+    
+    
+
+
+      // Map plan validity to months
+      const validityMapping = {
+        '1 month': 1,
+        '3 months': 3,
+        '6 months': 6,
+        '9 months': 9,
+        '1 year': 12,
+        '2 years': 24,
+        '3 years': 36,
+        '4 years': 48,
+        '5 years': 60
+      };
+
+      const monthsToAdd = validityMapping[plan.validity];
+      if (monthsToAdd === undefined) {
+        return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+      }
+
+      const start = new Date();
+      const end = new Date(start);
+      end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+      end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+
+      // Split the services in the category if they exist
+      const planservice = plan.category?.service;
+      const planservices = planservice ? planservice.split(',') : [];
+      // Loop through each service ID and update or add the plan
+      for (const serviceId of planservices) {
+        const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: serviceId }).exec();
+
+        if (existingPlan) {
+          // If the plan exists and the end date is still valid, extend it
+          if (existingPlan.enddate && existingPlan.enddate > new Date()) {
+            existingPlan.enddate.setMonth(existingPlan.enddate.getMonth() + monthsToAdd);
+          } else {
+            existingPlan.enddate = end;  // Set new end date if it has expired
+            existingPlan.startdate = start;
+          }
+
+
+          try {
+            const savedPlan = await Planmanage.updateOne(
+              { _id: existingPlan._id },  // Filter: find the document by its ID
+              {
+                $set: {
+                  enddate: existingPlan.enddate,  // Set the new end date
+                  startdate: existingPlan.startdate // Set the new start date
+                }
+              }  // Update fields
+            );
+            //  const savedPlan = await existingPlan.save();  
+            console.log("Plan updated successfully:", savedPlan);
+          } catch (error) {
+            console.error("Error saving updated plan:", error);
+          }
+        } else {
+
+          ////////////////// 17/10/2024 ////////////////////////
+
+          const today = new Date(); // Aaj ki date
+          const existingPlans = await Planmanage.find({
+            clientid: client_id,
+            serviceid: serviceId,
+            enddate: { $gt: today } // End date must be greater than today's date
+          })
+            .sort({ enddate: -1 }) // Sort by `enddate` in descending order
+            .limit(1) // Get the top result
+            .exec();
+
+          if (existingPlans.length > 0) {
+            const existingEndDate = existingPlans[0].enddate; // Get the enddate of the existing plan
+            const newEndDate = end; // Assuming `end` is your new plan's end date
+
+            // Check if the new end date is greater than the existing end date
+            if (newEndDate > existingEndDate) {
+
+              const differenceInTime = newEndDate.getTime() - existingEndDate.getTime(); // Difference in milliseconds
+              const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24)); // Convert milliseconds to days
+
+              let differenceInMonths;
+
+              // Logic to determine the number of months
+              if (differenceInDays < 15) {
+                differenceInMonths = 0; // Less than a month
+              } else {
+                // Calculate the difference in months
+                differenceInMonths = differenceInDays / 30; // Convert days to months
+              }
+
+              // Round the months based on your requirement
+              if (differenceInMonths % 1 >= 0.5) {
+                monthsToAdd = Math.ceil(differenceInMonths); // Round up to the nearest whole number
+              } else {
+                monthsToAdd = Math.floor(differenceInMonths); // Round down to the nearest whole number
+              }
+
+            }
+            else {
+              monthsToAdd = 0;
+            }
+          }
+
+          ////////////////// 17/10/2024 ////////////////////////
+
+          const newPlanManage = new Planmanage({
+            clientid: client_id,
+            serviceid: serviceId,
+            startdate: start,
+            enddate: end,
+          });
+
+          try {
+            await newPlanManage.save();  // Save the new plan
+            console.log(`Added new record for service ID: ${serviceId}`);
+          } catch (error) {
+            console.error("Error saving new plan:", error);
+          }
+        }
+
+      }
+
+      ////////////////// 17/10/2024 ////////////////////////
+      const currentDate = new Date();
+      const targetMonth = `${String(currentDate.getMonth() + 1).padStart(2, '0')}${currentDate.getFullYear()}`;
+
+      let license = await License_Modal.findOne({ month: targetMonth }).exec();
+
+
+      if (license) {
+        license.noofclient += monthsToAdd;
+        console.log('Month found, updating noofclient.', monthsToAdd);
+      } else {
+        license = new License_Modal({
+          month: targetMonth,
+          noofclient: monthsToAdd
+        });
+        console.log('Month not found, inserting new record.');
+      }
+
+      try {
+        await license.save();
+        console.log('License updated successfully.');
+      } catch (error) {
+        console.error('Error updating license:', error);
+      }
+
+
+      const numberOfPlans = plan_ids.length;
+      const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
+
+      ////////////////// 17/10/2024 ////////////////////////
+      // Create a new plan subscription record
+      const newSubscription = new PlanSubscription_Modal({
+        plan_id,
+        client_id,
+        total: plan.price-discountPerPlan,
+        plan_price: plan.price,
+        discount: discountPerPlan,
+        coupon: coupon_code,
+        plan_start: start,
+        plan_end: end,
+        validity: plan.validity,
+        orderid: orderid,
+        ordernumber:`INV-${orderNumber}`,
+        ordernumber:`INV-${orderNumber}.pdf`,
+      });
+
+      // Save the subscription
+      const savedSubscription = await newSubscription.save();
+
+    }
+
+      if (coupon_code) {
+        const resultc = await Coupon_Modal.findOne({
+          del: false,
+          status: true,
+          code: coupon_code
+        });
+
+
+        if (resultc) {
+
+          // Check if limitation is greater than 0 before decrementing
+          if (resultc.limitation > 0) {
+            const updatedResult = await Coupon_Modal.findByIdAndUpdate(
+              resultc._id,
+              { $inc: { limitation: -1 } }, // Decrease limitation by 1
+              { new: true } // Return the updated document
+            );
+          }
+
+        }
+      }
+
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+
+      if (!client) {
+        return console.log('Client not found or inactive.');
+      }
+
+
+      if (client.freetrial == 0) {
+        client.freetrial = 1;
+        await client.save();
+      }
+
+      const settings = await BasicSetting_Modal.findOne();
+
+      const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
+
+      if (client.refer_status && client.token) {
+        if (refertokens.length > 0) {
+        }
+        else {
+
+          const senderamount = (price * settings.sender_earn) / 100;
+          const receiveramount = (price * settings.receiver_earn) / 100;
+
+          const results = new Refer_Modal({
+            token: client.token,
+            user_id: client._id,
+            senderearn: settings.sender_earn,
+            receiverearn: settings.receiver_earn,
+            senderamount: senderamount,
+            receiveramount: receiveramount,
+            status: 1
+          })
+          await results.save();
+
+          client.wamount += receiveramount;
+          await client.save();
+          const sender = await Clients_Modal.findOne({ refer_token: client.token, del: 0, ActiveStatus: 1 });
+
+          if (sender) {
+            sender.wamount += senderamount;
+            await sender.save();
+          } else {
+            console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
+          }
+
+        }
+
+      }
+
+      if (refertokens.length > 0) {
+        for (const refertoken of refertokens) {
+          const senderamount = (price * refertoken.senderearn) / 100;
+          const receiveramount = (price * refertoken.receiverearn) / 100;
+
+          refertoken.senderamount = senderamount;
+          refertoken.receiveramount = receiveramount;
+          refertoken.status = 1;
+
+          await refertoken.save();
+
+          // Update client's wallet amount
+          client.wamount += receiveramount;
+          await client.save();
+
+          // Update sender's wallet amount
+          const sender = await Clients_Modal.findOne({ refer_token: refertoken.token, del: 0, ActiveStatus: 1 });
+
+          if (sender) {
+            sender.wamount += senderamount;
+            await sender.save();
+          } else {
+            console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
+          }
+        }
+      } else {
+        console.log('No referral tokens found.');
+      }
+
+      const adminnotificationTitle = "Important Update";
+      const adminnotificationBody = `Congratulations! ${client.FullName} successfully purchased the Plan`;
+      const resultnm = new Adminnotification_Modal({
+        clientid: client._id,
+        segmentid: "",
+        type: 'plan purchase',
+        title: adminnotificationTitle,
+        message: adminnotificationBody
+      });
+
+
+      await resultnm.save();
+
+      // if (plan.deliverystatus == true) {
+      //   client.deliverystatus = true;
+      //   await client.save();
+      // }
+
+      if (settings.invoicestatus == 1) {
+      
+
+        let payment_type;
+        if (orderid) {
+          payment_type = "Online";
+        }
+        else {
+          payment_type = "Offline";
+
+        }
+
+        const templatePath = path.join(__dirname, '../../../template', 'invoicenew.html');
+        let htmlContent = fs.readFileSync(templatePath, 'utf8');
+
+
+
+        let planDetailsHtml = '';
+        for (const plan_id of plan_ids) {
+          const plan = await Plan_Modal.findById(plan_id)
+            .populate('category')
+            .exec();
+
+            const validityMapping = {
+              '1 month': 1,
+              '3 months': 3,
+              '6 months': 6,
+              '9 months': 9,
+              '1 year': 12,
+              '2 years': 24,
+              '3 years': 36,
+              '4 years': 48,
+              '5 years': 60
+            };
+      
+            const monthsToAdd = validityMapping[plan.validity];
+            if (monthsToAdd === undefined) {
+              return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+            }
+      
+            const start = new Date();
+            const end = new Date(start);
+            end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+            end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+      
+
+
+
+          planDetailsHtml += `
+            <tr>
+              <td>${plan.category.title}</td>
+              <td>${plan.validity}</td>
+              <td>${plan.price}</td>
+              <td>${formatDate(start)}</td>
+              <td>${formatDate(end)}</td>
+            </tr>`;
+        }
+
+
+        const todays = new Date(); 
+
+        htmlContent = htmlContent
+          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+          .replace(/{{created_at}}/g, formatDate(todays))
+          .replace(/{{payment_type}}/g, payment_type)
+          .replace(/{{clientname}}/g, client.FullName)
+          .replace(/{{email}}/g, client.Email)
+          .replace(/{{PhoneNo}}/g, client.PhoneNo)
+          .replace(/{{plan_details}}/g, planDetailsHtml)
+          .replace(/{{total}}/g, price)
+          .replace(/{{plantype}}/g, "Plan")
+          .replace(/{{discount}}/g, discount);
+
+
+        const browser = await puppeteer.launch({
+          args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+        const page = await browser.newPage();
+        await page.setContent(htmlContent);
+
+        // Define the path to save the PDF
+        const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+
+        // Generate PDF and save to the specified path
+        await page.pdf({
+          path: pdfPath,
+          format: 'A4',
+          printBackground: true,
+          margin: {
+            top: '20mm',
+            right: '10mm',
+            bottom: '50mm',
+            left: '10mm',
+          },
+        });
+
+        await browser.close();
+
+   
+
+
+        const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
+        if (!mailtemplate || !mailtemplate.mail_body) {
+          throw new Error('Mail template not found');
+        }
+
+        const templatePaths = path.join(__dirname, '../../../template', 'mailtemplate.html');
+
+        fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
+          if (err) {
+            console.error('Error reading HTML template:', err);
+            return;
+          }
+
+          let finalMailBody = mailtemplate.mail_body
+            .replace('{clientName}', `${client.FullName}`);
+
+          const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+
+          // Replace placeholders with actual values
+          const finalHtml = htmlTemplate
+            .replace(/{{company_name}}/g, settings.website_title)
+            .replace(/{{body}}/g, finalMailBody)
+            .replace(/{{logo}}/g, logo);
+
+          const mailOptions = {
+            to: client.Email,
+            from: `${settings.from_name} <${settings.from_mail}>`,
+            subject: `${mailtemplate.mail_subject}`,
+            html: finalHtml,
+            attachments: [
+              {
+                filename: `INV-${orderNumber}.pdf`, // PDF file name
+                path: pdfPath, // Path to the PDF file
+              }
+            ]
+          };
+
+          // Send email
+          await sendEmail(mailOptions);
+        });
+
+      }
+      // Return success response
+      return res.status(201).json({
+        status: true,
+        message: 'Subscription added successfully',
+      });
+
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ status: false, message: 'Server error', data: [] });
+    }
+  }
+  
+  
+  async PurchasedBasketList(req, res) {
+    try {
+      const { clientid } = req.body; // assuming clientid is passed in the request
+  
+      // Convert clientid to ObjectId
+      const clientObjectId = new mongoose.Types.ObjectId(clientid);
+  
+      const currentDate = new Date();
+  
+      const result = await Basket_Modal.aggregate([
+        {
+          $lookup: {
+            from: 'basketsubscriptions',
+            localField: '_id',
+            foreignField: 'basket_id',
+            as: 'subscription_info',
+          },
+        },
+        {
+          $addFields: {
+            filteredSubscriptions: {
+              $filter: {
+                input: '$subscription_info',
+                as: 'sub',
+                cond: { $eq: ['$$sub.client_id', clientObjectId] },
+              },
+            },
+          },
+        },
+        {
+          $addFields: {
+            latestSubscription: {
+              $arrayElemAt: [
+                {
+                  $sortArray: {
+                    input: '$filteredSubscriptions',
+                    sortBy: { enddate: -1 },
+                  },
+                },
+                0,
+              ],
+            },
+          },
+        },
+        {
+          $addFields: {
+            isSubscribed: true,
+            isActive: {
+              $cond: {
+                if: {
+                  $and: [
+                    { $gt: [{ $size: '$filteredSubscriptions' }, 0] },
+                    { $gte: [currentDate, '$latestSubscription.startdate'] },
+                    { $lte: [currentDate, '$latestSubscription.enddate'] },
+                  ],
+                },
+                then: true,
+                else: false,
+              },
+            },
+          },
+        },
+        {
+          $match: {
+            'filteredSubscriptions.0': { $exists: true }, // Only include baskets with subscriptions
+            del: false,
+            status: true,
+          },
+        },
+        {
+          $lookup: {
+            from: 'basketstocks',
+            let: { basketId: { $toString: '$_id' } },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ['$basket_id', '$$basketId'] },
+                      { $eq: ['$status', 1] },
+                    ],
+                  },
+                },
+              },
+              {
+                $group: {
+                  _id: '$basket_id',
+                  maxVersion: { $max: '$version' },
+                },
+              },
+              {
+                $lookup: {
+                  from: 'basketstocks',
+                  let: { basketId: '$_id', maxVer: '$maxVersion' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $and: [
+                            { $eq: ['$basket_id', '$$basketId'] },
+                            { $eq: ['$version', '$$maxVer'] },
+                            { $eq: ['$status', 1] },
+                          ],
+                        },
+                      },
+                    },
+                  ],
+                  as: 'latestStocks',
+                },
+              },
+              { $unwind: '$latestStocks' },
+              { $replaceRoot: { newRoot: '$latestStocks' } },
+            ],
+            as: 'stock_details',
+          },
+        },
+        {
+          $project: {
+            basket_id: 1,
+            title: 1,
+            description: 1,
+            full_price: 1,
+            basket_price: 1,
+            mininvamount: 1,
+            accuracy: 1,
+            portfolioweightage: 1,
+            cagr: 1,
+            cagr_live: 1,
+            frequency: 1,
+            validity: 1,
+            next_rebalance_date: 1,
+            status: 1,
+            del: 1,
+            created_at: 1,
+            updated_at: 1,
+            type: 1,
+            themename: 1,
+            image: 1,
+            short_description: 1,
+            rationale: 1,
+            methodology: 1,
+            isActive: 1,
+            isSubscribed:1,
+            startdate: '$latestSubscription.startdate',
+            enddate: '$latestSubscription.enddate',
+            stock_details: {
+              $filter: {
+                input: '$stock_details',
+                as: 'stock',
+                cond: { $eq: ['$$stock.del', false] },
+              },
+            },
+          },
+        },
+      ]);
+  
+      res.status(200).json({
+        status: true,
+        message: 'Purchased baskets retrieved successfully.',
+        data: result,
+      });
+    } catch (error) {
+      console.error('Error retrieving purchased baskets:', error);
+      res.status(500).json({
+        status: false,
+        message: 'An error occurred while retrieving purchased baskets.',
+      });
+    }
+  }
+  
+  async addBasketSubscriptionAddToCart(req, res) {
+    try {
+      const { basket_ids, client_id, price, discount, orderid, coupon } = req.body;
+
+      // Validate input
+      if (!basket_ids || !Array.isArray(basket_ids) || basket_ids.length === 0 || !client_id) {
+        return res.status(400).json({ status: false, message: 'Missing required fields' });
+      }
+
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return console.log('Client not found or inactive.');
+      }
+
+      const settings = await BasicSetting_Modal.findOne();
+
+
+      const length = 6;
+      const digits = '0123456789';
+      let orderNumber = '';
+
+      for (let i = 0; i < length; i++) {
+        orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
+      }
+
+
+
+
+      for (const basket_id of basket_ids) {
+
+      const basket = await Basket_Modal.findOne({
+        _id: basket_id,
+        del: false
+      });
+
+
+      // Map plan validity to months
+      const validityMapping = {
+        '1 month': 1,
+        '3 months': 3,
+        '6 months': 6,
+        '9 months': 9,
+        '1 year': 12,
+        '2 years': 24,
+        '3 years': 36,
+        '4 years': 48,
+        '5 years': 60,
+      };
+
+      const monthsToAdd = validityMapping[basket.validity];
+      if (monthsToAdd === undefined) {
+        return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+      }
+
+      const start = new Date();
+      const end = new Date(start);
+      end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+      end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+
+      const numberOfPlans = basket_ids.length;
+      const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
+
+
+      // Create a new subscription
+      const newSubscription = new BasketSubscription_Modal({
+        basket_id,
+        client_id,
+        total: basket.basket_price-discountPerPlan,
+        plan_price: basket.basket_price,
+        discount: discountPerPlan,
+        coupon: coupon,
+        startdate: start,
+        enddate: end,
+        validity: basket.validity,
+        orderid: orderid,
+        ordernumber : `INV-${orderNumber}`,
+        invoice : `INV-${orderNumber}.pdf`,
+      });
+
+      // Save to the database
+      const savedSubscription = await newSubscription.save();
+    }
+
+      if (settings.invoicestatus == 1) {
+
+     
+
+        let payment_type;
+        if (orderid) {
+          payment_type = "Online";
+        }
+        else {
+          payment_type = "Offline";
+
+        }
+
+        const templatePath = path.join(__dirname, '../../../template', 'invoicenew.html');
+        let htmlContent = fs.readFileSync(templatePath, 'utf8');
+
+        let planDetailsHtml = '';
+
+        for (const basket_id of basket_ids) {
+
+          const basket = await Basket_Modal.findOne({
+            _id: basket_id,
+            del: false
+          });
+    
+    
+          // Map plan validity to months
+          const validityMapping = {
+            '1 month': 1,
+            '3 months': 3,
+            '6 months': 6,
+            '9 months': 9,
+            '1 year': 12,
+            '2 years': 24,
+            '3 years': 36,
+            '4 years': 48,
+            '5 years': 60,
+          };
+    
+          const monthsToAdd = validityMapping[basket.validity];
+          if (monthsToAdd === undefined) {
+            return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+          }
+    
+          const start = new Date();
+          const end = new Date(start);
+          end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+          end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+    
+
+        planDetailsHtml += `
+            <tr>
+              <td>${basket.title}</td>
+              <td>${basket.validity}</td>
+              <td>${basket.basket_price}</td>
+              <td>${formatDate(start)}</td>
+              <td>${formatDate(end)}</td>
+            </tr>`;
+        }
+
+
+        const todays = new Date(); 
+
+        htmlContent = htmlContent
+          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+          .replace(/{{created_at}}/g, formatDate(todays))
+          .replace(/{{payment_type}}/g, payment_type)
+          .replace(/{{clientname}}/g, client.FullName)
+          .replace(/{{email}}/g, client.Email)
+          .replace(/{{PhoneNo}}/g, client.PhoneNo)
+          .replace(/{{total}}/g, price)
+          .replace(/{{discount}}/g, discount)
+          .replace(/{{plan_details}}/g, planDetailsHtml)
+          .replace(/{{plantype}}/g, "Basket");
+
+
+        const browser = await puppeteer.launch({
+          args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+        const page = await browser.newPage();
+        await page.setContent(htmlContent);
+
+        // Define the path to save the PDF
+        const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+
+        // Generate PDF and save to the specified path
+        await page.pdf({
+          path: pdfPath,
+          format: 'A4',
+          printBackground: true,
+          margin: {
+            top: '20mm',
+            right: '10mm',
+            bottom: '50mm',
+            left: '10mm',
+          },
+        });
+
+        await browser.close();
+
+     
+
+
+        const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
+        if (!mailtemplate || !mailtemplate.mail_body) {
+          throw new Error('Mail template not found');
+        }
+
+
+
+        const templatePaths = path.join(__dirname, '../../../template', 'mailtemplate.html');
+
+        fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
+          if (err) {
+            console.error('Error reading HTML template:', err);
+            return;
+          }
+
+          let finalMailBody = mailtemplate.mail_body
+            .replace('{clientName}', `${client.FullName}`);
+
+          const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+
+          // Replace placeholders with actual values
+          const finalHtml = htmlTemplate
+            .replace(/{{company_name}}/g, settings.website_title)
+            .replace(/{{body}}/g, finalMailBody)
+            .replace(/{{logo}}/g, logo);
+
+          const mailOptions = {
+            to: client.Email,
+            from: `${settings.from_name} <${settings.from_mail}>`,
+            subject: `${mailtemplate.mail_subject}`,
+            html: finalHtml,
+            attachments: [
+              {
+                filename: `INV-${orderNumber}.pdf`, // PDF file name
+                path: pdfPath, // Path to the PDF file
+              }
+            ]
+          };
+
+          // Send email
+          await sendEmail(mailOptions);
+        });
+
+      }
+      // Respond with the created subscription
+      return res.status(201).json({
+        status: true,
+        message: 'Subscription added successfully',
+      });
+
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ status: false, message: 'Server error', data: [] });
+    }
+  }
+
+
+
+
 }
 
 
@@ -4504,6 +5667,10 @@ function formatDate(date) {
   return `${day}/${month}/${year}`;
 
 }
+
+
+
+ 
 
 
 

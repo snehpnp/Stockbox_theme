@@ -5,6 +5,7 @@ const Stock_Modal = db.Stock;
 const Notification_Modal = db.Notification;
 const Planmanage = db.Planmanage;
 const Order_Modal = db.Order;
+const Plancategory_Modal = db.Plancategory;
 
 mongoose  = require('mongoose');
 const Clients_Modal = db.Clients;
@@ -1155,6 +1156,264 @@ async allShowSignalsToClients(req, res) {
     return res.json({ status: false, message: "Server error", data: [] });
   }
 }
+
+
+
+async AddSignalwithPlan(req, res) {
+  try {
+
+    await new Promise((resolve, reject) => {
+      upload('report').fields([{ name: 'report', maxCount: 1 }])(req, res, (err) => {
+          if (err) {
+            
+              return reject(err);
+          }
+
+          resolve();
+      });
+  });
+
+
+      const { price,calltype,stock,tag1,tag2,tag3,stoploss,description,callduration,callperiod,add_by,expirydate,segment,optiontype,strikeprice,tradesymbol,lotsize,entrytype,lot,planid } = req.body;
+  
+  //    const report = req.files['report'] ? req.files['report'][0].filename : null;
+
+
+
+  const allowedMimeTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+
+const reportFile = req.files['report'] ? req.files['report'][0] : null;
+
+if (reportFile) {
+const fileMimeType = reportFile.mimetype; // Get the MIME type of the uploaded file
+if (!allowedMimeTypes.includes(fileMimeType)) {
+  return res.status(400).json({
+      status: false,
+      message: "Invalid file type. Only PDF and Word files are allowed.",
+  });
+}
+}
+
+// If validation passes, extract the filename
+const report = reportFile ? reportFile.filename : null;
+
+      var service;
+      var serviceName;
+// Set the service value based on the segment
+if (segment == "C") {
+service = "66d2c3bebf7e6dc53ed07626";
+serviceName = "Cash";
+
+} else if (segment == "O") {
+service = "66dfeef84a88602fbbca9b79";
+serviceName = "Option";
+} else {
+service = "66dfede64a88602fbbca9b72";
+serviceName = "Future";
+}
+
+
+
+let stocks;
+if (segment === "C") {
+stocks = await Stock_Modal.findOne({ 
+  symbol: stock, 
+  segment: segment, 
+});
+} else if (segment === "F") {
+stocks = await Stock_Modal.findOne({ 
+  symbol: stock, 
+  segment: segment, 
+  expiry: expirydate, 
+});
+} else {
+stocks = await Stock_Modal.findOne({ 
+  symbol: stock, 
+  segment: segment, 
+  expiry: expirydate, 
+   option_type: optiontype, 
+  strike: strikeprice 
+});
+}
+
+
+if (!stocks) {
+return res.status(404).json({
+ status: false,
+ message: "Stock not found"
+});
+}
+
+   
+      const result = new Signal_Modal({
+        price: price,
+        service: service,
+        strikeprice: strikeprice,
+        calltype: calltype,
+        callduration:callduration,
+        callperiod:callperiod,
+        stock: stock,
+        tag1: tag1,
+        tag2: tag2,
+        tag3:tag3,
+        targetprice1: tag1,
+        targetprice2: tag2,
+        targetprice3: tag3,
+        stoploss: stoploss,
+        description: description,
+        report: report,
+        add_by:add_by,
+        expirydate: expirydate,
+        segment:segment,
+        optiontype: optiontype,
+        tradesymbol:stocks.tradesymbol,
+        lotsize: stocks.lotsize,
+        entrytype:entrytype,
+        lot:lot,
+        planid:planid,
+    });
+
+
+      await result.save();
+
+      const planIds = planid.split(','); 
+
+
+      const today = new Date();
+
+      const clients = await Clients_Modal.find({
+        del: 0,
+        ActiveStatus: 1,
+        devicetoken: { $exists: true, $ne: null },
+        _id: {
+          $in: await PlanSubscription_Modal.find({
+            client_id: { $ne: null },  
+            plan_id: { $in: planIds },
+            plan_end: { $gte: today }, // Filter by plan_end date
+            del: false  // Optional: Ensure the plan subscription is not deleted
+          }).distinct('client_id')  // Get distinct client_ids
+        }
+      }).select('devicetoken');
+
+
+      const tokens = clients.map(client => client.devicetoken);
+      
+      if (tokens.length > 0) {
+
+
+      const notificationTitle = 'Important Update';
+      const notificationBody =`${serviceName} ${stock} ${calltype} AT ${price} OPEN`;
+        const resultn = new Notification_Modal({
+          segmentid:service,
+          type:'open signal',
+          title: notificationTitle,
+          message: notificationBody
+      });
+
+      await resultn.save();
+
+
+      try {
+      
+        await sendFCMNotification(notificationTitle, notificationBody, tokens,"open signal");
+      
+      } catch (error) {
+     
+      }
+
+
+      }
+    
+
+    return res.json({
+      status: true,
+      message: "Signal added successfully",
+      data: result,
+  });
+
+
+
+  } catch (error) {
+      // Enhanced error logging
+      // console.error("Error adding Signal:", error);
+
+      return res.status(500).json({
+          status: false,
+          message: "Server error",
+          error: error.message,
+      });
+  }
+}
+
+async getPlansByService(req, res) {
+  try {
+    const { serviceId } = req.body;
+    if (!serviceId) {
+      return res.status(400).json({
+        status: false,
+        message: "Service ID is required",
+      });
+    }
+
+    const serviceIdString = serviceId.toString();
+
+    const result = await Plancategory_Modal.aggregate([
+      {
+        $match: {
+          service: { $regex: `(^|,)${serviceIdString}(,|$)` }, // Use regex to match comma-separated values
+        },
+      },
+      {
+        $lookup: {
+          from: "plans", // Join with the plans collection
+          localField: "_id", // _id of PlanCategory
+          foreignField: "category", // category in Plan
+          as: "plans", // Resulting array of related plans
+        },
+      },
+      {
+        $unwind: "$plans", // Unwind the plans array to work with individual plans
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          service: 1,
+          status: 1,
+          created_at: 1,
+          updated_at: 1,
+          "plans._id": 1,
+          "plans.title": 1,
+          "plans.description": 1,
+          "plans.price": 1,
+          "plans.validity": 1,
+          "plans.status": 1,
+          "plans.deliverystatus": 1,
+          "plans.created_at": 1,
+          "plans.updated_at": 1,
+        },
+      },
+    ]);
+
+
+    console.log("Query result:", result);
+
+    return res.json({
+      status: true,
+      message: "Data retrieved successfully",
+      data: result,
+    });
+  } catch (error) {
+    console.error("Server error:", error.message);
+    return res.status(500).json({
+      status: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+}
+
+
 
 
 }

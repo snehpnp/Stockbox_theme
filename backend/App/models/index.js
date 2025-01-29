@@ -51,6 +51,8 @@ module.exports = {
     Company :require("./Company"),
     ThemeModal: require("./Theme"),
     Company1 :require("./Company1"),
+    Stockrating :require("./Stockrating"),
+
 
     open_position:open_position,
     open_position_excute:open_position_excute,

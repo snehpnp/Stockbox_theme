@@ -4,14 +4,18 @@ import { getMySubscription } from "../../../Services/UserService/User";
 import Content from "../../../components/Contents/Content";
 import { fDateTime } from "../../../../Utils/Date_formate";
 import ReusableModal from "../../../components/Models/ReusableModal";
+import Loader from "../../../../Utils/Loader";
+
 
 const Subscription = () => {
   const [planData, setPlanData] = useState([]);
-  const [activeTab, setActiveTab] = useState("plan"); // Tracks the active tab
-  const [selectedPlan, setSelectedPlan] = useState(null); // To store the selected plan data for modal
+  const [activeTab, setActiveTab] = useState("plan");
+  const [selectedPlan, setSelectedPlan] = useState(null);
   const [discription, setDiscription] = useState("");
   const id = localStorage.getItem("id");
   const token = localStorage.getItem("token");
+  const [isLoading, setIsLoading] = useState(true)
+
 
   const fetchMySubscription = async () => {
     try {
@@ -24,6 +28,7 @@ const Subscription = () => {
     } catch (err) {
       setPlanData([]);
     }
+    setIsLoading(false)
   };
 
   const columns = [
@@ -51,7 +56,7 @@ const Subscription = () => {
     setDiscription(plan);
   };
 
-  console.log(planData);
+
 
   const renderAccordionItems = () => {
     return planData.map((accordion) => (
@@ -164,13 +169,11 @@ const Subscription = () => {
         backbutton_status={false}
       >
         <div className="page-content">
-          {/* Tab Navigation */}
           <ul className="nav nav-pills mb-3 justify-content-center">
             <li className="nav-item">
               <button
-                className={`nav-link ${
-                  activeTab === "plan" ? "active btn-primary" : ""
-                }`}
+                className={`nav-link ${activeTab === "plan" ? "active btn-primary" : ""
+                  }`}
                 onClick={() => setActiveTab("plan")}
               >
                 Plan Subscription
@@ -178,9 +181,8 @@ const Subscription = () => {
             </li>
             <li className="nav-item">
               <button
-                className={`nav-link ${
-                  activeTab === "basket" ? "active btn-primary" : ""
-                }`}
+                className={`nav-link ${activeTab === "basket" ? "active btn-primary" : ""
+                  }`}
                 onClick={() => setActiveTab("basket")}
               >
                 Basket Subscription
@@ -188,8 +190,8 @@ const Subscription = () => {
             </li>
           </ul>
 
-          {/* Tab Content */}
-          {activeTab === "plan" && (
+
+          {isLoading ? <Loader /> : activeTab === "plan" && (
             <div>
               <div className="row">
                 {/* Static Plan Cards */}
@@ -226,7 +228,7 @@ const Subscription = () => {
 
           {activeTab === "basket" && (
             <div>
-              {/* Basket Subscription Content */}
+
               <div className="card">
                 <h1 className="card-header">Basket Subscription</h1>
                 <Table columns={columns} data={planData} />
@@ -236,25 +238,25 @@ const Subscription = () => {
         </div>
 
         <ReusableModal
-  size="xl"
-  show={discription}
-  onClose={() => setDiscription("")}
-  title="Description"
-  body={
-    <>
-      <div>
-        <p dangerouslySetInnerHTML={{ __html: discription }} />
-      </div>
-      <style jsx>{`
+          size="xl"
+          show={discription}
+          onClose={() => setDiscription("")}
+          title="Description"
+          body={
+            <>
+              <div>
+                <p dangerouslySetInnerHTML={{ __html: discription }} />
+              </div>
+              <style jsx>{`
         .modal-body img {
           max-width: 100%;
           max-height: 100%;
           object-fit: contain;
         }
       `}</style>
-    </>
-  }
-/>
+            </>
+          }
+        />
 
       </Content>
 
