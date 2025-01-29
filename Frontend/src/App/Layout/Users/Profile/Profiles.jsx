@@ -1,8 +1,11 @@
-  import React from "react";
+import React, { useRef, useState, useEffect } from "react";
   import { Link } from "react-router-dom";
   import Content from "../../../components/Contents/Content";
+  import ReusableModal from "../../../components/Models/ReusableModal";
 
   const Profiles = () => {
+  const [showModal, setShowModal] = useState(false);
+
     return (
       <Content
         Page_title="User Profile"
@@ -19,7 +22,9 @@
                 </div>
                 <ul className="list-group list-group-flush">
                 <li className="list-group-item">
-                    <Link to="/user/subscription">Change Password</Link>
+                    <Link  onClick={(e) => {
+                    setShowModal(true);
+                  }}>Change Password</Link>
                   </li>
                   <li className="list-group-item">
                     <Link to="/user/subscription">My Subscription</Link>
@@ -98,6 +103,43 @@
             </div>
           </div>
         </div>
+
+        <ReusableModal
+                  show={showModal}
+                  onClose={() => setShowModal(false)}
+                  title={<> Change Password</>}
+                  body={
+                    <>
+                      <div className="row">
+                        <div className="col-md-12">
+                        
+                        <input type="password"  className="form-control mb-3" placeholder="Old Password" />
+                        <input type="password"  className="form-control mb-3" placeholder="New Password" />
+                        <input type="password"  className="form-control " placeholder="Confirm Password" />
+                        </div>
+                      
+                      </div>
+                      
+                    </>
+                  }
+                  footer={
+                    <>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        
+                      >
+                        Save
+                      </button>
+                      <button
+                        className="btn btn-primary rounded-1"
+                        onClick={() => setShowModal(false)}
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  }
+                />
       </Content>
     );
   };
