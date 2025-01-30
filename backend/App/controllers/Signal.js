@@ -12,6 +12,7 @@ mongoose  = require('mongoose');
 const Clients_Modal = db.Clients;
 const { sendFCMNotification } = require('./Pushnotification'); // Adjust if necessary
 
+var axios = require('axios');
 
 
 
@@ -1426,6 +1427,25 @@ async getPlansByService(req, res) {
   }
 }
 
+async getSymbol(req, res) {
+  try {
+    const bseResponse = await axios.get("http://stockboxapis.cmots.com/api/BseNseDelayedData/NSE");
+    
+    const data = bseResponse.data;  // API se milne wala data
+
+    return res.status(200).json({
+      success: true,
+      message: "Data fetched successfully",
+      data: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+}
 
 
 
