@@ -302,7 +302,7 @@ const Subscription = () => {
         backbutton_status={false}
       >
         <div className="page-content">
-          <ul className="nav nav-pills mb-3 justify-content-center">
+          <ul className="nav nav-pills mb-3 justify-content-center border-bottom">
             <li className="nav-item">
               <button
                 className={`nav-link ${activeTab === "plan" ? "active btn-primary" : ""
@@ -367,6 +367,7 @@ const Subscription = () => {
                 id="accordionFlushExample"
               >
                 {renderAccordionItems1()}
+                
               </div>
             </div>
           )}
