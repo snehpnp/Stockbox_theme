@@ -607,7 +607,7 @@ class List {
             //  const savedPlan = await existingPlan.save();  
             console.log("Plan updated successfully:", savedPlan);
           } catch (error) {
-            console.error("Error saving updated plan:", error);
+            // console.error("Error saving updated plan:", error);
           }
         } else {
 
@@ -669,7 +669,7 @@ class List {
             await newPlanManage.save();  // Save the new plan
             console.log(`Added new record for service ID: ${serviceId}`);
           } catch (error) {
-            console.error("Error saving new plan:", error);
+            // console.error("Error saving new plan:", error);
           }
         }
 
@@ -697,7 +697,7 @@ class List {
         await license.save();
         console.log('License updated successfully.');
       } catch (error) {
-        console.error('Error updating license:', error);
+        // console.error('Error updating license:', error);
       }
 
 
@@ -787,7 +787,7 @@ class List {
             sender.wamount += senderamount;
             await sender.save();
           } else {
-            console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
+            // console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
           }
 
         }
@@ -816,7 +816,7 @@ class List {
             sender.wamount += senderamount;
             await sender.save();
           } else {
-            console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
+            // console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
           }
         }
       } else {
@@ -920,7 +920,7 @@ class List {
 
         fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
           if (err) {
-            console.error('Error reading HTML template:', err);
+            // console.error('Error reading HTML template:', err);
             return;
           }
 
@@ -961,7 +961,7 @@ class List {
       });
 
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -1112,7 +1112,7 @@ class List {
 
         fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
           if (err) {
-            console.error('Error reading HTML template:', err);
+            // console.error('Error reading HTML template:', err);
             return;
           }
 
@@ -1666,7 +1666,7 @@ class List {
       });
 
     } catch (error) {
-      console.error("Error fetching signals:", error);
+      // console.error("Error fetching signals:", error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -1837,7 +1837,7 @@ class List {
       });
 
     } catch (error) {
-      console.error("Error fetching signals:", error);
+      // console.error("Error fetching signals:", error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -1917,7 +1917,7 @@ class List {
       });
 
     } catch (error) {
-      console.error("Error fetching signals:", error);
+      // console.error("Error fetching signals:", error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -1984,7 +1984,7 @@ class List {
         }
       });
     } catch (error) {
-      console.error("Error fetching signals:", error);
+      // console.error("Error fetching signals:", error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -2272,7 +2272,7 @@ class List {
         data: result
       });
     } catch (error) {
-      console.error("Error retrieving baskets:", error);
+      // console.error("Error retrieving baskets:", error);
       res.status(500).json({
         status: false,
         message: "An error occurred while retrieving the baskets."
@@ -2414,7 +2414,7 @@ class List {
         data: result, // Return the aggregated result
       });
     } catch (error) {
-      console.error("Error fetching basket stock:", error);
+      // console.error("Error fetching basket stock:", error);
 
       // Handle any server errors gracefully
       return res.json({
@@ -2532,7 +2532,7 @@ class List {
         data: latestVersionStock,
       });
     } catch (error) {
-      console.error("Error fetching basket stock:", error);
+      // console.error("Error fetching basket stock:", error);
 
       // Handle any server errors gracefully
       return res.json({
@@ -2682,7 +2682,7 @@ class List {
 
 
     } catch (error) {
-      console.error("Error fetching basket stock:", error);
+      // console.error("Error fetching basket stock:", error);
 
       // Handle any server errors gracefully
       return res.json({
@@ -2746,7 +2746,7 @@ class List {
         data: orders,
       });
     } catch (error) {
-      console.error("Error fetching orders:", error);
+      // console.error("Error fetching orders:", error);
       return res.status(500).json({
         status: false,
         message: "Error fetching orders",
@@ -3048,7 +3048,7 @@ class List {
       });
 
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -3121,7 +3121,7 @@ class List {
       return res.status(200).json({ status: true, data: uniqueBroadcasts });
 
     } catch (error) {
-      console.error("Error fetching broadcasts:", error);
+      // console.error("Error fetching broadcasts:", error);
       return res.status(500).json({ status: false, message: "Internal server error" });
     }
   }
@@ -3158,7 +3158,7 @@ class List {
       });
 
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -3196,7 +3196,7 @@ class List {
       });
 
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -3353,7 +3353,7 @@ class List {
       });
 
     } catch (error) {
-      console.error("Error fetching signal details:", error);
+      // console.error("Error fetching signal details:", error);
 
       return res.status(500).json({
         status: false,
@@ -3425,7 +3425,7 @@ class List {
       });
 
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -4125,7 +4125,7 @@ class List {
           }
 
         } catch (innerError) {
-          console.error(`Error processing stock ${tradesymbol}:`, innerError);
+          // console.error(`Error processing stock ${tradesymbol}:`, innerError);
           continue; // Skip this stock in case of an error
         }
       }
@@ -4145,7 +4145,7 @@ class List {
       }
 
     } catch (error) {
-      console.error("Error placing order:", error);
+      // console.error("Error placing order:", error);
       res.status(500).json({
         status: false,
         message: "An error occurred while placing the order.",
@@ -4307,7 +4307,7 @@ class List {
 
           }
         } catch (innerError) {
-          console.error(`Error processing stock ${tradesymbol}:`, innerError);
+          // console.error(`Error processing stock ${tradesymbol}:`, innerError);
           continue; // Skip this stock in case of an error
         }
       }
@@ -4319,7 +4319,7 @@ class List {
 
 
     } catch (error) {
-      console.error("Error placing order:", error);
+      // console.error("Error placing order:", error);
       res.status(500).json({
         status: false,
         message: "An error occurred while placing the order.",
@@ -4378,7 +4378,7 @@ class List {
       });
     } catch (error) {
       // Log the error and return a 500 response
-      console.error("Error retrieving grouped orders:", error);
+      // console.error("Error retrieving grouped orders:", error);
       res.status(500).json({
         status: false,
         message: "An error occurred while retrieving the grouped orders."
@@ -4425,7 +4425,7 @@ class List {
         data: livePrices
       });
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -4454,7 +4454,7 @@ class List {
       });
 
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -4483,7 +4483,7 @@ class List {
       });
 
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -4582,7 +4582,7 @@ class List {
       });
 
     } catch (error) {
-      console.error("Error fetching signals:", error);
+      // console.error("Error fetching signals:", error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -4684,7 +4684,7 @@ class List {
         data: result
       });
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       return res.status(500).json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -4740,7 +4740,6 @@ class List {
         }
       }).filter(Boolean);  // Remove undefined results if no match was found
   
-      console.log("Combined Data:", combinedData);  // Log the combined data
   
       return res.json({
         status: true,
@@ -4748,7 +4747,6 @@ class List {
       });
   
     } catch (error) {
-      console.error('Error fetching or merging data:', error);
       return res.status(500).json({ status: false, message: "Server error", data: error });
     }
   }
@@ -4839,7 +4837,7 @@ class List {
             //  const savedPlan = await existingPlan.save();  
             console.log("Plan updated successfully:", savedPlan);
           } catch (error) {
-            console.error("Error saving updated plan:", error);
+            // console.error("Error saving updated plan:", error);
           }
         } else {
 
@@ -4901,7 +4899,7 @@ class List {
             await newPlanManage.save();  // Save the new plan
             console.log(`Added new record for service ID: ${serviceId}`);
           } catch (error) {
-            console.error("Error saving new plan:", error);
+            // console.error("Error saving new plan:", error);
           }
         }
 
@@ -4929,7 +4927,7 @@ class List {
         await license.save();
         console.log('License updated successfully.');
       } catch (error) {
-        console.error('Error updating license:', error);
+        // console.error('Error updating license:', error);
       }
 
 
@@ -5024,7 +5022,7 @@ class List {
             sender.wamount += senderamount;
             await sender.save();
           } else {
-            console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
+            // console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
           }
 
         }
@@ -5053,7 +5051,7 @@ class List {
             sender.wamount += senderamount;
             await sender.save();
           } else {
-            console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
+            // console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
           }
         }
       } else {
@@ -5189,7 +5187,7 @@ class List {
 
         fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
           if (err) {
-            console.error('Error reading HTML template:', err);
+            // console.error('Error reading HTML template:', err);
             return;
           }
 
@@ -5229,7 +5227,7 @@ class List {
       });
 
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -5397,7 +5395,7 @@ class List {
         data: result,
       });
     } catch (error) {
-      console.error('Error retrieving purchased baskets:', error);
+      // console.error('Error retrieving purchased baskets:', error);
       res.status(500).json({
         status: false,
         message: 'An error occurred while retrieving purchased baskets.',
@@ -5604,7 +5602,7 @@ class List {
 
         fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
           if (err) {
-            console.error('Error reading HTML template:', err);
+            // console.error('Error reading HTML template:', err);
             return;
           }
 

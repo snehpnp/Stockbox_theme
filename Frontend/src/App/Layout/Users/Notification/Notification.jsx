@@ -1,101 +1,94 @@
-import React, { useEffect, useState } from 'react';
-import Content from "../../../components/Contents/Content";
-import { GetCouponlist } from '../../../Services/UserService/User';
-import { fa_time } from '../../../../Utils/Date_formate';
-import Swal from 'sweetalert2';
-import { Bell } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { Bell } from "lucide-react";
+import { GetNotificationData } from "../../../Services/UserService/User";
 
 const Notification = () => {
+  const [notificationData, setNotificationData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [notificationsPerPage] = useState(5);
 
+  const token = localStorage.getItem("token");
+  const userid = localStorage.getItem("id");
 
+  // Get data from API
+  const GetNotificationDataApi = async () => {
+    try {
+      const response = await GetNotificationData({ user_id: userid }, token);
+      if (response.status) {
+        setNotificationData(response.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    return (
-        <div>
-        <Content
-          Page_title="Notification"
-          button_status={false}
-          backbutton_title="Back"
-          backbutton_status={false}
-        >
-          <div className="page-content">
-            <ul className="list-unstyled">
-              <li
-                className=" d-sm-flex align-items-center border-bottom py-2"
-                
-              >
-                <div
-                  className="rounded-circle p-1 border d-flex align-items-center justify-content-center btn-primary"
-                  style={{
-                    width: "40px",
-                    height: "40px",
-                 
-                    textAlign: "center",
-                  }}
-                >
-                   <Bell/>
-                </div>
-  
-                <div className="flex-grow-1 ms-sm-3">
-                 
-                  <h6 className="mt-0 mb-1">
-                    Unlock Unbeatable Exclusive redDeals!
-                  </h6>
-                 
-                </div>
-              </li>
-              <li
-                className=" d-sm-flex align-items-center border-bottom py-2"
-                
-              >
-                <div
-                  className="rounded-circle p-1 border d-flex align-items-center justify-content-center btn-primary"
-                  style={{
-                    width: "40px",
-                    height: "40px",
-                  
-                    textAlign: "center",
-                  }}
-                >
-                   <Bell/>
-                </div>
-  
-                <div className="flex-grow-1 ms-sm-3">
-                 
-                  <h6 className="mt-0 mb-1">
-                    Unlock Unbeatable Exclusive redDeals!
-                  </h6>
-                 
-                </div>
-              </li>
-              <li
-                className=" d-sm-flex align-items-center border-bottom py-2"
-                
-              >
-                <div
-                  className="rounded-circle p-1 border d-flex align-items-center justify-content-center btn-primary"
-                  style={{
-                    width: "40px",
-                    height: "40px",
-                    
-                    textAlign: "center",
-                  }}
-                >
-                   <Bell/>
-                </div>
-  
-                <div className="flex-grow-1 ms-sm-3">
-                 
-                  <h6 className="mt-0 mb-1">
-                    Unlock Unbeatable Exclusive redDeals!
-                  </h6>
-                 
-                </div>
-              </li>
-            </ul>
+  // Fetch notification data on page load
+  useEffect(() => {
+    GetNotificationDataApi();
+  }, []);
+
+  // Logic for pagination
+  const indexOfLastNotification = currentPage * notificationsPerPage;
+  const indexOfFirstNotification = indexOfLastNotification - notificationsPerPage;
+  const currentNotifications = notificationData.slice(indexOfFirstNotification, indexOfLastNotification);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  return (
+    <div className="page-content">
+      <div className="notifications-list">
+        {currentNotifications.map((notification, index) => (
+          <div key={index} className="notification-item d-flex align-items-center border-bottom py-3">
+            <div
+              className="rounded-circle p-2 border d-flex align-items-center justify-content-center btn-primary"
+              style={{ width: "50px", height: "50px", textAlign: "center" }}
+            >
+              <Bell />
+            </div>
+
+            <div className="flex-grow-1 ms-3">
+              <div className="d-flex justify-content-between align-items-center">
+                <h6 className="mt-0 mb-1 text-dark">{notification.title}</h6>
+                <small className="text-muted">
+                  {new Date(notification.createdAt).toLocaleString()}
+                </small>
+              </div>
+              <p className="mt-0 mb-1">{notification.message}</p>
+            </div>
+
+            {/* Status Indicator */}
+            <div className="ms-3">
+              {notification.status === 0 ? (
+                <span className="badge" style={{ backgroundColor: "#3c763d", color: "#fff" }}>
+                  ✔️ Viewed
+                </span>
+              ) : (
+                <span className="badge" style={{ backgroundColor: "#f0ad4e", color: "#fff" }}>
+                  ⏳ Unseen
+                </span>
+              )}
+            </div>
           </div>
-        </Content>
+        ))}
       </div>
-    );
+
+      {/* Pagination */}
+      <nav>
+        <ul className="pagination justify-content-center mt-4">
+          {Array.from({ length: Math.ceil(notificationData.length / notificationsPerPage) }).map((_, index) => (
+            <li key={index} className={`page-item ${currentPage === index + 1 ? "active" : ""}`}>
+              <button
+                className="page-link"
+                onClick={() => paginate(index + 1)}
+              >
+                {index + 1}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  );
 };
 
 export default Notification;
