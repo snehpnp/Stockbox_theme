@@ -8,7 +8,6 @@ import { basicsettinglist } from "../../Services/Admin/Admin";
 import $ from "jquery";
 import BgImg from "./bg-login-img.png";
 const Userlogin = () => {
-
   const navigate = useNavigate();
   let logoSrc =
     "https://www.pms.crmplus.in/files/system/_file5c2e1123e834d-site-logo.png";
@@ -18,7 +17,6 @@ const Userlogin = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
   const [information, setInformation] = useState([]);
@@ -26,11 +24,6 @@ const Userlogin = () => {
   const togglePasswordVisibility = (e) => {
     e.preventDefault();
     setShowPassword(!showPassword);
-  };
-
-  const toggleConfirmPasswordVisibility = (e) => {
-    e.preventDefault();
-    setShowConfirmPassword(!showConfirmPassword);
   };
 
   const handleLogin = async (e) => {
@@ -51,9 +44,7 @@ const Userlogin = () => {
     if (ResData.status) {
       localStorage.setItem("token", ResData.data?.token);
       localStorage.setItem("id", ResData.data?.id);
-      localStorage.setItem(
-        "Role", "USER"
-      );
+      localStorage.setItem("Role", "USER");
 
       Swal.fire({
         icon: "success",
@@ -72,7 +63,6 @@ const Userlogin = () => {
       });
     }
   };
-
 
   const handleLogin1 = async (e) => {
     e.preventDefault();
@@ -99,14 +89,16 @@ const Userlogin = () => {
     setIsLoading(true); // Set loading state before making the API request
 
     try {
-      const ResData = await UserLoginApi({ UserName: email, password: password });
+      const ResData = await UserLoginApi({
+        UserName: email,
+        password: password,
+      });
 
       if (ResData.status) {
         localStorage.setItem("token", ResData.data?.token);
         localStorage.setItem("id", ResData.data?.id);
         localStorage.setItem("Role", "USER");
 
-        // Cache only the email and token for security
         localStorage.setItem("email", email);
 
         Swal.fire({
@@ -119,29 +111,22 @@ const Userlogin = () => {
           window.location.reload();
         });
       } else {
-
         errors.other = ResData.message;
         setErrors(errors);
       }
-
     } catch (error) {
-
       errors.password = "An error occurred while processing your request.";
       setErrors(errors);
-
     } finally {
       setIsLoading(false); // Always stop loading after the API call completes
     }
   };
-
-
 
   const getsettinglist = async () => {
     try {
       let token = "";
       const response = await basicsettinglist(token);
       if (response.status) {
-        ;
         localStorage.setItem("theme", JSON.stringify(response?.Theme));
 
         const faviconElement = document.querySelector("link[rel='icon']");
@@ -161,20 +146,13 @@ const Userlogin = () => {
     }
   };
 
-
-
-
   useEffect(() => {
     getsettinglist();
   }, []);
 
-
-
-
   return (
     <div className="main-login" style={{ backgroundImage: `url(${BgImg})` }}>
       <div className="row align-items-center h-100">
-
         <div className="col-lg-12 mx-auto">
           {status === 1 ? (
             <div className="login-wrapper">
@@ -194,7 +172,6 @@ const Userlogin = () => {
                       />
                     </div>
                     <div className="form-item">
-
                       <input
                         id="password-login"
                         placeholder="Password"
@@ -313,104 +290,134 @@ const Userlogin = () => {
               </div>
             </div>
           ) : (
-            <div
-              style={{
-                width: "90%",
-                maxWidth: "350px",
-                margin: "auto",
-                padding: "30px",
-                background: "#fff",
-                borderRadius: "10px",
-                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-                textAlign: "center",
-              }}
-            >
-              <div>
-                <img
-                  style={{ width: "241px" }}
-                  src={`${image_baseurl}uploads/basicsetting/${information[0]?.logo}`}
-                />
-              </div>
-              <form onSubmit={handleLogin1} noValidate>
-                <div style={{ marginBottom: "15px", textAlign: "left" }}>
-                  <label
-                    htmlFor="email"
-                    style={{
-                      display: "block",
-                      fontWeight: "bold",
-                      marginBottom: "5px",
-                    }}
-                  >
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setemail(e.target.value)}
-                    placeholder="votremail@exemple.com"
+            <>
+              <div
+                style={{
+                  width: "90%",
+                  maxWidth: "400px",
+                  margin: "auto",
+                  padding: "40px",
+                  background: "#fff",
+                  borderRadius: "15px",
+                  boxShadow: "0 10px 20px rgba(0, 0, 0, 0.1)",
+                  textAlign: "center",
+                }}
+              >
+                <div>
+                  <img
                     style={{
                       width: "100%",
-                      padding: "10px",
-                      border: "1px solid #ccc",
-                      borderRadius: "5px",
-                      fontSize: "16px",
+                      maxWidth: "240px",
+                      marginBottom: "20px",
                     }}
+                    src={`${image_baseurl}uploads/basicsetting/${information[0]?.logo}`}
+                    alt="Logo"
                   />
-                  {errors.email && <div style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>{errors.email}</div>}
                 </div>
-                <div style={{ marginBottom: "15px", textAlign: "left" }}>
-                  <label
-                    htmlFor="password"
-                    style={{
-                      display: "block",
-                      fontWeight: "bold",
-                      marginBottom: "5px",
-                    }}
-                  >
-                    Mot de passe
-                  </label>
-                  <input
-                    type="password"
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Votre mot de passe"
-                    style={{
-                      width: "100%",
-                      padding: "10px",
-                      border: "1px solid #ccc",
-                      borderRadius: "5px",
-                      fontSize: "16px",
-                    }}
-                  />
-                  {errors.password && <div style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>{errors.password}</div>}
-                </div>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  style={{
-                    width: "100%",
-                    padding: "10px",
-                    border: "none",
-                    borderRadius: "5px",
-                    background: isLoading ? "#ccc" : "#007bff",
-                    color: "white",
-                    fontSize: "16px",
-                    cursor: isLoading ? "not-allowed" : "pointer",
-                    transition: "background 0.3s",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {isLoading ? "Connexion en cours..." : "Se connecter"}
-                </button>
-                {errors.other && <div style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>{errors.other}</div>}
+                <form onSubmit={handleLogin1} noValidate>
+                  <div style={{ marginBottom: "20px", textAlign: "left" }}>
+                    <label
+                      htmlFor="email"
+                      style={{
+                        display: "block",
+                        fontWeight: "bold",
+                        marginBottom: "8px",
+                        fontSize: "14px",
+                      }}
+                    >
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      value={email}
+                      onChange={(e) => setemail(e.target.value)}
+                      placeholder="Enter your email"
+                      style={{
+                        width: "100%",
+                        padding: "12px",
+                        border: "1px solid #ccc",
+                        borderRadius: "8px",
+                        fontSize: "16px",
+                        boxSizing: "border-box",
+                        transition: "border-color 0.3s",
+                      }}
+                    />
+                    {errors.email && (
+                      <div style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>
+                        {errors.email}
+                      </div>
+                    )}
+                  </div>
 
-              </form>
-            </div>
-          )}
+                  <div style={{ marginBottom: "20px", textAlign: "left" }}>
+                    <label
+                      htmlFor="password"
+                      style={{
+                        display: "block",
+                        fontWeight: "bold",
+                        marginBottom: "8px",
+                        fontSize: "14px",
+                      }}
+                    >
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      id="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Your password"
+                      style={{
+                        width: "100%",
+                        padding: "12px",
+                        border: "1px solid #ccc",
+                        borderRadius: "8px",
+                        fontSize: "16px",
+                        boxSizing: "border-box",
+                        transition: "border-color 0.3s",
+                      }}
+                    />
+                    {errors.password && (
+                      <div style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>
+                        {errors.password}
+                      </div>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    style={{
+                      width: "100%",
+                      padding: "12px",
+                      border: "none",
+                      borderRadius: "8px",
+                      background: isLoading ? "#ddd" : "#007bff",
+                      color: "#fff",
+                      fontSize: "16px",
+                      cursor: isLoading ? "not-allowed" : "pointer",
+                      transition: "background-color 0.3s ease-in-out",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {isLoading ? "Logging in..." : "Log In"}
+                  </button>
+
+                  {errors.other && (
+                    <div style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>
+                      {errors.other}
+                    </div>
+                  )}
+                </form>
+              </div>
+
+            </>
+          )
+          }
         </div>
       </div>
+
     </div>
   );
 };

@@ -506,3 +506,51 @@ export async function ChangePasswordOfclient(data, token) {
         return err.response?.data || err.message;
     }
 }
+
+export async function UpdateUserProfile(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/update-profile`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    }   
+    catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+export async function DeleteClient(data, token) {
+    try{
+        const res = await axios.get(`${Config.base_url}api/client/deleteclient/:${data}`, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+
+    }catch(err){
+        return err.response?.data || err.message;
+    }
+}
+
+export async function DeleteDematAccount(data, token) {
+    try{
+        const res = await axios.post(`${Config.base_url}api/client/deletebrokerlink`, data,{
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+
+    }catch(err){
+        return err.response?.data || err.message;
+    }
+}

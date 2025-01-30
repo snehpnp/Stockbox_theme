@@ -5,6 +5,9 @@ import FormicForm from "../../../Extracomponents/Newformicform";
 import { useFormik } from "formik";
 import Content from "../../../components/Contents/Content";
 import { GetUserData } from "../../../Services/UserService/User";
+import { UpdateBroker } from "../../../Services/UserService/User";
+
+
 const Demat = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
@@ -13,6 +16,21 @@ const Demat = () => {
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
+  const getuserdetail = async () => {
+    try {
+      const response = await GetUserData(userid, token);
+      if (response.status) {
+        setUserDetail(response.data?.brokerid);
+        setDlinkstatus(response.data?.dlinkstatus == 1);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  useEffect(() => {
+    getuserdetail();
+  }, []);
 
   const handleShowModal = (title) => {
     setModalTitle(title);
@@ -20,35 +38,6 @@ const Demat = () => {
   };
 
   const handleCloseModal = () => setShowModal(false);
-
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-      password: "",
-    },
-    validate: (values) => {
-      const errors = {};
-
-      if (!values.email) {
-        errors.email = "Required";
-      } else if (
-        !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
-      ) {
-        errors.email = "Invalid email address";
-      }
-
-      if (!values.password) {
-        errors.password = "Required";
-      } else if (values.password.length < 6) {
-        errors.password = "Password should be at least 6 characters";
-      }
-
-      return errors;
-    },
-    onSubmit: (values) => {
-      console.log("Form data", values);
-    },
-  });
 
   const brokers = [
     {
@@ -74,43 +63,72 @@ const Demat = () => {
     },
   ];
 
+
   const brokerFieldsMap = {
-    1: [{ key: "apikey", label: "API Key", type: "text" }],
+    1: [{ name: "apikey", key: "apikey", label: "API Key", type: "text" }],
     2: [
-      { key: "AppCode", label: "App Code", type: "text" },
-      { key: "alice_userid", label: "User ID", type: "tel" },
-      { key: "apisecret", label: "API Secret", type: "text" },
+      { name: "AppCode", key: "AppCode", label: "App Code", type: "text" },
+      {
+        name: "alice_userid",
+        key: "alice_userid",
+        label: "User ID",
+        type: "tel",
+      },
+      {
+        name: "apisecret",
+        key: "apisecret",
+        label: "API Secret",
+        type: "text",
+      },
     ],
     3: [
-      { key: "apikey", label: "API Key", type: "text" },
-      { key: "apisecret", label: "API Secret", type: "text" },
-      { key: "user_name", label: "Username", type: "text" },
-      { key: "pass_word", label: "Password", type: "password" },
+      { name: "apikey", key: "apikey", label: "API Key", type: "text" },
+      {
+        name: "apisecret",
+        key: "apisecret",
+        label: "API Secret",
+        type: "text",
+      },
+      { name: "user_name", key: "user_name", label: "Username", type: "text" },
+      {
+        name: "pass_word",
+        key: "pass_word",
+        label: "Password",
+        type: "password",
+      },
     ],
     4: [
-      { key: "apikey", label: "API Key", type: "text" },
-      { key: "apisecret", label: "API Secret", type: "text" },
-      { key: "Password", label: "Password", type: "password" },
+      { name: "apikey", key: "apikey", label: "API Key", type: "text" },
+      {
+        name: "apisecret",
+        key: "apisecret",
+        label: "API Secret",
+        type: "text",
+      },
+      {
+        name: "Password",
+        key: "Password",
+        label: "Password",
+        type: "password",
+      },
     ],
   };
-
-  const getuserdetail = async () => {
-    try {
-      const response = await GetUserData(userid, token);
-      if (response.status) {
-        setUserDetail(response.data?.brokerid);
-        setDlinkstatus(response.data?.dlinkstatus == 1);
-      }
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
-
-  useEffect(() => {
-    getuserdetail();
-  }, []);
-
   const fieldTypes = brokerFieldsMap[userDetail || 1];
+
+  const formik = useFormik({
+    initialValues: fieldTypes.reduce((acc, field) => {
+      acc[field.key] = ""; // Initialize each field with an empty string
+      return acc;
+    }, {}),
+    enableReinitialize: true,
+    validate: (values) => {},
+    onSubmit: async(values) => {
+      let data = { ...values, brokerid: userDetail, id: userid };
+      console.log("data", data);
+      // const loginData = await UpdateBroker(data, token);
+      // console.log("loginData", loginData);
+    },
+  });
 
   return (
     <div>
