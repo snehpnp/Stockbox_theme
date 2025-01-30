@@ -4,20 +4,11 @@ import { Link } from "react-router-dom";
 
 const NewsCard = ({ news }) => {
   const [showModal, setShowModal] = useState(false); // State to toggle the main modal visibility
-  const [showNestedModal, setShowNestedModal] = useState(false); // State to toggle the nested modal visibility
   const [modalImage, setModalImage] = useState(""); // State to store clicked image
 
   const handleImageClick = (image) => {
     setModalImage(image); // Set the image to display in the modal
     setShowModal(true); // Open the main modal
-  };
-
-  const handleShowNestedModal = () => {
-    setShowNestedModal(true); // Open the nested modal
-  };
-
-  const handleCloseNestedModal = () => {
-    setShowNestedModal(false); // Close the nested modal
   };
 
   return (
@@ -40,14 +31,25 @@ const NewsCard = ({ news }) => {
       </div>
       <div className="card-body">
         <p dangerouslySetInnerHTML={{ __html: news.description }} />
+        <div className="mt-3">
+          {/* Display create and update date */}
+          <p>
+            <strong>Created on:</strong> {new Date(news.created_at).toLocaleDateString()}
+          </p>
+          {news.updated_at && (
+            <p>
+              <strong>Updated on:</strong> {new Date(news.updated_at).toLocaleDateString()}
+            </p>
+          )}
+        </div>
       </div>
       <div className="card-footer">
-        <Link
+        {/* <Link
           to={`/user/newsdetail/${news.id}`}
           className="btn btn-primary w-100"
         >
           Read More
-        </Link>
+        </Link> */}
       </div>
 
       {/* Main Modal for Fullscreen Image */}
