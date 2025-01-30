@@ -1,25 +1,13 @@
 import React, { useState } from 'react'
 import Content from "../../../components/Contents/Content";
 import { Doughnut } from "react-chartjs-2";
-import ReusableModal from "../../../components/Models/ReusableModal";
+import { Link } from 'react-router-dom';
 
 function Basket() {
 
-  const handleCloseModal = () => setShowModal(false);
-  const Viewdetails = () => setShowModal(true);
-  const [showModal, setShowModal] = useState(false);
 
-  // Static data for Doughnut chart
-  const chartData = {
-    labels: ["Hit Ratio", "Miss Ratio"],
-    datasets: [
-      {
-        data: [80, 20], // Static values
-        backgroundColor: ["#4CAF50", "#FF5252"],
-        hoverBackgroundColor: ["#66BB6A", "#FF867F"],
-      },
-    ],
-  };
+
+
 
   // Static details
   const details = {
@@ -87,12 +75,10 @@ function Basket() {
                   </span>
                 </li>
                 <li className="list-group-item  align-items-center ">
-                  <button
-                    onClick={Viewdetails}
-                    className="card-link btn btn-sm btn-primary w-100 text-white"
-                  >
+                  <Link to='/user/basketdetail' className="btn btn-primary w-100">
                     View Details
-                  </button>
+                  </Link>
+                
                 </li>
               </ul>
             </div>
@@ -133,12 +119,9 @@ function Basket() {
                   </span>
                 </li>
                 <li className="list-group-item  align-items-center ">
-                  <button
-                    onClick={Viewdetails}
-                    className="card-link btn btn-sm btn-primary w-100 text-white"
-                  >
+                <Link to='/user/basketdetail' className="btn btn-primary w-100">
                     View Details
-                  </button>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -179,12 +162,9 @@ function Basket() {
                   </span>
                 </li>
                 <li className="list-group-item  align-items-center ">
-                  <button
-                    onClick={Viewdetails}
-                    className="card-link btn btn-sm btn-primary w-100 text-white"
-                  >
+                <Link to='/user/basketdetail' className="btn btn-primary w-100">
                     View Details
-                  </button>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -359,73 +339,7 @@ function Basket() {
         </div>
       </div>
 
-      <ReusableModal
-        show={showModal}
-        onClose={handleCloseModal}
-        title={<><h4 className="card-title">{details.name}</h4>
-          <p className="fs-6 mb-0"><b>Accuracy:</b> {details.accuracy}</p></>}
-        body=
-        {<div>
-          <div className="">
-
-
-            <h5>Basic Details</h5>
-
-
-            <ul className="list-group list-group-flush list shadow-none">
-              <li className="list-group-item d-flex justify-content-between align-items-center">
-                Minimum Investment
-                <span className="badge bg-dark rounded-pill">
-                  ₹{details.minInvestment}
-                </span>
-              </li>
-              <li className="list-group-item d-flex justify-content-between align-items-center">
-                CAGR
-                <span className="badge bg-success rounded-pill">
-                  {details.cagr}
-                </span>
-              </li>
-              <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
-                Type
-                <span className="badge bg-danger rounded-pill">
-                  {details.type}
-                </span>
-              </li>
-              <li className="list-group-item d-flex justify-content-between align-items-center">
-                Theme
-                <span className="badge bg-warning rounded-pill">
-                  {details.theme}
-                </span>
-              </li>
-              <li className="list-group-item d-flex justify-content-between align-items-center">
-                No. of Stocks
-                <span className="badge bg-info rounded-pill">
-                  {details.noOfStocks}
-                </span>
-              </li>
-              <li className="list-group-item d-flex justify-content-between align-items-center">
-                Next Rebalance Date
-                <span className="badge bg-primary rounded-pill">
-                  {details.nextRebalanceDate}
-                </span>
-              </li>
-
-            </ul>
-            <hr />
-
-            <div className="row px-4">
-              <div className="col-md-6">
-                <h6>Description</h6>
-                <p>{details.description}</p>
-              </div>
-              <div className="col-md-6"> <Doughnut data={chartData} /></div>
-
-            </div>
-          </div>
-        </div>
-        }
-
-      />
+   
 
 
     </Content>
