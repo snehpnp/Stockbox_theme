@@ -470,7 +470,7 @@ const Coupon = () => {
                     <hr />
                     <div className="card">
                         <div className="card-body">
-                            <div className="d-lg-flex align-items-center mb-4 gap-3">
+                            <div className="d-sm-flex align-items-center  gap-3">
                                 <div className="position-relative">
                                     <input
                                         type="text"
@@ -483,7 +483,7 @@ const Coupon = () => {
                                         <i className="bx bx-search" />
                                     </span>
                                 </div>
-                                {permission.includes("addcoupon") ? <div className="ms-auto">
+                                {permission.includes("addcoupon") ? <div className="ms-auto mt-3 mt-sm-0">
                                     <Link
                                         to="/employee/addcoupon"
                                         className="btn btn-primary"
@@ -499,10 +499,7 @@ const Coupon = () => {
 
 
                         </div>
-                    </div>
-                </div>
-
-                {isLoading ? (
+                        {isLoading ? (
                     <Loader />
                 ) : (
                     <>
@@ -513,6 +510,10 @@ const Coupon = () => {
                         />
                     </>
                 )}
+                    </div>
+                </div>
+
+               
                 {/* <div className="button-group">
 
                     <div

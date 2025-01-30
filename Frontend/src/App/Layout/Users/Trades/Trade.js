@@ -391,7 +391,7 @@ function Trade() {
 
 
   return (
-    <Content Page_title="Trade" button_title="Add Trade" button_status={true}>
+    <Content Page_title="Trade" button_title="Add Trade" button_status={false}>
       <div className="page-content">
         <div>
           <label htmlFor="planSelect" className="mb-1">

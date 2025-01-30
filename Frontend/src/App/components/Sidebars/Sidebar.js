@@ -37,7 +37,9 @@ import {
   FileUser,
   MessageCircleMore,
   FileQuestion,
-  CircleUserRound
+  CircleUserRound,
+  Bell,
+  Puzzle
 } from "lucide-react";
 
 import { Link, useLocation } from "react-router-dom";
@@ -270,7 +272,9 @@ const IconComponent = ({ icon }) => {
     FileUser,
     MessageCircleMore,
     FileQuestion,
-    CircleUserRound
+    CircleUserRound,
+    Bell,
+    Puzzle
 
   };
 

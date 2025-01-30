@@ -1168,3 +1168,10 @@ span.trade-type1 {
   padding-right: 5px;
 }
 
+.fs-14
+{
+  font-size: 14px;
+}
+li.fs-14 {
+  padding: 5px 0;
+}

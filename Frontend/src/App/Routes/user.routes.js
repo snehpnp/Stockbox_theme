@@ -22,6 +22,10 @@ import Userkyc from "../Layout/Users/Profile/Kyc";
 import HelpDesk from "../Layout/Users/HelpDesk/HelpDesk";
 import BrokerReponse from "../Layout/Users/Trades/BrokerReponse";
 import BasketDetail from "../Layout/Users/Basket/BasketDetail";
+import Notification from "../Layout/Users/Notification/Notification";
+import Broadcast from "../Layout/Users/Broadcast/Broadcast";
+import News from "../Layout/Users/News/News";
+import NewsDetail from "../Layout/Users/News/NewsDetail";
 
 export default function App() {
   return (
@@ -48,6 +52,11 @@ export default function App() {
       <Route path="/help-desk" element={<HelpDesk />} />
       <Route path="/broker-response" element={<BrokerReponse />} />
       <Route path="/basketdetail" element={<BasketDetail />} />
+      <Route path="/notification" element={<Notification />} />
+      <Route path="/broadcast" element={<Broadcast />} />
+      <Route path="/news" element={<News />} />
+      <Route path="/newsdetail" element={<NewsDetail />} />
+
     </Routes>
   );
 }

@@ -715,7 +715,7 @@ const Client = () => {
 
                     <div className="card">
                         <div className="card-body">
-                            <div className="d-lg-flex align-items-center mb-4 gap-3">
+                            <div className="d-md-flex align-items-center mb-4 gap-3">
                                 <div className="position-relative">
                                     <input
                                         type="text"
@@ -732,7 +732,7 @@ const Client = () => {
                                 {permission.includes("addclient") && <div className="ms-auto">
                                     <Link
                                         to="/employee/addclient"
-                                        className="btn btn-primary"
+                                        className="btn btn-primary  mt-2 mt-md-0"
                                     >
                                         <i
                                             className="bx bxs-plus-square"
@@ -743,12 +743,12 @@ const Client = () => {
                                 </div>}
 
                                 <div
-                                    className="ms-2"
+                                    className="  mt-2 mt-md-0"
                                     onClick={(e) => getexportfile()}
                                 >
                                     <button
                                         type="button"
-                                        className="btn btn-primary float-end"
+                                        className="btn btn-primary float-md-end"
                                         data-toggle="tooltip"
                                         data-placement="top"
                                         title="Export To Excel"
@@ -775,8 +775,8 @@ const Client = () => {
 
 
                             </div>
-                            <div className="row mb-4">
-                                <div className="col-md-4 ">
+                            <div className="row">
+                                <div className="col-md-4 mb-3">
                                     <div>
                                         <label htmlFor="kycSelect">Select Kyc</label>
                                         <select
@@ -791,7 +791,7 @@ const Client = () => {
                                         </select>
                                     </div>
                                 </div>
-                                <div className="col-md-4">
+                                <div className="col-md-4 mb-3">
                                     <div >
                                         <label htmlFor="kycSelect">Select CreatedBy</label>
                                         <select
@@ -824,7 +824,7 @@ const Client = () => {
 
                                 </div>
                                 <div className="col-md-1">
-                                    <div className="refresh-icon mt-4">
+                                    <div className="refresh-icon mt-2">
                                         <RefreshCcw onClick={resethandle} />
                                     </div>
                                 </div>
