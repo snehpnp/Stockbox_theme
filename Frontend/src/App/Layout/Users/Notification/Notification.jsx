@@ -5,7 +5,7 @@ import { GetNotificationData } from "../../../Services/UserService/User";
 const Notification = () => {
   const [notificationData, setNotificationData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [notificationsPerPage] = useState(10);
+  const [notificationsPerPage] = useState(5);
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
@@ -59,11 +59,11 @@ const Notification = () => {
             {/* Status Indicator */}
             <div className="ms-3">
               {notification.status === 0 ? (
-                <span className="badge bg-success">
+                <span className="badge" style={{ backgroundColor: "#3c763d", color: "#fff" }}>
                   ✔️ Viewed
                 </span>
               ) : (
-                <span className="badge bg-warning">
+                <span className="badge" style={{ backgroundColor: "#f0ad4e", color: "#fff" }}>
                   ⏳ Unseen
                 </span>
               )}
