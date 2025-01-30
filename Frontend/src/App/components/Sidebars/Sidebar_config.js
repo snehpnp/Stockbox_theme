@@ -358,6 +358,13 @@ const User = [
     children: [],
   },
   {
+    name: "News",
+    label: "News",
+    icon: "Vote",
+    link: "/user/news",
+    children: [],
+  },
+  {
     name: "PaymentHistory",
     label: "Payment History",
     icon: "WalletCards",
