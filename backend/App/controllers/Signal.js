@@ -1355,7 +1355,19 @@ async getPlansByService(req, res) {
       });
     }
 
-    const serviceIdString = serviceId.toString();
+    let serviceIdString="";
+    if (serviceId == "C") {
+         serviceIdString = "66d2c3bebf7e6dc53ed07626";
+      } else if (serviceId == "O") {
+         serviceIdString = "66dfeef84a88602fbbca9b79";
+      } else {
+          serviceIdString = "66dfede64a88602fbbca9b72";
+      }
+      
+
+
+
+ //   const serviceIdString = serviceId.toString();
 
     const result = await Plancategory_Modal.aggregate([
       {
