@@ -13,7 +13,7 @@ const Userlogin = () => {
   let logoSrc =
     "https://www.pms.crmplus.in/files/system/_file5c2e1123e834d-site-logo.png";
 
-  const [status, setStatus] = useState(3);
+  const [status, setStatus] = useState(2);
   const [email, setemail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -76,39 +76,39 @@ const Userlogin = () => {
 
   const handleLogin1 = async (e) => {
     e.preventDefault();
-  
+
     let errors = {};
     if (!email) {
       errors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       errors.email = "Please enter a valid email address";
     }
-  
+
     if (!password) {
       errors.password = "Password is required";
     } else if (password.length < 6) {
       errors.password = "Password must be at least 6 characters long";
     }
-  
+
     // Set errors before exiting early
     if (Object.keys(errors).length > 0) {
       setErrors(errors);
       return; // Early exit if there are errors
     }
-  
+
     setIsLoading(true); // Set loading state before making the API request
-  
+
     try {
       const ResData = await UserLoginApi({ UserName: email, password: password });
-  
+
       if (ResData.status) {
         localStorage.setItem("token", ResData.data?.token);
         localStorage.setItem("id", ResData.data?.id);
-        localStorage.setItem("Role","USER");
-  
+        localStorage.setItem("Role", "USER");
+
         // Cache only the email and token for security
         localStorage.setItem("email", email);
-  
+
         Swal.fire({
           icon: "success",
           title: "Success",
@@ -120,12 +120,12 @@ const Userlogin = () => {
         });
       } else {
 
-      errors.other = ResData.message;
-      setErrors(errors);
+        errors.other = ResData.message;
+        setErrors(errors);
       }
 
     } catch (error) {
-  
+
       errors.password = "An error occurred while processing your request.";
       setErrors(errors);
 
@@ -133,7 +133,7 @@ const Userlogin = () => {
       setIsLoading(false); // Always stop loading after the API call completes
     }
   };
-  
+
 
 
   const getsettinglist = async () => {
@@ -314,100 +314,100 @@ const Userlogin = () => {
             </div>
           ) : (
             <div
-            style={{
-              width: "90%",
-              maxWidth: "350px",
-              margin: "auto",
-              padding: "30px",
-              background: "#fff",
-              borderRadius: "10px",
-              boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-              textAlign: "center",
-            }}
-          >
-            <div>
-              <img
-                style={{ width: "241px" }}
-                src={`${image_baseurl}uploads/basicsetting/${information[0]?.logo}`}
-              />
-            </div>
-            <form onSubmit={handleLogin1} noValidate>
-              <div style={{ marginBottom: "15px", textAlign: "left" }}>
-                <label
-                  htmlFor="email"
-                  style={{
-                    display: "block",
-                    fontWeight: "bold",
-                    marginBottom: "5px",
-                  }}
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setemail(e.target.value)}
-                  placeholder="votremail@exemple.com"
+              style={{
+                width: "90%",
+                maxWidth: "350px",
+                margin: "auto",
+                padding: "30px",
+                background: "#fff",
+                borderRadius: "10px",
+                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+                textAlign: "center",
+              }}
+            >
+              <div>
+                <img
+                  style={{ width: "241px" }}
+                  src={`${image_baseurl}uploads/basicsetting/${information[0]?.logo}`}
+                />
+              </div>
+              <form onSubmit={handleLogin1} noValidate>
+                <div style={{ marginBottom: "15px", textAlign: "left" }}>
+                  <label
+                    htmlFor="email"
+                    style={{
+                      display: "block",
+                      fontWeight: "bold",
+                      marginBottom: "5px",
+                    }}
+                  >
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setemail(e.target.value)}
+                    placeholder="votremail@exemple.com"
+                    style={{
+                      width: "100%",
+                      padding: "10px",
+                      border: "1px solid #ccc",
+                      borderRadius: "5px",
+                      fontSize: "16px",
+                    }}
+                  />
+                  {errors.email && <div style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>{errors.email}</div>}
+                </div>
+                <div style={{ marginBottom: "15px", textAlign: "left" }}>
+                  <label
+                    htmlFor="password"
+                    style={{
+                      display: "block",
+                      fontWeight: "bold",
+                      marginBottom: "5px",
+                    }}
+                  >
+                    Mot de passe
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Votre mot de passe"
+                    style={{
+                      width: "100%",
+                      padding: "10px",
+                      border: "1px solid #ccc",
+                      borderRadius: "5px",
+                      fontSize: "16px",
+                    }}
+                  />
+                  {errors.password && <div style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>{errors.password}</div>}
+                </div>
+                <button
+                  type="submit"
+                  disabled={isLoading}
                   style={{
                     width: "100%",
                     padding: "10px",
-                    border: "1px solid #ccc",
+                    border: "none",
                     borderRadius: "5px",
+                    background: isLoading ? "#ccc" : "#007bff",
+                    color: "white",
                     fontSize: "16px",
-                  }}
-                />
-                {errors.email && <div style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>{errors.email}</div>}
-              </div>
-              <div style={{ marginBottom: "15px", textAlign: "left" }}>
-                <label
-                  htmlFor="password"
-                  style={{
-                    display: "block",
+                    cursor: isLoading ? "not-allowed" : "pointer",
+                    transition: "background 0.3s",
                     fontWeight: "bold",
-                    marginBottom: "5px",
                   }}
                 >
-                  Mot de passe
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Votre mot de passe"
-                  style={{
-                    width: "100%",
-                    padding: "10px",
-                    border: "1px solid #ccc",
-                    borderRadius: "5px",
-                    fontSize: "16px",
-                  }}
-                />
-                {errors.password && <div style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>{errors.password}</div>}
-              </div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                style={{
-                  width: "100%",
-                  padding: "10px",
-                  border: "none",
-                  borderRadius: "5px",
-                  background: isLoading ? "#ccc" : "#007bff",
-                  color: "white",
-                  fontSize: "16px",
-                  cursor: isLoading ? "not-allowed" : "pointer",
-                  transition: "background 0.3s",
-                  fontWeight: "bold",
-                }}
-              >
-                {isLoading ? "Connexion en cours..." : "Se connecter"}
-              </button>
-              {errors.other && <div style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>{errors.other}</div>}
+                  {isLoading ? "Connexion en cours..." : "Se connecter"}
+                </button>
+                {errors.other && <div style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>{errors.other}</div>}
 
-            </form>
-          </div>
+              </form>
+            </div>
           )}
         </div>
       </div>
