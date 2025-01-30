@@ -554,3 +554,19 @@ export async function DeleteDematAccount(data, token) {
         return err.response?.data || err.message;
     }
 }
+
+// /api/list/news
+
+export async function GetNewsData(token) {
+    try {
+        const res = await axios.get(`${Config.base_url}api/list/news`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
