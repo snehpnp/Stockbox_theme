@@ -175,8 +175,8 @@ const Plan = () => {
         
             
 
-            <div className="card">
-                <div className="card-body">
+            <div className="">
+                <div className="">
                     <ul className="nav nav-pills mb-1" role="tablist">
                         <li className="nav-item" role="presentation">
                             <a
@@ -277,10 +277,10 @@ const Plan = () => {
                                                                     <li><b className='mb-1'>Description</b>:<textarea className='form-control' value={stripHtmlTags(client.description || '')} >{client.description}</textarea></li>
                                                                     <li><b>Created At</b>: {fDateTime(client.created_at)}</li>
                                                                 </ul>
-                                                                <div className="button-group">
+                                                                <div className="button-group gap-2 d-sm-flex">
                                                                     <button
                                                                         type="button"
-                                                                        className="btnsecond btn btn-primary w-50"
+                                                                        className="btnsecond btn btn-primary w-100 w-sm-50"
                                                                         onClick={() => setShowViewModal(client._id)}
                                                                     >
                                                                         View More
@@ -342,7 +342,7 @@ const Plan = () => {
 
                                                                     <Link
                                                                         to={`editplan/${client._id}`}
-                                                                        className="btnprime btn btn-secondary ms-2"
+                                                                        className="btnprime btn btn-secondary mt-2 mt-sm-0 w-100 w-sm-50"
                                                                         style={{ color: 'inherit', textDecoration: 'none' }}
                                                                     >
                                                                         Edit

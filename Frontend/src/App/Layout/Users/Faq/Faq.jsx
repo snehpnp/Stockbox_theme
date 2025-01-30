@@ -39,7 +39,7 @@ const Faq = () => {
       <Content
         Page_title="FAQ"
         button_title="Add Basket"
-        button_status={true}
+        button_status={false}
       >
         <div className="page-content">
 
