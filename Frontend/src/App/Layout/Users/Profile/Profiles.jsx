@@ -10,6 +10,7 @@ import {
   GetUserData,
   UpdateUserProfile,
   DeleteClient,
+  DeleteDematAccount,
 } from "../../../Services/UserService/User";
 
 const Profiles = () => {
@@ -116,17 +117,17 @@ const Profiles = () => {
           }
         },
       });
-  
+
       if (!email) return; // If no email entered, exit.
-  
+
       if (email !== userDetail.Email) {
         Swal.fire("Error", "Email does not match", "error");
         return;
       }
-  
+
       let timerInterval;
       let isCancelled = false; // Track cancellation
-  
+
       await Swal.fire({
         title: "Account will be deleted in...",
         html: "<b>10</b> seconds remaining. <br><br> <button id='cancel-delete' class='swal2-cancel btn btn-danger'>Cancel</button>",
@@ -137,11 +138,11 @@ const Profiles = () => {
           const popup = Swal.getPopup();
           const timer = popup.querySelector("b");
           const cancelButton = popup.querySelector("#cancel-delete");
-  
+
           timerInterval = setInterval(() => {
             timer.textContent = Math.ceil(Swal.getTimerLeft() / 1000);
           }, 1000);
-  
+
           cancelButton.addEventListener("click", () => {
             isCancelled = true;
             Swal.close(); // Close the modal
@@ -151,29 +152,60 @@ const Profiles = () => {
           clearInterval(timerInterval);
         },
       });
-  
+
       if (isCancelled) {
         Swal.fire("Cancelled", "Account deletion was cancelled.", "info");
         return;
       }
-  
+
       // After the timer, proceed with the actual deletion
       const response = await DeleteClient(userDetail._id, token);
       console.log("response", response);
-  
+
       if (response.status) {
         Swal.fire("Deleted!", "Your account has been deleted.", "success");
         localStorage.removeItem("token");
         window.location.href = "/login"; // Redirect after deletion
       } else {
-        Swal.fire("Error!", response.message || "Something went wrong.", "error");
+        Swal.fire(
+          "Error!",
+          response.message || "Something went wrong.",
+          "error"
+        );
       }
     } catch (error) {
       console.error("Error deleting account:", error);
-      Swal.fire("Error!", "Failed to delete account. Try again later.", "error");
+      Swal.fire(
+        "Error!",
+        "Failed to delete account. Try again later.",
+        "error"
+      );
     }
   };
-  
+
+  const DeleteDematAccountApi = async () => {
+    try {
+      console.log("userDetail._id", userid);
+      const response = await DeleteDematAccount({ id: userid }, token);
+      if (response.status) {
+        Swal.fire("Deleted!", "Your account has been deleted.", "success" );
+        // window.location.reload();
+      } else {
+        Swal.fire(
+          "Error!",
+          response.message || "Something went wrong.",
+          "error"
+        );
+      }
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      Swal.fire(
+        "Error!",
+        "Failed to delete account. Try again later.",
+        "error"
+      );
+    }
+  };
 
   return (
     <Content
@@ -186,7 +218,15 @@ const Profiles = () => {
           <div className="col-lg-4 mb-4">
             <div className="card shadow-sm">
               <div className="card-body text-center">
-                <h4 className="mb-3">Test User</h4>
+                <img
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTox5GjcAiQFx_AhZfdb1Y4Y5TViXM613ATDg&s"
+                  alt="User"
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    backgroundColor: "#f1f1f1",
+                  }}
+                />
               </div>
               <ul className="list-group list-group-flush">
                 <li className="list-group-item">
@@ -205,6 +245,11 @@ const Profiles = () => {
                 </li>
                 <li className="list-group-item">
                   <Link to="">My Basket Subscription</Link>
+                </li>
+                <li className="list-group-item">
+                  <Link to="" onClick={(e) => DeleteDematAccountApi()}>
+                    Delete Demat Account
+                  </Link>
                 </li>
                 <li className="list-group-item">
                   <Link
