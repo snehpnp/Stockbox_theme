@@ -586,3 +586,21 @@ export async function GetBroadcastData(token) {
         return err;
     }
 }
+
+
+// /api/list/notification/$Id_notification?page=$_page
+
+export async function GetNotificationData(data, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}api/list/notification/${data.user_id}`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
