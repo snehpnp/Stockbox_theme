@@ -6,6 +6,7 @@ const Notification_Modal = db.Notification;
 const Planmanage = db.Planmanage;
 const Order_Modal = db.Order;
 const Plancategory_Modal = db.Plancategory;
+const PlanSubscription_Modal = db.PlanSubscription;
 
 mongoose  = require('mongoose');
 const Clients_Modal = db.Clients;
