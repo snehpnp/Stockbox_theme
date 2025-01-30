@@ -4740,7 +4740,6 @@ class List {
         }
       }).filter(Boolean);  // Remove undefined results if no match was found
   
-      console.log("Combined Data:", combinedData);  // Log the combined data
   
       return res.json({
         status: true,
