@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Tooltip } from 'antd';
+import { Tooltip } from "antd";
 import { SuperAdmin, Admin, User, Employee } from "../Sidebars/Sidebar_config";
 
 import {
@@ -33,18 +33,16 @@ import {
   ClipboardType,
   ShoppingCart,
   Cog,
-  UserCheck ,
+  UserCheck,
   FileUser,
   MessageCircleMore,
   FileQuestion,
-  CircleUserRound
+  CircleUserRound,
 } from "lucide-react";
 
 import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
-
-
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isTopbar, setIsTopbar] = useState(false);
   const [openTab, setOpenTab] = useState(null);
@@ -54,8 +52,10 @@ const Sidebar = () => {
     localStorage.getItem("Role") == "SUPERADMIN"
       ? SuperAdmin
       : localStorage.getItem("Role") == "ADMIN"
-        ? Admin
-        : localStorage.getItem("Role") == "USER" ? User : Employee
+      ? Admin
+      : localStorage.getItem("Role") == "USER"
+      ? User
+      : Employee
   );
 
   useEffect(() => {
@@ -109,7 +109,6 @@ const Sidebar = () => {
     }
   }, [isCollapsed]);
 
-
   return (
     <>
       <div
@@ -150,8 +149,9 @@ const Sidebar = () => {
                     {/* Parent Tab */}
                     <div
                       onClick={() => tab.children && toggleSubmenu(tab.name)}
-                      className={`sidebar-color sidebar-link ${location.pathname === tab.link ? "active" : ""
-                        }`}
+                      className={`sidebar-color sidebar-link ${
+                        location.pathname === tab.link ? "active" : ""
+                      }`}
                       style={{
                         display: "flex",
                         alignItems: "center",
@@ -163,22 +163,21 @@ const Sidebar = () => {
                     >
                       <Link
                         to={tab.link}
-                        className={`sidebar-color sidebar-link ${location.pathname === tab.link ? "active" : ""
-                          }`}
+                        className={`sidebar-color sidebar-link ${
+                          location.pathname === tab.link ? "active" : ""
+                        }`}
                         style={{
                           textDecoration: "none",
                           display: "flex",
                           alignItems: "center",
                         }}
-                      > 
+                      >
                         <Tooltip placement="top" title={tab?.name}>
-      <div>
-      <IconComponent icon={tab.icon} />
-      </div>
-    </Tooltip>
-                        {!isCollapsed ?     
-                        <span>{tab?.name}</span>
-                                : ""}
+                          <div>
+                            <IconComponent icon={tab.icon} />
+                          </div>
+                        </Tooltip>
+                        {!isCollapsed ? <span>{tab?.name}</span> : ""}
                       </Link>
                       {tab?.children?.length > 0 &&
                         (openTab === tab?.name ? (
@@ -201,27 +200,29 @@ const Sidebar = () => {
                         {tab.children.map((child) => (
                           <li
                             key={child.name}
-                            className={`sidebar-subitem ${location.pathname === child.link ? "active" : ""
-                              }`}
+                            className={`sidebar-subitem ${
+                              location.pathname === child.link ? "active" : ""
+                            }`}
                           >
                             <Link
                               to={child.link}
-                              className={`sidebar-color sidebar-sublink ${location.pathname === child.link ? "active" : ""
-                                }`}
+                              className={`sidebar-color sidebar-sublink ${
+                                location.pathname === child.link ? "active" : ""
+                              }`}
                               style={{
                                 textDecoration: "none",
                                 display: "flex",
                                 alignItems: "center",
                                 gap: "10px",
                               }}
-                            > <Tooltip placement="top" title={child.name}>
-                            <div>
-                              <IconComponent icon={child.icon} />
-                            </div>
-                          </Tooltip>
-                             
+                            >
+                              {" "}
+                              <Tooltip placement="top" title={child.name}>
+                                <div>
+                                  <IconComponent icon={child.icon} />
+                                </div>
+                              </Tooltip>
                               <span> {child.name}</span>
-                               
                             </Link>
                           </li>
                         ))}
@@ -232,8 +233,6 @@ const Sidebar = () => {
             </ul>
           </div>
         )}
-
-
       </div>
     </>
   );
@@ -270,8 +269,7 @@ const IconComponent = ({ icon }) => {
     FileUser,
     MessageCircleMore,
     FileQuestion,
-    CircleUserRound
-
+    CircleUserRound,
   };
 
   const Icon = icons[icon] || null;
