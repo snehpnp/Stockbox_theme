@@ -488,3 +488,21 @@ export async function ReferAndEarnData(data, token) {
         return err.response?.data || err.message;
     }
 }
+
+
+// chage client password
+
+export async function ChangePasswordOfclient(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/change-password`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}

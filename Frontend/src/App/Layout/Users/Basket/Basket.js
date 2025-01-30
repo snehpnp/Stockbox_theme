@@ -14,7 +14,7 @@ function Basket() {
     labels: ["Hit Ratio", "Miss Ratio"],
     datasets: [
       {
-        data: [80, 20], // Static values
+        data: [80, 20],
         backgroundColor: ["#4CAF50", "#FF5252"],
         hoverBackgroundColor: ["#66BB6A", "#FF867F"],
       },
