@@ -189,7 +189,7 @@ const Profiles = () => {
       const response = await DeleteDematAccount({ id: userid }, token);
       if (response.status) {
         Swal.fire("Deleted!", "Your account has been deleted.", "success" );
-        // window.location.reload();
+       
       } else {
         Swal.fire(
           "Error!",
