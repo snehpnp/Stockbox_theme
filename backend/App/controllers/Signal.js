@@ -1247,7 +1247,7 @@ return res.status(404).json({
 }
 
    
-      const result = new Signal_Modal({
+     /* const result = new Signal_Modal({
         price: price,
         service: service,
         strikeprice: strikeprice,
@@ -1276,9 +1276,46 @@ return res.status(404).json({
     });
 
 
-      await result.save();
-
+      await result.save(); */
+      
       const planIds = planid.split(','); 
+
+
+      const signalEntries = planIds.map(id => {
+
+      
+        return new Signal_Modal({
+            price: price,
+            service: service,
+            strikeprice: strikeprice,
+            calltype: calltype,
+            callduration: callduration,
+            callperiod: callperiod,
+            stock: stock,
+            tag1: tag1,
+            tag2: tag2,
+            tag3: tag3,
+            targetprice1: tag1,
+            targetprice2: tag2,
+            targetprice3: tag3,
+            stoploss: stoploss,
+            description: description,
+            report: report,
+            add_by: add_by,
+            expirydate: expirydate,
+            segment: segment,
+            optiontype: optiontype,
+            tradesymbol: stocks.tradesymbol,
+            lotsize: stocks.lotsize,
+            entrytype: entrytype,
+            lot: lot,
+            planid: id, // Use individual plan ID
+        });
+    });
+    
+    // Save all entries in one go
+    await Signal_Modal.insertMany(signalEntries);
+
 
 
       const today = new Date();
@@ -1306,7 +1343,7 @@ return res.status(404).json({
       const notificationTitle = 'Important Update';
       const notificationBody =`${serviceName} ${stock} ${calltype} AT ${price} OPEN`;
         const resultn = new Notification_Modal({
-          segmentid:service,
+          segmentid:planIds,
           type:'open signal',
           title: notificationTitle,
           message: notificationBody
@@ -1323,14 +1360,13 @@ return res.status(404).json({
      
       }
 
-
       }
     
 
     return res.json({
       status: true,
       message: "Signal added successfully",
-      data: result,
+    //  data: result,
   });
 
 
@@ -1367,26 +1403,13 @@ async getPlansByService(req, res) {
       }
       
 
-
-
- //   const serviceIdString = serviceId.toString();
-
     const result = await Plancategory_Modal.aggregate([
       {
         $match: {
           service: { $regex: `(^|,)${serviceIdString}(,|$)` }, // Use regex to match comma-separated values
+          del:false,
+          status:true,
         },
-      },
-      {
-        $lookup: {
-          from: "plans", // Join with the plans collection
-          localField: "_id", // _id of PlanCategory
-          foreignField: "category", // category in Plan
-          as: "plans", // Resulting array of related plans
-        },
-      },
-      {
-        $unwind: "$plans", // Unwind the plans array to work with individual plans
       },
       {
         $project: {
@@ -1396,15 +1419,7 @@ async getPlansByService(req, res) {
           status: 1,
           created_at: 1,
           updated_at: 1,
-          "plans._id": 1,
-          "plans.title": 1,
-          "plans.description": 1,
-          "plans.price": 1,
-          "plans.validity": 1,
-          "plans.status": 1,
-          "plans.deliverystatus": 1,
-          "plans.created_at": 1,
-          "plans.updated_at": 1,
+         
         },
       },
     ]);

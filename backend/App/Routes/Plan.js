@@ -1,6 +1,6 @@
 const router = require("express").Router()
 const { checkPermission } = require('../Middleware/permissionMiddleware'); // Path to your middleware
-const {AddPlan,getPlan,updatePlan,deletePlan,detailPlan,statusChange,activePlan,addPlanSubscription,paymentHistory,getPlanByClient,paymentHistoryWithFilter} = require('../Controllers/Plan')
+const {AddPlan,getPlan,updatePlan,deletePlan,detailPlan,statusChange,activePlan,addPlanSubscription,paymentHistory,getPlanByClient,paymentHistoryWithFilter,addPlanSubscriptionAddToCart} = require('../Controllers/Plan')
 
 
 const PERMISSIONS = {
@@ -26,5 +26,6 @@ router.post('/plan/addplansubscription', addPlanSubscription);
 router.get('/plan/paymenthistory', paymentHistory); 
 router.post('/plan/paymenthistorywithfilter', paymentHistoryWithFilter); 
 
+router.post('/plan/addplansubscriptionaddtocart', addPlanSubscriptionAddToCart); 
 
 module.exports = router;
