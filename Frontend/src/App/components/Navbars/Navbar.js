@@ -289,6 +289,8 @@ const [userNotification, setUserNotification] = useState([]);
     setViewModel(false); // Close the modal
   };
 
+  console.log("userNotification",userNotification)
+
   return (
     <>
       <nav
@@ -681,7 +683,7 @@ const [userNotification, setUserNotification] = useState([]);
                         }}
                       >
                         {
-                          clients?.filter(
+                          userNotification?.filter(
                             (notification) => notification?.status === 0
                           )?.length
                         }
@@ -697,8 +699,8 @@ const [userNotification, setUserNotification] = useState([]);
                         scrollbarColor: "#c1c1c1 transparent",
                       }}
                     >
-                      {clients?.length > 0 ? (
-                        clients?.map((notification, index) => (
+                      {userNotification?.length > 0 ? (
+                        userNotification?.map((notification, index) => (
                           <div
                             key={index}
                             className={`dropdown-item notification ${
