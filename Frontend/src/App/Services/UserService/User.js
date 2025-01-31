@@ -588,7 +588,6 @@ export async function GetBroadcastData(token) {
 }
 
 
-// /api/list/notification/$Id_notification?page=$_page
 
 export async function GetNotificationData(data, token) {
     try {
@@ -604,3 +603,18 @@ export async function GetNotificationData(data, token) {
     }
 }
 
+// api/list/blogspagination
+
+export async function GetBlogData(token) {
+    try {
+        const res = await axios.get(`${Config.base_url}api/list/blogspagination`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}

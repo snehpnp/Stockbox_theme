@@ -365,6 +365,15 @@ const User = [
     children: [],
   },
   {
+    name: "Blogs",
+    label: "Blogs",
+    icon: "Paintbrush",
+    link: "/user/blogs",
+    children: [],
+
+  }
+  ,
+  {
     name: "PaymentHistory",
     label: "Payment History",
     icon: "WalletCards",
