@@ -28,7 +28,6 @@ const BrokerReponse = () => {
             const data = { clientid: userid }
             const response = await BrokerResponsedata(data, token);
             if (response.status) {
-                // console.log("response response", response);
                 setResponseData(response?.data)
             }
         } catch (error) {
