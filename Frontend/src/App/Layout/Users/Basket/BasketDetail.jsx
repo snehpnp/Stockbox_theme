@@ -152,7 +152,7 @@ const BasketDetail = () => {
          
         </div>
     <div className="card-footer mt-3 text-center">
-      <button className="btn btn-primary w-50 mx-auto mt-3">View Detail</button>
+      <Link to="/user/basketstocklist" className="btn btn-primary w-50 mx-auto mt-3">View Detail</Link>
     </div>
     </Content>
   );
