@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
 import { GetNotificationData } from "../../../Services/UserService/User";
+import Content from '../../../components/Contents/Content';
+ 
 
 const Notification = () => {
   const [notificationData, setNotificationData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [notificationsPerPage] = useState(5);
+  const [notificationsPerPage] = useState(10);
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
@@ -35,6 +37,11 @@ const Notification = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
+    <Content 
+    Page_title="Notifications"
+    button_status={false}
+    backbutton_status={true}
+    >
     <div className="page-content">
       <div className="notifications-list">
         {currentNotifications.map((notification, index) => (
@@ -54,10 +61,6 @@ const Notification = () => {
                 </small>
               </div>
               <p className="mt-0 mb-1">{notification.message}</p>
-            </div>
-
-            {/* Status Indicator */}
-            <div className="ms-3">
               {notification.status === 0 ? (
                 <span className="badge" style={{ backgroundColor: "#3c763d", color: "#fff" }}>
                   ✔️ Viewed
@@ -68,6 +71,8 @@ const Notification = () => {
                 </span>
               )}
             </div>
+
+       
           </div>
         ))}
       </div>
@@ -88,6 +93,7 @@ const Notification = () => {
         </ul>
       </nav>
     </div>
+    </Content>
   );
 };
 

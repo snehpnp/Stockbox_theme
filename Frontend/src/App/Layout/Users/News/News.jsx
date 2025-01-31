@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
-import { Link } from "react-router-dom";
 import { GetNewsData } from "../../../Services/UserService/User";
-import NewsCard  from "./NewsCard";
+import NewsModal from "./NewsCard";
 
 const News = () => {
   const [newsData, setNewsData] = useState([]);
-const [NewsFullData, setNewsFullData] = useState([]);
+  const [selectedNews, setSelectedNews] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
   useEffect(() => {
     GetNewsData()
       .then((response) => {
-        console.log(response);
         if (response.status) {
           setNewsData(response.data);
         }
@@ -20,81 +20,100 @@ const [NewsFullData, setNewsFullData] = useState([]);
       });
   }, []);
 
-  const chunkedNewsData = () => {
-    const chunkSize = 3;
-    let result = [];
-    for (let i = 0; i < newsData.length; i += chunkSize) {
-      result.push(newsData.slice(i, i + chunkSize));
-    }
-    return result;
+  // Handle card click
+  const handleCardClick = (news) => {
+    setSelectedNews(news);
+    setModalOpen(true);
   };
 
   return (
     <div>
-      <Content
-        Page_title="News"
-        button_status={false}
-        backbutton_title="Back"
-        backbutton_status={false}
-      >
-        <div className="page-content">
-          <div
-            id="newsCarousel"
-            className="carousel slide"
-            data-bs-ride="carousel"
-          >
-            <div className="carousel-inner">
-              {chunkedNewsData().map((chunk, index) => (
+      <Content Page_title="News" button_status={false} backbutton_status={true}>
+        <div style={styles.container}>
+          <div style={styles.newsList}>
+            {newsData.length > 0 ? (
+              newsData.map((news, index) => (
                 <div
-                  className={`carousel-item ${index === 0 ? "active" : ""}`}
                   key={index}
+                  style={styles.card}
+                  onClick={() => handleCardClick(news)}
                 >
-                  <div className="row">
-                    {chunk.map((news, index) => (
-                      <div className="col-md-4 col-sm-6" key={index}>
-                        {" "}
-                        <NewsCard news={news} />{" "}
-                      </div>
-                    ))}
+                  <img
+                    src={news.image}
+                    alt="news"
+                    style={styles.image}
+                    loading="lazy"
+                  />
+                  <div style={styles.content}>
+                    <h3 style={styles.title}>{news.title}</h3>
+                    <p
+                      dangerouslySetInnerHTML={{
+                        __html: news.description.substring(0, 100) + "...",
+                      }}
+                    />
+                    <small style={styles.date}>
+                      {new Date(news.created_at).toLocaleDateString()}
+                    </small>
                   </div>
                 </div>
-              ))}
-            </div>
-            {/* Only show the controls if there are more than one carousel items */}
-            {chunkedNewsData().length > 1 && (
-              <>
-                <button
-                  className="carousel-control-prev"
-                  type="button"
-                  data-bs-target="#newsCarousel"
-                  data-bs-slide="prev"
-                >
-                  <span
-                    className="carousel-control-prev-icon"
-                    aria-hidden="true"
-                  ></span>
-                  <span className="visually-hidden">Previous</span>
-                </button>
-                <button
-                  className="carousel-control-next"
-                  type="button"
-                  data-bs-target="#newsCarousel"
-                  data-bs-slide="next"
-                >
-                  <span
-                    className="carousel-control-next-icon"
-                    aria-hidden="true"
-                  ></span>
-                  <span className="visually-hidden">Next</span>
-                </button>
-              </>
+              ))
+            ) : (
+              <p>No news available</p>
             )}
           </div>
         </div>
       </Content>
 
+      {/* Modal for News Details */}
+      {modalOpen && selectedNews && (
+        <NewsModal news={selectedNews} onClose={() => setModalOpen(false)} />
+      )}
     </div>
   );
+};
+
+const styles = {
+  container: {
+    padding: "10px",
+    textAlign: "center",
+  },
+  newsList: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "center",
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: "10px",
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+    overflow: "hidden",
+    margin: "15px",
+    width: "300px",
+    transition: "0.3s",
+    cursor: "pointer",
+  },
+  image: {
+    width: "100%",
+    height: "250px",
+    objectFit: "cover",
+  },
+  content: {
+    padding: "15px",
+  },
+  title: {
+    fontSize: "18px",
+    fontWeight: "bold",
+    marginBottom: "8px",
+  },
+  description: {
+    fontSize: "14px",
+    color: "#555",
+    marginBottom: "10px",
+  },
+  date: {
+    fontSize: "12px",
+    color: "#888",
+  },
 };
 
 export default News;
