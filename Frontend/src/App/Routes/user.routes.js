@@ -57,6 +57,9 @@ export default function App() {
       <Route path="/broadcast" element={<Broadcast />} />
       <Route path="/news" element={<News />} />
       <Route path="/newsdetail" element={<NewsDetail />} />
+      <Route path="/basketstocklist" element={<BasketStockList />} />
+      <Route path="/rebalancehistory" element={<RebalanceHistory />} />     
+ 
       <Route path="/blogs" element={<Blogs />} />
 
     </Routes>

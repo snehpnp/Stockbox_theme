@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 function Basket() {
 
-
+  const [activeTab, setActiveTab] = useState("allbasket");
 
 
 
@@ -37,140 +37,319 @@ function Basket() {
 
     >
 
+      <ul className="nav nav-pills mb-3 justify-content-center border-bottom">
+        <li className="nav-item">
+          <button
+            className={`nav-link ${activeTab === "allbasket" ? "active btn-primary" : ""
+              }`}
+            onClick={() => setActiveTab("allbasket")}
+          >
+            All Basket
+          </button>
+        </li>
+        <li className="nav-item">
+          <button
+            className={`nav-link ${activeTab === "subscribedbasket" ? "active btn-primary" : ""
+              }`}
+            onClick={() => setActiveTab("subscribedbasket")}
+          >
+            Subscribed Basket
+          </button>
+        </li>
+      </ul>
+      {activeTab === "allbasket" && (
+        <div className="row">
+          <div className="col-md-12 col-lg-4 mb-3">
+            <div className="card radius-10 overflow-hidden">
+              <div className="card-body">
+                <h5>Test(test)</h5>
+              </div>
+              <div className="progress-wrapper">
+                <div className="progress" style={{ height: 7 }}>
+                  <div
+                    className="progress-bar"
+                    role="progressbar"
+                    style={{ width: "75%" }}
+                  />
+                </div>
+              </div>
+              <div className="card-body">
+                <ul className="list-group list-group-flush list shadow-none">
+                  <li className="list-group-item d-flex justify-content-between align-items-center ">
+                    <p className='basket-short-description'>Lorem ipsum (/ˌlɔː.rəm ˈɪp.səm/ LOR-əm IP-səm) is a dummy or placeholder text commonly used in graphic design, publishing, and web development to fill empty spaces in a layout that does not yet have content.</p>
 
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center ">
+                    Minimum Investment
+                    <span className="badge bg-dark rounded-pill">
+                      100000
+                    </span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                    CAGR
+                    <span className="badge bg-success rounded-pill">
+                      2%
+                    </span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
+                    Validity
+                    <span className="badge bg-danger rounded-pill">
+                      3 month
+                    </span>
+                  </li>
+                  <li className="list-group-item  align-items-center ">
+                    <Link to='/user/basketdetail' className="btn btn-primary w-100">
+                      View Details
+                    </Link>
 
-      <div className="row">
-        <div className="col-md-12 col-lg-4 mb-3">
-          <div className="card radius-10 overflow-hidden">
-            <div className="card-body">
-              <h5>Test(test)</h5>
-            </div>
-            <div className="progress-wrapper">
-              <div className="progress" style={{ height: 7 }}>
-                <div
-                  className="progress-bar"
-                  role="progressbar"
-                  style={{ width: "75%" }}
-                />
+                  </li>
+                </ul>
               </div>
             </div>
-            <div className="card-body">
-              <ul className="list-group list-group-flush list shadow-none">
-                <li className="list-group-item d-flex justify-content-between align-items-center ">
-                  Minimum Investment
-                  <span className="badge bg-dark rounded-pill">
-                    100000
-                  </span>
-                </li>
-                <li className="list-group-item d-flex justify-content-between align-items-center">
-                  CAGR
-                  <span className="badge bg-success rounded-pill">
-                    2%
-                  </span>
-                </li>
-                <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
-                  Type
-                  <span className="badge bg-danger rounded-pill">
-                    Basket Type
-                  </span>
-                </li>
-                <li className="list-group-item  align-items-center ">
-                  <Link to='/user/basketdetail' className="btn btn-primary w-100">
-                    View Details
-                  </Link>
-                
-                </li>
-              </ul>
+          </div>
+          <div className="col-md-12 col-lg-4 mb-3">
+            <div className="card radius-10 overflow-hidden">
+              <div className="card-body">
+                <h5>Test(test)</h5>
+              </div>
+              <div className="progress-wrapper">
+                <div className="progress" style={{ height: 7 }}>
+                  <div
+                    className="progress-bar"
+                    role="progressbar"
+                    style={{ width: "75%" }}
+                  />
+                </div>
+              </div>
+              <div className="card-body">
+                <ul className="list-group list-group-flush list shadow-none">
+                  <li className="list-group-item d-flex justify-content-between align-items-center ">
+                    <p className='basket-short-description'>Lorem ipsum (/ˌlɔː.rəm ˈɪp.səm/ LOR-əm IP-səm) is a dummy or placeholder text commonly used in graphic design, publishing, and web development to fill empty spaces in a layout that does not yet have content.</p>
+
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center ">
+                    Minimum Investment
+                    <span className="badge bg-dark rounded-pill">
+                      100000
+                    </span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                    CAGR
+                    <span className="badge bg-success rounded-pill">
+                      2%
+                    </span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
+                    Validity
+                    <span className="badge bg-danger rounded-pill">
+                      3 month
+                    </span>
+                  </li>
+                  <li className="list-group-item  align-items-center ">
+                    <Link to='/user/basketdetail' className="btn btn-primary w-100">
+                      View Details
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-12 col-lg-4 mb-3">
+            <div className="card radius-10 overflow-hidden">
+              <div className="card-body">
+                <h5>Test(test)</h5>
+              </div>
+              <div className="progress-wrapper">
+                <div className="progress" style={{ height: 7 }}>
+                  <div
+                    className="progress-bar"
+                    role="progressbar"
+                    style={{ width: "75%" }}
+                  />
+                </div>
+              </div>
+              <div className="card-body">
+                <ul className="list-group list-group-flush list shadow-none">
+                  <li className="list-group-item d-flex justify-content-between align-items-center ">
+                    <p className='basket-short-description'>Lorem ipsum (/ˌlɔː.rəm ˈɪp.səm/ LOR-əm IP-səm) is a dummy or placeholder text commonly used in graphic design, publishing, and web development to fill empty spaces in a layout that does not yet have content.</p>
+
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center ">
+                    Minimum Investment
+                    <span className="badge bg-dark rounded-pill">
+                      100000
+                    </span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                    CAGR
+                    <span className="badge bg-success rounded-pill">
+                      2%
+                    </span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
+                    Validity
+                    <span className="badge bg-danger rounded-pill">
+                      3 month
+                    </span>
+                  </li>
+                  <li className="list-group-item  align-items-center ">
+                    <Link to='/user/basketdetail' className="btn btn-primary w-100">
+                      View Details
+                    </Link>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
-        <div className="col-md-12 col-lg-4 mb-3">
-          <div className="card radius-10 overflow-hidden">
-            <div className="card-body">
-              <h5>Test(test)</h5>
-            </div>
-            <div className="progress-wrapper">
-              <div className="progress" style={{ height: 7 }}>
-                <div
-                  className="progress-bar"
-                  role="progressbar"
-                  style={{ width: "75%" }}
-                />
+      )}
+
+      {activeTab === "subscribedbasket" && (
+        <div className="row">
+          <div className="col-md-12 col-lg-4 mb-3">
+            <div className="card radius-10 overflow-hidden">
+              <div className="card-body">
+                <h5>Test(test12)</h5>
+              </div>
+              <div className="progress-wrapper">
+                <div className="progress" style={{ height: 7 }}>
+                  <div
+                    className="progress-bar"
+                    role="progressbar"
+                    style={{ width: "75%" }}
+                  />
+                </div>
+              </div>
+              <div className="card-body">
+                <ul className="list-group list-group-flush list shadow-none">
+                  <li className="list-group-item d-flex justify-content-between align-items-center ">
+                    <p className='basket-short-description'>Lorem ipsum (/ˌlɔː.rəm ˈɪp.səm/ LOR-əm IP-səm) is a dummy or placeholder text commonly used in graphic design, publishing, and web development to fill empty spaces in a layout that does not yet have content.</p>
+
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center ">
+                    Minimum Investment
+                    <span className="badge bg-dark rounded-pill">
+                      100000
+                    </span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                    CAGR
+                    <span className="badge bg-success rounded-pill">
+                      2%
+                    </span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
+                    Validity
+                    <span className="badge bg-danger rounded-pill">
+                      3 month
+                    </span>
+                  </li>
+                  <li className="list-group-item  align-items-center ">
+                    <Link to='/user/basketdetail' className="btn btn-primary w-100">
+                      View Details
+                    </Link>
+
+                  </li>
+                </ul>
               </div>
             </div>
-            <div className="card-body">
-              <ul className="list-group list-group-flush list shadow-none">
-                <li className="list-group-item d-flex justify-content-between align-items-center ">
-                  Minimum Investment
-                  <span className="badge bg-dark rounded-pill">
-                    100000
-                  </span>
-                </li>
-                <li className="list-group-item d-flex justify-content-between align-items-center">
-                  CAGR
-                  <span className="badge bg-success rounded-pill">
-                    2%
-                  </span>
-                </li>
-                <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
-                  Type
-                  <span className="badge bg-danger rounded-pill">
-                    Basket Type
-                  </span>
-                </li>
-                <li className="list-group-item  align-items-center ">
-                <Link to='/user/basketdetail' className="btn btn-primary w-100">
-                    View Details
-                  </Link>
-                </li>
-              </ul>
+          </div>
+          <div className="col-md-12 col-lg-4 mb-3">
+            <div className="card radius-10 overflow-hidden">
+              <div className="card-body">
+                <h5>Test(test)</h5>
+              </div>
+              <div className="progress-wrapper">
+                <div className="progress" style={{ height: 7 }}>
+                  <div
+                    className="progress-bar"
+                    role="progressbar"
+                    style={{ width: "75%" }}
+                  />
+                </div>
+              </div>
+              <div className="card-body">
+                <ul className="list-group list-group-flush list shadow-none">
+                  <li className="list-group-item d-flex justify-content-between align-items-center ">
+                    <p className='basket-short-description'>Lorem ipsum (/ˌlɔː.rəm ˈɪp.səm/ LOR-əm IP-səm) is a dummy or placeholder text commonly used in graphic design, publishing, and web development to fill empty spaces in a layout that does not yet have content.</p>
+
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center ">
+                    Minimum Investment
+                    <span className="badge bg-dark rounded-pill">
+                      100000
+                    </span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                    CAGR
+                    <span className="badge bg-success rounded-pill">
+                      2%
+                    </span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
+                    Validity
+                    <span className="badge bg-danger rounded-pill">
+                      3 month
+                    </span>
+                  </li>
+                  <li className="list-group-item  align-items-center ">
+                    <Link to='/user/basketdetail' className="btn btn-primary w-100">
+                      View Details
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-12 col-lg-4 mb-3">
+            <div className="card radius-10 overflow-hidden">
+              <div className="card-body">
+                <h5>Test(test)</h5>
+              </div>
+              <div className="progress-wrapper">
+                <div className="progress" style={{ height: 7 }}>
+                  <div
+                    className="progress-bar"
+                    role="progressbar"
+                    style={{ width: "75%" }}
+                  />
+                </div>
+              </div>
+              <div className="card-body">
+                <ul className="list-group list-group-flush list shadow-none">
+                  <li className="list-group-item d-flex justify-content-between align-items-center ">
+                    <p className='basket-short-description'>Lorem ipsum (/ˌlɔː.rəm ˈɪp.səm/ LOR-əm IP-səm) is a dummy or placeholder text commonly used in graphic design, publishing, and web development to fill empty spaces in a layout that does not yet have content.</p>
+
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center ">
+                    Minimum Investment
+                    <span className="badge bg-dark rounded-pill">
+                      100000
+                    </span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                    CAGR
+                    <span className="badge bg-success rounded-pill">
+                      2%
+                    </span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
+                    Validity
+                    <span className="badge bg-danger rounded-pill">
+                      3 month
+                    </span>
+                  </li>
+                  <li className="list-group-item  align-items-center ">
+                    <Link to='/user/basketdetail' className="btn btn-primary w-100">
+                      View Details
+                    </Link>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
-        <div className="col-md-12 col-lg-4 mb-3">
-          <div className="card radius-10 overflow-hidden">
-            <div className="card-body">
-              <h5>Test(test)</h5>
-            </div>
-            <div className="progress-wrapper">
-              <div className="progress" style={{ height: 7 }}>
-                <div
-                  className="progress-bar"
-                  role="progressbar"
-                  style={{ width: "75%" }}
-                />
-              </div>
-            </div>
-            <div className="card-body">
-              <ul className="list-group list-group-flush list shadow-none">
-                <li className="list-group-item d-flex justify-content-between align-items-center ">
-                  Minimum Investment
-                  <span className="badge bg-dark rounded-pill">
-                    100000
-                  </span>
-                </li>
-                <li className="list-group-item d-flex justify-content-between align-items-center">
-                  CAGR
-                  <span className="badge bg-success rounded-pill">
-                    2%
-                  </span>
-                </li>
-                <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
-                  Type
-                  <span className="badge bg-danger rounded-pill">
-                    Basket Type
-                  </span>
-                </li>
-                <li className="list-group-item  align-items-center ">
-                <Link to='/user/basketdetail' className="btn btn-primary w-100">
-                    View Details
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
 
       <div className='mt-4'>
         <div
@@ -339,7 +518,7 @@ function Basket() {
         </div>
       </div>
 
-   
+
 
 
     </Content>
