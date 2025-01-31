@@ -3296,3 +3296,21 @@ export async function changestatusrebalance(data, token) {
         return err.response?.data || err.message;
     }
 }
+
+
+// get order listv 
+
+export async function getOrderlistofclient(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}client/orderlistdetail`, data, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}

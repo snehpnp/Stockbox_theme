@@ -192,6 +192,12 @@ const Admin = [
     name: "BasicSettings",
   },
   {
+    label: "Order List",
+    icon: "MessageCircleMore",
+    link: "/admin/orderlist",
+    name: "Order List"
+  },
+  {
     label: "Broadcast SMS",
     icon: "MessageCircleMore",
     link: "/admin/message",
