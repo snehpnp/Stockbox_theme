@@ -25,7 +25,10 @@ const News = () => {
     setSelectedNews(news);
     setModalOpen(true);
   };
-
+  const stripHtmlTags = (html) => {
+    return html.replace(/<\/?[^>]+(>|$)/g, ""); // Remove all HTML tags
+  };
+  
   return (
     <div>
       <Content Page_title="News" button_status={false} backbutton_status={true}>
@@ -50,6 +53,7 @@ const News = () => {
                       dangerouslySetInnerHTML={{
                         __html: news.description.substring(0, 100) + "...",
                       }}
+                      title={stripHtmlTags(news.description)} 
                     />
                     <small style={styles.date}>
                       {new Date(news.created_at).toLocaleDateString()}
