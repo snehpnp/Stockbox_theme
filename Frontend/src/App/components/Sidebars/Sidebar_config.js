@@ -301,10 +301,10 @@ const User = [
   //   children: [],
   // },
   {
-    name: "BasketResponse",
+    name: "Basket Response",
     label: "Basket Response",
     icon: "FolderClock",
-    link: "/user/basket_response",
+    link: "/user/basket-response",
     children: [],
   },
   {

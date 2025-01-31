@@ -517,14 +517,14 @@ export async function UpdateUserProfile(data, token) {
         });
 
         return res?.data;
-    }   
+    }
     catch (err) {
         return err.response?.data || err.message;
     }
 }
 
 export async function DeleteClient(data, token) {
-    try{
+    try {
         const res = await axios.get(`${Config.base_url}api/client/deleteclient/:${data}`, {
             headers: {
                 data: {},
@@ -534,14 +534,14 @@ export async function DeleteClient(data, token) {
 
         return res?.data;
 
-    }catch(err){
+    } catch (err) {
         return err.response?.data || err.message;
     }
 }
 
 export async function DeleteDematAccount(data, token) {
-    try{
-        const res = await axios.post(`${Config.base_url}api/client/deletebrokerlink`, data,{
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/deletebrokerlink`, data, {
             headers: {
                 data: {},
                 'Authorization': `${token}`,
@@ -550,7 +550,7 @@ export async function DeleteDematAccount(data, token) {
 
         return res?.data;
 
-    }catch(err){
+    } catch (err) {
         return err.response?.data || err.message;
     }
 }
@@ -608,6 +608,25 @@ export async function GetNotificationData(data, token) {
 export async function GetBlogData(token) {
     try {
         const res = await axios.get(`${Config.base_url}api/list/blogspagination`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+// basket order list 
+
+// /api/list/broadcast
+
+export async function Getbasketorderlist(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/basketorderlist`, data, {
             headers: {
                 Authorization: `${token}`,
             },
