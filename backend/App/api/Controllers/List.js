@@ -5823,6 +5823,13 @@ class List {
         client_id: client_id,
         status: false,
         basket_id: null, // Check for both null and empty string
+      }).populate('plan_id', 'price validity')  // Populate plan details
+       .populate({
+        path: 'plan_id', // The path to the plan
+        populate: {
+          path: 'category', // The field in Plan model that references the Plancategory
+          select: 'title' // Select only the 'title' from Plancategory
+        }
       });
   
       // Check if cart is empty
@@ -5867,7 +5874,7 @@ class List {
         client_id: client_id,
         status: false,
         plan_id: null, // Check for both null and empty string
-      });
+      }).populate('basket_id');
   
       // Check if cart is empty
       if (!cartItems.length) {
