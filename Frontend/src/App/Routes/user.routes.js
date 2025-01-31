@@ -26,8 +26,7 @@ import Notification from "../Layout/Users/Notification/Notification";
 import Broadcast from "../Layout/Users/Broadcast/Broadcast";
 import News from "../Layout/Users/News/News";
 import NewsDetail from "../Layout/Users/News/NewsDetail";
-import BasketStockList from "../Layout/Users/Basket/BasketStockList";
-import RebalanceHistory from "../Layout/Users/Basket/RebalanceHistory";
+import Blogs from '../Layout/Users/Blogs/Blogs'
 
 export default function App() {
   return (
@@ -61,6 +60,8 @@ export default function App() {
       <Route path="/basketstocklist" element={<BasketStockList />} />
       <Route path="/rebalancehistory" element={<RebalanceHistory />} />     
  
+      <Route path="/blogs" element={<Blogs />} />
+
     </Routes>
   );
 }

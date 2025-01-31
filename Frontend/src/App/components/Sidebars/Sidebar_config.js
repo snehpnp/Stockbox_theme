@@ -192,6 +192,12 @@ const Admin = [
     name: "BasicSettings",
   },
   {
+    label: "Order List",
+    icon: "MessageCircleMore",
+    link: "/admin/orderlist",
+    name: "Order List"
+  },
+  {
     label: "Broadcast SMS",
     icon: "MessageCircleMore",
     link: "/admin/message",
@@ -364,6 +370,15 @@ const User = [
     link: "/user/news",
     children: [],
   },
+  {
+    name: "Blogs",
+    label: "Blogs",
+    icon: "Paintbrush",
+    link: "/user/blogs",
+    children: [],
+
+  }
+  ,
   {
     name: "PaymentHistory",
     label: "Payment History",
