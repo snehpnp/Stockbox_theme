@@ -96,7 +96,6 @@ const ClientOrderlist = () => {
             const response = await getOrderlistofclient(data, token);
             if (response.status) {
                 let filteredData = response.data;
-                console.log("filteredData", filteredData)
                 setTotalRows(response.pagination.totalRecords)
                 setClients(filteredData);
             }
