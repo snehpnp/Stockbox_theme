@@ -73,10 +73,8 @@ router.get('/api/list/logout/:id', Logout);
 router.post('/api/list/signalclientwithplan', SignalClientWithPlan);
 router.post('/api/list/notificationwithplan/:id', NotificationWithPlan);
 router.get('/api/list/getcompanyandbsedata', getCompanyAndBseData);
- 
 router.post('/api/list/addplansubscriptionaddtocart', addPlanSubscriptionAddToCart); 
 router.post('/api/list/addbasketsubscriptionaddtocart', addBasketSubscriptionAddToCart); 
-
 router.post('/api/list/addtocartplan', AddToCartPlan); 
 router.post('/api/list/addtocartbasket', AddToCartBasket);
 router.get('/api/list/plancartlist/:client_id', PlanCartList); 
