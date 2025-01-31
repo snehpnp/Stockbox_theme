@@ -24,7 +24,6 @@ const Notification = () => {
     }
   };
 
-  // Fetch notification data on page load
   useEffect(() => {
     GetNotificationDataApi();
   }, []);
