@@ -69,7 +69,7 @@ const BasketStockList = () => {
    </tbody>
     </table>
     </div>
-    <button className="btn btn-success" onClick={() => setShowModal(true)}>Buy Now</button>
+    <button className="btn btn-success mt-3" onClick={() => setShowModal(true)}>Buy Now</button>
     </div>
     </div>
     <ReusableModal
