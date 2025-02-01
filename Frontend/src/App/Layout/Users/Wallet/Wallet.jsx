@@ -12,17 +12,21 @@ const Wallet = () => {
     >
       <div className="page-content">
         <div className="wallet">
-          <div className="wallet-content">
-            <div className="wallet-card">
-              <div className="wallet-card-header">
-                <h6>Wallet Balance</h6>
-              </div>
-              <div className="wallet-card-body">
-                <div className="wallet-balance">
-                  <h5>₹ 0.00</h5>
-                </div>
-              </div>
+        <div className="col-md-4">
+          <div className="card mb-3">
+            <div className="card-body p-2">
+              <ul className="list-group list-group-flush list shadow-none ">
+                <li className="list-group-item ">
+                <h6 className="mb-0">Wallet Balance</h6>
+                  <hr />
+                  <h5 className="mb-0">₹ 0.00</h5>
+                </li>
+              </ul>
             </div>
+          </div>
+        </div>
+          <div className="wallet-content">
+          
             <div className="wallet-card">
               <ul className="nav nav-pills mb-3 justify-content-center border-bottom">
                 <li className="nav-item">
@@ -70,7 +74,7 @@ const Wallet = () => {
 
                   {activeTab === "deposit" && (
                     <table className="table">
-                      <thead>
+                      <thead className="table-primary">
                         <tr>
                           <th>Transaction ID</th>
                           <th>Amount</th>
