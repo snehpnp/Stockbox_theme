@@ -1189,3 +1189,21 @@ display: -webkit-box;
   width: 200px !important;
   margin: 0px auto;
 }
+.dynamic-image {
+  fill: var(--BtnPriBgCol, red); /* Default color red */
+}
+
+.no-data-person {
+  animation: shake 1s ease-in-out infinite;
+}
+
+@keyframes shake {
+  0% { transform: rotate(0); }
+  25% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+  75% { transform: rotate(-5deg); }
+  100% { transform: rotate(0); }
+}
+
+
+

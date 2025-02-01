@@ -324,27 +324,40 @@ const Subscription = () => {
           </ul>
 
 
-          {isLoading ? <Loader /> : activeTab === "plan" && (
+          {isLoading ? <Loader /> 
+          : activeTab === "plan" && (
             <div>
-              <div className="row">
-                {servicedata?.map((item, index) => (
-                  <div key={index} className="col-md-4 mb-3">
-                    <div className="card">
-                      <ul className="list-group list-group-flush mt-0">
-                        <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
-                          {item?.serviceName} <span></span>
-                        </li>
-                        <li className="list-group-item d-flex justify-content-between align-items-center">
-                          Expiry Date
-                          <span className="badge bg-primary rounded-pill badgespan">
-                            {fDate(item?.enddate)}
-                          </span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="row">
+  {servicedata && servicedata.length > 0 ? (
+    servicedata.map((item, index) => (
+      <div key={index} className="col-md-4 mb-3">
+        <div className="card">
+          <ul className="list-group list-group-flush mt-0">
+            <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
+              {item?.serviceName} <span></span>
+            </li>
+            <li className="list-group-item d-flex justify-content-between align-items-center">
+              Expiry Date
+              <span className="badge bg-primary rounded-pill badgespan">
+                {fDate(item?.enddate)}
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    ))
+  ) : (
+    <>
+<svg class="dynamic-image" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24">
+  <path fill="none" d="M0 0h24v24H0z"/>
+  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+</svg>
+
+</>
+  
+  )}
+</div>
+
 
               <div className="mt-4">
                 <div
@@ -367,7 +380,7 @@ const Subscription = () => {
                 id="accordionFlushExample"
               >
                 {renderAccordionItems1()}
-                
+
               </div>
             </div>
           )}

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import Content from "../../../../components/Contents/Content";
-import { Getbasketorderlist } from "../../../../Services/UserService/User";
+import Content from "../../../components/Contents/Content";
+import { Getbasketorderlist } from "../../../Services/UserService/User";
 
 
 const BasketResponse = () => {

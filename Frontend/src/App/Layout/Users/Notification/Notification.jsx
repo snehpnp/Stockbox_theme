@@ -70,18 +70,8 @@ const Notification = () => {
                   </small>
                 </div>
                 <p className="mt-0 mb-1">{notification.message}</p>
-                {notification.status === 0 ? (
-                  <span className="badge" style={{ backgroundColor: "#3c763d", color: "#fff" }}>
-                    ✔️ Viewed
-                  </span>
-                ) : (
-                  <span className="badge" style={{ backgroundColor: "#f0ad4e", color: "#fff" }}>
-                    ⏳ Unseen
-                  </span>
-                )}
+
               </div>
-
-
             </div>
           ))}
         </div>}
