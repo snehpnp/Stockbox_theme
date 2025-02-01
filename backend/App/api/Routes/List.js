@@ -1,7 +1,7 @@
 const router = require("express").Router()
 
 const { Addtocart } = require("../../Models");
-const {Blogslist,Newslist,Bannerlist,Plancategorysist,getPlansByPlancategoryId,addPlanSubscription,myPlan,Couponlist,Signallist,applyCoupon,showSignalsToClients,Servicelist,Faqlist,detailContent,showSignalsToClientsClose,BasketList,pastPerformance,addBasketSubscription,getallPlan,addFreeTrail,BroadcastList,myFreetrial,basicSetting,pastPerformances,myService,CloseSignal,showSignalsToClientsCloses,Notification,Bank,Qrcode,BlogslistwithPagination,NewslistwithPagination,Refer,BasketLists,BasketstockList,myBasketPlan,placeOrder,exitPlaceOrder,checkBasketSell,BasketListss,BasketstockLists,getLivePrice,MyPorfolio,BasketstockListBalance,getBasketVersionOrder,Logout,addRequest,SignalClientWithPlan,NotificationWithPlan,getCompanyAndBseData,addPlanSubscriptionAddToCart,PurchasedBasketList,addBasketSubscriptionAddToCart,AddToCartPlan,AddToCartBasket,PlanCartList,BasketCartList,DeleteCartItem} = require('../Controllers/List')
+const {Blogslist,Newslist,Bannerlist,Plancategorysist,getPlansByPlancategoryId,addPlanSubscription,myPlan,Couponlist,Signallist,applyCoupon,showSignalsToClients,Servicelist,Faqlist,detailContent,showSignalsToClientsClose,BasketList,pastPerformance,addBasketSubscription,getallPlan,addFreeTrail,BroadcastList,myFreetrial,basicSetting,pastPerformances,myService,CloseSignal,showSignalsToClientsCloses,Notification,Bank,Qrcode,BlogslistwithPagination,NewslistwithPagination,Refer,BasketLists,BasketstockList,myBasketPlan,placeOrder,exitPlaceOrder,checkBasketSell,BasketListss,BasketstockLists,getLivePrice,MyPorfolio,BasketstockListBalance,getBasketVersionOrder,Logout,addRequest,SignalClientWithPlan,NotificationWithPlan,getCompanyAndBseData,addPlanSubscriptionAddToCart,PurchasedBasketList,addBasketSubscriptionAddToCart,AddToCartPlan,AddToCartBasket,PlanCartList,BasketCartList,DeleteCartItem,SignalClientWithPlanClose} = require('../Controllers/List')
 
 
 router.get('/api/list/blogs',Blogslist);
@@ -71,6 +71,7 @@ router.get('/api/list/logout/:id', Logout);
 
 
 router.post('/api/list/signalclientwithplan', SignalClientWithPlan);
+router.post('/api/list/signalclientwithplanclose', SignalClientWithPlanClose);
 router.post('/api/list/notificationwithplan/:id', NotificationWithPlan);
 router.get('/api/list/getcompanyandbsedata', getCompanyAndBseData);
 router.post('/api/list/addplansubscriptionaddtocart', addPlanSubscriptionAddToCart); 
