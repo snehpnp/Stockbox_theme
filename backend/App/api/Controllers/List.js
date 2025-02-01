@@ -5898,7 +5898,7 @@ class List {
         client_id: client_id,
         status: false,
         plan_id: null, // Check for both null and empty string
-      }).populate('basket_id');
+      }).populate('basket_id','title	themename	full_price	basket_price	validity');
   
       // Check if cart is empty
       if (!cartItems.length) {
