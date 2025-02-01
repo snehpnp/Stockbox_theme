@@ -2096,8 +2096,6 @@ class List {
     try {
       const { clientid } = req.body; // assuming clientid is passed in the request
 
-      console.log("req.body", req.body)
-
       // Get the current date
       const currentDate = new Date();
 
@@ -4837,6 +4835,29 @@ class List {
         end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
         end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
 
+
+        const planservice = plan.category?.service;
+        const planservices = planservice ? planservice.split(',') : [];
+        for (const serviceId of planservices) {
+          const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: serviceId }).exec();
+
+          if (existingPlan) {
+
+            if (new Date(existingPlan.enddate) < end) {
+              existingPlan.enddate = end;
+              await existingPlan.save();
+            }
+          }
+          else {
+            const newPlanManage = new Planmanage({
+              clientid: client_id,
+              serviceid: serviceId,
+              startdate: start,
+              enddate: end,
+            });
+            await newPlanManage.save();
+          }
+        }
         /*
          const planservice = plan.category?.service;
          const planservices = planservice ? planservice.split(',') : [];
@@ -4986,6 +5007,14 @@ class List {
         const savedSubscription = await newSubscription.save();
 
       }
+
+
+
+      const updatedItem = await Addtocart_Modal.findOneAndUpdate(
+        { client_id: client_id, status: false, basket_id: null, }, // Find item with status false
+        { $set: { status: true } }, // Update status to true
+        { new: true } // Return the updated document
+      );
 
       if (coupon_code) {
         const resultc = await Coupon_Modal.findOne({
@@ -5518,6 +5547,15 @@ class List {
         const savedSubscription = await newSubscription.save();
       }
 
+
+
+      const updatedItem = await Addtocart_Modal.findOneAndUpdate(
+        { client_id: client_id, status: false, plan_id: null, }, // Find item with status false
+        { $set: { status: true } }, // Update status to true
+        { new: true } // Return the updated document
+      );
+
+
       if (settings.invoicestatus == 1) {
 
 
@@ -5808,7 +5846,14 @@ class List {
         client_id: client_id,
         status: false,
         basket_id: null, // Check for both null and empty string
-      });
+      }).populate('plan_id', 'price validity')  // Populate plan details
+        .populate({
+          path: 'plan_id', // The path to the plan
+          populate: {
+            path: 'category', // The field in Plan model that references the Plancategory
+            select: 'title' // Select only the 'title' from Plancategory
+          }
+        });
 
       // Check if cart is empty
       if (!cartItems.length) {
@@ -5852,7 +5897,7 @@ class List {
         client_id: client_id,
         status: false,
         plan_id: null, // Check for both null and empty string
-      });
+      }).populate('basket_id', 'title	themename	full_price	basket_price	validity');
 
       // Check if cart is empty
       if (!cartItems.length) {
@@ -5920,6 +5965,122 @@ class List {
       });
     }
   }
+
+
+
+  async SignalClientWithPlanClose(req, res) {
+    try {
+      const { service_id, client_id, search, page = 1 } = req.body;
+      const limit = 10;
+      const skip = (parseInt(page) - 1) * parseInt(limit); // Calculate how many items to skip
+      const limitValue = parseInt(limit); // Items per page
+
+
+      const subscriptions = await PlanSubscription_Modal.find({ client_id });
+      if (subscriptions.length === 0) {
+        return res.json({
+          status: false,
+          message: "No plan subscriptions found for the given service and client IDs",
+          data: []
+        });
+      }
+
+      const planIds = subscriptions.map(sub => sub.plan_category_id);
+      const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
+
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+
+      const uniquePlanIds = [
+        ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
+      ].map(id => new ObjectId(id));
+
+
+      const query = {
+        service: service_id,
+        close_status: true,
+        $or: uniquePlanIds.map((planId, index) => ({
+          planid: planId.toString(), // Matching the planid with regex
+          created_at: { $lte: planEnds[index] }       // Checking if created_at is <= to planEnds
+        }))
+      };
+
+
+      //   const query = {
+      //     service: service_id,
+      //     close_status: false,
+      //     $or: uniquePlanIds.map((planId, index) => {
+      //         return {
+      //             planid: { $regex: `(^|,)${planId}($|,)` }
+      //             created_at: { $lte: planEnds[index] } // Compare created_at with the plan_end date of each subscription
+      //         };
+      //     })
+      // };
+
+
+      //console.log("Final Query:", JSON.stringify(query, null, 2));
+      const protocol = req.protocol; // Will be 'http' or 'https'
+
+      const baseUrl = `${protocol}://${req.headers.host}`; // Construct the base URL
+
+
+
+      if (search && search.trim() !== '') {
+        query.$or = [
+          { tradesymbol: { $regex: search, $options: 'i' } },
+          { calltype: { $regex: search, $options: 'i' } },
+          { price: { $regex: search, $options: 'i' } },
+          { closeprice: { $regex: search, $options: 'i' } }
+        ];
+      }
+
+
+      const signals = await Signal_Modal.find(query)
+        .sort({ created_at: -1 })
+        .skip(skip)
+        .limit(limitValue)
+        .lean();
+
+
+
+      const totalSignals = await Signal_Modal.countDocuments(query);
+
+      const signalsWithReportUrls = await Promise.all(signals.map(async (signal) => {
+        // Check if the signal was bought by the client
+        const order = await Order_Modal.findOne({
+          clientid: client_id,
+          signalid: signal._id
+        }).lean();
+
+
+        return {
+          ...signal,
+          report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null, // Append full report URL
+          purchased: order ? true : false,
+          order_quantity: order ? order.quantity : 0
+        };
+      }));
+
+
+      return res.json({
+        status: true,
+        message: "Signals retrieved successfully",
+        data: signalsWithReportUrls,
+        pagination: {
+          total: totalSignals,
+          page: parseInt(page), // Current page
+          limit: parseInt(limit), // Items per page
+          totalPages: Math.ceil(totalSignals / limit), // Total number of pages
+        }
+      });
+
+    } catch (error) {
+      // console.error("Error fetching signals:", error);
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
+
+
 
 
 }

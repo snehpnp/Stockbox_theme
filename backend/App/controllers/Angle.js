@@ -53,10 +53,19 @@ class Angle {
                     }
                 );
 
+                const userAgent = req.headers["user-agent"];
+                const isAppRequest = userAgent && userAgent.includes("MobileApp"); // Adjust based on actual app identifier
+        
+                if (isAppRequest) {
                 return res.json({
                     status: true,
                     message: "Broker login successfully",
                 });
+            } else {
+                // For web request, redirect dynamically
+                const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                return res.redirect(dynamicUrl);
+            }
 
             } else {
 
