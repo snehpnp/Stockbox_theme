@@ -1189,3 +1189,7 @@ display: -webkit-box;
   width: 200px !important;
   margin: 0px auto;
 }
+.dynamic-image {
+  fill: var(--BtnPriBgCol, red); /* Default color red */
+}
+
