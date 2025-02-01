@@ -253,7 +253,8 @@ const Profiles = () => {
                   <Link to="">My Basket Subscription</Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="" onClick={(e) => DeleteDematAccountApi()}>
+                  <Link to="" onClick={(e) => DeleteDematAccountApi()}
+                  className="btn btn-secondary w-100">
                     Delete Demat Account
                   </Link>
                 </li>
@@ -272,7 +273,7 @@ const Profiles = () => {
 
           <div className="col-lg-8">
             <div className="card shadow-sm">
-              <div className="card-header bg-primary text-white">
+              <div className="card-header btn-primary text-white">
                 <h5 className="mb-0">Profile Information</h5>
               </div>
               <div className="card-body">

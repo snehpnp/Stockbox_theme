@@ -24,8 +24,6 @@ const Wallet = () => {
               </div>
             </div>
             <div className="wallet-card">
-             
-
               <ul className="nav nav-pills mb-3 justify-content-center border-bottom">
                 <li className="nav-item">
                   <button
@@ -70,7 +68,7 @@ const Wallet = () => {
                     </table>
                   )}
 
-{activeTab === "deposit" && (
+                  {activeTab === "deposit" && (
                     <table className="table">
                       <thead>
                         <tr>
