@@ -29,6 +29,7 @@ import Blogs from '../Layout/Users/Blogs/Blogs'
 import BasketStockList from "../Layout/Users/Basket/BasketStockList";
 import RebalanceHistory from "../Layout/Users/Basket/RebalanceHistory";
 import BasketResponse from "../Layout/Users/BasketResponse/BasketResponse";
+import Wallet from "../Layout/Users/Wallet/Wallet";
 
 
 export default function App() {
@@ -65,7 +66,7 @@ export default function App() {
       <Route path="/basketstocklist" element={<BasketStockList />} />
       <Route path="/rebalanceHistory" element={<RebalanceHistory />} />
       <Route path="/basket-response" element={<BasketResponse />} />      
-
+      <Route path="/wallet" element={<Wallet />} />
     </Routes>
   );
 }

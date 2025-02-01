@@ -241,8 +241,11 @@ const Profiles = () => {
                   <Link to="/user/subscription">My Subscription</Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="/user/kyc">KYC Pending</Link>
+                  <Link to="/user/wallet">Wallet</Link>
                 </li>
+                {/* <li className="list-group-item">
+                  <Link to="/user/kyc">KYC Pending</Link>
+                </li> */}
                 <li className="list-group-item">
                   <Link to="/user/payment-history">Payment History</Link>
                 </li>

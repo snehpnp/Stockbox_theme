@@ -1193,14 +1193,8 @@ display: -webkit-box;
   fill: var(--BtnPriBgCol, red); /* Default color red */
 }
 
-.dynamic-image {
-  display: block;
-  margin: 0 auto;
+.no-data-person {
   animation: shake 1s ease-in-out infinite;
-}
-
-.dynamic-image {
-  animation: bounce 1s ease-in-out infinite;
 }
 
 @keyframes shake {
@@ -1211,10 +1205,5 @@ display: -webkit-box;
   100% { transform: rotate(0); }
 }
 
-@keyframes bounce {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0); }
-}
 
 
