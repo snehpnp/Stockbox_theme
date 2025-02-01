@@ -291,18 +291,24 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
 
   const TradingBtnCall = async (e) => {
+
     if (UserDetail.dlinkstatus == 0) {
       setViewModel(true);
     } else {
+
       if (UserDetail.brokerid == 1) {
+
         window.location.href = `https://smartapi.angelone.in/publisher-login?api_key=${UserDetail.apikey}`;
       } else if (UserDetail.brokerid == 2) {
+
         window.location.href = `https://ant.aliceblueonline.com/?appcode=${UserDetail.apikey}`;
       } else if (UserDetail.brokerid == 3) {
       } else if (UserDetail.brokerid == 4) {
       }
     }
   };
+
+
 
   const closeBrokerModal = () => {
     setViewModel(false);
