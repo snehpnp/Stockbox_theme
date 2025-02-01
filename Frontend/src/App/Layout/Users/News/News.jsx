@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
 import { GetNewsData } from "../../../Services/UserService/User";
 import NewsModal from "./NewsCard";
+import Loader from "../../../../Utils/Loader";
 
 const News = () => {
   const [newsData, setNewsData] = useState([]);
   const [selectedNews, setSelectedNews] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true)
+
 
   useEffect(() => {
     GetNewsData()
@@ -18,6 +21,7 @@ const News = () => {
       .catch((error) => {
         console.log(error);
       });
+    setIsLoading(false)
   }, []);
 
   // Handle card click
@@ -28,12 +32,12 @@ const News = () => {
   const stripHtmlTags = (html) => {
     return html.replace(/<\/?[^>]+(>|$)/g, ""); // Remove all HTML tags
   };
-  
+
   return (
     <div>
       <Content Page_title="News" button_status={false} backbutton_status={true}>
         <div style={styles.container}>
-          <div style={styles.newsList}>
+          {isLoading ? <Loader /> : <div style={styles.newsList}>
             {newsData.length > 0 ? (
               newsData.map((news, index) => (
                 <div
@@ -53,7 +57,7 @@ const News = () => {
                       dangerouslySetInnerHTML={{
                         __html: news.description.substring(0, 100) + "...",
                       }}
-                      title={stripHtmlTags(news.description)} 
+                      title={stripHtmlTags(news.description)}
                     />
                     <small style={styles.date}>
                       {new Date(news.created_at).toLocaleDateString()}
@@ -64,7 +68,7 @@ const News = () => {
             ) : (
               <p>No news available</p>
             )}
-          </div>
+          </div>}
         </div>
       </Content>
 

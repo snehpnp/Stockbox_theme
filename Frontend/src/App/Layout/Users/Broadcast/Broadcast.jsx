@@ -3,23 +3,27 @@ import Content from "../../../components/Contents/Content";
 import { GetBroadcastData } from "../../../Services/UserService/User";
 import { MessageCircleMore } from "lucide-react";
 import Swal from "sweetalert2";
+import Loader from "../../../../Utils/Loader";
 
 const Broadcast = () => {
   const [broadcastData, setBroadcastData] = useState([]);
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
-  // Fetch broadcast data on component mount
+  const [isLoading, setIsLoading] = useState(true)
+
+
+
   useEffect(() => {
     GetBrodcast();
   }, []);
 
-  // Fetch broadcast data function
+
   const GetBrodcast = async () => {
     try {
       await GetBroadcastData({ id: userid }, token).then((response) => {
         if (response && response.data) {
-          setBroadcastData(response.data); // Update state with fetched data
+          setBroadcastData(response.data);
         }
       });
     } catch (error) {
@@ -29,8 +33,12 @@ const Broadcast = () => {
         title: "Oops...",
         text: "Something went wrong while fetching broadcast data!",
       });
+
     }
+    setIsLoading(false)
   };
+
+
 
   return (
     <div>
@@ -40,8 +48,7 @@ const Broadcast = () => {
         backbutton_title="Back"
         backbutton_status={false}
       >
-        <div className="page-content" style={{ padding: "20px" }}>
-          {/* Dynamically rendered list of broadcast messages */}
+        {isLoading ? <Loader /> : <div className="page-content" style={{ padding: "20px" }}>
           <ul className="list-unstyled" style={{ margin: "0", padding: "0" }}>
             {broadcastData.length === 0 ? (
               <li className="text-center py-3">No Broadcast Data Available</li>
@@ -93,7 +100,7 @@ const Broadcast = () => {
               ))
             )}
           </ul>
-        </div>
+        </div>}
       </Content>
     </div>
   );
