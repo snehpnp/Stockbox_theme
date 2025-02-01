@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
 import ReusableModal from "../../../components/Models/ReusableModal";
-import { GetUserData, GetWithdrawRequest } from "../../../Services/UserService/User";
+import { GetUserData, GetWithdrawRequest, GetReferEarning, GetPayoutDetail } from "../../../Services/UserService/User";
 import Swal from 'sweetalert2';
+
+
 
 
 const Wallet = () => {
@@ -15,6 +17,8 @@ const Wallet = () => {
   const [activeTab, setActiveTab] = useState("earning");
   const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState({});
+  const [eraning, setEarning] = useState({});
+  const [payout, setPayout] = useState({});
 
   const [request, setRequest] = useState({
     clientId: "",
@@ -28,6 +32,19 @@ const Wallet = () => {
       const response = await GetUserData(userid, token);
       if (response.status) {
         setData(response.data);
+
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+
+  const getEarning = async () => {
+    try {
+      const response = await GetReferEarning(userid, token);
+      if (response.status) {
+        setEarning(response.data);
         console.log(response.data)
       }
     } catch (error) {
@@ -35,8 +52,31 @@ const Wallet = () => {
     }
   };
 
+
+  const getPayoutdata = async () => {
+    try {
+      const response = await GetPayoutDetail(userid, token);
+      if (response.status) {
+        setPayout(response.data);
+
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+
+
+
+
   useEffect(() => {
     getuserdetail();
+    if (activeTab == "earning") {
+      getEarning();
+    } else if (activeTab == "payout") {
+      getPayoutdata();
+    }
+
   }, []);
 
 
@@ -121,7 +161,7 @@ const Wallet = () => {
                     </span>
                   </div>
                   <hr />
-                  <h5 className="mb-0">₹ 0.00</h5>
+                  <h5 className="mb-0">₹ {data?.wamount}</h5>
                 </li>
               </ul>
             </div>
@@ -156,9 +196,11 @@ const Wallet = () => {
                     <table className="table table-striped">
                       <thead className="table-light">
                         <tr>
-                          <th>Transaction ID</th>
-                          <th>Amount</th>
-                          <th>Date</th>
+                          <th>clientName</th>
+                          <th>Recieve</th>
+                          <th>Recieve</th>
+                          <th>Sender</th>
+                          <th>Reciver Amount</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -208,7 +250,7 @@ const Wallet = () => {
         body={
           <>
             <p className="fs-14 mb-2">
-              Available Amount <strong>{data.wamount}</strong>
+              Available Amount <strong>{data?.wamount}</strong>
             </p>
             <input
               type="number"

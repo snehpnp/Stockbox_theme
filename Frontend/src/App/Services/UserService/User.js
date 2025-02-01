@@ -656,3 +656,39 @@ export async function GetWithdrawRequest(data, token) {
         return err;
     }
 }
+
+
+
+//refer earning 
+
+export async function GetReferEarning(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/referearn`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+// get payout 
+
+
+export async function GetPayoutDetail(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/payoutlist`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
