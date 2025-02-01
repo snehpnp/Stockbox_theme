@@ -1,8 +1,33 @@
 import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
+import { GetUserData } from "../../../Services/UserService/User";
 
 const Wallet = () => {
+
+  const token = localStorage.getItem("token");
+  const userid = localStorage.getItem("id");
+
   const [activeTab, setActiveTab] = useState("withdraw");
+  const [data, setData] = useState({});
+
+
+  const getuserdetail = async () => {
+    try {
+      const response = await GetUserData(userid, token);
+      if (response.status) {
+        setData(response.data)
+        console.log(response.data)
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+
+
+  useEffect(() => {
+    getuserdetail()
+  }, [])
 
   return (
     <Content
@@ -12,28 +37,27 @@ const Wallet = () => {
     >
       <div className="page-content">
         <div className="wallet">
-        <div className="col-md-4">
-          <div className="card mb-3">
-            <div className="card-body p-2">
-              <ul className="list-group list-group-flush list shadow-none ">
-                <li className="list-group-item ">
-                <h6 className="mb-0">Wallet Balance</h6>
-                  <hr />
-                  <h5 className="mb-0">₹ 0.00</h5>
-                </li>
-              </ul>
+          <div className="col-md-4">
+            <div className="card mb-3">
+              <div className="card-body p-2">
+                <ul className="list-group list-group-flush list shadow-none ">
+                  <li className="list-group-item ">
+                    <h6 className="mb-0">Wallet Balance</h6>
+                    <hr />
+                    <h5 className="mb-0">₹ {data?.wamount}</h5>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
           <div className="wallet-content">
-          
+
             <div className="wallet-card">
               <ul className="nav nav-pills mb-3 justify-content-center border-bottom">
                 <li className="nav-item">
                   <button
-                    className={`nav-link ${
-                      activeTab === "withdraw" ? "active btn-primary" : ""
-                    }`}
+                    className={`nav-link ${activeTab === "withdraw" ? "active btn-primary" : ""
+                      }`}
                     onClick={() => setActiveTab("withdraw")}
                   >
                     withdraw
@@ -41,9 +65,8 @@ const Wallet = () => {
                 </li>
                 <li className="nav-item">
                   <button
-                    className={`nav-link ${
-                      activeTab === "deposit" ? "active btn-primary" : ""
-                    }`}
+                    className={`nav-link ${activeTab === "deposit" ? "active btn-primary" : ""
+                      }`}
                     onClick={() => setActiveTab("deposit")}
                   >
                     Deposit
