@@ -163,7 +163,7 @@ const Demat = () => {
             {brokers
               .filter((broker) =>
                 dlinkstatus ? broker.id === userDetail : true
-              ) // Conditional filtering
+              )
               .map((broker) => (
                 <div className="col mb-3" key={broker.id}>
                   <div

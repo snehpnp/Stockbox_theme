@@ -294,7 +294,6 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     if (UserDetail.dlinkstatus == 0) {
       setViewModel(true);
     } else {
-      // console.log(UserDetail);
       if (UserDetail.brokerid == 1) {
         window.location.href = `https://smartapi.angelone.in/publisher-login?api_key=${UserDetail.apikey}`;
       } else if (UserDetail.brokerid == 2) {
