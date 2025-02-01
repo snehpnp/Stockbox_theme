@@ -139,6 +139,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
+
+
+
   const gettradedetail = async () => {
     try {
       const response = await basicsettinglist(token);
@@ -170,6 +173,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
+
+
+
   const getstatusdetaile = async () => {
     if (
       !statusinfo.aliceuserid ||
@@ -199,6 +205,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       console.log("error", error);
     }
   };
+
+
+
 
   const UpdateloginOff = async (e) => {
     const dataoff = e.target.checked ? 1 : 0;
@@ -239,6 +248,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     });
   };
 
+
+
   const handleToggle = () => {
     if (getstatus[0]?.brokerloginstatus === 1) {
       setIsChecked(!isChecked);
@@ -252,12 +263,18 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
+
+
+
   useEffect(() => {
     getuserdetail();
     if (getstatus[0]?.brokerloginstatus === 1) {
       setIsChecked(true);
     }
   }, [getstatus]);
+
+
+
 
   const getuserdetail = async () => {
     try {
@@ -269,6 +286,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       console.log("error", error);
     }
   };
+
+
+
 
   const TradingBtnCall = async (e) => {
     if (UserDetail.dlinkstatus == 0) {
@@ -286,10 +306,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   };
 
   const closeBrokerModal = () => {
-    setViewModel(false); // Close the modal
+    setViewModel(false);
   };
 
-  console.log("userNotification", userNotification)
 
   return (
     <>
@@ -512,8 +531,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                             <div
                               key={index}
                               className={`dropdown-item notification ${notification.status === 1
-                                  ? "text-info font-bold"
-                                  : "text-muted bg-light"
+                                ? "text-info font-bold"
+                                : "text-muted bg-light"
                                 }`}
                               onClick={(event) =>
                                 handleNotificationClick(event, notification)
@@ -604,201 +623,199 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                     </div>
                   </div>
                 ) :
-                 Role === "USER" ? (
-                  <div className="dropdown">
-                    <div
-                      className="notification-container dropdown-toggle"
-                      style={{
-                        cursor: "pointer",
-                        marginLeft: "10px",
-                        position: "relative",
-                      }}
-                      role="button"
-                      id="dropdownMenuLink"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      {badgecount ? (
-                        <span
-                          className="alert-count"
-                          style={{
-                            position: "absolute",
-                            top: "-5px",
-                            right: "-5px",
-                            background: "red",
-                            color: "white",
-                            fontSize: "12px",
-                            fontWeight: "bold",
-                            borderRadius: "50%",
-                            padding: "4px 8px",
-                            zIndex: 1051,
-                          }}
-                        >
-                          {badgecount > 100 ? "99+" : badgecount}
-                        </span>
-                      ) : null}
-                      <FaBell size={24} />
-                    </div>
-
-                    <div
-                      style={{
-                        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                        borderRadius: "10px",
-                        minWidth: "320px",
-                        maxWidth: "400px",
-                        zIndex: 1050,
-                        padding: "10px",
-                        overflow: "hidden",
-                      }}
-                      className="dropdown-menu dropdown-menu-end"
-                      aria-labelledby="dropdownMenuLink"
-                    >
+                  Role === "USER" ? (
+                    <div className="dropdown">
                       <div
-                        className="msg-header d-flex justify-content-between align-items-center"
+                        className="notification-container dropdown-toggle"
                         style={{
-                          borderBottom: "1px solid #ddd",
-                          paddingBottom: "8px",
-                          marginBottom: "10px",
+                          cursor: "pointer",
+                          marginLeft: "10px",
+                          position: "relative",
                         }}
+                        role="button"
+                        id="dropdownMenuLink"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
                       >
-                        <p
-                          className="msg-header-title"
-                          style={{
-                            fontSize: "18px",
-                            fontWeight: "600",
-                            margin: 0,
-                          }}
-                        >
-                          Notifications
-                        </p>
-                        <span
-                          className="msg-header-badge"
-                          style={{
-                            backgroundColor: "#007bff",
-                            color: "white",
-                            fontSize: "14px",
-                            fontWeight: "500",
-                            borderRadius: "12px",
-                            padding: "2px 8px",
-                          }}
-                        >
-                          {
-                            userNotification?.filter(
-                              (notification) => notification?.status === 0
-                            )?.length
-                          }
-                        </span>
-                      </div>
-                      <div
-                        className="header-notifications-list"
-                        style={{
-                          overflowY: "auto",
-                          maxHeight: "300px",
-                          paddingRight: "10px",
-                          scrollbarWidth: "thin",
-                          scrollbarColor: "#c1c1c1 transparent",
-                        }}
-                      >
-                        {userNotification?.length > 0 ? (
-                          userNotification?.map((notification, index) => (
-                            <div
-                              key={index}
-                              className={`dropdown-item notification ${notification.status === 1
-                                  ? "text-info font-bold"
-                                  : "text-muted bg-light"
-                                }`}
-                              onClick={(event) =>
-                                handleNotificationClick(event, notification)
-                              }
-                              style={{
-                                padding: "10px",
-                                marginBottom: "5px",
-                                borderRadius: "6px",
-                                background:
-                                  notification.status === 0
-                                    ? "#f8f9fa"
-                                    : "white",
-                                cursor: "pointer",
-                                transition: "all 0.3s ease",
-                              }}
-                            >
-                              <div className="d-flex align-items-center">
-                                <div className="flex-grow-1">
-                                  <h6
-                                    className="msg-name"
-                                    style={{
-                                      margin: 0,
-                                      fontWeight:
-                                        notification.status === 1
-                                          ? "normal"
-                                          : "bold",
-                                    }}
-                                  >
-                                    {notification?.title}
-                                    <span
-                                      className="msg-time float-end"
-                                      style={{
-                                        fontSize: "12px",
-                                        color: "#6c757d",
-                                      }}
-                                    >
-                                      {notification.createdAt
-                                        ? formatDistanceToNow(
-                                          new Date(notification.createdAt),
-                                          {
-                                            addSuffix: true,
-                                          }
-                                        )
-                                        : "Empty Message"}
-                                    </span>
-                                  </h6>
-                                  <p
-                                    className="msg-info"
-                                    title={notification.message}
-                                    style={{
-                                      fontSize: "14px",
-                                      color: "#6c757d",
-                                      margin: "4px 0 0",
-                                    }}
-                                  >
-                                    {notification.message}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          ))
-                        ) : (
-                          <div
+                        {badgecount ? (
+                          <span
+                            className="alert-count"
                             style={{
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              height: "100%",
-                              color: "#6c757d",
+                              position: "absolute",
+                              top: "-5px",
+                              right: "-5px",
+                              background: "red",
+                              color: "white",
+                              fontSize: "12px",
+                              fontWeight: "bold",
+                              borderRadius: "50%",
+                              padding: "4px 8px",
+                              zIndex: 1051,
                             }}
                           >
-                            <h4>No Notifications</h4>
-                          </div>
-                        )}
+                            {badgecount > 100 ? "99+" : badgecount}
+                          </span>
+                        ) : null}
+                        <FaBell size={24} />
                       </div>
-                      <div className="text-center msg-footer mt-2">
-                        <button
-                          className="btn btn-primary w-100"
-                          onClick={() => getAllMessageRead()}
+
+                      <div
+                        style={{
+                          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                          borderRadius: "10px",
+                          minWidth: "320px",
+                          maxWidth: "400px",
+                          zIndex: 1050,
+                          padding: "10px",
+                          overflow: "hidden",
+                        }}
+                        className="dropdown-menu dropdown-menu-end"
+                        aria-labelledby="dropdownMenuLink"
+                      >
+                        <div
+                          className="msg-header d-flex justify-content-between align-items-center"
                           style={{
-                            borderRadius: "6px",
-                            fontWeight: "500",
+                            borderBottom: "1px solid #ddd",
+                            paddingBottom: "8px",
+                            marginBottom: "10px",
                           }}
                         >
-                          View All Notifications
-                        </button>
+                          <p
+                            className="msg-header-title"
+                            style={{
+                              fontSize: "18px",
+                              fontWeight: "600",
+                              margin: 0,
+                            }}
+                          >
+                            Notifications
+                          </p>
+                          <span
+                            className="msg-header-badge"
+                            style={{
+                              backgroundColor: "#007bff",
+                              color: "white",
+                              fontSize: "14px",
+                              fontWeight: "500",
+                              borderRadius: "12px",
+                              padding: "2px 8px",
+                            }}
+                          >
+                            {
+                              userNotification?.filter(
+                                (notification) => notification?.status === 0
+                              )?.length
+                            }
+                          </span>
+                        </div>
+                        <div
+                          className="header-notifications-list"
+                          style={{
+                            overflowY: "auto",
+                            maxHeight: "300px",
+                            paddingRight: "10px",
+                            scrollbarWidth: "thin",
+                            scrollbarColor: "#c1c1c1 transparent",
+                          }}
+                        >
+                          {userNotification?.length > 0 ? (
+                            userNotification?.map((notification, index) => (
+                              <div
+                                key={index}
+                                className={`dropdown-item notification ${notification.status === 1
+                                  ? "text-info font-bold"
+                                  : "text-muted bg-light"
+                                  }`}
+
+                                style={{
+                                  padding: "10px",
+                                  marginBottom: "5px",
+                                  borderRadius: "6px",
+                                  background:
+                                    notification.status === 0
+                                      ? "#f8f9fa"
+                                      : "white",
+                                  cursor: "pointer",
+                                  transition: "all 0.3s ease",
+                                }}
+                              >
+                                <div className="d-flex align-items-center">
+                                  <div className="flex-grow-1">
+                                    <h6
+                                      className="msg-name"
+                                      style={{
+                                        margin: 0,
+                                        fontWeight:
+                                          notification.status === 1
+                                            ? "normal"
+                                            : "bold",
+                                      }}
+                                    >
+                                      {notification?.title}
+                                      <span
+                                        className="msg-time float-end"
+                                        style={{
+                                          fontSize: "12px",
+                                          color: "#6c757d",
+                                        }}
+                                      >
+                                        {notification.createdAt
+                                          ? formatDistanceToNow(
+                                            new Date(notification.createdAt),
+                                            {
+                                              addSuffix: true,
+                                            }
+                                          )
+                                          : "Empty Message"}
+                                      </span>
+                                    </h6>
+                                    <p
+                                      className="msg-info"
+                                      title={notification.message}
+                                      style={{
+                                        fontSize: "14px",
+                                        color: "#6c757d",
+                                        margin: "4px 0 0",
+                                      }}
+                                    >
+                                      {notification.message}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                height: "100%",
+                                color: "#6c757d",
+                              }}
+                            >
+                              <h4>No Notifications</h4>
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-center msg-footer mt-2">
+                          <button
+                            className="btn btn-primary w-100"
+                            onClick={() => getAllMessageRead()}
+                            style={{
+                              borderRadius: "6px",
+                              fontWeight: "500",
+                            }}
+                          >
+                            View All Notifications
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ) 
-                : (
-                  ""
-                )}
+                  )
+                    : (
+                      ""
+                    )}
 
                 <div className="dropdown">
                   <div

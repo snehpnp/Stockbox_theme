@@ -9,13 +9,20 @@ import { UpdateBroker } from "../../../Services/UserService/User";
 
 
 const Demat = () => {
+
+
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [userDetail, setUserDetail] = useState();
   const [dlinkstatus, setDlinkstatus] = useState(false);
 
+
+
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
+
+
+
   const getuserdetail = async () => {
     try {
       const response = await GetUserData(userid, token);
@@ -28,16 +35,23 @@ const Demat = () => {
     }
   };
 
+
+
   useEffect(() => {
     getuserdetail();
   }, []);
+
+
+
 
   const handleShowModal = (title) => {
     setModalTitle(title);
     setShowModal(true);
   };
 
+
   const handleCloseModal = () => setShowModal(false);
+
 
   const brokers = [
     {
@@ -62,6 +76,7 @@ const Demat = () => {
       img: "https://media.licdn.com/dms/image/v2/D560BAQEB5MsFZkdKwg/company-logo_200_200/company-logo_200_200/0/1681292585114/market_hub_stock_broking_pvt_ltd__logo?e=1746057600&v=beta&t=9YGrMbiPySe_qefvVi7OuaBOhjgc-BbupTeRPPIp1jE",
     },
   ];
+
 
 
   const brokerFieldsMap = {
@@ -113,22 +128,28 @@ const Demat = () => {
       },
     ],
   };
+
+
+
   const fieldTypes = brokerFieldsMap[userDetail || 1];
+
+
 
   const formik = useFormik({
     initialValues: fieldTypes.reduce((acc, field) => {
-      acc[field.key] = ""; // Initialize each field with an empty string
+      acc[field.key] = "";
       return acc;
     }, {}),
     enableReinitialize: true,
-    validate: (values) => {},
-    onSubmit: async(values) => {
+    validate: (values) => { },
+    onSubmit: async (values) => {
       let data = { ...values, brokerid: userDetail, id: userid };
       console.log("data", data);
-      // const loginData = await UpdateBroker(data, token);
-      // console.log("loginData", loginData);
+
     },
   });
+
+
 
   return (
     <div>
