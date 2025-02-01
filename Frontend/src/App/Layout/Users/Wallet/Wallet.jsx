@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
+import ReusableModal from "../../../components/Models/ReusableModal";
 
 const Wallet = () => {
-  const [activeTab, setActiveTab] = useState("withdraw");
+  const [activeTab, setActiveTab] = useState("earning");
+   const [showModal, setShowModal] = useState(false);
 
   return (
     <Content
@@ -12,12 +14,16 @@ const Wallet = () => {
     >
       <div className="page-content">
         <div className="wallet">
-        <div className="col-md-4">
+        <div className="col-md-12">
           <div className="card mb-3">
             <div className="card-body p-2">
               <ul className="list-group list-group-flush list shadow-none ">
                 <li className="list-group-item ">
-                <h6 className="mb-0">Wallet Balance</h6>
+                    <div className="d-flex justify-content-between align-items-center">
+                    <h6 className="mb-0">Wallet Balance</h6>
+                    <spna><button className="btn btn-primary" onClick={setShowModal}> Withdraw</button></spna>
+                    </div>
+               
                   <hr />
                   <h5 className="mb-0">₹ 0.00</h5>
                 </li>
@@ -32,28 +38,28 @@ const Wallet = () => {
                 <li className="nav-item">
                   <button
                     className={`nav-link ${
-                      activeTab === "withdraw" ? "active btn-primary" : ""
+                      activeTab === "earning" ? "active btn-primary" : ""
                     }`}
-                    onClick={() => setActiveTab("withdraw")}
+                    onClick={() => setActiveTab("earning")}
                   >
-                    withdraw
+                    Earning
                   </button>
                 </li>
                 <li className="nav-item">
                   <button
                     className={`nav-link ${
-                      activeTab === "deposit" ? "active btn-primary" : ""
+                      activeTab === "payout" ? "active btn-primary" : ""
                     }`}
-                    onClick={() => setActiveTab("deposit")}
+                    onClick={() => setActiveTab("payout")}
                   >
-                    Deposit
+                    Payout
                   </button>
                 </li>
               </ul>
 
               <div className="wallet-card-body">
                 <div className="wallet-history">
-                  {activeTab === "withdraw" && (
+                  {activeTab === "earning" && (
                     <table className="table">
                       <thead className="table-primary">
                         <tr>
@@ -72,7 +78,7 @@ const Wallet = () => {
                     </table>
                   )}
 
-                  {activeTab === "deposit" && (
+                  {activeTab === "payout" && (
                     <table className="table">
                       <thead className="table-primary">
                         <tr>
@@ -96,6 +102,30 @@ const Wallet = () => {
           </div>
         </div>
       </div>
+
+      <ReusableModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        title="Withdraw Request"
+        body={
+            <>
+        <p className="fs-14 mb-2">Availabel Amount <strong>₹4545846</strong></p>
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Enter Amount" 
+          />
+          </>
+        }
+        footer={
+            <>
+                <button className="btn btn-primary">Submit</button>
+                <button className="btn btn-secondary" onClick={() => setShowModal(false)}>
+                Cancel
+                </button>
+            </>
+        }
+      />
     </Content>
   );
 };
