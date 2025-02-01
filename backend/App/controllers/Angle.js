@@ -10,7 +10,6 @@ const Stock_Modal = db.Stock;
 const Order_Modal = db.Order;
 const Basketorder_Modal = db.Basketorder;
 
-
 class Angle {
 
     async GetAccessToken(req, res) {
@@ -29,7 +28,6 @@ class Angle {
                         message: "Client not found"
                     });
                 }
-
 
                 var auth_token = keystr.split('?auth_token=')[1];
 
@@ -53,19 +51,11 @@ class Angle {
                     }
                 );
 
-                const userAgent = req.headers["user-agent"];
-                const isAppRequest = userAgent && userAgent.includes("MobileApp"); // Adjust based on actual app identifier
-        
-                if (isAppRequest) {
                 return res.json({
                     status: true,
                     message: "Broker login successfully",
                 });
-            } else {
-                // For web request, redirect dynamically
-                const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                return res.redirect(dynamicUrl);
-            }
+
 
             } else {
 
@@ -82,7 +72,6 @@ class Angle {
 
         try {
             const { id, signalid, quantity, price, tsprice, tsstatus, slprice, exitquantity } = req.body;
-
 
             const client = await Clients_Modal.findById(id);
             if (!client) {
