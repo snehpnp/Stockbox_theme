@@ -31,6 +31,7 @@ const Liveprice_Modal = db.Liveprice;
 const Basketorder_Modal = db.Basketorder;
 const Mailtemplate_Modal = db.Mailtemplate;
 const Requestclient_Modal = db.Requestclient;
+const Addtocart_Modal = db.Addtocart;
 
 
 const { sendEmail } = require('../../Utils/emailService');
@@ -4507,26 +4508,40 @@ class List {
         });
       }
 
-
-      const planIds = subscriptions.map(sub => sub.plan_id);
+      const planIds = subscriptions.map(sub => sub.plan_category_id);
       const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
-
-
 
       const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
 
     
+      const uniquePlanIds = [
+        ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
+      ].map(id => new ObjectId(id));
       
+
       const query = {
         service: service_id,
         close_status: false,
-        $or: planIds.map((planId, index) => ({
-          planid: { $regex: `(^|,)${planId}($|,)` }, // Match plan_id in the signal's comma-separated list
-          created_at: { $lte: planEnds[index] } // Compare created_at with the plan_end date of each subscription
+        $or: uniquePlanIds.map((planId, index) => ({
+          planid: planId.toString(), // Matching the planid with regex
+          created_at: { $lte: planEnds[index] }       // Checking if created_at is <= to planEnds
         }))
       };
 
 
+    //   const query = {
+    //     service: service_id,
+    //     close_status: false,
+    //     $or: uniquePlanIds.map((planId, index) => {
+    //         return {
+    //             planid: { $regex: `(^|,)${planId}($|,)` }
+    //             created_at: { $lte: planEnds[index] } // Compare created_at with the plan_end date of each subscription
+    //         };
+    //     })
+    // };
+
+
+    //console.log("Final Query:", JSON.stringify(query, null, 2));
       const protocol = req.protocol; // Will be 'http' or 'https'
 
       const baseUrl = `${protocol}://${req.headers.host}`; // Construct the base URL
@@ -4541,6 +4556,7 @@ class List {
           { closeprice: { $regex: search, $options: 'i' } }
         ];
       }
+
 
       const signals = await Signal_Modal.find(query)
         .sort({ created_at: -1 })
@@ -4781,7 +4797,15 @@ class List {
         return res.status(404).json({ status: false, message: 'Plan not found' });
       }
     
-    
+
+
+      const activePlan = await PlanSubscription_Modal.findOne({
+        plan_category_id: plan.category._id,
+        plan_end: { $gte: new Date() } // Ensure the plan is not expired
+      }).sort({ plan_end: -1 }); // Sort by end date to get the most recent one
+      
+      // If there is an active plan, set the new plan's start date to the end date of the existing active plan
+      
 
 
       // Map plan validity to months
@@ -4802,15 +4826,18 @@ class List {
         return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
       }
 
-      const start = new Date();
+      let start = new Date();  // Use let instead of const to allow reassigning
+
+      if (activePlan) {
+        start = new Date(activePlan.plan_end); // Start the new plan right after the previous one ends
+      }
       const end = new Date(start);
       end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
       end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
 
-      // Split the services in the category if they exist
+     /*
       const planservice = plan.category?.service;
       const planservices = planservice ? planservice.split(',') : [];
-      // Loop through each service ID and update or add the plan
       for (const serviceId of planservices) {
         const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: serviceId }).exec();
 
@@ -4904,6 +4931,7 @@ class List {
         }
 
       }
+      */
 
       ////////////////// 17/10/2024 ////////////////////////
       const currentDate = new Date();
@@ -4938,6 +4966,7 @@ class List {
       // Create a new plan subscription record
       const newSubscription = new PlanSubscription_Modal({
         plan_id,
+        plan_category_id: plan.category._id,
         client_id,
         total: plan.price-discountPerPlan,
         plan_price: plan.price,
@@ -5648,7 +5677,248 @@ class List {
   }
 
 
+  async AddToCartPlan(req, res) {
+    try {
+      const { plan_id, client_id } = req.body;
+  
+      // Validate input
+      if (!plan_id || !client_id) {
+        return res.status(400).json({ 
+          status: false, 
+          message: 'Missing required fields: plan_id and client_id are required.' 
+        });
+      }
+  
+      // Check if plan exists in the database (optional step)
+      const plan = await Plan_Modal.findById(plan_id);
+      if (!plan) {
+        return res.status(404).json({ 
+          status: false, 
+          message: 'Plan not found.' 
+        });
+      }
+  
+      // Check if client exists in the database (optional step)
+      const client = await Clients_Modal.findById(client_id);
+      if (!client) {
+        return res.status(404).json({ 
+          status: false, 
+          message: 'Client not found.' 
+        });
+      }
+  
+      // Create the new subscription object for the cart
+      const newSubscription = new Addtocart_Modal({
+        plan_id,
+        client_id,
+      });
+  
+      // Save the subscription
+      const savedSubscription = await newSubscription.save();
+  
+      // Return a success response with the saved subscription details
+      return res.status(201).json({
+        status: true,
+        message: 'Plan added to cart successfully.',
+        data: savedSubscription,
+      });
+      
+    } catch (error) {
+      console.error('Error adding plan to cart:', error);
+      return res.status(500).json({
+        status: false,
+        message: 'Something went wrong while adding the plan to the cart.',
+        error: error.message,
+      });
+    }
+  }
+  
+  async AddToCartBasket(req, res) {
+    try {
+      const { basket_id, client_id } = req.body;
+  
+      // Validate input
+      if (!basket_id || !client_id) {
+        return res.status(400).json({ 
+          status: false, 
+          message: 'Missing required fields: basket_id and client_id are required.' 
+        });
+      }
+  
+      // Check if plan exists in the database (optional step)
+      const plan = await Basket_Modal.findById(basket_id);
+      if (!plan) {
+        return res.status(404).json({ 
+          status: false, 
+          message: 'Plan not found.' 
+        });
+      }
+  
+      // Check if client exists in the database (optional step)
+      const client = await Clients_Modal.findById(client_id);
+      if (!client) {
+        return res.status(404).json({ 
+          status: false, 
+          message: 'Client not found.' 
+        });
+      }
+  
+      // Create the new subscription object for the cart
+      const newSubscription = new Addtocart_Modal({
+        basket_id,
+        client_id,
+      });
+  
+      // Save the subscription
+      const savedSubscription = await newSubscription.save();
+  
+      // Return a success response with the saved subscription details
+      return res.status(201).json({
+        status: true,
+        message: 'Basket added to cart successfully.',
+        data: savedSubscription,
+      });
+      
+    } catch (error) {
+      console.error('Error adding Basket to cart:', error);
+      return res.status(500).json({
+        status: false,
+        message: 'Something went wrong while adding the Basket to the cart.',
+        error: error.message,
+      });
+    }
+  }
 
+  async PlanCartList(req, res) {
+    try {
+      const { client_id } = req.params; // Assuming client_id is passed in URL parameters
+  
+      // Validate input
+      if (!client_id) {
+        return res.status(400).json({
+          status: false,
+          message: 'Client ID is required.',
+        });
+      }
+  
+      // Fetch cart items where client_id matches and status is false
+      const cartItems = await Addtocart_Modal.find({
+        client_id: client_id,
+        status: false,
+        basket_id: null, // Check for both null and empty string
+      });
+  
+      // Check if cart is empty
+      if (!cartItems.length) {
+        return res.status(404).json({
+          status: false,
+          message: 'No items found in the cart for this client.',
+        });
+      }
+  
+      // Return success response with cart items
+      return res.status(200).json({
+        status: true,
+        message: 'Cart items retrieved successfully.',
+        data: cartItems,
+      });
+  
+    } catch (error) {
+      console.error('Error retrieving cart items:', error);
+      return res.status(500).json({
+        status: false,
+        message: 'Something went wrong while retrieving cart items.',
+        error: error.message,
+      });
+    }
+  }
+  
+  async BasketCartList(req, res) {
+    try {
+      const { client_id } = req.params; // Assuming client_id is passed in URL parameters
+  
+      // Validate input
+      if (!client_id) {
+        return res.status(400).json({
+          status: false,
+          message: 'Client ID is required.',
+        });
+      }
+  
+      // Fetch cart items where client_id matches and status is false
+      const cartItems = await Addtocart_Modal.find({
+        client_id: client_id,
+        status: false,
+        plan_id: null, // Check for both null and empty string
+      });
+  
+      // Check if cart is empty
+      if (!cartItems.length) {
+        return res.status(404).json({
+          status: false,
+          message: 'No items found in the cart for this client.',
+        });
+      }
+  
+      // Return success response with cart items
+      return res.status(200).json({
+        status: true,
+        message: 'Cart items retrieved successfully.',
+        data: cartItems,
+      });
+  
+    } catch (error) {
+      console.error('Error retrieving cart items:', error);
+      return res.status(500).json({
+        status: false,
+        message: 'Something went wrong while retrieving cart items.',
+        error: error.message,
+      });
+    }
+  }
+  
+  async DeleteCartItem(req, res) {
+    try {
+      const { id, client_id } = req.body; // Assuming cart_id is passed in request body
+  
+      // Validate input
+      if (!id || !client_id) {
+        return res.status(400).json({
+          status: false,
+          message: "Cart ID and Client ID are required.",
+        });
+      }
+  
+      // Find and delete the cart item
+      const deletedItem = await Addtocart_Modal.findOneAndDelete({
+        _id: id,
+        client_id: client_id,
+      });
+  
+      // If no item is found, return an error
+      if (!deletedItem) {
+        return res.status(404).json({
+          status: false,
+          message: "Cart item not found.",
+        });
+      }
+  
+      // Return success response
+      return res.status(200).json({
+        status: true,
+        message: "Cart item deleted successfully.",
+      });
+  
+    } catch (error) {
+      console.error("Error deleting cart item:", error);
+      return res.status(500).json({
+        status: false,
+        message: "Something went wrong while deleting the cart item.",
+        error: error.message,
+      });
+    }
+  }
+  
 
 }
 

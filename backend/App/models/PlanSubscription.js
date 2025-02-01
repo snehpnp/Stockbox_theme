@@ -62,6 +62,11 @@ const PlanSubscriptionSchema = new Schema({
         type: String,
         default: null
     },
+    plan_category_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'Plancategory', 
+        default: null
+    },
     del: {
         type: Boolean,
         default: false // Indicates whether the subscription is marked as deleted

@@ -17,16 +17,13 @@ import { image_baseurl } from "../../../Utils/config";
 import BrokersData from "../../../Utils/BrokersData";
 import axios from "axios";
 import { GetUserData } from "../../Services/UserService/User";
+import { GetNotificationData } from "../../Services/UserService/User";
 
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   useEffect(() => {
     getdemoclient();
     gettradedetail();
-
   }, []);
-
-
-
 
   const navigate = useNavigate();
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
@@ -41,9 +38,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const [getstatus, setGetstatus] = useState([]);
   const [badgecount, setBadgecount] = useState([]);
   const [viewmodel, setViewModel] = useState(false);
-  const [showBrokerData, setShowBrokerData] = useState(false);
   const [UserDetail, setUserDetail] = useState([]);
-
+  const [userNotification, setUserNotification] = useState([]);
   const [statusinfo, setStatusinfo] = useState({
     aliceuserid: "",
     apikey: "",
@@ -58,8 +54,6 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       window.location.href = "/#/login";
     }
   };
-
-
 
   const handleNotificationClick = async (event, notification) => {
     const user_active_status = "1";
@@ -101,14 +95,25 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   };
 
   const getdemoclient = async () => {
-    try {
-      const response = await getDashboardNotification(token);
-      if (response.status) {
-        setBadgecount(response?.unreadCount);
-        setClients(response?.data);
+    if (Role == "ADMIN") {
+      try {
+        const response = await getDashboardNotification(token);
+        if (response.status) {
+          setBadgecount(response?.unreadCount);
+          setClients(response?.data);
+        }
+      } catch (error) {
+        console.log("error", error);
       }
-    } catch (error) {
-      console.log("error", error);
+    } else if (Role == "USER") {
+      try {
+        const response = await GetNotificationData({ user_id: userid }, token);
+        if (response.status) {
+          setUserNotification(response.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -164,9 +169,6 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       console.error("Error fetching services:", error);
     }
   };
-
-
-
 
   const getstatusdetaile = async () => {
     if (
@@ -257,21 +259,16 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   }, [getstatus]);
 
-
-
   const getuserdetail = async () => {
     try {
       const response = await GetUserData(userid, token);
       if (response.status) {
         setUserDetail(response.data);
-
       }
     } catch (error) {
       console.log("error", error);
     }
   };
-
-
 
   const TradingBtnCall = async (e) => {
     if (UserDetail.dlinkstatus == 0) {
@@ -287,9 +284,12 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       }
     }
   };
+
   const closeBrokerModal = () => {
     setViewModel(false); // Close the modal
   };
+
+  console.log("userNotification", userNotification)
 
   return (
     <>
@@ -512,8 +512,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                             <div
                               key={index}
                               className={`dropdown-item notification ${notification.status === 1
-                                ? "text-info font-bold"
-                                : "text-muted bg-light"
+                                  ? "text-info font-bold"
+                                  : "text-muted bg-light"
                                 }`}
                               onClick={(event) =>
                                 handleNotificationClick(event, notification)
@@ -603,7 +603,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       </div>
                     </div>
                   </div>
-                ) : Role === "USER" ? (
+                ) :
+                 Role === "USER" ? (
                   <div className="dropdown">
                     <div
                       className="notification-container dropdown-toggle"
@@ -617,29 +618,185 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
                     >
+                      {badgecount ? (
+                        <span
+                          className="alert-count"
+                          style={{
+                            position: "absolute",
+                            top: "-5px",
+                            right: "-5px",
+                            background: "red",
+                            color: "white",
+                            fontSize: "12px",
+                            fontWeight: "bold",
+                            borderRadius: "50%",
+                            padding: "4px 8px",
+                            zIndex: 1051,
+                          }}
+                        >
+                          {badgecount > 100 ? "99+" : badgecount}
+                        </span>
+                      ) : null}
                       <FaBell size={24} />
                     </div>
 
                     <div
-                      style={notificationDropdownStyle}
-                      className="dropdown-menu"
+                      style={{
+                        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                        borderRadius: "10px",
+                        minWidth: "320px",
+                        maxWidth: "400px",
+                        zIndex: 1050,
+                        padding: "10px",
+                        overflow: "hidden",
+                      }}
+                      className="dropdown-menu dropdown-menu-end"
                       aria-labelledby="dropdownMenuLink"
                     >
-                      <div style={notificationHeaderStyle}>Notifications</div>
-                      <ul style={notificationListStyle}>
-                        <li style={notificationItemStyle}>
-                          🔔 New message from admin
-                        </li>
-                        <li style={notificationItemStyle}>
-                          🔔 Your profile was updated
-                        </li>
-                        <li style={notificationItemStyle}>
-                          🔔 System maintenance scheduled
-                        </li>
-                      </ul>
+                      <div
+                        className="msg-header d-flex justify-content-between align-items-center"
+                        style={{
+                          borderBottom: "1px solid #ddd",
+                          paddingBottom: "8px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <p
+                          className="msg-header-title"
+                          style={{
+                            fontSize: "18px",
+                            fontWeight: "600",
+                            margin: 0,
+                          }}
+                        >
+                          Notifications
+                        </p>
+                        <span
+                          className="msg-header-badge"
+                          style={{
+                            backgroundColor: "#007bff",
+                            color: "white",
+                            fontSize: "14px",
+                            fontWeight: "500",
+                            borderRadius: "12px",
+                            padding: "2px 8px",
+                          }}
+                        >
+                          {
+                            userNotification?.filter(
+                              (notification) => notification?.status === 0
+                            )?.length
+                          }
+                        </span>
+                      </div>
+                      <div
+                        className="header-notifications-list"
+                        style={{
+                          overflowY: "auto",
+                          maxHeight: "300px",
+                          paddingRight: "10px",
+                          scrollbarWidth: "thin",
+                          scrollbarColor: "#c1c1c1 transparent",
+                        }}
+                      >
+                        {userNotification?.length > 0 ? (
+                          userNotification?.map((notification, index) => (
+                            <div
+                              key={index}
+                              className={`dropdown-item notification ${notification.status === 1
+                                  ? "text-info font-bold"
+                                  : "text-muted bg-light"
+                                }`}
+                              onClick={(event) =>
+                                handleNotificationClick(event, notification)
+                              }
+                              style={{
+                                padding: "10px",
+                                marginBottom: "5px",
+                                borderRadius: "6px",
+                                background:
+                                  notification.status === 0
+                                    ? "#f8f9fa"
+                                    : "white",
+                                cursor: "pointer",
+                                transition: "all 0.3s ease",
+                              }}
+                            >
+                              <div className="d-flex align-items-center">
+                                <div className="flex-grow-1">
+                                  <h6
+                                    className="msg-name"
+                                    style={{
+                                      margin: 0,
+                                      fontWeight:
+                                        notification.status === 1
+                                          ? "normal"
+                                          : "bold",
+                                    }}
+                                  >
+                                    {notification?.title}
+                                    <span
+                                      className="msg-time float-end"
+                                      style={{
+                                        fontSize: "12px",
+                                        color: "#6c757d",
+                                      }}
+                                    >
+                                      {notification.createdAt
+                                        ? formatDistanceToNow(
+                                          new Date(notification.createdAt),
+                                          {
+                                            addSuffix: true,
+                                          }
+                                        )
+                                        : "Empty Message"}
+                                    </span>
+                                  </h6>
+                                  <p
+                                    className="msg-info"
+                                    title={notification.message}
+                                    style={{
+                                      fontSize: "14px",
+                                      color: "#6c757d",
+                                      margin: "4px 0 0",
+                                    }}
+                                  >
+                                    {notification.message}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              height: "100%",
+                              color: "#6c757d",
+                            }}
+                          >
+                            <h4>No Notifications</h4>
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-center msg-footer mt-2">
+                        <button
+                          className="btn btn-primary w-100"
+                          onClick={() => getAllMessageRead()}
+                          style={{
+                            borderRadius: "6px",
+                            fontWeight: "500",
+                          }}
+                        >
+                          View All Notifications
+                        </button>
+                      </div>
                     </div>
                   </div>
-                ) : (
+                ) 
+                : (
                   ""
                 )}
 

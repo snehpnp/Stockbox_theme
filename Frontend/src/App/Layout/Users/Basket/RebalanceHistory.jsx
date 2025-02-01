@@ -4,178 +4,178 @@ import Content from "../../../components/Contents/Content";
 const RebalanceHistory = () => {
   return (
     <Content
-    Page_title="Rebalance History"
-    button_status={false}
-    backbutton_status={false}
-    backbutton_title="Back">
-    <div className="row">   
-    <div className="col-md-12">
-        <div className='card mb-3'>
-            <div className='card-body'> 
-            <div className=''>
-        <div
-          className="accordion accordion-flush"
-          id="accordionFlushExample"
-        >
-          <div className="accordion-item rounded-3 border-0 shadow mb-2">
-            <h2 className="accordion-header">
-              <div
-                className="accordion-button border-bottom collapsed fw-semibold"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#flush-collapseOne"
-                aria-expanded="false"
-                aria-controls="flush-collapseOne"
-              >
-                <div className="d-flex justify-content-between align-items-center w-100">
-                <h6 className="m-0 fw-bold"> Investment Amount: ₹ 35,000</h6>
-                <p className="m-0 pe-2 fs-14"> 28Apr2025</p>
-                </div>
-              </div>
-            </h2>
-            <div
-              id="flush-collapseOne"
-              className="accordion-collapse collapse"
-              data-bs-parent="#accordionFlushExample"
-            >
-              <div className="accordion-body">
-                <div className="row  align-items-center">
-                  <div className="col-md-12">
-                    <div className='table-responsive'>
-                    <table className="table table-bordered">
-                        <thead className='table-primary'>
-                          <tr>
-                            <td> <p className="mb-1"> Name</p></td>
-                            <td><p className="mb-1">Price</p></td>
-                            <td><p className="mb-1">Weightage</p></td>
-                            <td><p className="mb-1">Quantity</p></td>
-                            </tr>
+      Page_title="Rebalance History"
+      button_status={false}
+      backbutton_status={false}
+      backbutton_title="Back">
+      <div className="row">
+        <div className="col-md-12">
+          <div className='card mb-3'>
+            <div className='card-body'>
+              <div className=''>
+                <div
+                  className="accordion accordion-flush"
+                  id="accordionFlushExample"
+                >
+                  <div className="accordion-item rounded-3 border-0 shadow mb-2">
+                    <h2 className="accordion-header">
+                      <div
+                        className="accordion-button border-bottom collapsed fw-semibold"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#flush-collapseOne"
+                        aria-expanded="false"
+                        aria-controls="flush-collapseOne"
+                      >
+                        <div className="d-flex justify-content-between align-items-center w-100">
+                          <h6 className="m-0 fw-bold"> Investment Amount: ₹ 35,000</h6>
+                          <p className="m-0 pe-2 fs-14"> 28Apr2025</p>
+                        </div>
+                      </div>
+                    </h2>
+                    <div
+                      id="flush-collapseOne"
+                      className="accordion-collapse collapse"
+                      data-bs-parent="#accordionFlushExample"
+                    >
+                      <div className="accordion-body">
+                        <div className="row  align-items-center">
+                          <div className="col-md-12">
+                            <div className='table-responsive'>
+                              <table className="table table-bordered">
+                                <thead className='table-primary'>
+                                  <tr>
+                                    <td> <p className="mb-1"> Name</p></td>
+                                    <td><p className="mb-1">Price</p></td>
+                                    <td><p className="mb-1">Weightage</p></td>
+                                    <td><p className="mb-1">Quantity</p></td>
+                                  </tr>
 
-                        </thead>
-                        <tbody>
-                          <tr className=""> <td><b>6 Months</b></td>
-                            <td>  <b>28 oct 2024</b></td>
-                            <td>  <b>51999</b></td>
-                            <td>  <b>28 apr 2025</b></td>
-                            </tr>
+                                </thead>
+                                <tbody>
+                                  <tr className=""> <td><b>6 Months</b></td>
+                                    <td>  <b>28 oct 2024</b></td>
+                                    <td>  <b>51999</b></td>
+                                    <td>  <b>28 apr 2025</b></td>
+                                  </tr>
 
-                        </tbody>
+                                </tbody>
 
-                      </table>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="accordion-item rounded-3 border-0 shadow mb-2">
+                    <h2 className="accordion-header">
+                      <button
+                        className="accordion-button border-bottom collapsed fw-semibold"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#flush-collapseTwo"
+                        aria-expanded="false"
+                        aria-controls="flush-collapseTwo"
+                      >
+                        <div className="d-flex justify-content-between align-items-center w-100">
+                          <h6 className="m-0 fw-bold"> Investment Amount: ₹ 35,000</h6>
+                          <p className="m-0 pe-2 fs-14"> 28Apr2025</p>
+                        </div>
+                      </button>
+                    </h2>
+                    <div
+                      id="flush-collapseTwo"
+                      className="accordion-collapse collapse"
+                      data-bs-parent="#accordionFlushExample"
+                    >
+                      <div className="accordion-body">
+                        <div className="row  align-items-center">
+                          <div className="col-md-12">
+                            <div className='table-responsive'>
+                              <table className="table table-bordered">
+                                <thead className='table-primary'>
+                                  <tr>
+                                    <td> <p className="mb-1"> Name</p></td>
+                                    <td><p className="mb-1">Price</p></td>
+                                    <td><p className="mb-1">Weightage</p></td>
+                                    <td><p className="mb-1">Quantity</p></td>
+                                  </tr>
+
+                                </thead>
+                                <tbody>
+                                  <tr className=""> <td><b>6 Months</b></td>
+                                    <td>  <b>28 oct 2024</b></td>
+                                    <td>  <b>51999</b></td>
+                                    <td>  <b>28 apr 2025</b></td>
+                                  </tr>
+
+                                </tbody>
+
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="accordion-item rounded-3 border-0 mb-2 shadow">
+                    <h2 className="accordion-header">
+                      <button
+                        className="accordion-button border-bottom collapsed fw-semibold"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#flush-collapseThree"
+                        aria-expanded="false"
+                        aria-controls="flush-collapseThree"
+                      >
+                        <div className="d-flex justify-content-between align-items-center w-100">
+                          <h6 className="m-0 fw-bold"> Investment Amount: ₹ 35,000</h6>
+                          <p className="m-0 pe-2 fs-14"> 28Apr2025</p>
+                        </div>
+                      </button>
+                    </h2>
+                    <div
+                      id="flush-collapseThree"
+                      className="accordion-collapse collapse"
+                      data-bs-parent="#accordionFlushExample"
+                    >
+                      <div className="accordion-body">
+                        <div className="row  align-items-center">
+                          <div className="col-md-12">
+                            <div className='table-responsive'>
+                              <table className="table table-bordered">
+                                <thead className='table-primary'>
+                                  <tr>
+                                    <td> <p className="mb-1"> Name</p></td>
+                                    <td><p className="mb-1">Price</p></td>
+                                    <td><p className="mb-1">Weightage</p></td>
+                                    <td><p className="mb-1">Quantity</p></td>
+                                  </tr>
+
+                                </thead>
+                                <tbody>
+                                  <tr className=""> <td><b>6 Months</b></td>
+                                    <td>  <b>28 oct 2024</b></td>
+                                    <td>  <b>51999</b></td>
+                                    <td>  <b>28 apr 2025</b></td>
+                                  </tr>
+
+                                </tbody>
+
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div className="accordion-item rounded-3 border-0 shadow mb-2">
-            <h2 className="accordion-header">
-              <button
-                className="accordion-button border-bottom collapsed fw-semibold"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#flush-collapseTwo"
-                aria-expanded="false"
-                aria-controls="flush-collapseTwo"
-              >
-                <div className="d-flex justify-content-between align-items-center w-100">
-                <h6 className="m-0 fw-bold"> Investment Amount: ₹ 35,000</h6>
-                <p className="m-0 pe-2 fs-14"> 28Apr2025</p>
-                </div>
-              </button>
-            </h2>
-            <div
-              id="flush-collapseTwo"
-              className="accordion-collapse collapse"
-              data-bs-parent="#accordionFlushExample"
-            >
-              <div className="accordion-body">
-                <div className="row  align-items-center">
-                  <div className="col-md-12">
-                    <div className='table-responsive'>
-                    <table className="table table-bordered">
-                        <thead className='table-primary'>
-                          <tr>
-                            <td> <p className="mb-1"> Name</p></td>
-                            <td><p className="mb-1">Price</p></td>
-                            <td><p className="mb-1">Weightage</p></td>
-                            <td><p className="mb-1">Quantity</p></td>
-                            </tr>
-
-                        </thead>
-                        <tbody>
-                          <tr className=""> <td><b>6 Months</b></td>
-                            <td>  <b>28 oct 2024</b></td>
-                            <td>  <b>51999</b></td>
-                            <td>  <b>28 apr 2025</b></td>
-                            </tr>
-
-                        </tbody>
-
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="accordion-item rounded-3 border-0 mb-2 shadow">
-            <h2 className="accordion-header">
-              <button
-                className="accordion-button border-bottom collapsed fw-semibold"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#flush-collapseThree"
-                aria-expanded="false"
-                aria-controls="flush-collapseThree"
-              >
-                <div className="d-flex justify-content-between align-items-center w-100">
-                  <h6 className="m-0 fw-bold"> Investment Amount: ₹ 35,000</h6>
-                  <p className="m-0 pe-2 fs-14"> 28Apr2025</p>
-                </div>
-              </button>
-            </h2>
-            <div
-              id="flush-collapseThree"
-              className="accordion-collapse collapse"
-              data-bs-parent="#accordionFlushExample"
-            >
-              <div className="accordion-body">
-                <div className="row  align-items-center">
-                  <div className="col-md-12">
-                    <div className='table-responsive'>
-                      <table className="table table-bordered">
-                        <thead className='table-primary'>
-                          <tr>
-                            <td> <p className="mb-1"> Name</p></td>
-                            <td><p className="mb-1">Price</p></td>
-                            <td><p className="mb-1">Weightage</p></td>
-                            <td><p className="mb-1">Quantity</p></td>
-                            </tr>
-
-                        </thead>
-                        <tbody>
-                          <tr className=""> <td><b>6 Months</b></td>
-                            <td>  <b>28 oct 2024</b></td>
-                            <td>  <b>51999</b></td>
-                            <td>  <b>28 apr 2025</b></td>
-                            </tr>
-
-                        </tbody>
-
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+              </div></div>
           </div>
         </div>
-      </div></div>
-        </div>
-        </div>
-        </div>
-        </Content>
+      </div>
+    </Content>
   )
 }
 

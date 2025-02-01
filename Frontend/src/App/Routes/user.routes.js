@@ -4,7 +4,6 @@ import Dashboard from "../Layout/Users/Dashboard/Dashboard";
 import Services from "../Layout/Users/Service/Service";
 import Trades from "../Layout/Users/Trades/Trade";
 import Basket from "../Layout/Users/Basket/Basket";
-import BrokerResponse from "../Layout/Users/BrokerResponse/BrokerResponse";
 import PastPerformance from "../Layout/Users/PastPerformance/PastPerformance";
 import ReferEarn from "../Layout/Users/ReferEarn/Refer";
 import Coupon from "../Layout/Users/Coupon/Coupon";
@@ -27,8 +26,6 @@ import Broadcast from "../Layout/Users/Broadcast/Broadcast";
 import News from "../Layout/Users/News/News";
 import NewsDetail from "../Layout/Users/News/NewsDetail";
 import Blogs from '../Layout/Users/Blogs/Blogs'
-import BasketStockList from "../Layout/Users/Basket/BasketStockList";
-import RebalanceHistory from "../Layout/Users/Basket/RebalanceHistory";
 
 export default function App() {
   return (
@@ -37,7 +34,6 @@ export default function App() {
       <Route path="/basket" element={<Basket />} />
       <Route path="/trades" element={<Trades />} />
       <Route path="/service" element={<Services />} />
-      <Route path="/basket_response" element={<BrokerResponse />} />
       <Route path="/past-performance" element={<PastPerformance />} />
       <Route path="/refer-earn" element={<ReferEarn />} />
       <Route path="/coupons" element={<Coupon />} />
@@ -61,7 +57,13 @@ export default function App() {
       <Route path="/newsdetail" element={<NewsDetail />} />
       <Route path="/basketstocklist" element={<BasketStockList />} />
       <Route path="/rebalancehistory" element={<RebalanceHistory />} />     
+ 
       <Route path="/blogs" element={<Blogs />} />
+      <Route path="/basketstocklist" element={<BasketStockList />} />
+      <Route path="/rebalanceHistory" element={<RebalanceHistory />} />
+
+
+      <Route path="/basket-response" element={<BasketResponse />} />
 
     </Routes>
   );

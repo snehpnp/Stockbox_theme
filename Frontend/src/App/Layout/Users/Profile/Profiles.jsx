@@ -184,27 +184,30 @@ const Profiles = () => {
   };
 
   const DeleteDematAccountApi = async () => {
-    try {
-      console.log("userDetail._id", userid);
-      const response = await DeleteDematAccount({ id: userid }, token);
-      if (response.status) {
-        Swal.fire("Deleted!", "Your account has been deleted.", "success" );
-        // window.location.reload();
-      } else {
-        Swal.fire(
-          "Error!",
-          response.message || "Something went wrong.",
-          "error"
-        );
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this action!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          console.log("userDetail._id", userid);
+          const response = await DeleteDematAccount({ id: userid }, token);
+          if (response.status) {
+            Swal.fire("Deleted!", "Your account has been deleted.", "success");
+          } else {
+            Swal.fire("Error!", response.message || "Something went wrong.", "error");
+          }
+        } catch (error) {
+          console.error("Error deleting account:", error);
+          Swal.fire("Error!", "Failed to delete account. Try again later.", "error");
+        }
       }
-    } catch (error) {
-      console.error("Error deleting account:", error);
-      Swal.fire(
-        "Error!",
-        "Failed to delete account. Try again later.",
-        "error"
-      );
-    }
+    });
   };
 
   return (
