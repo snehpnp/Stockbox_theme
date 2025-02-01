@@ -346,11 +346,17 @@ const Subscription = () => {
       </div>
     ))
   ) : (
+    <>
 <svg class="dynamic-image" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24">
   <path fill="none" d="M0 0h24v24H0z"/>
   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
 </svg>
-
+<svg class="dynamic-image" xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24">
+  <circle cx="12" cy="12" r="10" fill="none" stroke="#aaa" stroke-width="2" class="circle"/>
+  <path class="no-data-path" d="M12 6C10.89 6 10 6.89 10 8s.89 2 2 2 2-.89 2-2-.89-2-2-2zM12 10c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" fill="#aaa"/>
+  <text x="50%" y="50%" text-anchor="middle" fill="#aaa" font-size="5" dy=".3em">No Data Found</text>
+</svg>
+</>
   
   )}
 </div>
