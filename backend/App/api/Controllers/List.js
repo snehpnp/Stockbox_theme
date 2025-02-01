@@ -4835,6 +4835,30 @@ class List {
       end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
       end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
 
+
+      const planservice = plan.category?.service;
+      const planservices = planservice ? planservice.split(',') : [];
+      for (const serviceId of planservices) {
+        const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: serviceId }).exec();
+
+        if (existingPlan) {
+
+          if (new Date(existingPlan.enddate) < end) {
+            existingPlan.enddate = end;
+            await existingPlan.save();
+          }
+        }
+        else
+        {
+          const newPlanManage = new Planmanage({
+            clientid: client_id,
+            serviceid: serviceId,
+            startdate: start,
+            enddate: end,
+          });
+            await newPlanManage.save();
+        }
+      }
      /*
       const planservice = plan.category?.service;
       const planservices = planservice ? planservice.split(',') : [];
