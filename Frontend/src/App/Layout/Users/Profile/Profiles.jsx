@@ -13,19 +13,33 @@ import {
   DeleteDematAccount,
 } from "../../../Services/UserService/User";
 
+
+
+
+
 const Profiles = () => {
+
+  const token = localStorage.getItem("token");
+  const userid = localStorage.getItem("id");
+
+
+
   const [showModal, setShowModal] = useState(false);
   const [userDetail, setUserDetail] = useState({});
+
   const [showPassword, setShowPassword] = useState({
     currentPassword: false,
     newPassword: false,
     confirmPassword: false,
   });
-  const token = localStorage.getItem("token");
-  const userid = localStorage.getItem("id");
+
+
+
   const togglePassword = (field) => {
     setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
   };
+
+
 
   const formik = useFormik({
     initialValues: {
@@ -33,15 +47,43 @@ const Profiles = () => {
       newPassword: "",
       confirmPassword: "",
     },
+
+
     validate: (values) => {
       const errors = {};
-      if (!values.currentPassword)
-        errors.currentPassword = "Please enter current password";
-      if (!values.newPassword) errors.newPassword = "Please enter new password";
-      if (values.newPassword !== values.confirmPassword)
+
+      if (!values.currentPassword) {
+        errors.currentPassword = "Please enter your current password";
+      }
+      if (!values.newPassword) {
+        errors.newPassword = "Please enter a new password";
+      } else {
+        if (values.newPassword.length < 8) {
+          errors.newPassword = "Password must be at least 8 characters long";
+        }
+
+        if (!/[A-Z]/.test(values.newPassword)) {
+          errors.newPassword = "Password must contain at least one uppercase letter";
+        }
+
+        if (!/\d/.test(values.newPassword)) {
+          errors.newPassword = "Password must contain at least one number";
+        }
+
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(values.newPassword)) {
+          errors.newPassword = "Password must contain at least one special character";
+        }
+      }
+
+      if (!values.confirmPassword) {
+        errors.confirmPassword = "Please confirm your new password";
+      } else if (values.newPassword !== values.confirmPassword) {
         errors.confirmPassword = "Passwords do not match";
+      }
+
       return errors;
     },
+
     onSubmit: async (values, { resetForm }) => {
       try {
         const response = await ChangePasswordOfclient(
@@ -65,6 +107,9 @@ const Profiles = () => {
     },
   });
 
+
+
+
   const getuserdetail = async () => {
     try {
       const response = await GetUserData(userid, token);
@@ -79,6 +124,8 @@ const Profiles = () => {
   useEffect(() => {
     getuserdetail();
   }, []);
+
+
 
   const UpdateProfileInfo = async () => {
     try {
@@ -101,6 +148,8 @@ const Profiles = () => {
     }
   };
 
+
+
   const DeleteAccount = async () => {
     try {
       const { value: email } = await Swal.fire({
@@ -118,7 +167,7 @@ const Profiles = () => {
         },
       });
 
-      if (!email) return; // If no email entered, exit.
+      if (!email) return;
 
       if (email !== userDetail.Email) {
         Swal.fire("Error", "Email does not match", "error");
@@ -126,7 +175,7 @@ const Profiles = () => {
       }
 
       let timerInterval;
-      let isCancelled = false; // Track cancellation
+      let isCancelled = false;
 
       await Swal.fire({
         title: "Account will be deleted in...",
@@ -145,7 +194,7 @@ const Profiles = () => {
 
           cancelButton.addEventListener("click", () => {
             isCancelled = true;
-            Swal.close(); // Close the modal
+            Swal.close();
           });
         },
         willClose: () => {
@@ -158,14 +207,11 @@ const Profiles = () => {
         return;
       }
 
-      // After the timer, proceed with the actual deletion
       const response = await DeleteClient(userDetail._id, token);
-      console.log("response", response);
-
       if (response.status) {
         Swal.fire("Deleted!", "Your account has been deleted.", "success");
         localStorage.removeItem("token");
-        window.location.href = "/login"; // Redirect after deletion
+        window.location.href = "/login";
       } else {
         Swal.fire(
           "Error!",
@@ -182,6 +228,8 @@ const Profiles = () => {
       );
     }
   };
+
+
 
   const DeleteDematAccountApi = async () => {
     Swal.fire({
@@ -209,6 +257,9 @@ const Profiles = () => {
       }
     });
   };
+
+
+
 
   return (
     <Content
@@ -243,9 +294,6 @@ const Profiles = () => {
                 <li className="list-group-item">
                   <Link to="/user/wallet">Wallet</Link>
                 </li>
-                {/* <li className="list-group-item">
-                  <Link to="/user/kyc">KYC Pending</Link>
-                </li> */}
                 <li className="list-group-item">
                   <Link to="/user/payment-history">Payment History</Link>
                 </li>
@@ -254,7 +302,7 @@ const Profiles = () => {
                 </li>
                 <li className="list-group-item">
                   <Link to="" onClick={(e) => DeleteDematAccountApi()}
-                  className="btn btn-secondary w-100">
+                    className="btn btn-secondary w-100">
                     Delete Demat Account
                   </Link>
                 </li>
