@@ -637,3 +637,22 @@ export async function Getbasketorderlist(data, token) {
         return err;
     }
 }
+
+
+// withdrw reuest 
+
+
+
+export async function GetWithdrawRequest(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/requestpayout`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
