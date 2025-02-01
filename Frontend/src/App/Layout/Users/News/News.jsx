@@ -99,7 +99,7 @@ const styles = {
   image: {
     width: "100%",
     height: "250px",
-    objectFit: "cover",
+    objectFit: "contain",
   },
   content: {
     padding: "15px",
