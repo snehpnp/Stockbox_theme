@@ -1,11 +1,37 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Content from "../../../components/Contents/Content";
 import { Doughnut } from "react-chartjs-2";
 import { Link } from 'react-router-dom';
+import { GetBasketService } from '../../../Services/UserService/User';
+
 
 function Basket() {
 
   const [activeTab, setActiveTab] = useState("allbasket");
+
+  let userid = JSON.stringify(localStorage.getItem("id"))
+  let token = JSON.stringify(localStorage.getItem("token"))
+
+  console.log("userid", userid)
+
+  useEffect(() => {
+    getbasketdata()
+  }, [])
+
+
+  const getbasketdata = async () => {
+    try {
+      const data = { clientid: userid }
+      const response = await GetBasketService(data, token)
+      if (response.status) {
+        console.log("resaa", response.data)
+      }
+    } catch (error) {
+      console.log("error", error)
+    }
+  }
+
+
 
 
 

@@ -692,3 +692,21 @@ export async function GetPayoutDetail(data, token) {
         return err;
     }
 }
+
+
+// basket service
+
+
+export async function GetBasketService(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/list/baskets`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
