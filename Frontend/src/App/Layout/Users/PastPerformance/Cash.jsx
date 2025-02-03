@@ -157,11 +157,11 @@ const Cash = () => {
       <div className="row mt-2 mb-2">
         <div className="col-md-12">
         <div class="alert alert-primary" role="alert">
-  <div class="d-flex justify-content-between align-items-center">
+  <div class="d-md-flex justify-content-between align-items-center">
     <div>  Momentum (Dec 2024) PERFORMANCE
     </div>
-    <div> <button className="btn btn-primary me-2"><i class='bx bx-left-arrow-alt'></i>Nov 2024</button>
-    <button className="btn btn-primary">Dec 2024<i class='bx bx-right-arrow-alt' ></i></button></div>
+    <div className=",t-md-0 mt-3"> <button className="btn btn-primary me-2 "><i class='bx bx-left-arrow-alt'></i>Nov 2024</button>
+    <button className="btn btn-primary  ">Dec 2024<i class='bx bx-right-arrow-alt' ></i></button></div>
    
 </div>
         </div>
@@ -196,7 +196,7 @@ const Cash = () => {
         </div>
       </div>
 <div className="my-4">
-  <div className="d-sm-flex gap-3">
+  <div className="d-md-flex gap-3">
     <div className="card-body card">
       <h5 className="mb-1">Total Calls
       </h5>
