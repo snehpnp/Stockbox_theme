@@ -131,8 +131,6 @@ function Basket() {
 
 
 
-
-
   const stripHtmlTags = (input) => {
     if (!input) return "";
     return input.replace(/<\/?[^>]+(>|$)/g, "");
