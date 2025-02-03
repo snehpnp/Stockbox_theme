@@ -15,7 +15,7 @@ const EditClient = () => {
   const location = useLocation();
   const { row } = location.state;
 
-  
+
 
   const user_id = localStorage.getItem("id");
   const token = localStorage.getItem("token");
@@ -26,117 +26,102 @@ const EditClient = () => {
   const validate = (values) => {
     let errors = {};
 
-     // Regex to check for numbers
-  const numberRegex = /[0-9]/;
+    const numberRegex = /[0-9]/;
 
-  // Regex to check for special characters
-  const specialCharRegex = /[^a-zA-Z\s]/;
+    const specialCharRegex = /[^a-zA-Z\s]/;
 
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
-  const onlyNumbersRegex = /^[0-9]+$/;
+    const onlyNumbersRegex = /^[0-9]+$/;
 
-  // Regex to check phone number (10 digits)
-  const phoneRegex = /^[0-9]{10}$/;  // This will match only 10 digits
+    const phoneRegex = /^[0-9]{10}$/;
 
-  if (!values.FullName) {
-    errors.FullName = "Please Enter Full Name";
-  } else if (numberRegex.test(values.FullName)) {
-    errors.FullName = "Full Name should not contain numbers";
-  } else if (specialCharRegex.test(values.FullName)) {
-    errors.FullName = "Full Name should not contain special characters";
-  }
-   // Email Validation
-   if (!values.Email) {
-    errors.Email = "Please Enter Email";
-} else if (onlyNumbersRegex.test(values.Email)) {
-    // If the email contains only numbers
-    errors.Email = "Email should not contain only numbers";
-} else if (!emailRegex.test(values.Email)) {
-    // If email format is invalid
-    errors.Email = "Please Enter a valid Email";
-}
+    if (!values.FullName) {
+      errors.FullName = "Please Enter Full Name";
+    } else if (numberRegex.test(values.FullName)) {
+      errors.FullName = "Full Name should not contain numbers";
+    } else if (specialCharRegex.test(values.FullName)) {
+      errors.FullName = "Full Name should not contain special characters";
+    }
+    if (!values.Email) {
+      errors.Email = "Please Enter Email";
+    } else if (onlyNumbersRegex.test(values.Email)) {
+      errors.Email = "Email should not contain only numbers";
+    } else if (!emailRegex.test(values.Email)) {
+      errors.Email = "Please Enter a valid Email";
+    }
 
-    // if (!values.UserName) {
-    //   errors.UserName = "Please enter Username";
-    // }
     if (!values.PhoneNo) {
       errors.PhoneNo = "Please Enter Phone Number";
     } else if (!phoneRegex.test(values.PhoneNo)) {
-      // Check if phone number is not exactly 10 digits
       errors.PhoneNo = "Phone Number should be exactly 10 digits";
     }
-    // if (!values.password) {
-    //   errors.password = "Please Enter Password";
-    // }
 
 
     return errors;
   };
 
   const onSubmit = async (values) => {
-  const req = {
-    FullName: values.FullName,
-    Email: values.Email,
-    PhoneNo: values.PhoneNo,
-    id: row._id,
-  };
+    const req = {
+      FullName: values.FullName,
+      Email: values.Email,
+      PhoneNo: values.PhoneNo,
+      id: row._id,
+    };
 
-  try {
-    const response = await UpdateClient(req, token);
-    // console.log("checking email and mobile number:",response);
-    
+    try {
+      const response = await UpdateClient(req, token);
 
-    if (response.status) {
+
+      if (response.status) {
+        Swal.fire({
+          title: "Update Successful!",
+          text: response.message,
+          icon: "success",
+          timer: 1500,
+          timerProgressBar: true,
+        });
+        setTimeout(() => {
+          navigate("/admin/client");
+        }, 1500);
+      } else {
+
+        if (response.error.status === false) {
+          Swal.fire({
+            title: "Error",
+            text: response.error.message,
+            icon: "error",
+            timer: 2500,
+            timerProgressBar: true,
+          });
+        } else if (response.error.status === false) {
+          Swal.fire({
+            title: "Error",
+            text: response.error.message,
+            icon: "error",
+            timer: 2500,
+            timerProgressBar: true,
+          });
+        } else {
+          Swal.fire({
+            title: "Error",
+            text: "Email or Mobile number are already exists.",
+            icon: "error",
+            timer: 2500,
+            timerProgressBar: true,
+          });
+        }
+      }
+    } catch (error) {
       Swal.fire({
-        title: "Update Successful!",
-        text: response.message,
-        icon: "success",
+        title: "Error",
+        text: "An unexpected error occurred. Please try again later.",
+        icon: "error",
         timer: 1500,
         timerProgressBar: true,
       });
-      setTimeout(() => {
-        navigate("/admin/client");
-      }, 1500);
-    } else {
-      // Check for specific error messages
-      if (response.error.status === false) {
-        Swal.fire({
-          title: "Error",
-          // text: "Email already exists. Please use a different email.",
-          text:response.error.message,
-          icon: "error",
-          timer: 2500,
-          timerProgressBar: true,
-        });
-      } else if (response.error.status === false) {
-        Swal.fire({
-          title: "Error",
-          text:response.error.message,
-          icon: "error",
-          timer: 2500,
-          timerProgressBar: true,
-        });
-      } else {
-        Swal.fire({
-          title: "Error",
-          text: "Email or Mobile number are already exists.",
-          icon: "error",
-          timer: 2500,
-          timerProgressBar: true,
-        });
-      }
     }
-  } catch (error) {
-    Swal.fire({
-      title: "Error",
-      text: "An unexpected error occurred. Please try again later.",
-      icon: "error",
-      timer: 1500,
-      timerProgressBar: true,
-    });
-  }
-};
+  };
 
 
   const formik = useFormik({
@@ -160,7 +145,7 @@ const EditClient = () => {
       label_size: 6,
       col_size: 4,
       disable: false,
-      star:true
+      star: true
 
     },
     // {
@@ -179,7 +164,7 @@ const EditClient = () => {
       label_size: 12,
       col_size: 4,
       disable: false,
-      star:true
+      star: true
 
     },
     {
@@ -189,8 +174,8 @@ const EditClient = () => {
       label_size: 12,
       col_size: 4,
       disable: false,
-      star:true
-      
+      star: true
+
 
     },
     // {
@@ -220,8 +205,8 @@ const EditClient = () => {
         btn_name1_route={"/admin/client"}
         additional_field={<></>}
       />
-      </Content>
-   
+    </Content>
+
   );
 };
 

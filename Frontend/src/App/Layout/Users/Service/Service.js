@@ -37,6 +37,7 @@ const Service = () => {
   const [discountedPrice, setDiscountedPrice] = useState(0);
   const [coupons, setCoupon] = useState([]);
   const [getkey, setGetkey] = useState([]);
+  const [company, setCompany] = useState([]);
   const [sortCriteria, setSortCriteria] = useState("price");
   const [isLoading, setIsLoading] = useState(true)
 
@@ -65,9 +66,10 @@ const Service = () => {
 
 
 
+
   const applyCoupon = async (coupon) => {
     try {
-      const data = { code: coupon?.code, purchaseValue: selectedPlanDetails?.plans?.[0]?.price, planid: selectedPlanDetails?._id };
+      const data = { code: coupon?.code, purchaseValue: selectedPlanDetails?.plans?.[0]?.price, planid: selectedPlanDetails?.plans[0]?._id };
       const response = await ApplyCoupondata(data, token)
 
       if (response.status) {
@@ -139,6 +141,7 @@ const Service = () => {
       const response = await basicsettinglist();
       if (response.status) {
         setGetkey(response?.data[0]?.razorpay_key);
+        setCompany(response?.data[0]?.from_name);
       }
     } catch (error) {
       console.error("Error fetching coupons:", error);
@@ -171,6 +174,7 @@ const Service = () => {
       const options = {
         key: getkey,
         amount: (discountedPrice || selectedPlanDetails?.plans[0]?.price) * 100,
+        name: company,
         currency: "INR",
         title: item?.plans[0]?.title || "Subscription Plan",
         handler: async function (response1) {
@@ -193,7 +197,9 @@ const Service = () => {
             console.error("Error while adding plan subscription:", error);
           }
         },
-        prefill: {},
+        prefill: {
+
+        },
         theme: {
           color: "#F37254",
         },
@@ -311,9 +317,9 @@ const Service = () => {
                     <div className="d-flex align-items-center">
                       <div className="text-left">
                         <span className="price-original">
-                          {Array.isArray(item?.services) &&
+                          {Array?.isArray(item?.services) &&
                             item.services.length > 0
-                            ? item.services?.map((service) =>
+                            ? item?.services?.map((service) =>
                               typeof service.title === "string"
                                 ? service.title
                                   .split(/(?=[A-Z])/)
@@ -444,7 +450,7 @@ const Service = () => {
                       </div>
                     </div>
 
-                    {/* Available Coupons */}
+
                     <div>
                       {coupons.map((coupon) => (
                         <li
@@ -474,11 +480,11 @@ const Service = () => {
                           }}
                         >
                           <div
-                          className="btn-primary"
+                            className="btn-primary"
                             style={{
                               width: "40px",
                               height: "130px",
-                             
+
                               color: "#fff",
                               textAlign: "center",
                               display: "flex",
@@ -509,7 +515,7 @@ const Service = () => {
                               ))}
                           </div>
 
-                          {/* Second Section */}
+
                           <div
                             style={{
                               flexGrow: 1,
@@ -561,14 +567,7 @@ const Service = () => {
                               >
                                 💸 Save Upto: <strong>₹{coupon?.value}</strong>
                               </span>
-                              {/* <span
-            style={{
-              display: "block",
-              marginBottom: "4px",
-            }}
-          >
-            ✨ Offer: <strong>{coupon?.name}</strong>
-          </span> */}
+
                               <span style={{ display: "block" }}>
                                 🛒 Min Purchase:{" "}
                                 <strong>₹{coupon?.minpurchasevalue}</strong>
@@ -590,10 +589,10 @@ const Service = () => {
                 </Accordion.Item>
               </Accordion>
 
-              {/* Total Price */}
+
               <hr />
               <div>
-                {/* Original Price */}
+
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <b>💵 Original Price:</b>
                   <span className="text-primary fw-bold">
@@ -610,7 +609,7 @@ const Service = () => {
                   </div>
                 )}
 
-                {/* Total Price */}
+
                 <div className="d-flex justify-content-between align-items-center mt-3 py-2 border-top">
                   <b>💰 Total Price:</b>
                   <span
@@ -623,7 +622,7 @@ const Service = () => {
                 </div>
               </div>
 
-              {/* Confirm Button */}
+
               <div className="mt-4">
                 <button
                   className="btn btn-success w-100"

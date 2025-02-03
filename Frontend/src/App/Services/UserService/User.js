@@ -637,3 +637,112 @@ export async function Getbasketorderlist(data, token) {
         return err;
     }
 }
+
+
+// withdrw reuest 
+
+
+
+export async function GetWithdrawRequest(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/requestpayout`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+
+//refer earning 
+
+export async function GetReferEarning(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/referearn`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+// get payout 
+
+
+export async function GetPayoutDetail(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/payoutlist`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+// basket service
+
+
+export async function GetBasketService(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/list/baskets`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+
+// basket purchase 
+
+
+export async function BasketPurchaseList(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/list/mybasketpurchaselist`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+// add basket subscription 
+
+export async function AddBasketsubscription(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/list/addbasketsubscription`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
