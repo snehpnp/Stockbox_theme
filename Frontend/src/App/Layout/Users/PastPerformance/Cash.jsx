@@ -76,7 +76,7 @@ const Cash = () => {
     <div className="page-content">
     
       <div className="row">
-        <div className="col-md-3">
+        <div className="col-md-3 mb-3">
           <div className="card">
             <ul className="list-group list-group-flush mt-0">
               <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
@@ -91,7 +91,7 @@ const Cash = () => {
             </ul>
           </div>
         </div>
-        <div className="col-md-3">
+        <div className="col-md-3 mb-3">
           <div className="card">
             <ul className="list-group list-group-flush mt-0">
               <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
@@ -106,7 +106,7 @@ const Cash = () => {
             </ul>
           </div>
         </div>
-        <div className="col-md-3">
+        <div className="col-md-3 mb-3">
           <div className="card">
             <ul className="list-group list-group-flush mt-0">
               <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
@@ -121,7 +121,7 @@ const Cash = () => {
             </ul>
           </div>
         </div>
-        <div className="col-md-3">
+        <div className="col-md-3 mb-3">
           <div className="card">
             <ul className="list-group list-group-flush mt-0">
               <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
