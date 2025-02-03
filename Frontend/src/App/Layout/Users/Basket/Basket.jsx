@@ -229,7 +229,10 @@ function Basket() {
                         Validity
                         <span className="badge bg-danger rounded-pill">{item?.validity}</span>
                       </li>
-                      <Link className="btn btn-primary w-100 " onClick={() => { AddbasketSubscribeplan(item) }}>
+                      {/* <Link className="btn btn-primary w-100 " onClick={() => { AddbasketSubscribeplan(item) }}>
+                        Subscribe <del>{item?.full_price}</del>  {item?.basket_price}
+                      </Link> */}
+                      <Link to="/user/payment" state={{ item }} className="btn btn-primary w-100 ">
                         Subscribe <del>{item?.full_price}</del>  {item?.basket_price}
                       </Link>
                     </ul>

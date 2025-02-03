@@ -7,7 +7,6 @@ import { fDate } from "../../../../Utils/Date_formate";
 
 const BasketDetail = () => {
   const [activeTab, setActiveTab] = useState("rational");
-  const [basketdata, setBasketdata] = useState([])
 
 
   const token = localStorage.getItem("token");
@@ -16,7 +15,7 @@ const BasketDetail = () => {
   const location = useLocation();
   const { item } = location.state;
 
-  console.log("item", item)
+
 
   const stripHtmlTags = (input) => {
     if (!input) return "";
