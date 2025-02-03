@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { GetBasketService, BasketPurchaseList, AddBasketsubscription } from '../../../Services/UserService/User';
 import { basicsettinglist } from '../../../Services/Admin/Admin';
 import { loadScript } from '../../../../Utils/Razorpayment';
-import Loader from '../../../../Utils/Loader';
+
 
 
 function Basket() {
@@ -13,9 +13,6 @@ function Basket() {
   const [activeTab, setActiveTab] = useState("allbasket");
   const [basketdata, setBasketdata] = useState([])
   const [purchasedata, setPurchasedata] = useState([])
-
-  const [isLoading, setIsLoading] = useState(true)
-
 
   const [getkey, setGetkey] = useState([]);
   const [company, setCompany] = useState([]);
@@ -34,7 +31,7 @@ function Basket() {
     } else if (activeTab === "subscribedbasket") {
       getbasketpurchasedata()
     }
-  }, [activeTab, isLoading])
+  }, [activeTab])
 
 
   const getkeybydata = async () => {
@@ -62,7 +59,6 @@ function Basket() {
     } catch (error) {
       console.log("error", error)
     }
-    setIsLoading(false)
   }
 
 
@@ -73,12 +69,11 @@ function Basket() {
       const response = await BasketPurchaseList(data, token)
       if (response.status) {
         setPurchasedata(response.data)
-
+        console.log("resaa", response.data)
       }
     } catch (error) {
       console.log("error", error)
     }
-    setIsLoading(false)
   }
 
 
@@ -128,6 +123,8 @@ function Basket() {
       console.error("Subscription error:", error);
     }
   };
+
+
 
 
 
@@ -188,72 +185,68 @@ function Basket() {
         </li>
       </ul>
       {activeTab === "allbasket" && (
-        isLoading ? <Loader /> :
-          <>
-            <div className="row">
+        <div className="row">
 
-              {basketdata?.map((item) => {
-                return (
-                  <div className="col-md-12 col-lg-4 mb-3" key={item?.id}>
-                    <div className="card radius-10 overflow-hidden">
-                      <div className="card-body">
-                        <h5>{item?.title}</h5>
-                      </div>
-                      <div className="progress-wrapper">
-                        <div className="progress" style={{ height: 7 }}>
-                          <div
-                            className="progress-bar"
-                            role="progressbar"
-                            style={{ width: "75%" }}
-                          />
-                        </div>
-                      </div>
-                      <div className="card-body">
-                        <ul className="list-group list-group-flush list shadow-none">
-                          <li className="list-group-item d-flex justify-content-between align-items-center">
-                            <textarea
-                              className="form-control"
-                              value={stripHtmlTags(
-                                item?.description || ""
-                              )}
-                              readOnly
-                            />
-                            {/* <p className="basket-short-description">
-                          {stripHtmlTags(item?.description)}
-                        </p> */}
-                          </li>
-                          <li className="list-group-item d-flex justify-content-between align-items-center">
-                            Minimum Investment
-                            <span className="badge bg-dark rounded-pill">{item?.mininvamount}</span>
-                          </li>
-                          <li className="list-group-item d-flex justify-content-between align-items-center">
-                            CAGR
-                            <span className="badge bg-success rounded-pill">{item?.cagr}</span>
-                          </li>
-                          <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
-                            Validity
-                            <span className="badge bg-danger rounded-pill">{item?.validity}</span>
-                          </li>
-                          {/* <Link className="btn btn-primary w-100 " onClick={() => { AddbasketSubscribeplan(item) }}>
-                        Subscribe <del>{item?.full_price}</del>  {item?.basket_price}
-                      </Link> */}
-                          <Link to="/user/payment" state={{ item }} className="btn btn-primary w-100 ">
-                            Subscribe <del>{item?.full_price}</del>  {item?.basket_price}
-                          </Link>
-                        </ul>
-                      </div>
+          {basketdata?.map((item) => {
+            return (
+              <div className="col-md-12 col-lg-4 mb-3" key={item?.id}>
+                <div className="card radius-10 overflow-hidden">
+                  <div className="card-body">
+                    <h5>{item?.title}</h5>
+                  </div>
+                  <div className="progress-wrapper">
+                    <div className="progress" style={{ height: 7 }}>
+                      <div
+                        className="progress-bar"
+                        role="progressbar"
+                        style={{ width: "75%" }}
+                      />
                     </div>
                   </div>
-                );
-              })}
+                  <div className="card-body">
+                    <ul className="list-group list-group-flush list shadow-none">
+                      <li className="list-group-item d-flex justify-content-between align-items-center">
+                        <textarea
+                          className="form-control"
+                          value={stripHtmlTags(
+                            item?.description || ""
+                          )}
+                          readOnly
+                        />
+                        {/* <p className="basket-short-description">
+                          {stripHtmlTags(item?.description)}
+                        </p> */}
+                      </li>
+                      <li className="list-group-item d-flex justify-content-between align-items-center">
+                        Minimum Investment
+                        <span className="badge bg-dark rounded-pill">{item?.mininvamount}</span>
+                      </li>
+                      <li className="list-group-item d-flex justify-content-between align-items-center">
+                        CAGR
+                        <span className="badge bg-success rounded-pill">{item?.cagr}</span>
+                      </li>
+                      <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
+                        Validity
+                        <span className="badge bg-danger rounded-pill">{item?.validity}</span>
+                      </li>
+                      {/* <Link className="btn btn-primary w-100 " onClick={() => { AddbasketSubscribeplan(item) }}>
+                        Subscribe <del>{item?.full_price}</del>  {item?.basket_price}
+                      </Link> */}
+                      <Link to="/user/payment" state={{ item }} className="btn btn-primary w-100 ">
+                        Subscribe <del>{item?.full_price}</del>  {item?.basket_price}
+                      </Link>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
 
-            </div>
-          </>
-
+        </div>
       )}
 
       {activeTab === "subscribedbasket" && (
-        isLoading ? <Loader /> : <div className="row">
+        <div className="row">
           {purchasedata?.map((item) => {
             return (
               <>
