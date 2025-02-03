@@ -2,13 +2,18 @@ import React, { useEffect, useState } from 'react'
 import Content from "../../../components/Contents/Content";
 import { Doughnut } from "react-chartjs-2";
 import { Link, useNavigate } from 'react-router-dom';
-import { GetBasketService } from '../../../Services/UserService/User';
-
+import { GetBasketService, BasketPurchaseList, AddBasketsubscription } from '../../../Services/UserService/User';
+import { basicsettinglist } from '../../../Services/Admin/Admin';
+import { loadScript } from '../../../../Utils/Razorpayment';
 
 function Basket() {
 
   const [activeTab, setActiveTab] = useState("allbasket");
   const [basketdata, setBasketdata] = useState([])
+  const [purchasedata, setPurchasedata] = useState([])
+
+  const [getkey, setGetkey] = useState([]);
+  const [company, setCompany] = useState([]);
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
@@ -16,9 +21,29 @@ function Basket() {
   const navigate = useNavigate();
 
 
+
   useEffect(() => {
-    getbasketdata()
-  }, [])
+    getkeybydata()
+    if (activeTab === "allbasket") {
+      getbasketdata()
+    } else if (activeTab === "subscribedbasket") {
+      getbasketpurchasedata()
+    }
+  }, [activeTab])
+
+
+  const getkeybydata = async () => {
+    try {
+      const response = await basicsettinglist();
+      if (response.status) {
+        setGetkey(response?.data[0]?.razorpay_key);
+        setCompany(response?.data[0]?.from_name);
+      }
+    } catch (error) {
+      console.error("Error fetching coupons:", error);
+    }
+  };
+
 
 
   const getbasketdata = async () => {
@@ -27,12 +52,78 @@ function Basket() {
       const response = await GetBasketService(data, token)
       if (response.status) {
         setBasketdata(response.data)
+
+      }
+    } catch (error) {
+      console.log("error", error)
+    }
+  }
+
+
+
+  const getbasketpurchasedata = async () => {
+    try {
+      const data = { clientid: userid }
+      const response = await BasketPurchaseList(data, token)
+      if (response.status) {
+        setPurchasedata(response.data)
         console.log("resaa", response.data)
       }
     } catch (error) {
       console.log("error", error)
     }
   }
+
+
+
+  const AddbasketSubscribeplan = async (item) => {
+    try {
+      console.log("item", item)
+      return
+      if (!window.Razorpay) {
+        await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+      }
+      const options = {
+        key: getkey,
+        amount: item?.basket_price * 100,
+        name: company,
+        currency: "INR",
+        title: item?.title || "Subscription Basket",
+        handler: async function (response1) {
+          const data = {
+            basket_id: item?._id,
+            client_id: userid,
+            price: item?.full_price ? item?.full_price : item?.basket_price,
+            discount: response1?.orderid,
+            orderid: response1?.orderid,
+            coupon: 0,
+          };
+
+          try {
+            const response2 = await AddBasketsubscription(data, token);
+            if (response2?.status) {
+              window.location.reload();
+            }
+          } catch (error) {
+            console.error("Error while adding plan subscription:", error);
+          }
+        },
+        prefill: {
+
+        },
+        theme: {
+          color: "#F37254",
+        },
+      };
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error("Subscription error:", error);
+    }
+  };
+
+
+
 
 
   const stripHtmlTags = (input) => {
@@ -136,8 +227,8 @@ function Basket() {
                         Validity
                         <span className="badge bg-danger rounded-pill">{item?.validity}</span>
                       </li>
-                      <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100">
-                        View Details
+                      <Link className="btn btn-primary w-100 " onClick={() => { AddbasketSubscribeplan(item) }}>
+                        Subscribe <del>{item?.full_price}</del>  {item?.basket_price}
                       </Link>
                     </ul>
                   </div>
@@ -146,154 +237,66 @@ function Basket() {
             );
           })}
 
-
         </div>
       )}
 
       {activeTab === "subscribedbasket" && (
         <div className="row">
-          <div className="col-md-12 col-lg-4 mb-3">
-            <div className="card radius-10 overflow-hidden">
-              <div className="card-body">
-                <h5>Test(test12)</h5>
-              </div>
-              <div className="progress-wrapper">
-                <div className="progress" style={{ height: 7 }}>
-                  <div
-                    className="progress-bar"
-                    role="progressbar"
-                    style={{ width: "75%" }}
-                  />
+          {purchasedata?.map((item) => {
+            return (
+              <>
+                <div className="col-md-12 col-lg-4 mb-3" key={item?.id}>
+                  <div className="card radius-10 overflow-hidden">
+                    <div className="card-body">
+                      <h5>{item?.title}</h5>
+                    </div>
+                    <div className="progress-wrapper">
+                      <div className="progress" style={{ height: 7 }}>
+                        <div
+                          className="progress-bar"
+                          role="progressbar"
+                          style={{ width: "75%" }}
+                        />
+                      </div>
+                    </div>
+                    <div className="card-body">
+                      <ul className="list-group list-group-flush list shadow-none">
+                        <li className="list-group-item d-flex justify-content-between align-items-center">
+                          <textarea
+                            className="form-control"
+                            value={stripHtmlTags(
+                              item?.description || ""
+                            )}
+                            readOnly
+                          />
+                          {/* <p className="basket-short-description">
+                          {stripHtmlTags(item?.description)}
+                        </p> */}
+                        </li>
+                        <li className="list-group-item d-flex justify-content-between align-items-center">
+                          Minimum Investment
+                          <span className="badge bg-dark rounded-pill">{item?.mininvamount}</span>
+                        </li>
+                        <li className="list-group-item d-flex justify-content-between align-items-center">
+                          CAGR
+                          <span className="badge bg-success rounded-pill">{item?.cagr}</span>
+                        </li>
+                        <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
+                          Validity
+                          <span className="badge bg-danger rounded-pill">{item?.validity}</span>
+                        </li>
+                        <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100">
+                          View Details
+                        </Link>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="card-body">
-                <ul className="list-group list-group-flush list shadow-none">
-                  <li className="list-group-item d-flex justify-content-between align-items-center ">
-                    <p className='basket-short-description'>Lorem ipsum (/ˌlɔː.rəm ˈɪp.səm/ LOR-əm IP-səm) is a dummy or placeholder text commonly used in graphic design, publishing, and web development to fill empty spaces in a layout that does not yet have content.</p>
 
-                  </li>
-                  <li className="list-group-item d-flex justify-content-between align-items-center ">
-                    Minimum Investment
-                    <span className="badge bg-dark rounded-pill">
-                      100000
-                    </span>
-                  </li>
-                  <li className="list-group-item d-flex justify-content-between align-items-center">
-                    CAGR
-                    <span className="badge bg-success rounded-pill">
-                      2%
-                    </span>
-                  </li>
-                  <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
-                    Validity
-                    <span className="badge bg-danger rounded-pill">
-                      3 month
-                    </span>
-                  </li>
-                  <li className="list-group-item  align-items-center ">
-                    <Link to='/user/basketdetail' className="btn btn-primary w-100">
-                      View Details
-                    </Link>
+              </>
+            )
+          })}
 
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-12 col-lg-4 mb-3">
-            <div className="card radius-10 overflow-hidden">
-              <div className="card-body">
-                <h5>Test(test)</h5>
-              </div>
-              <div className="progress-wrapper">
-                <div className="progress" style={{ height: 7 }}>
-                  <div
-                    className="progress-bar"
-                    role="progressbar"
-                    style={{ width: "75%" }}
-                  />
-                </div>
-              </div>
-              <div className="card-body">
-                <ul className="list-group list-group-flush list shadow-none">
-                  <li className="list-group-item d-flex justify-content-between align-items-center ">
-                    <p className='basket-short-description'>Lorem ipsum (/ˌlɔː.rəm ˈɪp.səm/ LOR-əm IP-səm) is a dummy or placeholder text commonly used in graphic design, publishing, and web development to fill empty spaces in a layout that does not yet have content.</p>
-
-                  </li>
-                  <li className="list-group-item d-flex justify-content-between align-items-center ">
-                    Minimum Investment
-                    <span className="badge bg-dark rounded-pill">
-                      100000
-                    </span>
-                  </li>
-                  <li className="list-group-item d-flex justify-content-between align-items-center">
-                    CAGR
-                    <span className="badge bg-success rounded-pill">
-                      2%
-                    </span>
-                  </li>
-                  <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
-                    Validity
-                    <span className="badge bg-danger rounded-pill">
-                      3 month
-                    </span>
-                  </li>
-                  <li className="list-group-item  align-items-center ">
-                    <Link to='/user/basketdetail' className="btn btn-primary w-100">
-                      View Details
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-12 col-lg-4 mb-3">
-            <div className="card radius-10 overflow-hidden">
-              <div className="card-body">
-                <h5>Test(test)</h5>
-              </div>
-              <div className="progress-wrapper">
-                <div className="progress" style={{ height: 7 }}>
-                  <div
-                    className="progress-bar"
-                    role="progressbar"
-                    style={{ width: "75%" }}
-                  />
-                </div>
-              </div>
-              <div className="card-body">
-                <ul className="list-group list-group-flush list shadow-none">
-                  <li className="list-group-item d-flex justify-content-between align-items-center ">
-                    <p className='basket-short-description'>Lorem ipsum (/ˌlɔː.rəm ˈɪp.səm/ LOR-əm IP-səm) is a dummy or placeholder text commonly used in graphic design, publishing, and web development to fill empty spaces in a layout that does not yet have content.</p>
-
-                  </li>
-                  <li className="list-group-item d-flex justify-content-between align-items-center ">
-                    Minimum Investment
-                    <span className="badge bg-dark rounded-pill">
-                      100000
-                    </span>
-                  </li>
-                  <li className="list-group-item d-flex justify-content-between align-items-center">
-                    CAGR
-                    <span className="badge bg-success rounded-pill">
-                      2%
-                    </span>
-                  </li>
-                  <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
-                    Validity
-                    <span className="badge bg-danger rounded-pill">
-                      3 month
-                    </span>
-                  </li>
-                  <li className="list-group-item  align-items-center ">
-                    <Link to='/user/basketdetail' className="btn btn-primary w-100">
-                      View Details
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
         </div>
       )}
 

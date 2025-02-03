@@ -66,9 +66,10 @@ const Service = () => {
 
 
 
+
   const applyCoupon = async (coupon) => {
     try {
-      const data = { code: coupon?.code, purchaseValue: selectedPlanDetails?.plans?.[0]?.price, planid: selectedPlanDetails?._id };
+      const data = { code: coupon?.code, purchaseValue: selectedPlanDetails?.plans?.[0]?.price, planid: selectedPlanDetails?.plans[0]?._id };
       const response = await ApplyCoupondata(data, token)
 
       if (response.status) {
@@ -147,7 +148,7 @@ const Service = () => {
     }
   };
 
-  console.log("company", company)
+
 
 
   const getPlan = async () => {

@@ -710,3 +710,39 @@ export async function GetBasketService(data, token) {
         return err;
     }
 }
+
+
+
+// basket purchase 
+
+
+export async function BasketPurchaseList(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/list/mybasketpurchaselist`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+// add basket subscription 
+
+export async function AddBasketsubscription(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/list/addbasketsubscription`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}

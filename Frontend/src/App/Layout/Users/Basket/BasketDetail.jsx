@@ -117,9 +117,7 @@ const BasketDetail = () => {
         <div className="col-md-10"> {activeTab === "rational" && (
           <div className="row">
             <div className="col-md-8">
-              <p>
-                {stripHtmlTags(item?.description)}
-              </p>
+              <div dangerouslySetInnerHTML={{ __html: item?.rationale }} />
             </div>
           </div>
         )}
@@ -128,17 +126,9 @@ const BasketDetail = () => {
             <div className="row">
               <div className="col-md-8">
                 <p>
-                  {stripHtmlTags(item?.description)}
+                  <div dangerouslySetInnerHTML={{ __html: item?.rationale }} />
                 </p>
               </div>
-              {/* <div className="col-md-4">
-                {" "}
-                <img
-                  src="https://stockboxpnp.pnpuniverse.com/uploads/news/image-1736745027111-438243699.jpg"
-                  alt="news"
-                  className="img-fluid"
-                />
-              </div> */}
             </div>
           )}  </div>
 

@@ -1435,16 +1435,14 @@ class List {
   async applyCoupon(req, res) {
 
 
+
     try {
       const { code, purchaseValue, planid } = req.body;
       // Find the coupon by code
       const coupon = await Coupon_Modal.findOne({ code, status: 'true', del: false });
       if (!coupon) {
-        return res.status(404).json({ message: 'Coupon not found or is inactive' });
+        return res.json({ message: 'Coupon not found or is inactive' });
       }
-
-
-
 
       // Check if the coupon is within the valid date range
       const currentDate = new Date();
@@ -1453,13 +1451,13 @@ class List {
       const endDateOnly = new Date(coupon.enddate.getFullYear(), coupon.enddate.getMonth(), coupon.enddate.getDate());
 
       if (currentDateOnly < startDateOnly || currentDateOnly > endDateOnly) {
-        return res.status(400).json({ status: false, message: 'Coupon is not valid at this time' });
+        return res.json({ status: false, message: 'Coupon is not valid at this time' });
       }
 
 
       // Check if the purchase meets the minimum purchase value requirement
       if (purchaseValue < coupon.minpurchasevalue) {
-        return res.status(400).json({ status: false, message: `Minimum purchase value required is ${coupon.minpurchasevalue}` });
+        return res.json({ status: false, message: `Minimum purchase value required is ${coupon.minpurchasevalue}` });
       }
       // Calculate the discount based on the coupon type
       let discount = 0;
@@ -1470,20 +1468,21 @@ class List {
       }
 
       if (discount > purchaseValue) {
-        return res.status(400).json({ status: false, message: "Discount should be less than the purchase value." });
+        return res.json({ status: false, message: "Discount should be less than the purchase value." });
       }
 
 
       if (coupon.limitation <= 0) {
-        return res.status(400).json({ status: false, message: 'Coupon usage limit has been reached' });
+        return res.json({ status: false, message: 'Coupon usage limit has been reached' });
       }
       if (coupon.service && coupon.service != 0) {
         const plan = await Plan_Modal.findById(planid)
           .populate('category')
           .exec();
+
         if (coupon.service != plan.category?.service) {
 
-          return res.status(404).json({ status: false, message: 'Service Does not match' });
+          return res.json({ status: false, message: 'Service Does not match' });
         }
       }
 
@@ -1506,7 +1505,7 @@ class List {
         finalPrice
       });
     } catch (error) {
-      return res.status(500).json({ status: false, message: 'Server error', error: error.message });
+      return res.json({ status: false, message: 'Server error11', error: error.message });
     }
   }
 
@@ -5888,7 +5887,7 @@ class List {
   async BasketCartList(req, res) {
     try {
       const { client_id } = req.params; // Assuming client_id is passed in URL parameters
-     
+
       // Validate input
       if (!client_id) {
         return res.status(400).json({
