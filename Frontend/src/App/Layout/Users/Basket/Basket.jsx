@@ -213,9 +213,9 @@ function Basket() {
                           )}
                           readOnly
                         />
-                        {/* <p className="basket-short-description">
+                        <p className="basket-short-description">
                           {stripHtmlTags(item?.description)}
-                        </p> */}
+                        </p> 
                       </li>
                       <li className="list-group-item d-flex justify-content-between align-items-center">
                         Minimum Investment
