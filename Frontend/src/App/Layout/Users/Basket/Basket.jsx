@@ -73,7 +73,7 @@ function Basket() {
       const response = await BasketPurchaseList(data, token)
       if (response.status) {
         setPurchasedata(response.data)
-        console.log("resaa", response.data)
+
       }
     } catch (error) {
       console.log("error", error)
