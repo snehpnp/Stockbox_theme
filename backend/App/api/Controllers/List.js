@@ -32,6 +32,7 @@ const Basketorder_Modal = db.Basketorder;
 const Mailtemplate_Modal = db.Mailtemplate;
 const Requestclient_Modal = db.Requestclient;
 const Addtocart_Modal = db.Addtocart;
+const Stockrating_Modal = db.Stockrating;
 
 
 const { sendEmail } = require('../../Utils/emailService');
@@ -6087,6 +6088,32 @@ class List {
   
 
   
+  async getStockrating(req, res) {
+    try {
+
+      const { symbol } = req.params;
+      const result = await Stockrating_Modal.find({ del: false, symbol:symbol });
+
+
+      if (result.length === 0) {
+        return res.json({
+          status: false,
+          message: "Stock rating not available",
+          data: [],
+        });
+      }
+  
+
+      return res.json({
+        status: true,
+        message: "get",
+        data: result
+      });
+
+    } catch (error) {
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
 
 }
 
