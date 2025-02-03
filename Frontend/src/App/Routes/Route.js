@@ -28,6 +28,7 @@ import Login from "../Layout/Auth/Login";
 import Company from '../Layout/Superadmin/Company/Company'
 import Trade from "../pages/Trade";
 import Basket from "../pages/Basket/Basket";
+import Registration from "../Layout/Auth/Registration";
 
 export default function App() {
 
@@ -36,6 +37,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/registration" element={<Registration />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="/home" element={<Home />} />
       <Route path="/" element={<Dashboard />} />
