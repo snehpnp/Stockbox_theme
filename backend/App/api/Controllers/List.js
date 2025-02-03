@@ -5866,6 +5866,7 @@ class List {
         return res.status(404).json({
           status: false,
           message: 'No items found in the cart for this client.',
+          data:[],
         });
       }
   
@@ -5910,6 +5911,7 @@ class List {
         return res.status(404).json({
           status: false,
           message: 'No items found in the cart for this client.',
+          data:[],
         });
       }
   
