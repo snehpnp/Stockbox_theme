@@ -2096,6 +2096,7 @@ class List {
     try {
       const { clientid } = req.body; // assuming clientid is passed in the request
 
+
       // Get the current date
       const currentDate = new Date();
 
@@ -2256,9 +2257,9 @@ class List {
             enddate: 1,
             stock_details: {
               $filter: {
-                input: "$stock_details", // Filter the joined stock details
+                input: "$stock_details",
                 as: "stock",
-                cond: { $eq: ["$$stock.del", false] } // Exclude deleted stocks
+                cond: { $eq: ["$$stock.del", false] }
               }
             },
           }

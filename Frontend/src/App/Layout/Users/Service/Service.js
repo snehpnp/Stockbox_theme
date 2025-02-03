@@ -37,6 +37,7 @@ const Service = () => {
   const [discountedPrice, setDiscountedPrice] = useState(0);
   const [coupons, setCoupon] = useState([]);
   const [getkey, setGetkey] = useState([]);
+  const [company, setCompany] = useState([]);
   const [sortCriteria, setSortCriteria] = useState("price");
   const [isLoading, setIsLoading] = useState(true)
 
@@ -139,13 +140,14 @@ const Service = () => {
       const response = await basicsettinglist();
       if (response.status) {
         setGetkey(response?.data[0]?.razorpay_key);
+        setCompany(response?.data[0]?.from_name);
       }
     } catch (error) {
       console.error("Error fetching coupons:", error);
     }
   };
 
-
+  console.log("company", company)
 
 
   const getPlan = async () => {
@@ -171,6 +173,7 @@ const Service = () => {
       const options = {
         key: getkey,
         amount: (discountedPrice || selectedPlanDetails?.plans[0]?.price) * 100,
+        name: company,
         currency: "INR",
         title: item?.plans[0]?.title || "Subscription Plan",
         handler: async function (response1) {
@@ -193,7 +196,9 @@ const Service = () => {
             console.error("Error while adding plan subscription:", error);
           }
         },
-        prefill: {},
+        prefill: {
+
+        },
         theme: {
           color: "#F37254",
         },

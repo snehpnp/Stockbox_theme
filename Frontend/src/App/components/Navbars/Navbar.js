@@ -23,13 +23,19 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   useEffect(() => {
     getdemoclient();
     gettradedetail();
+    getuserdetail();
   }, []);
+
+
 
   const navigate = useNavigate();
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
   const Role = localStorage.getItem("Role");
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
+
+
+
 
   const [clients, setClients] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -46,6 +52,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     secretkey: "",
   });
 
+
+
   const Logout = () => {
     localStorage.clear();
     if (Role === "USER") {
@@ -54,6 +62,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       window.location.href = "/#/login";
     }
   };
+
+
+
 
   const handleNotificationClick = async (event, notification) => {
     const user_active_status = "1";
@@ -94,6 +105,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
+
+
+  
   const getdemoclient = async () => {
     if (Role == "ADMIN") {
       try {
@@ -267,11 +281,14 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
 
   useEffect(() => {
-    getuserdetail();
+
     if (getstatus[0]?.brokerloginstatus === 1) {
       setIsChecked(true);
     }
-  }, [getstatus]);
+    if (UserDetail?.tradingstatus === 1) {
+      setIsChecked(true);
+    }
+  }, [getstatus, UserDetail]);
 
 
 
@@ -281,6 +298,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       const response = await GetUserData(userid, token);
       if (response.status) {
         setUserDetail(response.data);
+
       }
     } catch (error) {
       console.log("error", error);
