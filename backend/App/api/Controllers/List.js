@@ -2251,6 +2251,10 @@ class List {
             updated_at: 1,
             type: 1,
             themename: 1,
+            image: 1,
+            short_description: 1,
+            rationale: 1,
+            methodology: 1,
             isSubscribed: 1,
             isActive: 1,
             startdate: 1,
@@ -5884,7 +5888,7 @@ class List {
   async BasketCartList(req, res) {
     try {
       const { client_id } = req.params; // Assuming client_id is passed in URL parameters
-
+     
       // Validate input
       if (!client_id) {
         return res.status(400).json({
