@@ -6,27 +6,12 @@ import "chart.js/auto";
 import { GetPastPerformance } from "../../../Services/UserService/User";
 import Content from "../../../components/Contents/Content";
 
-const Option = () => {
-  const [pastPerformance, setPastPerformance] = React.useState([]);
-  const userId = localStorage.getItem("id");
-  const token = localStorage.getItem("token");
 
-  console.log(userId, token);
+const Cash = () => {
 
-  const fetchPastPerformance = async () => {
-    try {
-      const res = await GetPastPerformance({ token, userId });
-      console.log("Response:", res);
-      setPastPerformance([res.data]); // Convert object to an array
-    } catch (error) {
-      console.error("Error fetching past performance:", error);
-      setPastPerformance([]); // Handle errors gracefully
-    }
-  };
 
-  useEffect(() => {
-    fetchPastPerformance();
-  }, []);
+
+
 
   const columns = [
     { name: "Count", selector: (row) => row.count },
@@ -87,10 +72,11 @@ const Option = () => {
     button_status={false}
     backbutton_status={false}
   >
+
     <div className="page-content">
-     
+    
       <div className="row">
-        <div className="col-md-3">
+        <div className="col-md-3 mb-3">
           <div className="card">
             <ul className="list-group list-group-flush mt-0">
               <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
@@ -105,7 +91,7 @@ const Option = () => {
             </ul>
           </div>
         </div>
-        <div className="col-md-3">
+        <div className="col-md-3 mb-3">
           <div className="card">
             <ul className="list-group list-group-flush mt-0">
               <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
@@ -120,7 +106,7 @@ const Option = () => {
             </ul>
           </div>
         </div>
-        <div className="col-md-3">
+        <div className="col-md-3 mb-3">
           <div className="card">
             <ul className="list-group list-group-flush mt-0">
               <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
@@ -135,7 +121,7 @@ const Option = () => {
             </ul>
           </div>
         </div>
-        <div className="col-md-3">
+        <div className="col-md-3 mb-3">
           <div className="card">
             <ul className="list-group list-group-flush mt-0">
               <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
@@ -171,11 +157,11 @@ const Option = () => {
       <div className="row mt-2 mb-2">
         <div className="col-md-12">
         <div class="alert alert-primary" role="alert">
-  <div class="d-flex justify-content-between align-items-center">
+  <div class="d-md-flex justify-content-between align-items-center">
     <div>  Momentum (Dec 2024) PERFORMANCE
     </div>
-    <div> <button className="btn btn-primary me-2"><i class='bx bx-left-arrow-alt'></i>Nov 2024</button>
-    <button className="btn btn-primary">Dec 2024<i class='bx bx-right-arrow-alt' ></i></button></div>
+    <div className=",t-md-0 mt-3"> <button className="btn btn-primary me-2 "><i class='bx bx-left-arrow-alt'></i>Nov 2024</button>
+    <button className="btn btn-primary  ">Dec 2024<i class='bx bx-right-arrow-alt' ></i></button></div>
    
 </div>
         </div>
@@ -212,45 +198,45 @@ const Option = () => {
 <div className="my-4">
   <div className="d-md-flex gap-3">
     <div className="card-body card">
-      <h5 className="mb-1">Total Calls
-      </h5>
+      <p className="mb-1"><strong>Total Calls</strong>
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
     <div className="card-body card">
-      <h5 className="mb-1">Profitable Calls
+      <p className="mb-1"><strong>Profitable Calls</strong>
 
-      </h5>
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
     <div className="card-body card">
-      <h5 className="mb-1">Loss Calls
-      </h5>
+      <p className="mb-1"><strong>Loss Calls</strong>
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
     <div className="card-body card">
-      <h5 className="mb-1">Cost Exit
-      </h5>
+      <p className="mb-1"><strong>Cost Exit</strong>
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
     <div className="card-body card">
-      <h5 className="mb-1">Total Profit 
-      </h5>
+      <p className="mb-1"><strong>Total Profit </strong>
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
     <div className="card-body card">
-      <h5 className="mb-1">Total Loss 
-      </h5>
+      <p className="mb-1"><strong>Total Loss</strong> 
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
     <div className="card-body card">
-      <h5 className="mb-1">Net Profit 
-      </h5>
+      <p className="mb-1"><strong>Net Profit</strong> 
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
@@ -353,9 +339,9 @@ const Option = () => {
                 </div>
                
                 </div>
-              </Content>  
+                </Content>
       
   );
 };
 
-export default Option;
+export default Cash;

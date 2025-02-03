@@ -165,20 +165,21 @@ const Demat = () => {
                 dlinkstatus ? broker.id === userDetail : true
               )
               .map((broker) => (
-                <div className="col mb-3" key={broker.id}>
+                <div className="col-md-4 col-sm-6 mb-3" key={broker.id}>
                   <div
                     className="card radius-5"
                     onClick={() => setUserDetail(broker.id)}
                   >
                     <div
-                      className="card-body text-center cursor-pointer"
+                      className="card-body p-2 text-center cursor-pointer"
                       onClick={() => handleShowModal(broker.name)}
                     >
                       <div className="p-4 border radius-5">
                         <img
+                        className="img-fluid"
                           src={broker.img}
-                          width={110}
-                          height={110}
+                         
+                         
                           alt={broker.name}
                         />
                         <h5 className="mb-0 mt-5">{broker.name}</h5>

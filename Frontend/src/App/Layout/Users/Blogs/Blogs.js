@@ -31,33 +31,18 @@ const Blogs = () => {
       button_status={false}
       backbutton_status={true}
     >
-      <div style={styles.container}>
-        {isLoading ? <Loader /> : <div style={styles.blogList}>
-          {blogData.length > 0 ? (
-            blogData.map((blog, index) => <BlogCard key={index} blog={blog} />)
-          ) : (
-            <p>No blogs available</p>
-          )}
-        </div>}
+    
+      <div className="row">
+        {blogData.length > 0 ? (
+          blogData.map((blog, index) => <BlogCard key={index} blog={blog} />)
+        ) : (
+          <p>No blogs available</p>
+        )}
       </div>
     </Content>
   );
 };
 
-const styles = {
-  container: {
-    padding: "20px",
-    textAlign: "center",
-  },
-  heading: {
-    fontSize: "24px",
-    marginBottom: "20px",
-  },
-  blogList: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "center",
-  },
-};
+
 
 export default Blogs;
