@@ -1448,6 +1448,7 @@ const DynamicForm = ({
                                     ["link", "image"],
                                     ["clean"],
                                   ],
+
                                 }}
                                 formats={[
                                   "header",
