@@ -34,7 +34,7 @@ function Basket() {
     } else if (activeTab === "subscribedbasket") {
       getbasketpurchasedata()
     }
-  }, [activeTab])
+  }, [activeTab, isLoading])
 
 
   const getkeybydata = async () => {
