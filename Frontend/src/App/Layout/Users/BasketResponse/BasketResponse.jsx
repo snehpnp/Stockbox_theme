@@ -50,20 +50,15 @@ const BasketResponse = () => {
                                 aria-expanded="false"
                                 aria-controls="flush-collapseOne"
                             >
-                                <div className="d-flex justify-content-between align-items-center w-100">
+                                <div className="d-md-flex justify-content-between align-items-center w-100">
                                     <div>
+                                    <span class="badge bg-success rounded-pill badgespan mb-2">
+                                                Buy
+                                            </span>
                                         <h5 className="m-0">Vision2030 (Cash)</h5>
                                         <p className="m-0 pe-2 pt-2">Expires on : 28Apr2025</p>
                                     </div>
-                                    <div className="text-end">
-                                        <p className="m-0 pe-2">
-                                            <span class="badge bg-success rounded-pill badgespan mb-2">
-                                                Buy
-                                            </span>
-                                            <br />
-                                            Expires on : 28Apr2025
-                                        </p>
-                                    </div>
+                                   
                                 </div>
                             </button>
                         </h2>
@@ -128,21 +123,15 @@ const BasketResponse = () => {
                                 aria-expanded="false"
                                 aria-controls="flush-collapseTwo"
                             >
-                                <div className="d-flex justify-content-between align-items-center w-100">
                                     <div>
+                                    <span class="badge bg-success rounded-pill badgespan mb-2">
+                                                Buy
+                                            </span>
                                         <h5 className="m-0">Vision2030 (Cash)</h5>
                                         <p className="m-0 pe-2 pt-2">Expires on : 28Apr2025</p>
                                     </div>
-                                    <div className="text-end">
-                                        <p className="m-0 pe-2">
-                                            <span class="badge bg-success rounded-pill badgespan mb-2">
-                                                Buy
-                                            </span>
-                                            <br />
-                                            Expires on : 28Apr2025
-                                        </p>
-                                    </div>
-                                </div>
+                                   
+                               
                             </button>
                         </h2>
                         <div
@@ -208,18 +197,11 @@ const BasketResponse = () => {
                             >
                                 <div className="d-flex justify-content-between align-items-center w-100">
                                     <div>
+                                    <span class="badge bg-success rounded-pill badgespan mb-2"> Buy</span>
                                         <h5 className="m-0">Vision2030 (Cash)</h5>
                                         <p className="m-0 pe-2 pt-2">Expires on : 28Apr2025</p>
                                     </div>
-                                    <div className="text-end">
-                                        <p className="m-0 pe-2">
-                                            <span class="badge bg-success rounded-pill badgespan mb-2">
-                                                Buy
-                                            </span>
-                                            <br />
-                                            Expires on : 28Apr2025
-                                        </p>
-                                    </div>
+                                
                                 </div>
                             </button>
                         </h2>
