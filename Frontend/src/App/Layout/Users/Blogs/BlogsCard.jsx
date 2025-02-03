@@ -2,7 +2,9 @@ import React from "react";
 
 const BlogCard = ({ blog }) => {
   return (
-    <div style={styles.card}>
+ 
+     <div className="col-md-4 mb-3">
+     <div className="card">
       <img src={blog.image} alt="blog" style={styles.image} />
       <div style={styles.content}>
         <h3 style={styles.title}>{blog.title}</h3>
@@ -13,19 +15,14 @@ const BlogCard = ({ blog }) => {
         </small>
       </div>
     </div>
+     </div>
+ 
+    
   );
 };
 
 const styles = {
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: "10px",
-    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-    overflow: "hidden",
-    margin: "15px",
-    width: "300px",
-    transition: "0.3s",
-  },
+ 
   image: {
     width: "100%",
     height: "180px",
