@@ -198,45 +198,45 @@ const Cash = () => {
 <div className="my-4">
   <div className="d-md-flex gap-3">
     <div className="card-body card">
-      <h5 className="mb-1">Total Calls
-      </h5>
+      <p className="mb-1"><strong>Total Calls</strong>
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
     <div className="card-body card">
-      <h5 className="mb-1">Profitable Calls
+      <p className="mb-1"><strong>Profitable Calls</strong>
 
-      </h5>
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
     <div className="card-body card">
-      <h5 className="mb-1">Loss Calls
-      </h5>
+      <p className="mb-1"><strong>Loss Calls</strong>
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
     <div className="card-body card">
-      <h5 className="mb-1">Cost Exit
-      </h5>
+      <p className="mb-1"><strong>Cost Exit</strong>
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
     <div className="card-body card">
-      <h5 className="mb-1">Total Profit 
-      </h5>
+      <p className="mb-1"><strong>Total Profit </strong>
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
     <div className="card-body card">
-      <h5 className="mb-1">Total Loss 
-      </h5>
+      <p className="mb-1"><strong>Total Loss</strong> 
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
     <div className="card-body card">
-      <h5 className="mb-1">Net Profit 
-      </h5>
+      <p className="mb-1"><strong>Net Profit</strong> 
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
