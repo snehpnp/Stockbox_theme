@@ -5844,6 +5844,7 @@ class List {
         return res.status(400).json({
           status: false,
           message: 'Client ID is required.',
+          data:[],
         });
       }
   
@@ -5896,6 +5897,7 @@ class List {
         return res.status(400).json({
           status: false,
           message: 'Client ID is required.',
+          data:[],
         });
       }
   
