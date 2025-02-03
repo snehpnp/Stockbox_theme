@@ -11,6 +11,7 @@ const Payments = () => {
             backbutton_title="back"
             button_status={false}
             backbutton_status={false}
+            backForword={true}
         >
             <ul className="nav nav-pills mb-3 justify-content-center border-bottom">
                 <li className="nav-item">
