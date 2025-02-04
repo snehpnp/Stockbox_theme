@@ -3,7 +3,7 @@ import Content from "../../../components/Contents/Content";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { BasketPurchaseList } from "../../../Services/UserService/User";
+import { BasketStockListdata } from "../../../Services/UserService/User";
 import Loader from "../../../../Utils/Loader";
 
 
@@ -15,6 +15,9 @@ const BasketStockList = () => {
     getbasketpurchasedata()
   }, [])
 
+  const location = useLocation();
+  const item = location?.state?.item;
+
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
@@ -25,15 +28,16 @@ const BasketStockList = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [purchasedata, setPurchasedata] = useState([])
 
-  console.log("purchasedata", purchasedata)
+
+
+
 
   const getbasketpurchasedata = async () => {
     try {
-      const data = { clientid: userid }
-      const response = await BasketPurchaseList(data, token)
+      const data = { id: item?._id }
+      const response = await BasketStockListdata(data, token)
       if (response.status) {
         setPurchasedata(response.data)
-
       }
     } catch (error) {
       console.log("error", error)
@@ -63,7 +67,7 @@ const BasketStockList = () => {
                 <li className="list-group-item ">
                   Total Investment
                   <hr />
-                  <h5 className="mb-0">₹105666</h5>
+                  <h5 className="mb-0">₹ {item?.mininvamount}</h5>
                 </li>
               </ul>
             </div>
@@ -101,31 +105,32 @@ const BasketStockList = () => {
           <table className="table ">
             <thead className="table-primary">
               <tr>
-                <th>Instrument</th>
-                <th>Qty</th>
-                <th> Avg. Cost </th>
-                <th>LTP</th>
+                <th>Symbol</th>
+                <th>Suggested Price</th>
+                <th>Stock Weightage</th>
+                <th>Current Market Price</th>
                 <th>Current Value</th>
-                <th>P&L</th>
+                <th>Quanty</th>
+                <th>Price</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Reliance</td>
-                <td>2</td>
-                <td>RELIANCE</td>
-                <td>2000</td>
-                <td>10</td>
-                <td>10</td>
-              </tr>
-              <tr>
-                <td>Infosys</td>
-                <td>1</td>
-                <td>INFY</td>
-                <td>1000</td>
-                <td>20</td>
-                <td>10</td>
-              </tr>
+              {purchasedata?.map((item) => {
+                return (
+                  <>
+                    <tr>
+                      <td>{item?.name}</td>
+                      <td>{item?.price}</td>
+                      <td>{item?.weightage}</td>
+                      <td>2000</td>
+                      <td>10</td>
+                      <td>10</td>
+                      <td>10</td>
+                    </tr>
+                  </>
+                )
+              })}
+
             </tbody>
           </table>
         </div>

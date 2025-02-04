@@ -31,6 +31,7 @@ import RebalanceHistory from "../Layout/Users/Basket/RebalanceHistory";
 import BasketResponse from "../Layout/Users/BasketResponse/BasketResponse";
 import Wallet from "../Layout/Users/Wallet/Wallet";
 import Payments from "../Layout/Users/Basket/Payments";
+import RebalanceStock from "../Layout/Users/Basket/RebalanceStock";
 
 
 export default function App() {
@@ -67,6 +68,7 @@ export default function App() {
       <Route path="/basketstocklist" element={<BasketStockList />} />
       <Route path="/rebalanceHistory" element={<RebalanceHistory />} />
       <Route path="/basket-response" element={<BasketResponse />} />
+      <Route path="/rebalancestock" element={<RebalanceStock />} />
       <Route path="/wallet" element={<Wallet />} />
 
       <Route path="/payment" element={<Payments />} />

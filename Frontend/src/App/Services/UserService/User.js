@@ -746,3 +746,58 @@ export async function AddBasketsubscription(data, token) {
         return err;
     }
 }
+
+
+// basket stock list 
+
+export async function BasketStockListdata(data, token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}api/list/basketstock/${data.id}`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+// get offline qr 
+
+
+export async function getQRcodedata(token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}api/list/qrcode`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+// get offline bank  detail 
+
+
+export async function getBankdetaildata(token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}api/list/bank`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
