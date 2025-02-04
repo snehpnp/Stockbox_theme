@@ -17,6 +17,8 @@ const BasicSetting_Modal = db.BasicSetting;
 const Notification_Modal = db.Notification;
 const Planmanage = db.Planmanage;
 const Basket_Modal = db.Basket;
+const Order_Modal = db.Order;
+
 
 //const JsonFile = require("../../uploads/json/config.json");
 const { sendFCMNotification } = require('./Pushnotification'); 
@@ -62,6 +64,15 @@ cron.schedule('0 17 * * *', async () => {
     scheduled: true,
     timezone: "Asia/Kolkata"
 });
+
+
+cron.schedule('0 16 * * *', async () => {
+    await processPendingOrders();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
+
 
 // cron.schedule(`${JsonFile.cashexpiretime} ${JsonFile.cashexpirehours} * * *`, async () => {
 //     await CheckExpireSignalCash();
@@ -356,10 +367,14 @@ const DeleteTokenAliceToken = async (req, res) => {
   
         return {
             symbol: element.name,
-            expiry: expiry,
-            expiry_month_year: expiry.slice(2),
-            expiry_date: expiry.slice(0, -6),
-            expiry_str: element.expiry,
+            // expiry: expiry,
+            // expiry_month_year: expiry.slice(2),
+            // expiry_date: expiry.slice(0, -6),
+            // expiry_str: element.expiry,
+            expiry: segment === "C" ? null : expiry,
+            expiry_date: segment === "C" ? null : expiry.slice(0, -6),
+            expiry_month_year: segment === "C" ? null : expiry.slice(2),
+            expiry_str: segment === "C" ? null : element.expiry,
             strike: strike,
             option_type: option_type,
             segment: segment,  // Default segment
@@ -993,7 +1008,210 @@ async function calculateCAGRForBaskets() {
 }
 
 
+////////////////////////// auto respose for order //////////////////////////
+async function handleExpiredToken(client, order, error) {
+    console.error(`Error processing order ${order.orderid} for client ${client._id}:`, error.message);
+
+    // order.status = -1;
+    // await order.save();
+
+    console.log(`Notifying client ${client._id} about expired token.`);
+}
+
+// Fetch order for Alice Blue broker
+async function fetchAliceBlueOrder(client, order) {
+    const authToken = client.authtoken;
+    const userId = client.apikey;
+
+    const data = JSON.stringify({ "nestOrderNumber": order.orderid });
+
+    const config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://ant.aliceblueonline.com/rest/AliceBlueAPIService/api/placeOrder/orderHistory',
+        headers: {
+            'Authorization': `Bearer ${userId} ${authToken}`,
+            'Content-Type': 'application/json',
+        },
+        data: data
+    };
+
+    return await axios(config);
+}
+
+async function fetchAngelOneOrder(client, order) {
+    const authToken = client.authtoken;
+    const userId = client.apikey;
+
+    const config = {
+        method: 'get',
+        url: `https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/details/${order.uniqueorderid}`,
+        headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-UserType': 'USER',
+            'X-SourceID': 'WEB',
+            'X-ClientLocalIP': 'CLIENT_LOCAL_IP',
+            'X-ClientPublicIP': 'CLIENT_PUBLIC_IP',
+            'X-MACAddress': 'MAC_ADDRESS',
+            'X-PrivateKey': userId,
+        },
+    };
+
+    return await axios(config);
+}
+
+async function fetchKotakOrder(client, order) {
+    const authToken = client.authtoken;
+    const userId = client.apikey;
+
+    const data_orderHistory = qs.stringify({
+        jData: '{"nOrdNo":"' + order.orderid + '"}',
+    });
+    const url = `https://gw-napi.kotaksecurities.com/Orders/2.0/quick/order/history?sId=${client.hserverid}`;
+
+    const config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: url,
+        headers: {
+            accept: "application/json",
+            Sid: client.kotakneo_sid,
+            Auth: client.authtoken,
+            "neo-fin-key": "neotradeapi",
+            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization: "Bearer " + client.oneTimeToken,
+        },
+        data: data_orderHistory,
+    };
+
+    return await axios(config);
+}
+
+async function fetchMarketHubOrder(client, order) {
+    const authToken = client.authtoken;
+
+    const data = JSON.stringify({ "orderId": order.orderid });
+
+    const config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://fund.markethubonline.com/middleware/api/v2/OrderHistory',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`,
+        },
+        data: data
+    };
+
+    return await axios(config);
+}
+
+
+async function processPendingOrders(req, res) {
+    const summary = { processed: 0, failed: 0, skipped: 0, errors: [] };
+
+    try {
+        // Set start and end of the current day
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+
+        // Fetch orders for the day with status 0
+        const orders = await Order_Modal.find({
+            status: 0,
+            createdAt: { $gte: startOfDay, $lt: endOfDay }
+        });
+
+        if (!orders.length) {
+            console.log("No pending orders to process.");
+            return res.json({ 
+                status: true, 
+                message: "No pending orders to process.",
+                summary: summary
+            });
+        }
+
+        // Process each order
+        await Promise.all(orders.map(async (order) => {
+            try {
+                const client = await Clients_Modal.findById(order.clientid);
+
+                if (!client || client.tradingstatus === 0) {
+                    console.log(`Skipping order ${order.orderid}: Client not found or not logged in.`);
+                    summary.skipped += 1;
+                    return; // Skip this order
+                }
+
+                let response;
+
+                switch (order.borkerid) {
+                    case 2:
+                        response = await fetchAliceBlueOrder(client, order);
+                        break;
+                    case 1:
+                        response = await fetchAngelOneOrder(client, order);
+                        break;
+                    case 3:
+                        response = await fetchKotakOrder(client, order);
+                        break;
+                    case 4:
+                        response = await fetchMarketHubOrder(client, order);
+                        break;
+                    default:
+                        console.log(`Skipping order ${order.orderid}: Unsupported broker ID.`);
+                        summary.skipped += 1;
+                        return; // Skip this order
+                }
+
+                // Update the order data and status
+                order.data = response.data;
+                order.status = 1;
+                await order.save();
+
+                summary.processed += 1;
+                console.log(`Order ${order.orderid} updated successfully.`);
+            } catch (error) {
+                if (error.response && error.response.status === 401) {
+                    // Handle expired token
+                    await handleExpiredToken(client, order, error);
+                } else {
+                    console.error(`Error processing order ${order.orderid}:`, error.message);
+                    summary.errors.push({ orderid: order.orderid, error: error.message });
+                }
+                summary.failed += 1;
+            }
+        }));
+
+        // Send summary response after all processing is complete
+        return res.json({ 
+            status: true, 
+            message: "Processing completed.",
+            summary: summary 
+        });
+
+    } catch (error) {
+        console.error("Error in processPendingOrders:", error.message);
+        return res.status(500).json({ 
+            status: false, 
+            message: "An error occurred while processing orders.", 
+            error: error.message 
+        });
+    }
+}
+
+
+////////////////////////// auto respose for order //////////////////////////
 
 
 
-  module.exports = { AddBulkStockCron,DeleteTokenAliceToken,TradingStatusOff,CheckExpireSignalCash,CheckExpireSignalFutureOption,PlanExpire,downloadKotakNeotoken,calculateCAGRForBaskets };
+
+
+
+
+
+
+  module.exports = { AddBulkStockCron,DeleteTokenAliceToken,TradingStatusOff,CheckExpireSignalCash,CheckExpireSignalFutureOption,PlanExpire,downloadKotakNeotoken,calculateCAGRForBaskets,processPendingOrders };
