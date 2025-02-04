@@ -406,7 +406,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   <div className="d-flex">
                     <span className="switch-label p-1">
                       Trading Status:
-                      <span style={{ color: isChecked ? "green" : "red" }}>
+                      <span style={{ color: isChecked ? "green" : "red" ,fontSize: 16}}>
                         {isChecked ? "On" : "Off"}
                       </span>
                     </span>
@@ -440,7 +440,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       className="form-check form-switch form-check-dark mb-0"
                       style={{ margin: "inherit", fontSize: 21 }}
                     >
-                      <span style={{ color: isChecked ? "green" : "red" }}>
+                      <span style={{ color: isChecked ? "green" : "red",fontSize: '16px' }}>
                         {isChecked ? "On" : "Off"}
                       </span>
                       <input
