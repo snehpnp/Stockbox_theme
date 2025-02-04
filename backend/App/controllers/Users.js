@@ -775,7 +775,7 @@ class Users {
 
 
       const mailOptions = {
-        from: "shakirpnp@gmail.com",
+        from: "",
         to,
         subject
 
