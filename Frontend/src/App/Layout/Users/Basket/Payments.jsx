@@ -36,7 +36,7 @@ const Payments = () => {
             const response = await getQRcodedata();
             if (response.status) {
                 setQrdata(response?.data)
-                console.log(response?.data)
+
             }
         } catch (error) {
             console.error("Error fetching coupons:", error);
@@ -179,7 +179,13 @@ const Payments = () => {
                                     return (
                                         <>
                                             <h5 className="card-title btn-primary py-2">Scan to Pay</h5>
-                                            <img src={`${image_baseurl}/uploads/bank/${item?.image}`} alt="QR Code" className="img-fluid mb-3" style={{ width: '200px', height: '200px' }} />
+                                            <img
+                                                src={item?.image}
+                                                alt={item.image}
+                                                title={item.image}
+                                                className="img-fluid mb-3"
+                                                style={{ width: 200, height: 200 }}
+                                            />
                                         </>
                                     )
                                 })}
