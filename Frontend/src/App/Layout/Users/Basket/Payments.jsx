@@ -57,17 +57,19 @@ const Payments = () => {
 
             {activeTab === "offline" && (
                 <div className="row justify-content-center">
-                    <div className="col-md-10">
+                    <div className="col-md-6">
                         <div className="card">
                             <div className="card-body text-center">
-                                <h5 className="card-title">Scan to Pay</h5>
-                                <img src="https://via.placeholder.com/150" alt="QR Code" className="img-fluid mb-3" />
-                                <h6>Bank Details:</h6>
-                                <p>
-                                    Account Name: XYZ Investments <br />
-                                    Account Number: 1234567890 <br />
-                                    IFSC Code: XYZB0001234
-                                </p>
+                                <h5 className="card-title btn-primary py-2">Scan to Pay</h5>
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" alt="QR Code" className="img-fluid mb-3"  style={{width:'200px',height:'200px'}}/>
+                                <h5 className="btn-primary py-2">Bank Details:</h5>
+                                <ul className="ps-0">
+                                <li className="list-group-item d-flex justify-content-between"> <b>Account Name:</b>  XYZ Investments </li>
+                                <li className="list-group-item d-flex justify-content-between">  <b>Account Number:</b> 1234567890</li>
+                                <li className="list-group-item d-flex justify-content-between">  <b>IFSC Code:</b> XYZB0001234</li>
+
+                                </ul>
+                               
                             </div>
                         </div>
                     </div>
