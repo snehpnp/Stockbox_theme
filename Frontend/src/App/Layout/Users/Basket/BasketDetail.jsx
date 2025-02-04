@@ -8,15 +8,13 @@ import { fDate } from "../../../../Utils/Date_formate";
 const BasketDetail = () => {
 
   const [activeTab, setActiveTab] = useState("rational");
-
+  const [itemdata, setItemdata] = useState()
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
   const location = useLocation();
   const { item } = location?.state;
-
-  console.log("item", item)
 
   const stripHtmlTags = (input) => {
     if (!input) return "";
@@ -37,6 +35,9 @@ const BasketDetail = () => {
   };
 
 
+  useEffect(() => {
+    setItemdata(item)
+  }, [item])
 
 
   return (
@@ -133,7 +134,7 @@ const BasketDetail = () => {
 
       </div>
       <div className="card-footer mt-3 text-center">
-        <Link to="/user/basketstocklist" className="btn btn-primary w-50 mx-auto mt-3">View Detail</Link>
+        <Link to="/user/basketstocklist" state={{ item }} className="btn btn-primary w-50 mx-auto mt-3">View Detail</Link>
       </div>
     </Content>
   );

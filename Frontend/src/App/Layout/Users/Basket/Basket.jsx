@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Content from "../../../components/Contents/Content";
 import { Doughnut } from "react-chartjs-2";
 import { Link, useNavigate } from 'react-router-dom';
-import { GetBasketService, BasketPurchaseList, AddBasketsubscription } from '../../../Services/UserService/User';
-import { basicsettinglist } from '../../../Services/Admin/Admin';
+import { GetBasketService, BasketPurchaseList } from '../../../Services/UserService/User';
 import { loadScript } from '../../../../Utils/Razorpayment';
 import Loader from '../../../../Utils/Loader';
 
@@ -17,8 +16,9 @@ function Basket() {
   const [isLoading, setIsLoading] = useState(true)
 
 
-  const [getkey, setGetkey] = useState([]);
-  const [company, setCompany] = useState([]);
+
+
+
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
@@ -28,7 +28,6 @@ function Basket() {
 
 
   useEffect(() => {
-    getkeybydata()
     if (activeTab === "allbasket") {
       getbasketdata()
     } else if (activeTab === "subscribedbasket") {
@@ -39,17 +38,6 @@ function Basket() {
 
 
 
-  const getkeybydata = async () => {
-    try {
-      const response = await basicsettinglist();
-      if (response.status) {
-        setGetkey(response?.data[0]?.razorpay_key);
-        setCompany(response?.data[0]?.from_name);
-      }
-    } catch (error) {
-      console.error("Error fetching coupons:", error);
-    }
-  };
 
 
 
@@ -83,54 +71,6 @@ function Basket() {
     }
     setIsLoading(false)
   }
-
-
-
-  const AddbasketSubscribeplan = async (item) => {
-    try {
-      console.log("item", item)
-      return
-      if (!window.Razorpay) {
-        await loadScript("https://checkout.razorpay.com/v1/checkout.js");
-      }
-      const options = {
-        key: getkey,
-        amount: item?.basket_price * 100,
-        name: company,
-        currency: "INR",
-        title: item?.title || "Subscription Basket",
-        handler: async function (response1) {
-          const data = {
-            basket_id: item?._id,
-            client_id: userid,
-            price: item?.full_price ? item?.full_price : item?.basket_price,
-            discount: response1?.orderid,
-            orderid: response1?.orderid,
-            coupon: 0,
-          };
-
-          try {
-            const response2 = await AddBasketsubscription(data, token);
-            if (response2?.status) {
-              window.location.reload();
-            }
-          } catch (error) {
-            console.error("Error while adding plan subscription:", error);
-          }
-        },
-        prefill: {
-
-        },
-        theme: {
-          color: "#F37254",
-        },
-      };
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-    } catch (error) {
-      console.error("Subscription error:", error);
-    }
-  };
 
 
 
@@ -237,7 +177,7 @@ function Basket() {
                             Validity
                             <span className="badge bg-danger rounded-pill">{item?.validity}</span>
                           </li>
-                          {/* <Link className="btn btn-primary w-100 " onClick={() => { AddbasketSubscribeplan(item) }}>
+                          {/* <Link className="btn btn-primary w-100 " >
                         Subscribe <del>{item?.full_price}</del>  {item?.basket_price}
                       </Link> */}
                           <Link to="/user/payment" state={{ item }} className="btn btn-primary w-100 ">

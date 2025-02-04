@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import FormicForm from "../../../Extracomponents/Newformicform";
@@ -15,6 +15,7 @@ const Demat = () => {
   const [modalTitle, setModalTitle] = useState("");
   const [userDetail, setUserDetail] = useState();
   const [dlinkstatus, setDlinkstatus] = useState(false);
+  const [brokerData, setBrokerData] = useState([]);
 
 
 
@@ -29,6 +30,7 @@ const Demat = () => {
       if (response.status) {
         setUserDetail(response.data?.brokerid);
         setDlinkstatus(response.data?.dlinkstatus == 1);
+        setBrokerData(response.data);
       }
     } catch (error) {
       console.log("error", error);
@@ -149,6 +151,14 @@ const Demat = () => {
     },
   });
 
+  useEffect(() => {
+    formik.setValues(
+      fieldTypes.reduce((acc, field) => {
+        acc[field.key] = brokerData[field.key] || "";
+        return acc;
+      }, {})
+    );
+  }, [userDetail]);
 
 
   return (
