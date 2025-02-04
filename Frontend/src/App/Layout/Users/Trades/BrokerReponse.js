@@ -28,6 +28,7 @@ const BrokerReponse = () => {
             const data = { clientid: userid }
             const response = await BrokerResponsedata(data, token);
             if (response.status) {
+                console.log("response?.data", response?.data)
                 setResponseData(response?.data)
             }
         } catch (error) {
@@ -84,7 +85,7 @@ const BrokerReponse = () => {
     return (
 
         <Content
-            Page_title="Add New Client"
+            Page_title="Broker Response"
             button_status={false}
             backbutton_status={true}
             backForword={true}
