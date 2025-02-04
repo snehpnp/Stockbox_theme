@@ -403,7 +403,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
             <div className="col-7 pe-0">
               <div className="d-flex align-items-center position-relative justify-content-end">
                 {Role === "ADMIN" ? (
-                  <div className="d-flex">
+                  <div className="d-flex me-1">
                     <span className="switch-label p-1">
                       Trading Status:
                       <span style={{ color: isChecked ? "green" : "red" ,fontSize: 16}}>
