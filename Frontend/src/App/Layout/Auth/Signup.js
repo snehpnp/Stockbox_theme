@@ -30,7 +30,6 @@ const UserSignup = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
 
-    // Validate field on change
     validateField(name, value);
   };
 
