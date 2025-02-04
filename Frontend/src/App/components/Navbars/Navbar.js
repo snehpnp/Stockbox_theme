@@ -489,7 +489,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                           {badgecount > 100 ? "99+" : badgecount}
                         </span>
                       ) : null}
-                      <FaBell size={24} />
+                      <FaBell size={20} className=""/>
                     </div>
 
                     <div
@@ -681,7 +681,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                             {badgecount > 100 ? "99+" : badgecount}
                           </span>
                         ) : null}
-                        <FaBell size={24} />
+                        <FaBell size={20} />
                       </div>
 
                       <div
