@@ -1,11 +1,49 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Content from "../../../components/Contents/Content";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
+import { BasketPurchaseList } from "../../../Services/UserService/User";
+import Loader from "../../../../Utils/Loader";
+
+
 
 const BasketStockList = () => {
+
+
+  useEffect(() => {
+    getbasketpurchasedata()
+  }, [])
+
+  const token = localStorage.getItem("token");
+  const userid = localStorage.getItem("id");
+
   const [showModal, setShowModal] = useState(false);
   const handleCloseModal = () => setShowModal(false);
+
+
+  const [isLoading, setIsLoading] = useState(true)
+  const [purchasedata, setPurchasedata] = useState([])
+
+  console.log("purchasedata", purchasedata)
+
+  const getbasketpurchasedata = async () => {
+    try {
+      const data = { clientid: userid }
+      const response = await BasketPurchaseList(data, token)
+      if (response.status) {
+        setPurchasedata(response.data)
+
+      }
+    } catch (error) {
+      console.log("error", error)
+    }
+    setIsLoading(false)
+  }
+
+
+
+
 
   return (
     <Content
@@ -15,6 +53,7 @@ const BasketStockList = () => {
       route={"/user/rebalancehistory"}
       backbutton_status={false}
       backbutton_title="Back"
+      backForword={true}
     >
       <div className="row">
         <div className="col-md-4">
@@ -56,8 +95,8 @@ const BasketStockList = () => {
             </div>
           </div>
         </div>
-        </div>
-        <div className="row">
+      </div>
+      <div className="row">
         <div className="table-responsive">
           <table className="table ">
             <thead className="table-primary">
