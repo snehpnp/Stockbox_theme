@@ -5,7 +5,7 @@ import Table from '../../../Extracomponents/Table';
 import { RefreshCcw, IndianRupee } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { fDateTime } from '../../../../Utils/Date_formate';
-
+import Content from '../../../components/Contents/Content';
 
 
 
@@ -28,7 +28,6 @@ const BrokerReponse = () => {
             const data = { clientid: userid }
             const response = await BrokerResponsedata(data, token);
             if (response.status) {
-                // console.log("response response", response);
                 setResponseData(response?.data)
             }
         } catch (error) {
@@ -83,22 +82,14 @@ const BrokerReponse = () => {
 
 
     return (
-        <div>
-            <div className="page-content">
-                <div className="page-breadcrumb  d-flex align-items-center mb-3">
-                    <div className="breadcrumb-title pe-3">Broker Response</div>
-                    <div className="ps-3">
-                        <nav aria-label="breadcrumb">
-                            <ol className="breadcrumb mb-0 p-0">
-                                <li className="breadcrumb-item">
-                                    <Link to="/admin/dashboard">
-                                        <i className="bx bx-home-alt" />
-                                    </Link>
-                                </li>
-                            </ol>
-                        </nav>
-                    </div>
-                </div>
+
+        <Content
+            Page_title="Add New Client"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
+            <div>
 
                 <div className="card">
                     <div className="card-body">
@@ -114,7 +105,7 @@ const BrokerReponse = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </Content>
     );
 };
 

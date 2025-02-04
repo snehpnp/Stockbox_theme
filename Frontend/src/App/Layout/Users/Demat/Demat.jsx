@@ -9,13 +9,20 @@ import { UpdateBroker } from "../../../Services/UserService/User";
 
 
 const Demat = () => {
+
+
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [userDetail, setUserDetail] = useState();
   const [dlinkstatus, setDlinkstatus] = useState(false);
 
+
+
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
+
+
+
   const getuserdetail = async () => {
     try {
       const response = await GetUserData(userid, token);
@@ -28,16 +35,23 @@ const Demat = () => {
     }
   };
 
+
+
   useEffect(() => {
     getuserdetail();
   }, []);
+
+
+
 
   const handleShowModal = (title) => {
     setModalTitle(title);
     setShowModal(true);
   };
 
+
   const handleCloseModal = () => setShowModal(false);
+
 
   const brokers = [
     {
@@ -62,6 +76,7 @@ const Demat = () => {
       img: "https://media.licdn.com/dms/image/v2/D560BAQEB5MsFZkdKwg/company-logo_200_200/company-logo_200_200/0/1681292585114/market_hub_stock_broking_pvt_ltd__logo?e=1746057600&v=beta&t=9YGrMbiPySe_qefvVi7OuaBOhjgc-BbupTeRPPIp1jE",
     },
   ];
+
 
 
   const brokerFieldsMap = {
@@ -113,22 +128,28 @@ const Demat = () => {
       },
     ],
   };
+
+
+
   const fieldTypes = brokerFieldsMap[userDetail || 1];
+
+
 
   const formik = useFormik({
     initialValues: fieldTypes.reduce((acc, field) => {
-      acc[field.key] = ""; // Initialize each field with an empty string
+      acc[field.key] = "";
       return acc;
     }, {}),
     enableReinitialize: true,
-    validate: (values) => {},
-    onSubmit: async(values) => {
+    validate: (values) => { },
+    onSubmit: async (values) => {
       let data = { ...values, brokerid: userDetail, id: userid };
       console.log("data", data);
-      // const loginData = await UpdateBroker(data, token);
-      // console.log("loginData", loginData);
+
     },
   });
+
+
 
   return (
     <div>
@@ -142,22 +163,23 @@ const Demat = () => {
             {brokers
               .filter((broker) =>
                 dlinkstatus ? broker.id === userDetail : true
-              ) // Conditional filtering
+              )
               .map((broker) => (
-                <div className="col mb-3" key={broker.id}>
+                <div className="col-md-4 col-sm-6 mb-3" key={broker.id}>
                   <div
                     className="card radius-5"
                     onClick={() => setUserDetail(broker.id)}
                   >
                     <div
-                      className="card-body text-center cursor-pointer"
+                      className="card-body p-2 text-center cursor-pointer"
                       onClick={() => handleShowModal(broker.name)}
                     >
                       <div className="p-4 border radius-5">
                         <img
+                        className="img-fluid"
                           src={broker.img}
-                          width={110}
-                          height={110}
+                         
+                         
                           alt={broker.name}
                         />
                         <h5 className="mb-0 mt-5">{broker.name}</h5>

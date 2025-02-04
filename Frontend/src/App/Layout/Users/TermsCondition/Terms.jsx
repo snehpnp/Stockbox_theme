@@ -46,8 +46,7 @@ const Terms = () => {
 
                         <div className="card">
                             {isLoading ? <Loader /> : <div className="card-body">
-                              
-                                {/* Render HTML content safely */}
+
                                 <div
                                     dangerouslySetInnerHTML={{ __html: termsCondition }}
                                 />

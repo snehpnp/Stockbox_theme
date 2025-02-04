@@ -506,30 +506,39 @@ function Trade() {
             </div>
 
             <div className="col-md-12">
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="targetCheckbox"
-                  checked={targetEnabled === 1}
-                  onChange={(e) => setTargetEnabled(e.target.checked ? 1 : 0)}
-                />
-                <label className="form-check-label" htmlFor="targetCheckbox">
-                  Target
-                </label>
+              <div className="row">
+                <div className="col-md-6">
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id="targetCheckbox"
+                      checked={targetEnabled === 1}
+                      onChange={(e) => setTargetEnabled(e.target.checked ? 1 : 0)}
+                    />
+                    <label className="form-check-label" htmlFor="targetCheckbox">
+                      Target
+                    </label>
+                  </div>
+
+                </div>
+                <div className="col-md-6">
+
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id="stoplossCheckbox"
+                      checked={targetEnabled === 2}
+                      onChange={(e) => setTargetEnabled(e.target.checked ? 2 : 0)}
+                    />
+                    <label className="form-check-label" htmlFor="stoplossCheckbox">
+                      Stoploss
+                    </label>
+                  </div>
+                </div>
               </div>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="stoplossCheckbox"
-                  checked={targetEnabled === 2}
-                  onChange={(e) => setTargetEnabled(e.target.checked ? 2 : 0)}
-                />
-                <label className="form-check-label" htmlFor="stoplossCheckbox">
-                  Stoploss
-                </label>
-              </div>
+
               <input
                 type="text"
                 className="form-control"
@@ -548,7 +557,7 @@ function Trade() {
             </div>
             <div className="col-md-12">
               <label htmlFor="inputQuantity" className="form-label">
-                EXit Price
+                Exit Price
               </label>
               <input
                 type="number"
@@ -572,7 +581,7 @@ function Trade() {
                 PlanceOrderdata();
               }}
             >
-              Save
+              Buy
             </button>
             <button className="btn btn-secondary" onClick={() => setModel(false)}>
               Cancel

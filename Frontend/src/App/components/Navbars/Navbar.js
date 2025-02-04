@@ -23,6 +23,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   useEffect(() => {
     getdemoclient();
     gettradedetail();
+    getuserdetail();
   }, []);
 
   const navigate = useNavigate();
@@ -94,7 +95,6 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
- 
   const getdemoclient = async () => {
     if (Role == "ADMIN") {
       try {
@@ -254,11 +254,13 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   };
 
   useEffect(() => {
-    getuserdetail();
     if (getstatus[0]?.brokerloginstatus === 1) {
       setIsChecked(true);
     }
-  }, [getstatus]);
+    if (UserDetail?.tradingstatus === 1) {
+      setIsChecked(true);
+    }
+  }, [getstatus, UserDetail]);
 
   const getuserdetail = async () => {
     try {
@@ -275,7 +277,6 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     if (UserDetail.dlinkstatus == 0) {
       setViewModel(true);
     } else {
-      // console.log(UserDetail);
       if (UserDetail.brokerid == 1) {
         window.location.href = `https://smartapi.angelone.in/publisher-login?api_key=${UserDetail.apikey}`;
       } else if (UserDetail.brokerid == 2) {
@@ -287,10 +288,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   };
 
   const closeBrokerModal = () => {
-    setViewModel(false); // Close the modal
+    setViewModel(false);
   };
-
-  console.log("userNotification", userNotification);
 
   return (
     <>
@@ -619,7 +618,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
                     >
-                      {userNotification ? (
+                      {badgecount ? (
                         <span
                           className="alert-count"
                           style={{
@@ -635,7 +634,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                             zIndex: 1051,
                           }}
                         >
-                          {userNotification?.length > 100 ? "99+" : userNotification?.length}
+                          {badgecount > 100 ? "99+" : badgecount}
                         </span>
                       ) : null}
                       <FaBell size={24} />
@@ -709,9 +708,6 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                                   ? "text-info font-bold"
                                   : "text-muted bg-light"
                               }`}
-                              onClick={(event) =>
-                                handleNotificationClick(event, notification)
-                              }
                               style={{
                                 padding: "10px",
                                 marginBottom: "5px",
@@ -786,7 +782,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       <div className="text-center msg-footer mt-2">
                         <button
                           className="btn btn-primary w-100"
-                          onClick={() => navigate("/user/notification")}
+                          onClick={() => getAllMessageRead()}
                           style={{
                             borderRadius: "6px",
                             fontWeight: "500",

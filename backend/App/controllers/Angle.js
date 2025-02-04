@@ -10,7 +10,6 @@ const Stock_Modal = db.Stock;
 const Order_Modal = db.Order;
 const Basketorder_Modal = db.Basketorder;
 
-
 class Angle {
 
     async GetAccessToken(req, res) {
@@ -29,7 +28,6 @@ class Angle {
                         message: "Client not found"
                     });
                 }
-
 
                 var auth_token = keystr.split('?auth_token=')[1];
 
@@ -58,6 +56,7 @@ class Angle {
                     message: "Broker login successfully",
                 });
 
+
             } else {
 
                 return res.status(500).json({ status: false, message: "Server error" });
@@ -69,11 +68,12 @@ class Angle {
 
     }
 
+
+
     async placeOrder(req, res) {
 
         try {
             const { id, signalid, quantity, price, tsprice, tsstatus, slprice, exitquantity } = req.body;
-
 
             const client = await Clients_Modal.findById(id);
             if (!client) {

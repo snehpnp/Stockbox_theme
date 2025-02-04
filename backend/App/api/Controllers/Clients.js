@@ -183,7 +183,7 @@ class Clients {
       });
 
 
-     
+
 
 
       return res.json({
@@ -1148,28 +1148,28 @@ class Clients {
 
       // Validate input
       if (!clientId) {
-        return res.status(400).json({ status: false, message: 'Invalid client ID' });
+        return res.json({ status: false, message: 'Invalid client ID' });
       }
       if (amount <= 0) {
-        return res.status(400).json({ status: false, message: 'Enter Invalid Amount' });
+        return res.json({ status: false, message: 'Enter Invalid Amount' });
       }
 
       // Fetch the client record
       const client = await Clients_Modal.findOne({ _id: clientId, del: 0, ActiveStatus: 1 });
 
       if (!client) {
-        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+        return res.json({ status: false, message: 'Client not found or inactive.' });
       }
 
       // Check if the requested amount is below the minimum withdrawal limit
       const minimumWithdrawal = 500;
       if (amount < minimumWithdrawal) {
-        return res.status(400).json({ status: false, message: `Minimum withdrawal amount is ${minimumWithdrawal}.` });
+        return res.json({ status: false, message: `Minimum withdrawal amount is ${minimumWithdrawal}.` });
       }
 
       // Check if the client has enough wamount
       if (client.wamount < amount) {
-        return res.status(400).json({ status: false, message: 'Insufficient funds in wallet.' });
+        return res.json({ status: false, message: 'Insufficient funds in wallet.' });
       }
 
       // Deduct the amount from client's wamount

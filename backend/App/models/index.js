@@ -52,6 +52,7 @@ module.exports = {
     ThemeModal: require("./Theme"),
     Company1 :require("./Company1"),
     Stockrating :require("./Stockrating"),
+    Addtocart :require("./Addtocart"),
 
 
     open_position:open_position,

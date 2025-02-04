@@ -192,6 +192,12 @@ const Admin = [
     name: "BasicSettings",
   },
   {
+    label: "Order List",
+    icon: "MessageCircleMore",
+    link: "/admin/orderlist",
+    name: "Order List"
+  },
+  {
     label: "Broadcast SMS",
     icon: "MessageCircleMore",
     link: "/admin/message",
@@ -295,10 +301,10 @@ const User = [
   //   children: [],
   // },
   {
-    name: "BasketResponse",
+    name: "Basket Response",
     label: "Basket Response",
     icon: "FolderClock",
-    link: "/user/basket_response",
+    link: "/user/basket-response",
     children: [],
   },
   {

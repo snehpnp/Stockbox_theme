@@ -517,14 +517,14 @@ export async function UpdateUserProfile(data, token) {
         });
 
         return res?.data;
-    }   
+    }
     catch (err) {
         return err.response?.data || err.message;
     }
 }
 
 export async function DeleteClient(data, token) {
-    try{
+    try {
         const res = await axios.get(`${Config.base_url}api/client/deleteclient/:${data}`, {
             headers: {
                 data: {},
@@ -534,14 +534,14 @@ export async function DeleteClient(data, token) {
 
         return res?.data;
 
-    }catch(err){
+    } catch (err) {
         return err.response?.data || err.message;
     }
 }
 
 export async function DeleteDematAccount(data, token) {
-    try{
-        const res = await axios.post(`${Config.base_url}api/client/deletebrokerlink`, data,{
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/deletebrokerlink`, data, {
             headers: {
                 data: {},
                 'Authorization': `${token}`,
@@ -550,7 +550,7 @@ export async function DeleteDematAccount(data, token) {
 
         return res?.data;
 
-    }catch(err){
+    } catch (err) {
         return err.response?.data || err.message;
     }
 }
@@ -608,6 +608,134 @@ export async function GetNotificationData(data, token) {
 export async function GetBlogData(token) {
     try {
         const res = await axios.get(`${Config.base_url}api/list/blogspagination`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+// basket order list 
+
+// /api/list/broadcast
+
+export async function Getbasketorderlist(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/basketorderlist`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+// withdrw reuest 
+
+
+
+export async function GetWithdrawRequest(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/requestpayout`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+
+//refer earning 
+
+export async function GetReferEarning(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/referearn`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+// get payout 
+
+
+export async function GetPayoutDetail(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/payoutlist`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+// basket service
+
+
+export async function GetBasketService(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/list/baskets`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+
+// basket purchase 
+
+
+export async function BasketPurchaseList(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/list/mybasketpurchaselist`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+// add basket subscription 
+
+export async function AddBasketsubscription(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/list/addbasketsubscription`, data, {
             headers: {
                 Authorization: `${token}`,
             },
