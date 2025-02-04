@@ -367,10 +367,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
             <div className="col-7 pe-0">
               <div className="d-flex align-items-center position-relative justify-content-end">
                 {Role === "ADMIN" ? (
-                  <div className="d-flex">
+                  <div className="d-flex me-1">
                     <span className="switch-label p-1">
                       Trading Status:
-                      <span style={{ color: isChecked ? "green" : "red" }}>
+                      <span style={{ color: isChecked ? "green" : "red" ,fontSize: 16}}>
                         {isChecked ? "On" : "Off"}
                       </span>
                     </span>
@@ -404,7 +404,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       className="form-check form-switch form-check-dark mb-0"
                       style={{ margin: "inherit", fontSize: 21 }}
                     >
-                      <span style={{ color: isChecked ? "green" : "red" }}>
+                      <span style={{ color: isChecked ? "green" : "red",fontSize: '16px' }}>
                         {isChecked ? "On" : "Off"}
                       </span>
                       <input
@@ -453,7 +453,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                           {badgecount > 100 ? "99+" : badgecount}
                         </span>
                       ) : null}
-                      <FaBell size={24} />
+                      <FaBell size={20} className=""/>
                     </div>
 
                     <div
@@ -612,41 +612,42 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       </div>
                     </div>
                   </div>
-                ) : Role === "USER" ? (
-                  <div className="dropdown">
-                    <div
-                      className="notification-container dropdown-toggle"
-                      style={{
-                        cursor: "pointer",
-                        marginLeft: "10px",
-                        position: "relative",
-                      }}
-                      role="button"
-                      id="dropdownMenuLink"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      {badgecount ? (
-                        <span
-                          className="alert-count"
-                          style={{
-                            position: "absolute",
-                            top: "-5px",
-                            right: "-5px",
-                            background: "red",
-                            color: "white",
-                            fontSize: "12px",
-                            fontWeight: "bold",
-                            borderRadius: "50%",
-                            padding: "4px 8px",
-                            zIndex: 1051,
-                          }}
-                        >
-                          {badgecount > 100 ? "99+" : badgecount}
-                        </span>
-                      ) : null}
-                      <FaBell size={24} />
-                    </div>
+                ) :
+                  Role === "USER" ? (
+                    <div className="dropdown">
+                      <div
+                        className="notification-container dropdown-toggle"
+                        style={{
+                          cursor: "pointer",
+                          marginLeft: "10px",
+                          position: "relative",
+                        }}
+                        role="button"
+                        id="dropdownMenuLink"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        {badgecount ? (
+                          <span
+                            className="alert-count"
+                            style={{
+                              position: "absolute",
+                              top: "-5px",
+                              right: "-5px",
+                              background: "red",
+                              color: "white",
+                              fontSize: "12px",
+                              fontWeight: "bold",
+                              borderRadius: "50%",
+                              padding: "4px 8px",
+                              zIndex: 1051,
+                            }}
+                          >
+                            {badgecount > 100 ? "99+" : badgecount}
+                          </span>
+                        ) : null}
+                        <FaBell size={20} />
+                      </div>
 
                     <div
                       style={{
