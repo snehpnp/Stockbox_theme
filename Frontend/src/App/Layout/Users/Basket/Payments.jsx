@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Content from "../../../components/Contents/Content";
+import { HandCoins } from "lucide-react";
 
 const Payments = () => {
     const [activeTab, setActiveTab] = useState("online");
@@ -33,17 +34,21 @@ const Payments = () => {
             </ul>
 
             {activeTab === "online" && (
-                <div className="row justify-content-center">
-                    <div className="col-md-10">
+                <div className="row justify-content-center mt-4">
+                    <div className="col-md-6">
                         <div className="card">
+                        <div className="card-header"><HandCoins className="me-2 btn-primary p-1 rounded"/>your total saving is off ₹2,000</div>
                             <div className="card-body">
-                                <h5 className="card-title">Premium Investment Plan</h5>
-                                <p className="card-text">
-                                    - Monthly Returns: 12% <br />
-                                    - Minimum Investment: ₹10,000 <br />
-                                    - Risk Level: Moderate
+                            <div className="d-md-flex justify-content-between">
+                            <h6 className="card-title mb-0"><strong>Premium Investment Plan</strong></h6>
+                            <h6 className="card-title mb-0"><strong>₹10,000</strong></h6>
+                            </div>
+                               
+                                <p className="mt-1">
+                                    
+                                    - validity 3 months 
                                 </p>
-                                <button className="btn btn-primary w-100">Subscribe</button>
+                                <button className="btn btn-primary w-100">Subscribe Now <span className="text-decoration-line-through">₹10,000</span> ₹10,000</button>
                             </div>
                         </div>
                     </div>
