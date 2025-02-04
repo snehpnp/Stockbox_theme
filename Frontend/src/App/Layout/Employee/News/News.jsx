@@ -343,6 +343,7 @@ const News = () => {
 
                                                         {permission.includes("editnews") ? <Tooltip placement="top" overlay="Update">
                                                             <SquarePen
+                                                            className='me-2'
                                                                 onClick={() => {
                                                                     navigate("/employee/updatenews", { state: { client } })
                                                                 }}
@@ -356,7 +357,7 @@ const News = () => {
                                                 <hr />
                                                 <div className="row">
                                                     {/* Image on the left side */}
-                                                    <div className="col-md-2" style={{ borderRight: "1px solid #D0D0D0", textAlign: "center" }}>
+                                                    <div className="col-md-2 border-md-right border-end" style={{  textAlign: "center" }}>
                                                         <img
                                                             src={`${image_baseurl}uploads/news/${client.image}`}
 
