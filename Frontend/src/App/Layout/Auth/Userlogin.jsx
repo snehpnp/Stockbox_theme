@@ -9,16 +9,11 @@ import $ from "jquery";
 import BgImg from "./bg-login-img.png";
 const Userlogin = () => {
   const navigate = useNavigate();
-  let logoSrc =
-    "https://www.pms.crmplus.in/files/system/_file5c2e1123e834d-site-logo.png";
-
-  const [status, setStatus] = useState(2);
   const [email, setemail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
-
   const [information, setInformation] = useState([]);
 
   const togglePasswordVisibility = (e) => {
@@ -154,46 +149,7 @@ const Userlogin = () => {
     <div className="main-login" style={{ backgroundImage: `url(${BgImg})` }}>
       <div className="row align-items-center h-100">
         <div className="col-lg-12 mx-auto">
-          {status === 1 ? (
-            <div className="login-wrapper">
-              <div className="background"></div>
-              <div className="login-container active">
-                <img src={logoSrc} alt="Logo" />
-                <div className="inner-div mt-4">
-                  <form className="login-form" onSubmit={handleLogin1}>
-                    <div className="form-item">
-                      <input
-                        id="email-login"
-                        placeholder="Email"
-                        type="textemail"
-                        value={email}
-                        onChange={(e) => setemail(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="form-item">
-                      <input
-                        id="password-login"
-                        placeholder="Password"
-                        type="password"
-                        aria-label="Enter your password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <button
-                      className="form-button"
-                      type="submit"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? "Logging in..." : "Login"}
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
-          ) : status === 2 ? (
+          {1 === 1 ? (
             <div className="bg-login">
               <div className="section-authentication-signin d-flex align-items-center justify-content-center my-5 my-lg-0">
                 <div className="container-fluid ">
@@ -255,8 +211,9 @@ const Userlogin = () => {
                                       className="input-group-text bg-transparent"
                                     >
                                       <i
-                                        className={`bx ${showPassword ? "bx-show" : "bx-hide"
-                                          }`}
+                                        className={`bx ${
+                                          showPassword ? "bx-show" : "bx-hide"
+                                        }`}
                                       />
                                     </a>
                                   </div>
@@ -274,9 +231,21 @@ const Userlogin = () => {
                                       type="submit"
                                       className="btn btn-primary"
                                     >
-                                      Sign in
+                                      Sign In
                                     </button>
                                   </div>
+                                </div>
+
+                                <div className="col-12 text-center mt-3">
+                                  <p className="mb-0">
+                                    Don't have an account?{" "}
+                                    <Link
+                                      to="/register"
+                                      className="btn btn-link p-0"
+                                    >
+                                      Sign Up
+                                    </Link>
+                                  </p>
                                 </div>
                               </form>
                             </div>
@@ -344,7 +313,13 @@ const Userlogin = () => {
                       }}
                     />
                     {errors.email && (
-                      <div style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>
+                      <div
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "5px",
+                        }}
+                      >
                         {errors.email}
                       </div>
                     )}
@@ -379,7 +354,13 @@ const Userlogin = () => {
                       }}
                     />
                     {errors.password && (
-                      <div style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>
+                      <div
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "5px",
+                        }}
+                      >
                         {errors.password}
                       </div>
                     )}
@@ -403,21 +384,32 @@ const Userlogin = () => {
                   >
                     {isLoading ? "Logging in..." : "Log In"}
                   </button>
+                  <div className="col-12 text-center mt-3">
+                    <p className="mb-0">
+                      Don't have an account?{" "}
+                      <Link to="/register" className="btn btn-link p-0">
+                        Sign Up
+                      </Link>
+                    </p>
+                  </div>
 
                   {errors.other && (
-                    <div style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>
+                    <div
+                      style={{
+                        color: "red",
+                        fontSize: "12px",
+                        marginTop: "5px",
+                      }}
+                    >
                       {errors.other}
                     </div>
                   )}
                 </form>
               </div>
-
             </>
-          )
-          }
+          )}
         </div>
       </div>
-
     </div>
   );
 };

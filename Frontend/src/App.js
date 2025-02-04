@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Wrapper from "./App/components/Wrapper/Wrapper";
 import Login from "./App/Layout/Auth/Login";
 import Userlogin from "./App/Layout/Auth/Userlogin";
+import Signup from "./App/Layout/Auth/Signup";
 
 const App = () => {
   const navigate = useNavigate();
@@ -13,12 +14,16 @@ const App = () => {
 
   useEffect(() => {
     if (!Token) {
+      if (location.pathname === "/register") {
+        navigate("/register");
+        return;
+      }
+
       if (
         !location.pathname.includes("login") &&
         !location.pathname.includes("user-login")
       ) {
         navigate("/user-login"); //USER LOGIN
-        // navigate("/login"); //ADMIN LOGIN
       }
       return;
     }
@@ -59,12 +64,13 @@ const App = () => {
 
   return (
     <div className="App">
-      {location.pathname !== "/login" &&
-        location.pathname !== "/user-login" && <Wrapper />}
+      {(location.pathname !== "/register" && location.pathname !== "/login" &&
+        location.pathname !== "/user-login") && <Wrapper />}
 
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/user-login" element={<Userlogin />} />
+        <Route path="/register" element={<Signup/>} />
 
         <Route path="/forget" element={<div>Forget Password</div>} />
         <Route path="/signup/*" element={<div>Signup Page</div>} />
