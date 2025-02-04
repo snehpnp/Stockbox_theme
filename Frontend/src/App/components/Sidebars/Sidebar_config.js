@@ -308,6 +308,13 @@ const User = [
     children: [],
   },
   {
+    name: "Broker Response",
+    label: "Broker Response",
+    icon: "FolderClock",
+    link: "/user/broker-response",
+    children: [],
+  },
+  {
     name: "Coupons",
     label: "Coupons",
     icon: "Copyright",

@@ -158,8 +158,8 @@ const Dashboard = () => {
           newData1.shift();
           const newData2 = chartCtx.w.config.series[1].data.slice();
           newData2.shift();
-          window.setTimeout(() => {
-            chartCtx.updateOptions(
+          window?.setTimeout(() => {
+            chartCtx?.updateOptions(
               {
                 series: [
                   { data: newData1 },
@@ -527,18 +527,18 @@ const Dashboard = () => {
               <h3 class="h6 fw-semibold mb-2">Sales Statistic</h3>
               <p class="h4 font-weight-bold">$<span id="salesValue">1,062.56</span></p>
               <p class="text-success">Today (+<span id="salesChangePercent">40.8</span>%)</p>
-              <ApexCharts
+              {/* <ApexCharts
                 options={optionsLine}
                 series={optionsLine.series}
                 type="line"
                 height={350}
-              />
-              {/* <ApexCharts
+              /> */}
+              <ApexCharts
                 options={optionsColumn}
                 series={optionsColumn.series}
                 type="bar"
                 height={350}
-              /> */}
+              />
             </div>
           </div>
         </div>
