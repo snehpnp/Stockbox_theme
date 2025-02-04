@@ -7,7 +7,9 @@ const RebalanceHistory = () => {
       Page_title="Rebalance History"
       button_status={false}
       backbutton_status={false}
-      backbutton_title="Back">
+      backbutton_title="Back"
+      backForword={true}
+    >
       <div className="row">
         <div className="col-md-12">
           <div className='card mb-3'>

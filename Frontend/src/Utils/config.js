@@ -10,9 +10,7 @@ export const image_baseurl = `https://stockboxpnp.pnpuniverse.com/`;
 
 
 
-// export const base_url = `https://stockboxpnp.pnpuniverse.com/backend/`;
-// export const soket_url = `https://stockboxpnp.pnpuniverse.com/1001/`;
-// export const image_baseurl = `https://stockboxpnp.pnpuniverse.com/`;
+
 
 
 

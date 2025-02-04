@@ -559,6 +559,7 @@ class List {
       // Map plan validity to months
       const validityMapping = {
         '1 month': 1,
+        '2 months': 2,
         '3 months': 3,
         '6 months': 6,
         '9 months': 9,
@@ -995,6 +996,7 @@ class List {
       // Map plan validity to months
       const validityMapping = {
         '1 month': 1,
+        '2 months': 2,
         '3 months': 3,
         '6 months': 6,
         '9 months': 9,
@@ -1436,14 +1438,16 @@ class List {
   async applyCoupon(req, res) {
 
 
-
     try {
       const { code, purchaseValue, planid } = req.body;
       // Find the coupon by code
       const coupon = await Coupon_Modal.findOne({ code, status: 'true', del: false });
       if (!coupon) {
-        return res.json({ message: 'Coupon not found or is inactive' });
+        return res.status(404).json({ message: 'Coupon not found or is inactive' });
       }
+
+
+
 
       // Check if the coupon is within the valid date range
       const currentDate = new Date();
@@ -1452,13 +1456,13 @@ class List {
       const endDateOnly = new Date(coupon.enddate.getFullYear(), coupon.enddate.getMonth(), coupon.enddate.getDate());
 
       if (currentDateOnly < startDateOnly || currentDateOnly > endDateOnly) {
-        return res.json({ status: false, message: 'Coupon is not valid at this time' });
+        return res.status(400).json({ status: false, message: 'Coupon is not valid at this time' });
       }
 
 
       // Check if the purchase meets the minimum purchase value requirement
       if (purchaseValue < coupon.minpurchasevalue) {
-        return res.json({ status: false, message: `Minimum purchase value required is ${coupon.minpurchasevalue}` });
+        return res.status(400).json({ status: false, message: `Minimum purchase value required is ${coupon.minpurchasevalue}` });
       }
       // Calculate the discount based on the coupon type
       let discount = 0;
@@ -1469,21 +1473,20 @@ class List {
       }
 
       if (discount > purchaseValue) {
-        return res.json({ status: false, message: "Discount should be less than the purchase value." });
+        return res.status(400).json({ status: false, message: "Discount should be less than the purchase value." });
       }
 
 
       if (coupon.limitation <= 0) {
-        return res.json({ status: false, message: 'Coupon usage limit has been reached' });
+        return res.status(400).json({ status: false, message: 'Coupon usage limit has been reached' });
       }
       if (coupon.service && coupon.service != 0) {
         const plan = await Plan_Modal.findById(planid)
           .populate('category')
           .exec();
-
         if (coupon.service != plan.category?.service) {
 
-          return res.json({ status: false, message: 'Service Does not match' });
+          return res.status(404).json({ status: false, message: 'Service Does not match' });
         }
       }
 
@@ -1506,7 +1509,7 @@ class List {
         finalPrice
       });
     } catch (error) {
-      return res.json({ status: false, message: 'Server error11', error: error.message });
+      return res.status(500).json({ status: false, message: 'Server error', error: error.message });
     }
   }
 
@@ -2096,7 +2099,6 @@ class List {
     try {
       const { clientid } = req.body; // assuming clientid is passed in the request
 
-
       // Get the current date
       const currentDate = new Date();
 
@@ -2261,9 +2263,9 @@ class List {
             enddate: 1,
             stock_details: {
               $filter: {
-                input: "$stock_details",
+                input: "$stock_details", // Filter the joined stock details
                 as: "stock",
-                cond: { $eq: ["$$stock.del", false] }
+                cond: { $eq: ["$$stock.del", false] } // Exclude deleted stocks
               }
             },
           }
@@ -4816,6 +4818,7 @@ class List {
         // Map plan validity to months
         const validityMapping = {
           '1 month': 1,
+          '2 months': 2,
           '3 months': 3,
           '6 months': 6,
           '9 months': 9,
@@ -5166,6 +5169,7 @@ class List {
 
           const validityMapping = {
             '1 month': 1,
+            '2 months': 2,
             '3 months': 3,
             '6 months': 6,
             '9 months': 9,
@@ -5508,6 +5512,7 @@ class List {
         // Map plan validity to months
         const validityMapping = {
           '1 month': 1,
+          '2 months': 2,
           '3 months': 3,
           '6 months': 6,
           '9 months': 9,
@@ -5590,6 +5595,7 @@ class List {
           // Map plan validity to months
           const validityMapping = {
             '1 month': 1,
+            '2 months': 2,
             '3 months': 3,
             '6 months': 6,
             '9 months': 9,
@@ -5843,7 +5849,7 @@ class List {
         return res.status(400).json({
           status: false,
           message: 'Client ID is required.',
-          data:[],
+          data: [],
         });
       }
 
@@ -5866,7 +5872,7 @@ class List {
         return res.status(404).json({
           status: false,
           message: 'No items found in the cart for this client.',
-          data:[],
+          data: [],
         });
       }
 
@@ -5896,7 +5902,7 @@ class List {
         return res.status(400).json({
           status: false,
           message: 'Client ID is required.',
-          data:[],
+          data: [],
         });
       }
 
@@ -5912,7 +5918,7 @@ class List {
         return res.status(404).json({
           status: false,
           message: 'No items found in the cart for this client.',
-          data:[],
+          data: [],
         });
       }
 
@@ -6089,12 +6095,13 @@ class List {
     }
   }
 
-  
+
+
   async getStockrating(req, res) {
     try {
 
       const { symbol } = req.params;
-      const result = await Stockrating_Modal.find({ del: false, symbol:symbol });
+      const result = await Stockrating_Modal.find({ del: false, symbol: symbol });
 
 
       if (result.length === 0) {
@@ -6104,7 +6111,7 @@ class List {
           data: [],
         });
       }
-  
+
 
       return res.json({
         status: true,

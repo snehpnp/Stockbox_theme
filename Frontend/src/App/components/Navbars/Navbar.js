@@ -58,10 +58,12 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     localStorage.clear();
     if (Role === "USER") {
       window.location.href = "/#/user-login";
-    } else {
+    } else if (Role === "ADMIN") {
       window.location.href = "/#/login";
     }
   };
+
+
 
 
 
@@ -107,7 +109,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
 
 
-  
+
   const getdemoclient = async () => {
     if (Role == "ADMIN") {
       try {

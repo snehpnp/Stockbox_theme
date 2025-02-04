@@ -1250,6 +1250,7 @@ class Basket {
       // Map plan validity to months
       const validityMapping = {
         '1 month': 1,
+        '2 months': 2,
         '3 months': 3,
         '6 months': 6,
         '9 months': 9,

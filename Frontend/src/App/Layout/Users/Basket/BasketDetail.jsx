@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 import Content from "../../../components/Contents/Content";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { fDate } from "../../../../Utils/Date_formate";
 
 
 const BasketDetail = () => {
+
   const [activeTab, setActiveTab] = useState("rational");
 
 
@@ -13,16 +14,14 @@ const BasketDetail = () => {
   const userid = localStorage.getItem("id");
 
   const location = useLocation();
-  const { item } = location.state;
+  const { item } = location?.state;
 
-
+  console.log("item", item)
 
   const stripHtmlTags = (input) => {
     if (!input) return "";
     return input.replace(/<\/?[^>]+(>|$)/g, "");
   };
-
-
 
 
 

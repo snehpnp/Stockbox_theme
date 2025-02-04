@@ -16,6 +16,7 @@ const Planmanage = db.Planmanage;
 const Service_Modal = db.Service;
 const Requestclient_Modal = db.Requestclient;
 const Order_Modal = db.Order;
+const Addtocart_Modal = db.Addtocart;
 
 
 
@@ -2594,6 +2595,105 @@ class Clients {
   
 
 
+  async PlanCartList(req, res) {
+    try {
+      const { client_id } = req.params; // Assuming client_id is passed in URL parameters
+  
+      // Validate input
+      if (!client_id) {
+        return res.status(400).json({
+          status: false,
+          message: 'Client ID is required.',
+          data:[],
+        });
+      }
+  
+      // Fetch cart items where client_id matches and status is false
+      const cartItems = await Addtocart_Modal.find({
+        client_id: client_id,
+        status: false,
+        basket_id: null, // Check for both null and empty string
+      }).populate('plan_id', 'price validity')  // Populate plan details
+       .populate({
+        path: 'plan_id', // The path to the plan
+        populate: {
+          path: 'category', // The field in Plan model that references the Plancategory
+          select: 'title' // Select only the 'title' from Plancategory
+        }
+      });
+  
+      // Check if cart is empty
+      if (!cartItems.length) {
+        return res.status(404).json({
+          status: false,
+          message: 'No items found in the cart for this client.',
+          data:[],
+        });
+      }
+  
+      // Return success response with cart items
+      return res.status(200).json({
+        status: true,
+        message: 'Cart items retrieved successfully.',
+        data: cartItems,
+      });
+  
+    } catch (error) {
+      console.error('Error retrieving cart items:', error);
+      return res.status(500).json({
+        status: false,
+        message: 'Something went wrong while retrieving cart items.',
+        error: error.message,
+      });
+    }
+  }
+  
+  async BasketCartList(req, res) {
+    try {
+      const { client_id } = req.params; // Assuming client_id is passed in URL parameters
+     
+      // Validate input
+      if (!client_id) {
+        return res.status(400).json({
+          status: false,
+          message: 'Client ID is required.',
+          data:[],
+        });
+      }
+  
+      // Fetch cart items where client_id matches and status is false
+      const cartItems = await Addtocart_Modal.find({
+        client_id: client_id,
+        status: false,
+        plan_id: null, // Check for both null and empty string
+      }).populate('basket_id','title	themename	full_price	basket_price	validity');
+  
+      // Check if cart is empty
+      if (!cartItems.length) {
+        return res.status(404).json({
+          status: false,
+          message: 'No items found in the cart for this client.',
+          data:[],
+        });
+      }
+  
+      // Return success response with cart items
+      return res.status(200).json({
+        status: true,
+        message: 'Cart items retrieved successfully.',
+        data: cartItems,
+      });
+  
+    } catch (error) {
+      console.error('Error retrieving cart items:', error);
+      return res.status(500).json({
+        status: false,
+        message: 'Something went wrong while retrieving cart items.',
+        error: error.message,
+      });
+    }
+  }
+  
 
 }
 module.exports = new Clients();
