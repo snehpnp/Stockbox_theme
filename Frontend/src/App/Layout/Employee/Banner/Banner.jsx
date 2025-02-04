@@ -353,7 +353,7 @@ const Banner = () => {
                     </div> : ""}
                     {permission.includes("deletebanner") ? <div>
                         <Tooltip placement="top" overlay="Delete">
-                            <Trash2 onClick={() => Deletebannerlist(row._id)} />
+                            <Trash2 onClick={() => Deletebannerlist(row._id)} className='ms-2'/>
                         </Tooltip>
                     </div> : ""}
                 </>

@@ -359,6 +359,7 @@ const Blogs = () => {
                                 onClick={() => {
                                     updateblogs(row)
                                 }}
+                                className='me-2'
                             />
                         </Tooltip>
                     </div> : ""}
