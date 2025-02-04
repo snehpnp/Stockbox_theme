@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 import { loadScript } from "../../../../Utils/Razorpayment";
 import { AddBasketsubscription, getQRcodedata, getBankdetaildata } from "../../../Services/UserService/User";
 import { basicsettinglist } from "../../../Services/Admin/Admin";
-
+import { image_baseurl } from "../../../../Utils/config";
 
 const Payments = () => {
 
@@ -22,6 +22,7 @@ const Payments = () => {
     const [getkey, setGetkey] = useState([]);
     const [company, setCompany] = useState([]);
     const [bankdetail, setBankdetail] = useState([]);
+    const [qrdata, setQrdata] = useState([]);
 
     useEffect(() => {
         getkeybydata()
@@ -34,7 +35,8 @@ const Payments = () => {
         try {
             const response = await getQRcodedata();
             if (response.status) {
-                console.log("getQRcodedata", response?.data)
+                setQrdata(response?.data)
+                console.log(response?.data)
             }
         } catch (error) {
             console.error("Error fetching coupons:", error);
@@ -46,7 +48,7 @@ const Payments = () => {
             const response = await getBankdetaildata();
             if (response.status) {
                 setBankdetail(response?.data)
-                console.log("getQRcodedata", response?.data)
+
             }
         } catch (error) {
             console.error("Error fetching coupons:", error);
@@ -173,8 +175,15 @@ const Payments = () => {
                     <div className="col-md-6">
                         <div className="card">
                             <div className="card-body text-center">
-                                <h5 className="card-title btn-primary py-2">Scan to Pay</h5>
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" alt="QR Code" className="img-fluid mb-3" style={{ width: '200px', height: '200px' }} />
+                                {qrdata.length > 0 && qrdata?.map((item) => {
+                                    return (
+                                        <>
+                                            <h5 className="card-title btn-primary py-2">Scan to Pay</h5>
+                                            <img src={`${image_baseurl}/uploads/bank/${item?.image}`} alt="QR Code" className="img-fluid mb-3" style={{ width: '200px', height: '200px' }} />
+                                        </>
+                                    )
+                                })}
+
 
 
                                 {bankdetail?.map((item) => {
