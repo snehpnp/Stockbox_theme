@@ -1,7 +1,7 @@
 const router = require("express").Router()
 const { checkPermission } = require('../Middleware/permissionMiddleware');
 
-const {AddClient,getClient,updateClient,deleteClient,detailClient,statusChange,activeClient,processPayoutRequest,payoutList,freetrialList,deleteFreetrial,helpdeskList,deleteHelpdesk,myPlan,myService,deActiveClient,getClientWithFilter,freetrialListWithFilter,getClientWithFilterExcel,getDeleteClientWithFilter,clientRequest,deleteClientrequest,orderListDetail} = require('../Controllers/Clients')
+const {AddClient,getClient,updateClient,deleteClient,detailClient,statusChange,activeClient,processPayoutRequest,payoutList,freetrialList,deleteFreetrial,helpdeskList,deleteHelpdesk,myPlan,myService,deActiveClient,getClientWithFilter,freetrialListWithFilter,getClientWithFilterExcel,getDeleteClientWithFilter,clientRequest,deleteClientrequest,orderListDetail,PlanCartList,BasketCartList} = require('../Controllers/Clients')
 
 
 
@@ -45,5 +45,8 @@ router.post('/client/clientrequest', clientRequest);
 router.get('/client/deleteclientrequest/:id',   deleteClientrequest);
 
 router.post('/client/orderlistdetail', orderListDetail); 
+
+router.get('/client/plancartlist/:client_id', PlanCartList); 
+router.get('/client/basketcartlist/:client_id', BasketCartList); 
 
 module.exports = router;
