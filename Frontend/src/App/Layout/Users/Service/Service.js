@@ -156,7 +156,12 @@ const Service = () => {
       const response = await GetPlanByCategory(token);
       if (response.status) {
         setPlan(response.data);
-        setCategory(response?.data);
+        setCategory(
+          response?.data.sort((a, b) => b._id.localeCompare(a._id))
+        );
+        
+        
+        
       }
     } catch (error) {
       console.error("Error fetching plans:", error);
