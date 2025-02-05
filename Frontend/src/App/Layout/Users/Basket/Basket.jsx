@@ -46,6 +46,7 @@ function Basket() {
       const data = { clientid: userid }
       const response = await GetBasketService(data, token)
       if (response.status) {
+        console.log("data", response.data)
         setBasketdata(response.data)
 
       }
@@ -177,12 +178,24 @@ function Basket() {
                             Validity
                             <span className="badge bg-danger rounded-pill">{item?.validity}</span>
                           </li>
-                          {/* <Link className="btn btn-primary w-100 " >
-                        Subscribe <del>{item?.full_price}</del>  {item?.basket_price}
-                      </Link> */}
-                          <Link to="/user/payment" state={{ item }} className="btn btn-primary w-100 ">
-                            Subscribe <del>{item?.full_price}</del>  {item?.basket_price}
-                          </Link>
+
+                          {
+                            item?.isSubscribed || item?.isActive ? (
+                              <Link to="/user/basketstocklist" state={{ item }} className="btn btn-primary w-100">
+                                View Stock Detail
+                              </Link>
+                            ) : item?.isSubscribed === false && item?.isActive === false ? (
+                              <Link to="/user/payment" state={{ item }} className="btn btn-primary w-100">
+                                Subscribe <del>{item?.full_price}</del> {item?.basket_price}
+                              </Link>
+                            ) : item?.isSubscribed === true && item?.isActive === false ? (
+                              <Link to="/user/rebalance" state={{ item }} className="btn btn-primary w-100">
+                                View Rebalance
+                              </Link>
+                            ) : ""
+                          }
+
+
                         </ul>
                       </div>
                     </div>
