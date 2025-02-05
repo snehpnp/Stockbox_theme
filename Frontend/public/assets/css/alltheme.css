@@ -1073,6 +1073,10 @@ padding-left: 0;
 }
 }
 @media screen and (max-width: 768px) {
+body .border-md-right
+  {
+    border-right: 0px !important;
+  }
   .btn.btn-primary ,.btn.btn-secondary {
     font-size: 14px !important;
 }

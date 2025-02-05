@@ -331,6 +331,7 @@ const Faq = () => {
                     {permission.includes("editfaq") ? <div>
                         <Tooltip placement="top" overlay="Update">
                             <SquarePen
+                            className='me-2'
                                 onClick={() => {
                                     setModel(true);
                                     setServiceid(row);

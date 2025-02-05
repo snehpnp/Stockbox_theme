@@ -368,7 +368,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
               <div className="d-flex align-items-center position-relative justify-content-end">
                 {Role === "ADMIN" ? (
                   <div className="d-flex me-1">
-                    <span className="switch-label p-1">
+                    <span className="switch-label p-1 text-end">
                       Trading Status:
                       <span style={{ color: isChecked ? "green" : "red" ,fontSize: 16}}>
                         {isChecked ? "On" : "Off"}
@@ -399,7 +399,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   </div>
                 ) : (
                   <div className="d-flex">
-                    <span className="switch-label p-1">Trading Status:</span>
+                    <span className="switch-label p-1 text-end">Trading Status:</span>
                     <div
                       className="form-check form-switch form-check-dark mb-0"
                       style={{ margin: "inherit", fontSize: 21 }}
