@@ -834,3 +834,38 @@ export async function PortfolioStock(data, token) {
         return err;
     }
 }
+
+
+// get basket rebalance history 
+
+export async function Rebalancehistory(data, token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}api/list/basketstocks/${data.id}/${data.clientid}`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+// version api for history 
+
+export async function getversionhistory(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/list/getbasketversionorder`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}

@@ -1,7 +1,53 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Content from "../../../components/Contents/Content";
+import { Rebalancehistory, getversionhistory } from '../../../Services/UserService/User';
+import { useLocation, useParams } from 'react-router-dom';
+
 
 const RebalanceHistory = () => {
+
+  const token = localStorage.getItem("token");
+  const userid = localStorage.getItem("id");
+
+  const { id } = useParams()
+
+
+  useEffect(() => {
+    gethistory()
+    geVersion()
+  }, [])
+
+  const gethistory = async () => {
+    try {
+      const data = { id: id, clientid: userid };
+      const response = await Rebalancehistory(data, token);
+      if (response.status) {
+        console.log("resp11", response.data)
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+
+  };
+
+
+
+  const geVersion = async () => {
+    try {
+      const data = { id: id, clientid: userid, version: 4 };
+      const response = await getversionhistory(data, token);
+      if (response.status) {
+        console.log("verson", response.data)
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+
+  };
+
+
+
+
   return (
     <Content
       Page_title="Rebalance History"

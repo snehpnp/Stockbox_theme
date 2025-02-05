@@ -145,7 +145,7 @@ const BasketStockList = () => {
       button_status1={true}
       button_title={"Rebalance History"}
       button_title1={"Rebalance"}
-      route={"/user/rebalancehistory"}
+      route={`/user/rebalancehistory/${item._id}`}
       route1={"/user/rebalancestock"}
       backbutton_status={false}
       backbutton_title="Back"
@@ -174,173 +174,177 @@ const BasketStockList = () => {
       </ul>
 
 
-      {activeTab === "baskets" && (
-        isLoading ? <Loader /> :
-          <>
-            <div className="row">
-              <div className="col-md-4">
-                <div className="card mb-3">
-                  <div className="card-body p-2">
-                    <ul className="list-group list-group-flush list shadow-none ">
-                      <li className="list-group-item ">
-                        Total Investment
-                        <hr />
-                        <h5 className="mb-0">₹ {item?.mininvamount}</h5>
-                      </li>
-                    </ul>
+      {
+        activeTab === "baskets" && (
+          isLoading ? <Loader /> :
+            <>
+              <div className="row">
+                <div className="col-md-4">
+                  <div className="card mb-3">
+                    <div className="card-body p-2">
+                      <ul className="list-group list-group-flush list shadow-none ">
+                        <li className="list-group-item ">
+                          Total Investment
+                          <hr />
+                          <h5 className="mb-0">₹ {item?.mininvamount}</h5>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div className="card mb-3">
+                    <div className="card-body p-2">
+                      <ul className="list-group list-group-flush list shadow-none ">
+                        <li className="list-group-item ">
+                          Current Value
+                          <hr />
+                          <h5 className="mb-0">₹10</h5>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div className="card mb-3">
+                    <div className="card-body p-2">
+                      <ul className="list-group list-group-flush list shadow-none ">
+                        <li className="list-group-item ">
+                          Total P&L
+                          <hr />
+                          <h5 className="mb-0">₹1055666</h5>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="col-md-4">
-                <div className="card mb-3">
-                  <div className="card-body p-2">
-                    <ul className="list-group list-group-flush list shadow-none ">
-                      <li className="list-group-item ">
-                        Current Value
-                        <hr />
-                        <h5 className="mb-0">₹10</h5>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-4">
-                <div className="card mb-3">
-                  <div className="card-body p-2">
-                    <ul className="list-group list-group-flush list shadow-none ">
-                      <li className="list-group-item ">
-                        Total P&L
-                        <hr />
-                        <h5 className="mb-0">₹1055666</h5>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="row">
-              <div className="table-responsive">
-                <table className="table ">
-                  <thead className="table-primary">
-                    <tr>
-                      <th>Symbol</th>
-                      <th>Suggested Price</th>
-                      <th>Stock Weightage</th>
-                      <th>Current Market Price</th>
-                      <th>Current Value</th>
-                      <th>Quanty</th>
-                      <th>Price</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {purchasedata?.map((item) => (
-                      <tr key={item?.name}>
-                        <td>{item?.name}</td>
-                        <td>{item?.price}</td>
-                        <td>{item?.weightage}</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>{item?.quantity}</td>
-                        <td>{item?.price}</td>
+              <div className="row">
+                <div className="table-responsive">
+                  <table className="table ">
+                    <thead className="table-primary">
+                      <tr>
+                        <th>Symbol</th>
+                        <th>Suggested Price</th>
+                        <th>Stock Weightage</th>
+                        <th>Current Market Price</th>
+                        <th>Current Value</th>
+                        <th>Quanty</th>
+                        <th>Price</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {purchasedata?.map((item) => (
+                        <tr key={item?.name}>
+                          <td>{item?.name}</td>
+                          <td>{item?.price}</td>
+                          <td>{item?.weightage}</td>
+                          <td>0</td>
+                          <td>0</td>
+                          <td>{item?.quantity}</td>
+                          <td>{item?.price}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <button
+                  className="btn btn-success w-auto ms-3"
+                  onClick={() => setShowModal(true)}
+                >
+                  Buy Now
+                </button>
               </div>
-              <button
-                className="btn btn-success w-auto ms-3"
-                onClick={() => setShowModal(true)}
-              >
-                Buy Now
-              </button>
-            </div>
-          </>
+            </>
 
-      )}
+        )
+      }
 
 
-      {portfolio.length > 0 && activeTab === "portfolio" && (
-        isLoading ? <Loader /> :
-          <>
-            <div className="row">
-              <div className="col-md-4">
-                <div className="card mb-3">
-                  <div className="card-body p-2">
-                    <ul className="list-group list-group-flush list shadow-none ">
-                      <li className="list-group-item ">
-                        Total Investment
-                        <hr />
-                        <h5 className="mb-0">₹ {item?.mininvamount}</h5>
-                      </li>
-                    </ul>
+      {
+        portfolio.length > 0 && activeTab === "portfolio" && (
+          isLoading ? <Loader /> :
+            <>
+              <div className="row">
+                <div className="col-md-4">
+                  <div className="card mb-3">
+                    <div className="card-body p-2">
+                      <ul className="list-group list-group-flush list shadow-none ">
+                        <li className="list-group-item ">
+                          Total Investment
+                          <hr />
+                          <h5 className="mb-0">₹ {item?.mininvamount}</h5>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div className="card mb-3">
+                    <div className="card-body p-2">
+                      <ul className="list-group list-group-flush list shadow-none ">
+                        <li className="list-group-item ">
+                          Current Value
+                          <hr />
+                          <h5 className="mb-0">₹10</h5>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div className="card mb-3">
+                    <div className="card-body p-2">
+                      <ul className="list-group list-group-flush list shadow-none ">
+                        <li className="list-group-item ">
+                          Total P&L
+                          <hr />
+                          <h5 className="mb-0">₹1055666</h5>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="col-md-4">
-                <div className="card mb-3">
-                  <div className="card-body p-2">
-                    <ul className="list-group list-group-flush list shadow-none ">
-                      <li className="list-group-item ">
-                        Current Value
-                        <hr />
-                        <h5 className="mb-0">₹10</h5>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-4">
-                <div className="card mb-3">
-                  <div className="card-body p-2">
-                    <ul className="list-group list-group-flush list shadow-none ">
-                      <li className="list-group-item ">
-                        Total P&L
-                        <hr />
-                        <h5 className="mb-0">₹1055666</h5>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="row">
-              <div className="table-responsive">
-                <table className="table ">
-                  <thead className="table-primary">
-                    <tr>
-                      <th>Symbol</th>
-                      <th>Suggested Price</th>
-                      <th>Stock Weightage</th>
-                      <th>Current Market Price</th>
-                      <th>Current Value</th>
-                      <th>Quanty</th>
-                      <th>Price</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {portfolio?.map((item) => (
-                      <tr key={item?.name}>
-                        <td>{item?.tradesymbol}</td>
-                        <td>{item?.price}</td>
-                        <td>{item?.weightage}</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>{item?.totalQuantity}</td>
-                        <td>{item?.price}</td>
+              <div className="row">
+                <div className="table-responsive">
+                  <table className="table ">
+                    <thead className="table-primary">
+                      <tr>
+                        <th>Symbol</th>
+                        <th>Suggested Price</th>
+                        <th>Stock Weightage</th>
+                        <th>Current Market Price</th>
+                        <th>Current Value</th>
+                        <th>Quanty</th>
+                        <th>Price</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {portfolio?.map((item) => (
+                        <tr key={item?.name}>
+                          <td>{item?.tradesymbol}</td>
+                          <td>{item?.price}</td>
+                          <td>{item?.weightage}</td>
+                          <td>0</td>
+                          <td>0</td>
+                          <td>{item?.totalQuantity}</td>
+                          <td>{item?.price}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <button
+                  className="btn btn-success w-auto ms-3"
+                  onClick={() => setShowModal(true)}
+                >
+                  Buy Now
+                </button>
               </div>
-              <button
-                className="btn btn-success w-auto ms-3"
-                onClick={() => setShowModal(true)}
-              >
-                Buy Now
-              </button>
-            </div>
-          </>
-      )}
+            </>
+        )
+      }
 
 
       <ReusableModal
@@ -387,7 +391,7 @@ const BasketStockList = () => {
           </>
         }
       />
-    </Content>
+    </Content >
   );
 };
 

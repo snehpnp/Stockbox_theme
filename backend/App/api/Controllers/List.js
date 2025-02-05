@@ -2705,7 +2705,7 @@ class List {
     try {
       // Extract basket_id, clientid, and version from request body
       const { basket_id, clientid, version } = req.body; // Fix typo: use req.body instead of req.bady
-      console.log("req.body", req.body);
+
       // Perform aggregation to fetch orders from BasketOrderModel
       const orders = await Basketorder_Modal.aggregate([
         {
@@ -4069,13 +4069,13 @@ class List {
                   version: version,
                   borkerid: brokerid
                 })
-                  .sort({ createdAt: -1 }) 
+                  .sort({ createdAt: -1 })
                   .limit(1);
 
 
                 if (orders.length > 0) {
-                  const order = orders[0]; 
-                  howmanytimebuy = (order.howmanytimebuy || 0) + 1; 
+                  const order = orders[0];
+                  howmanytimebuy = (order.howmanytimebuy || 0) + 1;
                 }
               }
 
@@ -4133,7 +4133,7 @@ class List {
           }
 
         } catch (innerError) {
-          continue; 
+          continue;
         }
       }
 
