@@ -673,11 +673,11 @@ const Client = () => {
                     </Tooltip>}
 
                     {permission.includes("viewdetail") && <Tooltip title="view">
-                        <Eye onClick={() => Clientdetail(row)} />
+                        <Eye onClick={() => Clientdetail(row)} className='ms-2'/>
                     </Tooltip>}
 
                     {permission.includes("editclient") && <Tooltip title="Update">
-                        <SquarePen className='ms-3' onClick={() => updateClient(row)} />
+                        <SquarePen className='ms-2' onClick={() => updateClient(row)} />
                     </Tooltip>}
                     {/* <Tooltip title="delete">
                   <Trash2 onClick={() => DeleteClient(row._id)} />
