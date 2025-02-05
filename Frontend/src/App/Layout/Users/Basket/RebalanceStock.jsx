@@ -3,24 +3,30 @@ import Content from "../../../components/Contents/Content";
 
 
 const RebalanceStock = () => {
-    return (
-        <Content
-        Page_title="Rebalance stock"
-        button_title="Add Basket"
-        backbutton_title="back"
-        button_status={false}
-        backbutton_status={false}
+
+
   
-      >
+
+
+  return (
+    <Content
+      Page_title="Rebalance stock"
+      button_title="Add Basket"
+      backbutton_title="back"
+      button_status={false}
+      backbutton_status={false}
+      backForword={true}
+
+    >
       <div className="card">
-      <div className="card-body">
-        <div className='float-end mb-3'>
-        <button className='btn btn-primary'>View</button>
-         <button className='btn btn-danger ms-2'>Sell</button>
-         </div>
+        <div className="card-body">
+          <div className='float-end mb-3'>
+            <button className='btn btn-primary'>View</button>
+            <button className='btn btn-danger ms-2'>Sell</button>
+          </div>
           <div
             className=""
-           
+
           >
             <div className="table-responsive">
               <table className="table mb-0">
@@ -51,16 +57,16 @@ const RebalanceStock = () => {
           </div>
         </div>
       </div>
-    
+
       <div className="card mt-4">
-      <div className="card-body">
-        <div className='float-end mb-3'>
-        <button className='btn btn-primary'>View</button>
-         <button className='btn btn-success ms-2'>Buy</button>
-         </div>
+        <div className="card-body">
+          <div className='float-end mb-3'>
+            <button className='btn btn-primary'>View</button>
+            <button className='btn btn-success ms-2'>Buy</button>
+          </div>
           <div
             className=""
-           
+
           >
             <div className="table-responsive">
               <table className="table mb-0">
@@ -91,9 +97,9 @@ const RebalanceStock = () => {
           </div>
         </div>
       </div>
-         
-        </Content>
-    )
+
+    </Content>
+  )
 }
 
 export default RebalanceStock

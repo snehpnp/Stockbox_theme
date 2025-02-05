@@ -5,12 +5,15 @@ import { House, Tally1 } from "lucide-react";
 const Content = ({
   Page_title,
   button_title,
+  button_title1,
   backForword,
   Page_title_showClient,
   backbutton_title,
   button_status,
+  button_status1,
   backbutton_status,
   route,
+  route1,
   permissions, // Add a permissions prop
   ...rest
 }) => {
@@ -54,8 +57,8 @@ const Content = ({
                 <button
                   onClick={handleBackClick} // Handle back button click
                   className="btn btn-primary float-sm-end  ms-3  mt-3 mt-sm-0 "
-                 
-                  
+
+
                 >
                   <i
                     className={`fa-solid ${backbutton_title === "Back"
@@ -79,12 +82,25 @@ const Content = ({
                   {button_title}
                 </Link>
               )}
+              {button_status1 && (
+                <Link
+                  to={route1}
+                  className="btn btn-primary  float-sm-end  float-start mt-3 mt-sm-0"
+                  style={{ padding: "10px !important" }}
+                >
+                  <i
+                    className={`fa-solid  ${button_title1 === "Back" ? "fa-arrow-left" : "fa-plus"
+                      } `}
+                  ></i>{" "}
+                  {button_title1}
+                </Link>
+              )}
               {backForword && (
                 <button
                   onClick={() => window.history.back()} // Handle back button click
                   className="btn btn-primary float-sm-end ms-0 ms-sm-3 mt-3 mt-sm-0"
-                 
-                
+
+
                 >
                   <i className={`fa-solid fa-arrow-left`}></i> Back
                 </button>

@@ -3745,7 +3745,7 @@ class List {
 
       const basket = await Basket_Modal.findById(basket_id);
       if (!basket) {
-        return res.status(400).json({
+        return res.json({
           status: false,
           message: "Basket not found.",
         });
@@ -3754,7 +3754,7 @@ class List {
 
 
       if (investmentamount < basket.mininvamount) {
-        return res.status(400).json({
+        return res.json({
           status: false,
           message: `Investment amount must be at least ${basket.mininvamount}.`,
         });
@@ -3762,14 +3762,14 @@ class List {
 
       const client = await Clients_Modal.findById(clientid);
       if (!client) {
-        return res.status(404).json({
+        return res.json({
           status: false,
           message: "Client not found"
         });
       }
 
       if (client.tradingstatus == 0) {
-        return res.status(404).json({
+        return res.json({
           status: false,
           message: "Client Broker Not Login, Please Login With Broker"
         });
@@ -3784,7 +3784,7 @@ class List {
 
       if (version == 1) {
         if (investmentamount < basket.mininvamount) {
-          return res.status(400).json({
+          return res.json({
             status: false,
             message: `Investment amount must be at least ${basket.mininvamount}.`,
           });
@@ -3792,7 +3792,7 @@ class List {
       }
 
       if (!existingStocks || existingStocks.length === 0) {
-        return res.status(400).json({
+        return res.json({
           status: false,
           message: "No stocks found in the basket.",
         });
@@ -3967,7 +3967,7 @@ class List {
                   const total = parseFloat(totalAmount);
 
                   if (total >= net) {
-                    return res.status(400).json({
+                    return res.json({
                       status: false,
                       message: "Insufficient funds in your broker account.",
                     });
@@ -4069,13 +4069,13 @@ class List {
                   version: version,
                   borkerid: brokerid
                 })
-                  .sort({ createdAt: -1 }) // Sort by `createdAt` in descending order
+                  .sort({ createdAt: -1 }) 
                   .limit(1);
 
 
                 if (orders.length > 0) {
-                  const order = orders[0]; // Use the first order if only one is relevant
-                  howmanytimebuy = (order.howmanytimebuy || 0) + 1; // Increment the `howmanytimebuy` value
+                  const order = orders[0]; 
+                  howmanytimebuy = (order.howmanytimebuy || 0) + 1; 
                 }
               }
 
@@ -4104,7 +4104,7 @@ class List {
                   const total = parseFloat(totalAmount);
 
                   if (total >= net) {
-                    return res.status(400).json({
+                    return res.json({
                       status: false,
                       message: "Insufficient funds in your broker account.",
                     });
@@ -4133,8 +4133,7 @@ class List {
           }
 
         } catch (innerError) {
-          // console.error(`Error processing stock ${tradesymbol}:`, innerError);
-          continue; // Skip this stock in case of an error
+          continue; 
         }
       }
 
@@ -4154,7 +4153,7 @@ class List {
 
     } catch (error) {
       // console.error("Error placing order:", error);
-      res.status(500).json({
+      res.json({
         status: false,
         message: "An error occurred while placing the order.",
       });

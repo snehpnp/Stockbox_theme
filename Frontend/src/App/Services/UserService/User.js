@@ -801,3 +801,36 @@ export async function getBankdetaildata(token) {
         return err;
     }
 }
+
+
+// add  stock  place order 
+
+export async function AddStockplaceorder(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/placeorder`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+export async function PortfolioStock(data, token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}api/list/myportfolio/${data.id}/${data.clientid}`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
