@@ -35,7 +35,6 @@ class Kotakneo {
                 return res.status(404).json({ status: false, message: "Client not found" });
             }
 
-            // Check trading status
             if (client.tradingstatus === "1") {
                 return res.json({ status: true, message: "Broker login successfully" });
             }
@@ -149,7 +148,6 @@ class Kotakneo {
                 return res.status(404).json({ status: false, message: "Client not found" });
             }
 
-            // Check trading status
             if (client.tradingstatus === "1") {
                 return res.json({ status: true, message: "Broker login successfully" });
             }

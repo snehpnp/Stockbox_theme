@@ -2642,7 +2642,6 @@ export async function getfreetrialstatus(token) {
 }
 
 
-// get trading status
 
 export async function gettradestatus(data, token) {
     try {
