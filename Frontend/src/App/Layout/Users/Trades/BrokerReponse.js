@@ -35,7 +35,7 @@ const BrokerResponse = () => {
       backForword={true}
     >
       <div className="accordion accordion-flush" id="accordionFlushExample">
-        {responsedata &&
+        {responsedata.length > 0 ?
           responsedata.map((data, index) => (
             <div
               className="accordion-item rounded-3 border-0 shadow mb-2"
@@ -126,7 +126,7 @@ const BrokerResponse = () => {
 
                                 <span
                                   className="badge"
-                                  style={{ color: "red",fontSize:"0.9rem" }}
+                                  style={{ color: "red", fontSize: "0.9rem" }}
                                 >
                                   {data.data[0]?.Status
                                     ? data.data[0]?.Status.toUpperCase()
@@ -152,7 +152,7 @@ const BrokerResponse = () => {
                 </div>
               </div>
             </div>
-          ))}
+          )) : <strong>No Data</strong>}
       </div>
     </Content>
   );

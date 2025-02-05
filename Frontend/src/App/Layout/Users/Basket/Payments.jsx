@@ -175,20 +175,22 @@ const Payments = () => {
                     <div className="col-md-6">
                         <div className="card">
                             <div className="card-body text-center">
-                                {qrdata.length > 0 && qrdata?.map((item) => {
-                                    return (
-                                        <>
-                                            <h5 className="card-title btn-primary py-2">Scan to Pay</h5>
-                                            <img
-                                                src={item?.image}
-                                                alt={item.image}
-                                                title={item.image}
-                                                className="img-fluid mb-3"
-                                                style={{ width: 200, height: 200 }}
-                                            />
-                                        </>
-                                    )
-                                })}
+                                {qrdata.length > 0 &&
+                                    qrdata.map((item, index) => {
+                                        return (
+                                            <div key={index} className="text-center">
+                                                <h5 className="card-title btn-primary py-2">Scan to Pay</h5>
+                                                <img
+                                                    src={item?.image}
+                                                    alt="QR Code"
+                                                    title="QR Code"
+                                                    className="img-fluid mb-3"
+                                                    style={{ width: 200, height: 200 }}
+                                                />
+                                            </div>
+                                        );
+                                    })}
+
 
 
 
