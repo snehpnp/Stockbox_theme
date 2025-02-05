@@ -6125,6 +6125,59 @@ class List {
     }
   }
 
+
+  async SignalLatest(req, res) {
+    try {
+      const { service_id, client_id } = req.body;
+  
+      // Ensure service_id is provided
+      if (!service_id) {
+        return res.json({ status: false, message: "Service ID is required", data: [] });
+      }
+  
+      // Query to fetch the last 5 signals
+      const query = {
+        service: service_id, // Match the service_id
+        close_status: false  // Ensure signals are active (not closed)
+      };
+  
+      const signals = await Signal_Modal.find(query)
+        .sort({ created_at: -1 }) // Sort by created_at in descending order
+        .limit(5) // Fetch only the last 5 signals
+        .lean();
+  
+      const protocol = req.protocol;
+      const baseUrl = `${protocol}://${req.headers.host}`;
+  
+      // Enhance the signals with additional info
+      const signalsWithReportUrls = await Promise.all(
+        signals.map(async (signal) => {
+          // Check if the signal was purchased by the client
+          const order = await Order_Modal.findOne({
+            clientid: client_id,
+            signalid: signal._id
+          }).lean();
+  
+          return {
+            ...signal,
+            report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null, // Full report URL
+            purchased: order ? true : false, // Whether the signal was purchased
+            order_quantity: order ? order.quantity : 0 // Quantity if purchased
+          };
+        })
+      );
+  
+      return res.json({
+        status: true,
+        message: "Last 5 signals retrieved successfully",
+        data: signalsWithReportUrls
+      });
+    } catch (error) {
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
+  
+
 }
 
 
