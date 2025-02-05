@@ -369,7 +369,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                 {Role === "ADMIN" ? (
                   <div className="d-flex me-1">
                     <span className="switch-label p-1">
-                      Trading Status:
+                    Login with API:
                       <span style={{ color: isChecked ? "green" : "red" ,fontSize: 16}}>
                         {isChecked ? "On" : "Off"}
                       </span>
@@ -399,7 +399,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   </div>
                 ) : (
                   <div className="d-flex">
-                    <span className="switch-label p-1">Trading Status:</span>
+                    <span className="switch-label p-1">Login with API:</span>
                     <div
                       className="form-check form-switch form-check-dark mb-0"
                       style={{ margin: "inherit", fontSize: 21 }}
@@ -867,7 +867,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                 <div className="modal-content">
                   <div className="modal-header">
                     <h5 className="modal-title" id="exampleModalLabel">
-                      Trading Status
+                    Login with API
                     </h5>
                     <button
                       type="button"
