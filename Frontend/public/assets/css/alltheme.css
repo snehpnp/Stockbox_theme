@@ -1201,4 +1201,32 @@ display: -webkit-box;
   width: 100%;
 }
 
-
+.screen-bg {
+  fill: var(
+    --BtnPriBgCol,
+    black) !important;
+  animation: flicker 3s ease-in-out infinite;
+}
+.dot {
+  fill: #ffffff;
+  animation: dotPulse 2s ease-in-out infinite;
+  transform-origin: center;
+}
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+.dark .screen-bg {
+  fill: var(
+    --BtnPriBgCol,
+    black) !important;
+}
+ .no-data
+{
+margin-top: -20px;
+font-size: 20px;
+}
