@@ -135,7 +135,7 @@ const Category = () => {
                     confirmButtonText: 'OK',
                     timer: 2000,
                 });
-
+                setShowAddModal(false)
                 setTitle({ title: "", add_by: "", service: "" });
                 getcategory();
 
@@ -389,206 +389,7 @@ const Category = () => {
                                     <i className="bx bx-search" />
                                 </span>
                             </div>
-                            {/* <div className="ms-auto">
-                                <button
-                                    type="button"
-                                    className="btn btn-primary"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal"
-                                >
-                                    <i className="bx bxs-plus-square" />
-                                    Add Category
-                                </button>
 
-                                <div
-                                    className="modal fade"
-                                    id="exampleModal"
-                                    tabIndex={-1}
-                                    aria-labelledby="exampleModalLabel"
-                                    aria-hidden="true"
-                                >
-                                    <div className="modal-dialog">
-                                        <div className="modal-content">
-                                            <div className="modal-header">
-                                                <h5 className="modal-title" id="exampleModalLabel">
-                                                    Add Category
-                                                </h5>
-                                                <button
-                                                    type="button"
-                                                    className="btn-close"
-                                                    data-bs-dismiss="modal"
-                                                    aria-label="Close"
-                                                />
-                                            </div>
-                                            <div className="modal-body">
-
-                                                <div className="row">
-                                                    <div className="col-md-12">
-                                                        <label htmlFor="service">Segment</label>
-                                                        <span className="text-danger">*</span>
-                                                        {servicedata.length > 0 && (
-                                                            <DropdownMultiselect
-                                                                name="Service"
-                                                                options={servicedata.map((item) => ({
-                                                                    key: item._id,
-                                                                    label: item.title
-                                                                }))}
-                                                                placeholder="Select Segment"
-                                                                handleOnChange={(selected) => {
-                                                                    const selectedService = selected;
-                                                                    setTitle({ ...title, service: selectedService });
-
-                                                                }}
-                                                            />
-                                                        )}
-
-                                                    </div>
-                                                    <div className="col-md-12">
-                                                        <label htmlFor="categoryTitle">Category</label>
-                                                        <span className="text-danger">*</span>
-                                                        <input
-                                                            id="categoryTitle"
-                                                            className="form-control mb-3"
-                                                            type="text"
-                                                            placeholder="Enter Category Title"
-                                                            value={title.title}
-                                                            onChange={(e) => setTitle({ ...title, title: e.target.value })}
-                                                        />
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                            <div className="modal-footer">
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-secondary"
-                                                    data-bs-dismiss="modal"
-                                                >
-                                                    Close
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-primary"
-                                                    onClick={addcategory}
-                                                >
-                                                    Save
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {model && (
-                                    <>
-                                        <div className="modal-backdrop fade show"></div>
-
-                                        <div
-                                            className="modal fade show"
-                                            style={{ display: 'block' }}
-                                            tabIndex={-1}
-                                            aria-labelledby="updateServiceModalLabel"
-                                            aria-hidden="true"
-                                            role="dialog"
-                                        >
-                                            <div className="modal-dialog">
-                                                <div className="modal-content">
-                                                    <div className="modal-header">
-                                                        <h5 className="modal-title" id="updateServiceModalLabel">
-                                                            Update Category
-                                                        </h5>
-                                                        <button
-                                                            type="button"
-                                                            className="btn-close"
-                                                            aria-label="Close"
-                                                            onClick={() => setModel(false)}
-                                                        />
-                                                    </div>
-                                                    <div className="modal-body">
-                                                        <form>
-                                                            <div className="row">
-                                                                <div className="col-md-12">
-                                                                    <label htmlFor="category">Category</label>
-                                                                    <span className="text-danger">*</span>
-                                                                    <input
-                                                                        className="form-control mb-2"
-                                                                        type="text"
-                                                                        placeholder="Enter Category Title"
-                                                                        id="category"
-                                                                        value={updatetitle.title}
-                                                                        onChange={(e) =>
-                                                                            updateServiceTitle('title', e.target.value)
-                                                                        }
-                                                                        required
-                                                                    />
-                                                                </div>
-                                                            </div>
-
-
-
-                                                      
-
-                                                            <div className="row">
-                                                                <div className="col-md-12">
-                                                                    <label htmlFor="service">Segment</label>
-                                                                    <span className="text-danger">*</span>
-                                                                    {servicedata.length > 0 && (
-                                                                        <div className="form-group">
-                                                                            {servicedata.map((item) => (
-                                                                                <div key={item._id} className="form-check">
-                                                                                    <input
-                                                                                        className="form-check-input"
-                                                                                        type="checkbox"
-                                                                                        id={`service_${item._id}`}
-                                                                                        value={item._id}
-                                                                                        checked={updatetitle.service.includes(item._id)}
-                                                                                        onChange={(e) => handleServiceChange(item._id, e.target.checked)}
-                                                                                    />
-                                                                                    <label className="form-check-label" htmlFor={`service_${item._id}`}>
-                                                                                        {item.title}
-                                                                                    </label>
-                                                                                </div>
-                                                                            ))}
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-
-
-
-
-
-
-
-
-                                                        </form>
-                                                    </div>
-                                                    <div className="modal-footer">
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-secondary"
-                                                            onClick={() => setModel(false)}
-                                                        >
-                                                            Close
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-primary"
-                                                            onClick={Updatecategory}
-                                                            disabled={!updatetitle.title || !updatetitle.service}
-                                                        >
-                                                            Update Service
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </>
-
-                                )}
-
-
-
-                            </div> */}
                             <div className="ms-auto mt-2 mt-md-0">
                                 <button
                                     type="button"
@@ -601,7 +402,7 @@ const Category = () => {
 
                                 <ReusableModal
                                     show={showAddModal}
-                                    onClose={() => setShowAddModal(false)}
+                                    onClose={() => { setShowAddModal(false); setTitle("") }}
                                     title={<span>Add Category</span>}
                                     body={
                                         <>
@@ -644,7 +445,7 @@ const Category = () => {
                                             <button
                                                 type="button"
                                                 className="btn btn-secondary"
-                                                onClick={() => setShowAddModal(false)}
+                                                onClick={() => { setShowAddModal(false), setTitle("") }}
                                             >
                                                 Close
                                             </button>
