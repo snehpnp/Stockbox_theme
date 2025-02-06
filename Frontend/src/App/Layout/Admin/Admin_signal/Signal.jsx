@@ -1102,7 +1102,7 @@ const Signal = () => {
                                     />
                                 </div>
                                 <div className="modal-body">
-                                    <div className='card '>
+                                    <div className='card mb-3'>
                                         <div className='d-flex justify-content-between align-items-center card-body'>
                                             {['Fully Closed', 'Partially Closed', 'SL Hit', 'Closed Signal', "Avoid Signal"].map((tab, index) => (
                                                 <label key={index} className='labelfont'>
@@ -1197,7 +1197,7 @@ const Signal = () => {
                                                     />
                                                 </div> */}
 
-                                                <button type="submit" className='btn btn-danger mt-2' onClick={() => closeSignalperUser(0)}>Submit</button>
+                                                <button type="submit" className='btn btn-primary mt-2' onClick={() => closeSignalperUser(0)}>Submit</button>
                                             </form>
                                         )}
 
@@ -1326,7 +1326,7 @@ const Signal = () => {
                                                         />
                                                     </div>
 
-                                                    <button type="submit" className='btn btn-danger mt-2'>Submit</button>
+                                                    <button type="submit" className='btn btn-primary mt-2'>Submit</button>
                                                 </form>
                                             )
 
@@ -1375,7 +1375,7 @@ const Signal = () => {
                                                     />
                                                 </div>
 
-                                                <button type="submit" className='btn btn-danger mt-2' onClick={() => closeSignalperUser(2)}>Submit</button>
+                                                <button type="submit" className='btn btn-primary mt-2' onClick={() => closeSignalperUser(2)}>Submit</button>
                                             </form>
                                         )}
 
@@ -1417,7 +1417,7 @@ const Signal = () => {
                                                     />
                                                 </div>
 
-                                                <button type="submit" className='btn btn-danger mt-2' onClick={() => closeSignalperUser(3)}>Submit</button>
+                                                <button type="submit" className='btn btn-primary mt-2' onClick={() => closeSignalperUser(3)}>Submit</button>
                                             </form>
                                         )}
                                         {checkedIndex === 4 && (
@@ -1440,7 +1440,7 @@ const Signal = () => {
                                                     />
                                                 </div>
 
-                                                <button type="submit" className='btn btn-danger mt-2' onClick={() => closeSignalperUser(4)}>Submit</button>
+                                                <button type="submit" className='btn btn-primary mt-2' onClick={() => closeSignalperUser(4)}>Submit</button>
                                             </form>
                                         )}
                                     </div>
@@ -1553,6 +1553,7 @@ const Signal = () => {
 
             <ReusableModal
                 show={model1}
+                
                 onClose={() => setModel1(false)}
                 title="Upload Report"
                 body={
