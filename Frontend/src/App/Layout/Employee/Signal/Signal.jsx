@@ -648,10 +648,12 @@ const Signal = () => {
         },
         {
             name: 'Upload Report',
+          
+         
             cell: row => (
                 <>
 
-                    <div className='d-flex '>
+                    <div className='d-flex justify-content-end'>
                         {row.report ?
                             <Link className="btn px-2" onClick={() => handleDownload(row)}>
                                 <Tooltip placement="top" overlay="Download">

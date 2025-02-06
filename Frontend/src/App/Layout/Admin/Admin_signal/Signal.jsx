@@ -599,7 +599,7 @@ const Signal = () => {
         },
         {
             name: 'Entry Price',
-            selector: row => <div> <IndianRupee />{row.price}</div>,
+            selector: row => <div> <IndianRupee style={{width:'15px'}}/>{row.price}</div>,
             sortable: true,
             width: '200px',
         },
@@ -630,7 +630,7 @@ const Signal = () => {
                 <>
                     <div>
                         <button
-                            className="btn btn-success btnclose"
+                            className="btn btn-sm btn-success btnclose"
                             onClick={() => {
                                 UpdateData(row)
                             }}
@@ -663,10 +663,11 @@ const Signal = () => {
         },
         {
             name: 'Upload Report',
+            className: 'text-end',
             cell: row => (
                 <>
 
-                    <div className='d-flex '>
+                    <div className='d-flex  justify-content-end' style={{ width: "150px" }}>
                         {row.report ?
                             <Link className="btn px-2" onClick={() => handleDownload(row)}>
                                 <Tooltip placement="top" overlay="Download">
