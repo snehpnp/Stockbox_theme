@@ -445,7 +445,7 @@ const Category = () => {
                                             <button
                                                 type="button"
                                                 className="btn btn-secondary"
-                                                onClick={() => { setShowAddModal(false), setTitle("") }}
+                                                onClick={() => { setShowAddModal(false); setTitle("") }}
                                             >
                                                 Close
                                             </button>

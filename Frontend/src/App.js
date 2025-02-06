@@ -4,6 +4,8 @@ import Wrapper from "./App/components/Wrapper/Wrapper";
 import Login from "./App/Layout/Auth/Login";
 import Userlogin from "./App/Layout/Auth/Userlogin";
 import Signup from "./App/Layout/Auth/Signup";
+import Forgetpassword from "./App/Layout/Auth/Forgetpassword";
+import Forgetpassworduser from "./App/Layout/Auth/Forgetpassworduser";
 
 const App = () => {
   const navigate = useNavigate();
