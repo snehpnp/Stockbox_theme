@@ -770,7 +770,7 @@ async updateReport(req, res) {
             });
         });
         const { id,description } = req.body;
-        console.log("req",req.body)
+       
  
         if (!id) {
             return res.status(400).json({
@@ -786,9 +786,9 @@ async updateReport(req, res) {
         const updateFields = {}; // Initialize as an empty object
         if (reportFile) {
             updateFields.report = reportFile;
-            updateFields.description = description;
+            
         }
-
+        updateFields.description = description;
         // Update the report in the database
         const updatedreport = await Signal_Modal.findByIdAndUpdate(
             id,
@@ -804,7 +804,6 @@ async updateReport(req, res) {
             });
         }
 
-        // console.log("Updated Report:", updatedreport);
         return res.json({
             status: true,
             message: "Report updated successfully",
