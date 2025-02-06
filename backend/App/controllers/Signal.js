@@ -1407,21 +1407,38 @@ async getPlansByService(req, res) {
       },
       {
         $lookup: {
-          from: "plans", // Plan Modal ka actual MongoDB collection name (usually lowercase)
+          from: "plans", // Plan Modal ka actual MongoDB collection name
           localField: "_id",
           foreignField: "category", // Plan collection me category ka reference field
           as: "plans",
         },
       },
       {
+        $addFields: {
+          plans: {
+            $filter: {
+              input: "$plans",
+              as: "plan",
+              cond: {
+                $and: [
+                  { $eq: ["$$plan.status", "active"] }, // Active plans only
+                  { $eq: ["$$plan.del", false] } // Plans where del is false
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
         $match: {
-          "plans.0": { $exists: true }, // Sirf wahi categories jo plans ke saath linked hain
-        },
+          "plans.0": { $exists: true } // Only categories having active plans
+        }
       },
       {
         $project: {
           _id: 1,
           title: 1,
+         
         },
       },
     ]);
@@ -1442,6 +1459,7 @@ async getPlansByService(req, res) {
     });
   }
 }
+
 
 
 async getSymbol(req, res) {
