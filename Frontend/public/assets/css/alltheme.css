@@ -1230,3 +1230,8 @@ display: -webkit-box;
 margin-top: -20px;
 font-size: 20px;
 }
+
+.basket-stock-list .breadcrumb a ,.basket-stock-list .breadcrumb button{
+margin-right:  8PX;
+margin-top: 5px !important;
+}

@@ -599,7 +599,7 @@ const Signal = () => {
         },
         {
             name: 'Entry Price',
-            selector: row => <div> <IndianRupee />{row.price}</div>,
+            selector: row => <div> <IndianRupee style={{ width: '15px' }} />{row.price}</div>,
             sortable: true,
             width: '200px',
         },
@@ -630,7 +630,7 @@ const Signal = () => {
                 <>
                     <div>
                         <button
-                            className="btn btn-success btnclose"
+                            className="btn btn-sm btn-success btnclose"
                             onClick={() => {
                                 UpdateData(row)
                             }}
@@ -663,10 +663,11 @@ const Signal = () => {
         },
         {
             name: 'Upload Report',
+            className: 'text-end',
             cell: row => (
                 <>
 
-                    <div className='d-flex '>
+                    <div className='d-flex  justify-content-end' style={{ width: "150px" }}>
                         {row.report ?
                             <Link className="btn px-2" onClick={() => handleDownload(row)}>
                                 <Tooltip placement="top" overlay="Download">
@@ -1435,105 +1436,11 @@ const Signal = () => {
             />
 
 
-            {/* {model1 && (
-                <>
-                    <div className="modal-backdrop fade show"></div>
-                    <div
-                        className="modal fade show"
-                        style={{ display: 'block' }}
-                        tabIndex={-1}
-                        aria-labelledby="exampleModalLabel"
-                        aria-hidden="true"
-                    >
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title" id="exampleModalLabel">
-                                        Upload Report
-                                    </h5>
-                                    <button
-                                        type="button"
-                                        className="btn-close"
-                                        onClick={() => setModel1(false)}
-                                    />
-                                </div>
-                                <div className="modal-body">
-                                    <form>
-                                        <div className="row">
-                                            <div className="col-md-10">
-                                                <label htmlFor="imageUpload">Upload Report </label>
-                                                <span className="text-danger">*</span>
-                                                <input
-                                                    className="form-control mb-3"
-                                                    type="file"
-                                                    accept="application/pdf"
-                                                    id="imageUpload"
-                                                    onChange={(e) => {
-                                                        const file = e.target.files[0];
-                                                        if (file) {
-                                                            if (file.type !== "application/pdf") {
-                                                                Swal.fire({
-                                                                    title: 'Error!',
-                                                                    text: 'Only PDF files are allowed!.',
-                                                                    icon: 'error',
-                                                                    confirmButtonText: 'Try Again',
-                                                                });
-                                                                return;
-                                                            }
-                                                            updateServiceTitle({ report: file });
-                                                        }
-                                                    }}
-
-                                                />
-                                            </div>
-                                            <div className="col-md-2">
-
-
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-md-12">
-                                                <label htmlFor="description">Description</label>
-                                                <input
-                                                    className="form-control mb-2"
-                                                    type="text"
-                                                    placeholder='Enter Description Title'
-                                                    value={updatetitle.description}
-                                                    onChange={(e) => updateServiceTitle({ description: e.target.value })}
-                                                />
-                                            </div>
-                                        </div>
-
-                                    </form>
-
-
-                                </div>
-                                <div className="modal-footer">
-                                    <button
-                                        type="button"
-                                        className="btn btn-secondary"
-                                        onClick={() => setModel1(false)}
-                                    >
-                                        Close
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary"
-                                        onClick={updateReportpdf}
-                                    >
-                                        Update File
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </>
-            )} */}
-
 
 
             <ReusableModal
                 show={model1}
+
                 onClose={() => setModel1(false)}
                 title="Upload Report"
                 body={
