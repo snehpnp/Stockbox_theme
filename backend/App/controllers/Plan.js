@@ -1011,6 +1011,7 @@ try {
 
       const activePlan = await PlanSubscription_Modal.findOne({
         plan_category_id: plan.category._id,
+        client_id: client_id,
         plan_end: { $gte: new Date() } // Ensure the plan is not expired
       }).sort({ plan_end: -1 }); // Sort by end date to get the most recent one
       

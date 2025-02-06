@@ -1400,16 +1400,16 @@ async getPlansByService(req, res) {
     const result = await Plancategory_Modal.aggregate([
       {
         $match: {
-          service: { $regex: `(^|,)${serviceIdString}(,|$)` }, // Match comma-separated values
+          service: { $regex: `(^|,)${serviceIdString}(,|$)` }, 
           del: false,
           status: true,
         },
       },
       {
         $lookup: {
-          from: "plans", // Plan Modal ka actual MongoDB collection name
+          from: "plans", 
           localField: "_id",
-          foreignField: "category", // Plan collection me category ka reference field
+          foreignField: "category",
           as: "plans",
         },
       },
@@ -1466,7 +1466,7 @@ async getSymbol(req, res) {
   try {
     const bseResponse = await axios.get("http://stockboxapis.cmots.com/api/BseNseDelayedData/NSE");
     
-    const data = bseResponse.data;  // API se milne wala data
+    const data = bseResponse.data;  
 
     return res.status(200).json({
       success: true,
@@ -1492,18 +1492,17 @@ async getSignalWithFilterplan(req, res) {
     let fromDate;
     if (from) {
       fromDate = new Date(from);
-      fromDate.setHours(0, 0, 0, 0); // दिन की शुरुआत (00:00:00)
+      fromDate.setHours(0, 0, 0, 0); 
     }
     
     let toDate;
     if (to) {
       toDate = new Date(to);
-      toDate.setHours(23, 59, 59, 999); // दिन का अंत (23:59:59)
+      toDate.setHours(23, 59, 59, 999); 
     }
 
     
 
-    // Query को बनाएं
     let query = { del: 0 };
     // console.log(typeof closestatus, closestatus);
     

@@ -1307,6 +1307,7 @@ class List {
             coupon: { $first: '$coupon' }, // Keep the discount
             plan_start: { $first: '$plan_start' }, // Keep the plan_start
             plan_end: { $first: '$plan_end' },
+            created_at: { $first: '$created_at' },
             orderid: { $first: '$orderid' }, // Keep the plan_end
             planDetails: { $first: '$planDetails' }, // First instance of planDetails
             categoryDetails: { $first: '$categoryDetails' }, // First instance of categoryDetails
@@ -1330,7 +1331,8 @@ class List {
             coupon: 1,
             plan_start: 1, // Plan start date
             plan_end: 1,
-            orderid: 1, // Plan end date
+            orderid: 1,
+            created_at: 1, // Plan end date
             planDetails: 1, // Details from the plans collection
             categoryDetails: 1, // Details from the plan categories collection
             serviceNames: 1, // All service titles
@@ -4806,6 +4808,7 @@ class List {
 
       const activePlan = await PlanSubscription_Modal.findOne({
         plan_category_id: plan.category._id,
+        client_id: client_id,
         plan_end: { $gte: new Date() } // Ensure the plan is not expired
       }).sort({ plan_end: -1 }); // Sort by end date to get the most recent one
       
