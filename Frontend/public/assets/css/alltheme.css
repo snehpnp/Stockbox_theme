@@ -1235,3 +1235,14 @@ font-size: 20px;
 margin-right:  8PX;
 margin-top: 5px !important;
 }
+
+.rfreshicon , .refresh-icon {
+  margin-top: 30px;
+  margin-left: 15px;
+}
+body.sidebar-vertical-container.sidebar-closed.sidebar-collapsed .sidebar-subitem .sidebar-sublink  span {
+  display: none;
+}
+body svg.lucide.lucide-chevron-right {
+  color: #fff !important;
+}
