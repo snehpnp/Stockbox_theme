@@ -1235,3 +1235,8 @@ font-size: 20px;
 margin-right:  8PX;
 margin-top: 5px !important;
 }
+
+.rfreshicon , .refresh-icon {
+  margin-top: 30px;
+  margin-left: 15px;
+}
