@@ -3186,7 +3186,7 @@ class List {
 
 
       const result = await BasicSetting_Modal.find({ _id: "66bb3c19542b26b6357bbf4f" })
-        .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key	razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube, offer_image')
+        .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key	razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image')
         .exec();
 
       if (result.length > 0) {
