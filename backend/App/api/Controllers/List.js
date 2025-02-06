@@ -3185,17 +3185,15 @@ class List {
 
 
 
-      const result = await BasicSetting_Modal.find({ _id: "66bb3c19542b26b6357bbf4f" })
-        .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key	razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image')
-        .exec();
+   const result = await BasicSetting_Modal.findOne()
+  .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image')
+  .exec();
 
-      if (result.length > 0) {
-        result[0].logo = `${baseUrl}/uploads/basicsetting/${result[0].logo}`;
-        result[0].refer_image = `${baseUrl}/uploads/basicsetting/${result[0].refer_image}`;
-        result[0].offer_image = `${baseUrl}/uploads/basicsetting/${result[0].offer_image}`;
+   if (result) {  
+          result.logo = `${baseUrl}/uploads/basicsetting/${result.logo}`;
+        result.refer_image = `${baseUrl}/uploads/basicsetting/${result.refer_image}`;
+        result.offer_image = `${baseUrl}/uploads/basicsetting/${result.offer_image}`;
       }
-
-
 
       return res.json({
         status: true,
