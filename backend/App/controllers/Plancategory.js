@@ -27,7 +27,12 @@ class Plancategory {
                 return res.json({ status: false, message: "Invalid service format" });
             }
     
-            const existingCategory = await Plancategory_Modal.findOne({ title });
+            const existingCategory = await Plancategory_Modal.findOne({
+              status : true,
+              del : false,
+              title: { $regex: `^${title}$`, $options: 'i' } // Case-insensitive check
+            });
+            
 
             if (existingCategory) {
               return res.json({ status: false, message: "Plancategory already exists" });
@@ -257,6 +262,20 @@ class Plancategory {
           message: "Plan category ID is required",
         });
       }
+
+
+      const existingCategory = await Plancategory_Modal.findOne({
+        _id: { $ne: id },
+        status : true,
+        del : false,
+        title: { $regex: `^${title}$`, $options: 'i' } // Case-insensitive match
+      });
+  
+      if (existingCategory) {
+        return res.json({ status: false, message: "Plan category with this title already exists" });
+      }
+  
+
 
 
       let services;
