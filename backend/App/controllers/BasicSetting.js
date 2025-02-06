@@ -13,8 +13,8 @@ class BasicSetting {
       upload("basicsetting").fields([
         { name: "favicon", maxCount: 1 },
         { name: "logo", maxCount: 1 },
-        ,
         { name: "refer_image", maxCount: 1 },
+        { name: "offer_image", maxCount: 1 }
       ])(req, res, async (err) => {
         if (err) {
           return res.status(500).json({
@@ -72,6 +72,13 @@ class BasicSetting {
           : existingSetting
           ? existingSetting.refer_image
           : null;
+          const offer_image = req.files["offer_image"]
+          ? req.files["offer_image"][0].filename
+          : existingSetting
+          ? existingSetting.offer_image
+          : null;
+
+
         // Define the update payload
         const update = {
           favicon,
@@ -105,6 +112,7 @@ class BasicSetting {
           officepaymenystatus,
           refer_status,
           invoicestatus,
+          offer_image,
         };
 
         const options = {

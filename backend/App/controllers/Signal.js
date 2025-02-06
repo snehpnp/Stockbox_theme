@@ -1478,7 +1478,7 @@ async getSignalWithFilterplan(req, res) {
     }
 
     
-    
+
     // Query को बनाएं
     let query = { del: 0 };
     // console.log(typeof closestatus, closestatus);
@@ -1493,6 +1493,8 @@ async getSignalWithFilterplan(req, res) {
       query.created_at = { $gte: fromDate, $lte: toDate }; 
     }
   }
+
+
     
     if (service) {
       query.service = service;
@@ -1501,6 +1503,7 @@ async getSignalWithFilterplan(req, res) {
     if (stock) {
       query.stock = stock;
     }
+
 
     if (closestatus) {
       query.close_status = closestatus;
@@ -1545,7 +1548,7 @@ async getSignalWithFilterplan(req, res) {
 
 // Extract unique plan IDs
 const planIds = [...new Set(result.map(item => item.planid).filter(id => id))];
-console.log("Plan IDs:", planIds);
+
 // Fetch plan category titles for these planIds
 const planCategories = await Plancategory_Modal.find({ _id: { $in: planIds } }, { _id: 1, title: 1 });
 

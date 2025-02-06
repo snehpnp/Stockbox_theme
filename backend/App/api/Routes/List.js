@@ -1,7 +1,7 @@
 const router = require("express").Router()
 
 const { Addtocart } = require("../../Models");
-const {Blogslist,Newslist,Bannerlist,Plancategorysist,getPlansByPlancategoryId,addPlanSubscription,myPlan,Couponlist,Signallist,applyCoupon,showSignalsToClients,Servicelist,Faqlist,detailContent,showSignalsToClientsClose,BasketList,pastPerformance,addBasketSubscription,getallPlan,addFreeTrail,BroadcastList,myFreetrial,basicSetting,pastPerformances,myService,CloseSignal,showSignalsToClientsCloses,Notification,Bank,Qrcode,BlogslistwithPagination,NewslistwithPagination,Refer,BasketLists,BasketstockList,myBasketPlan,placeOrder,exitPlaceOrder,checkBasketSell,BasketListss,BasketstockLists,getLivePrice,MyPorfolio,BasketstockListBalance,getBasketVersionOrder,Logout,addRequest,SignalClientWithPlan,NotificationWithPlan,getCompanyAndBseData,addPlanSubscriptionAddToCart,PurchasedBasketList,addBasketSubscriptionAddToCart,AddToCartPlan,AddToCartBasket,PlanCartList,BasketCartList,DeleteCartItem,SignalClientWithPlanClose,getStockrating} = require('../Controllers/List')
+const {Blogslist,Newslist,Bannerlist,Plancategorysist,getPlansByPlancategoryId,addPlanSubscription,myPlan,Couponlist,Signallist,applyCoupon,showSignalsToClients,Servicelist,Faqlist,detailContent,showSignalsToClientsClose,BasketList,pastPerformance,addBasketSubscription,getallPlan,addFreeTrail,BroadcastList,myFreetrial,basicSetting,pastPerformances,myService,CloseSignal,showSignalsToClientsCloses,Notification,Bank,Qrcode,BlogslistwithPagination,NewslistwithPagination,Refer,BasketLists,BasketstockList,myBasketPlan,placeOrder,exitPlaceOrder,checkBasketSell,BasketListss,BasketstockLists,getLivePrice,MyPorfolio,BasketstockListBalance,getBasketVersionOrder,Logout,addRequest,SignalClientWithPlan,NotificationWithPlan,getCompanyAndBseData,addPlanSubscriptionAddToCart,PurchasedBasketList,addBasketSubscriptionAddToCart,AddToCartPlan,AddToCartBasket,PlanCartList,BasketCartList,DeleteCartItem,SignalClientWithPlanClose,getStockrating,SignalLatest} = require('../Controllers/List')
 
 
 router.get('/api/list/blogs',Blogslist);
@@ -83,5 +83,6 @@ router.get('/api/list/basketcartlist/:client_id', BasketCartList);
 router.post('/api/list/deletecartitem', DeleteCartItem);
 router.get('/api/list/stockrating/:symbol', getStockrating);
 
+router.post('/api/list/signallatest', SignalLatest);
 
 module.exports = router;
