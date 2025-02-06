@@ -1378,7 +1378,6 @@ return res.status(404).json({
       });
   }
 }
-
 async getPlansByService(req, res) {
   try {
     const { serviceId } = req.body;
@@ -1389,37 +1388,43 @@ async getPlansByService(req, res) {
       });
     }
 
-    let serviceIdString="";
+    let serviceIdString = "";
     if (serviceId == "C") {
-         serviceIdString = "66d2c3bebf7e6dc53ed07626";
-      } else if (serviceId == "O") {
-         serviceIdString = "66dfeef84a88602fbbca9b79";
-      } else {
-          serviceIdString = "66dfede64a88602fbbca9b72";
-      }
-      
+      serviceIdString = "66d2c3bebf7e6dc53ed07626";
+    } else if (serviceId == "O") {
+      serviceIdString = "66dfeef84a88602fbbca9b79";
+    } else {
+      serviceIdString = "66dfede64a88602fbbca9b72";
+    }
 
     const result = await Plancategory_Modal.aggregate([
       {
         $match: {
-          service: { $regex: `(^|,)${serviceIdString}(,|$)` }, // Use regex to match comma-separated values
-          del:false,
-          status:true,
+          service: { $regex: `(^|,)${serviceIdString}(,|$)` }, // Match comma-separated values
+          del: false,
+          status: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "plans", // Plan Modal ka actual MongoDB collection name (usually lowercase)
+          localField: "_id",
+          foreignField: "category", // Plan collection me category ka reference field
+          as: "plans",
+        },
+      },
+      {
+        $match: {
+          "plans.0": { $exists: true }, // Sirf wahi categories jo plans ke saath linked hain
         },
       },
       {
         $project: {
           _id: 1,
           title: 1,
-          service: 1,
-          status: 1,
-          created_at: 1,
-          updated_at: 1,
-         
         },
       },
     ]);
-
 
     console.log("Query result:", result);
 
@@ -1437,6 +1442,7 @@ async getPlansByService(req, res) {
     });
   }
 }
+
 
 async getSymbol(req, res) {
   try {
