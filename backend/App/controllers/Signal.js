@@ -1323,7 +1323,7 @@ return res.status(404).json({
         _id: {
           $in: await PlanSubscription_Modal.find({
             client_id: { $ne: null },  
-            plan_id: { $in: planIds },
+            plan_category_id: { $in: planIds },
             plan_end: { $gte: today }, // Filter by plan_end date
             del: false  // Optional: Ensure the plan subscription is not deleted
           }).distinct('client_id')  // Get distinct client_ids
