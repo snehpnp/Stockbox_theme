@@ -44,7 +44,6 @@ function Basket() {
       const data = { clientid: userid }
       const response = await GetBasketService(data, token)
       if (response.status) {
-        console.log("data", response.data)
         setBasketdata(response.data)
 
       }

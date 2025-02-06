@@ -14,7 +14,7 @@ const RebalanceHistory = () => {
 
   useEffect(() => {
     gethistory()
-    geVersion()
+    // geVersion()
   }, [])
 
   const gethistory = async () => {
@@ -32,18 +32,18 @@ const RebalanceHistory = () => {
 
 
 
-  const geVersion = async () => {
-    try {
-      const data = { id: id, clientid: userid, version: 4 };
-      const response = await getversionhistory(data, token);
-      if (response.status) {
-        console.log("verson", response.data)
-      }
-    } catch (error) {
-      console.log("error", error);
-    }
+  // const geVersion = async () => {
+  //   try {
+  //     const data = { id: id, clientid: userid, version: 4 };
+  //     const response = await getversionhistory(data, token);
+  //     if (response.status) {
+  //       console.log("verson", response.data)
+  //     }
+  //   } catch (error) {
+  //     console.log("error", error);
+  //   }
 
-  };
+  // };
 
 
 

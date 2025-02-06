@@ -17,17 +17,20 @@ const BasketStockList = () => {
 
 
 
-
   const location = useLocation();
   const item = location?.state?.item;
 
+
+
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
+
 
   const [showModal, setShowModal] = useState(false);
   const handleCloseModal = () => setShowModal(false);
 
   const [activeTab, setActiveTab] = useState("baskets");
+
 
 
   const [isLoading, setIsLoading] = useState(false);
@@ -45,7 +48,8 @@ const BasketStockList = () => {
       const data = { id: item?._id, clientid: userid };
       const response = await PortfolioStock(data, token);
       if (response.status) {
-        setPortfolio(response.data)
+        console.log(response?.data)
+        setPortfolio(response?.data)
       }
     } catch (error) {
       console.log("error", error);
@@ -61,7 +65,7 @@ const BasketStockList = () => {
       const data = { id: item?._id };
       const response = await BasketStockListdata(data, token);
       if (response.status) {
-        setPurchasedata(response.data);
+        setPurchasedata(response?.data);
       }
     } catch (error) {
       console.log("error", error);
