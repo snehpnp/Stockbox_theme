@@ -1875,6 +1875,7 @@ export async function Updatebasicsettings(data, token) {
     formData.append('contact_number', data.contact_number);
     formData.append('favicon', data.favicon);
     formData.append('logo', data.logo);
+    formData.append('offer_image', data.offer_image);
 
 
     try {

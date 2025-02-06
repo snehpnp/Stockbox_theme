@@ -139,9 +139,6 @@ const BasketStockList = () => {
 
 
 
-
-
-
   return (
     <div className="basket-stock-list">
     <Content
