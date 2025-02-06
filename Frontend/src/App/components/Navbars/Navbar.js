@@ -369,8 +369,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                 {Role === "ADMIN" ? (
                   <div className="d-flex me-1">
                     <span className="switch-label p-1">
-                    Login with API:
-                      <span style={{ color: isChecked ? "green" : "red" ,fontSize: 16}}>
+                      Login with API:
+                      <span style={{ color: isChecked ? "green" : "red", fontSize: 16 }}>
                         {isChecked ? "On" : "Off"}
                       </span>
                     </span>
@@ -378,7 +378,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       className="form-check form-switch form-check-dark mb-0"
                       style={{ margin: "inherit", fontSize: 21 }}
                     >
-                      <span style={{ color: "red", fontSize: 16 }}>Off</span>
+                      {/* <span style={{ color: "red", fontSize: 16 }}>Off</span> */}
                       <input
                         className="form-check-input"
                         type="checkbox"
@@ -404,7 +404,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       className="form-check form-switch form-check-dark mb-0"
                       style={{ margin: "inherit", fontSize: 21 }}
                     >
-                      <span style={{ color: isChecked ? "green" : "red",fontSize: '16px' }}>
+                      <span style={{ color: isChecked ? "green" : "red", fontSize: '16px' }}>
                         {isChecked ? "On" : "Off"}
                       </span>
                       <input
@@ -453,7 +453,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                           {badgecount > 100 ? "99+" : badgecount}
                         </span>
                       ) : null}
-                      <FaBell size={20} className=""/>
+                      <FaBell size={20} className="" />
                     </div>
 
                     <div
@@ -519,11 +519,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                           clients?.map((notification, index) => (
                             <div
                               key={index}
-                              className={`dropdown-item notification ${
-                                notification.status === 1
-                                  ? "text-info font-bold"
-                                  : "text-muted bg-light"
-                              }`}
+                              className={`dropdown-item notification ${notification.status === 1
+                                ? "text-info font-bold"
+                                : "text-muted bg-light"
+                                }`}
                               onClick={(event) =>
                                 handleNotificationClick(event, notification)
                               }
@@ -561,11 +560,11 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                                     >
                                       {notification.createdAt
                                         ? formatDistanceToNow(
-                                            new Date(notification.createdAt),
-                                            {
-                                              addSuffix: true,
-                                            }
-                                          )
+                                          new Date(notification.createdAt),
+                                          {
+                                            addSuffix: true,
+                                          }
+                                        )
                                         : "Empty Message"}
                                     </span>
                                   </h6>
@@ -649,162 +648,161 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                         <FaBell size={20} />
                       </div>
 
-                    <div
-                      style={{
-                        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                        borderRadius: "10px",
-                        minWidth: "320px",
-                        maxWidth: "400px",
-                        zIndex: 1050,
-                        padding: "10px",
-                        overflow: "hidden",
-                      }}
-                      className="dropdown-menu dropdown-menu-end"
-                      aria-labelledby="dropdownMenuLink"
-                    >
                       <div
-                        className="msg-header d-flex justify-content-between align-items-center"
                         style={{
-                          borderBottom: "1px solid #ddd",
-                          paddingBottom: "8px",
-                          marginBottom: "10px",
+                          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                          borderRadius: "10px",
+                          minWidth: "320px",
+                          maxWidth: "400px",
+                          zIndex: 1050,
+                          padding: "10px",
+                          overflow: "hidden",
                         }}
+                        className="dropdown-menu dropdown-menu-end"
+                        aria-labelledby="dropdownMenuLink"
                       >
-                        <p
-                          className="msg-header-title"
+                        <div
+                          className="msg-header d-flex justify-content-between align-items-center"
                           style={{
-                            fontSize: "18px",
-                            fontWeight: "600",
-                            margin: 0,
+                            borderBottom: "1px solid #ddd",
+                            paddingBottom: "8px",
+                            marginBottom: "10px",
                           }}
                         >
-                          Notifications
-                        </p>
-                        <span
-                          className="msg-header-badge"
+                          <p
+                            className="msg-header-title"
+                            style={{
+                              fontSize: "18px",
+                              fontWeight: "600",
+                              margin: 0,
+                            }}
+                          >
+                            Notifications
+                          </p>
+                          <span
+                            className="msg-header-badge"
+                            style={{
+                              backgroundColor: "#007bff",
+                              color: "white",
+                              fontSize: "14px",
+                              fontWeight: "500",
+                              borderRadius: "12px",
+                              padding: "2px 8px",
+                            }}
+                          >
+                            {
+                              userNotification?.filter(
+                                (notification) => notification?.status === 0
+                              )?.length
+                            }
+                          </span>
+                        </div>
+                        <div
+                          className="header-notifications-list"
                           style={{
-                            backgroundColor: "#007bff",
-                            color: "white",
-                            fontSize: "14px",
-                            fontWeight: "500",
-                            borderRadius: "12px",
-                            padding: "2px 8px",
+                            overflowY: "auto",
+                            maxHeight: "300px",
+                            paddingRight: "10px",
+                            scrollbarWidth: "thin",
+                            scrollbarColor: "#c1c1c1 transparent",
                           }}
                         >
-                          {
-                            userNotification?.filter(
-                              (notification) => notification?.status === 0
-                            )?.length
-                          }
-                        </span>
-                      </div>
-                      <div
-                        className="header-notifications-list"
-                        style={{
-                          overflowY: "auto",
-                          maxHeight: "300px",
-                          paddingRight: "10px",
-                          scrollbarWidth: "thin",
-                          scrollbarColor: "#c1c1c1 transparent",
-                        }}
-                      >
-                        {userNotification?.length > 0 ? (
-                          userNotification?.map((notification, index) => (
-                            <div
-                              key={index}
-                              className={`dropdown-item notification ${
-                                notification.status === 1
+                          {userNotification?.length > 0 ? (
+                            userNotification?.map((notification, index) => (
+                              <div
+                                key={index}
+                                className={`dropdown-item notification ${notification.status === 1
                                   ? "text-info font-bold"
                                   : "text-muted bg-light"
-                              }`}
-                              style={{
-                                padding: "10px",
-                                marginBottom: "5px",
-                                borderRadius: "6px",
-                                background:
-                                  notification.status === 0
-                                    ? "#f8f9fa"
-                                    : "white",
-                                cursor: "pointer",
-                                transition: "all 0.3s ease",
-                              }}
-                            >
-                              <div className="d-flex align-items-center">
-                                <div className="flex-grow-1">
-                                  <h6
-                                    className="msg-name"
-                                    style={{
-                                      margin: 0,
-                                      fontWeight:
-                                        notification.status === 1
-                                          ? "normal"
-                                          : "bold",
-                                    }}
-                                  >
-                                    {notification?.title}
-                                    <span
-                                      className="msg-time float-end"
+                                  }`}
+                                style={{
+                                  padding: "10px",
+                                  marginBottom: "5px",
+                                  borderRadius: "6px",
+                                  background:
+                                    notification.status === 0
+                                      ? "#f8f9fa"
+                                      : "white",
+                                  cursor: "pointer",
+                                  transition: "all 0.3s ease",
+                                }}
+                              >
+                                <div className="d-flex align-items-center">
+                                  <div className="flex-grow-1">
+                                    <h6
+                                      className="msg-name"
                                       style={{
-                                        fontSize: "12px",
-                                        color: "#6c757d",
+                                        margin: 0,
+                                        fontWeight:
+                                          notification.status === 1
+                                            ? "normal"
+                                            : "bold",
                                       }}
                                     >
-                                      {notification.createdAt
-                                        ? formatDistanceToNow(
+                                      {notification?.title}
+                                      <span
+                                        className="msg-time float-end"
+                                        style={{
+                                          fontSize: "12px",
+                                          color: "#6c757d",
+                                        }}
+                                      >
+                                        {notification.createdAt
+                                          ? formatDistanceToNow(
                                             new Date(notification.createdAt),
                                             {
                                               addSuffix: true,
                                             }
                                           )
-                                        : "Empty Message"}
-                                    </span>
-                                  </h6>
-                                  <p
-                                    className="msg-info"
-                                    title={notification.message}
-                                    style={{
-                                      fontSize: "14px",
-                                      color: "#6c757d",
-                                      margin: "4px 0 0",
-                                    }}
-                                  >
-                                    {notification.message}
-                                  </p>
+                                          : "Empty Message"}
+                                      </span>
+                                    </h6>
+                                    <p
+                                      className="msg-info"
+                                      title={notification.message}
+                                      style={{
+                                        fontSize: "14px",
+                                        color: "#6c757d",
+                                        margin: "4px 0 0",
+                                      }}
+                                    >
+                                      {notification.message}
+                                    </p>
+                                  </div>
                                 </div>
                               </div>
+                            ))
+                          ) : (
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                height: "100%",
+                                color: "#6c757d",
+                              }}
+                            >
+                              <h4>No Notifications</h4>
                             </div>
-                          ))
-                        ) : (
-                          <div
+                          )}
+                        </div>
+                        <div className="text-center msg-footer mt-2">
+                          <button
+                            className="btn btn-primary w-100"
+                            onClick={() => getAllMessageRead()}
                             style={{
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              height: "100%",
-                              color: "#6c757d",
+                              borderRadius: "6px",
+                              fontWeight: "500",
                             }}
                           >
-                            <h4>No Notifications</h4>
-                          </div>
-                        )}
-                      </div>
-                      <div className="text-center msg-footer mt-2">
-                        <button
-                          className="btn btn-primary w-100"
-                          onClick={() => getAllMessageRead()}
-                          style={{
-                            borderRadius: "6px",
-                            fontWeight: "500",
-                          }}
-                        >
-                          View All Notifications
-                        </button>
+                            View All Notifications
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ) : (
-                  ""
-                )}
+                  ) : (
+                    ""
+                  )}
 
                 <div className="dropdown">
                   <div
@@ -867,7 +865,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                 <div className="modal-content">
                   <div className="modal-header">
                     <h5 className="modal-title" id="exampleModalLabel">
-                    Login with API
+                      Login with API
                     </h5>
                     <button
                       type="button"

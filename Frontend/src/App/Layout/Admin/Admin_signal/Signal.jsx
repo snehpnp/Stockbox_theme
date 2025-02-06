@@ -493,6 +493,12 @@ const Signal = () => {
                     return;
                 }
             }
+            if (index === 3) {
+                if (closedata?.exitprice == 0) {
+                    showValidationError('Price Should be Gerater than Zero');
+                    return;
+                }
+            }
 
             const data = {
                 id: serviceid._id,

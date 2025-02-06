@@ -566,7 +566,7 @@ const Coupon = () => {
 
             </div>
         </div>
-    );
+    )
 }
 
 export default Coupon;

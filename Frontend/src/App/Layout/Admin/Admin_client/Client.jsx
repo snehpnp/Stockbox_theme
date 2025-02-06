@@ -599,18 +599,15 @@ const Client = () => {
     {
       name: "Actions",
       selector: (row) => (
-        <div className="d-flex">
+        <div className="d-flex justify-content-end gap-2">
           <Tooltip placement="top" overlay="Package Assign">
             <span
               onClick={(e) => {
-                // Check if ActiveStatus is 1
                 if (row.ActiveStatus === 1) {
-                  // If active, proceed with the package assignment
                   showModal(true);
                   setClientid(row);
                   getplanlistassinstatus(row._id);
                 } else {
-                  // If not active, show the SweetAlert message
                   Swal.fire({
                     title: "Reminder",
                     text: "Activate the client first Then assign the package.",
@@ -822,7 +819,7 @@ const Client = () => {
                             <input
                               style={{
                                 border: "1px solid #ddd",
-                                margin: "0 8px",
+                                margin: "0 8px 1px",
                               }}
                               className="form-check-input"
                               type="radio"

@@ -375,7 +375,7 @@ const Viewclientdetail = () => {
                       className="list-group-item d-flex justify-content-between align-items-center flex-wrap"
                     >
                       <h6 className="mb-0">{item?.serviceName}</h6>
-                      {/* <span className="text-secondary">{ fDateTime(item?.enddate)}</span> */}
+                      <span className="text-secondary">{fDateTime(item?.enddate)}</span>
                     </li>
                   ))}
               </ul>
