@@ -10,8 +10,6 @@ class BasicSetting {
   async AddBasicSetting(req, res) {
     try {
 
-
-
       // Handle the image uploads
       upload("basicsetting").fields([
         { name: "favicon", maxCount: 1 },
