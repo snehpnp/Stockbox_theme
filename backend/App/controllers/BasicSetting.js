@@ -9,6 +9,9 @@ const ThemeModal = db.ThemeModal;
 class BasicSetting {
   async AddBasicSetting(req, res) {
     try {
+
+
+
       // Handle the image uploads
       upload("basicsetting").fields([
         { name: "favicon", maxCount: 1 },
@@ -60,23 +63,24 @@ class BasicSetting {
         const favicon = req.files["favicon"]
           ? req.files["favicon"][0].filename
           : existingSetting
-          ? existingSetting.favicon
-          : null;
+            ? existingSetting.favicon
+            : null;
         const logo = req.files["logo"]
           ? req.files["logo"][0].filename
           : existingSetting
-          ? existingSetting.logo
-          : null;
+            ? existingSetting.logo
+            : null;
         const refer_image = req.files["refer_image"]
           ? req.files["refer_image"][0].filename
           : existingSetting
-          ? existingSetting.refer_image
-          : null;
-          const offer_image = req.files["offer_image"]
+            ? existingSetting.refer_image
+            : null;
+        const offer_image = req.files["offer_image"]
           ? req.files["offer_image"][0].filename
           : existingSetting
-          ? existingSetting.offer_image
-          : null;
+            ? existingSetting.offer_image
+            : null;
+
 
 
         // Define the update payload

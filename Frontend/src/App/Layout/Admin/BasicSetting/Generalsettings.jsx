@@ -69,6 +69,7 @@ const Generalsettings = () => {
                                 email_address: clients[0].email_address || '',
                                 favicon: null,
                                 logo: null,
+                                offer_image: null,
 
                             }}
                             onSubmit={async (values) => {
@@ -79,6 +80,7 @@ const Generalsettings = () => {
                                     email_address: values.email_address,
                                     favicon: values.favicon,
                                     logo: values.logo,
+                                    offer_image: values.offer_image,
                                     id: user_id,
 
                                 };
@@ -221,6 +223,30 @@ const Generalsettings = () => {
                                                         </div>
                                                     )}
                                                 </div>
+
+                                            </div>
+
+                                            <div className="row mb-3 align-items-center">
+                                                <label htmlFor="logo" className="col-sm-3 col-form-label">
+                                                    <b>Offer Image</b>
+                                                </label>
+                                                <div className="col-sm-8">
+                                                    <input
+                                                        name="offer_image"
+                                                        type="file"
+                                                        className="form-control"
+                                                        onChange={(event) => setFieldValue("offer_image", event.currentTarget.files[0])}
+
+                                                    />
+                                                </div>
+                                                <div className="col-sm-1">
+                                                    {clients[0].offer_image && (
+                                                        <div className="file-preview">
+                                                            <img src={`${image_baseurl}uploads/basicsetting/${clients[0].offer_image}`} alt="offer_image Preview" className="image-preview" />
+                                                        </div>
+                                                    )}
+                                                </div>
+
                                             </div>
 
                                             <div className="row">
