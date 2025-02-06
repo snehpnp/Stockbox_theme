@@ -1243,6 +1243,7 @@ margin-top: 5px !important;
 body.sidebar-vertical-container.sidebar-closed.sidebar-collapsed .sidebar-subitem .sidebar-sublink  span {
   display: none;
 }
-body svg.lucide.lucide-chevron-right {
+body.sidebar-vertical-container.sidebar-closed.sidebar-collapsed svg.lucide.lucide-chevron-right {
   color: #fff !important;
+  margin-left: -15px;
 }
