@@ -143,7 +143,9 @@ const BasketStockList = () => {
 
 
   return (
+    <div className="basket-stock-list">
     <Content
+   
       Page_title="Stock List"
       button_status={true}
       button_status1={true}
@@ -396,6 +398,7 @@ const BasketStockList = () => {
         }
       />
     </Content >
+    </div>
   );
 };
 
