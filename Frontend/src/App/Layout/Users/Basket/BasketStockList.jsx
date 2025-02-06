@@ -139,9 +139,6 @@ const BasketStockList = () => {
 
 
 
-
-
-
   return (
     <Content
       Page_title="Stock List"
