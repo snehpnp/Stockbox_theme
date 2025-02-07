@@ -1247,3 +1247,26 @@ body.sidebar-vertical-container.sidebar-closed.sidebar-collapsed svg.lucide.luci
   color: #fff !important;
   margin-left: -15px;
 }
+.lucide-trash2 {
+  color: red;
+}
+
+svg.lucide.lucide-square-pen {
+  color: #0d6efd;
+}
+
+.lucide-user-cog {
+  color: #058105;
+}
+
+svg.lucide.lucide-arrow-down-to-line {
+  color: #ff6000;
+}
+
+svg.lucide.lucide-eye {
+  color: #ffc107;
+}
+
+svg.lucide {
+  margin: 0px 3px;
+}

@@ -57,7 +57,7 @@ const Login = () => {
         timer: 1500,
       }).then(() => {
         if (ResData?.data?.Role === 0) {
-          navigate("/superadmin/dashboard");
+          navigate("/superadmin/company");
         } else if (ResData?.data?.Role === 1) {
           navigate("/admin/dashboard");
         } else if (ResData?.data?.Role === 2) {

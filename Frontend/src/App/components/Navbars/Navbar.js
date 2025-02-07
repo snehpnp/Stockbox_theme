@@ -51,11 +51,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     localStorage.clear();
     if (Role === "USER") {
       window.location.href = "/#/user-login";
-    } else if (Role === "ADMIN") {
+    } else if (Role === "ADMIN" || Role === "SUPERADMIN" || Role === "EMPLOYEE") {
       window.location.href = "/#/login";
     }
   };
-
 
 
 

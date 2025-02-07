@@ -466,7 +466,7 @@ const DynamicForm = ({
                                 <input
                                   type="file"
                                   id={field.name}
-                                  // Accept only image files
+                                  accept="application/pdf"
                                   placeholder="No File Choosen"
                                   className={`form-control ${formik.touched[field.name] &&
                                     formik.errors[field.name]

@@ -225,13 +225,13 @@ const Admin = [
 
 
 const SuperAdmin = [
-  {
-    name: "Dashboard",
-    label: "Dashboard",
-    icon: "LayoutDashboard",
-    link: "/superadmin/dashboard",
-    children: [],
-  },
+  // {
+  //   name: "Dashboard",
+  //   label: "Dashboard",
+  //   icon: "LayoutDashboard",
+  //   link: "/superadmin/dashboard",
+  //   children: [],
+  // },
   {
     name: "Company",
     label: "Company",

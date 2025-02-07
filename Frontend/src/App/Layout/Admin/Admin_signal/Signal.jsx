@@ -17,6 +17,8 @@ import ReusableModal from '../../../components/Models/ReusableModal';
 
 
 const Signal = () => {
+
+
     const [viewMode, setViewMode] = useState("table");
     const token = localStorage.getItem('token');
     const [searchInput, setSearchInput] = useState("");
@@ -211,14 +213,14 @@ const Signal = () => {
                         const entryType = `${item?.calltype} ${item?.stock} ${item?.expirydate ? `Expiry: ${item.expirydate}` : ""} ${item?.optiontype ? `Option: ${item.optiontype}` : ""} Entry Type: ${item?.entrytype} Price: ${item?.price} Target: ${item?.tag1} ${item?.tag2 ? `/${item.tag2}` : ""} ${item?.tag3 ? `/${item.tag3}` : ""} Stop Loss: ${item?.stoploss}`;
 
                         return {
-                            OpenSignal: `${fDateTimeH(item?.created_at)}\n\nSegment: ${item.segment === "C"
+                            OpenSignal: `${fDateTimeH(item?.created_at)}  Segment: ${item.segment === "C"
                                 ? "CASH"
                                 : item.segment === "O"
                                     ? "OPTION"
                                     : item.segment === "F"
                                         ? "FUTURE"
                                         : ""
-                                } \n\nEntry Type: ${entryType}`
+                                }   Entry Type: ${entryType}`
                         };
                     });
                     exportToCSV1(csvArr, "Open Signal");
@@ -403,8 +405,9 @@ const Signal = () => {
 
 
 
-    const closeSignalperUser = async (index) => {
+    const closeSignalperUser = async (index, e) => {
         try {
+            e.preventDefault()
             const showValidationError = (message) => {
                 Swal.fire({
                     title: 'Error!',
@@ -1061,14 +1064,14 @@ const Signal = () => {
                                                     />
                                                 </div> */}
 
-                                    <button type="submit" className='btn btn-primary mt-2' onClick={() => closeSignalperUser(0)}>Submit</button>
+                                    <button type="submit" className='btn btn-primary mt-2' onClick={(e) => closeSignalperUser(0, e)}>Submit</button>
                                 </form>
                             )}
 
                             {checkedIndex === 1 && (
 
                                 checkedIndex === 1 && (
-                                    <form className='card-body' onSubmit={() => closeSignalperUser(1)}>
+                                    <form className='card-body' onSubmit={(e) => closeSignalperUser(1, e)}>
                                         <div className="col-md-12">
                                             <div className="form-check mb-2">
                                                 <input
@@ -1240,7 +1243,7 @@ const Signal = () => {
                                         />
                                     </div>
 
-                                    <button type="submit" className='btn btn-primary mt-2' onClick={() => closeSignalperUser(2)}>Submit</button>
+                                    <button type="submit" className='btn btn-primary mt-2' onClick={(e) => closeSignalperUser(2, e)}>Submit</button>
                                 </form>
                             )}
 
@@ -1282,7 +1285,7 @@ const Signal = () => {
                                         />
                                     </div>
 
-                                    <button type="submit" className='btn btn-primary mt-2' onClick={() => closeSignalperUser(3)}>Submit</button>
+                                    <button type="submit" className='btn btn-primary mt-2' onClick={(e) => closeSignalperUser(3, e)}>Submit</button>
                                 </form>
                             )}
                             {checkedIndex === 4 && (
@@ -1305,7 +1308,7 @@ const Signal = () => {
                                         />
                                     </div>
 
-                                    <button type="submit" className='btn btn-primary mt-2' onClick={() => closeSignalperUser(4)}>Submit</button>
+                                    <button type="submit" className='btn btn-primary mt-2' onClick={(e) => closeSignalperUser(4, e)}>Submit</button>
                                 </form>
                             )}
                         </div>

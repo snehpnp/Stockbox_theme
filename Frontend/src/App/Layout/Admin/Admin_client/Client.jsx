@@ -599,7 +599,7 @@ const Client = () => {
     {
       name: "Actions",
       selector: (row) => (
-        <div className="d-flex justify-content-end gap-2">
+        <div className="d-flex justify-content-end gap-2 " >
           <Tooltip placement="top" overlay="Package Assign">
             <span
               onClick={(e) => {
@@ -616,22 +616,29 @@ const Client = () => {
                   });
                 }
               }}
-              style={{ cursor: "pointer" }}
+              style={{ cursor: "pointer", color: "orange" }}
             >
               <Settings2 />
             </span>
           </Tooltip>
 
           <Tooltip title="view">
-            <Eye onClick={() => Clientdetail(row)} />
+            <Eye onClick={() => Clientdetail(row)}
+              style={{ color: "green" }} />
           </Tooltip>
 
           <Tooltip title="Update">
-            <SquarePen className="ms-3" onClick={() => updateClient(row)} />
+            <SquarePen className="" onClick={() => updateClient(row)}
+              style={{ color: "#6f42c1" }}
+            />
           </Tooltip>
+
+
           {/* <Tooltip title="delete">
                   <Trash2 onClick={() => DeleteClient(row._id)} />
                 </Tooltip> */}
+
+
         </div>
       ),
       ignoreRowClick: true,
