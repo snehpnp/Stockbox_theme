@@ -251,6 +251,11 @@ const Viewclientdetail = () => {
 
     {
       name: "Purchase Date",
+      selector: (row) => (row?.created_at ? fDateTime(row?.created_at) : ""),
+      width: "180px",
+    },
+    {
+      name: "Start Date",
       selector: (row) => (row?.plan_start ? fDateTime(row?.plan_start) : ""),
       width: "180px",
     },

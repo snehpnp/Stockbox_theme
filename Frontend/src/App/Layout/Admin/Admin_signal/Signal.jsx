@@ -795,132 +795,6 @@ const Signal = () => {
                         </div>
                     </div>
                     <hr />
-                    {/* <div className="card">
-                        <div className="card-body">
-                            <div className="d-lg-flex align-items-center mb-4 gap-3">
-                                <div className="position-relative">
-                                    <input
-                                        type="text"
-                                        className="form-control ps-5 radius-10"
-                                        placeholder="Search Signal"
-                                        value={searchInput}
-                                        onChange={(e) => setSearchInput(e.target.value)}
-
-                                    />
-                                    <span className="position-absolute top-50 product-show translate-middle-y">
-                                        <i className="bx bx-search" />
-                                    </span>
-                                </div>
-
-                                <div className="ms-auto">
-                                    <Link
-                                        to="/admin/addsignal"
-                                        className="btn btn-primary"
-                                    >
-                                        <i
-                                            className="bx bxs-plus-square"
-                                            aria-hidden="true"
-                                        />
-                                        Add Signal
-                                    </Link>
-                                </div>
-
-                                <div
-                                    className="ms-2"
-                                    onClick={(e) => getexportfile()}
-                                >
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary float-end"
-                                        data-toggle="tooltip"
-                                        data-placement="top"
-                                        title="Export To Excel"
-                                        delay={{ show: "0", hide: "100" }}
-
-                                    >
-                                        <i className="bx bxs-download" aria-hidden="true"></i>
-
-                                        Export-Excel
-                                    </button>
-                                </div>
-
-                            </div>
-
-                            <div className="row">
-
-                                <div className="col-md-3">
-                                    <label>From date</label>
-                                    <input
-                                        type="date"
-                                        name="from"
-                                        className="form-control radius-10"
-                                        placeholder="From"
-                                        value={filters.from}
-                                        onChange={handleFilterChange}
-
-                                    />
-                                </div>
-                                <div className="col-md-3">
-                                    <label>To Date</label>
-                                    <input
-                                        type="date"
-                                        name="to"
-                                        className="form-control radius-10"
-                                        placeholder="To"
-                                        value={filters.to}
-                                        onChange={handleFilterChange}
-                                        min={filters.from}
-                                    />
-                                </div>
-                                <div className="col-md-3">
-                                    <label>Select Service</label>
-                                    <select
-                                        name="service"
-                                        className="form-control radius-10"
-                                        value={filters.service}
-                                        onChange={handleFilterChange}
-                                    >
-                                        <option value="">Select Service</option>
-                                        {serviceList.map((service) => (
-                                            <option key={service._id} value={service._id}>
-                                                {service.title}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div className="col-md-3 d-flex">
-                                    <div style={{ width: "80%" }}>
-                                        <label>Select Stock</label>
-                                        <Select
-                                            options={options}
-                                            value={options.find((option) => option.value === searchstock) || null}
-                                            onChange={handleChange1}
-                                            className="form-control radius-10"
-                                            isClearable
-                                            placeholder="Select Stock"
-                                        />
-                                    </div>
-                                    <div className='rfreshicon'>
-                                        <RefreshCcw onClick={resethandle} />
-                                    </div>
-
-                                </div>
-
-
-                            </div>
-
-                        </div>
-
-                        <Table
-                            columns={columns}
-                            data={clients}
-                            totalRows={totalRows}
-                            currentPage={currentPage}
-                            onPageChange={handlePageChange}
-                        />
-
-                    </div> */}
 
                     <div className="card">
                         <div className="card-body">
@@ -1481,13 +1355,15 @@ const Signal = () => {
                         <div className="row">
                             <div className="col-md-12">
                                 <label htmlFor="description">Description</label>
-                                <input
+                                <textarea
                                     className="form-control mb-2"
-                                    type="text"
                                     placeholder="Enter Description Title"
                                     value={updatetitle.description}
                                     onChange={(e) => updateServiceTitle({ description: e.target.value })}
-                                />
+                                    rows={2}
+                                >
+
+                                </textarea>
                             </div>
                         </div>
                     </form>
