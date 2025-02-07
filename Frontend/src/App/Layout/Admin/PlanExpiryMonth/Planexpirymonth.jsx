@@ -4,7 +4,7 @@ import Table from '../../../Extracomponents/Table';
 import { Tooltip } from 'antd';
 import { getExpiryByMonth } from '../../../Services/Admin/Admin';
 import { fDate, fDateTime, fDateMonth } from '../../../../Utils/Date_formate';
-
+import Content from '../../../components/Contents/Content';
 
 
 
@@ -79,33 +79,22 @@ const Planexpirymonth = () => {
 
 
     return (
-        <div>
-            <div className="page-content">
-                <div className="row">
-                    <div className="col-md-6">
-                        <div className="page-breadcrumb  d-flex align-items-center mb-3">
-                            <div className="breadcrumb-title pe-3">Total Actice License</div>
-                            <div className="ps-3">
-                                <nav aria-label="breadcrumb">
-                                    <ol className="breadcrumb mb-0 p-0">
-                                        <li className="breadcrumb-item">
-                                            <Link to="/admin/dashboard">
-                                                <i className="bx bx-home-alt" />
-                                            </Link>
-                                        </li>
-                                    </ol>
-                                </nav>
-                            </div>
+        <Content
+            Page_title="Total Actice License"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
+            <div>
+                <div className="page-content">
+                    <div className="card">
+                        <div className="card-body">
+                            <Table columns={columns} data={data} />
                         </div>
                     </div>
                 </div>
-                <div className="card">
-                    <div className="card-body">
-                        <Table columns={columns} data={data} />
-                    </div>
-                </div>
             </div>
-        </div>
+        </Content>
     );
 };
 
