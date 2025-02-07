@@ -16,13 +16,13 @@ const Dashboard1 = ({ monthexpiry }) => {
       value1:
         monthexpiry?.monthexpiry?.length > 0
           ? monthexpiry?.monthexpiry?.some(
-              (item) => fDateMonth(item?.month) === currentMonthYear
-            )
+            (item) => fDateMonth(item?.month) === currentMonthYear
+          )
             ? monthexpiry?.monthexpiry.reduce((acc, item) => {
-                return fDateMonth(item?.month) === currentMonthYear
-                  ? acc + (item.noofclient || 0)
-                  : acc;
-              }, 0)
+              return fDateMonth(item?.month) === currentMonthYear
+                ? acc + (item.noofclient || 0)
+                : acc;
+            }, 0)
             : 0
           : 0,
 
@@ -158,7 +158,7 @@ const Dashboard1 = ({ monthexpiry }) => {
                             <h4 className="mb-0 my-2">{item.label}</h4>
                             {item.visible ? (
                               <>
-                                <Link className="mb-2" to={item.link}>
+                                <Link to={{ pathname: item.link }} state={item.state || {}} className="mb-2" >
                                   <i className="fa-regular fa-eye pe-1 my-1"></i>
                                   View
                                 </Link>

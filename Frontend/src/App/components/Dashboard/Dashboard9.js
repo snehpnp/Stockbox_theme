@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const Dashboard1 = ({ data }) => {
 
-   let arr = [
+  let arr = [
     {
       index: 1,
       name: "Total  Client",
@@ -148,13 +148,13 @@ const Dashboard1 = ({ data }) => {
                       <h2 className="text-uppercase mb-0">{item.value}</h2>
                       {item.visible ? <>
 
-                      <Link  className="" to={item.route}>
+                        <Link className="" to={{ pathname: item.link }} state={item.state || {}}>
                           <i className="fa-regular fa-eye pe-1" ></i>View</Link>
                       </> : ""}
 
                     </div>
-                      </div>
-                    {/* <div className="col-auto text-center px-0">
+                  </div>
+                  {/* <div className="col-auto text-center px-0">
                       <img
                         src="../assets/images/dash_icon/dash-9-icon.png"
                         className="w-50"
