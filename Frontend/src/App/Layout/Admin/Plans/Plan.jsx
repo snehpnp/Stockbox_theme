@@ -266,7 +266,7 @@ const Plan = () => {
                                                         <hr />
                                                         <ul className='p-0'>
                                                             <li><b>Validity</b>: {client.validity}</li>
-                                                            <li><b className='mb-1'>Description</b>:<textarea className='form-control' value={stripHtmlTags(client.description || '')} >{client.description}</textarea></li>
+                                                            <li><b className='mb-1'>Description</b> : <textarea className='form-control' value={stripHtmlTags(client.description || '')} >{client.description}</textarea></li>
                                                             <li><b>Created At</b>: {fDateTime(client.created_at)}</li>
                                                         </ul>
 
