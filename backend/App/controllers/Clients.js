@@ -530,6 +530,30 @@ class Clients {
           }
         },
         {
+          $lookup: {
+              from: 'addtocarts', // Join with addtocarts collection
+              let: { clientId: { $toObjectId: "$_id" } }, // Convert client _id to ObjectId
+              pipeline: [
+                  {
+                      $match: {
+                          $expr: {
+                              $and: [
+                                  { $eq: [{ $toObjectId: "$client_id" }, "$$clientId"] }, // Ensure both are ObjectId
+                                  { $eq: ["$status", false] } // Only fetch records where status is false
+                              ]
+                          }
+                      }
+                  }
+              ],
+              as: 'cartItems'
+          }
+      },
+      {
+          $addFields: {
+              hasPendingCart: { $gt: [{ $size: "$cartItems" }, 0] } // If cartItems > 0, set true; else false
+          }
+      },   
+        {
           $project: {
             _id: 1,
             FullName: 1,
@@ -594,7 +618,8 @@ class Clients {
                   }
                 }
               }
-            }
+            },
+            hasPendingCart:1
           }
         },
         ...(planStatus ? [{
