@@ -38,6 +38,7 @@ const Table = ({ columns, data }) => {
                 striped
                 customStyles={customStyles}
                 responsive={true}
+                paginationComponentOptions={{ rowsPerPageText: '', noRowsPerPage: true }}
             />
         </div>
     );
