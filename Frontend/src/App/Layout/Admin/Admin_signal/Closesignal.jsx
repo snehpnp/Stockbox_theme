@@ -45,6 +45,9 @@ const Closesignal = () => {
   const [totalRows, setTotalRows] = useState(0);
   const [header, setheader] = useState("Close Signal");
 
+  const [showModal, setShowModal] = useState(false);
+  const [description, setDescription] = useState([])
+
   const [updatetitle, setUpdatetitle] = useState({
     report: "",
     id: "",
@@ -319,7 +322,7 @@ const Closesignal = () => {
               ? "OPTION"
               : "FUTURE";
         return row.closeprice == 0
-          ? <div>{segmentLabel}<span style={{ color: "red" }}> (Avoid)</span></div>
+          ? <div>{segmentLabel}<span style={{ color: "red" }}> (Avoid)<Eye onClick={() => { setShowModal(true); setDescription(row?.close_description) }}></Eye></span></div>
           : segmentLabel;
       },
       sortable: true,
@@ -799,6 +802,13 @@ const Closesignal = () => {
         }
       />
 
+
+      <ReusableModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        title="Description"
+        body={<p>{description || "No description available."}</p>}
+      />
 
 
     </div>
