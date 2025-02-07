@@ -1338,7 +1338,7 @@ return res.status(404).json({
       const notificationTitle = 'Important Update';
       const notificationBody =`${serviceName} ${stock} ${calltype} AT ${price} OPEN`;
         const resultn = new Notification_Modal({
-          segmentid:planIds,
+          segmentid:planid,
           type:'open signal',
           title: notificationTitle,
           message: notificationBody
@@ -1420,7 +1420,7 @@ async getPlansByService(req, res) {
               as: "plan",
               cond: {
                 $and: [
-                  { $eq: ["$$plan.status", "active"] }, // Active plans only
+                //  { $eq: ["$$plan.status", "active"] }, // Active plans only
                   { $eq: ["$$plan.del", false] } // Plans where del is false
                 ]
               }
