@@ -1,0 +1,12 @@
+[
+    {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+    "namespace": "android_app",
+    "package_name": "com.stockboxnew.stock_box",
+    "sha256_cert_fingerprints": [
+    "EB:84:3C:81:6C:A0:24:E6:AC:FE:95:F3:FA:3D:68:93:3E:E9:1B:18:9D:0D:55:4F:5B:F5:7C:D1:A1:67:44:FC" 
+    ]
+    }
+    }
+    ]
