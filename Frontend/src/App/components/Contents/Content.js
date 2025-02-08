@@ -36,12 +36,12 @@ const Content = ({
             <div className="col-lg-6 col-sm-6 col-12">
               <ul className="breadcrumb-links">
                 <li>
-                  <House onClick={handleHomeClick}></House>
 
-                  <a href="/" className="breadcrumb-box" />
+                  <a className="bx bx-home-alt" onClick={handleHomeClick} style={{ fontSize: "20px", marginLeft: "3px", marginTop: "5px" }} />
                 </li>
-                <li style={{ width: "3px" }}>
-                  <Tally1 />
+                <li style={{ width: "2px" }}>
+                  {/* <Tally1 style={{ width: "30px" }} /> */}
+                  |
                 </li>
                 <li>
                   <div className="breadcrumb-box">

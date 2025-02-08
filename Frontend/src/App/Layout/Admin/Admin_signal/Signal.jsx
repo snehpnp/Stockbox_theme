@@ -33,6 +33,8 @@ const Signal = () => {
 
 
     });
+
+
     const location = useLocation();
     const clientStatus = location?.state?.clientStatus;
 
@@ -433,11 +435,11 @@ const Signal = () => {
                         return;
                     }
                     if (target1 && target2 && target1 >= target2) {
-                        showValidationError('Target 2 must be greater than Target 1.');
+                        showValidationError('Target 2 must be Greater than Target 1.');
                         return;
                     }
                     if (target3 && target2 >= target3) {
-                        showValidationError('Target 3 must be greater than Target 2.');
+                        showValidationError('Target 3 must be Greater than Target 2.');
                         return;
                     }
                     if (checkedTargets1.target1 && !target1) {

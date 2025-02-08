@@ -235,7 +235,7 @@ const Viewclientdetail = () => {
     },
     {
       name: "Amount",
-      selector: (row) => row.plan_price ?? "-",
+      selector: (row) => <>  <IndianRupee />  {row.plan_price ?? "-"} </>,
       width: "189px",
     },
     {
@@ -314,10 +314,13 @@ const Viewclientdetail = () => {
 
     {
       name: "Exit Price",
-      selector: (row) => (row.closeprice ? row.closeprice : "-"),
+      selector: (row) =>
+        <>
+          <IndianRupee />  {row.closeprice ? row.closeprice : "-"}
+        </>,
       sortable: true,
-      width: "132px",
-    },
+      width: "150px",
+    }, ,
     {
       name: "Entry Date",
       selector: (row) => fDateTimeH(row?.created_at),

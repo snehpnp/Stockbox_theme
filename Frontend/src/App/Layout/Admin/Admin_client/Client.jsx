@@ -633,7 +633,6 @@ const Client = () => {
             />
           </Tooltip>
 
-
           {/* <Tooltip title="delete">
                   <Trash2 onClick={() => DeleteClient(row._id)} />
                 </Tooltip> */}

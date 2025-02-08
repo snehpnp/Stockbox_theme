@@ -369,9 +369,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                   <div className="d-flex me-1">
                     <span className="switch-label p-1">
                       Login with API:
-                      <span style={{ color: isChecked ? "green" : "red", fontSize: 16 }}>
+                      {/* <span style={{ color: isChecked ? "green" : "red", fontSize: 16 }}>
                         {isChecked ? "On" : "Off"}
-                      </span>
+                      </span> */}
                     </span>
                     <div
                       className="form-check form-switch form-check-dark mb-0"
@@ -403,9 +403,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       className="form-check form-switch form-check-dark mb-0"
                       style={{ margin: "inherit", fontSize: 21 }}
                     >
-                      <span style={{ color: isChecked ? "green" : "red", fontSize: '16px' }}>
+                      {/* <span style={{ color: isChecked ? "green" : "red", fontSize: '16px' }}>
                         {isChecked ? "On" : "Off"}
-                      </span>
+                      </span> */}
                       <input
                         className="form-check-input"
                         type="checkbox"
