@@ -2368,11 +2368,10 @@ class Clients {
       const limit = 10;
       const skip = (page - 1) * limit;
       const clientSearchQuery = new RegExp(search, 'i');
+  
       const requestclients = await Requestclient_Modal.aggregate([
         {
-          $match: {
-            del: false, // Filter out deleted records
-          },
+          $match: { del: false }, // Filter out deleted records
         },
         {
           $lookup: {
@@ -2397,10 +2396,94 @@ class Clients {
             ]
           }
         },
-        // Pagination
-        { $skip: skip },
-        { $limit: parseInt(limit) },
-        // Optionally, you can project specific fields to return only what you need
+        // Conditional Lookup for 'plan' and 'basket' based on 'type' field
+          // Lookup for Plans
+      {
+        $lookup: {
+          from: 'plans',
+          localField: 'id',
+          foreignField: '_id',
+          as: 'planDetails'
+        }
+      },
+      {
+        $unwind: {
+          path: '$planDetails',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      // Lookup for Plan Category (to get category title & service)
+      {
+        $lookup: {
+          from: 'plancategories',
+          localField: 'planDetails.category',
+          foreignField: '_id',
+          as: 'categoryDetails'
+        }
+      },
+      {
+        $unwind: {
+          path: '$categoryDetails',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $addFields: {
+          serviceArray: {
+            $map: {
+              input: { $split: ["$categoryDetails.service", ","] }, // Split string into array
+              as: "serviceId",
+              in: { $toObjectId: "$$serviceId" } // Convert to ObjectId
+            }
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: 'services',
+          localField: 'serviceArray',
+          foreignField: '_id',
+          as: 'serviceDetails'
+        }
+      },
+      // Lookup for Baskets
+        {
+          $lookup: {
+            from: 'baskets',
+            localField: 'id',
+            foreignField: '_id',
+            as: 'basketDetails'
+          }
+        },
+        {
+          $addFields: {
+            planData: { 
+              $cond: { 
+                if: { $eq: ["$type", "plan"] }, 
+                then: {
+                  title: "$planDetails.title",
+                  categoryTitle: "$categoryDetails.title",
+                  service: "$categoryDetails.service",
+                  serviceTitles: {
+                    $map: {
+                      input: "$serviceDetails",
+                      as: "service",
+                      in: "$$service.title"
+                    }
+                  } 
+                },
+                else: null 
+              } 
+            },
+             basketData: { 
+              $cond: { 
+                if: { $eq: ["$type", "basket"] }, 
+                then: { $map: { input: "$basketDetails", as: "basket", in: { title: "$$basket.title" } } }, 
+                else: [] 
+              } 
+            }        
+            }
+        },
         {
           $project: {
             _id: 1,
@@ -2410,19 +2493,21 @@ class Clients {
             del: 1,
             created_at: 1,
             updated_at: 1,
-            FullName: "$clientDetails.FullName", // clientDetails ke andar se FullName le kar root pe
-            Email: "$clientDetails.Email",       // clientDetails ke andar se Email le kar root pe
-            PhoneNo: "$clientDetails.PhoneNo"
+            FullName: "$clientDetails.FullName",
+            Email: "$clientDetails.Email",
+            PhoneNo: "$clientDetails.PhoneNo",
+            planData: 1,
+            basketData: 1
           }
-        }
+        },
+        { $skip: skip },
+        { $limit: parseInt(limit) }
       ]);
-
+  
       // Get the total count of matching records for pagination
       const totalCount = await Requestclient_Modal.aggregate([
         {
-          $match: {
-            del: false, // Filter out deleted records
-          },
+          $match: { del: false }, // Filter out deleted records
         },
         {
           $lookup: {
@@ -2438,40 +2523,148 @@ class Clients {
         {
           $match: {
             $or: [
-              { 'clientDetails.name': clientSearchQuery },
-              { 'clientDetails.email': clientSearchQuery },
-              { 'clientDetails.phone': clientSearchQuery }
+              { 'clientDetails.FullName': clientSearchQuery },
+              { 'clientDetails.Email': clientSearchQuery },
+              { 'clientDetails.PhoneNo': clientSearchQuery }
             ]
           }
         },
         { $count: 'totalCount' }
       ]);
-
+  
       const totalItems = totalCount.length ? totalCount[0].totalCount : 0;
       const totalPages = Math.ceil(totalItems / limit);
-
-      // Return paginated result
-
+  
       return res.json({
         status: true,
-        message: "retrieved successfully",
+        message: "Retrieved successfully",
         data: requestclients,
         pagination: {
           total: totalItems,
-          page: parseInt(page), // Current page
-          limit: parseInt(limit), // Items per page
-          totalPages // Total number of pages
+          page: parseInt(page),
+          limit: parseInt(limit),
+          totalPages
         }
       });
-
-
-
+  
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: 'Error retrieving Requestclient data', error });
     }
-
   }
+  
+
+  // async clientRequest(req, res) {
+  //   try {
+  //     // Destructure query params
+  //     const { page = 1, search } = req.body;
+  //     const limit = 10;
+  //     const skip = (page - 1) * limit;
+  //     const clientSearchQuery = new RegExp(search, 'i');
+  //     const requestclients = await Requestclient_Modal.aggregate([
+  //       {
+  //         $match: {
+  //           del: false, // Filter out deleted records
+  //         },
+  //       },
+  //       {
+  //         $lookup: {
+  //           from: 'clients',
+  //           localField: 'clientid',
+  //           foreignField: '_id',
+  //           as: 'clientDetails'
+  //         }
+  //       },
+  //       {
+  //         $unwind: {
+  //           path: '$clientDetails',
+  //           preserveNullAndEmptyArrays: true
+  //         }
+  //       },
+  //       {
+  //         $match: {
+  //           $or: [
+  //             { 'clientDetails.FullName': clientSearchQuery },
+  //             { 'clientDetails.Email': clientSearchQuery },
+  //             { 'clientDetails.PhoneNo': clientSearchQuery }
+  //           ]
+  //         }
+  //       },
+  //       // Pagination
+  //       { $skip: skip },
+  //       { $limit: parseInt(limit) },
+  //       // Optionally, you can project specific fields to return only what you need
+  //       {
+  //         $project: {
+  //           _id: 1,
+  //           clientid: 1,
+  //           type: 1,
+  //           status: 1,
+  //           del: 1,
+  //           created_at: 1,
+  //           updated_at: 1,
+  //           FullName: "$clientDetails.FullName", // clientDetails ke andar se FullName le kar root pe
+  //           Email: "$clientDetails.Email",       // clientDetails ke andar se Email le kar root pe
+  //           PhoneNo: "$clientDetails.PhoneNo"
+  //         }
+  //       }
+  //     ]);
+
+  //     // Get the total count of matching records for pagination
+  //     const totalCount = await Requestclient_Modal.aggregate([
+  //       {
+  //         $match: {
+  //           del: false, // Filter out deleted records
+  //         },
+  //       },
+  //       {
+  //         $lookup: {
+  //           from: 'clients',
+  //           localField: 'clientid',
+  //           foreignField: '_id',
+  //           as: 'clientDetails'
+  //         }
+  //       },
+  //       {
+  //         $unwind: { path: '$clientDetails', preserveNullAndEmptyArrays: true }
+  //       },
+  //       {
+  //         $match: {
+  //           $or: [
+  //             { 'clientDetails.name': clientSearchQuery },
+  //             { 'clientDetails.email': clientSearchQuery },
+  //             { 'clientDetails.phone': clientSearchQuery }
+  //           ]
+  //         }
+  //       },
+  //       { $count: 'totalCount' }
+  //     ]);
+
+  //     const totalItems = totalCount.length ? totalCount[0].totalCount : 0;
+  //     const totalPages = Math.ceil(totalItems / limit);
+
+  //     // Return paginated result
+
+  //     return res.json({
+  //       status: true,
+  //       message: "retrieved successfully",
+  //       data: requestclients,
+  //       pagination: {
+  //         total: totalItems,
+  //         page: parseInt(page), // Current page
+  //         limit: parseInt(limit), // Items per page
+  //         totalPages // Total number of pages
+  //       }
+  //     });
+
+
+
+  //   } catch (error) {
+  //     console.error(error);
+  //     return res.status(500).json({ message: 'Error retrieving Requestclient data', error });
+  //   }
+
+  // }
 
 
   async deleteClientrequest(req, res) {

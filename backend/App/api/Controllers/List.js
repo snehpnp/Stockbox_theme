@@ -4473,12 +4473,13 @@ class List {
 
   async addRequest(req, res) {
     try {
-      const { clientid, type } = req.body;
+      const { clientid, type, id } = req.body;
 
 
 
       const result = new Requestclient_Modal({
         clientid: clientid,
+        id: id,
         type: type
       });
 
@@ -4518,7 +4519,30 @@ class List {
 
       const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
 
-    
+      const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: service_id }).exec();
+
+
+      if (!existingPlan) {
+        // Fetch last 5 signal IDs for the given service_id
+        const lastFiveSignals = await Signal_Modal.find({ service: service_id })
+            .sort({ created_at: -1 })
+            .limit(5)
+            .lean();
+        
+        return res.json({
+            status: true,
+            message: "Returning last 5 signals due to no existing plan",
+            data: lastFiveSignals,
+            pagination: {
+              total: lastFiveSignals.length,
+              page: 1,
+              limit: 5,
+              totalPages: 1
+          }
+        });
+    }
+
+
       const uniquePlanIds = [
         ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
       ].map(id => new ObjectId(id));
@@ -6001,6 +6025,7 @@ class List {
       }
 
       const planIds = subscriptions.map(sub => sub.plan_category_id);
+      const planStarts = subscriptions.map(sub => new Date(sub.plan_start));
       const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
 
       const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
@@ -6016,7 +6041,8 @@ class List {
         close_status: true,
         $or: uniquePlanIds.map((planId, index) => ({
           planid: planId.toString(), // Matching the planid with regex
-          created_at: { $lte: planEnds[index] }       // Checking if created_at is <= to planEnds
+          created_at: { $lte: planEnds[index] },  
+          closedate: { $gte: planStarts[index] }      // Checking if created_at is <= to planEnds
         }))
       };
 
