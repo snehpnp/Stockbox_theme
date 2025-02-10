@@ -5045,11 +5045,11 @@ class List {
 
 
 
-    const updatedItem = await Addtocart_Modal.findOneAndUpdate(
-      { client_id: client_id, status: false,basket_id: null, }, // Find item with status false
-      { $set: { status: true } }, // Update status to true
-      { new: true } // Return the updated document
-    );
+    const updatedItems = await Addtocart_Modal.updateMany(
+      { client_id: client_id, status: false, basket_id: null }, // Find all matching items
+      { $set: { status: true } } // Update status to true
+  );
+  
 
       if (coupon_code) {
         const resultc = await Coupon_Modal.findOne({
@@ -5585,13 +5585,11 @@ class List {
     }
 
 
-
-    const updatedItem = await Addtocart_Modal.findOneAndUpdate(
-      { client_id: client_id, status: false,plan_id: null, }, // Find item with status false
-      { $set: { status: true } }, // Update status to true
-      { new: true } // Return the updated document
-    );
-
+    const updatedItems = await Addtocart_Modal.updateMany(
+      { client_id: client_id, status: false, plan_id: null }, // Find all matching items
+      { $set: { status: true } } // Update status to true
+  );
+  
 
       if (settings.invoicestatus == 1) {
 
