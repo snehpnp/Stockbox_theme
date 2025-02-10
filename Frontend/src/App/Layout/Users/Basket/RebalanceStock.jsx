@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Content from "../../../components/Contents/Content";
-import { RebalanceBasket, GetBasketSell, getversionhistory, ExitPlaceOrderData } from '../../../Services/UserService/User';
+import { RebalanceBasket, GetBasketSell, getversionhistory, ExitPlaceOrderData, GetUserData } from '../../../Services/UserService/User';
 import { useParams } from 'react-router-dom';
 import Loader from '../../../../Utils/Loader';
 import { IndianRupee } from "lucide-react";
 import Swal from "sweetalert2";
+import ReusableModal from '../../../components/Models/ReusableModal';
 
 
 const RebalanceStock = () => {
@@ -15,13 +16,26 @@ const RebalanceStock = () => {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [baskets, setBaskets] = useState([]);
+  const [userDetail, setUserDetail] = useState();
+  const [showModal, setShowModal] = useState(false);
+  const [inputdata, setInputdata] = useState({});
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [data, setData] = useState({});
+
+
+  const handleCloseModal = () => setShowModal(false);
+
 
 
 
   useEffect(() => {
     getbasketRebalance();
+    getuserdetail();
   }, []);
 
+
+  console.log("data", data)
 
 
   const getbasketRebalance = async () => {
@@ -31,6 +45,7 @@ const RebalanceStock = () => {
       if (response.status) {
         const groupedData = groupByVersion(response.data);
         setBaskets(groupedData);
+
       }
     } catch (error) {
       console.log("error", error);
@@ -39,9 +54,22 @@ const RebalanceStock = () => {
   };
 
 
+  const getuserdetail = async () => {
+    try {
+      const response = await GetUserData(userid, token);
+      if (response.status) {
+        setUserDetail(response.data?.brokerid);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+
+
   const getbasketsell = async () => {
     try {
-      const data = { basket_id: id, clientid: userid, brokerid: "", version: "" };
+      const data = { basket_id: id, clientid: userid, brokerid: userDetail, version: "" };
       const response = await GetBasketSell(data, token);
       if (response.status) {
         console.log("response", response.data)
@@ -52,9 +80,9 @@ const RebalanceStock = () => {
   };
 
 
-  const GetVersionhistory = async () => {
+  const GetbasketVersionhistory = async () => {
     try {
-      const data = { basket_id: id, clientid: userid, brokerid: "", version: "" };
+      const data = { basket_id: id, clientid: userid, brokerid: userDetail, version: "" };
       const response = await getversionhistory(data, token);
       if (response.status) {
         console.log("response1", response.data)
@@ -66,25 +94,33 @@ const RebalanceStock = () => {
 
 
 
-  const ExitOrderplace = async (type) => {
+  const BUYstockdata = async (type) => {
     try {
-
+      setIsPlacingOrder(true);
       const data = {
-        basket_id: "",
-        clientid: "",
-        brokerid: "",
-        investmentamount: "",
-        type: "",
+        basket_id: id,
+        clientid: userid,
+        brokerid: userDetail,
+        investmentamount: inputdata,
+        type: type,
       };
 
       const response = await ExitPlaceOrderData(data, token);
+      setIsPlacingOrder(false);
+      setIsConfirming(false);
+
       if (response.status) {
         Swal.fire({
           icon: "success",
           title: response.message || "Order Placed Successfully!",
           text: "Your order has been placed successfully.",
           confirmButtonText: "OK",
-        })
+        }).then(() => {
+          if (type === 1) {
+            setShowModal(false);
+            setInputdata("")
+          }
+        });
       } else {
         Swal.fire({
           icon: "error",
@@ -94,6 +130,7 @@ const RebalanceStock = () => {
         });
       }
     } catch (error) {
+      setIsPlacingOrder(false);
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -102,6 +139,7 @@ const RebalanceStock = () => {
       });
     }
   };
+
 
 
 
@@ -136,7 +174,7 @@ const RebalanceStock = () => {
             <div className="card-body">
               <div className='float-end mb-3'>
                 <button className='btn btn-primary'>View</button>
-                <button className='btn btn-success ms-2'>Buy</button>
+                <button className='btn btn-success ms-2' onClick={() => { setShowModal(true); setData(version) }}>{version == 1 ? "Sell" : "Buy"}</button>
               </div>
               <div className="table-responsive">
                 <table className="table mb-0">
@@ -164,6 +202,52 @@ const RebalanceStock = () => {
           </div>
         ))
       )}
+
+      <ReusableModal
+        show={showModal}
+        onClose={handleCloseModal}
+        title={<>Investment Amount</>}
+        body={
+          <div>
+            <input
+              type="number"
+              className="form-control"
+              placeholder="Enter Investment Amount"
+              value={inputdata}
+              onChange={(e) => setInputdata(e.target.value)}
+            />
+
+            <button
+              className="btn btn-primary"
+              onClick={() => {
+                setIsConfirming(true);
+                BUYstockdata(0);
+              }}
+              disabled={isConfirming}
+            >
+              Confirm
+            </button>
+            <p className="fs-14 mb-0 mt-1">
+              Minimum Investment Amount: <strong>₹ {baskets?.mininvamount}</strong>
+            </p>
+          </div>
+        }
+        footer={
+          <>
+            <button
+              className="btn btn-primary"
+              onClick={() => BUYstockdata(1)}
+              disabled={isPlacingOrder}
+            >
+              {isPlacingOrder ? "Placing Order..." : "Place Order"}
+            </button>
+            <button className="btn btn-secondary" onClick={handleCloseModal}>
+              Cancel
+            </button>
+          </>
+        }
+      />
+
     </Content>
   );
 };
