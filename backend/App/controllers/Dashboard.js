@@ -758,7 +758,6 @@ class Dashboard {
     try {
       const { serviceid, startdate, enddate, search, page = 1 } = req.body;
 
-      console.log(req.body);
       let limit = 10;
       // Build the filter object dynamically
       const filter = {};

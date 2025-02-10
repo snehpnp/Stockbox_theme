@@ -4503,21 +4503,7 @@ class List {
       const skip = (parseInt(page) - 1) * parseInt(limit); // Calculate how many items to skip
       const limitValue = parseInt(limit); // Items per page
 
-
-      const subscriptions = await PlanSubscription_Modal.find({ client_id });
-      if (subscriptions.length === 0) {
-        return res.json({
-          status: false,
-          message: "No plan subscriptions found for the given service and client IDs",
-          data: []
-        });
-      }
-
-      const planIds = subscriptions.map(sub => sub.plan_category_id);
-      const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
-
-      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
-
+    
       const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: service_id }).exec();
 
 
@@ -4540,6 +4526,23 @@ class List {
           }
         });
     }
+
+
+      const subscriptions = await PlanSubscription_Modal.find({ client_id });
+      if (subscriptions.length === 0) {
+        return res.json({
+          status: false,
+          message: "No plan subscriptions found for the given service and client IDs",
+          data: []
+        });
+      }
+
+      const planIds = subscriptions.map(sub => sub.plan_category_id);
+      const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
+
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+     
 
 
       const uniquePlanIds = [
@@ -6373,8 +6376,30 @@ class List {
     }
   }
   
+  async updatePerformanceStatus(req, res) {
+    try {
+        const { client_id, performance_status } = req.body;
+        // Validate required fields
+        if (!client_id ) {
+            return res.status(400).json({ message: "Client ID are required." });
+        }
 
+        // Find client by ID
+        const client = await Clients_Modal.findById(client_id);
+        if (!client) {
+            return res.status(404).json({ message: "Client not found." });
+        }
 
+        // Update performance status (0 or 1)
+        client.performance_status = performance_status;
+        await client.save();
+
+        return res.status(200).json({ message: "Performance status updated successfully.", data: client });
+
+    } catch (error) {
+        return res.status(500).json({ message: "Something went wrong.", error: error.message });
+    }
+}
 
   
 
