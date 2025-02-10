@@ -2707,7 +2707,7 @@ class List {
     try {
       // Extract basket_id, clientid, and version from request body
       const { basket_id, clientid, version } = req.body; // Fix typo: use req.body instead of req.bady
-
+      console.log("req.body", req.body);
       // Perform aggregation to fetch orders from BasketOrderModel
       const orders = await Basketorder_Modal.aggregate([
         {
@@ -3185,12 +3185,12 @@ class List {
 
 
 
-   const result = await BasicSetting_Modal.findOne()
-  .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image')
-  .exec();
+      const result = await BasicSetting_Modal.findOne()
+        .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image')
+        .exec();
 
-   if (result) {  
-          result.logo = `${baseUrl}/uploads/basicsetting/${result.logo}`;
+      if (result) {
+        result.logo = `${baseUrl}/uploads/basicsetting/${result.logo}`;
         result.refer_image = `${baseUrl}/uploads/basicsetting/${result.refer_image}`;
         result.offer_image = `${baseUrl}/uploads/basicsetting/${result.offer_image}`;
       }
@@ -3743,7 +3743,7 @@ class List {
 
       const basket = await Basket_Modal.findById(basket_id);
       if (!basket) {
-        return res.json({
+        return res.status(400).json({
           status: false,
           message: "Basket not found.",
         });
@@ -3752,7 +3752,7 @@ class List {
 
 
       if (investmentamount < basket.mininvamount) {
-        return res.json({
+        return res.status(400).json({
           status: false,
           message: `Investment amount must be at least ${basket.mininvamount}.`,
         });
@@ -3760,14 +3760,14 @@ class List {
 
       const client = await Clients_Modal.findById(clientid);
       if (!client) {
-        return res.json({
+        return res.status(404).json({
           status: false,
           message: "Client not found"
         });
       }
 
       if (client.tradingstatus == 0) {
-        return res.json({
+        return res.status(404).json({
           status: false,
           message: "Client Broker Not Login, Please Login With Broker"
         });
@@ -3782,7 +3782,7 @@ class List {
 
       if (version == 1) {
         if (investmentamount < basket.mininvamount) {
-          return res.json({
+          return res.status(400).json({
             status: false,
             message: `Investment amount must be at least ${basket.mininvamount}.`,
           });
@@ -3790,7 +3790,7 @@ class List {
       }
 
       if (!existingStocks || existingStocks.length === 0) {
-        return res.json({
+        return res.status(400).json({
           status: false,
           message: "No stocks found in the basket.",
         });
@@ -3965,7 +3965,7 @@ class List {
                   const total = parseFloat(totalAmount);
 
                   if (total >= net) {
-                    return res.json({
+                    return res.status(400).json({
                       status: false,
                       message: "Insufficient funds in your broker account.",
                     });
@@ -4067,13 +4067,13 @@ class List {
                   version: version,
                   borkerid: brokerid
                 })
-                  .sort({ createdAt: -1 })
+                  .sort({ createdAt: -1 }) // Sort by `createdAt` in descending order
                   .limit(1);
 
 
                 if (orders.length > 0) {
-                  const order = orders[0];
-                  howmanytimebuy = (order.howmanytimebuy || 0) + 1;
+                  const order = orders[0]; // Use the first order if only one is relevant
+                  howmanytimebuy = (order.howmanytimebuy || 0) + 1; // Increment the `howmanytimebuy` value
                 }
               }
 
@@ -4102,7 +4102,7 @@ class List {
                   const total = parseFloat(totalAmount);
 
                   if (total >= net) {
-                    return res.json({
+                    return res.status(400).json({
                       status: false,
                       message: "Insufficient funds in your broker account.",
                     });
@@ -4131,7 +4131,8 @@ class List {
           }
 
         } catch (innerError) {
-          continue;
+          // console.error(`Error processing stock ${tradesymbol}:`, innerError);
+          continue; // Skip this stock in case of an error
         }
       }
 
@@ -4151,7 +4152,7 @@ class List {
 
     } catch (error) {
       // console.error("Error placing order:", error);
-      res.json({
+      res.status(500).json({
         status: false,
         message: "An error occurred while placing the order.",
       });
@@ -4503,29 +4504,29 @@ class List {
       const skip = (parseInt(page) - 1) * parseInt(limit); // Calculate how many items to skip
       const limitValue = parseInt(limit); // Items per page
 
-    
+
       const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: service_id }).exec();
 
 
       if (!existingPlan) {
         // Fetch last 5 signal IDs for the given service_id
         const lastFiveSignals = await Signal_Modal.find({ service: service_id })
-            .sort({ created_at: -1 })
-            .limit(5)
-            .lean();
-        
+          .sort({ created_at: -1 })
+          .limit(5)
+          .lean();
+
         return res.json({
-            status: true,
-            message: "Returning last 5 signals due to no existing plan",
-            data: lastFiveSignals,
-            pagination: {
-              total: lastFiveSignals.length,
-              page: 1,
-              limit: 5,
-              totalPages: 1
+          status: true,
+          message: "Returning last 5 signals due to no existing plan",
+          data: lastFiveSignals,
+          pagination: {
+            total: lastFiveSignals.length,
+            page: 1,
+            limit: 5,
+            totalPages: 1
           }
         });
-    }
+      }
 
 
       const subscriptions = await PlanSubscription_Modal.find({ client_id });
@@ -4542,7 +4543,7 @@ class List {
 
       const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
 
-     
+
 
 
       const uniquePlanIds = [
@@ -4832,6 +4833,7 @@ class List {
 
         const activePlan = await PlanSubscription_Modal.findOne({
           plan_category_id: plan.category._id,
+          client_id: client_id,
           plan_end: { $gte: new Date() } // Ensure the plan is not expired
         }).sort({ plan_end: -1 }); // Sort by end date to get the most recent one
 
@@ -5042,11 +5044,11 @@ class List {
 
 
 
-      const updatedItem = await Addtocart_Modal.findOneAndUpdate(
-        { client_id: client_id, status: false, basket_id: null, }, // Find item with status false
-        { $set: { status: true } }, // Update status to true
-        { new: true } // Return the updated document
+      const updatedItems = await Addtocart_Modal.updateMany(
+        { client_id: client_id, status: false, basket_id: null }, // Find all matching items
+        { $set: { status: true } } // Update status to true
       );
+
 
       if (coupon_code) {
         const resultc = await Coupon_Modal.findOne({
@@ -5582,11 +5584,9 @@ class List {
       }
 
 
-
-      const updatedItem = await Addtocart_Modal.findOneAndUpdate(
-        { client_id: client_id, status: false, plan_id: null, }, // Find item with status false
-        { $set: { status: true } }, // Update status to true
-        { new: true } // Return the updated document
+      const updatedItems = await Addtocart_Modal.updateMany(
+        { client_id: client_id, status: false, plan_id: null }, // Find all matching items
+        { $set: { status: true } } // Update status to true
       );
 
 
@@ -6041,7 +6041,7 @@ class List {
         close_status: true,
         $or: uniquePlanIds.map((planId, index) => ({
           planid: planId.toString(), // Matching the planid with regex
-          created_at: { $lte: planEnds[index] },  
+          created_at: { $lte: planEnds[index] },
           closedate: { $gte: planStarts[index] }      // Checking if created_at is <= to planEnds
         }))
       };
@@ -6154,26 +6154,26 @@ class List {
   async SignalLatest(req, res) {
     try {
       const { service_id, client_id } = req.body;
-  
+
       // Ensure service_id is provided
       if (!service_id) {
         return res.json({ status: false, message: "Service ID is required", data: [] });
       }
-  
+
       // Query to fetch the last 5 signals
       const query = {
         service: service_id, // Match the service_id
         close_status: false  // Ensure signals are active (not closed)
       };
-  
+
       const signals = await Signal_Modal.find(query)
         .sort({ created_at: -1 }) // Sort by created_at in descending order
         .limit(5) // Fetch only the last 5 signals
         .lean();
-  
+
       const protocol = req.protocol;
       const baseUrl = `${protocol}://${req.headers.host}`;
-  
+
       // Enhance the signals with additional info
       const signalsWithReportUrls = await Promise.all(
         signals.map(async (signal) => {
@@ -6182,7 +6182,7 @@ class List {
             clientid: client_id,
             signalid: signal._id
           }).lean();
-  
+
           return {
             ...signal,
             report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null, // Full report URL
@@ -6191,7 +6191,7 @@ class List {
           };
         })
       );
-  
+
       return res.json({
         status: true,
         message: "Last 5 signals retrieved successfully",
@@ -6214,61 +6214,61 @@ class List {
         closeprice: { $ne: 0 },
         service: new mongoose.Types.ObjectId(id),
       };
-  
+
       // Agar callduration available ho, to usko filter me add karein
       if (callDurationValue !== null) {
         query.callduration = callDurationValue;
       }
-  
+
       // Signals fetch karein
       const signals = await Signal_Modal.find(query);
       const count = signals.length;
-  
+
       if (count === 0) {
         return res.status(404).json({
           status: false,
           message: "No signals found",
         });
       }
-  
+
       let totalProfit = 0;
       let totalLoss = 0;
       let profitCount = 0;
       let lossCount = 0;
       let avgreturnpermonth = 0;
-  
+
       const [firstSignal, lastSignal] = await Promise.all([
         Signal_Modal.findOne(query).sort({ created_at: 1 }),
         Signal_Modal.findOne(query).sort({ created_at: -1 }),
       ]);
-  
+
       if (!firstSignal || !lastSignal) {
         return res.status(404).json({
           status: false,
           message: "No signals found",
         });
       }
-  
+
       const firstCreatedAt = firstSignal.created_at;
       const lastCreatedAt = lastSignal.created_at;
-  
+
       const startYear = firstCreatedAt.getFullYear();
       const startMonth = firstCreatedAt.getMonth();
       const endYear = lastCreatedAt.getFullYear();
       const endMonth = lastCreatedAt.getMonth();
-  
+
       const yearDifference = endYear - startYear;
       const monthDifference = endMonth - startMonth;
       const monthsBetween = yearDifference * 12 + monthDifference;
-  
+
       signals.forEach((signal) => {
         const entryPrice = parseFloat(signal.price);
         const exitPrice = parseFloat(signal.closeprice);
         const callType = signal.calltype;
-  
+
         if (!isNaN(entryPrice) && !isNaN(exitPrice)) {
           let profitOrLoss = callType === "BUY" ? exitPrice - entryPrice : entryPrice - exitPrice;
-  
+
           if (profitOrLoss >= 0) {
             totalProfit += ["66dfede64a88602fbbca9b72", "66dfeef84a88602fbbca9b79"].includes(id)
               ? profitOrLoss * signal.lotsize
@@ -6282,11 +6282,11 @@ class List {
           }
         }
       });
-  
+
       const accuracy = (profitCount / count) * 100;
       const avgreturnpertrade = (totalProfit - totalLoss) / count;
       avgreturnpermonth = monthsBetween > 0 ? (totalProfit - totalLoss) / monthsBetween : totalProfit - totalLoss;
-  
+
       return res.json({
         status: true,
         message: "Past performance data fetched successfully",
@@ -6310,28 +6310,28 @@ class List {
       });
     }
   }
-  
+
 
   async CloseSignalwithtype(req, res) {
     try {
       const { service_id, search, page = 1, callduration } = req.body;
-  
+
       const limit = 15;
       const skip = (parseInt(page) - 1) * parseInt(limit);
       const limitValue = parseInt(limit);
-  
+
       // Base query
       const query = {
         service: service_id,
         close_status: true,
         closeprice: { $ne: 0 }
       };
-  
+
       // Agar callduration exist karta hai to query me add karein
       if (callduration) {
         query.callduration = callduration;
       }
-  
+
       // Agar search filter exist karta hai to query me add karein
       if (search && search.trim() !== '') {
         query.$or = [
@@ -6341,24 +6341,24 @@ class List {
           { closeprice: { $regex: search, $options: 'i' } }
         ];
       }
-  
+
       // Fetch signals and sort by createdAt in descending order
       const signals = await Signal_Modal.find(query)
         .sort({ created_at: -1 })
         .skip(skip)
         .limit(limitValue)
         .lean();
-  
+
       const protocol = req.protocol; // 'http' or 'https'
       const baseUrl = `${protocol}://${req.headers.host}`; // Base URL for constructing report path
-  
+
       const signalsWithReportUrls = signals.map(signal => ({
         ...signal,
         report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null
       }));
-  
+
       const totalSignals = await Signal_Modal.countDocuments(query);
-  
+
       return res.json({
         status: true,
         message: "Signals retrieved successfully",
@@ -6375,33 +6375,33 @@ class List {
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
-  
+
   async updatePerformanceStatus(req, res) {
     try {
-        const { client_id, performance_status } = req.body;
-        // Validate required fields
-        if (!client_id ) {
-            return res.status(400).json({ message: "Client ID are required." });
-        }
+      const { client_id, performance_status } = req.body;
+      // Validate required fields
+      if (!client_id) {
+        return res.status(400).json({ message: "Client ID are required." });
+      }
 
-        // Find client by ID
-        const client = await Clients_Modal.findById(client_id);
-        if (!client) {
-            return res.status(404).json({ message: "Client not found." });
-        }
+      // Find client by ID
+      const client = await Clients_Modal.findById(client_id);
+      if (!client) {
+        return res.status(404).json({ message: "Client not found." });
+      }
 
-        // Update performance status (0 or 1)
-        client.performance_status = performance_status;
-        await client.save();
+      // Update performance status (0 or 1)
+      client.performance_status = performance_status;
+      await client.save();
 
-        return res.status(200).json({ message: "Performance status updated successfully.", data: client });
+      return res.status(200).json({ message: "Performance status updated successfully.", data: client });
 
     } catch (error) {
-        return res.status(500).json({ message: "Something went wrong.", error: error.message });
+      return res.status(500).json({ message: "Something went wrong.", error: error.message });
     }
-}
+  }
 
-  
+
 
 }
 
