@@ -4505,20 +4505,6 @@ class List {
       const limitValue = parseInt(limit); // Items per page
 
     
-      const subscriptions = await PlanSubscription_Modal.find({ client_id });
-      if (subscriptions.length === 0) {
-        return res.json({
-          status: false,
-          message: "No plan subscriptions found for the given service and client IDs",
-          data: []
-        });
-      }
-
-      const planIds = subscriptions.map(sub => sub.plan_category_id);
-      const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
-
-      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
-
       const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: service_id }).exec();
 
 
@@ -4541,6 +4527,23 @@ class List {
           }
         });
     }
+
+
+      const subscriptions = await PlanSubscription_Modal.find({ client_id });
+      if (subscriptions.length === 0) {
+        return res.json({
+          status: false,
+          message: "No plan subscriptions found for the given service and client IDs",
+          data: []
+        });
+      }
+
+      const planIds = subscriptions.map(sub => sub.plan_category_id);
+      const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
+
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+     
 
 
       const uniquePlanIds = [
