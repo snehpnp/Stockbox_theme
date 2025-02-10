@@ -67,7 +67,7 @@ export default function App() {
       <Route path="/basketstocklist" element={<BasketStockList />} />
       <Route path="/rebalanceHistory/:id" element={<RebalanceHistory />} />
       <Route path="/basket-response" element={<BasketResponse />} />
-      <Route path="/rebalancestock" element={<RebalanceStock />} />
+      <Route path="/rebalancestock/:id" element={<RebalanceStock />} />
       <Route path="/wallet" element={<Wallet />} />
 
       <Route path="/payment" element={<Payments />} />

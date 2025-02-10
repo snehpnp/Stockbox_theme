@@ -869,3 +869,41 @@ export async function getversionhistory(data, token) {
         return err;
     }
 }
+
+
+
+// get basket rebalance 
+
+export async function RebalanceBasket(data, token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}api/list/basketstockbalance/${data.id}/${data.clientid}`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+// get basket sell 
+
+// version api for history 
+
+export async function GetBasketSell(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/checkbasketsell`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
