@@ -6379,8 +6379,30 @@ class List {
     }
   }
   
+  async updatePerformanceStatus(req, res) {
+    try {
+        const { client_id, performance_status } = req.body;
+        // Validate required fields
+        if (!client_id ) {
+            return res.status(400).json({ message: "Client ID are required." });
+        }
 
+        // Find client by ID
+        const client = await Clients_Modal.findById(client_id);
+        if (!client) {
+            return res.status(404).json({ message: "Client not found." });
+        }
 
+        // Update performance status (0 or 1)
+        client.performance_status = performance_status;
+        await client.save();
+
+        return res.status(200).json({ message: "Performance status updated successfully.", data: client });
+
+    } catch (error) {
+        return res.status(500).json({ message: "Something went wrong.", error: error.message });
+    }
+}
 
   
 
