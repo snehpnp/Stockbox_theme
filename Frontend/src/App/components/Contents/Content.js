@@ -40,7 +40,7 @@ const Content = ({
                   <a className="bx bx-home-alt" onClick={handleHomeClick} style={{ fontSize: "20px", marginLeft: "3px", marginTop: "5px" }} />
                 </li>
                 <li style={{ width: "2px" }}>
-                  {/* <Tally1 style={{ width: "30px" }} /> */}
+
                   |
                 </li>
                 <li>
@@ -55,7 +55,7 @@ const Content = ({
             <div className="col-lg-6 col-sm-6  col-12">
               {backbutton_status && backbutton_title && (
                 <button
-                  onClick={handleBackClick} // Handle back button click
+                  onClick={handleBackClick}
                   className="btn btn-primary float-sm-end  ms-3  mt-3 mt-sm-0 "
 
 
@@ -97,7 +97,7 @@ const Content = ({
               )}
               {backForword && (
                 <button
-                  onClick={() => window.history.back()} // Handle back button click
+                  onClick={() => window.history.back()}
                   className="btn btn-primary float-sm-end ms-0 ms-sm-3 mt-3 mt-sm-0"
 
 
