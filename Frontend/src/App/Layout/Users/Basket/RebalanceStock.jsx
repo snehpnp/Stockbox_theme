@@ -146,6 +146,7 @@ const RebalanceStock = () => {
 
 
   const groupByVersion = (data) => {
+    console.log("data", data)
     return data.reduce((acc, item) => {
       if (!acc[item.version]) {
         acc[item.version] = [];
