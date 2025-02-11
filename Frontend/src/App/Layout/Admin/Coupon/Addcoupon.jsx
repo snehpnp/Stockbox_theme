@@ -322,7 +322,7 @@ const Addcoupon = () => {
             <DynamicForm
                 fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
                 formik={formik}
-                page_title="Add Coupon Code"
+                // page_title="Add Coupon Code"
                 btn_name="Add Coupon"
                 btn_name1="Cancel"
                 sumit_btn={true}

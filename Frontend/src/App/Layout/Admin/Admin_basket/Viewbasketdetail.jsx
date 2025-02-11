@@ -168,6 +168,14 @@ const fieldConfigurations = [
     star: true
   },
   {
+    name: "url",
+    label: "url",
+    type: "text",
+    label_size: 12,
+    col_size: 4,
+    disable: false,
+  },
+  {
     name: "description",
     label: "Description",
     type: "ckeditor",
@@ -279,6 +287,7 @@ const Viewbasketdetail = () => {
     type: "",
     image: "",
     short_description: "",
+    url:"",
     rationale: "",
     methodology: "",
   });
@@ -327,6 +336,7 @@ const Viewbasketdetail = () => {
           type: basketData?.type || "",
           image: basketData?.image || "",
           short_description: basketData?.short_description || "",
+          url: basketData?.url || "",
           rationale: basketData?.rationale || "",
           methodology: basketData?.methodology || "",
         });

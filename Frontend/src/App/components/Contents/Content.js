@@ -20,7 +20,7 @@ const Content = ({
 }) => {
   const navigate = useNavigate();
 
-  console.log("state1", state1)
+ 
 
   const handleHomeClick = () => {
     navigate("/");

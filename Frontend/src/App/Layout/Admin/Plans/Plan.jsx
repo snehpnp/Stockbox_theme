@@ -293,7 +293,7 @@ const Plan = () => {
                                                                                     <div className="col-md-3">
                                                                                         <b>Price</b>
                                                                                     </div>
-                                                                                    <div className="col-md-9">{client.price}</div>
+                                                                                    <div className="col-md-8">{client.price}</div>
                                                                                 </div>
                                                                             </li>
                                                                             <li>
@@ -301,7 +301,7 @@ const Plan = () => {
                                                                                     <div className="col-md-3">
                                                                                         <b>Validity</b>
                                                                                     </div>
-                                                                                    <div className="col-md-9">{client.validity}</div>
+                                                                                    <div className="col-md-8">{client.validity}</div>
                                                                                 </div>
                                                                             </li>
                                                                             <li>
@@ -309,7 +309,7 @@ const Plan = () => {
                                                                                     <div className="col-md-3">
                                                                                         <b>Created At</b>
                                                                                     </div>
-                                                                                    <div className="col-md-9">{fDateTime(client.created_at)}</div>
+                                                                                    <div className="col-md-8">{fDateTime(client.created_at)}</div>
                                                                                 </div>
                                                                             </li>
                                                                             <li>
@@ -317,15 +317,15 @@ const Plan = () => {
                                                                                     <div className="col-md-3">
                                                                                         <b>Updated At</b>
                                                                                     </div>
-                                                                                    <div className="col-md-9">{fDateTime(client.updated_at)}</div>
+                                                                                    <div className="col-md-8">{fDateTime(client.updated_at)}</div>
                                                                                 </div>
                                                                             </li>
                                                                             <li>
                                                                                 <div className="row justify-content-between">
                                                                                     <div className="col-md-3">
-                                                                                        <b>Description</b>
+                                                                                        <b>Description</b> 
                                                                                     </div>
-                                                                                    <div className="col-md-9">
+                                                                                    <div className="col-md-8">
                                                                                         <textarea className='form-control ' value={stripHtmlTags(client?.description || '')} >{client?.description}</textarea>
 
                                                                                     </div>

@@ -686,7 +686,7 @@ const Closesignal = () => {
                                 <b>Date: {fDateTimeH(client?.created_at)}</b>
                               </p>
                               <p className="mb-2">
-                                <b>Segment: {client?.segment == "C" ? "CASH" : client?.segment == "O" ? "OPTION" : "FUTURE"}, {client?.closeprice == 0 ? <span style={{ color: "red" }}> (Avoid)</span> : ""} </b>
+                                <b>Segment: {client?.segment == "C" ? "CASH" : client?.segment == "O" ? "OPTION" : "FUTURE"}, {client?.closeprice == 0 ? <span style={{ color: "red" }}> <Eye onClick={() => { setShowModal(true); setDescription(client?.close_description) }}></Eye></span> : ""} </b>
                               </p>
                             </div>
                             <div>

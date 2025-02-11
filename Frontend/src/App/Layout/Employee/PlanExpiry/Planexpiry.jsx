@@ -183,12 +183,12 @@ const Planexpiry = () => {
 
 
                         <div
-                            className="ms-sm-auto mt-2 mt-md-0"
+                            className="ms-2"
                             onClick={(e) => getexportfile()}
                         >
-                            <button
+                             <button
                                 type="button"
-                                className="btn btn-primary "
+                                className="btn btn-primary float-end"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 title="Export To Excel"

@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { Addbasketplan } from '../../../Services/Admin/Admin';
+import { Link } from 'react-router-dom';
 import Content from '../../../components/Contents/Content';
-
-
-
 const AddBasket = () => {
 
 
@@ -31,11 +29,11 @@ const AddBasket = () => {
     }
 
     if (values.full_price && values.full_price <= values.basket_price) {
-      errors.full_price = "Please Enter Greater Basket Price";
+      errors.full_price = "Please Enter Greater Discounted/Net Basket Price";
     }
 
     if (!values.basket_price) {
-      errors.basket_price = "Please Enter Basket Price";
+      errors.basket_price = "Please Enter Discounted/Net Basket Price";
     }
 
     // if (!values.accuracy) {
@@ -69,7 +67,6 @@ const AddBasket = () => {
     if (!values.description) {
       errors.description = "Please Enter Description";
     }
-
     if (!values.type) {
       errors.type = "Please Enter Type";
     }
@@ -106,6 +103,7 @@ const AddBasket = () => {
       type: values.type,
       image: values.image,
       short_description: values.short_description,
+      url:values.url,
       rationale: values.rationale,
       methodology: values.methodology
     };
@@ -163,6 +161,7 @@ const AddBasket = () => {
       type: "",
       image: "",
       short_description: "",
+      url:"",
       rationale: "",
       methodology: "",
     },
@@ -194,7 +193,7 @@ const AddBasket = () => {
     },
     {
       name: "full_price",
-      label: "Price",
+      label: "Actual Basket Price",
       type: "number",
       label_size: 12,
       col_size: 6,
@@ -204,13 +203,15 @@ const AddBasket = () => {
 
     {
       name: "basket_price",
-      label: "Basket Price",
+      label: "Discounted/Net Basket Price",
       type: "number",
       label_size: 12,
       col_size: 6,
       disable: false,
       star: true
+
     },
+
     {
       name: "mininvamount",
       label: "Minimun Investment Amount",
@@ -303,6 +304,14 @@ const AddBasket = () => {
       star: true
     },
     {
+      name: "url",
+      label: "url",
+      type: "text",
+      label_size: 12,
+      col_size: 6,
+      disable: false,
+    },
+    {
       name: "description",
       label: "Description",
       type: "ckeditor",
@@ -313,7 +322,7 @@ const AddBasket = () => {
     },
     {
       name: "rationale",
-      label: "Rational",
+      label: "Rationale",
       type: "ckeditor",
       label_size: 12,
       col_size: 12,
@@ -336,15 +345,16 @@ const AddBasket = () => {
 
   return (
     <Content
-        Page_title="Add Basket"
-        button_status={false}
-        backbutton_status={true}
-        backForword={true}
-      >
+      Page_title="Add Basket"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
+
       <DynamicForm
         fields={fields}
         formik={formik}
-        // page_title="Add Basket"
+       
         btn_name="Add Basket"
         btn_name1="Cancel"
         sumit_btn={true}
@@ -353,8 +363,8 @@ const AddBasket = () => {
         additional_field={<></>}
 
       />
-      </Content>
-  
+
+    </Content>
   );
 };
 

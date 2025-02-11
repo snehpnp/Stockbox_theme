@@ -4,7 +4,7 @@ import { getblogslist, Addblogsbyadmin, Updateblogsbyadmin, changeblogsstatus, D
 import Table from '../../../Extracomponents/Table';
 import { SquarePen, Trash2, PanelBottomOpen, Eye } from 'lucide-react';
 import Swal from 'sweetalert2';
-import { image_baseurl } from '../../../../Utils/config';
+import { image_baseurl } from '../../../../Utils/config'; 
 import { Tooltip } from 'antd';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import Loader from '../../../../Utils/Loader'

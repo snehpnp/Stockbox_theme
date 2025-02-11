@@ -690,6 +690,7 @@ export async function Addbasketplan(data, token) {
     formData.append('type', data.type);
     formData.append('add_by', data.add_by);
     formData.append('short_description', data.short_description);
+    formData.append('url', data.url);
     formData.append('image', data.image);
     formData.append('rationale', data.rationale);
     formData.append('methodology', data.methodology);
@@ -774,6 +775,7 @@ export async function Updatebasket(data, token) {
     formData.append('type', data.type);
     formData.append('id', data.id);
     formData.append('short_description', data.short_description);
+    formData.append('url', data.url);
     formData.append('image', data.image);
     formData.append('rationale', data.rationale);
     formData.append('methodology', data.methodology);

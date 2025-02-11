@@ -789,7 +789,7 @@ const Client = () => {
       <ReusableModal
         show={isModalVisible}
         onClose={() => handleCancel()}
-        title={<> Assign Package</>}
+        title={<> Assign Package</>} 
         size="xl"
         body={
           <>

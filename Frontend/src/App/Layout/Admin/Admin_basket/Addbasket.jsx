@@ -103,6 +103,7 @@ const AddBasket = () => {
       type: values.type,
       image: values.image,
       short_description: values.short_description,
+      url:values.url,
       rationale: values.rationale,
       methodology: values.methodology
     };
@@ -160,6 +161,7 @@ const AddBasket = () => {
       type: "",
       image: "",
       short_description: "",
+      url:"",
       rationale: "",
       methodology: "",
     },
@@ -300,6 +302,14 @@ const AddBasket = () => {
       col_size: 6,
       disable: false,
       star: true
+    },
+    {
+      name: "url",
+      label: "url",
+      type: "text",
+      label_size: 12,
+      col_size: 6,
+      disable: false,
     },
     {
       name: "description",

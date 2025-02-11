@@ -10,6 +10,8 @@ import styled from 'styled-components';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import Loader from '../../../../Utils/Loader'
 import ReusableModal from '../../../components/Models/ReusableModal';
+import Select from 'react-select'
+
 
 
 
@@ -30,7 +32,7 @@ const Category = () => {
     const [isLoading, setIsLoading] = useState(true)
 
     const [showAddModal, setShowAddModal] = useState(false);
-    
+
 
     const [updatetitle, setUpdatetitle] = useState({
         title: "",
@@ -442,149 +444,157 @@ const Category = () => {
                                     <i className="bx bx-search" />
                                 </span>
                             </div>
-                            {permission.includes("addcategory") ? 
-                            <div className="ms-sm-auto  ms-0 mt-2 mt-sm-0">
-                            <button
-                                type="button"
-                                className="btn btn-primary "
-                                onClick={() => setShowAddModal(true)}
-                            >
-                                <i className="bx bxs-plus-square" />
-                                Add Category
-                            </button>
+                            {permission.includes("addcategory") ?
+                                <div className="ms-sm-auto  ms-0 mt-2 mt-sm-0">
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary "
+                                        onClick={() => setShowAddModal(true)}
+                                    >
+                                        <i className="bx bxs-plus-square" />
+                                        Add Category
+                                    </button>
 
-                            <ReusableModal
-                                show={showAddModal}
-                                onClose={() => setShowAddModal(false)}
-                                title={<span>Add Category</span>}
-                                body={
-                                    <>
-                                        <div className="row">
-                                            <div className="col-md-12">
-                                                <label htmlFor="service">Segment</label>
-                                                <span className="text-danger">*</span>
-                                                {servicedata.length > 0 && (
-                                                    <DropdownMultiselect
-                                                        name="Service"
-                                                        options={servicedata.map((item) => ({
-                                                            key: item._id,
-                                                            label: item.title,
-                                                        }))}
-                                                        placeholder="Select Segment"
-                                                        handleOnChange={(selected) => {
-                                                            const selectedService = selected;
-                                                            setTitle({ ...title, service: selectedService });
-                                                        }}
-                                                    />
-                                                )}
-                                            </div>
-                                            <div className="col-md-12">
-                                                <label htmlFor="categoryTitle">Category</label>
-                                                <span className="text-danger">*</span>
-                                                <input
-                                                    id="categoryTitle"
-                                                    className="form-control mb-3"
-                                                    type="text"
-                                                    placeholder="Enter Category Title"
-                                                    value={title.title}
-                                                    onChange={(e) => setTitle({ ...title, title: e.target.value })}
-                                                />
-                                            </div>
-                                        </div>
-                                    </>
-                                }
-                                footer={
-                                    <>
-                                        <button
-                                            type="button"
-                                            className="btn btn-secondary"
-                                            onClick={() => setShowAddModal(false)}
-                                        >
-                                            Close
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="btn btn-primary"
-                                            onClick={addcategory}
-                                        >
-                                            Save
-                                        </button>
-                                    </>
-                                }
-                            />
+                                    <ReusableModal
+                                        show={showAddModal}
+                                        onClose={() => { setShowAddModal(false); setTitle("") }}
+                                        title={<span>Add Category</span>}
+                                        body={
+                                            <>
+                                                <div className="row">
+                                                    <div className="col-md-12 mb-3">
+                                                        <label htmlFor="service">Segment</label>
+                                                        <span className="text-danger">*</span>
 
-                            {model && (
-                                <ReusableModal
-                                    show={model}
-                                    onClose={() => setModel(false)}
-                                    title={<span>Update Category</span>}
-                                    body={
-                                        <form>
-                                            <div className="row">
-                                                <div className="col-md-12">
-                                                    <label htmlFor="category">Category</label>
-                                                    <span className="text-danger">*</span>
-                                                    <input
-                                                        className="form-control mb-2"
-                                                        type="text"
-                                                        placeholder="Enter Category Title"
-                                                        id="category"
-                                                        value={updatetitle.title}
-                                                        onChange={(e) => updateServiceTitle('title', e.target.value)}
-                                                        required
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col-md-12">
-                                                    <label htmlFor="service">Segment</label>
-                                                    <span className="text-danger">*</span>
-                                                    {servicedata.length > 0 && (
-                                                        <div className="form-group">
-                                                            {servicedata.map((item) => (
-                                                                <div key={item._id} className="form-check">
-                                                                    <input
-                                                                        className="form-check-input"
-                                                                        type="checkbox"
-                                                                        id={`service_${item._id}`}
-                                                                        value={item._id}
-                                                                        checked={updatetitle.service.includes(item._id)}
-                                                                        onChange={(e) => handleServiceChange(item._id, e.target.checked)}
-                                                                    />
-                                                                    <label className="form-check-label" htmlFor={`service_${item._id}`}>
-                                                                        {item.title}
-                                                                    </label>
-                                                                </div>
-                                                            ))}
+                                                        <div style={{ border: "2px solid #ccc", borderRadius: "10px" }}>
+
+                                                            {servicedata.length > 0 && (
+                                                                <Select
+                                                                    options={servicedata.map(({ _id, title }) => ({
+                                                                        value: _id,
+                                                                        label: title,
+                                                                    }))}
+                                                                    isMulti
+                                                                    placeholder="Select Segment"
+                                                                    onChange={(selected) =>
+                                                                        setTitle((prev) => ({
+                                                                            ...prev,
+                                                                            service: selected.map((item) => item.value),
+                                                                        }))
+                                                                    }
+                                                                />
+                                                            )}
                                                         </div>
-                                                    )}
+
+                                                    </div>
+                                                    <div className="col-md-12">
+                                                        <label htmlFor="categoryTitle">Category</label>
+                                                        <span className="text-danger">*</span>
+                                                        <input
+                                                            id="categoryTitle"
+                                                            className="form-control mb-3"
+                                                            type="text"
+                                                            placeholder="Enter Category Title"
+                                                            value={title.title}
+                                                            onChange={(e) => setTitle({ ...title, title: e.target.value })}
+                                                        />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </form>
-                                    }
-                                    footer={
-                                        <>
-                                            <button
-                                                type="button"
-                                                className="btn btn-secondary"
-                                                onClick={() => setModel(false)}
-                                            >
-                                                Close
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="btn btn-primary"
-                                                onClick={Updatecategory}
-                                                disabled={!updatetitle.title || !updatetitle.service}
-                                            >
-                                                Update Service
-                                            </button>
-                                        </>
-                                    }
-                                />
-                            )}
-                        </div>
-: ""}
+                                            </>
+                                        }
+                                        footer={
+                                            <>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-secondary"
+                                                    onClick={() => { setShowAddModal(false); setTitle("") }}
+                                                >
+                                                    Close
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-primary"
+                                                    onClick={addcategory}
+                                                >
+                                                    Save
+                                                </button>
+                                            </>
+                                        }
+                                    />
+
+
+                                    {model && (
+                                        <ReusableModal
+                                            show={model}
+                                            onClose={() => setModel(false)}
+                                            title={<span>Update Category</span>}
+                                            body={
+                                                <form>
+                                                    <div className="row">
+                                                        <div className="col-md-12">
+                                                            <label htmlFor="category">Category</label>
+                                                            <span className="text-danger">*</span>
+                                                            <input
+                                                                className="form-control mb-2"
+                                                                type="text"
+                                                                placeholder="Enter Category Title"
+                                                                id="category"
+                                                                value={updatetitle.title}
+                                                                onChange={(e) => updateServiceTitle('title', e.target.value)}
+                                                                required
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className="row">
+                                                        <div className="col-md-12">
+                                                            <label htmlFor="service">Segment</label>
+                                                            <span className="text-danger">*</span>
+                                                            {servicedata.length > 0 && (
+                                                                <div className="form-group">
+                                                                    {servicedata.map((item) => (
+                                                                        <div key={item._id} className="form-check">
+                                                                            <input
+                                                                                className="form-check-input"
+                                                                                type="checkbox"
+                                                                                id={`service_${item._id}`}
+                                                                                value={item._id}
+                                                                                checked={updatetitle.service.includes(item._id)}
+                                                                                onChange={(e) => handleServiceChange(item._id, e.target.checked)}
+                                                                            />
+                                                                            <label className="form-check-label" htmlFor={`service_${item._id}`}>
+                                                                                {item.title}
+                                                                            </label>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            }
+                                            footer={
+                                                <>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-secondary"
+                                                        onClick={() => setModel(false)}
+                                                    >
+                                                        Close
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-primary"
+                                                        onClick={Updatecategory}
+                                                        disabled={!updatetitle.title || !updatetitle.service}
+                                                    >
+                                                        Update Service
+                                                    </button>
+                                                </>
+                                            }
+                                        />
+                                    )}
+                                </div>
+                                : ""}
                         </div>
                         {isLoading ? (
                             <Loader />
@@ -604,7 +614,7 @@ const Category = () => {
                     </div>
                 </div>
             </div>
-            
+
         </div>
     );
 };

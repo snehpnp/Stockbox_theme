@@ -211,7 +211,7 @@ const Planexpiry = () => {
 
                             >
                                 <i className="bx bxs-download" aria-hidden="true"></i>
-                                Export-Excel
+                                Export-Excel 
                             </button>
                         </div>
 

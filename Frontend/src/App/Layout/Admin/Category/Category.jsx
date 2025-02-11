@@ -10,6 +10,8 @@ import styled from 'styled-components';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import Loader from '../../../../Utils/Loader'
 import ReusableModal from '../../../components/Models/ReusableModal';
+import Select from 'react-select'
+
 
 
 const Category = () => {
@@ -407,23 +409,30 @@ const Category = () => {
                                     body={
                                         <>
                                             <div className="row">
-                                                <div className="col-md-12">
+                                                <div className="col-md-12 mb-3">
                                                     <label htmlFor="service">Segment</label>
                                                     <span className="text-danger">*</span>
-                                                    {servicedata.length > 0 && (
-                                                        <DropdownMultiselect
-                                                            name="Service"
-                                                            options={servicedata.map((item) => ({
-                                                                key: item._id,
-                                                                label: item.title,
-                                                            }))}
-                                                            placeholder="Select Segment"
-                                                            handleOnChange={(selected) => {
-                                                                const selectedService = selected;
-                                                                setTitle({ ...title, service: selectedService });
-                                                            }}
-                                                        />
-                                                    )}
+
+                                                    <div style={{ border: "2px solid #ccc", borderRadius: "10px" }}>
+
+                                                        {servicedata.length > 0 && (
+                                                            <Select
+                                                                options={servicedata.map(({ _id, title }) => ({
+                                                                    value: _id,
+                                                                    label: title,
+                                                                }))}
+                                                                isMulti
+                                                                placeholder="Select Segment"
+                                                                 onChange={(selected) =>
+                                                                    setTitle((prev) => ({
+                                                                        ...prev,
+                                                                        service: selected.map((item) => item.value),
+                                                                    }))
+                                                                }
+                                                            />
+                                                        )}
+                                                    </div>
+
                                                 </div>
                                                 <div className="col-md-12">
                                                     <label htmlFor="categoryTitle">Category</label>

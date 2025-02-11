@@ -55,6 +55,7 @@ const Editbasket = () => {
         type: data?.type,
         image: data?.image,
         short_description: data?.short_description,
+        url: data?.url,
         rationale: data?.rationale,
         methodology: data?.methodology,
       });
@@ -105,9 +106,9 @@ const Editbasket = () => {
     if (!values.type) {
       errors.type = "Please Enter type";
     }
-    if (!values.image) {
-      errors.image = "Please Upload image";
-    }
+    // if (!values.image) {
+    //   errors.image = "Please Upload image";
+    // }
     if (!values.short_description) {
       errors.short_description = "Please Enter Short Description";
     }
@@ -138,6 +139,7 @@ const Editbasket = () => {
       type: values.type,
       image: values.image,
       short_description: values.short_description,
+      url: values.url,
       rationale: values.rationale,
       methodology: values.methodology
     };
@@ -196,6 +198,7 @@ const Editbasket = () => {
       type: "",
       image: "",
       short_description: "",
+      url: "",
       rationale: "",
       methodology: "",
     },
@@ -336,6 +339,14 @@ const Editbasket = () => {
       col_size: 6,
       disable: false,
       star: true
+    },
+    {
+      name: "url",
+      label: "url",
+      type: "text",
+      label_size: 12,
+      col_size: 6,
+      disable: false,
     },
     {
       name: "description",

@@ -7,7 +7,11 @@ import { Link } from 'react-router-dom';
 import { IndianRupee } from 'lucide-react';
 
 
+
 const PaymentRequest = () => {
+
+
+
     const token = localStorage.getItem('token');
     const [clients, setClients] = useState([]);
     const [searchInput, setSearchInput] = useState("");
@@ -36,8 +40,6 @@ const PaymentRequest = () => {
 
 
 
-
-
     const Updatestatus = async (id, status) => {
         try {
             const data = {
@@ -59,8 +61,11 @@ const PaymentRequest = () => {
                     icon: 'error',
                     title: 'Error',
                     text: response.message || 'Failed to update the request. Please try again.',
-                    timer: 2000
+                    timer: 3000
                 });
+                window.location.reload();
+
+
             }
         } catch (error) {
             Swal.fire({
@@ -69,7 +74,7 @@ const PaymentRequest = () => {
                 text: error.message || 'An unexpected error occurred. Please try again.',
                 timer: 2000
             });
-            console.log("Error:", error);
+
         }
     };
 
@@ -93,19 +98,47 @@ const PaymentRequest = () => {
             width: '80px',
         },
         {
-            name: 'Amount',
-            selector: row => row.amount,
+            name: 'User name',
+            selector: row => <div>{row?.client_details?.FullName}</div>,
             sortable: true,
+            width: '150px',
         },
         {
-            name: 'Created At',
+            name: 'Mobile no',
+            selector: row => <div>{row?.client_details?.PhoneNo}</div>,
+            sortable: true,
+            width: '150px',
+        },
+        {
+            name: 'Email Id',
+            selector: row => <div>{row?.client_details?.Email}</div>,
+            sortable: true,
+            width: '300px',
+
+        },
+        {
+            name: 'Available balance',
+            selector: row => <div> <IndianRupee />{row.amount}</div>,
+            sortable: true,
+            width: '220px',
+        },
+        {
+            name: 'Amount',
+            selector: row => <div> <IndianRupee />{row.amount}</div>,
+            sortable: true,
+            width: '130px',
+        },
+        {
+            name: 'Requested Date',
             selector: row => fDateTime(row.created_at),
             sortable: true,
+            width: '195px',
         },
         {
             name: 'Updated At',
             selector: row => fDateTime(row.updated_at),
             sortable: true,
+            width: '160px',
         },
         {
             name: 'Status',
@@ -133,12 +166,11 @@ const PaymentRequest = () => {
         columns.push({
             name: 'Action',
             selector: row => (
-                <div>
+                <div >
                     <select
-                        className="form-select"
+                        className='form-select' style={{ width: "120px", marginRight: "100px" }}
                         onChange={(event) => handleSelectChange(row._id, event)}
                         defaultValue={selectedValues[row._id] || "0"}
-
                     >
                         <option value="0">Pending</option>
                         <option value="2">Reject</option>
@@ -155,12 +187,40 @@ const PaymentRequest = () => {
 
 
     const handleSelectChange = async (rowId, event) => {
-        const newSelectedValues = {
-            ...selectedValues,
-            [rowId]: event.target.value,
+        const selectedValue = event.target.value;
+        const statusMap = {
+            0: 'Pending',
+            1: 'Complete',
+            2: 'Reject',
         };
-        setSelectedValues(newSelectedValues);
-        await Updatestatus(rowId, newSelectedValues[rowId]);
+
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: `Do you want to change the status to "${statusMap[selectedValue]}"?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, update it!',
+            cancelButtonText: 'No, cancel!',
+        });
+
+        if (result.isConfirmed) {
+            try {
+                await Updatestatus(rowId, selectedValue);
+                setSelectedValues((prevValues) => ({
+                    ...prevValues,
+                    [rowId]: selectedValue,
+                }));
+                // Swal.fire('Updated!', 'The status has been updated.', 'success');
+            } catch (error) {
+                Swal.fire('Error!', 'There was a problem updating the status.', 'error');
+            }
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            window.location.reload()
+
+
+        }
     };
 
 
@@ -199,7 +259,7 @@ const PaymentRequest = () => {
             <div className='page-content'>
 
                 <div className="page-breadcrumb  d-flex align-items-center mb-3">
-                    <div className="breadcrumb-title pe-3">Payment History</div>
+                    <div className="breadcrumb-title pe-3">Withdrawal Request</div>
                     <div className="ps-3">
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb mb-0 p-0">
@@ -212,9 +272,10 @@ const PaymentRequest = () => {
                         </nav>
                     </div>
                 </div>
+                <hr />
 
                 <div className='card'>
-                    <div className='card-body'>
+                    <div className=''>
 
 
 
@@ -225,23 +286,23 @@ const PaymentRequest = () => {
 
                         <div className="tab-content" id="myTabContent3">
                             <div className="tab-pane fade show active" id="NavPills">
-                                <div className="card-body pt-0">
+                                <div className="card-body pt-0"> 
                                     <div className="d-lg-flex align-items-center mb-4 gap-3">
-                                        <div className="position-relative">
+                                        {/* <div className="position-relative">
                                             <input
                                                 type="text"
                                                 className="form-control ps-5 radius-10"
-                                                placeholder="Search Order"
+                                                placeholder="Search Payment Request"
                                                 defaultValue=""
                                             />
                                             <span className="position-absolute top-50 product-show translate-middle-y">
                                                 <i className="bx bx-search" />
                                             </span>
-                                        </div>
+                                        </div> */}
 
                                     </div>
 
-                                    <ul className="nav nav-pills nav-pills1 mb-4 light justify-content-center" id="pills-tab" role="tablist">
+                                    <ul className="nav nav-pills border-bottom nav-pills1 mb-4 light justify-content-center" id="pills-tab" role="tablist">
                                         <li className="nav-item">
                                             <a
                                                 className={`nav-link navlink ${activeTab === 'Pending' ? 'active' : ''}`}

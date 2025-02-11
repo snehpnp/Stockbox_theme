@@ -25,12 +25,15 @@ import {
 } from "../../../Services/Admin/Admin";
 import { fDateTimeSuffix, fDateTimeH } from "../../../../Utils/Date_formate";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { exportToCSV } from "../../../../Utils/ExportData";
+import { exportToCSV, exportToCSV1 } from "../../../../Utils/ExportData";
 import Select from "react-select";
 import { Tooltip } from "antd";
 import { image_baseurl } from "../../../../Utils/config";
 import Loader from "../../../../Utils/Loader";
 import ReusableModal from "../../../components/Models/ReusableModal";
+
+
+
 
 const Closesignal = () => {
 
@@ -45,6 +48,8 @@ const Closesignal = () => {
     const [totalRows, setTotalRows] = useState(0);
     const [header, setheader] = useState("Close Signal");
     const [permission, setPermission] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [description, setDescription] = useState([])
 
     //state for loading
     const [isLoading, setIsLoading] = useState(true)
@@ -228,6 +233,61 @@ const Closesignal = () => {
     }
 
 
+    const getexportfile1 = async () => {
+        try {
+            const response = await GetSignallist(token);
+            if (response.status) {
+                if (response.data?.length > 0) {
+                    let filterdata = response.data.filter(
+                        (item) => item.close_status === true
+                    );
+                    const csvArr = filterdata.map((item) => {
+                        let profitAndLossPercentage = 0;
+                        if (item.calltype === "BUY") {
+                            profitAndLossPercentage = (
+                                ((item.closeprice - item.price) / item.price) *
+                                100
+                            ).toFixed(2);
+                        } else if (item.calltype === "SELL") {
+                            profitAndLossPercentage = (
+                                ((item.price - item.closeprice) / item.price) *
+                                100
+                            ).toFixed(2);
+                        }
+
+                        const entryType = `BUY POSITION CLOSED IN ${item.tradesymbol || ""} ${item.expirydate || ""
+                            } ${item.optiontype || ""} SL ${item.stoploss || ""}, ${(() => {
+                                const count = [item.tag1, item.tag2, item.tag3].filter(Boolean).length;
+                                return count === 1
+                                    ? "1st"
+                                    : count === 2
+                                        ? "2nd"
+                                        : count === 3
+                                            ? "3rd"
+                                            : "";
+                            })()
+                            } Target Achieved Exit Price ${item?.closeprice}`;
+
+                        return {
+                            CloseSignal: `${fDateTimeH(item?.created_at)}  Segment: ${item.segment === "C"
+                                ? "CASH"
+                                : item.segment === "O"
+                                    ? "OPTION"
+                                    : item.segment === "F"
+                                        ? "FUTURE"
+                                        : ""
+                                }   P/L: ${profitAndLossPercentage}%   Entry Type: ${entryType}`,
+                        }
+                    });
+                    exportToCSV1(csvArr, "Close Signal");
+                }
+            }
+        } catch (error) {
+            console.log("Error:", error);
+        }
+    };
+
+
 
 
     useEffect(() => {
@@ -241,6 +301,12 @@ const Closesignal = () => {
     useEffect(() => {
         getAllSignal();
     }, [filters, searchInput, searchstock, currentPage]);
+
+    useEffect(() => {
+        if (activeTab) {
+            setCurrentPage(1);
+        }
+    }, [activeTab]);
 
 
 
@@ -285,7 +351,7 @@ const Closesignal = () => {
                             ? "OPTION"
                             : "FUTURE";
                 return row.closeprice == 0
-                    ? <div>{segmentLabel}<span style={{ color: "red" }}> (Avoid)</span></div>
+                    ? <div>{segmentLabel}<span style={{ color: "red" }}> (Avoid)<Eye onClick={() => { setShowModal(true); setDescription(row?.close_description) }} /></span></div>
                     : segmentLabel;
             },
             sortable: true,
@@ -636,15 +702,27 @@ const Closesignal = () => {
                                         <i className="bx bx-search" />
                                     </span>
                                 </div>
-                                <div className="ms-0 ms-md-2 mt-2 mt-md-0" onClick={(e) => getexportfile()}>
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary float-sm-end"
-                                        title="Export To Excel"
-                                    >
-                                        <i className="bx bxs-download" aria-hidden="true"></i>
-                                        Export-Excel
-                                    </button>
+                                <div className="mt-2 mt-sm-0">
+                                    {activeTab === "table" ? (
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary float-sm-end"
+                                            title="Export To Excel"
+                                            onClick={getexportfile}
+                                        >
+                                            <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
+                                        </button>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary float-sm-end"
+                                            title="Export Card data"
+                                            onClick={getexportfile1}
+
+                                        >
+                                            <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
+                                        </button>
+                                    )}
                                 </div>
                             </div>
 
@@ -688,7 +766,7 @@ const Closesignal = () => {
                                         ))}
                                     </select>
                                 </div>
-                                <div className="col-md-3 d-flex align-items-center justify-content-between"> 
+                                <div className="col-md-3 d-flex">
                                     <div style={{ width: "80%" }}>
                                         <label>Select Stock</label>
                                         <Select
@@ -699,7 +777,7 @@ const Closesignal = () => {
                                                 ) || null
                                             }
                                             onChange={handleChange}
-                                            className=""
+                                            className="form-control radius-10"
                                             isClearable
                                             placeholder="Select Stock"
                                         />
@@ -710,8 +788,8 @@ const Closesignal = () => {
                                 </div>
                             </div>
 
-                            {/* Tab Content */}
-                            {activeTab === "table" && (
+
+                            {/* {activeTab === "table" && (
                                 isLoading ? (
                                     <Loader />
                                 ) : (
@@ -787,92 +865,166 @@ const Closesignal = () => {
                                         </div>
                                     ))}
                                 </div>
-                            )}
+                            )} */}
+
+                            {activeTab === "table" ?
+                                isLoading ? (
+                                    <Loader />
+                                ) : (
+
+                                    <Table
+                                        columns={columns}
+                                        data={clients}
+                                        totalRows={totalRows}
+                                        currentPage={currentPage}
+                                        onPageChange={handlePageChange}
+                                    />
+                                ) :
+
+                                (
+                                    <>
+                                        <div className="row">
+                                            {clients.map((client) => (
+                                                <div className="col-md-12 mb-3" key={client.id}>
+                                                    <div className="card card radius-10 mb-3 border">
+                                                        <div className="card-body ">
+                                                            <div className="d-flex justify-content-between">
+                                                                <div>
+                                                                    <p className="mb-1">
+                                                                        <b>Date: {fDateTimeH(client?.created_at)}</b>
+                                                                    </p>
+                                                                    <p className="mb-2">
+                                                                        <b>Segment: {client?.segment == "C" ? "CASH" : client?.segment == "O" ? "OPTION" : "FUTURE"}, {client?.closeprice == 0 ? <span style={{ color: "red" }}> (Avoid)<Eye onClick={() => { setShowModal(true); setDescription(client?.close_description) }} /></span> : ""} </b>
+                                                                    </p>
+                                                                </div>
+                                                                <div>
+                                                                    {(() => {
+                                                                        let totalPL = 0;
+                                                                        if (client.calltype === "BUY") {
+                                                                            totalPL = ((client.closeprice - client.price) * client.lotsize).toFixed(2);
+                                                                        } else if (client.calltype === "SELL") {
+                                                                            totalPL = ((client.price - client.closeprice) * client.lotsize).toFixed(2);
+                                                                        }
+
+                                                                        const style = {
+                                                                            color: totalPL < 0 ? "red" : "green",
+                                                                        };
+
+
+                                                                        const plPercentage = ((totalPL / (client.price * client.lotsize)) * 100).toFixed(2);
+                                                                        return (
+                                                                            <p className="mb-1">
+                                                                                <b>
+                                                                                    P/L :
+                                                                                    <span className={plPercentage < 0 ? "text-danger" : "text-success"}>
+                                                                                        {plPercentage}%
+                                                                                        <i className={plPercentage < 0 ? 'bx bx-down-arrow-alt' : 'bx bx-up-arrow-alt'}></i>
+                                                                                    </span>
+                                                                                </b>
+                                                                            </p>
+                                                                        );
+                                                                    })()}
+                                                                </div>
+
+                                                            </div>
+                                                            <p className='mb-1'> Entry Type {client?.calltype}  POSITION CLOSED IN {client?.stock}  {client?.expirydate && `${client.expirydate}`} {client?.optiontype && `${client.optiontype}`} {client?.stoploss && `SL ${client.stoploss}`}  {(() => {
+                                                                const count = [client?.tag1, client?.tag2, client?.tag3].filter(Boolean).length;
+                                                                if (count === 1) return "1st";
+                                                                if (count === 2) return "2nd";
+                                                                if (count === 3) return "3rd";
+                                                                return "";
+                                                            })()}   Target  Achived  Exit Price {client?.closeprice}
+
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {totalRows > 0 && (
+                                            <div className="d-flex justify-content-center mt-4">
+                                                <nav>
+                                                    <ul className="pagination">
+
+                                                        {(() => {
+                                                            const totalPages = Math.ceil(totalRows / 10);
+                                                            return (
+                                                                <>
+
+                                                                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                                        <button
+                                                                            className="page-link"
+                                                                            onClick={() => handlePageChange(currentPage - 1)}
+                                                                        >
+                                                                            Previous
+                                                                        </button>
+                                                                    </li>
+
+
+                                                                    {currentPage > 2 && (
+                                                                        <li className="page-item">
+                                                                            <button className="page-link" onClick={() => handlePageChange(1)}>1</button>
+                                                                        </li>
+                                                                    )}
+                                                                    {currentPage > 3 && (
+                                                                        <li className="page-item disabled">
+                                                                            <span className="page-link">...</span>
+                                                                        </li>
+                                                                    )}
+
+
+                                                                    {[...Array(totalPages).keys()]
+                                                                        .slice(Math.max(0, currentPage - 2), Math.min(totalPages, currentPage + 1))
+                                                                        .map(num => (
+                                                                            <li key={num} className={`page-item ${currentPage === num + 1 ? 'active' : ''}`}>
+                                                                                <button
+                                                                                    className="page-link"
+                                                                                    onClick={() => handlePageChange(num + 1)}
+                                                                                >
+                                                                                    {num + 1}
+                                                                                </button>
+                                                                            </li>
+                                                                        ))}
+
+
+                                                                    {currentPage < totalPages - 2 && (
+                                                                        <li className="page-item disabled">
+                                                                            <span className="page-link">...</span>
+                                                                        </li>
+                                                                    )}
+                                                                    {currentPage < totalPages - 1 && (
+                                                                        <li className="page-item">
+                                                                            <button className="page-link" onClick={() => handlePageChange(totalPages)}>{totalPages}</button>
+                                                                        </li>
+                                                                    )}
+
+
+
+                                                                    <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                                                        <button
+                                                                            className="page-link"
+                                                                            onClick={() => handlePageChange(currentPage + 1)}
+                                                                        >
+                                                                            Next
+                                                                        </button>
+                                                                    </li>
+                                                                </>
+                                                            );
+                                                        })()}
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                        )}
+
+                                    </>
+                                )}
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* {model1 && (
-                <>
-                    <div className="modal-backdrop fade show"></div>
-                    <div
-                        className="modal fade show"
-                        style={{ display: "block" }}
-                        tabIndex={-1}
-                        aria-labelledby="exampleModalLabel"
-                        aria-hidden="true"
-                    >
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title" id="exampleModalLabel">
-                                        Upload Report
-                                    </h5>
-                                    <button
-                                        type="button"
-                                        className="btn-close"
-                                        onClick={() => setModel1(false)}
-                                    />
-                                </div>
-                                <div className="modal-body">
-                                    <form>
-                                        <div className="row">
-                                            <div className="col-md-10">
-                                                <label htmlFor="imageUpload">Upload Report</label>
-                                                <span className="text-danger">*</span>
-                                                <input
-                                                    className="form-control mb-3"
-                                                    type="file"
-                                                    accept="application/pdf"
-                                                    id="imageUpload"
-                                                    onChange={(e) => {
-                                                        const file = e.target.files[0];
-                                                        if (file) {
-                                                            updateServiceTitle({ report: file });
-                                                        }
-                                                    }}
-                                                />
-                                            </div>
-                                            <div className="col-md-2"></div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-md-12">
-                                                <label htmlFor="description">Description</label>
-                                                <input
-                                                    className="form-control mb-2"
-                                                    type="text"
-                                                    placeholder="Enter Description"
-                                                    value={updatetitle.description}
-                                                    onChange={(e) =>
-                                                        updateServiceTitle({ description: e.target.value })
-                                                    }
-                                                />
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div className="modal-footer">
-                                    <button
-                                        type="button"
-                                        className="btn btn-secondary"
-                                        onClick={() => setModel1(false)}
-                                    >
-                                        Close
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary"
-                                        onClick={updateReportpdf}
-                                    >
-                                        Update File
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </>
-            )} */}
+
 
             <ReusableModal
                 show={model1}
@@ -931,6 +1083,13 @@ const Closesignal = () => {
                         </button>
                     </>
                 }
+            />
+
+            <ReusableModal
+                show={showModal}
+                onClose={() => setShowModal(false)}
+                title="Description"
+                body={<p>{description || "No description available."}</p>}
             />
         </div>
     );

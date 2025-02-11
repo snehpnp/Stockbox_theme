@@ -59,6 +59,7 @@ const Editbasket = () => {
         type: data?.type,
         image: data?.image,
         short_description: data?.short_description,
+        url: data?.url,
         rationale: data?.rationale,
         methodology: data?.methodology,
       });
@@ -67,10 +68,10 @@ const Editbasket = () => {
 
 
   const validate = (values) => {
-    // console.log("values",values);
+    console.log("values",values);
 
     let errors = {};
-
+    
     if (!values.title) {
       errors.title = "Please Enter Title";
     }
@@ -109,9 +110,9 @@ const Editbasket = () => {
     if (!values.type) {
       errors.type = "Please Enter type";
     }
-    if (!values.image) {
-      errors.image = "Please Upload image";
-    }
+    // if (!values.image) {
+    //   errors.image = "Please Upload image";
+    // }
     if (!values.short_description) {
       errors.short_description = "Please Enter Short Description";
     }
@@ -122,11 +123,12 @@ const Editbasket = () => {
       errors.methodology = "Please Enter Methodology";
     }
 
-
+       
     return errors;
   };
 
   const onSubmit = async (values) => {
+   
     setLoading(!loading)
     const req = {
       title: values.title,
@@ -143,6 +145,7 @@ const Editbasket = () => {
       type: values.type,
       image: values.image,
       short_description: values.short_description,
+      url:values.url,
       rationale: values.rationale,
       methodology: values.methodology
     };
@@ -203,6 +206,7 @@ const Editbasket = () => {
       type: "",
       image: "",
       short_description: "",
+      url:"",
       rationale: "",
       methodology: "",
     },
@@ -334,6 +338,7 @@ const Editbasket = () => {
       disable: false,
       star: true
     },
+
     {
       name: "image",
       label: "Upload Image",
@@ -346,6 +351,14 @@ const Editbasket = () => {
       imageHeight: "auto",
       src: `${image_baseurl}/uploads/basket/${data.image}`,
       star: true
+    },
+    {
+      name: "url",
+      label: "url",
+      type: "text",
+      label_size: 12,
+      col_size: 6,
+      disable: false,
     },
     {
       name: "description",

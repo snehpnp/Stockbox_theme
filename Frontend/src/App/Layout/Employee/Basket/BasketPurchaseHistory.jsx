@@ -9,6 +9,7 @@ import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import { exportToCSV } from '../../../../Utils/ExportCSV';
+import Content from '../../../components/Contents/Content'; 
 
 
 
@@ -149,35 +150,14 @@ const BasketPurchaseHistory = () => {
 
 
   return (
-    <div>
-      <div className="page-content">
 
-        <div className="row">
-          <div className="col-md-6">
-            <div className="page-breadcrumb  d-flex align-items-center mb-3">
-              <div className="breadcrumb-title pe-3">Basket History</div>
-              <div className="ps-3">
-                <nav aria-label="breadcrumb">
-                  <ol className="breadcrumb mb-0 p-0">
-                    <li className="breadcrumb-item">
-                      <Link to="/employee/dashboard">
-                        <i className="bx bx-home-alt" />
-                      </Link>
-                    </li>
-                  </ol>
-                </nav>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-6 d-flex justify-content-end">
-            <Link to="/employee/basket/basketstockpublish">
-              <Tooltip title="Back">
-                <i className="lni lni-arrow-left-circle" style={{ fontSize: "2rem", color: "#000" }} />
-              </Tooltip>
-            </Link>
-          </div>
-        </div>
-        
+    <Content
+      Page_title="Basket History"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
+      <div>
         <div className="card">
           <div className="card-body">
             <div className="d-lg-flex align-items-center mb-4 gap-3 justify-content-between">
@@ -196,28 +176,6 @@ const BasketPurchaseHistory = () => {
 
               </div>
 
-
-              {/* <div>
-
-                                <div
-                                    className="ms-2"
-                                    onClick={(e) => getexportfile()}
-                                >
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary float-end"
-                                        data-toggle="tooltip"
-                                        data-placement="top"
-                                        title="Export To Excel"
-                                        delay={{ show: "0", hide: "100" }}
-
-                                    >
-                                        <i className="bx bxs-download" aria-hidden="true"></i>
-
-                                        Export-Excel
-                                    </button>
-                                </div>
-                            </div> */}
             </div>
             <div className='row mb-2'>
               <div className="col-md-3">
@@ -257,10 +215,9 @@ const BasketPurchaseHistory = () => {
           </div>
         </div>
       </div>
-
-
-    </div>
+    </Content>
   );
 };
+
 
 export default BasketPurchaseHistory;

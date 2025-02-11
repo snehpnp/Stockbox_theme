@@ -297,7 +297,7 @@ const Perform = () => {
                                         <i className="bx bx-home-alt" />
                                     </Link>
                                 </li>
-                            </ol>
+                            </ol> 
                         </nav>
                     </div>
                 </div>

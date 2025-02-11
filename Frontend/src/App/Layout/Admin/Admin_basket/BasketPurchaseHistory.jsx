@@ -9,7 +9,7 @@ import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import { exportToCSV } from '../../../../Utils/ExportCSV';
-import Content from '../../../components/Contents/Content';
+import Content from '../../../components/Contents/Content'; 
 
 
 

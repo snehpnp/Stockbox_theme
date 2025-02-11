@@ -286,7 +286,7 @@ const PaymentRequest = () => {
 
                         <div className="tab-content" id="myTabContent3">
                             <div className="tab-pane fade show active" id="NavPills">
-                                <div className="card-body pt-0">
+                                <div className="card-body pt-0"> 
                                     <div className="d-lg-flex align-items-center mb-4 gap-3">
                                         {/* <div className="position-relative">
                                             <input
