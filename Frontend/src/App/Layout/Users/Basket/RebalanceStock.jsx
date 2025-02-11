@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Content from "../../../components/Contents/Content";
 import { RebalanceBasket, GetBasketSell, getversionhistory, ExitPlaceOrderData, GetUserData, AddStockplaceorder } from '../../../Services/UserService/User';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import Loader from '../../../../Utils/Loader';
 import { IndianRupee } from "lucide-react";
 import Swal from "sweetalert2";
@@ -13,7 +13,13 @@ const RebalanceStock = () => {
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
+
+  const location = useLocation();
+  const item = location?.state?.data;
+  console.log("item", item)
+
   const { id } = useParams();
+
   const [isLoading, setIsLoading] = useState(true);
   const [baskets, setBaskets] = useState([]);
   const [userDetail, setUserDetail] = useState();
@@ -22,6 +28,8 @@ const RebalanceStock = () => {
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
   const [data, setData] = useState({});
+
+
 
 
   const handleCloseModal = () => setShowModal(false);
@@ -37,7 +45,6 @@ const RebalanceStock = () => {
 
 
 
-
   const getbasketRebalance = async () => {
     try {
       const data = { id: id, clientid: userid };
@@ -45,13 +52,15 @@ const RebalanceStock = () => {
       if (response.status) {
         const groupedData = groupByVersion(response.data);
         setBaskets(groupedData);
-
       }
     } catch (error) {
       console.log("error", error);
     }
     setIsLoading(false);
   };
+
+
+  console.log("data", data)
 
 
   const getuserdetail = async () => {
@@ -143,10 +152,7 @@ const RebalanceStock = () => {
 
 
 
-
-
   const groupByVersion = (data) => {
-    console.log("data", data)
     return data.reduce((acc, item) => {
       if (!acc[item.version]) {
         acc[item.version] = [];
@@ -154,6 +160,7 @@ const RebalanceStock = () => {
       acc[item.version].push(item);
       return acc;
     }, {});
+
   };
 
 
@@ -175,7 +182,7 @@ const RebalanceStock = () => {
             <div className="card-body">
               <div className='float-end mb-3'>
                 <button className='btn btn-primary'>View</button>
-                <button className='btn btn-success ms-2' onClick={() => { setShowModal(true); setData(version) }}>{version == 1 ? "Sell" : "Buy"}</button>
+                <button className='btn btn-success ms-2' onClick={() => { setShowModal(true); setData(baskets[version]) }}>{version == 1 ? "Sell" : "Buy"}</button>
               </div>
               <div className="table-responsive">
                 <table className="table mb-0">
@@ -228,9 +235,9 @@ const RebalanceStock = () => {
             >
               Confirm
             </button>
-            <p className="fs-14 mb-0 mt-1">
+            {/* <p className="fs-14 mb-0 mt-1">
               Minimum Investment Amount: <strong>₹ {baskets?.mininvamount}</strong>
-            </p>
+            </p> */}
           </div>
         }
         footer={

@@ -148,7 +148,8 @@ const BasketStockList = () => {
         button_title={"Rebalance History"}
         button_title1={"Rebalance"}
         route={`/user/rebalancehistory/${item._id}`}
-        route1={`/user/rebalancestock/${item._id}`}
+        route1={`/user/rebalancestock/${item?._id}`}
+        state1={{ data: item }}
         backbutton_status={false}
         backbutton_title="Back"
         backForword={true}

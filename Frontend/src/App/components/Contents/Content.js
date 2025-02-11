@@ -14,10 +14,13 @@ const Content = ({
   backbutton_status,
   route,
   route1,
-  permissions, // Add a permissions prop
+  state1,
+  permissions,
   ...rest
 }) => {
   const navigate = useNavigate();
+
+  console.log("state1", state1)
 
   const handleHomeClick = () => {
     navigate("/");
@@ -85,6 +88,7 @@ const Content = ({
               {button_status1 && (
                 <Link
                   to={route1}
+                  state={state1}
                   className="btn btn-primary  float-sm-end  float-start mt-3 mt-sm-0"
                   style={{ padding: "10px !important" }}
                 >
