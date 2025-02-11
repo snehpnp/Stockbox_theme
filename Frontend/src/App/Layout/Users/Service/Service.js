@@ -141,6 +141,9 @@ const Service = () => {
     setIsLoading(false);
   };
 
+
+
+
   const AddSubscribeplan = async (item) => {
     try {
       if (!window.Razorpay) {
@@ -184,10 +187,17 @@ const Service = () => {
     }
   };
 
+
+
+
   const handleShowModal = (item) => {
     setSelectedPlanDetails(item);
     setShowModal(true);
   };
+
+
+
+
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -195,13 +205,16 @@ const Service = () => {
     setDiscountedPrice(0);
   };
 
+
+
+
   const getFilteredPlans = useMemo(() => {
     let filteredPlans =
       selectedPlan === "all"
         ? plan
         : plan.filter((item) => item?._id === selectedPlan);
 
-    if (sortCriteria ) {
+    if (sortCriteria) {
       filteredPlans = filteredPlans.filter((item) =>
         item.services.some((data) => data.title === sortCriteria)
       );
@@ -210,10 +223,16 @@ const Service = () => {
     return filteredPlans;
   }, [plan, selectedPlan, sortCriteria]);
 
+
+
+
   const stripHtmlTags = (input) => {
     if (!input) return "";
     return input.replace(/<\/?[^>]+(>|$)/g, "");
   };
+
+
+  
 
   return (
     <Content Page_title="Service" button_title="Back" button_status={false}>
@@ -276,16 +295,16 @@ const Service = () => {
                             <div className="text-left">
                               <span className="price-original">
                                 {Array?.isArray(item?.services) &&
-                                item.services.length > 0
+                                  item.services.length > 0
                                   ? item?.services
-                                      ?.map((service) =>
-                                        typeof service.title === "string"
-                                          ? service.title
-                                              .split(/(?=[A-Z])/)
-                                              .join(" + ")
-                                          : "N/A"
-                                      )
-                                      .join(" + ")
+                                    ?.map((service) =>
+                                      typeof service.title === "string"
+                                        ? service.title
+                                          .split(/(?=[A-Z])/)
+                                          .join(" + ")
+                                        : "N/A"
+                                    )
+                                    .join(" + ")
                                   : "N/A"}
                               </span>
                               <h5 className="mb-0">{item?.title}</h5>

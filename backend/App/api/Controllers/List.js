@@ -421,7 +421,6 @@ class List {
       });
 
     } catch (error) {
-      console.log(error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -2087,9 +2086,9 @@ class List {
 
       // Update each basket's image path
       baskets.forEach(basket => {
-          if (basket.image) {
-              basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
-          }
+        if (basket.image) {
+          basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
+        }
       });
 
 
@@ -2292,9 +2291,9 @@ class List {
       const baseUrl = `${protocol}://${req.headers.host}`;
 
       result.forEach(basket => {
-          if (basket.image) {
-              basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
-          }
+        if (basket.image) {
+          basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
+        }
       });
 
       res.status(200).json({
@@ -4529,11 +4528,11 @@ class List {
 
       if (!existingPlan) {
         // Fetch last 5 signal IDs for the given service_id
-        const lastFiveSignals = await Signal_Modal.find({ service: service_id,close_status: false })
-            .sort({ created_at: -1 })
-            .limit(5)
-            .lean();
-        
+        const lastFiveSignals = await Signal_Modal.find({ service: service_id, close_status: false })
+          .sort({ created_at: -1 })
+          .limit(5)
+          .lean();
+
         return res.json({
           status: true,
           message: "Returning last 5 signals due to no existing plan",
@@ -5502,7 +5501,7 @@ class List {
           },
         },
       ]);
-  
+
 
 
       const protocol = req.protocol; // 'http' or 'https'
@@ -5510,9 +5509,9 @@ class List {
 
       // Update each basket's image path
       result.forEach(basket => {
-          if (basket.image) {
-              basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
-          }
+        if (basket.image) {
+          basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
+        }
       });
 
 

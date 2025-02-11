@@ -235,9 +235,9 @@ const RebalanceStock = () => {
             >
               Confirm
             </button>
-            {/* <p className="fs-14 mb-0 mt-1">
-              Minimum Investment Amount: <strong>₹ {baskets?.mininvamount}</strong>
-            </p> */}
+            <p className="fs-14 mb-0 mt-1">
+              Minimum Investment Amount: <strong>₹ {item?.mininvamount}</strong>
+            </p>
           </div>
         }
         footer={
