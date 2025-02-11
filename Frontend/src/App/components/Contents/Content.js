@@ -60,7 +60,6 @@ const Content = ({
                   onClick={handleBackClick}
                   className="btn btn-primary float-sm-end  ms-3  mt-3 mt-sm-0 "
 
-
                 >
                   <i
                     className={`fa-solid ${backbutton_title === "Back"

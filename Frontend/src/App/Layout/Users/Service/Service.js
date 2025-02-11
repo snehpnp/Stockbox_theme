@@ -94,12 +94,16 @@ const Service = () => {
     }
   };
 
+
+
   const removeCoupon = () => {
     setManualCoupon("");
     setAppliedCoupon(null);
     setDiscountedPrice(selectedPlanDetails?.plans[0]?.price || "N/A");
     setAppliedCoupon(null);
   };
+
+
 
   const handleSelectChange = (event) => {
     setSelectedPlan(event.target.value);
@@ -232,7 +236,7 @@ const Service = () => {
   };
 
 
-  
+
 
   return (
     <Content Page_title="Service" button_title="Back" button_status={false}>

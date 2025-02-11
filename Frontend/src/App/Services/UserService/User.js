@@ -907,3 +907,20 @@ export async function GetBasketSell(data, token) {
         return err;
     }
 }
+
+
+//  exit basket stock 
+
+export async function ExitPlaceorderstockbasket(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/exitplaceorder`, data, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}

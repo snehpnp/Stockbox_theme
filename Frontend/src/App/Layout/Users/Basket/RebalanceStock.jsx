@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Content from "../../../components/Contents/Content";
-import { RebalanceBasket, GetBasketSell, getversionhistory, ExitPlaceOrderData, GetUserData, AddStockplaceorder } from '../../../Services/UserService/User';
+import { RebalanceBasket, GetBasketSell, getversionhistory, ExitPlaceorderstockbasket, GetUserData, AddStockplaceorder } from '../../../Services/UserService/User';
 import { useLocation, useParams } from 'react-router-dom';
 import Loader from '../../../../Utils/Loader';
 import { IndianRupee } from "lucide-react";
@@ -16,23 +16,22 @@ const RebalanceStock = () => {
 
   const location = useLocation();
   const item = location?.state?.data;
-  console.log("item", item)
+
 
   const { id } = useParams();
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoading1, setIsLoading1] = useState(true);
   const [baskets, setBaskets] = useState([]);
   const [userDetail, setUserDetail] = useState();
   const [showModal, setShowModal] = useState(false);
+  const [showModal1, setShowModal1] = useState(false);
   const [inputdata, setInputdata] = useState({});
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
   const [data, setData] = useState({});
+  const [viewdata, setViewdata] = useState([]);
 
-
-
-
-  const handleCloseModal = () => setShowModal(false);
 
 
 
@@ -60,7 +59,6 @@ const RebalanceStock = () => {
   };
 
 
-  console.log("data", data)
 
 
   const getuserdetail = async () => {
@@ -89,17 +87,24 @@ const RebalanceStock = () => {
   };
 
 
-  const GetbasketVersionhistory = async () => {
+
+
+
+
+  const GetbasketVersionhistory = async (basketData) => {
     try {
-      const data = { basket_id: id, clientid: userid, brokerid: userDetail, version: "" };
+      const data = { basket_id: id, clientid: userid, brokerid: userDetail, version: basketData[0]?.version };
       const response = await getversionhistory(data, token);
       if (response.status) {
-        console.log("response1", response.data)
+        setViewdata(response.data)
       }
     } catch (error) {
       console.log("error", error);
     }
+    setIsLoading1(false)
   };
+
+
 
 
 
@@ -152,6 +157,45 @@ const RebalanceStock = () => {
 
 
 
+
+  const SellExistOrder = async (basketData) => {
+    try {
+      const data = {
+        basket_id: id,
+        clientid: userid,
+        brokerid: userDetail,
+        version: basketData[0]?.version || "",
+        ids: "",
+      };
+      const response = await ExitPlaceorderstockbasket(data, token);
+      if (response.status) {
+        Swal.fire({
+          icon: "success",
+          title: response.message || "Order Placed Successfully!",
+          text: "Your order has been placed successfully.",
+          confirmButtonText: "OK",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: response.message || "Order Failed",
+          text: "Failed to place the order. Please try again.",
+          confirmButtonText: "Retry",
+        });
+      }
+    } catch (error) {
+      console.error("API Error:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An error occurred while placing the order. Please check your network or try again later.",
+        confirmButtonText: "Retry",
+      });
+    }
+  };
+
+
+
   const groupByVersion = (data) => {
     return data.reduce((acc, item) => {
       if (!acc[item.version]) {
@@ -181,8 +225,25 @@ const RebalanceStock = () => {
           <div className="card mt-4" key={version}>
             <div className="card-body">
               <div className='float-end mb-3'>
-                <button className='btn btn-primary'>View</button>
-                <button className='btn btn-success ms-2' onClick={() => { setShowModal(true); setData(baskets[version]) }}>{version == 1 ? "Sell" : "Buy"}</button>
+                <button className='btn btn-primary' onClick={() => {
+                  GetbasketVersionhistory(baskets[version]);
+                  setShowModal1(true)
+                }}>View</button>
+                <button
+                  className={`btn ms-2 ${version == 1 ? "btn-danger" : "btn-success"}`}
+                  onClick={() => {
+                    if (version == 1) {
+                      SellExistOrder(baskets[version]);
+                    } else {
+                      setShowModal(true);
+                      setData(baskets[version]);
+                    }
+                  }}
+
+                >
+                  {version == 1 ? "Sell" : "Buy"}
+                </button>
+
               </div>
               <div className="table-responsive">
                 <table className="table mb-0">
@@ -213,7 +274,7 @@ const RebalanceStock = () => {
 
       <ReusableModal
         show={showModal}
-        onClose={handleCloseModal}
+        onClose={() => { setShowModal(false) }}
         title={<>Investment Amount</>}
         body={
           <div>
@@ -249,12 +310,43 @@ const RebalanceStock = () => {
             >
               {isPlacingOrder ? "Placing Order..." : "Place Order"}
             </button>
-            <button className="btn btn-secondary" onClick={handleCloseModal}>
+            <button className="btn btn-secondary" onClick={() => { setShowModal(false) }}>
               Cancel
             </button>
           </>
         }
       />
+
+
+
+      <ReusableModal
+        show={showModal1}
+        onClose={() => { setShowModal1(false) }}
+        title={<>Stock Detail</>}
+        body={
+          <div className="table-responsive">
+            <table className="table mb-0">
+              <thead className="table-primary">
+                <tr>
+                  <th>Name</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {isLoading1 ? <Loader /> : viewdata?.map((stock) => (
+                  <tr key={stock._id}>
+                    <td>{stock.tradesymbol}</td>
+                    <td> <IndianRupee /> {stock.price}</td>
+                    <td>{stock.quantity}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        }
+      />
+
 
     </Content>
   );
