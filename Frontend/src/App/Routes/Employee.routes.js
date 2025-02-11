@@ -117,7 +117,6 @@ export default function Employee() {
             {permission.includes("addstock") ? <Route path="/addstock/:id" element={<AddStock />} /> : ""}
             {permission.includes("editstock") ? <Route path="/editstock/:id" element={<EditStock />} /> : ""}
 
-
             {permission.includes("viewblogs") ? <Route path="/blogs" element={<Blogs />} /> : ""}
             {permission.includes("addblogs") ? <Route path="/addblogs" element={<Addblogs />} /> : ""}
             {permission.includes("editblogs") ? <Route path="/updatebolgs" element={<Updateblogs />} /> : ""}
