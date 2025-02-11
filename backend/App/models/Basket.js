@@ -108,6 +108,11 @@ const BasketSchema = new Schema({
         trim: true,
         default: null
     },
+    url: {
+        type: String,
+        trim: true,
+        default: null
+    },
     del: {
         type: Boolean,
         default: false // Indicates whether the Basket is marked as deleted

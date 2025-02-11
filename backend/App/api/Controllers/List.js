@@ -2082,6 +2082,17 @@ class List {
 
       const baskets = await Basket_Modal.find({ del: false, status: true });
 
+      const protocol = req.protocol; // 'http' or 'https'
+      const baseUrl = `${protocol}://${req.headers.host}`;
+
+      // Update each basket's image path
+      baskets.forEach(basket => {
+          if (basket.image) {
+              basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
+          }
+      });
+
+
       return res.json({
         status: true,
         message: "Baskets fetched successfully",
@@ -2275,6 +2286,16 @@ class List {
       ]);
 
 
+
+
+      const protocol = req.protocol; // 'http' or 'https'
+      const baseUrl = `${protocol}://${req.headers.host}`;
+
+      result.forEach(basket => {
+          if (basket.image) {
+              basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
+          }
+      });
 
       res.status(200).json({
         status: true,
@@ -2770,7 +2791,7 @@ class List {
     try {
 
       const { clientId } = req.params;
-      const baskets = await Basket_Modal.find({ del: false, status: "active" });
+      const baskets = await Basket_Modal.find({ del: false, status: true });
 
       // Process each basket to restructure the data
       const processedBaskets = await Promise.all(baskets.map(async (basket) => {
@@ -3743,7 +3764,7 @@ class List {
 
       const basket = await Basket_Modal.findById(basket_id);
       if (!basket) {
-        return res.status(400).json({
+        return res.json({
           status: false,
           message: "Basket not found.",
         });
@@ -3752,7 +3773,7 @@ class List {
 
 
       if (investmentamount < basket.mininvamount) {
-        return res.status(400).json({
+        return res.json({
           status: false,
           message: `Investment amount must be at least ${basket.mininvamount}.`,
         });
@@ -3760,14 +3781,14 @@ class List {
 
       const client = await Clients_Modal.findById(clientid);
       if (!client) {
-        return res.status(404).json({
+        return res.json({
           status: false,
           message: "Client not found"
         });
       }
 
       if (client.tradingstatus == 0) {
-        return res.status(404).json({
+        return res.json({
           status: false,
           message: "Client Broker Not Login, Please Login With Broker"
         });
@@ -3782,7 +3803,7 @@ class List {
 
       if (version == 1) {
         if (investmentamount < basket.mininvamount) {
-          return res.status(400).json({
+          return res.json({
             status: false,
             message: `Investment amount must be at least ${basket.mininvamount}.`,
           });
@@ -3790,7 +3811,7 @@ class List {
       }
 
       if (!existingStocks || existingStocks.length === 0) {
-        return res.status(400).json({
+        return res.json({
           status: false,
           message: "No stocks found in the basket.",
         });
@@ -3908,7 +3929,6 @@ class List {
                   howmanytimebuy
                 });
 
-                console.log("respo", respo);
 
               }
 
@@ -3965,7 +3985,7 @@ class List {
                   const total = parseFloat(totalAmount);
 
                   if (total >= net) {
-                    return res.status(400).json({
+                    return res.json({
                       status: false,
                       message: "Insufficient funds in your broker account.",
                     });
@@ -4035,7 +4055,7 @@ class List {
                   const total = parseFloat(totalAmount);
 
                   if (total >= net) {
-                    return res.status(400).json({
+                    return res.json({
                       status: false,
                       message: "Insufficient funds in your broker account.",
                     });
@@ -4102,7 +4122,7 @@ class List {
                   const total = parseFloat(totalAmount);
 
                   if (total >= net) {
-                    return res.status(400).json({
+                    return res.json({
                       status: false,
                       message: "Insufficient funds in your broker account.",
                     });
@@ -4137,14 +4157,14 @@ class List {
       }
 
       if (type != 1) {
-        res.status(200).json({
+        res.json({
           status: true,
           message: type == 1 ? "Order Placed Successfully." : "Order Confirm Successfully.",
           data: stockOrders,
         });
       }
       else {
-        res.status(200).json({
+        res.json({
           "response": respo
         });
 
@@ -4152,7 +4172,7 @@ class List {
 
     } catch (error) {
       // console.error("Error placing order:", error);
-      res.status(500).json({
+      res.json({
         status: false,
         message: "An error occurred while placing the order.",
       });
@@ -4507,10 +4527,9 @@ class List {
     
       const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: service_id }).exec();
 
-
       if (!existingPlan) {
         // Fetch last 5 signal IDs for the given service_id
-        const lastFiveSignals = await Signal_Modal.find({ service: service_id })
+        const lastFiveSignals = await Signal_Modal.find({ service: service_id,close_status: false })
             .sort({ created_at: -1 })
             .limit(5)
             .lean();
@@ -5485,6 +5504,19 @@ class List {
         },
       ]);
   
+
+
+      const protocol = req.protocol; // 'http' or 'https'
+      const baseUrl = `${protocol}://${req.headers.host}`;
+
+      // Update each basket's image path
+      result.forEach(basket => {
+          if (basket.image) {
+              basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
+          }
+      });
+
+
       res.status(200).json({
         status: true,
         message: 'Purchased baskets retrieved successfully.',

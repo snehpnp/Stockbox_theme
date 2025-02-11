@@ -2941,10 +2941,6 @@ class Clients {
         matchConditions.add_by = add_by;
       }
 
-
-      console.log("matchConditions",matchConditions);
-
-
       if (search && search.trim() !== "") {
         matchConditions.$or = [
           { FullName: { $regex: search, $options: "i" } }, // Search in name

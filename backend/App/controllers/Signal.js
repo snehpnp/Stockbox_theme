@@ -1536,11 +1536,21 @@ async getSignalWithFilterplan(req, res) {
     }
 
     if (search && search.trim() !== '') {
+
+
+      const matchingPlans = await Plancategory_Modal.find(
+        { title: { $regex: search, $options: 'i' } },
+        { _id: 1 }
+    );
+
+    const matchingPlanIds = matchingPlans.map(plan => plan._id.toString());
+
       query.$or = [
           { tradesymbol: { $regex: search, $options: 'i' } },
           { calltype: { $regex: search, $options: 'i' } },
           { price: { $regex: search, $options: 'i' } },
-          { closeprice: { $regex: search, $options: 'i' } }
+          { closeprice: { $regex: search, $options: 'i' } },
+          { planid: { $in: matchingPlanIds } }
       ];
   }
 
@@ -1585,9 +1595,6 @@ const finalResult = result.map(item => ({
   ...item._doc,
   plan_category_title: planCategoryMap[item.planid] || null, // Add title or null if not found
 }));
-
-console.log(finalResult);
-
 
     return res.json({
       status: true,
