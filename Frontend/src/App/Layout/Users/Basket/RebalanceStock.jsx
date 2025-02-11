@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Content from "../../../components/Contents/Content";
-import { RebalanceBasket, GetBasketSell, getversionhistory, ExitPlaceOrderData, GetUserData } from '../../../Services/UserService/User';
+import { RebalanceBasket, GetBasketSell, getversionhistory, ExitPlaceOrderData, GetUserData, AddStockplaceorder } from '../../../Services/UserService/User';
 import { useParams } from 'react-router-dom';
 import Loader from '../../../../Utils/Loader';
 import { IndianRupee } from "lucide-react";
@@ -35,7 +35,7 @@ const RebalanceStock = () => {
   }, []);
 
 
-  console.log("data", data)
+
 
 
   const getbasketRebalance = async () => {
@@ -105,7 +105,7 @@ const RebalanceStock = () => {
         type: type,
       };
 
-      const response = await ExitPlaceOrderData(data, token);
+      const response = await AddStockplaceorder(data, token);
       setIsPlacingOrder(false);
       setIsConfirming(false);
 

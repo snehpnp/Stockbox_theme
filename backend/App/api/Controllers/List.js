@@ -3737,22 +3737,23 @@ class List {
     }
   }
 
+
+
+
   async placeOrder(req, res) {
     try {
       const { basket_id, clientid, brokerid, investmentamount, type } = req.body;
 
       const basket = await Basket_Modal.findById(basket_id);
       if (!basket) {
-        return res.status(400).json({
+        return res.json({
           status: false,
           message: "Basket not found.",
         });
       }
 
-
-
       if (investmentamount < basket.mininvamount) {
-        return res.status(400).json({
+        return res.json({
           status: false,
           message: `Investment amount must be at least ${basket.mininvamount}.`,
         });
@@ -3760,14 +3761,14 @@ class List {
 
       const client = await Clients_Modal.findById(clientid);
       if (!client) {
-        return res.status(404).json({
+        return res.json({
           status: false,
           message: "Client not found"
         });
       }
 
       if (client.tradingstatus == 0) {
-        return res.status(404).json({
+        return res.json({
           status: false,
           message: "Client Broker Not Login, Please Login With Broker"
         });
@@ -3782,7 +3783,7 @@ class List {
 
       if (version == 1) {
         if (investmentamount < basket.mininvamount) {
-          return res.status(400).json({
+          return res.json({
             status: false,
             message: `Investment amount must be at least ${basket.mininvamount}.`,
           });
@@ -3790,19 +3791,18 @@ class List {
       }
 
       if (!existingStocks || existingStocks.length === 0) {
-        return res.status(400).json({
+        return res.json({
           status: false,
           message: "No stocks found in the basket.",
         });
       }
 
-      // Total investment amount
+
       const totalAmount = investmentamount;
 
-      // Initialize an array to store the calculated stock orders
       const stockOrders = [];
       let respo;
-      let isFundChecked = false; // Flag to ensure we check funds only once
+      let isFundChecked = false;
       // Iterate over each stock to calculate allocated amount and quantity
       for (const stock of existingStocks) {
         const { tradesymbol, weightage, name } = stock;
@@ -3811,7 +3811,7 @@ class List {
           // Fetch stock data from Stock_Modal
           const stockData = await Stock_Modal.findOne({ tradesymbol });
           if (!stockData) {
-            console.log(`Stock data not found for trade symbol: ${tradesymbol}`);
+
             continue; // Skip this stock if no data found
           }
 
@@ -3965,7 +3965,7 @@ class List {
                   const total = parseFloat(totalAmount);
 
                   if (total >= net) {
-                    return res.status(400).json({
+                    return res.json({
                       status: false,
                       message: "Insufficient funds in your broker account.",
                     });
@@ -4035,7 +4035,7 @@ class List {
                   const total = parseFloat(totalAmount);
 
                   if (total >= net) {
-                    return res.status(400).json({
+                    return res.json({
                       status: false,
                       message: "Insufficient funds in your broker account.",
                     });
@@ -4102,7 +4102,7 @@ class List {
                   const total = parseFloat(totalAmount);
 
                   if (total >= net) {
-                    return res.status(400).json({
+                    return res.json({
                       status: false,
                       message: "Insufficient funds in your broker account.",
                     });
@@ -4137,14 +4137,14 @@ class List {
       }
 
       if (type != 1) {
-        res.status(200).json({
+        res.json({
           status: true,
           message: type == 1 ? "Order Placed Successfully." : "Order Confirm Successfully.",
           data: stockOrders,
         });
       }
       else {
-        res.status(200).json({
+        res.json({
           "response": respo
         });
 
@@ -4152,7 +4152,7 @@ class List {
 
     } catch (error) {
       // console.error("Error placing order:", error);
-      res.status(500).json({
+      res.json({
         status: false,
         message: "An error occurred while placing the order.",
       });
