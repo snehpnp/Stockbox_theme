@@ -2082,6 +2082,17 @@ class List {
 
       const baskets = await Basket_Modal.find({ del: false, status: true });
 
+      const protocol = req.protocol; // 'http' or 'https'
+      const baseUrl = `${protocol}://${req.headers.host}`;
+
+      // Update each basket's image path
+      baskets.forEach(basket => {
+          if (basket.image) {
+              basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
+          }
+      });
+
+
       return res.json({
         status: true,
         message: "Baskets fetched successfully",
@@ -2275,6 +2286,16 @@ class List {
       ]);
 
 
+
+
+      const protocol = req.protocol; // 'http' or 'https'
+      const baseUrl = `${protocol}://${req.headers.host}`;
+
+      result.forEach(basket => {
+          if (basket.image) {
+              basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
+          }
+      });
 
       res.status(200).json({
         status: true,
@@ -2770,7 +2791,7 @@ class List {
     try {
 
       const { clientId } = req.params;
-      const baskets = await Basket_Modal.find({ del: false, status: "active" });
+      const baskets = await Basket_Modal.find({ del: false, status: true });
 
       // Process each basket to restructure the data
       const processedBaskets = await Promise.all(baskets.map(async (basket) => {
@@ -3908,7 +3929,6 @@ class List {
                   howmanytimebuy
                 });
 
-                console.log("respo", respo);
 
               }
 
@@ -4507,14 +4527,13 @@ class List {
 
       const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: service_id }).exec();
 
-
       if (!existingPlan) {
         // Fetch last 5 signal IDs for the given service_id
-        const lastFiveSignals = await Signal_Modal.find({ service: service_id })
-          .sort({ created_at: -1 })
-          .limit(5)
-          .lean();
-
+        const lastFiveSignals = await Signal_Modal.find({ service: service_id,close_status: false })
+            .sort({ created_at: -1 })
+            .limit(5)
+            .lean();
+        
         return res.json({
           status: true,
           message: "Returning last 5 signals due to no existing plan",
@@ -5483,6 +5502,19 @@ class List {
           },
         },
       ]);
+  
+
+
+      const protocol = req.protocol; // 'http' or 'https'
+      const baseUrl = `${protocol}://${req.headers.host}`;
+
+      // Update each basket's image path
+      result.forEach(basket => {
+          if (basket.image) {
+              basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
+          }
+      });
+
 
       res.status(200).json({
         status: true,
