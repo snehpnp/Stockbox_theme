@@ -125,6 +125,7 @@ const QRDetails = () => {
 
                 setTitle({ title: "", add_by: "", hyperlink: "" });
                 getQrlist();
+                setShowModal(false)
 
                 const modal = document.getElementById('exampleModal');
                 const bootstrapModal = window.bootstrap.Modal.getInstance(modal);

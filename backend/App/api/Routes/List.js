@@ -1,6 +1,7 @@
 const router = require("express").Router()
 
-const {Blogslist,Newslist,Bannerlist,Plancategorysist,getPlansByPlancategoryId,addPlanSubscription,myPlan,Couponlist,Signallist,applyCoupon,showSignalsToClients,Servicelist,Faqlist,detailContent,showSignalsToClientsClose,BasketList,pastPerformance,addBasketSubscription,getallPlan,addFreeTrail,BroadcastList,myFreetrial,basicSetting,pastPerformances,myService,CloseSignal,showSignalsToClientsCloses,Notification,Bank,Qrcode,BlogslistwithPagination,NewslistwithPagination,Refer,BasketLists,BasketstockList,myBasketPlan,placeOrder,exitPlaceOrder,checkBasketSell,BasketListss,BasketstockLists,getLivePrice,MyPorfolio,BasketstockListBalance,getBasketVersionOrder,Logout,addRequest} = require('../Controllers/List')
+const { Addtocart } = require("../../Models");
+const {Blogslist,Newslist,Bannerlist,Plancategorysist,getPlansByPlancategoryId,addPlanSubscription,myPlan,Couponlist,Signallist,applyCoupon,showSignalsToClients,Servicelist,Faqlist,detailContent,showSignalsToClientsClose,BasketList,pastPerformance,addBasketSubscription,getallPlan,addFreeTrail,BroadcastList,myFreetrial,basicSetting,pastPerformances,myService,CloseSignal,showSignalsToClientsCloses,Notification,Bank,Qrcode,BlogslistwithPagination,NewslistwithPagination,Refer,BasketLists,BasketstockList,myBasketPlan,placeOrder,exitPlaceOrder,checkBasketSell,BasketListss,BasketstockLists,getLivePrice,MyPorfolio,BasketstockListBalance,getBasketVersionOrder,Logout,addRequest,SignalClientWithPlan,NotificationWithPlan,getCompanyAndBseData,addPlanSubscriptionAddToCart,PurchasedBasketList,addBasketSubscriptionAddToCart,AddToCartPlan,AddToCartBasket,PlanCartList,BasketCartList,DeleteCartItem,SignalClientWithPlanClose,getStockrating,SignalLatest,pastPerformancewithtype,CloseSignalwithtype,updatePerformanceStatus} = require('../Controllers/List')
 
 
 router.get('/api/list/blogs',Blogslist);
@@ -37,6 +38,9 @@ router.get('/api/list/content/:id', detailContent);
 router.get('/api/list/basket/:clientId', BasketList);
 router.get('/api/list/basket', BasketLists);
 router.post('/api/list/baskets', BasketListss);
+
+router.post('/api/list/mybasketpurchaselist', PurchasedBasketList);
+
 router.get('/api/list/basketstock/:id', BasketstockList);
 router.get('/api/list/myportfolio/:id/:clientid', MyPorfolio);
 
@@ -64,6 +68,25 @@ router.post('/api/exitplaceorder', exitPlaceOrder);
 router.post('/api/checkbasketsell', checkBasketSell);
 router.get('/api/getliveprice', getLivePrice);
 router.get('/api/list/logout/:id', Logout); 
+
+
+router.post('/api/list/signalclientwithplan', SignalClientWithPlan);
+router.post('/api/list/signalclientwithplanclose', SignalClientWithPlanClose);
+router.post('/api/list/notificationwithplan/:id', NotificationWithPlan);
+router.get('/api/list/getcompanyandbsedata', getCompanyAndBseData);
+router.post('/api/list/addplansubscriptionaddtocart', addPlanSubscriptionAddToCart); 
+router.post('/api/list/addbasketsubscriptionaddtocart', addBasketSubscriptionAddToCart); 
+router.post('/api/list/addtocartplan', AddToCartPlan); 
+router.post('/api/list/addtocartbasket', AddToCartBasket);
+router.get('/api/list/plancartlist/:client_id', PlanCartList); 
+router.get('/api/list/basketcartlist/:client_id', BasketCartList); 
+router.post('/api/list/deletecartitem', DeleteCartItem);
+router.get('/api/list/stockrating/:symbol', getStockrating);
+
+router.post('/api/list/signallatest', SignalLatest);
+router.get('/api/list/past-performance-type/:id/:callduration?', pastPerformancewithtype);
+router.post('/api/list/closesignalwithtype', CloseSignalwithtype);
+router.post('/api/list/updateperformancestatus', updatePerformanceStatus);
 
 
 module.exports = router;

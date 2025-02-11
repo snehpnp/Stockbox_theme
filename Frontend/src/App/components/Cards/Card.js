@@ -1,5 +1,7 @@
 import React from 'react';
 
+
+
 const GradientCard = () => {
   const cardStyle = {
     background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',

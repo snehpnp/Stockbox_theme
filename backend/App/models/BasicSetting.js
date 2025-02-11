@@ -241,6 +241,11 @@ const BasicSettingSchema = new Schema({
         ref: "Theme",
         default: null
       },
+      offer_image: {
+        type: String,
+        trim: true,
+        default: null
+    },
 
 }, {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }

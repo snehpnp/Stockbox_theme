@@ -45,6 +45,9 @@ const Closesignal = () => {
   const [totalRows, setTotalRows] = useState(0);
   const [header, setheader] = useState("Close Signal");
 
+  const [showModal, setShowModal] = useState(false);
+  const [description, setDescription] = useState([])
+
   const [updatetitle, setUpdatetitle] = useState({
     report: "",
     id: "",
@@ -184,14 +187,14 @@ const Closesignal = () => {
               } Target Achieved Exit Price ${item?.closeprice}`;
 
             return {
-              CloseSignal: `${fDateTimeH(item?.created_at)}\nSegment: ${item.segment === "C"
+              CloseSignal: `${fDateTimeH(item?.created_at)}  Segment: ${item.segment === "C"
                 ? "CASH"
                 : item.segment === "O"
                   ? "OPTION"
                   : item.segment === "F"
                     ? "FUTURE"
                     : ""
-                } \nP/L: ${profitAndLossPercentage}% \n\nEntry Type: ${entryType}`,
+                }  P/L: ${profitAndLossPercentage}%   Entry Type: ${entryType}`,
             }
           });
           exportToCSV1(csvArr, "Close Signal");
@@ -319,7 +322,7 @@ const Closesignal = () => {
               ? "OPTION"
               : "FUTURE";
         return row.closeprice == 0
-          ? <div>{segmentLabel}<span style={{ color: "red" }}> (Avoid)</span></div>
+          ? <div>{segmentLabel}<span style={{ color: "red" }}> (Avoid)<Eye onClick={() => { setShowModal(true); setDescription(row?.close_description) }}></Eye></span></div>
           : segmentLabel;
       },
       sortable: true,
@@ -418,30 +421,24 @@ const Closesignal = () => {
       name: "Upload Report",
       cell: (row) => (
         <>
-          <div className="d-flex">
-            {row.report ? (
-              <div
-                style={{ color: "green", cursor: "pointer" }}
-                onClick={() => handleDownload(row)}
-              >
+          <div className='d-flex justify-content-end' style={{ width: "150px" }}>
+            {row.report ?
+              <Link className="btn px-2" onClick={() => handleDownload(row)}>
                 <Tooltip placement="top" overlay="Download">
                   <ArrowDownToLine />
                 </Tooltip>
-              </div>
-            ) : (
-              ""
-            )}
-            <div className="mx-3">
+              </Link> : ""}
+            <Link className="btn px-2">
               <Tooltip placement="top" overlay="Update">
                 <SquarePen
                   onClick={() => {
                     setModel1(true);
                     setServiceid(row);
-                    setUpdatetitle({ report: row.report, id: row._id });
+                    setUpdatetitle({ report: row.report, id: row._id, description: updatetitle.description });
                   }}
                 />
               </Tooltip>
-            </div>
+            </Link>
           </div>
         </>
       ),
@@ -531,108 +528,7 @@ const Closesignal = () => {
               </nav>
             </div>
           </div>
-          {/* <div className="card">
-            <div className="card-body">
-              <div className="d-lg-flex align-items-center mb-4 gap-3 justify-content-between">
-                <div className="position-relative">
-                  <input
-                    type="text"
-                    className="form-control ps-5 radius-10"
-                    placeholder="Search Signal"
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                  />
-                  <span className="position-absolute top-50 product-show translate-middle-y">
-                    <i className="bx bx-search" />
-                  </span>
-                </div>
 
-                <div className="ms-2" onClick={(e) => getexportfile()}>
-                  <button
-                    type="button"
-                    className="btn btn-primary float-end"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="Export To Excel"
-                    delay={{ show: "0", hide: "100" }}
-                  >
-                    <i className="bx bxs-download" aria-hidden="true"></i>
-                    Export-Excel
-                  </button>
-                </div>
-              </div>
-
-              <div className="row">
-                <div className="col-md-3">
-                  <label>From Date</label>
-                  <input
-                    type="date"
-                    name="from"
-                    className="form-control radius-10"
-                    placeholder="From"
-                    value={filters.from}
-                    onChange={handleFilterChange}
-                  />
-                </div>
-                <div className="col-md-3">
-                  <label>To Date</label>
-                  <input
-                    type="date"
-                    name="to"
-                    className="form-control radius-10"
-                    placeholder="To"
-                    value={filters.to}
-                    onChange={handleFilterChange}
-                  />
-                </div>
-                <div className="col-md-3">
-                  <label>Select Service</label>
-                  <select
-                    name="service"
-                    className="form-control radius-10"
-                    value={filters.service}
-                    onChange={handleFilterChange}
-                  >
-                    <option value="">Select Service</option>
-                    {serviceList.map((service) => (
-                      <option key={service._id} value={service._id}>
-                        {service.title}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="col-md-3 d-flex">
-                  <div style={{ width: "80%" }}>
-                    <label>Select Stock</label>
-                    <Select
-                      options={options}
-                      value={
-                        options.find(
-                          (option) => option.value === searchstock
-                        ) || null
-                      }
-                      onChange={handleChange}
-                      className="form-control radius-10"
-                      isClearable
-                      placeholder="Select Stock"
-                    />
-                  </div>
-                  <div className="rfreshicon">
-                    <RefreshCcw onClick={resethandle} />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <Table
-              columns={columns}
-              data={clients}
-              totalRows={totalRows}
-              currentPage={currentPage}
-              onPageChange={handlePageChange}
-            />
-          </div> */}
 
           <div className="card">
             <div className="card-body">
@@ -657,7 +553,7 @@ const Closesignal = () => {
               </div>
 
               {/* Search and Filters */}
-              <div className="d-lg-flex align-items-center mb-4 gap-3 justify-content-between">
+              <div className="d-sm-flex align-items-center mb-4 gap-3 justify-content-between">
                 <div className="position-relative">
                   <input
                     type="text"
@@ -681,11 +577,11 @@ const Closesignal = () => {
                   </button>
                 </div> */}
 
-                <div className="ms-2">
+                <div className="mt-2 mt-sm-0">
                   {activeTab === "table" ? (
                     <button
                       type="button"
-                      className="btn btn-primary float-end"
+                      className="btn btn-primary float-sm-end"
                       title="Export To Excel"
                       onClick={getexportfile}
                     >
@@ -694,7 +590,7 @@ const Closesignal = () => {
                   ) : (
                     <button
                       type="button"
-                      className="btn btn-primary float-end"
+                      className="btn btn-primary float-sm-end"
                       title="Export Card data"
                       onClick={getexportfile1}
 
@@ -843,86 +739,7 @@ const Closesignal = () => {
         </div>
       </div>
 
-      {/* {model1 && (
-        <>
-          <div className="modal-backdrop fade show"></div>
-          <div
-            className="modal fade show"
-            style={{ display: "block" }}
-            tabIndex={-1}
-            aria-labelledby="exampleModalLabel"
-            aria-hidden="true"
-          >
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title" id="exampleModalLabel">
-                    Upload Report
-                  </h5>
-                  <button
-                    type="button"
-                    className="btn-close"
-                    onClick={() => setModel1(false)}
-                  />
-                </div>
-                <div className="modal-body">
-                  <form>
-                    <div className="row">
-                      <div className="col-md-10">
-                        <label htmlFor="imageUpload">Upload Report</label>
-                        <span className="text-danger">*</span>
-                        <input
-                          className="form-control mb-3"
-                          type="file"
-                          accept="application/pdf"
-                          id="imageUpload"
-                          onChange={(e) => {
-                            const file = e.target.files[0];
-                            if (file) {
-                              updateServiceTitle({ report: file });
-                            }
-                          }}
-                        />
-                      </div>
-                      <div className="col-md-2"></div>
-                    </div>
-                    <div className="row">
-                      <div className="col-md-12">
-                        <label htmlFor="description">Description</label>
-                        <input
-                          className="form-control mb-2"
-                          type="text"
-                          placeholder="Enter Description"
-                          value={updatetitle.description}
-                          onChange={(e) =>
-                            updateServiceTitle({ description: e.target.value })
-                          }
-                        />
-                      </div>
-                    </div>
-                  </form>
-                </div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => setModel1(false)}
-                  >
-                    Close
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={updateReportpdf}
-                  >
-                    Update File
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      )} */}
+
 
       <ReusableModal
         show={model1}
@@ -960,13 +777,15 @@ const Closesignal = () => {
             <div className="row">
               <div className="col-md-12">
                 <label htmlFor="description">Description</label>
-                <input
+                <textarea
                   className="form-control mb-2"
-                  type="text"
                   placeholder="Enter Description Title"
                   value={updatetitle.description}
                   onChange={(e) => updateServiceTitle({ description: e.target.value })}
-                />
+                  rows={2}
+                >
+
+                </textarea>
               </div>
             </div>
           </form>
@@ -983,6 +802,13 @@ const Closesignal = () => {
         }
       />
 
+
+      <ReusableModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        title="Description"
+        body={<p>{description || "No description available."}</p>}
+      />
 
 
     </div>

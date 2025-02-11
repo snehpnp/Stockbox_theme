@@ -345,7 +345,7 @@ const BasketStockPublish = () => {
             )}
             {permission.includes("basketdetail") &&
               <Tooltip title="view">
-                <Eye onClick={() => viewdetailpage(row)} />
+                <Eye onClick={() => viewdetailpage(row)} className='ms-2'/>
               </Tooltip>}
             {/* <Tooltip title="Edit">
             <Link

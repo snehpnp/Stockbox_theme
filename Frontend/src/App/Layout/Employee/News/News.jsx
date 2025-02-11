@@ -294,7 +294,7 @@ const News = () => {
                 <hr />
                 <div className="card">
                     <div className="card-body">
-                        <div className="d-lg-flex align-items-center mb-4 gap-3">
+                        <div className="d-sm-flex align-items-center mb-4 gap-3">
                             <div className="position-relative">
                                 <input
                                     type="text"
@@ -307,7 +307,7 @@ const News = () => {
                                     <i className="bx bx-search" />
                                 </span>
                             </div>
-                            {permission.includes("addnews") ? <div className="ms-auto">
+                            {permission.includes("addnews") ? <div className="ms-auto mt-2 mt-sm-0">
                                 <Link
                                     to="/employee/addnews"
                                     type="button"
@@ -337,12 +337,13 @@ const News = () => {
                                             <div className="card-body" style={{ width: "100%" }}>
                                                 <div className="d-flex justify-content-between align-items-start">
 
-                                                    <h4 className="card-title text-muted mb-0">{client.title}</h4>
+                                                    <h5 className="card-title text-muted mb-0">{client.title}</h5>
 
                                                     <div>
 
                                                         {permission.includes("editnews") ? <Tooltip placement="top" overlay="Update">
                                                             <SquarePen
+                                                            className='me-2'
                                                                 onClick={() => {
                                                                     navigate("/employee/updatenews", { state: { client } })
                                                                 }}
@@ -356,7 +357,7 @@ const News = () => {
                                                 <hr />
                                                 <div className="row">
                                                     {/* Image on the left side */}
-                                                    <div className="col-md-2" style={{ borderRight: "1px solid #D0D0D0", textAlign: "center" }}>
+                                                    <div className="col-md-2 border-md-right border-end" style={{  textAlign: "center" }}>
                                                         <img
                                                             src={`${image_baseurl}uploads/news/${client.image}`}
 

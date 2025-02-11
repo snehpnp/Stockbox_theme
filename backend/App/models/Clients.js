@@ -53,7 +53,6 @@ const clientsModel = new Schema({
         enum: [1, 0],
         default: 0
     },
-
     pdf: {
         type: String,
         trim: true,
@@ -177,7 +176,12 @@ const clientsModel = new Schema({
         type: String,
         trim: true,
         default: null
-    }
+    },
+    performance_status: {
+        type: Number, // changed to Number
+        enum: [1, 0],
+        default: 0
+    },
 
 }, {
     timestamps: true

@@ -5,11 +5,14 @@ const Stock_Modal = db.Stock;
 const Notification_Modal = db.Notification;
 const Planmanage = db.Planmanage;
 const Order_Modal = db.Order;
+const Plancategory_Modal = db.Plancategory;
+const PlanSubscription_Modal = db.PlanSubscription;
 
 mongoose  = require('mongoose');
 const Clients_Modal = db.Clients;
 const { sendFCMNotification } = require('./Pushnotification'); // Adjust if necessary
 
+var axios = require('axios');
 
 
 
@@ -373,10 +376,6 @@ async getSignalWithFilter(req, res) {
       .sort(sortCriteria) // Sort in descending order
       .skip(skip) // Pagination: skip items
       .limit(limitValue); // Pagination: limit items
-
-
-
-
 
     return res.json({
       status: true,
@@ -771,7 +770,7 @@ async updateReport(req, res) {
             });
         });
         const { id,description } = req.body;
-        console.log("req",req.body)
+       
  
         if (!id) {
             return res.status(400).json({
@@ -787,9 +786,9 @@ async updateReport(req, res) {
         const updateFields = {}; // Initialize as an empty object
         if (reportFile) {
             updateFields.report = reportFile;
-            updateFields.description = description;
+            
         }
-
+        updateFields.description = description;
         // Update the report in the database
         const updatedreport = await Signal_Modal.findByIdAndUpdate(
             id,
@@ -805,7 +804,6 @@ async updateReport(req, res) {
             });
         }
 
-        // console.log("Updated Report:", updatedreport);
         return res.json({
             status: true,
             message: "Report updated successfully",
@@ -1155,6 +1153,470 @@ async allShowSignalsToClients(req, res) {
     return res.json({ status: false, message: "Server error", data: [] });
   }
 }
+
+
+
+async AddSignalwithPlan(req, res) {
+  try {
+
+    await new Promise((resolve, reject) => {
+      upload('report').fields([{ name: 'report', maxCount: 1 }])(req, res, (err) => {
+          if (err) {
+            
+              return reject(err);
+          }
+
+          resolve();
+      });
+  });
+
+
+      const { price,calltype,stock,tag1,tag2,tag3,stoploss,description,callduration,callperiod,add_by,expirydate,segment,optiontype,strikeprice,tradesymbol,lotsize,entrytype,lot,planid } = req.body;
+  
+  //    const report = req.files['report'] ? req.files['report'][0].filename : null;
+
+
+
+  const allowedMimeTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+
+const reportFile = req.files['report'] ? req.files['report'][0] : null;
+
+if (reportFile) {
+const fileMimeType = reportFile.mimetype; // Get the MIME type of the uploaded file
+if (!allowedMimeTypes.includes(fileMimeType)) {
+  return res.status(400).json({
+      status: false,
+      message: "Invalid file type. Only PDF and Word files are allowed.",
+  });
+}
+}
+
+// If validation passes, extract the filename
+const report = reportFile ? reportFile.filename : null;
+
+      var service;
+      var serviceName;
+// Set the service value based on the segment
+if (segment == "C") {
+service = "66d2c3bebf7e6dc53ed07626";
+serviceName = "Cash";
+
+} else if (segment == "O") {
+service = "66dfeef84a88602fbbca9b79";
+serviceName = "Option";
+} else {
+service = "66dfede64a88602fbbca9b72";
+serviceName = "Future";
+}
+
+
+
+let stocks;
+if (segment === "C") {
+stocks = await Stock_Modal.findOne({ 
+  symbol: stock, 
+  segment: segment, 
+});
+} else if (segment === "F") {
+stocks = await Stock_Modal.findOne({ 
+  symbol: stock, 
+  segment: segment, 
+  expiry: expirydate, 
+});
+} else {
+stocks = await Stock_Modal.findOne({ 
+  symbol: stock, 
+  segment: segment, 
+  expiry: expirydate, 
+   option_type: optiontype, 
+  strike: strikeprice 
+});
+}
+
+
+if (!stocks) {
+return res.status(404).json({
+ status: false,
+ message: "Stock not found"
+});
+}
+
+   
+     /* const result = new Signal_Modal({
+        price: price,
+        service: service,
+        strikeprice: strikeprice,
+        calltype: calltype,
+        callduration:callduration,
+        callperiod:callperiod,
+        stock: stock,
+        tag1: tag1,
+        tag2: tag2,
+        tag3:tag3,
+        targetprice1: tag1,
+        targetprice2: tag2,
+        targetprice3: tag3,
+        stoploss: stoploss,
+        description: description,
+        report: report,
+        add_by:add_by,
+        expirydate: expirydate,
+        segment:segment,
+        optiontype: optiontype,
+        tradesymbol:stocks.tradesymbol,
+        lotsize: stocks.lotsize,
+        entrytype:entrytype,
+        lot:lot,
+        planid:planid,
+    });
+
+
+      await result.save(); */
+      
+      const planIds = planid.split(','); 
+
+
+      const signalEntries = planIds.map(id => {
+
+      
+        return new Signal_Modal({
+            price: price,
+            service: service,
+            strikeprice: strikeprice,
+            calltype: calltype,
+            callduration: callduration,
+            callperiod: callperiod,
+            stock: stock,
+            tag1: tag1,
+            tag2: tag2,
+            tag3: tag3,
+            targetprice1: tag1,
+            targetprice2: tag2,
+            targetprice3: tag3,
+            stoploss: stoploss,
+            description: description,
+            report: report,
+            add_by: add_by,
+            expirydate: expirydate,
+            segment: segment,
+            optiontype: optiontype,
+            tradesymbol: stocks.tradesymbol,
+            lotsize: stocks.lotsize,
+            entrytype: entrytype,
+            lot: lot,
+            planid: id, // Use individual plan ID
+        });
+    });
+    
+    // Save all entries in one go
+    await Signal_Modal.insertMany(signalEntries);
+
+
+
+      const today = new Date();
+
+      const clients = await Clients_Modal.find({
+        del: 0,
+        ActiveStatus: 1,
+        devicetoken: { $exists: true, $ne: null },
+        _id: {
+          $in: await PlanSubscription_Modal.find({
+            client_id: { $ne: null },  
+            plan_category_id: { $in: planIds },
+            plan_end: { $gte: today }, // Filter by plan_end date
+            del: false  // Optional: Ensure the plan subscription is not deleted
+          }).distinct('client_id')  // Get distinct client_ids
+        }
+      }).select('devicetoken');
+
+
+      const tokens = clients.map(client => client.devicetoken);
+      
+      if (tokens.length > 0) {
+
+
+      const notificationTitle = 'Important Update';
+      const notificationBody =`${serviceName} ${stock} ${calltype} AT ${price} OPEN`;
+        const resultn = new Notification_Modal({
+          segmentid:planid,
+          type:'open signal',
+          title: notificationTitle,
+          message: notificationBody
+      });
+
+      await resultn.save();
+
+
+      try {
+      
+        await sendFCMNotification(notificationTitle, notificationBody, tokens,"open signal");
+      
+      } catch (error) {
+     
+      }
+
+      }
+    
+
+    return res.json({
+      status: true,
+      message: "Signal added successfully",
+    //  data: result,
+  });
+
+
+
+  } catch (error) {
+      // Enhanced error logging
+      // console.error("Error adding Signal:", error);
+
+      return res.status(500).json({
+          status: false,
+          message: "Server error",
+          error: error.message,
+      });
+  }
+}
+async getPlansByService(req, res) {
+  try {
+    const { serviceId } = req.body;
+    if (!serviceId) {
+      return res.status(400).json({
+        status: false,
+        message: "Service ID is required",
+      });
+    }
+
+    let serviceIdString = "";
+    if (serviceId == "C") {
+      serviceIdString = "66d2c3bebf7e6dc53ed07626";
+    } else if (serviceId == "O") {
+      serviceIdString = "66dfeef84a88602fbbca9b79";
+    } else {
+      serviceIdString = "66dfede64a88602fbbca9b72";
+    }
+
+    const result = await Plancategory_Modal.aggregate([
+      {
+        $match: {
+          service: { $regex: `(^|,)${serviceIdString}(,|$)` }, 
+          del: false,
+          status: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "plans", 
+          localField: "_id",
+          foreignField: "category",
+          as: "plans",
+        },
+      },
+      {
+        $addFields: {
+          plans: {
+            $filter: {
+              input: "$plans",
+              as: "plan",
+              cond: {
+                $and: [
+                //  { $eq: ["$$plan.status", "active"] }, // Active plans only
+                  { $eq: ["$$plan.del", false] } // Plans where del is false
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        $match: {
+          "plans.0": { $exists: true } // Only categories having active plans
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+         
+        },
+      },
+    ]);
+
+    console.log("Query result:", result);
+
+    return res.json({
+      status: true,
+      message: "Data retrieved successfully",
+      data: result,
+    });
+  } catch (error) {
+    console.error("Server error:", error.message);
+    return res.status(500).json({
+      status: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+}
+
+
+
+async getSymbol(req, res) {
+  try {
+    const bseResponse = await axios.get("http://stockboxapis.cmots.com/api/BseNseDelayedData/NSE");
+    
+    const data = bseResponse.data;  
+
+    return res.status(200).json({
+      success: true,
+      message: "Data fetched successfully",
+      data: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+}
+
+
+
+async getSignalWithFilterplan(req, res) {
+  try {
+    const { from, to, service, stock, closestatus, search, add_by, page = 1 } = req.body;
+    let limit = 10;
+    // Date filtering
+    let fromDate;
+    if (from) {
+      fromDate = new Date(from);
+      fromDate.setHours(0, 0, 0, 0); 
+    }
+    
+    let toDate;
+    if (to) {
+      toDate = new Date(to);
+      toDate.setHours(23, 59, 59, 999); 
+    }
+
+    
+
+    let query = { del: 0 };
+    // console.log(typeof closestatus, closestatus);
+    
+    if (closestatus === "true") {
+      if (fromDate && toDate) {
+        query.closedate = { $gte: fromDate, $lte: toDate }; 
+      }
+    }
+    else {
+    if (fromDate && toDate) {
+      query.created_at = { $gte: fromDate, $lte: toDate }; 
+    }
+  }
+
+
+    
+    if (service) {
+      query.service = service;
+    }
+
+    if (stock) {
+      query.stock = stock;
+    }
+
+
+    if (closestatus) {
+      query.close_status = closestatus;
+    }
+
+    if (add_by) {
+      query.add_by = add_by;
+    }
+
+    if (search && search.trim() !== '') {
+
+
+      const matchingPlans = await Plancategory_Modal.find(
+        { title: { $regex: search, $options: 'i' } },
+        { _id: 1 }
+    );
+
+    const matchingPlanIds = matchingPlans.map(plan => plan._id.toString());
+
+      query.$or = [
+          { tradesymbol: { $regex: search, $options: 'i' } },
+          { calltype: { $regex: search, $options: 'i' } },
+          { price: { $regex: search, $options: 'i' } },
+          { closeprice: { $regex: search, $options: 'i' } },
+          { planid: { $in: matchingPlanIds } }
+      ];
+  }
+
+    let sortCriteria = { created_at: -1 }; // Default sorting by created_at in descending order
+    if (closestatus === true) {
+      sortCriteria = { closedate: -1 }; // Sort by close_date in descending order if closestatus is true
+    }
+
+    // Convert page and limit to integers and calculate skip
+    const pageNumber = parseInt(page);
+    const limitValue = parseInt(limit);
+    const skip = (pageNumber - 1) * limitValue;
+
+    // Get total count for pagination
+    const totalRecords = await Signal_Modal.countDocuments(query);
+    const totalPages = Math.ceil(totalRecords / limitValue);
+
+    // Fetch data with pagination
+    const result = await Signal_Modal.find(query)
+      .populate({ path: 'service', select: 'title' }) // Populate only the title from service
+      .populate({ path: 'stock', select: 'title' })
+      .sort(sortCriteria) // Sort in descending order
+      .skip(skip) // Pagination: skip items
+      .limit(limitValue); // Pagination: limit items
+
+
+
+// Extract unique plan IDs
+const planIds = [...new Set(result.map(item => item.planid).filter(id => id))];
+
+// Fetch plan category titles for these planIds
+const planCategories = await Plancategory_Modal.find({ _id: { $in: planIds } }, { _id: 1, title: 1 });
+
+// Convert to a lookup object
+const planCategoryMap = planCategories.reduce((acc, category) => {
+  acc[category._id.toString()] = category.title;
+  return acc;
+}, {});
+
+// Attach plan category titles to result
+const finalResult = result.map(item => ({
+  ...item._doc,
+  plan_category_title: planCategoryMap[item.planid] || null, // Add title or null if not found
+}));
+
+    return res.json({
+      status: true,
+      message: "Signals fetched successfully",
+      data: finalResult,
+      pagination: {
+        totalRecords,
+        page: pageNumber,
+        limit: limitValue,
+        totalPages
+      }
+    });
+  } catch (error) {
+    return res.json({
+      status: false,
+      message: "Server error",
+      data: []
+    });
+  }
+}
+
+
 
 
 }

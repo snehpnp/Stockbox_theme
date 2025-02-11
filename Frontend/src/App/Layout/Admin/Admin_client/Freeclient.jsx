@@ -494,12 +494,12 @@ const Freeclient = () => {
                     </Tooltip> */}
                     <Tooltip placement="top" overlay="Package Assign">
                         <span onClick={(e) => { showModal(true); setClientid(row); getplanlistassinstatus(row._id) }} style={{ cursor: 'pointer' }}>
-                            <Settings2 />
+                            <Settings2 style={{ color: "orange" }} />
                         </span>
                     </Tooltip>
 
                     <Tooltip title="Update">
-                        <SquarePen className='ms-2' onClick={() => updateClient(row)} />
+                        <SquarePen className='ms-2' onClick={() => updateClient(row)} style={{ color: "#6f42c1" }} />
                     </Tooltip>
                     {/* <Tooltip title="delete">
                         <Trash2 onClick={() => DeleteClient(row._id)} />
@@ -575,21 +575,21 @@ const Freeclient = () => {
 
 
                                 </div>
-                               <div>
-                                {isLoading ? (
-                                    <Loader />
-                                ) : (
-                                    <>
+                                <div>
+                                    {isLoading ? (
+                                        <Loader />
+                                    ) : (
+                                        <>
 
-                                        <Table
-                                            columns={columns}
-                                            data={clients}
-                                            totalRows={totalRows}
-                                            currentPage={currentPage}
-                                            onPageChange={handlePageChange}
-                                        />
-                                    </>
-                                )}
+                                            <Table
+                                                columns={columns}
+                                                data={clients}
+                                                totalRows={totalRows}
+                                                currentPage={currentPage}
+                                                onPageChange={handlePageChange}
+                                            />
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -837,7 +837,7 @@ const Freeclient = () => {
                                                                     }}
                                                                     htmlFor={`input-plan-${index}`}
                                                                 >
-                                                                     {item.title} ({item.themename})
+                                                                    {item.title} ({item.themename})
                                                                 </label>
                                                             </h5>
 

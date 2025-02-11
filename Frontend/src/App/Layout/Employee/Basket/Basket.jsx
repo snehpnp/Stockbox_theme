@@ -369,7 +369,7 @@ const Basket = () => {
       
       <div className="card">
         <div className="card-body">
-          <div className="d-lg-flex align-items-center mb-4 gap-3">
+          <div className="d-sm-flex align-items-center mb-4 gap-3">
             <div className="position-relative">
               <input
                 type="text"
@@ -382,7 +382,7 @@ const Basket = () => {
                 <i className="bx bx-search" />
               </span>
             </div>
-            {permission.includes("addbasket") && <div className="ms-auto">
+            {permission.includes("addbasket") && <div className="ms-sm-auto  ms-0 mt-2 mt-sm-0">
               <Link to="/employee/addbasket" className="btn btn-primary">
                 <i className="bx bxs-plus-square" aria-hidden="true" />
                 Add Basket

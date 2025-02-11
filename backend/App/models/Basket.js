@@ -88,6 +88,31 @@ const BasketSchema = new Schema({
         type: Boolean,
         default: false // assuming true means active and false means inactive
     },
+    short_description: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    rationale: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    methodology: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    image: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    url: {
+        type: String,
+        trim: true,
+        default: null
+    },
     del: {
         type: Boolean,
         default: false // Indicates whether the Basket is marked as deleted

@@ -79,6 +79,7 @@ import Coupon from "../Layout/Admin/Coupon/Coupon";
 import Addcoupon from "../Layout/Admin/Coupon/Addcoupon";
 import Updatecoupon from "../Layout/Admin/Coupon/Updatecoupon";
 import Apiinfo from "../Layout/Admin/BasicSetting/Apiinfo";
+import ClientOrderlist from "../Layout/Admin/ClientOrderlist/ClientOrderlist";
 
 
 
@@ -202,7 +203,7 @@ export default function App() {
       <Route path="/termsandcondtion" element={<Condition />} />
       <Route path="/updatecondition" element={<Updatecondition />} />
 
-
+      <Route path="/orderlist" element={<ClientOrderlist />} />
 
     </Routes>
   );

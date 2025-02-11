@@ -35,6 +35,9 @@ import { exportToCSV } from "../../../../Utils/ExportData";
 import Table from "../../../Extracomponents/Table1";
 import Loader from "../../../../Utils/Loader";
 
+
+
+
 const Client = () => {
   useEffect(() => {
     getbasketlist();
@@ -596,18 +599,15 @@ const Client = () => {
     {
       name: "Actions",
       selector: (row) => (
-        <div className="d-flex">
+        <div className="d-flex justify-content-end gap-2 " >
           <Tooltip placement="top" overlay="Package Assign">
             <span
               onClick={(e) => {
-                // Check if ActiveStatus is 1
                 if (row.ActiveStatus === 1) {
-                  // If active, proceed with the package assignment
                   showModal(true);
                   setClientid(row);
                   getplanlistassinstatus(row._id);
                 } else {
-                  // If not active, show the SweetAlert message
                   Swal.fire({
                     title: "Reminder",
                     text: "Activate the client first Then assign the package.",
@@ -616,22 +616,28 @@ const Client = () => {
                   });
                 }
               }}
-              style={{ cursor: "pointer" }}
+              style={{ cursor: "pointer", color: "orange" }}
             >
               <Settings2 />
             </span>
           </Tooltip>
 
           <Tooltip title="view">
-            <Eye onClick={() => Clientdetail(row)} />
+            <Eye onClick={() => Clientdetail(row)}
+              style={{ color: "green" }} />
           </Tooltip>
 
           <Tooltip title="Update">
-            <SquarePen className="ms-3" onClick={() => updateClient(row)} />
+            <SquarePen className="" onClick={() => updateClient(row)}
+              style={{ color: "#6f42c1" }}
+            />
           </Tooltip>
+
           {/* <Tooltip title="delete">
                   <Trash2 onClick={() => DeleteClient(row._id)} />
                 </Tooltip> */}
+
+
         </div>
       ),
       ignoreRowClick: true,
@@ -676,40 +682,40 @@ const Client = () => {
                     <i className="bx bx-search" />
                   </span>
                 </div>
-            <div className="d-sm-flex gap-3 justify-content-lg-end w-100 mt-3 mt-lg-0">
-                <div className="flaot-lg-auto">
-                  <Link to="/admin/addclient" className="btn btn-primary">
-                    <i className="bx bxs-plus-square" aria-hidden="true" />
-                    Add Client
-                  </Link>
-                </div>
+                <div className="d-sm-flex gap-3 justify-content-lg-end w-100 mt-3 mt-lg-0">
+                  <div className="flaot-lg-auto">
+                    <Link to="/admin/addclient" className="btn btn-primary">
+                      <i className="bx bxs-plus-square" aria-hidden="true" />
+                      Add Client
+                    </Link>
+                  </div>
 
-                <div className="" onClick={(e) => getexportfile()}>
-                  <button
-                    type="button"
-                    className="btn btn-primary my-2 my-sm-0"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="Export To Excel"
-                    delay={{ show: "0", hide: "100" }}
-                  >
-                    <i className="bx bxs-download" aria-hidden="true"></i>
-                    Export-Excel
-                  </button>
-                </div>
-                <div className="">
-                  <Link
-                    to="/admin/clientdeletehistory"
-                    className="btn btn-primary"
-                  >
-                    <i className="bx bxs-trash" aria-hidden="true" />
-                    Deleted Client
-                  </Link>
+                  <div className="" onClick={(e) => getexportfile()}>
+                    <button
+                      type="button"
+                      className="btn btn-primary my-2 my-sm-0"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="Export To Excel"
+                      delay={{ show: "0", hide: "100" }}
+                    >
+                      <i className="bx bxs-download" aria-hidden="true"></i>
+                      Export-Excel
+                    </button>
+                  </div>
+                  <div className="">
+                    <Link
+                      to="/admin/clientdeletehistory"
+                      className="btn btn-primary"
+                    >
+                      <i className="bx bxs-trash" aria-hidden="true" />
+                      Deleted Client
+                    </Link>
+                  </div>
                 </div>
               </div>
-              </div>
-              <div className="row mb-4">
-                <div className="col-md-4 ">
+              <div className="row ">
+                <div className="col-sm-6 col-md-4 mb-3">
                   <div>
                     <label htmlFor="kycSelect">Select Kyc</label>
                     <select
@@ -724,7 +730,7 @@ const Client = () => {
                     </select>
                   </div>
                 </div>
-                <div className="col-md-4">
+                <div className="col-sm-6  col-md-4 mb-3">
                   <div>
                     <label htmlFor="kycSelect">Select CreatedBy</label>
                     <select
@@ -739,7 +745,7 @@ const Client = () => {
                     </select>
                   </div>
                 </div>
-                <div className="col-md-3">
+                <div className="col-sm-6  col-md-3 mb-3">
                   <div>
                     <label htmlFor="kycSelect">Select Client</label>
                     <select
@@ -754,8 +760,8 @@ const Client = () => {
                     </select>
                   </div>
                 </div>
-                <div className="col-md-1">
-                  <div className="refresh-icon mt-4">
+                <div className="col-sm-6 col-md-1">
+                  <div className="refresh-icon ">
                     <RefreshCcw onClick={resethandle} />
                   </div>
                 </div>
@@ -819,7 +825,7 @@ const Client = () => {
                             <input
                               style={{
                                 border: "1px solid #ddd",
-                                margin: "0 8px",
+                                margin: "0 8px 1px",
                               }}
                               className="form-check-input"
                               type="radio"
@@ -1018,7 +1024,7 @@ const Client = () => {
                                   }}
                                   htmlFor={`input-plan-${index}`}
                                 >
-                                   {item.title} ({item.themename})
+                                  {item.title} ({item.themename})
                                 </label>
                               </h5>
 

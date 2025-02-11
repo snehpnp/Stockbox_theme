@@ -623,7 +623,7 @@ const Closesignal = () => {
                             </div>
 
                             {/* Search and Filters */}
-                            <div className="d-lg-flex align-items-center mb-4 gap-3 justify-content-between">
+                            <div className="d-sm-flex align-items-center mb-4 gap-3 justify-content-between">
                                 <div className="position-relative">
                                     <input
                                         type="text"
@@ -636,10 +636,10 @@ const Closesignal = () => {
                                         <i className="bx bx-search" />
                                     </span>
                                 </div>
-                                <div className="ms-2" onClick={(e) => getexportfile()}>
+                                <div className="ms-0 ms-md-2 mt-2 mt-md-0" onClick={(e) => getexportfile()}>
                                     <button
                                         type="button"
-                                        className="btn btn-primary float-end"
+                                        className="btn btn-primary float-sm-end"
                                         title="Export To Excel"
                                     >
                                         <i className="bx bxs-download" aria-hidden="true"></i>
@@ -649,8 +649,8 @@ const Closesignal = () => {
                             </div>
 
                             {/* Filters */}
-                            <div className="row mb-4">
-                                <div className="col-md-3">
+                            <div className="row ">
+                                <div className="col-md-3 mb-3">
                                     <label>From Date</label>
                                     <input
                                         type="date"
@@ -661,7 +661,7 @@ const Closesignal = () => {
                                         onChange={handleFilterChange}
                                     />
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-md-3 mb-3">
                                     <label>To Date</label>
                                     <input
                                         type="date"
@@ -672,7 +672,7 @@ const Closesignal = () => {
                                         onChange={handleFilterChange}
                                     />
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-md-3 mb-3">
                                     <label>Select Service</label>
                                     <select
                                         name="service"
@@ -688,7 +688,7 @@ const Closesignal = () => {
                                         ))}
                                     </select>
                                 </div>
-                                <div className="col-md-3 d-flex">
+                                <div className="col-md-3 d-flex align-items-center justify-content-between"> 
                                     <div style={{ width: "80%" }}>
                                         <label>Select Stock</label>
                                         <Select
@@ -699,7 +699,7 @@ const Closesignal = () => {
                                                 ) || null
                                             }
                                             onChange={handleChange}
-                                            className="form-control radius-10"
+                                            className=""
                                             isClearable
                                             placeholder="Select Stock"
                                         />

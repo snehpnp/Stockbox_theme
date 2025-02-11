@@ -158,8 +158,8 @@ const Dashboard = () => {
           newData1.shift();
           const newData2 = chartCtx.w.config.series[1].data.slice();
           newData2.shift();
-          window.setTimeout(() => {
-            chartCtx.updateOptions(
+          window?.setTimeout(() => {
+            chartCtx?.updateOptions(
               {
                 series: [
                   { data: newData1 },
@@ -355,7 +355,7 @@ const Dashboard = () => {
 
                 <a href="/" className="breadcrumb-box" />
               </li>
-              <li>
+              <li style={{ width: "3px" }}>
                 <Tally1 />
               </li>
               <li>
@@ -372,104 +372,7 @@ const Dashboard = () => {
       </div>
 
       <div class="row g-3 mt-4" >
-
-        <div class="col-lg-8">
-          <div className="card h-100">
-            <div className="card-body">
-
-              <div className="row ">
-                <div class="col-md-6">
-                  <h3>Activity</h3>
-                </div>
-                <div class="col-md-6">
-                  <div class="d-flex justify-content-end align-items-center mb-3">
-
-                    <div class="time-selector d-flex gap-2 ">
-                      <button class="btn btn-outline-primary active" data-period="1D">1D</button>
-                      <button class="btn btn-outline-primary" data-period="1W">1W</button>
-                      <button class="btn btn-outline-primary" data-period="1M">1M</button>
-                      <button class="btn btn-outline-primary" data-period="1Y">1Y</button>
-                      <button class="btn btn-outline-primary" data-period="ALL">ALL</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <>
-                <div className=" my-5">
-                  <label className="fw-semibold">Trades</label>
-                  <div className="progress ">
-
-                    <div
-                      className="progress-bar progress-bar-striped"
-                      role="progressbar"
-                      style={{ width: "10%" }}
-                      aria-valuenow={10}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </div>
-                <div className=" my-5">
-                  <label className="fw-semibold">Past Performance</label>
-                  <div className="progress ">
-
-                    <div
-                      className="progress-bar progress-bar-striped bg-success"
-                      role="progressbar"
-                      style={{ width: "25%" }}
-                      aria-valuenow={25}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </div>
-                <div className=" my-5">
-                  <label className="fw-semibold">Basket</label>
-                  <div className="progress ">
-                    <div
-                      className="progress-bar progress-bar-striped bg-info"
-                      role="progressbar"
-                      style={{ width: "50%" }}
-                      aria-valuenow={50}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </div>
-                <div className=" my-5">
-                  <label className="fw-semibold">Subscription</label>
-                  <div className="progress " >
-                    <div
-                      className="progress-bar progress-bar-striped bg-warning"
-                      role="progressbar"
-                      style={{ width: "75%" }}
-                      aria-valuenow={75}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </div>
-                <div className=" my-5">
-                  <label className="fw-semibold">Coupon</label>
-                  <div className="progress ">
-                    <div
-                      className="progress-bar progress-bar-striped bg-danger"
-                      role="progressbar"
-                      style={{ width: "100%" }}
-                      aria-valuenow={100}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </div>
-              </>
-
-
-
-            </div>
-          </div>
-        </div>
-        <div className="col-lg-4">
+      <div className="col-lg-4 col-md-4">
           <div className="card">
             <div className="card-body">
               <div className="d-flex flex-column align-items-center text-center">
@@ -518,6 +421,103 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+        <div class="col-lg-8 col-md-8">
+          <div className="card h-100 activity-card">
+            <div className="card-body">
+
+              <div className="row ">
+                <div class="col-md-6">
+                  <h3>Activity</h3>
+                </div>
+                <div class="col-md-6">
+                  <div class="d-flex justify-content-end align-items-center mb-3">
+
+                    <div class="time-selector d-flex gap-2 ">
+                      <button class="btn btn-secondary active" data-period="1D">1D</button>
+                      <button class="btn btn-secondary" data-period="1W">1W</button>
+                      <button class="btn btn-secondary" data-period="1M">1M</button>
+                      <button class="btn btn-secondary" data-period="1Y">1Y</button>
+                      <button class="btn btn-secondary" data-period="ALL">ALL</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <>
+                <div className="my-4">
+                  <label className="fw-semibold">Trades</label>
+                  <div className="progress ">
+
+                    <div
+                      className="progress-bar progress-bar-striped"
+                      role="progressbar"
+                      style={{ width: "10%" }}
+                      aria-valuenow={10}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                    />
+                  </div>
+                </div>
+                <div className="my-4">
+                  <label className="fw-semibold">Past Performance</label>
+                  <div className="progress ">
+
+                    <div
+                      className="progress-bar progress-bar-striped bg-success"
+                      role="progressbar"
+                      style={{ width: "25%" }}
+                      aria-valuenow={25}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                    />
+                  </div>
+                </div>
+                <div className="my-4">
+                  <label className="fw-semibold">Basket</label>
+                  <div className="progress ">
+                    <div
+                      className="progress-bar progress-bar-striped bg-info"
+                      role="progressbar"
+                      style={{ width: "50%" }}
+                      aria-valuenow={50}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                    />
+                  </div>
+                </div>
+                <div className="my-4">
+                  <label className="fw-semibold">Subscription</label>
+                  <div className="progress " >
+                    <div
+                      className="progress-bar progress-bar-striped bg-warning"
+                      role="progressbar"
+                      style={{ width: "75%" }}
+                      aria-valuenow={75}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                    />
+                  </div>
+                </div>
+                <div className="my-4">
+                  <label className="fw-semibold">Coupon</label>
+                  <div className="progress ">
+                    <div
+                      className="progress-bar progress-bar-striped bg-danger"
+                      role="progressbar"
+                      style={{ width: "100%" }}
+                      aria-valuenow={100}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                    />
+                  </div>
+                </div>
+              </>
+
+
+
+            </div>
+          </div>
+        </div>
+        
       </div>
 
       <div className="row mt-4">
@@ -527,18 +527,18 @@ const Dashboard = () => {
               <h3 class="h6 fw-semibold mb-2">Sales Statistic</h3>
               <p class="h4 font-weight-bold">$<span id="salesValue">1,062.56</span></p>
               <p class="text-success">Today (+<span id="salesChangePercent">40.8</span>%)</p>
-              <ApexCharts
+              {/* <ApexCharts
                 options={optionsLine}
                 series={optionsLine.series}
                 type="line"
                 height={350}
-              />
-              {/* <ApexCharts
+              /> */}
+              <ApexCharts
                 options={optionsColumn}
                 series={optionsColumn.series}
                 type="bar"
                 height={350}
-              /> */}
+              />
             </div>
           </div>
         </div>
@@ -582,8 +582,8 @@ const Dashboard = () => {
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="h5 fw-semibold">Tokens</h3>
             <div>
-              <button class="btn btn-outline-primary me-2">Filter</button>
-              <button class="btn btn-outline-primary">Customize</button>
+              <button class="btn btn-secondary me-2">Filter</button>
+              <button class="btn btn-secondary">Customize</button>
             </div>
           </div>
           <div class="table-responsive">

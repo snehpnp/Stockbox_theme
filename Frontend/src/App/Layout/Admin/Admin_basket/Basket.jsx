@@ -6,7 +6,7 @@ import { Tooltip } from 'antd';
 // import Table from "../../../components/Table";
 import Table from '../../../Extracomponents/Table1';
 import { BasketAllList, deletebasket, Basketstatus, changestatusrebalance, getstocklistById } from "../../../Services/Admin/Admin";
-import { fDate} from "../../../../Utils/Date_formate";
+import { fDate } from "../../../../Utils/Date_formate";
 import Loader from "../../../../Utils/Loader";
 
 
@@ -24,7 +24,6 @@ const Basket = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
 
-  //state for loading
   const [isLoading, setIsLoading] = useState(true)
 
 
@@ -41,9 +40,6 @@ const Basket = () => {
     try {
       const data = { page: currentPage, search: searchInput || "" }
       const response = await BasketAllList(data, token);
-      // console.log("BasketAllList",response);
-      
-     
 
       if (response.status) {
         setClients(response.data);
@@ -204,8 +200,6 @@ const Basket = () => {
 
 
 
-
-  // Columns for DataTable
   const columns = [
     {
       name: 'S.No',
@@ -350,10 +344,10 @@ const Basket = () => {
           </nav>
         </div>
       </div>
-      
+
       <div className="card">
         <div className="card-body">
-          <div className="d-lg-flex align-items-center mb-4 gap-3">
+          <div className="d-sm-flex align-items-center mb-4 gap-3">
             <div className="position-relative">
               <input
                 type="text"
@@ -366,7 +360,7 @@ const Basket = () => {
                 <i className="bx bx-search" />
               </span>
             </div>
-            <div className="ms-auto">
+            <div className="ms-auto mt-2 mt-sm-0">
               <Link to="/admin/addbasket" className="btn btn-primary">
                 <i className="bx bxs-plus-square" aria-hidden="true" />
                 Add Basket

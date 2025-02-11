@@ -27,7 +27,7 @@ class BannerController {
             });
     
             // After the upload is successful, proceed with the rest of the logic
-            const { add_by, hyperlink } = req.body;
+            const { add_by, hyperlink, type } = req.body;
 
            
               if (!add_by) {
@@ -42,6 +42,7 @@ class BannerController {
                 image: image,
                 hyperlink:hyperlink,
                 add_by:add_by,
+                type:type,
             });
             
             // Save the result to the database
@@ -147,7 +148,7 @@ class BannerController {
             });
     
 
-            const { id, hyperlink } = req.body;
+            const { id, hyperlink,type } = req.body;
           
 
             if (!id) {
@@ -163,7 +164,7 @@ class BannerController {
             const image = req.files && req.files['image'] ? req.files['image'][0].filename : null;
             // Prepare the update object
             
-            const updateFields = { hyperlink };
+            const updateFields = { hyperlink,type };
             if (image) {
                 updateFields.image = image;
             }

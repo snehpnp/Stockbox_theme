@@ -1,0 +1,11 @@
+Important Note:
+Step 1:
+
+Please Enable the Trading status (Alice Blue) if you want to Auto Squareoff the signal.
+Signal Auto Squareoff in two types
+1.Trade duration is Intraday.
+2.Today's Expiry date
+
+Step 2:
+1.Go to the Basic setting 
+2.Click on Auto Squareoff and Set the Auto Squareoff time.

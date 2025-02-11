@@ -5,7 +5,7 @@ import { fDateTime } from '../../../../Utils/Date_formate';
 import Swal from 'sweetalert2';
 import Loader from '../../../../Utils/Loader'
 import ReusableModal from '../../../components/Models/ReusableModal';
-
+import Content from '../../../components/Contents/Content';
 
 
 
@@ -169,35 +169,14 @@ const Plan = () => {
 
 
     return (
+        <Content Page_title="Package" route="/employee/addplan"
+            button_status={true} button_title="Add Package">
         <div className="page-content">
-            <div className="page-breadcrumb  d-flex align-items-center mb-3">
-                <div className="breadcrumb-title pe-3">Package
-
-
-                </div> 
-                <div className="ps-3">
-                    <nav aria-label="breadcrumb">
-                        <ol className="breadcrumb mb-0 p-0">
-                            <li className="breadcrumb-item">
-                                <Link to="/admin/dashboard">
-                                    <i className="bx bx-home-alt" />
-                                </Link>
-                            </li>
-                        </ol>
-                    </nav>
-                </div>
-                <div className="ms-auto">
-                    <div className="btn-group">
-                        <Link to="/employee/addplan" className="btn btn-primary">
-                            Add Package
-                        </Link>
-                    </div>
-                </div>
-            </div>
+        
             
 
-            <div className="card">
-                <div className="card-body">
+            <div className="">
+                <div className="">
                     <ul className="nav nav-pills mb-1" role="tablist">
                         <li className="nav-item" role="presentation">
                             <a
@@ -298,10 +277,10 @@ const Plan = () => {
                                                                     <li><b className='mb-1'>Description</b>:<textarea className='form-control' value={stripHtmlTags(client.description || '')} >{client.description}</textarea></li>
                                                                     <li><b>Created At</b>: {fDateTime(client.created_at)}</li>
                                                                 </ul>
-                                                                <div className="button-group">
+                                                                <div className="button-group gap-2 d-sm-flex">
                                                                     <button
                                                                         type="button"
-                                                                        className="btnsecond btn btn-primary w-50"
+                                                                        className="btnsecond btn btn-primary w-100 w-sm-50"
                                                                         onClick={() => setShowViewModal(client._id)}
                                                                     >
                                                                         View More
@@ -363,7 +342,7 @@ const Plan = () => {
 
                                                                     <Link
                                                                         to={`editplan/${client._id}`}
-                                                                        className="btnprime btn btn-secondary ms-2"
+                                                                        className="btnprime btn btn-secondary mt-2 mt-sm-0 w-100 w-sm-50"
                                                                         style={{ color: 'inherit', textDecoration: 'none' }}
                                                                     >
                                                                         Edit
@@ -388,7 +367,7 @@ const Plan = () => {
                 </div>
             </div>
         </div>
-
+        </Content>
     );
 };
 

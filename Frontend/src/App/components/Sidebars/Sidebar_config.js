@@ -192,6 +192,12 @@ const Admin = [
     name: "BasicSettings",
   },
   {
+    label: "Order List",
+    icon: "MessageCircleMore",
+    link: "/admin/orderlist",
+    name: "Order List"
+  },
+  {
     label: "Broadcast SMS",
     icon: "MessageCircleMore",
     link: "/admin/message",
@@ -219,13 +225,13 @@ const Admin = [
 
 
 const SuperAdmin = [
-  {
-    name: "Dashboard",
-    label: "Dashboard",
-    icon: "LayoutDashboard",
-    link: "/superadmin/dashboard",
-    children: [],
-  },
+  // {
+  //   name: "Dashboard",
+  //   label: "Dashboard",
+  //   icon: "LayoutDashboard",
+  //   link: "/superadmin/dashboard",
+  //   children: [],
+  // },
   {
     name: "Company",
     label: "Company",
@@ -295,10 +301,17 @@ const User = [
   //   children: [],
   // },
   {
-    name: "BasketResponse",
+    name: "Basket Response",
     label: "Basket Response",
     icon: "FolderClock",
-    link: "/user/broker_response",
+    link: "/user/basket-response",
+    children: [],
+  },
+  {
+    name: "Broker Response",
+    label: "Broker Response",
+    icon: "FolderClock",
+    link: "/user/broker-response",
     children: [],
   },
   {
@@ -311,14 +324,14 @@ const User = [
   {
     name: "ReferEarn",
     label: "Refer & Earn",
-    icon: "HelpingHand",
+    icon: "Puzzle",
     link: "/user/refer-earn",
     children: [],
   },
   {
     name: "Faqs",
     label: "Faqs",
-    icon: "HelpingHand",
+    icon: "FileQuestion",
     link: "/user/faq",
     children: [],
   },
@@ -343,13 +356,36 @@ const User = [
     link: "/user/help-desk",
     children: [],
   },
-  // {
-  //   name: "Brodcast",
-  //   label: "Broadcast",
-  //   icon: "HelpingHand",
-  //   link: "/user/brodcast",
-  //   children: [],
-  // },
+  {
+    name: "Brodcast",
+    label: "Broadcast",
+    icon: "MessageCircleMore",
+    link: "/user/broadcast",
+    children: [],
+  },
+  {
+    name: "Notification",
+    label: "Notification",
+    icon: "Bell",
+    link: "/user/notification",
+    children: [],
+  },
+  {
+    name: "News",
+    label: "News",
+    icon: "Vote",
+    link: "/user/news",
+    children: [],
+  },
+  {
+    name: "Blogs",
+    label: "Blogs",
+    icon: "Paintbrush",
+    link: "/user/blogs",
+    children: [],
+
+  }
+  ,
   {
     name: "PaymentHistory",
     label: "Payment History",

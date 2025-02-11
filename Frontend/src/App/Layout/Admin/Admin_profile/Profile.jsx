@@ -301,25 +301,10 @@ const Profile = () => {
                               <p>{item.PhoneNo}</p>
                             </div>
                           </div>
-                          {/* <div className="row mb-3">
-                                                    <div className="col-sm-3">
-                                                        <h6 className="mb-0">Address</h6>
-                                                    </div>
-                                                    <div className="col-sm-9 text-secondary">
-                                                        <p>{item.address}</p>
-                                                    </div>
-                                                </div> */}
+                  
                         </div>
                       ))}
 
-                    {/* <div className="row mb-3">
-                                            <div className="col-sm-3">
-                                                <Link to="/admin/changepass" className="btn btn-primary mb-0" style={{ fontSize: "14px" }}>Change Password</Link>
-                                            </div>
-                                            <div className="col-sm-9 text-secondary">
-
-                                            </div>
-                                        </div> */}
                   </div>
                 </div>
               </div>

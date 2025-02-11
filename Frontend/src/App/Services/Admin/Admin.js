@@ -676,19 +676,42 @@ export async function getstaffperuser(_id, token) {
 // add basket 
 
 export async function Addbasketplan(data, token) {
+    const formData = new FormData();
+    formData.append('title', data.title);
+    formData.append('description', data.description);
+    formData.append('full_price', data.full_price);
+    formData.append('basket_price', data.basket_price);
+    formData.append('mininvamount', data.mininvamount);
+    formData.append('themename', data.themename);
+    formData.append('cagr', data.cagr);
+    formData.append('frequency', data.frequency);
+    formData.append('validity', data.validity);
+    formData.append('next_rebalance_date', data.next_rebalance_date);
+    formData.append('type', data.type);
+    formData.append('add_by', data.add_by);
+    formData.append('short_description', data.short_description);
+    formData.append('image', data.image);
+    formData.append('rationale', data.rationale);
+    formData.append('methodology', data.methodology);
+
+
+
+
     try {
-        const res = await axios.post(`${Config.base_url}basket/add`, data, {
+        const res = await axios.post(`${Config.base_url}basket/add`, formData, {
             headers: {
-                data: {},
+                'Content-Type': 'multipart/form-data',
                 'Authorization': `${token}`,
             },
         });
-
         return res?.data;
     } catch (err) {
         return err.response?.data || err.message;
     }
 }
+
+
+
 
 export async function Addstockbasketform(data, token) {
     try {
@@ -704,6 +727,7 @@ export async function Addstockbasketform(data, token) {
         return err.response?.data || err.message;
     }
 }
+
 export async function AddStock(data, token) {
     try {
         const res = await axios.post(`${Config.base_url}/stock/add`, data, {
@@ -735,20 +759,37 @@ export async function getStock(token) {
 // update basket 
 
 export async function Updatebasket(data, token) {
+
+    const formData = new FormData();
+    formData.append('title', data.title);
+    formData.append('description', data.description);
+    formData.append('full_price', data.full_price);
+    formData.append('basket_price', data.basket_price);
+    formData.append('mininvamount', data.mininvamount);
+    formData.append('themename', data.themename);
+    formData.append('cagr', data.cagr);
+    formData.append('frequency', data.frequency);
+    formData.append('validity', data.validity);
+    formData.append('next_rebalance_date', data.next_rebalance_date);
+    formData.append('type', data.type);
+    formData.append('id', data.id);
+    formData.append('short_description', data.short_description);
+    formData.append('image', data.image);
+    formData.append('rationale', data.rationale);
+    formData.append('methodology', data.methodology);
+
     try {
-        const res = await axios.put(`${Config.base_url}basket/update`, data, {
+        const res = await axios.put(`${Config.base_url}basket/update`, formData, {
             headers: {
-                data: {},
+                'Content-Type': 'multipart/form-data',
                 'Authorization': `${token}`,
             },
         });
-
         return res?.data;
     } catch (err) {
         return err.response?.data || err.message;
     }
 }
-
 
 
 //  update stock detail
@@ -772,7 +813,7 @@ export async function updateStockList(data, token) {
 // plan list 
 
 
-export async function getplanlist(token) { 
+export async function getplanlist(token) {
 
     try {
         const res = await axios.get(`${Config.base_url}plan/list`, {
@@ -1834,6 +1875,7 @@ export async function Updatebasicsettings(data, token) {
     formData.append('contact_number', data.contact_number);
     formData.append('favicon', data.favicon);
     formData.append('logo', data.logo);
+    formData.append('offer_image', data.offer_image);
 
 
     try {
@@ -2188,8 +2230,8 @@ export async function getPayementhistorywithfilter(data, token) {
                 'Authorization': `${token}`
             },
         });
-        console.log("response data from backend",res);
-        
+
+
         return res?.data;
     } catch (err) {
         return err;
@@ -2601,7 +2643,6 @@ export async function getfreetrialstatus(token) {
 }
 
 
-// get trading status
 
 export async function gettradestatus(data, token) {
     try {
@@ -3253,5 +3294,23 @@ export async function changestatusrebalance(data, token) {
         return res?.data;
     } catch (err) {
         return err.response?.data || err.message;
+    }
+}
+
+
+// get order listv 
+
+export async function getOrderlistofclient(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}client/orderlistdetail`, data, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+
+
+        return res?.data;
+    } catch (err) {
+        return err;
     }
 }

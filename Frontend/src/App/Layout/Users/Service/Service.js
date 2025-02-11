@@ -6,25 +6,19 @@ import {
   GetPlanByCategory,
   AddplanSubscription,
   GetCouponlist,
-  ApplyCoupondata
+  ApplyCoupondata,
 } from "../../../Services/UserService/User";
 import { IndianRupee } from "lucide-react";
 import { loadScript } from "../../../../Utils/Razorpayment";
 import { basicsettinglist } from "../../../Services/Admin/Admin";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 import Loader from "../../../../Utils/Loader";
 import ReusableModal from "../../../components/Models/ReusableModal";
 
 const Service = () => {
-
-
-
-
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
   const applyButtonRef = useRef(null);
-
-
 
   const [selectedPlan, setSelectedPlan] = useState("all");
   const [category, setCategory] = useState([]);
@@ -37,21 +31,19 @@ const Service = () => {
   const [discountedPrice, setDiscountedPrice] = useState(0);
   const [coupons, setCoupon] = useState([]);
   const [getkey, setGetkey] = useState([]);
-  const [sortCriteria, setSortCriteria] = useState("price");
-  const [isLoading, setIsLoading] = useState(true)
+  const [company, setCompany] = useState([]);
+  const [sortCriteria, setSortCriteria] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   const [viewmodel, setViewModel] = useState(false);
 
   const [discription, setDiscription] = useState("");
- 
 
   useEffect(() => {
     getPlan();
     getCoupon();
-    getkeybydata()
+    getkeybydata();
   }, []);
-
-
 
   const handleCouponSelect = (coupon) => {
     setManualCoupon(coupon?.code);
@@ -61,45 +53,46 @@ const Service = () => {
     }
   };
 
-
-
   const applyCoupon = async (coupon) => {
     try {
-      const data = { code: coupon?.code, purchaseValue: selectedPlanDetails?.plans?.[0]?.price, planid: selectedPlanDetails?._id };
-      const response = await ApplyCoupondata(data, token)
+      const data = {
+        code: coupon?.code,
+        purchaseValue: selectedPlanDetails?.plans?.[0]?.price,
+        planid: selectedPlanDetails?.plans[0]?._id,
+      };
+      const response = await ApplyCoupondata(data, token);
 
       if (response.status) {
         Swal.fire({
-          title: 'Coupon Applied!',
-          text: response.message || 'Your discount has been applied successfully.',
-          icon: 'success',
-          confirmButtonText: 'OK',
+          title: "Coupon Applied!",
+          text:
+            response.message || "Your discount has been applied successfully.",
+          icon: "success",
+          confirmButtonText: "OK",
         });
         const originalPrice = selectedPlanDetails?.plans?.[0]?.price || 0;
         const discount = coupondata?.value || 0;
-        const discountedPrice = (originalPrice - discount);
+        const discountedPrice = originalPrice - discount;
         setDiscountedPrice(originalPrice - discount);
         setAppliedCoupon(coupondata);
         setDiscountedPrice(discountedPrice);
       } else {
         Swal.fire({
-          title: 'Coupon Error',
-          text: response.message || 'Failed to apply coupon. Please try again.',
-          icon: 'error',
-          confirmButtonText: 'OK',
+          title: "Coupon Error",
+          text: response.message || "Failed to apply coupon. Please try again.",
+          icon: "error",
+          confirmButtonText: "OK",
         });
       }
     } catch (error) {
       Swal.fire({
-        title: 'Error',
-        text: 'Something went wrong. Please try again later.',
-        icon: 'error',
-        confirmButtonText: 'OK',
+        title: "Error",
+        text: "Something went wrong. Please try again later.",
+        icon: "error",
+        confirmButtonText: "OK",
       });
     }
   };
-
-
 
   const removeCoupon = () => {
     setManualCoupon("");
@@ -108,17 +101,9 @@ const Service = () => {
     setAppliedCoupon(null);
   };
 
-
-
-
-
-
   const handleSelectChange = (event) => {
     setSelectedPlan(event.target.value);
   };
-
-
-
 
   const getCoupon = async () => {
     try {
@@ -131,36 +116,30 @@ const Service = () => {
     }
   };
 
-
-
   const getkeybydata = async () => {
     try {
       const response = await basicsettinglist();
       if (response.status) {
         setGetkey(response?.data[0]?.razorpay_key);
+        setCompany(response?.data[0]?.from_name);
       }
     } catch (error) {
       console.error("Error fetching coupons:", error);
     }
   };
 
-
-
-
   const getPlan = async () => {
     try {
       const response = await GetPlanByCategory(token);
       if (response.status) {
         setPlan(response.data);
-        setCategory(response?.data);
+        setCategory(response?.data.sort((a, b) => b._id.localeCompare(a._id)));
       }
     } catch (error) {
       console.error("Error fetching plans:", error);
     }
-    setIsLoading(false)
+    setIsLoading(false);
   };
-
-
 
   const AddSubscribeplan = async (item) => {
     try {
@@ -170,6 +149,7 @@ const Service = () => {
       const options = {
         key: getkey,
         amount: (discountedPrice || selectedPlanDetails?.plans[0]?.price) * 100,
+        name: company,
         currency: "INR",
         title: item?.plans[0]?.title || "Subscription Plan",
         handler: async function (response1) {
@@ -204,15 +184,10 @@ const Service = () => {
     }
   };
 
-
-
   const handleShowModal = (item) => {
     setSelectedPlanDetails(item);
     setShowModal(true);
   };
-
-
-
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -220,45 +195,29 @@ const Service = () => {
     setDiscountedPrice(0);
   };
 
-
-
-
   const getFilteredPlans = useMemo(() => {
     let filteredPlans =
       selectedPlan === "all"
         ? plan
         : plan.filter((item) => item?._id === selectedPlan);
 
-    if (sortCriteria === "price") {
-      filteredPlans.sort((a, b) => a?.plans[0]?.price - b?.plans[0]?.price);
-    } else if (sortCriteria === "title") {
-      filteredPlans.sort((a, b) => a?.title.localeCompare(b?.title));
-    } else if (sortCriteria === "validity") {
-      filteredPlans.sort(
-        (a, b) => a?.plans[0]?.validity - b?.plans[0]?.validity
+    if (sortCriteria ) {
+      filteredPlans = filteredPlans.filter((item) =>
+        item.services.some((data) => data.title === sortCriteria)
       );
     }
 
     return filteredPlans;
   }, [plan, selectedPlan, sortCriteria]);
 
-
-
   const stripHtmlTags = (input) => {
     if (!input) return "";
     return input.replace(/<\/?[^>]+(>|$)/g, "");
   };
 
-
-
-
-
-
   return (
-
     <Content Page_title="Service" button_title="Back" button_status={false}>
-
-      <div className="card-body">
+      <div className="">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <div className="row w-100">
             <div className="col-md-6">
@@ -286,7 +245,7 @@ const Service = () => {
             </div>
             <div className="col-md-6">
               <label htmlFor="sortSelect" className="mb-1">
-                Sort By
+                Segment
               </label>
               <select
                 id="sortSelect"
@@ -294,82 +253,94 @@ const Service = () => {
                 onChange={(e) => setSortCriteria(e.target.value)}
                 value={sortCriteria}
               >
-                <option value="price">Price</option>
-                <option value="title">Title</option>
-                <option value="validity">Validity</option>
+                <option value="">Select Segment</option>
+                <option value="Cash">Cash</option>
+                <option value="Future">Future</option>
+                <option value="Option">Option</option>
               </select>
             </div>
           </div>
         </div>
-        {isLoading ? <Loader /> : <div className="pricing-container price1 row mt-4">
-          <div className="row row-cols-1 row-cols-md-1 row-cols-lg-3 row-cols-xl-3">
-            {getFilteredPlans?.map((item) => (
-              <div className="col col-md-6" key={item?._id}>
-                <div className="card card1 mb-4">
-                  <div className="card-body">
-                    <div className="d-flex align-items-center">
-                      <div className="text-left">
-                        <span className="price-original">
-                          {Array.isArray(item?.services) &&
-                            item.services.length > 0
-                            ? item.services?.map((service) =>
-                              typeof service.title === "string"
-                                ? service.title
-                                  .split(/(?=[A-Z])/)
-                                  .join(" + ")
-                                : "N/A"
-                            )
-                              .join(" + ")
-                            : "N/A"}
-                        </span>
-                        <h5 className="mb-0">{item?.title}</h5>
-                      </div>
-                      <div className="ms-auto">
-                        <div className="price">
-                          <span className="price-current">
-                            <IndianRupee />
-                            {item?.plans[0]?.price}
-                          </span>
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <div className="pricing-container price1  mt-4">
+            <div className="row row-cols-1 row-cols-md-1 row-cols-lg-3 row-cols-xl-3">
+              {getFilteredPlans?.map(
+                (item) =>
+                  item?.plans?.length > 0 && (
+                    <div className="col col-lg-6 " key={item?._id}>
+                      <div className="card card1 mb-4">
+                        <div className="card-body">
+                          <div className="d-flex align-items-center">
+                            <div className="text-left">
+                              <span className="price-original">
+                                {Array?.isArray(item?.services) &&
+                                item.services.length > 0
+                                  ? item?.services
+                                      ?.map((service) =>
+                                        typeof service.title === "string"
+                                          ? service.title
+                                              .split(/(?=[A-Z])/)
+                                              .join(" + ")
+                                          : "N/A"
+                                      )
+                                      .join(" + ")
+                                  : "N/A"}
+                              </span>
+                              <h5 className="mb-0">{item?.title}</h5>
+                            </div>
+                            <div className="ms-auto">
+                              <div className="price">
+                                <span className="price-current">
+                                  <IndianRupee />
+                                  {item?.plans[0]?.price}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <hr />
+                          <ul className="features">
+                            <li>
+                              <b>Validity</b>: {item?.plans[0]?.validity}{" "}
+                            </li>
+                            <li>
+                              <b>Description</b>:
+                              <textarea
+                                className="form-control"
+                                value={stripHtmlTags(
+                                  item?.plans[0]?.description || ""
+                                )}
+                                readOnly
+                              />
+                            </li>
+                          </ul>
+                          <div className="d-block d-sm-flex  align-items-center justify-content-between mt-4">
+                            <button
+                              className="btn btn-secondary rounded-1 mt-2 mt-sm-0 me-2 me-sm-0"
+                              onClick={() => {
+                                setViewModel(true);
+                                setDiscription(item?.plans[0]?.description);
+                              }}
+                            >
+                              Know More
+                            </button>
+
+                            <button
+                              className="btn btn-primary rounded-1 mt-2 mt-sm-0"
+                              onClick={() => handleShowModal(item)}
+                            >
+                              Subscribe Now
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <hr />
-                    <ul className="features">
-                      <li>
-                        <b>Validity</b>: {item?.plans[0]?.validity}{" "}
-                      </li>
-                      <li>
-                        <b>Description</b>:
-                        <textarea
-                          className="form-control"
-                          value={stripHtmlTags(
-                            item?.plans[0]?.description || ""
-                          )}
-                          readOnly
-                        />
-                      </li>
-                    </ul>
-                    <div className="d-block d-md-flex align-items-center justify-content-between mt-4">
-                      <button className="btn btn-secondary rounded-1 "
-                        onClick={() => {
-                          setViewModel(true);
-                          setDiscription(item?.plans[0]?.description);
-                        }} >
-                        Know More
-                      </button>
-                      <button
-                        className="btn btn-primary rounded-1 mt-3 mt-md-0"
-                        onClick={() => handleShowModal(item)}
-                      >
-                        Subscribe Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+                  )
+              )}
+            </div>
           </div>
-        </div>}
+        )}
       </div>
 
       <Modal show={showModal} onHide={handleCloseModal} centered size="xxl">
@@ -409,7 +380,6 @@ const Service = () => {
                       scrollbarWidth: "thin",
                     }}
                   >
-
                     <div className="mb-3">
                       <div className="d-flex align-items-center">
                         <input
@@ -440,7 +410,6 @@ const Service = () => {
                       </div>
                     </div>
 
-                    {/* Available Coupons */}
                     <div>
                       {coupons.map((coupon) => (
                         <li
@@ -470,18 +439,19 @@ const Service = () => {
                           }}
                         >
                           <div
+                            className="btn-primary"
                             style={{
                               width: "40px",
-                              height: "125px",
-                              backgroundColor: "#007bff",
+                              height: "130px",
+
                               color: "#fff",
                               textAlign: "center",
                               display: "flex",
                               flexDirection: "column",
                               justifyContent: "center",
                               alignItems: "center",
-                              borderRadius: "12px",
-
+                              borderTopLeftRadius: "12px",
+                              borderBottomLeftRadius: "12px",
                               padding: "0",
                               marginLeft: "-20px",
                               marginTop: "-20px",
@@ -504,7 +474,6 @@ const Service = () => {
                               ))}
                           </div>
 
-                          {/* Second Section */}
                           <div
                             style={{
                               flexGrow: 1,
@@ -556,14 +525,7 @@ const Service = () => {
                               >
                                 💸 Save Upto: <strong>₹{coupon?.value}</strong>
                               </span>
-                              {/* <span
-            style={{
-              display: "block",
-              marginBottom: "4px",
-            }}
-          >
-            ✨ Offer: <strong>{coupon?.name}</strong>
-          </span> */}
+
                               <span style={{ display: "block" }}>
                                 🛒 Min Purchase:{" "}
                                 <strong>₹{coupon?.minpurchasevalue}</strong>
@@ -573,25 +535,7 @@ const Service = () => {
                           <div>
                             <button
                               onClick={() => handleCouponSelect(coupon)}
-                              style={{
-                                padding: "8px 16px",
-                                fontSize: "14px",
-                                color: "#fff",
-                                backgroundColor: "#007bff",
-                                border: "none",
-                                borderRadius: "6px",
-                                cursor: "pointer",
-                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                                transition: "background-color 0.3s",
-                              }}
-                              onMouseOver={(e) =>
-                              (e.currentTarget.style.backgroundColor =
-                                "#0056b3")
-                              }
-                              onMouseOut={(e) =>
-                              (e.currentTarget.style.backgroundColor =
-                                "#007bff")
-                              }
+                              className="btn btn-secondary"
                             >
                               Select
                             </button>
@@ -603,10 +547,8 @@ const Service = () => {
                 </Accordion.Item>
               </Accordion>
 
-              {/* Total Price */}
               <hr />
               <div>
-                {/* Original Price */}
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <b>💵 Original Price:</b>
                   <span className="text-primary fw-bold">
@@ -623,7 +565,6 @@ const Service = () => {
                   </div>
                 )}
 
-                {/* Total Price */}
                 <div className="d-flex justify-content-between align-items-center mt-3 py-2 border-top">
                   <b>💰 Total Price:</b>
                   <span
@@ -636,7 +577,6 @@ const Service = () => {
                 </div>
               </div>
 
-              {/* Confirm Button */}
               <div className="mt-4">
                 <button
                   className="btn btn-success w-100"
@@ -659,27 +599,11 @@ const Service = () => {
             <div className="modal-body">
               <div className="p-2 dynamic-content">
                 <div dangerouslySetInnerHTML={{ __html: discription }} />
-                
               </div>
             </div>
           </>
         }
-        footer={
-          <>
-            <button type="button" className="btn btn-primary">
-              Save
-            </button>
-            <button
-              className="btn btn-primary rounded-1"
-              onClick={() => setViewModel(false)}
-            >
-              Cancel
-            </button>
-          </>
-        }
       />
-
-
     </Content>
   );
 };

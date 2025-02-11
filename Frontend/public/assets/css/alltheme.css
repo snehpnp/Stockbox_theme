@@ -917,7 +917,7 @@ ol.breadcrumb.mb-0.p-0 {
 .content-heading {
   color: var(--dynamic-color, black) !important; 
 }
-.btn-primary,.nav-link.active , .btn-primary i{
+.btn-primary,.nav-link.active , .btn-primary i ,.btn-secondary.active{
   background-color: var(
     --BtnPriBgCol,
     black
@@ -928,17 +928,7 @@ ol.breadcrumb.mb-0.p-0 {
     black
   ) !important; 
 }
-.btn-secoondary {
-  background-color: var(
-    --BtnPriBgCol,
-    #fff
-  ) !important; 
-  color: var(--BtnPriTxtCol, black) !important; 
-  border-color: var(
-    --BtnSecBorderColor,
-    black
-  ) !important; 
-}
+
 .primary-text {
   color: var(--PrimaryColor, black) !important; 
 }
@@ -957,14 +947,13 @@ ol.breadcrumb.mb-0.p-0 {
   ) !important; 
 }
 
-.sidebar-color.sidebar-link.active,
-a.sidebar-color.sidebar-sublink.active {
+.sidebar-color.sidebar-link.active, a.sidebar-color.sidebar-sublink.active {
   background-color: var(
-    --headSidebarFontActiveCol,
-    white
-  ) !important; 
+  --headSidebarFontActiveCol,
+  white
+) !important;
+  border-radius: 5px ! important;
 }
-
 .heading-color {
   color: var(--HeadingColor, black) !important; 
 }
@@ -1084,7 +1073,11 @@ padding-left: 0;
 }
 }
 @media screen and (max-width: 768px) {
-  .btn.btn-primary {
+body .border-md-right
+  {
+    border-right: 0px !important;
+  }
+  .btn.btn-primary ,.btn.btn-secondary {
     font-size: 14px !important;
 }
 .content {
@@ -1117,28 +1110,7 @@ div#dropdownMenuLink svg{
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* -------------------user dashboard---------------------------*/
-
-
-
 
 .box .apexcharts-xaxistooltip {
   background: #1B213B;
@@ -1168,6 +1140,18 @@ div#dropdownMenuLink svg{
   font-weight: bold;
   font-size: 20px;
 }
+
+
+.table-primary,.accordion-button:not(.collapsed)
+{
+  background:var(--tabelheadbgcolor, #007bff) !important;
+  --bs-table-bg:var(--tabelheadbgcolor, #007bff) !important;
+}
+.activity-card .progress, .activity-card .progress-stacked {
+  --bs-progress-height: 1.5rem !important;
+}
+
+
 span.alert-count {
   top: -5px !important;
   right: -10px !important;
@@ -1175,4 +1159,117 @@ span.alert-count {
   height: 15px;
   padding: 2px 5px !important;
   line-height: 13px !important;
+}
+span.trade-type1 {
+  background: #00cd00;
+  color: #fff;
+  border-radius: 5px;
+  padding: 2px 4px;
+}
+
+
+.btn-primary i, .btn-secondary i {
+  padding-right: 5px;
+}
+
+.fs-14
+{
+  font-size: 14px;
+}
+li.fs-14 {
+  padding: 5px 0;
+}
+.basket-short-description
+{
+  overflow: hidden;
+text-overflow: ellipsis;
+display: -webkit-box;
+-webkit-line-clamp: 3;
+-webkit-box-orient: vertical;
+}
+.card-img {
+  /* height: 200px; */
+  object-fit: cover;
+  width: 200px !important;
+  margin: 0px auto;
+}
+.dynamic-image {
+  fill: var(--BtnPriBgCol, red); /* Default color red */
+}
+
+.privacy-data  p img{
+  width: 100%;
+}
+
+.screen-bg {
+  fill: var(
+    --BtnPriBgCol,
+    black) !important;
+  animation: flicker 3s ease-in-out infinite;
+}
+.dot {
+  fill: #ffffff;
+  animation: dotPulse 2s ease-in-out infinite;
+  transform-origin: center;
+}
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+.dark .screen-bg {
+  fill: var(
+    --BtnPriBgCol,
+    black) !important;
+}
+ .no-data
+{
+margin-top: -20px;
+font-size: 20px;
+}
+
+.basket-stock-list .breadcrumb a ,.basket-stock-list .breadcrumb button{
+margin-right:  8PX;
+margin-top: 5px !important;
+}
+
+.rfreshicon , .refresh-icon {
+  margin-top: 30px;
+  margin-left: 15px;
+}
+body.sidebar-vertical-container.sidebar-closed.sidebar-collapsed .sidebar-subitem .sidebar-sublink  span {
+  display: none;
+}
+body.sidebar-vertical-container.sidebar-closed.sidebar-collapsed svg.lucide.lucide-chevron-right {
+  color: #fff !important;
+  margin-left: -15px;
+}
+.lucide-trash2 {
+  color: red;
+}
+
+svg.lucide.lucide-square-pen {
+  color: #0d6efd;
+}
+
+.lucide-user-cog {
+  color: #058105;
+}
+
+svg.lucide.lucide-arrow-down-to-line {
+  color: #ff6000;
+}
+
+svg.lucide.lucide-eye {
+  color: #ffc107;
+}
+
+svg.lucide {
+  margin: 0px 3px;
+}
+.lucide-pencil {
+  color: brown;
 }

@@ -36,13 +36,13 @@ const Dashboard1 = ({ monthexpiry }) => {
       value1:
         monthexpiry?.monthexpiry?.length > 0
           ? monthexpiry?.monthexpiry?.some(
-              (item) => fDateMonth(item?.month) === currentMonthYear
-            )
+            (item) => fDateMonth(item?.month) === currentMonthYear
+          )
             ? monthexpiry?.monthexpiry.reduce((acc, item) => {
-                return fDateMonth(item?.month) === currentMonthYear
-                  ? acc + (item.noofclient || 0)
-                  : acc;
-              }, 0)
+              return fDateMonth(item?.month) === currentMonthYear
+                ? acc + (item.noofclient || 0)
+                : acc;
+            }, 0)
             : 0
           : 0,
 
@@ -189,7 +189,7 @@ const Dashboard1 = ({ monthexpiry }) => {
           monthexpiry?.data?.clientCountTotal || 0,
           monthexpiry?.data?.clientCountActive || 0,
           monthexpiry?.data.clientCountTotal -
-            monthexpiry?.data.clientCountActive || 0,
+          monthexpiry?.data.clientCountActive || 0,
         ],
         backgroundColor: [
           "#3498db",
@@ -212,7 +212,7 @@ const Dashboard1 = ({ monthexpiry }) => {
         data: [
           monthexpiry?.data?.clientCountActive || 0,
           monthexpiry?.data.clientCountTotal -
-            monthexpiry?.data.clientCountActive || 0,
+          monthexpiry?.data.clientCountActive || 0,
         ],
         backgroundColor: ["#2ecc71", "#e74c3c", "#f1c40f"],
       },
@@ -296,7 +296,7 @@ const Dashboard1 = ({ monthexpiry }) => {
               <h3 className="my-3 text-center">{item.value1}</h3>
               <div className="text-center">
                 <Link
-                  to={item.link}
+                  to={{ pathname: item.link }} state={item.state || {}}
                   className="btn btn-light"
                   style={{
                     borderRadius: "20px",

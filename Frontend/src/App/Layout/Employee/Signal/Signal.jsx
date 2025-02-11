@@ -648,10 +648,12 @@ const Signal = () => {
         },
         {
             name: 'Upload Report',
+          
+         
             cell: row => (
                 <>
 
-                    <div className='d-flex '>
+                    <div className='d-flex justify-content-end'>
                         {row.report ?
                             <Link className="btn px-2" onClick={() => handleDownload(row)}>
                                 <Tooltip placement="top" overlay="Download">
@@ -920,7 +922,7 @@ const Signal = () => {
                             </div>
 
 
-                            <div className="d-lg-flex align-items-center mb-4 gap-3">
+                            <div className="d-md-flex align-items-center mb-4 gap-3">
                                 <div className="position-relative">
                                     <input
                                         type="text"
@@ -933,20 +935,20 @@ const Signal = () => {
                                         <i className="bx bx-search" />
                                     </span>
                                 </div>
-                                {permission.includes("addsignal") && <div className="ms-auto">
+                                {permission.includes("addsignal") && <div className="ms-sm-auto mt-2 mt-md-0">
                                     <Link to="/employee/addsignal" className="btn btn-primary">
                                         <i className="bx bxs-plus-square" aria-hidden="true" /> Add Signal
                                     </Link>
                                 </div>}
-                                <div className="ms-2" onClick={getexportfile}>
-                                    <button type="button" className="btn btn-primary float-end" title="Export To Excel">
+                                <div className="ms-0 ms-md-2 mt-2 mt-md-0" onClick={getexportfile}>
+                                    <button type="button" className="btn btn-primary float-md-end" title="Export To Excel">
                                         <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
                                     </button>
                                 </div>
                             </div>
 
                             <div className="row">
-                                <div className="col-md-3">
+                                <div className="col-md-3 mb-3">
                                     <label>From date</label>
                                     <input
                                         type="date"
@@ -956,7 +958,7 @@ const Signal = () => {
                                         onChange={handleFilterChange}
                                     />
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-md-3 mb-3">
                                     <label>To Date</label>
                                     <input
                                         type="date"
@@ -967,7 +969,7 @@ const Signal = () => {
                                         min={filters.from}
                                     />
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-md-3 mb-3">
                                     <label>Select Service</label>
                                     <select
                                         name="service"
@@ -983,7 +985,7 @@ const Signal = () => {
                                         ))}
                                     </select>
                                 </div>
-                                <div className="col-md-3 d-flex">
+                                <div className="col-md-3 mb-3 d-flex align-items-center justify-content-between">
                                     <div style={{ width: "80%" }}>
                                         <label>Select Stock</label>
                                         <Select

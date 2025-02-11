@@ -499,6 +499,7 @@ async  addPlanSubscription(req, res) {
       // Map plan validity to months
       const validityMapping = {
         '1 month': 1,
+        '2 months': 2,
         '3 months': 3,
         '6 months': 6,
         '9 months': 9,
@@ -980,6 +981,283 @@ try {
     }
   }
   
+
+
+  async addPlanSubscriptionAddToCart(req, res) {
+    try {
+      const { plan_id, client_id, price } = req.body;
+  
+      // Validate input
+      if (!plan_id) {
+        return res.status(400).json({ status: false, message: 'Please Select the Plan' });
+      }
+
+      if (!client_id) {
+        return res.status(400).json({ status: false, message: 'Client Not Found' });
+      }
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+      if (!client) {
+        return res.status(400).json({ status: false, message: 'Client Not Actived' });
+      }
+
+      // Fetch the plan and populate the category
+      const plan = await Plan_Modal.findById(plan_id)
+        .populate('category')
+        .exec();
+  
+      if (!plan) {
+        return res.status(404).json({ status: false, message: 'Plan not found' });
+      }
+
+      const activePlan = await PlanSubscription_Modal.findOne({
+        plan_category_id: plan.category._id,
+        client_id: client_id,
+        plan_end: { $gte: new Date() } // Ensure the plan is not expired
+      }).sort({ plan_end: -1 }); // Sort by end date to get the most recent one
+      
+  
+      // Map plan validity to months
+      const validityMapping = {
+        '1 month': 1,
+        '2 months': 2,
+        '3 months': 3,
+        '6 months': 6,
+        '9 months': 9,
+        '1 year': 12,
+        '2 years': 24,
+        '3 years': 36,
+        '4 years': 48,
+        '5 years': 60
+      };
+  
+      const monthsToAdd = validityMapping[plan.validity];
+      if (monthsToAdd === undefined) {
+        return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+      }
+  
+      let start = new Date();  // Use let instead of const to allow reassigning
+
+      if (activePlan) {
+        start = new Date(activePlan.plan_end); // Start the new plan right after the previous one ends
+      }
+
+      const end = new Date(start);
+      end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+      end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+  
+
+
+      const planservice = plan.category?.service;
+      const planservices = planservice ? planservice.split(',') : [];
+      for (const serviceId of planservices) {
+        const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: serviceId }).exec();
+
+        if (existingPlan) {
+
+          if (new Date(existingPlan.enddate) < end) {
+            existingPlan.enddate = end;
+            await existingPlan.save();
+          }
+        }
+        else
+        {
+          const newPlanManage = new Planmanage({
+            clientid: client_id,
+            serviceid: serviceId,
+            startdate: start,
+            enddate: end,
+          });
+            await newPlanManage.save();
+        }
+      }
+
+
+   /*   // Split the services in the category if they exist
+      const planservice = plan.category.service;
+      const planservices = planservice ? planservice.split(',') : [];
+  
+      // Loop through each service ID and update or add the plan
+      for (const serviceId of planservices) {
+        const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: serviceId }).exec();
+
+        if (existingPlan) {
+            // If the plan exists and the end date is still valid, extend it
+            if (existingPlan.enddate && existingPlan.enddate > new Date()) {
+               existingPlan.enddate.setMonth(existingPlan.enddate.getMonth() + monthsToAdd);
+            } else {
+                existingPlan.enddate = end;  // Set new end date if it has expired
+                existingPlan.startdate = start; 
+            }
+        
+        
+            try {
+              const savedPlan = await Planmanage.updateOne(
+                { _id: existingPlan._id },  // Filter: find the document by its ID
+                { $set: { 
+                    enddate: existingPlan.enddate,  // Set the new end date
+                    startdate: existingPlan.startdate // Set the new start date
+                } }  // Update fields
+            );
+              //  const savedPlan = await existingPlan.save();  
+                // console.log("Plan updated successfully:", savedPlan);
+            } catch (error) {
+                // console.error("Error saving updated plan:", error);
+            }
+        } else {
+
+
+
+////////////////// 17/10/2024 ////////////////////////
+
+const today = new Date(); // Aaj ki date
+const existingPlans = await Planmanage.find({
+    clientid: client_id,
+    serviceid: serviceId,
+    enddate: { $gt: today } // End date must be greater than today's date
+})
+.sort({ enddate: -1 }) // Sort by `enddate` in descending order
+.limit(1) // Get the top result
+.exec();
+
+if (existingPlans.length > 0) {
+const existingEndDate = existingPlans[0].enddate; // Get the enddate of the existing plan
+const newEndDate = end; // Assuming `end` is your new plan's end date
+
+// Check if the new end date is greater than the existing end date
+if (newEndDate > existingEndDate) {
+
+const differenceInTime = newEndDate.getTime() - existingEndDate.getTime(); // Difference in milliseconds
+const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24)); // Convert milliseconds to days
+
+let differenceInMonths;
+
+// Logic to determine the number of months
+if (differenceInDays < 15) {
+  differenceInMonths = 0; // Less than a month
+} else {
+  // Calculate the difference in months
+  differenceInMonths = differenceInDays / 30; // Convert days to months
+}
+
+// Round the months based on your requirement
+if (differenceInMonths % 1 >= 0.5) {
+monthsToAdd = Math.ceil(differenceInMonths); // Round up to the nearest whole number
+} else {
+monthsToAdd = Math.floor(differenceInMonths); // Round down to the nearest whole number
+}
+
+} 
+} 
+
+
+////////////////// 17/10/2024 ////////////////////////
+
+
+
+            // If the plan does not exist, create a new one
+            const newPlanManage = new Planmanage({
+                clientid: client_id,
+                serviceid: serviceId,
+                startdate: start,
+                enddate: end,
+            });
+        
+            try {
+                await newPlanManage.save();  // Save the new plan
+                // console.log(`Added new record for service ID: ${serviceId}`);
+            } catch (error) {
+                // console.error("Error saving new plan:", error);
+            }
+        }
+        
+      }
+
+*/
+
+////////////////// 17/10/2024 ////////////////////////
+const currentDate = new Date();
+const targetMonth = `${String(currentDate.getMonth() + 1).padStart(2, '0')}${currentDate.getFullYear()}`;
+
+let license = await License_Modal.findOne({ month: targetMonth }).exec();
+
+if (license) {
+    license.noofclient += monthsToAdd;
+    // console.log('Month found, updating noofclient.',monthsToAdd);
+} else {
+    license = new License_Modal({
+        month: targetMonth,
+        noofclient: monthsToAdd
+    });
+    // console.log('Month not found, inserting new record.');
+}
+
+try {
+    await license.save();
+    // console.log('License updated successfully.');
+} catch (error) {
+
+}
+
+
+////////////////// 17/10/2024 ////////////////////////
+
+  
+      // Create a new plan subscription record
+      const newSubscription = new PlanSubscription_Modal({
+        plan_id,
+        plan_category_id: plan.category._id,
+        client_id,
+        total: plan.price,
+        plan_price: price,
+        plan_start: start,
+        plan_end: end,
+        validity: plan.validity,
+      });
+  
+      // Save the subscription
+      const savedSubscription = await newSubscription.save();
+
+      if (plan.deliverystatus == true) {
+        client.deliverystatus = true;
+        await client.save();
+      }
+
+      if(client.freetrial==0) 
+      {
+      client.freetrial  = 1; 
+      await client.save();
+       }
+
+
+
+       const  adminnotificationTitle ="Important Update";
+       const  adminnotificationBody =`Congratulations! ${client.FullName} ${plan.category.title} Plan successfully assigned by the SuperAdmin`;
+         const resultnm = new Adminnotification_Modal({
+           clientid:client._id,
+           segmentid:savedSubscription._id,
+           type:'plan purchase',
+           title: adminnotificationTitle,
+           message: adminnotificationBody
+       });
+   
+   
+       await resultnm.save();
+   
+
+
+
+      // Return success response
+      return res.status(201).json({
+        status: true,
+        message: 'Subscription added successfully',
+        data: savedSubscription,
+      });
+  
+    } catch (error) {
+      // console.error(error);
+      return res.status(500).json({ status: false, message: 'Server error', data: [] });
+    }
+  }
 
 
 

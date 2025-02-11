@@ -429,7 +429,7 @@ const Category = () => {
 
                 <div className="card">
                     <div className="card-body">
-                        <div className="d-lg-flex align-items-center mb-4 gap-3">
+                        <div className="d-sm-flex align-items-center mb-4 gap-3">
                             <div className="position-relative">
                                 <input
                                     type="text"
@@ -443,10 +443,10 @@ const Category = () => {
                                 </span>
                             </div>
                             {permission.includes("addcategory") ? 
-                            <div className="ms-auto">
+                            <div className="ms-sm-auto  ms-0 mt-2 mt-sm-0">
                             <button
                                 type="button"
-                                className="btn btn-primary"
+                                className="btn btn-primary "
                                 onClick={() => setShowAddModal(true)}
                             >
                                 <i className="bx bxs-plus-square" />

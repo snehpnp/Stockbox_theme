@@ -5,7 +5,7 @@ import { fDateTime, fDateMonth } from "../../../Utils/Date_formate";
 
 
 const Dashboard1 = ({ monthexpiry }) => {
-  
+
   const currentMonthYear = new Date().toLocaleString("en-US", {
     month: "long",
     year: "numeric",
@@ -18,13 +18,13 @@ const Dashboard1 = ({ monthexpiry }) => {
       value1:
         monthexpiry?.monthexpiry?.length > 0
           ? monthexpiry?.monthexpiry?.some(
-              (item) => fDateMonth(item?.month) === currentMonthYear
-            )
+            (item) => fDateMonth(item?.month) === currentMonthYear
+          )
             ? monthexpiry?.monthexpiry.reduce((acc, item) => {
-                return fDateMonth(item?.month) === currentMonthYear
-                  ? acc + (item.noofclient || 0)
-                  : acc;
-              }, 0)
+              return fDateMonth(item?.month) === currentMonthYear
+                ? acc + (item.noofclient || 0)
+                : acc;
+            }, 0)
             : 0
           : 0,
 
@@ -163,8 +163,8 @@ const Dashboard1 = ({ monthexpiry }) => {
                       {item.visible ? <>
 
                         <h6>
-                          <Link className="" to={item.link}>
-                          <i className="fa-regular fa-eye pe-1" ></i>View</Link></h6>
+                          <Link className="" to={{ pathname: item.link }} state={item.state || {}}>
+                            <i className="fa-regular fa-eye pe-1" ></i>View</Link></h6>
                       </> : ""}
 
                     </div>

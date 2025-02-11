@@ -4,6 +4,7 @@ import { Bar, Doughnut } from "react-chartjs-2";
 import { Link } from "react-router-dom";
 import "chart.js/auto";
 import { GetPastPerformance } from "../../../Services/UserService/User";
+import Content from "../../../components/Contents/Content";
 
 
 const Cash = () => {
@@ -66,31 +67,23 @@ const Cash = () => {
   };
 
   return (
+    <Content
+    Page_title="Cash"
+    button_status={false}
+    backbutton_status={false}
+  >
+
     <div className="page-content">
-      <div className="page-breadcrumb  d-flex align-items-center mb-3">
-        <div className="breadcrumb-title pe-3">Cash</div>
-        <div className="ps-3">
-          <nav aria-label="breadcrumb">
-            <ol className="breadcrumb mb-0 p-0">
-              <li className="breadcrumb-item">
-                <a href="/admin/dashboard">
-                  <i className="bx bx-home-alt" />
-                </a>
-              </li>
-            </ol>
-          </nav>
-        </div>
-      </div>
-      <hr />
+    
       <div className="row">
-        <div className="col-md-3">
+        <div className="col-md-3 mb-3">
           <div className="card">
             <ul className="list-group list-group-flush mt-0">
               <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
                 1 Month Average<span></span>
               </li>
               <li className="list-group-item d-flex  align-items-center fs-5 fw-bold">
-                <span className="badge bg-primary  badgespan me-1">
+                <span className="badge btn-primary  badgespan me-1">
                   <i className="bx bx-rupee fs-5"></i>
                 </span>{" "}
                 249,711
@@ -98,14 +91,14 @@ const Cash = () => {
             </ul>
           </div>
         </div>
-        <div className="col-md-3">
+        <div className="col-md-3 mb-3">
           <div className="card">
             <ul className="list-group list-group-flush mt-0">
               <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
                 3 Month Average<span></span>
               </li>
               <li className="list-group-item d-flex  align-items-center fs-5 fw-bold">
-                <span className="badge bg-primary  badgespan me-1">
+                <span className="badge btn-primary  badgespan me-1">
                   <i className="bx bx-rupee fs-5"></i>
                 </span>{" "}
                 249,711
@@ -113,14 +106,14 @@ const Cash = () => {
             </ul>
           </div>
         </div>
-        <div className="col-md-3">
+        <div className="col-md-3 mb-3">
           <div className="card">
             <ul className="list-group list-group-flush mt-0">
               <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
                 6 Month Average<span></span>
               </li>
               <li className="list-group-item d-flex  align-items-center fs-5 fw-bold">
-                <span className="badge bg-primary  badgespan me-1">
+                <span className="badge btn-primary  badgespan me-1">
                   <i className="bx bx-rupee fs-5"></i>
                 </span>{" "}
                 249,711
@@ -128,14 +121,14 @@ const Cash = () => {
             </ul>
           </div>
         </div>
-        <div className="col-md-3">
+        <div className="col-md-3 mb-3">
           <div className="card">
             <ul className="list-group list-group-flush mt-0">
               <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
                 1 Year Average<span></span>
               </li>
               <li className="list-group-item d-flex  align-items-center fs-5 fw-bold">
-                <span className="badge bg-primary  badgespan me-1">
+                <span className="badge btn-primary  badgespan me-1">
                   <i className="bx bx-rupee fs-5"></i>
                 </span>{" "}
                 249,711
@@ -164,11 +157,11 @@ const Cash = () => {
       <div className="row mt-2 mb-2">
         <div className="col-md-12">
         <div class="alert alert-primary" role="alert">
-  <div class="d-flex justify-content-between align-items-center">
+  <div class="d-md-flex justify-content-between align-items-center">
     <div>  Momentum (Dec 2024) PERFORMANCE
     </div>
-    <div> <button className="btn btn-primary me-2"><i class='bx bx-left-arrow-alt'></i>Nov 2024</button>
-    <button className="btn btn-primary">Dec 2024<i class='bx bx-right-arrow-alt' ></i></button></div>
+    <div className=",t-md-0 mt-3"> <button className="btn btn-primary me-2 "><i class='bx bx-left-arrow-alt'></i>Nov 2024</button>
+    <button className="btn btn-primary  ">Dec 2024<i class='bx bx-right-arrow-alt' ></i></button></div>
    
 </div>
         </div>
@@ -189,7 +182,7 @@ const Cash = () => {
           </div>
         </div>
         <div className="col-md-8">
-          <div className="card radius-10 overflow-hidden w-100">
+          <div className="card radius-10 overflow-hidden w-100 h-100">
             <div className="card-body">
             <Bar
                 className=""
@@ -202,48 +195,48 @@ const Cash = () => {
           </div>
         </div>
       </div>
-<div className="">
-  <div className="d-flex gap-3">
+<div className="my-4">
+  <div className="d-md-flex gap-3">
     <div className="card-body card">
-      <h5 className="mb-1">Total Calls
-      </h5>
+      <p className="mb-1"><strong>Total Calls</strong>
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
     <div className="card-body card">
-      <h5 className="mb-1">Profitable Calls
+      <p className="mb-1"><strong>Profitable Calls</strong>
 
-      </h5>
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
     <div className="card-body card">
-      <h5 className="mb-1">Loss Calls
-      </h5>
+      <p className="mb-1"><strong>Loss Calls</strong>
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
     <div className="card-body card">
-      <h5 className="mb-1">Cost Exit
-      </h5>
+      <p className="mb-1"><strong>Cost Exit</strong>
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
     <div className="card-body card">
-      <h5 className="mb-1">Total Profit 
-      </h5>
+      <p className="mb-1"><strong>Total Profit </strong>
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
     <div className="card-body card">
-      <h5 className="mb-1">Total Loss 
-      </h5>
+      <p className="mb-1"><strong>Total Loss</strong> 
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
     <div className="card-body card">
-      <h5 className="mb-1">Net Profit 
-      </h5>
+      <p className="mb-1"><strong>Net Profit</strong> 
+      </p>
       <h6 className="card-title">16
       </h6>       
     </div>
@@ -346,7 +339,7 @@ const Cash = () => {
                 </div>
                
                 </div>
-                
+                </Content>
       
   );
 };

@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const csv = require('csv-parser');
 const path = require('path');
 const { Readable } = require('stream');
+const upload = require('../Utils/multerHelper'); 
+const multer = require('multer');
+
 const Basket_Modal = db.Basket;
 const Basketstock_Modal = db.Basketstock;
 const Stock_Modal = db.Stock;
@@ -16,7 +19,22 @@ class Basket {
 
   async AddBasket(req, res) {
     try {
-      const { title, description, full_price, basket_price, mininvamount, themename, accuracy, portfolioweightage, cagr, frequency, validity, next_rebalance_date, type, add_by } = req.body;
+
+
+      await new Promise((resolve, reject) => {
+        upload('basket').fields([{ name: 'image', maxCount: 1 }])(req, res, (err) => {
+            if (err) {
+                return reject(err);
+            }
+
+            resolve();
+        });
+    });
+     
+     
+      const image = req.files['image'] ? req.files['image'][0].filename : null;
+
+      const { title, description, full_price, basket_price, mininvamount, themename, accuracy, portfolioweightage, cagr, frequency, validity, next_rebalance_date, type, add_by, short_description, rationale, methodology,url } = req.body;
 
 
       const result = new Basket_Modal({
@@ -25,15 +43,20 @@ class Basket {
         basket_price,
         mininvamount,
         themename,
-        accuracy,
-        portfolioweightage,
+      //  accuracy,
+      //  portfolioweightage,
         add_by,
         cagr,
         frequency,
         validity,
         next_rebalance_date,
         full_price,
-        type
+        type,
+        image,
+        short_description,
+        rationale,
+        methodology,
+        url
 
       });
 
@@ -232,7 +255,26 @@ class Basket {
           message: "Basket not found.",
         });
       }
-      const existingStocks = await Basketstock_Modal.find({ basket_id }).sort({ version: -1 });
+   // const existingStocks = await Basketstock_Modal.find({ basket_id }).sort({ version: -1 });
+
+
+    const latestVersion = await Basketstock_Modal.aggregate([
+      { $match: { basket_id, status: 1 } }, // Filter by basket_id and status
+      { $group: { _id: null, maxVersion: { $max: "$version" } } }
+    ]);
+     
+     
+    let existingStocks = []; // Initialize as an empty array
+      if (latestVersion.length > 0) {
+        const maxVersion = latestVersion[0].maxVersion;
+      
+        // Fetch stocks with the latest version and status 1
+         existingStocks = await Basketstock_Modal.find({
+          basket_id,
+          status: 1,
+          version: maxVersion
+        });
+      }
 
 
   if(publishstatus==true) {
@@ -244,7 +286,6 @@ class Basket {
         await basket.save();
       }
     }
-
 
       let totalAmount = 0;
 
@@ -262,25 +303,26 @@ class Basket {
           // basket.status = true;
           // await basket.save();
 
-
           let totalSum = 0;
 
           for (const stock of existingStocks) {
             const tradeSymbol = stock.tradesymbol;
             const quantity = stock.quantity;
-
+      
             // Fetch the instrument token from the Stocks table
             const stockData = await Stock_Modal.findOne({ tradesymbol: tradeSymbol });
-
+           
             if (stockData) {
               const instrumentToken = stockData.instrument_token;
-
+             
               // Fetch the live price using the instrument token from StockLivePrices
               const livePrice = await Liveprice_Modal.findOne({ token: instrumentToken });
 
+            
+
               if (livePrice) {
                 const lpPrice = livePrice.lp;
-
+               
                 // Multiply lp_price by quantity and add to the total sum
                 totalSum += lpPrice * quantity;
               } else {
@@ -298,7 +340,7 @@ class Basket {
         totalAmount = basket.mininvamount;
       }
 
-
+     
       let remainingAmount = totalAmount; // Keep track of remaining amount
 
       if (!Array.isArray(stocks) || stocks.length === 0) {
@@ -321,7 +363,24 @@ class Basket {
           });
         }
 
-        // Calculate allocation
+
+        const stockDatas = await Stock_Modal.findOne({ tradesymbol: tradesymbol });
+           
+          const instrumentTokens = stockDatas.instrument_token;
+
+        const existingDocument = await Liveprice_Modal.findOne({ token: instrumentTokens });
+
+        if (existingDocument) {
+        } else {
+            await Liveprice_Modal.create({
+                token: instrumentTokens,
+                lp: currentPrice,
+                exc: "NSE",
+                curtime: `${new Date().getHours().toString().padStart(2, '0')}${new Date().getMinutes().toString().padStart(2, '0')}`,
+                ft: "1234566"
+            });
+        }
+        
         const allocatedAmount = (percentage / 100) * totalAmount;
         if (allocatedAmount > remainingAmount) {
           return res.status(400).json({
@@ -395,6 +454,27 @@ class Basket {
       }
 
 
+
+      const latestVersion = await Basketstock_Modal.aggregate([
+        { $match: { basket_id, status: 1 } }, // Filter by basket_id and status
+        { $group: { _id: null, maxVersion: { $max: "$version" } } }
+      ]);
+       
+       
+      let existingStocks = []; // Initialize as an empty array
+        if (latestVersion.length > 0) {
+          const maxVersion = latestVersion[0].maxVersion;
+        
+          // Fetch stocks with the latest version and status 1
+           existingStocks = await Basketstock_Modal.find({
+            basket_id,
+            status: 1,
+            version: maxVersion
+          });
+        }
+  
+
+
       
   if(publishstatus==true) {
     const checkpublishornot = await Basketstock_Modal.find({ basket_id, status: 1 });
@@ -407,68 +487,144 @@ class Basket {
   }
 
 
-      const totalAmount = basket.mininvamount; // Total amount to invest
-      let remainingAmount = totalAmount; // Keep track of remaining amount
+  await Basketstock_Modal.deleteMany({ basket_id, version });
 
-      if (!Array.isArray(stocks) || stocks.length === 0) {
-        return res.status(400).json({
-          status: false,
-          message: "Stocks data is required and should be an array.",
-        });
+
+  let totalAmount = 0;
+
+  if (existingStocks && existingStocks.length > 0) {
+
+    if (existingStocks[0].status == 0) {
+      return res.status(500).json({
+        status: false,
+        message: "Please Public Old Stock First Than New Create",
+      });
+    }
+    else {
+        
+
+      // basket.status = true;
+      // await basket.save();
+
+      let totalSum = 0;
+
+      for (const stock of existingStocks) {
+        const tradeSymbol = stock.tradesymbol;
+        const quantity = stock.quantity;
+  
+        // Fetch the instrument token from the Stocks table
+        const stockData = await Stock_Modal.findOne({ tradesymbol: tradeSymbol });
+       
+        if (stockData) {
+          const instrumentToken = stockData.instrument_token;
+         
+          // Fetch the live price using the instrument token from StockLivePrices
+          const livePrice = await Liveprice_Modal.findOne({ token: instrumentToken });
+
+        
+
+          if (livePrice) {
+            const lpPrice = livePrice.lp;
+           
+            // Multiply lp_price by quantity and add to the total sum
+            totalSum += lpPrice * quantity;
+          } else {
+            console.log(`Live price not found for instrument token: ${instrumentToken}`);
+          }
+        } else {
+          console.log(`Stock data not found for trade symbol: ${tradeSymbol}`);
+        }
       }
 
-      // Delete old stocks with the same basket_id and version
-      await Basketstock_Modal.deleteMany({ basket_id, version });
+      totalAmount = totalSum;
+    }
+  } else {
+    // Set the total amount to the basket's minimum investment amount if no stocks exist
+    totalAmount = basket.mininvamount;
+  }
 
-      const bulkOps = [];
+ 
+  let remainingAmount = totalAmount; // Keep track of remaining amount
 
-      for (const stock of stocks) {
-        const { name, tradesymbol, percentage, price, comment, type, status } = stock;
+  if (!Array.isArray(stocks) || stocks.length === 0) {
+    return res.status(400).json({
+      status: false,
+      message: "Stocks data is required and should be an array.",
+    });
+  }
 
-        const currentPrice = price;
-        if (!currentPrice) {
-          return res.status(400).json({
-            status: false,
-            message: `No market price found for ${tradesymbol}`,
-          });
-        }
 
-        const allocatedAmount = (percentage / 100) * totalAmount;
-        if (allocatedAmount > remainingAmount) {
-          return res.status(400).json({
-            status: false,
-            message: `Insufficient funds to allocate ${allocatedAmount} for ${tradesymbol}`,
-          });
-        }
+  const bulkOps = [];
 
-        // Calculate quantity and total value
-        const quantity = Math.floor(allocatedAmount / currentPrice);
-        const total_value = quantity * currentPrice;
+  for (const stock of stocks) {
+    const { name, tradesymbol, percentage, price, comment, type, status } = stock;
 
-        // Deduct from remaining amount
-        remainingAmount -= total_value;
+    const currentPrice = price;
+    if (!currentPrice) {
+      return res.status(400).json({
+        status: false,
+        message: `No market price found for ${tradesymbol}`,
+      });
+    }
 
-        // Prepare bulk upsert operation
-        bulkOps.push({
-          updateOne: {
-            filter: { basket_id, tradesymbol },
-            update: {
-              $set: {
-                name,
-                price: currentPrice,
-                total_value,
-                quantity,
-                type,
-                comment: comment || '',
-                weightage: percentage,
-                status,
-                version, // Set the version for the stock
-              },
-            },
-            upsert: true, // If stock does not exist, create a new one
-          },
-        });
-      }
+    const stockDatas = await Stock_Modal.findOne({ tradesymbol: tradesymbol });
+           
+    const instrumentTokens = stockDatas.instrument_token;
+
+  const existingDocument = await Liveprice_Modal.findOne({ token: instrumentTokens });
+
+  if (existingDocument) {
+  } else {
+      await Liveprice_Modal.create({
+          token: instrumentTokens,
+          lp: currentPrice,
+          exc: "NSE",
+          curtime: `${new Date().getHours().toString().padStart(2, '0')}${new Date().getMinutes().toString().padStart(2, '0')}`,
+          ft: "1234566"
+      });
+  }
+
+
+    // Calculate allocation
+    const allocatedAmount = (percentage / 100) * totalAmount;
+    if (allocatedAmount > remainingAmount) {
+      return res.status(400).json({
+        status: false,
+        message: `Insufficient funds to allocate ${allocatedAmount} for ${tradesymbol}`,
+      });
+    }
+
+    // Calculate quantity and total value
+    const quantity = Math.floor(allocatedAmount / currentPrice);
+    const total_value = quantity * currentPrice;
+
+    // Deduct from remaining amount
+    remainingAmount -= total_value;
+
+    // Find the latest version of the stock in the basket
+
+    const version = existingStocks.length > 0 ? existingStocks[0].version + 1 : 1;
+
+
+    bulkOps.push({
+      insertOne: {
+        document: {
+          basket_id,
+          name,
+          tradesymbol,
+          price: currentPrice,
+          total_value,
+          quantity,
+          type,
+          comment: comment || '',
+          version,
+          weightage: percentage,
+          status: status,
+        },
+      },
+    });
+  }
+    
 
       // Execute the bulk upsert
       const result = await Basketstock_Modal.bulkWrite(bulkOps);
@@ -784,7 +940,19 @@ class Basket {
 
   async updateBasket(req, res) {
     try {
-      const { id, title, description, full_price, basket_price, mininvamount, themename, accuracy, portfolioweightage, cagr, frequency, validity, next_rebalance_date, type } = req.body;
+
+
+      await new Promise((resolve, reject) => {
+        upload('basket').fields([{ name: 'image', maxCount: 1 }])(req, res, (err) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve();
+        });
+    });
+
+    const { id, title, description, full_price, basket_price, mininvamount, themename, accuracy, portfolioweightage, cagr, frequency, validity, next_rebalance_date, type, short_description, rationale, methodology,url } = req.body;
+
 
       if (!id) {
         return res.status(400).json({
@@ -803,6 +971,7 @@ class Basket {
     //   const basket_prices = basket_price;
     //   const full_prices = full_price;
     // }
+    const image = req.files && req.files['image'] ? req.files['image'][0].filename : null;
 
       const updatedBasket = await Basket_Modal.findByIdAndUpdate(
         id,
@@ -812,14 +981,19 @@ class Basket {
           basket_price,
           mininvamount,
           themename,
-          accuracy,
-          portfolioweightage,
+      //    accuracy,
+      //    portfolioweightage,
           cagr,
           frequency,
           validity,
           next_rebalance_date,
           full_price,
-          type
+          type,
+          image,
+          short_description,
+          rationale,
+          methodology,
+          url
         },
         { Basket: true, runValidators: true } // Options: return the updated document and run validators
       );
@@ -911,10 +1085,18 @@ class Basket {
       );
 
       if (!result) {
+
         return res.status(404).json({
           status: false,
           message: "Basket not found"
         });
+      }
+
+      if (result) {
+        const updateStocks = await Basketstock_Modal.updateMany(
+          { basket_id: id, del: false },
+          { $set: { status: 1 } }
+        );
       }
 
       return res.json({
@@ -1070,6 +1252,7 @@ class Basket {
       // Map plan validity to months
       const validityMapping = {
         '1 month': 1,
+        '2 months': 2,
         '3 months': 3,
         '6 months': 6,
         '9 months': 9,
@@ -1193,6 +1376,7 @@ class Basket {
             validity: 1,
             status: 1,
             basketDetails: 1,
+            invoice: 1,
             clientName: '$clientDetails.FullName',
             clientEmail: '$clientDetails.Email',
             clientPhoneNo: '$clientDetails.PhoneNo',
@@ -1314,6 +1498,7 @@ class Basket {
             validity: 1,
             status: 1,
             basketDetails: 1,
+            invoice: 1,
             clientName: '$clientDetails.FullName',
             clientEmail: '$clientDetails.Email',
             clientPhoneNo: '$clientDetails.PhoneNo',

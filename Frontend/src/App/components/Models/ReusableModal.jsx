@@ -11,7 +11,7 @@ const ReusableModal = ({ show, onClose, title, body, footer, size = "md" }) => {
       id="verticalycentered"
     >
       <Modal.Header closeButton>
-        <Modal.Title>{title}</Modal.Title>
+        <Modal.Title className="heading-color">{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>{body}</Modal.Body>
       <Modal.Footer>{footer || null}</Modal.Footer>

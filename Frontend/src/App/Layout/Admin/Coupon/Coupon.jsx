@@ -397,8 +397,8 @@ const Coupon = () => {
                                     <Tooltip placement="top" overlay="View">
                                         <Eye
                                             style={{ marginRight: "10px" }}
-                                          
-                                            onClick={() => {setShowModal(true);setViewpage(row)}}
+
+                                            onClick={() => { setShowModal(true); setViewpage(row) }}
                                         />
                                     </Tooltip>
                                 </div>
@@ -422,7 +422,7 @@ const Coupon = () => {
             button: true,
         }
 
-    ];
+    ]
 
     return (
         <div>
@@ -566,7 +566,7 @@ const Coupon = () => {
 
             </div>
         </div>
-    );
+    )
 }
 
 export default Coupon;

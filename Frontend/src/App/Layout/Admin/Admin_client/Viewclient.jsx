@@ -235,7 +235,7 @@ const Viewclientdetail = () => {
     },
     {
       name: "Amount",
-      selector: (row) => row.plan_price ?? "-",
+      selector: (row) => <>  <IndianRupee />  {row.plan_price ?? "-"} </>,
       width: "189px",
     },
     {
@@ -251,6 +251,11 @@ const Viewclientdetail = () => {
 
     {
       name: "Purchase Date",
+      selector: (row) => (row?.created_at ? fDateTime(row?.created_at) : ""),
+      width: "180px",
+    },
+    {
+      name: "Start Date",
       selector: (row) => (row?.plan_start ? fDateTime(row?.plan_start) : ""),
       width: "180px",
     },
@@ -309,10 +314,13 @@ const Viewclientdetail = () => {
 
     {
       name: "Exit Price",
-      selector: (row) => (row.closeprice ? row.closeprice : "-"),
+      selector: (row) =>
+        <>
+          <IndianRupee />  {row.closeprice ? row.closeprice : "-"}
+        </>,
       sortable: true,
-      width: "132px",
-    },
+      width: "150px",
+    }, ,
     {
       name: "Entry Date",
       selector: (row) => fDateTimeH(row?.created_at),
@@ -375,7 +383,7 @@ const Viewclientdetail = () => {
                       className="list-group-item d-flex justify-content-between align-items-center flex-wrap"
                     >
                       <h6 className="mb-0">{item?.serviceName}</h6>
-                      {/* <span className="text-secondary">{ fDateTime(item?.enddate)}</span> */}
+                      <span className="text-secondary">{fDateTime(item?.enddate)}</span>
                     </li>
                   ))}
               </ul>

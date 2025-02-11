@@ -31,6 +31,8 @@ const Liveprice_Modal = db.Liveprice;
 const Basketorder_Modal = db.Basketorder;
 const Mailtemplate_Modal = db.Mailtemplate;
 const Requestclient_Modal = db.Requestclient;
+const Addtocart_Modal = db.Addtocart;
+const Stockrating_Modal = db.Stockrating;
 
 
 const { sendEmail } = require('../../Utils/emailService');
@@ -557,6 +559,7 @@ class List {
       // Map plan validity to months
       const validityMapping = {
         '1 month': 1,
+        '2 months': 2,
         '3 months': 3,
         '6 months': 6,
         '9 months': 9,
@@ -607,7 +610,7 @@ class List {
             //  const savedPlan = await existingPlan.save();  
             console.log("Plan updated successfully:", savedPlan);
           } catch (error) {
-            console.error("Error saving updated plan:", error);
+            // console.error("Error saving updated plan:", error);
           }
         } else {
 
@@ -669,7 +672,7 @@ class List {
             await newPlanManage.save();  // Save the new plan
             console.log(`Added new record for service ID: ${serviceId}`);
           } catch (error) {
-            console.error("Error saving new plan:", error);
+            // console.error("Error saving new plan:", error);
           }
         }
 
@@ -697,7 +700,7 @@ class List {
         await license.save();
         console.log('License updated successfully.');
       } catch (error) {
-        console.error('Error updating license:', error);
+        // console.error('Error updating license:', error);
       }
 
 
@@ -787,7 +790,7 @@ class List {
             sender.wamount += senderamount;
             await sender.save();
           } else {
-            console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
+            // console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
           }
 
         }
@@ -816,7 +819,7 @@ class List {
             sender.wamount += senderamount;
             await sender.save();
           } else {
-            console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
+            // console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
           }
         }
       } else {
@@ -920,7 +923,7 @@ class List {
 
         fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
           if (err) {
-            console.error('Error reading HTML template:', err);
+            // console.error('Error reading HTML template:', err);
             return;
           }
 
@@ -961,7 +964,7 @@ class List {
       });
 
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -993,6 +996,7 @@ class List {
       // Map plan validity to months
       const validityMapping = {
         '1 month': 1,
+        '2 months': 2,
         '3 months': 3,
         '6 months': 6,
         '9 months': 9,
@@ -1112,7 +1116,7 @@ class List {
 
         fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
           if (err) {
-            console.error('Error reading HTML template:', err);
+            // console.error('Error reading HTML template:', err);
             return;
           }
 
@@ -1303,6 +1307,7 @@ class List {
             coupon: { $first: '$coupon' }, // Keep the discount
             plan_start: { $first: '$plan_start' }, // Keep the plan_start
             plan_end: { $first: '$plan_end' },
+            created_at: { $first: '$created_at' },
             orderid: { $first: '$orderid' }, // Keep the plan_end
             planDetails: { $first: '$planDetails' }, // First instance of planDetails
             categoryDetails: { $first: '$categoryDetails' }, // First instance of categoryDetails
@@ -1326,7 +1331,8 @@ class List {
             coupon: 1,
             plan_start: 1, // Plan start date
             plan_end: 1,
-            orderid: 1, // Plan end date
+            orderid: 1,
+            created_at: 1, // Plan end date
             planDetails: 1, // Details from the plans collection
             categoryDetails: 1, // Details from the plan categories collection
             serviceNames: 1, // All service titles
@@ -1666,7 +1672,7 @@ class List {
       });
 
     } catch (error) {
-      console.error("Error fetching signals:", error);
+      // console.error("Error fetching signals:", error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -1837,7 +1843,7 @@ class List {
       });
 
     } catch (error) {
-      console.error("Error fetching signals:", error);
+      // console.error("Error fetching signals:", error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -1917,7 +1923,7 @@ class List {
       });
 
     } catch (error) {
-      console.error("Error fetching signals:", error);
+      // console.error("Error fetching signals:", error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -1984,7 +1990,7 @@ class List {
         }
       });
     } catch (error) {
-      console.error("Error fetching signals:", error);
+      // console.error("Error fetching signals:", error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -2075,6 +2081,17 @@ class List {
     try {
 
       const baskets = await Basket_Modal.find({ del: false, status: true });
+
+      const protocol = req.protocol; // 'http' or 'https'
+      const baseUrl = `${protocol}://${req.headers.host}`;
+
+      // Update each basket's image path
+      baskets.forEach(basket => {
+          if (basket.image) {
+              basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
+          }
+      });
+
 
       return res.json({
         status: true,
@@ -2249,6 +2266,10 @@ class List {
             updated_at: 1,
             type: 1,
             themename: 1,
+            image: 1,
+            short_description: 1,
+            rationale: 1,
+            methodology: 1,
             isSubscribed: 1,
             isActive: 1,
             startdate: 1,
@@ -2266,13 +2287,23 @@ class List {
 
 
 
+
+      const protocol = req.protocol; // 'http' or 'https'
+      const baseUrl = `${protocol}://${req.headers.host}`;
+
+      result.forEach(basket => {
+          if (basket.image) {
+              basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
+          }
+      });
+
       res.status(200).json({
         status: true,
         message: "Baskets retrieved successfully.",
         data: result
       });
     } catch (error) {
-      console.error("Error retrieving baskets:", error);
+      // console.error("Error retrieving baskets:", error);
       res.status(500).json({
         status: false,
         message: "An error occurred while retrieving the baskets."
@@ -2414,7 +2445,7 @@ class List {
         data: result, // Return the aggregated result
       });
     } catch (error) {
-      console.error("Error fetching basket stock:", error);
+      // console.error("Error fetching basket stock:", error);
 
       // Handle any server errors gracefully
       return res.json({
@@ -2532,7 +2563,7 @@ class List {
         data: latestVersionStock,
       });
     } catch (error) {
-      console.error("Error fetching basket stock:", error);
+      // console.error("Error fetching basket stock:", error);
 
       // Handle any server errors gracefully
       return res.json({
@@ -2682,7 +2713,7 @@ class List {
 
 
     } catch (error) {
-      console.error("Error fetching basket stock:", error);
+      // console.error("Error fetching basket stock:", error);
 
       // Handle any server errors gracefully
       return res.json({
@@ -2746,7 +2777,7 @@ class List {
         data: orders,
       });
     } catch (error) {
-      console.error("Error fetching orders:", error);
+      // console.error("Error fetching orders:", error);
       return res.status(500).json({
         status: false,
         message: "Error fetching orders",
@@ -2760,7 +2791,7 @@ class List {
     try {
 
       const { clientId } = req.params;
-      const baskets = await Basket_Modal.find({ del: false, status: "active" });
+      const baskets = await Basket_Modal.find({ del: false, status: true });
 
       // Process each basket to restructure the data
       const processedBaskets = await Promise.all(baskets.map(async (basket) => {
@@ -3048,7 +3079,7 @@ class List {
       });
 
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -3121,7 +3152,7 @@ class List {
       return res.status(200).json({ status: true, data: uniqueBroadcasts });
 
     } catch (error) {
-      console.error("Error fetching broadcasts:", error);
+      // console.error("Error fetching broadcasts:", error);
       return res.status(500).json({ status: false, message: "Internal server error" });
     }
   }
@@ -3158,7 +3189,7 @@ class List {
       });
 
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -3175,19 +3206,15 @@ class List {
 
 
 
-      const result = await BasicSetting_Modal.find({ _id: "66bb3c19542b26b6357bbf4f" })
-        .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key	razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube')
+      const result = await BasicSetting_Modal.findOne()
+        .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image')
         .exec();
 
-      if (result.length > 0) {
-        result[0].logo = `${baseUrl}/uploads/basicsetting/${result[0].logo}`;
-        result[0].refer_image = `${baseUrl}/uploads/basicsetting/${result[0].refer_image}`;
+      if (result) {
+        result.logo = `${baseUrl}/uploads/basicsetting/${result.logo}`;
+        result.refer_image = `${baseUrl}/uploads/basicsetting/${result.refer_image}`;
+        result.offer_image = `${baseUrl}/uploads/basicsetting/${result.offer_image}`;
       }
-
-
-
-
-
 
       return res.json({
         status: true,
@@ -3196,7 +3223,7 @@ class List {
       });
 
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -3353,7 +3380,7 @@ class List {
       });
 
     } catch (error) {
-      console.error("Error fetching signal details:", error);
+      // console.error("Error fetching signal details:", error);
 
       return res.status(500).json({
         status: false,
@@ -3425,7 +3452,7 @@ class List {
       });
 
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -3731,22 +3758,23 @@ class List {
     }
   }
 
+
+
+
   async placeOrder(req, res) {
     try {
       const { basket_id, clientid, brokerid, investmentamount, type } = req.body;
 
       const basket = await Basket_Modal.findById(basket_id);
       if (!basket) {
-        return res.status(400).json({
+        return res.json({
           status: false,
           message: "Basket not found.",
         });
       }
 
-
-
       if (investmentamount < basket.mininvamount) {
-        return res.status(400).json({
+        return res.json({
           status: false,
           message: `Investment amount must be at least ${basket.mininvamount}.`,
         });
@@ -3754,14 +3782,14 @@ class List {
 
       const client = await Clients_Modal.findById(clientid);
       if (!client) {
-        return res.status(404).json({
+        return res.json({
           status: false,
           message: "Client not found"
         });
       }
 
       if (client.tradingstatus == 0) {
-        return res.status(404).json({
+        return res.json({
           status: false,
           message: "Client Broker Not Login, Please Login With Broker"
         });
@@ -3776,7 +3804,7 @@ class List {
 
       if (version == 1) {
         if (investmentamount < basket.mininvamount) {
-          return res.status(400).json({
+          return res.json({
             status: false,
             message: `Investment amount must be at least ${basket.mininvamount}.`,
           });
@@ -3784,19 +3812,18 @@ class List {
       }
 
       if (!existingStocks || existingStocks.length === 0) {
-        return res.status(400).json({
+        return res.json({
           status: false,
           message: "No stocks found in the basket.",
         });
       }
 
-      // Total investment amount
+
       const totalAmount = investmentamount;
 
-      // Initialize an array to store the calculated stock orders
       const stockOrders = [];
       let respo;
-      let isFundChecked = false; // Flag to ensure we check funds only once
+      let isFundChecked = false;
       // Iterate over each stock to calculate allocated amount and quantity
       for (const stock of existingStocks) {
         const { tradesymbol, weightage, name } = stock;
@@ -3805,7 +3832,7 @@ class List {
           // Fetch stock data from Stock_Modal
           const stockData = await Stock_Modal.findOne({ tradesymbol });
           if (!stockData) {
-            console.log(`Stock data not found for trade symbol: ${tradesymbol}`);
+
             continue; // Skip this stock if no data found
           }
 
@@ -3902,7 +3929,6 @@ class List {
                   howmanytimebuy
                 });
 
-                console.log("respo", respo);
 
               }
 
@@ -3959,7 +3985,7 @@ class List {
                   const total = parseFloat(totalAmount);
 
                   if (total >= net) {
-                    return res.status(400).json({
+                    return res.json({
                       status: false,
                       message: "Insufficient funds in your broker account.",
                     });
@@ -4029,7 +4055,7 @@ class List {
                   const total = parseFloat(totalAmount);
 
                   if (total >= net) {
-                    return res.status(400).json({
+                    return res.json({
                       status: false,
                       message: "Insufficient funds in your broker account.",
                     });
@@ -4096,7 +4122,7 @@ class List {
                   const total = parseFloat(totalAmount);
 
                   if (total >= net) {
-                    return res.status(400).json({
+                    return res.json({
                       status: false,
                       message: "Insufficient funds in your broker account.",
                     });
@@ -4125,28 +4151,28 @@ class List {
           }
 
         } catch (innerError) {
-          console.error(`Error processing stock ${tradesymbol}:`, innerError);
+          // console.error(`Error processing stock ${tradesymbol}:`, innerError);
           continue; // Skip this stock in case of an error
         }
       }
 
       if (type != 1) {
-        res.status(200).json({
+        res.json({
           status: true,
           message: type == 1 ? "Order Placed Successfully." : "Order Confirm Successfully.",
           data: stockOrders,
         });
       }
       else {
-        res.status(200).json({
+        res.json({
           "response": respo
         });
 
       }
 
     } catch (error) {
-      console.error("Error placing order:", error);
-      res.status(500).json({
+      // console.error("Error placing order:", error);
+      res.json({
         status: false,
         message: "An error occurred while placing the order.",
       });
@@ -4307,7 +4333,7 @@ class List {
 
           }
         } catch (innerError) {
-          console.error(`Error processing stock ${tradesymbol}:`, innerError);
+          // console.error(`Error processing stock ${tradesymbol}:`, innerError);
           continue; // Skip this stock in case of an error
         }
       }
@@ -4319,7 +4345,7 @@ class List {
 
 
     } catch (error) {
-      console.error("Error placing order:", error);
+      // console.error("Error placing order:", error);
       res.status(500).json({
         status: false,
         message: "An error occurred while placing the order.",
@@ -4378,7 +4404,7 @@ class List {
       });
     } catch (error) {
       // Log the error and return a 500 response
-      console.error("Error retrieving grouped orders:", error);
+      // console.error("Error retrieving grouped orders:", error);
       res.status(500).json({
         status: false,
         message: "An error occurred while retrieving the grouped orders."
@@ -4425,7 +4451,7 @@ class List {
         data: livePrices
       });
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -4454,7 +4480,7 @@ class List {
       });
 
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -4467,12 +4493,13 @@ class List {
 
   async addRequest(req, res) {
     try {
-      const { clientid, type } = req.body;
+      const { clientid, type, id } = req.body;
 
 
 
       const result = new Requestclient_Modal({
         clientid: clientid,
+        id: id,
         type: type
       });
 
@@ -4483,10 +4510,1929 @@ class List {
       });
 
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
+
+
+
+  async SignalClientWithPlan(req, res) {
+    try {
+      const { service_id, client_id, search, page = 1 } = req.body;
+      const limit = 10;
+      const skip = (parseInt(page) - 1) * parseInt(limit); // Calculate how many items to skip
+      const limitValue = parseInt(limit); // Items per page
+
+
+      const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: service_id }).exec();
+
+      if (!existingPlan) {
+        // Fetch last 5 signal IDs for the given service_id
+        const lastFiveSignals = await Signal_Modal.find({ service: service_id,close_status: false })
+            .sort({ created_at: -1 })
+            .limit(5)
+            .lean();
+        
+        return res.json({
+          status: true,
+          message: "Returning last 5 signals due to no existing plan",
+          data: lastFiveSignals,
+          pagination: {
+            total: lastFiveSignals.length,
+            page: 1,
+            limit: 5,
+            totalPages: 1
+          }
+        });
+      }
+
+
+      const subscriptions = await PlanSubscription_Modal.find({ client_id });
+      if (subscriptions.length === 0) {
+        return res.json({
+          status: false,
+          message: "No plan subscriptions found for the given service and client IDs",
+          data: []
+        });
+      }
+
+      const planIds = subscriptions.map(sub => sub.plan_category_id);
+      const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
+
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+
+
+
+      const uniquePlanIds = [
+        ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
+      ].map(id => new ObjectId(id));
+
+
+      const query = {
+        service: service_id,
+        close_status: false,
+        $or: uniquePlanIds.map((planId, index) => ({
+          planid: planId.toString(), // Matching the planid with regex
+          created_at: { $lte: planEnds[index] }       // Checking if created_at is <= to planEnds
+        }))
+      };
+
+
+      //   const query = {
+      //     service: service_id,
+      //     close_status: false,
+      //     $or: uniquePlanIds.map((planId, index) => {
+      //         return {
+      //             planid: { $regex: `(^|,)${planId}($|,)` }
+      //             created_at: { $lte: planEnds[index] } // Compare created_at with the plan_end date of each subscription
+      //         };
+      //     })
+      // };
+
+
+      //console.log("Final Query:", JSON.stringify(query, null, 2));
+      const protocol = req.protocol; // Will be 'http' or 'https'
+
+      const baseUrl = `${protocol}://${req.headers.host}`; // Construct the base URL
+
+
+
+      if (search && search.trim() !== '') {
+        query.$or = [
+          { tradesymbol: { $regex: search, $options: 'i' } },
+          { calltype: { $regex: search, $options: 'i' } },
+          { price: { $regex: search, $options: 'i' } },
+          { closeprice: { $regex: search, $options: 'i' } }
+        ];
+      }
+
+
+      const signals = await Signal_Modal.find(query)
+        .sort({ created_at: -1 })
+        .skip(skip)
+        .limit(limitValue)
+        .lean();
+
+
+
+      const totalSignals = await Signal_Modal.countDocuments(query);
+
+      const signalsWithReportUrls = await Promise.all(signals.map(async (signal) => {
+        // Check if the signal was bought by the client
+        const order = await Order_Modal.findOne({
+          clientid: client_id,
+          signalid: signal._id
+        }).lean();
+
+
+        return {
+          ...signal,
+          report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null, // Append full report URL
+          purchased: order ? true : false,
+          order_quantity: order ? order.quantity : 0
+        };
+      }));
+
+
+      return res.json({
+        status: true,
+        message: "Signals retrieved successfully",
+        data: signalsWithReportUrls,
+        pagination: {
+          total: totalSignals,
+          page: parseInt(page), // Current page
+          limit: parseInt(limit), // Items per page
+          totalPages: Math.ceil(totalSignals / limit), // Total number of pages
+        }
+      });
+
+    } catch (error) {
+      // console.error("Error fetching signals:", error);
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
+
+  async NotificationWithPlan(req, res) {
+    try {
+      const { id } = req.params;
+      const { page = 1 } = req.query; // Default values for page and limit
+      const limit = 10;
+      const today = new Date();
+
+      // Fetch the client's creation date
+      const client = await Clients_Modal.findById(id).select('createdAt');
+      if (!client) {
+        return res.status(404).json({ status: false, message: "Client not found" });
+      }
+      const clientCreatedAt = client.createdAt;
+
+      // Fetch subscriptions
+      const subscriptions = await PlanSubscription_Modal.find({ client_id: id });
+
+      // Initialize status variables
+      const hasActiveSubscriptions = subscriptions.some(
+        sub => new Date(sub.plan_start) <= today && new Date(sub.plan_end) >= today
+      );
+      const hasExpiredSubscriptions = subscriptions.some(
+        sub => new Date(sub.plan_end) < today
+      );
+      const noSubscriptions = subscriptions.length === 0;
+
+      // Fetch active and expired plans for broadcast notifications
+      const activePlans = await Planmanage.find({
+        clientid: id,
+        startdate: { $lte: today },
+        enddate: { $gte: today }
+      }).distinct('serviceid');
+
+      const expiredPlans = await Planmanage.find({
+        clientid: id,
+        enddate: { $lt: today }
+      }).distinct('serviceid');
+
+      // Construct query conditions
+      const queryConditions = {
+        createdAt: { $gte: clientCreatedAt }, // Notifications created after client creation date
+        $or: [
+          // Notifications specific to the client
+          { clientid: id },
+
+          // Global notifications
+          {
+            clientid: null,
+            $or: [
+              // Global notifications for 'close signal' and 'open signal'
+              {
+                type: { $in: ['close signal', 'open signal'] },
+                $or: subscriptions.map((sub) => ({
+                  segmentid: { $regex: `(^|,)${sub.plan_id}($|,)` }, // Match plan_id in segmentid
+                  createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
+                }))
+              },
+              // Global notifications for 'add broadcast'
+              //  { type: 'add broadcast' },
+              // Include all other types of notifications (e.g., add coupon, blogs, news, etc.)
+              { type: { $nin: ['close signal', 'open signal', 'add broadcast'] } }
+            ]
+          },
+
+          // Broadcast notifications based on client type
+          {
+            clienttype: { $in: ['active', 'expired', 'nonsubscribe', 'all'] },
+            $or: [
+              // For active clients with active subscriptions
+              ...(hasActiveSubscriptions ? [{ clienttype: 'active', segmentid: { $in: activePlans } }] : []),
+
+              // For expired clients with expired subscriptions
+              ...(hasExpiredSubscriptions ? [{ clienttype: 'expired', segmentid: { $in: expiredPlans } }] : []),
+
+              // For clients with no subscriptions
+              ...(noSubscriptions ? [{ clienttype: 'nonsubscribe' }] : []),
+
+              // For all clients
+              { clienttype: 'all' }
+            ]
+          }
+        ]
+      };
+
+      // Fetch notifications based on constructed query
+      const result = await Notification_Modal.find(queryConditions)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit) // Pagination
+        .limit(parseInt(limit)); // Limit the number of records
+
+      // Return the response with notifications
+      return res.json({
+        status: true,
+        message: "Notifications fetched successfully",
+        data: result
+      });
+    } catch (error) {
+      // console.error(error);
+      return res.status(500).json({ status: false, message: "Server error", data: [] });
+    }
+  }
+
+
+  async getCompanyAndBseData(req, res) {
+    try {
+      // Fetch data from CompanyMaster API
+      const companyResponse = await axios.get('http://stockboxapis.cmots.com/api/CompanyMaster');
+      const companyData = companyResponse.data.data;  // Accessing the 'data' field which is an array
+
+      // Get the search query from the request (if any)
+      const searchQuery = req.query.search || '';
+
+      // Filter companyData by CompanyName if searchQuery is provided
+      const filteredCompanyData = companyData.filter(company =>
+        company.CompanyName.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+
+      // Fetch data from BseNseDelayedData API
+      const bseResponse = await axios.get('http://stockboxapis.cmots.com/api/BseNseDelayedData/NSE');
+      const bseData = bseResponse.data.data;
+
+      // Combine data by matching BSECode from companyData and co_code from bseData
+      const combinedData = filteredCompanyData.map(company => {
+        // Find the matching BSE data using co_code from companyData and co_code from bseData
+        const bseMatch = bseData.find(bse => bse.co_code === company.co_code);
+
+        if (bseMatch) {
+          return {
+            co_code: company.co_code,
+            BSECode: company.BSECode,
+            NSESymbol: company.NSESymbol,
+            CompanyName: company.CompanyName,
+            CompanyShortName: company.CompanyShortName,
+            CategoryName: company.CategoryName,
+            isin: company.isin,
+            BSEGroup: company.BSEGroup,
+            mcaptype: company.mcaptype,
+            SectorCode: company.SectorCode,
+            SectorName: company.SectorName,
+            BSEListed: company.BSEListed,
+            NSEListed: company.NSEListed,
+            DisplayType: company.DisplayType,
+            price: bseMatch.price,
+            Open: bseMatch.Open,
+            High: bseMatch.High,
+            Low: bseMatch.Low,
+            prevclose: bseMatch.prevclose,
+            Volume: bseMatch.Volume,
+            Tr_Date: bseMatch.Tr_Date
+          };
+        }
+      }).filter(Boolean);  // Remove undefined results if no match was found
+
+
+      return res.json({
+        status: true,
+        data: combinedData
+      });
+
+    } catch (error) {
+      return res.status(500).json({ status: false, message: "Server error", data: error });
+    }
+  }
+
+
+  async addPlanSubscriptionAddToCart(req, res) {
+    try {
+      const { plan_ids, client_id, price, discount, orderid, coupon_code } = req.body;
+
+      // Validate input
+      if (!plan_ids || !Array.isArray(plan_ids) || plan_ids.length === 0 || !client_id) {
+        return res.status(400).json({ status: false, message: 'Missing required fields' });
+      }
+
+
+      const length = 6;
+      const digits = '0123456789';
+      let orderNumber = '';
+
+      for (let i = 0; i < length; i++) {
+        orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
+      }
+
+
+      for (const plan_id of plan_ids) {
+        // Fetch the plan and populate the category
+        const plan = await Plan_Modal.findById(plan_id)
+          .populate('category')
+          .exec();
+
+        if (!plan) {
+          return res.status(404).json({ status: false, message: 'Plan not found' });
+        }
+
+
+
+        const activePlan = await PlanSubscription_Modal.findOne({
+          plan_category_id: plan.category._id,
+          client_id: client_id,
+          plan_end: { $gte: new Date() } // Ensure the plan is not expired
+        }).sort({ plan_end: -1 }); // Sort by end date to get the most recent one
+
+        // If there is an active plan, set the new plan's start date to the end date of the existing active plan
+
+
+
+        // Map plan validity to months
+        const validityMapping = {
+          '1 month': 1,
+          '2 months': 2,
+          '3 months': 3,
+          '6 months': 6,
+          '9 months': 9,
+          '1 year': 12,
+          '2 years': 24,
+          '3 years': 36,
+          '4 years': 48,
+          '5 years': 60
+        };
+
+        const monthsToAdd = validityMapping[plan.validity];
+        if (monthsToAdd === undefined) {
+          return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+        }
+
+        let start = new Date();  // Use let instead of const to allow reassigning
+
+        if (activePlan) {
+          start = new Date(activePlan.plan_end); // Start the new plan right after the previous one ends
+        }
+        const end = new Date(start);
+        end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+        end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+
+
+        const planservice = plan.category?.service;
+        const planservices = planservice ? planservice.split(',') : [];
+        for (const serviceId of planservices) {
+          const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: serviceId }).exec();
+
+          if (existingPlan) {
+
+            if (new Date(existingPlan.enddate) < end) {
+              existingPlan.enddate = end;
+              await existingPlan.save();
+            }
+          }
+          else {
+            const newPlanManage = new Planmanage({
+              clientid: client_id,
+              serviceid: serviceId,
+              startdate: start,
+              enddate: end,
+            });
+            await newPlanManage.save();
+          }
+        }
+        /*
+         const planservice = plan.category?.service;
+         const planservices = planservice ? planservice.split(',') : [];
+         for (const serviceId of planservices) {
+           const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: serviceId }).exec();
+   
+           if (existingPlan) {
+             // If the plan exists and the end date is still valid, extend it
+             if (existingPlan.enddate && existingPlan.enddate > new Date()) {
+               existingPlan.enddate.setMonth(existingPlan.enddate.getMonth() + monthsToAdd);
+             } else {
+               existingPlan.enddate = end;  // Set new end date if it has expired
+               existingPlan.startdate = start;
+             }
+   
+   
+             try {
+               const savedPlan = await Planmanage.updateOne(
+                 { _id: existingPlan._id },  // Filter: find the document by its ID
+                 {
+                   $set: {
+                     enddate: existingPlan.enddate,  // Set the new end date
+                     startdate: existingPlan.startdate // Set the new start date
+                   }
+                 }  // Update fields
+               );
+               //  const savedPlan = await existingPlan.save();  
+               console.log("Plan updated successfully:", savedPlan);
+             } catch (error) {
+               // console.error("Error saving updated plan:", error);
+             }
+           } else {
+   
+             ////////////////// 17/10/2024 ////////////////////////
+   
+             const today = new Date(); // Aaj ki date
+             const existingPlans = await Planmanage.find({
+               clientid: client_id,
+               serviceid: serviceId,
+               enddate: { $gt: today } // End date must be greater than today's date
+             })
+               .sort({ enddate: -1 }) // Sort by `enddate` in descending order
+               .limit(1) // Get the top result
+               .exec();
+   
+             if (existingPlans.length > 0) {
+               const existingEndDate = existingPlans[0].enddate; // Get the enddate of the existing plan
+               const newEndDate = end; // Assuming `end` is your new plan's end date
+   
+               // Check if the new end date is greater than the existing end date
+               if (newEndDate > existingEndDate) {
+   
+                 const differenceInTime = newEndDate.getTime() - existingEndDate.getTime(); // Difference in milliseconds
+                 const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24)); // Convert milliseconds to days
+   
+                 let differenceInMonths;
+   
+                 // Logic to determine the number of months
+                 if (differenceInDays < 15) {
+                   differenceInMonths = 0; // Less than a month
+                 } else {
+                   // Calculate the difference in months
+                   differenceInMonths = differenceInDays / 30; // Convert days to months
+                 }
+   
+                 // Round the months based on your requirement
+                 if (differenceInMonths % 1 >= 0.5) {
+                   monthsToAdd = Math.ceil(differenceInMonths); // Round up to the nearest whole number
+                 } else {
+                   monthsToAdd = Math.floor(differenceInMonths); // Round down to the nearest whole number
+                 }
+   
+               }
+               else {
+                 monthsToAdd = 0;
+               }
+             }
+   
+             ////////////////// 17/10/2024 ////////////////////////
+   
+             const newPlanManage = new Planmanage({
+               clientid: client_id,
+               serviceid: serviceId,
+               startdate: start,
+               enddate: end,
+             });
+   
+             try {
+               await newPlanManage.save();  // Save the new plan
+               console.log(`Added new record for service ID: ${serviceId}`);
+             } catch (error) {
+               // console.error("Error saving new plan:", error);
+             }
+           }
+   
+         }
+         */
+
+        ////////////////// 17/10/2024 ////////////////////////
+        const currentDate = new Date();
+        const targetMonth = `${String(currentDate.getMonth() + 1).padStart(2, '0')}${currentDate.getFullYear()}`;
+
+        let license = await License_Modal.findOne({ month: targetMonth }).exec();
+
+
+        if (license) {
+          license.noofclient += monthsToAdd;
+          console.log('Month found, updating noofclient.', monthsToAdd);
+        } else {
+          license = new License_Modal({
+            month: targetMonth,
+            noofclient: monthsToAdd
+          });
+          console.log('Month not found, inserting new record.');
+        }
+
+        try {
+          await license.save();
+          console.log('License updated successfully.');
+        } catch (error) {
+          // console.error('Error updating license:', error);
+        }
+
+
+        const numberOfPlans = plan_ids.length;
+        const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
+
+        ////////////////// 17/10/2024 ////////////////////////
+        // Create a new plan subscription record
+        const newSubscription = new PlanSubscription_Modal({
+          plan_id,
+          plan_category_id: plan.category._id,
+          client_id,
+          total: plan.price - discountPerPlan,
+          plan_price: plan.price,
+          discount: discountPerPlan,
+          coupon: coupon_code,
+          plan_start: start,
+          plan_end: end,
+          validity: plan.validity,
+          orderid: orderid,
+          ordernumber: `INV-${orderNumber}`,
+          ordernumber: `INV-${orderNumber}.pdf`,
+        });
+
+        // Save the subscription
+        const savedSubscription = await newSubscription.save();
+
+      }
+
+
+
+      const updatedItems = await Addtocart_Modal.updateMany(
+        { client_id: client_id, status: false, basket_id: null }, // Find all matching items
+        { $set: { status: true } } // Update status to true
+      );
+
+
+      if (coupon_code) {
+        const resultc = await Coupon_Modal.findOne({
+          del: false,
+          status: true,
+          code: coupon_code
+        });
+
+
+        if (resultc) {
+
+          // Check if limitation is greater than 0 before decrementing
+          if (resultc.limitation > 0) {
+            const updatedResult = await Coupon_Modal.findByIdAndUpdate(
+              resultc._id,
+              { $inc: { limitation: -1 } }, // Decrease limitation by 1
+              { new: true } // Return the updated document
+            );
+          }
+
+        }
+      }
+
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+
+      if (!client) {
+        return console.log('Client not found or inactive.');
+      }
+
+
+      if (client.freetrial == 0) {
+        client.freetrial = 1;
+        await client.save();
+      }
+
+      const settings = await BasicSetting_Modal.findOne();
+
+      const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
+
+      if (client.refer_status && client.token) {
+        if (refertokens.length > 0) {
+        }
+        else {
+
+          const senderamount = (price * settings.sender_earn) / 100;
+          const receiveramount = (price * settings.receiver_earn) / 100;
+
+          const results = new Refer_Modal({
+            token: client.token,
+            user_id: client._id,
+            senderearn: settings.sender_earn,
+            receiverearn: settings.receiver_earn,
+            senderamount: senderamount,
+            receiveramount: receiveramount,
+            status: 1
+          })
+          await results.save();
+
+          client.wamount += receiveramount;
+          await client.save();
+          const sender = await Clients_Modal.findOne({ refer_token: client.token, del: 0, ActiveStatus: 1 });
+
+          if (sender) {
+            sender.wamount += senderamount;
+            await sender.save();
+          } else {
+            // console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
+          }
+
+        }
+
+      }
+
+      if (refertokens.length > 0) {
+        for (const refertoken of refertokens) {
+          const senderamount = (price * refertoken.senderearn) / 100;
+          const receiveramount = (price * refertoken.receiverearn) / 100;
+
+          refertoken.senderamount = senderamount;
+          refertoken.receiveramount = receiveramount;
+          refertoken.status = 1;
+
+          await refertoken.save();
+
+          // Update client's wallet amount
+          client.wamount += receiveramount;
+          await client.save();
+
+          // Update sender's wallet amount
+          const sender = await Clients_Modal.findOne({ refer_token: refertoken.token, del: 0, ActiveStatus: 1 });
+
+          if (sender) {
+            sender.wamount += senderamount;
+            await sender.save();
+          } else {
+            // console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
+          }
+        }
+      } else {
+        console.log('No referral tokens found.');
+      }
+
+      const adminnotificationTitle = "Important Update";
+      const adminnotificationBody = `Congratulations! ${client.FullName} successfully purchased the Plan`;
+      const resultnm = new Adminnotification_Modal({
+        clientid: client._id,
+        segmentid: "",
+        type: 'plan purchase',
+        title: adminnotificationTitle,
+        message: adminnotificationBody
+      });
+
+
+      await resultnm.save();
+
+      // if (plan.deliverystatus == true) {
+      //   client.deliverystatus = true;
+      //   await client.save();
+      // }
+
+      if (settings.invoicestatus == 1) {
+
+
+        let payment_type;
+        if (orderid) {
+          payment_type = "Online";
+        }
+        else {
+          payment_type = "Offline";
+
+        }
+
+        const templatePath = path.join(__dirname, '../../../template', 'invoicenew.html');
+        let htmlContent = fs.readFileSync(templatePath, 'utf8');
+
+
+
+        let planDetailsHtml = '';
+        for (const plan_id of plan_ids) {
+          const plan = await Plan_Modal.findById(plan_id)
+            .populate('category')
+            .exec();
+
+          const validityMapping = {
+            '1 month': 1,
+            '2 months': 2,
+            '3 months': 3,
+            '6 months': 6,
+            '9 months': 9,
+            '1 year': 12,
+            '2 years': 24,
+            '3 years': 36,
+            '4 years': 48,
+            '5 years': 60
+          };
+
+          const monthsToAdd = validityMapping[plan.validity];
+          if (monthsToAdd === undefined) {
+            return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+          }
+
+          const start = new Date();
+          const end = new Date(start);
+          end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+          end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+
+
+
+
+          planDetailsHtml += `
+            <tr>
+              <td>${plan.category.title}</td>
+              <td>${plan.validity}</td>
+              <td>${plan.price}</td>
+              <td>${formatDate(start)}</td>
+              <td>${formatDate(end)}</td>
+            </tr>`;
+        }
+
+
+        const todays = new Date();
+
+        htmlContent = htmlContent
+          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+          .replace(/{{created_at}}/g, formatDate(todays))
+          .replace(/{{payment_type}}/g, payment_type)
+          .replace(/{{clientname}}/g, client.FullName)
+          .replace(/{{email}}/g, client.Email)
+          .replace(/{{PhoneNo}}/g, client.PhoneNo)
+          .replace(/{{plan_details}}/g, planDetailsHtml)
+          .replace(/{{total}}/g, price)
+          .replace(/{{plantype}}/g, "Plan")
+          .replace(/{{discount}}/g, discount);
+
+
+        const browser = await puppeteer.launch({
+          args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+        const page = await browser.newPage();
+        await page.setContent(htmlContent);
+
+        // Define the path to save the PDF
+        const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+
+        // Generate PDF and save to the specified path
+        await page.pdf({
+          path: pdfPath,
+          format: 'A4',
+          printBackground: true,
+          margin: {
+            top: '20mm',
+            right: '10mm',
+            bottom: '50mm',
+            left: '10mm',
+          },
+        });
+
+        await browser.close();
+
+
+
+
+        const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
+        if (!mailtemplate || !mailtemplate.mail_body) {
+          throw new Error('Mail template not found');
+        }
+
+        const templatePaths = path.join(__dirname, '../../../template', 'mailtemplate.html');
+
+        fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
+          if (err) {
+            // console.error('Error reading HTML template:', err);
+            return;
+          }
+
+          let finalMailBody = mailtemplate.mail_body
+            .replace('{clientName}', `${client.FullName}`);
+
+          const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+
+          // Replace placeholders with actual values
+          const finalHtml = htmlTemplate
+            .replace(/{{company_name}}/g, settings.website_title)
+            .replace(/{{body}}/g, finalMailBody)
+            .replace(/{{logo}}/g, logo);
+
+          const mailOptions = {
+            to: client.Email,
+            from: `${settings.from_name} <${settings.from_mail}>`,
+            subject: `${mailtemplate.mail_subject}`,
+            html: finalHtml,
+            attachments: [
+              {
+                filename: `INV-${orderNumber}.pdf`, // PDF file name
+                path: pdfPath, // Path to the PDF file
+              }
+            ]
+          };
+
+          // Send email
+          await sendEmail(mailOptions);
+        });
+
+      }
+      // Return success response
+      return res.status(201).json({
+        status: true,
+        message: 'Subscription added successfully',
+      });
+
+    } catch (error) {
+      // console.error(error);
+      return res.status(500).json({ status: false, message: 'Server error', data: [] });
+    }
+  }
+
+
+  async PurchasedBasketList(req, res) {
+    try {
+      const { clientid } = req.body; // assuming clientid is passed in the request
+
+      // Convert clientid to ObjectId
+      const clientObjectId = new mongoose.Types.ObjectId(clientid);
+
+      const currentDate = new Date();
+
+      const result = await Basket_Modal.aggregate([
+        {
+          $lookup: {
+            from: 'basketsubscriptions',
+            localField: '_id',
+            foreignField: 'basket_id',
+            as: 'subscription_info',
+          },
+        },
+        {
+          $addFields: {
+            filteredSubscriptions: {
+              $filter: {
+                input: '$subscription_info',
+                as: 'sub',
+                cond: { $eq: ['$$sub.client_id', clientObjectId] },
+              },
+            },
+          },
+        },
+        {
+          $addFields: {
+            latestSubscription: {
+              $arrayElemAt: [
+                {
+                  $sortArray: {
+                    input: '$filteredSubscriptions',
+                    sortBy: { enddate: -1 },
+                  },
+                },
+                0,
+              ],
+            },
+          },
+        },
+        {
+          $addFields: {
+            isSubscribed: true,
+            isActive: {
+              $cond: {
+                if: {
+                  $and: [
+                    { $gt: [{ $size: '$filteredSubscriptions' }, 0] },
+                    { $gte: [currentDate, '$latestSubscription.startdate'] },
+                    { $lte: [currentDate, '$latestSubscription.enddate'] },
+                  ],
+                },
+                then: true,
+                else: false,
+              },
+            },
+          },
+        },
+        {
+          $match: {
+            'filteredSubscriptions.0': { $exists: true }, // Only include baskets with subscriptions
+            del: false,
+            status: true,
+          },
+        },
+        {
+          $lookup: {
+            from: 'basketstocks',
+            let: { basketId: { $toString: '$_id' } },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ['$basket_id', '$$basketId'] },
+                      { $eq: ['$status', 1] },
+                    ],
+                  },
+                },
+              },
+              {
+                $group: {
+                  _id: '$basket_id',
+                  maxVersion: { $max: '$version' },
+                },
+              },
+              {
+                $lookup: {
+                  from: 'basketstocks',
+                  let: { basketId: '$_id', maxVer: '$maxVersion' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $and: [
+                            { $eq: ['$basket_id', '$$basketId'] },
+                            { $eq: ['$version', '$$maxVer'] },
+                            { $eq: ['$status', 1] },
+                          ],
+                        },
+                      },
+                    },
+                  ],
+                  as: 'latestStocks',
+                },
+              },
+              { $unwind: '$latestStocks' },
+              { $replaceRoot: { newRoot: '$latestStocks' } },
+            ],
+            as: 'stock_details',
+          },
+        },
+        {
+          $project: {
+            basket_id: 1,
+            title: 1,
+            description: 1,
+            full_price: 1,
+            basket_price: 1,
+            mininvamount: 1,
+            accuracy: 1,
+            portfolioweightage: 1,
+            cagr: 1,
+            cagr_live: 1,
+            frequency: 1,
+            validity: 1,
+            next_rebalance_date: 1,
+            status: 1,
+            del: 1,
+            created_at: 1,
+            updated_at: 1,
+            type: 1,
+            themename: 1,
+            image: 1,
+            short_description: 1,
+            rationale: 1,
+            methodology: 1,
+            isActive: 1,
+            isSubscribed: 1,
+            startdate: '$latestSubscription.startdate',
+            enddate: '$latestSubscription.enddate',
+            stock_details: {
+              $filter: {
+                input: '$stock_details',
+                as: 'stock',
+                cond: { $eq: ['$$stock.del', false] },
+              },
+            },
+          },
+        },
+      ]);
+  
+
+
+      const protocol = req.protocol; // 'http' or 'https'
+      const baseUrl = `${protocol}://${req.headers.host}`;
+
+      // Update each basket's image path
+      result.forEach(basket => {
+          if (basket.image) {
+              basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
+          }
+      });
+
+
+      res.status(200).json({
+        status: true,
+        message: 'Purchased baskets retrieved successfully.',
+        data: result,
+      });
+    } catch (error) {
+      // console.error('Error retrieving purchased baskets:', error);
+      res.status(500).json({
+        status: false,
+        message: 'An error occurred while retrieving purchased baskets.',
+      });
+    }
+  }
+
+  async addBasketSubscriptionAddToCart(req, res) {
+    try {
+      const { basket_ids, client_id, price, discount, orderid, coupon } = req.body;
+
+      // Validate input
+      if (!basket_ids || !Array.isArray(basket_ids) || basket_ids.length === 0 || !client_id) {
+        return res.status(400).json({ status: false, message: 'Missing required fields' });
+      }
+
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return console.log('Client not found or inactive.');
+      }
+
+      const settings = await BasicSetting_Modal.findOne();
+
+
+      const length = 6;
+      const digits = '0123456789';
+      let orderNumber = '';
+
+      for (let i = 0; i < length; i++) {
+        orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
+      }
+
+
+
+
+      for (const basket_id of basket_ids) {
+
+        const basket = await Basket_Modal.findOne({
+          _id: basket_id,
+          del: false
+        });
+
+
+        // Map plan validity to months
+        const validityMapping = {
+          '1 month': 1,
+          '2 months': 2,
+          '3 months': 3,
+          '6 months': 6,
+          '9 months': 9,
+          '1 year': 12,
+          '2 years': 24,
+          '3 years': 36,
+          '4 years': 48,
+          '5 years': 60,
+        };
+
+        const monthsToAdd = validityMapping[basket.validity];
+        if (monthsToAdd === undefined) {
+          return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+        }
+
+        const start = new Date();
+        const end = new Date(start);
+        end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+        end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+
+        const numberOfPlans = basket_ids.length;
+        const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
+
+
+        // Create a new subscription
+        const newSubscription = new BasketSubscription_Modal({
+          basket_id,
+          client_id,
+          total: basket.basket_price - discountPerPlan,
+          plan_price: basket.basket_price,
+          discount: discountPerPlan,
+          coupon: coupon,
+          startdate: start,
+          enddate: end,
+          validity: basket.validity,
+          orderid: orderid,
+          ordernumber: `INV-${orderNumber}`,
+          invoice: `INV-${orderNumber}.pdf`,
+        });
+
+        // Save to the database
+        const savedSubscription = await newSubscription.save();
+      }
+
+
+      const updatedItems = await Addtocart_Modal.updateMany(
+        { client_id: client_id, status: false, plan_id: null }, // Find all matching items
+        { $set: { status: true } } // Update status to true
+      );
+
+
+      if (settings.invoicestatus == 1) {
+
+
+
+        let payment_type;
+        if (orderid) {
+          payment_type = "Online";
+        }
+        else {
+          payment_type = "Offline";
+
+        }
+
+        const templatePath = path.join(__dirname, '../../../template', 'invoicenew.html');
+        let htmlContent = fs.readFileSync(templatePath, 'utf8');
+
+        let planDetailsHtml = '';
+
+        for (const basket_id of basket_ids) {
+
+          const basket = await Basket_Modal.findOne({
+            _id: basket_id,
+            del: false
+          });
+
+
+          // Map plan validity to months
+          const validityMapping = {
+            '1 month': 1,
+            '2 months': 2,
+            '3 months': 3,
+            '6 months': 6,
+            '9 months': 9,
+            '1 year': 12,
+            '2 years': 24,
+            '3 years': 36,
+            '4 years': 48,
+            '5 years': 60,
+          };
+
+          const monthsToAdd = validityMapping[basket.validity];
+          if (monthsToAdd === undefined) {
+            return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+          }
+
+          const start = new Date();
+          const end = new Date(start);
+          end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+          end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+
+
+          planDetailsHtml += `
+            <tr>
+              <td>${basket.title}</td>
+              <td>${basket.validity}</td>
+              <td>${basket.basket_price}</td>
+              <td>${formatDate(start)}</td>
+              <td>${formatDate(end)}</td>
+            </tr>`;
+        }
+
+
+        const todays = new Date();
+
+        htmlContent = htmlContent
+          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+          .replace(/{{created_at}}/g, formatDate(todays))
+          .replace(/{{payment_type}}/g, payment_type)
+          .replace(/{{clientname}}/g, client.FullName)
+          .replace(/{{email}}/g, client.Email)
+          .replace(/{{PhoneNo}}/g, client.PhoneNo)
+          .replace(/{{total}}/g, price)
+          .replace(/{{discount}}/g, discount)
+          .replace(/{{plan_details}}/g, planDetailsHtml)
+          .replace(/{{plantype}}/g, "Basket");
+
+
+        const browser = await puppeteer.launch({
+          args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+        const page = await browser.newPage();
+        await page.setContent(htmlContent);
+
+        // Define the path to save the PDF
+        const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+
+        // Generate PDF and save to the specified path
+        await page.pdf({
+          path: pdfPath,
+          format: 'A4',
+          printBackground: true,
+          margin: {
+            top: '20mm',
+            right: '10mm',
+            bottom: '50mm',
+            left: '10mm',
+          },
+        });
+
+        await browser.close();
+
+
+
+
+        const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
+        if (!mailtemplate || !mailtemplate.mail_body) {
+          throw new Error('Mail template not found');
+        }
+
+
+
+        const templatePaths = path.join(__dirname, '../../../template', 'mailtemplate.html');
+
+        fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
+          if (err) {
+            // console.error('Error reading HTML template:', err);
+            return;
+          }
+
+          let finalMailBody = mailtemplate.mail_body
+            .replace('{clientName}', `${client.FullName}`);
+
+          const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+
+          // Replace placeholders with actual values
+          const finalHtml = htmlTemplate
+            .replace(/{{company_name}}/g, settings.website_title)
+            .replace(/{{body}}/g, finalMailBody)
+            .replace(/{{logo}}/g, logo);
+
+          const mailOptions = {
+            to: client.Email,
+            from: `${settings.from_name} <${settings.from_mail}>`,
+            subject: `${mailtemplate.mail_subject}`,
+            html: finalHtml,
+            attachments: [
+              {
+                filename: `INV-${orderNumber}.pdf`, // PDF file name
+                path: pdfPath, // Path to the PDF file
+              }
+            ]
+          };
+
+          // Send email
+          await sendEmail(mailOptions);
+        });
+
+      }
+      // Respond with the created subscription
+      return res.status(201).json({
+        status: true,
+        message: 'Subscription added successfully',
+      });
+
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ status: false, message: 'Server error', data: [] });
+    }
+  }
+
+
+  async AddToCartPlan(req, res) {
+    try {
+      const { plan_id, client_id } = req.body;
+
+      // Validate input
+      if (!plan_id || !client_id) {
+        return res.status(400).json({
+          status: false,
+          message: 'Missing required fields: plan_id and client_id are required.'
+        });
+      }
+
+      // Check if plan exists in the database (optional step)
+      const plan = await Plan_Modal.findById(plan_id);
+      if (!plan) {
+        return res.status(404).json({
+          status: false,
+          message: 'Plan not found.'
+        });
+      }
+
+      // Check if client exists in the database (optional step)
+      const client = await Clients_Modal.findById(client_id);
+      if (!client) {
+        return res.status(404).json({
+          status: false,
+          message: 'Client not found.'
+        });
+      }
+
+      // Create the new subscription object for the cart
+      const newSubscription = new Addtocart_Modal({
+        plan_id,
+        client_id,
+      });
+
+      // Save the subscription
+      const savedSubscription = await newSubscription.save();
+
+      // Return a success response with the saved subscription details
+      return res.status(201).json({
+        status: true,
+        message: 'Plan added to cart successfully.',
+        data: savedSubscription,
+      });
+
+    } catch (error) {
+      console.error('Error adding plan to cart:', error);
+      return res.status(500).json({
+        status: false,
+        message: 'Something went wrong while adding the plan to the cart.',
+        error: error.message,
+      });
+    }
+  }
+
+  async AddToCartBasket(req, res) {
+    try {
+      const { basket_id, client_id } = req.body;
+
+      // Validate input
+      if (!basket_id || !client_id) {
+        return res.status(400).json({
+          status: false,
+          message: 'Missing required fields: basket_id and client_id are required.'
+        });
+      }
+
+      // Check if plan exists in the database (optional step)
+      const plan = await Basket_Modal.findById(basket_id);
+      if (!plan) {
+        return res.status(404).json({
+          status: false,
+          message: 'Plan not found.'
+        });
+      }
+
+      // Check if client exists in the database (optional step)
+      const client = await Clients_Modal.findById(client_id);
+      if (!client) {
+        return res.status(404).json({
+          status: false,
+          message: 'Client not found.'
+        });
+      }
+
+      // Create the new subscription object for the cart
+      const newSubscription = new Addtocart_Modal({
+        basket_id,
+        client_id,
+      });
+
+      // Save the subscription
+      const savedSubscription = await newSubscription.save();
+
+      // Return a success response with the saved subscription details
+      return res.status(201).json({
+        status: true,
+        message: 'Basket added to cart successfully.',
+        data: savedSubscription,
+      });
+
+    } catch (error) {
+      console.error('Error adding Basket to cart:', error);
+      return res.status(500).json({
+        status: false,
+        message: 'Something went wrong while adding the Basket to the cart.',
+        error: error.message,
+      });
+    }
+  }
+
+  async PlanCartList(req, res) {
+    try {
+      const { client_id } = req.params; // Assuming client_id is passed in URL parameters
+
+      // Validate input
+      if (!client_id) {
+        return res.status(400).json({
+          status: false,
+          message: 'Client ID is required.',
+          data: [],
+        });
+      }
+
+      // Fetch cart items where client_id matches and status is false
+      const cartItems = await Addtocart_Modal.find({
+        client_id: client_id,
+        status: false,
+        basket_id: null, // Check for both null and empty string
+      }).populate('plan_id', 'price validity')  // Populate plan details
+        .populate({
+          path: 'plan_id', // The path to the plan
+          populate: {
+            path: 'category', // The field in Plan model that references the Plancategory
+            select: 'title' // Select only the 'title' from Plancategory
+          }
+        });
+
+      // Check if cart is empty
+      if (!cartItems.length) {
+        return res.status(404).json({
+          status: false,
+          message: 'No items found in the cart for this client.',
+          data: [],
+        });
+      }
+
+      // Return success response with cart items
+      return res.status(200).json({
+        status: true,
+        message: 'Cart items retrieved successfully.',
+        data: cartItems,
+      });
+
+    } catch (error) {
+      console.error('Error retrieving cart items:', error);
+      return res.status(500).json({
+        status: false,
+        message: 'Something went wrong while retrieving cart items.',
+        error: error.message,
+      });
+    }
+  }
+
+  async BasketCartList(req, res) {
+    try {
+      const { client_id } = req.params; // Assuming client_id is passed in URL parameters
+
+      // Validate input
+      if (!client_id) {
+        return res.status(400).json({
+          status: false,
+          message: 'Client ID is required.',
+          data: [],
+        });
+      }
+
+      // Fetch cart items where client_id matches and status is false
+      const cartItems = await Addtocart_Modal.find({
+        client_id: client_id,
+        status: false,
+        plan_id: null, // Check for both null and empty string
+      }).populate('basket_id', 'title	themename	full_price	basket_price	validity');
+
+      // Check if cart is empty
+      if (!cartItems.length) {
+        return res.status(404).json({
+          status: false,
+          message: 'No items found in the cart for this client.',
+          data: [],
+        });
+      }
+
+      // Return success response with cart items
+      return res.status(200).json({
+        status: true,
+        message: 'Cart items retrieved successfully.',
+        data: cartItems,
+      });
+
+    } catch (error) {
+      console.error('Error retrieving cart items:', error);
+      return res.status(500).json({
+        status: false,
+        message: 'Something went wrong while retrieving cart items.',
+        error: error.message,
+      });
+    }
+  }
+
+  async DeleteCartItem(req, res) {
+    try {
+      const { id, client_id } = req.body; // Assuming cart_id is passed in request body
+
+      // Validate input
+      if (!id || !client_id) {
+        return res.status(400).json({
+          status: false,
+          message: "Cart ID and Client ID are required.",
+        });
+      }
+
+      // Find and delete the cart item
+      const deletedItem = await Addtocart_Modal.findOneAndDelete({
+        _id: id,
+        client_id: client_id,
+      });
+
+      // If no item is found, return an error
+      if (!deletedItem) {
+        return res.status(404).json({
+          status: false,
+          message: "Cart item not found.",
+        });
+      }
+
+      // Return success response
+      return res.status(200).json({
+        status: true,
+        message: "Cart item deleted successfully.",
+      });
+
+    } catch (error) {
+      console.error("Error deleting cart item:", error);
+      return res.status(500).json({
+        status: false,
+        message: "Something went wrong while deleting the cart item.",
+        error: error.message,
+      });
+    }
+  }
+
+
+
+  async SignalClientWithPlanClose(req, res) {
+    try {
+      const { service_id, client_id, search, page = 1 } = req.body;
+      const limit = 10;
+      const skip = (parseInt(page) - 1) * parseInt(limit); // Calculate how many items to skip
+      const limitValue = parseInt(limit); // Items per page
+
+
+      const subscriptions = await PlanSubscription_Modal.find({ client_id });
+      if (subscriptions.length === 0) {
+        return res.json({
+          status: false,
+          message: "No plan subscriptions found for the given service and client IDs",
+          data: []
+        });
+      }
+
+      const planIds = subscriptions.map(sub => sub.plan_category_id);
+      const planStarts = subscriptions.map(sub => new Date(sub.plan_start));
+      const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
+
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+
+      const uniquePlanIds = [
+        ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
+      ].map(id => new ObjectId(id));
+
+
+      const query = {
+        service: service_id,
+        close_status: true,
+        $or: uniquePlanIds.map((planId, index) => ({
+          planid: planId.toString(), // Matching the planid with regex
+          created_at: { $lte: planEnds[index] },
+          closedate: { $gte: planStarts[index] }      // Checking if created_at is <= to planEnds
+        }))
+      };
+
+
+      //   const query = {
+      //     service: service_id,
+      //     close_status: false,
+      //     $or: uniquePlanIds.map((planId, index) => {
+      //         return {
+      //             planid: { $regex: `(^|,)${planId}($|,)` }
+      //             created_at: { $lte: planEnds[index] } // Compare created_at with the plan_end date of each subscription
+      //         };
+      //     })
+      // };
+
+
+      //console.log("Final Query:", JSON.stringify(query, null, 2));
+      const protocol = req.protocol; // Will be 'http' or 'https'
+
+      const baseUrl = `${protocol}://${req.headers.host}`; // Construct the base URL
+
+
+
+      if (search && search.trim() !== '') {
+        query.$or = [
+          { tradesymbol: { $regex: search, $options: 'i' } },
+          { calltype: { $regex: search, $options: 'i' } },
+          { price: { $regex: search, $options: 'i' } },
+          { closeprice: { $regex: search, $options: 'i' } }
+        ];
+      }
+
+
+      const signals = await Signal_Modal.find(query)
+        .sort({ created_at: -1 })
+        .skip(skip)
+        .limit(limitValue)
+        .lean();
+
+
+
+      const totalSignals = await Signal_Modal.countDocuments(query);
+
+      const signalsWithReportUrls = await Promise.all(signals.map(async (signal) => {
+        // Check if the signal was bought by the client
+        const order = await Order_Modal.findOne({
+          clientid: client_id,
+          signalid: signal._id
+        }).lean();
+
+
+        return {
+          ...signal,
+          report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null, // Append full report URL
+          purchased: order ? true : false,
+          order_quantity: order ? order.quantity : 0
+        };
+      }));
+
+
+      return res.json({
+        status: true,
+        message: "Signals retrieved successfully",
+        data: signalsWithReportUrls,
+        pagination: {
+          total: totalSignals,
+          page: parseInt(page), // Current page
+          limit: parseInt(limit), // Items per page
+          totalPages: Math.ceil(totalSignals / limit), // Total number of pages
+        }
+      });
+
+    } catch (error) {
+      // console.error("Error fetching signals:", error);
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
+
+
+
+  async getStockrating(req, res) {
+    try {
+
+      const { symbol } = req.params;
+      const result = await Stockrating_Modal.find({ del: false, symbol: symbol });
+
+
+      if (result.length === 0) {
+        return res.json({
+          status: false,
+          message: "Stock rating not available",
+          data: [],
+        });
+      }
+
+
+      return res.json({
+        status: true,
+        message: "get",
+        data: result
+      });
+
+    } catch (error) {
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
+
+
+  async SignalLatest(req, res) {
+    try {
+      const { service_id, client_id } = req.body;
+
+      // Ensure service_id is provided
+      if (!service_id) {
+        return res.json({ status: false, message: "Service ID is required", data: [] });
+      }
+
+      // Query to fetch the last 5 signals
+      const query = {
+        service: service_id, // Match the service_id
+        close_status: false  // Ensure signals are active (not closed)
+      };
+
+      const signals = await Signal_Modal.find(query)
+        .sort({ created_at: -1 }) // Sort by created_at in descending order
+        .limit(5) // Fetch only the last 5 signals
+        .lean();
+
+      const protocol = req.protocol;
+      const baseUrl = `${protocol}://${req.headers.host}`;
+
+      // Enhance the signals with additional info
+      const signalsWithReportUrls = await Promise.all(
+        signals.map(async (signal) => {
+          // Check if the signal was purchased by the client
+          const order = await Order_Modal.findOne({
+            clientid: client_id,
+            signalid: signal._id
+          }).lean();
+
+          return {
+            ...signal,
+            report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null, // Full report URL
+            purchased: order ? true : false, // Whether the signal was purchased
+            order_quantity: order ? order.quantity : 0 // Quantity if purchased
+          };
+        })
+      );
+
+      return res.json({
+        status: true,
+        message: "Last 5 signals retrieved successfully",
+        data: signalsWithReportUrls
+      });
+    } catch (error) {
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
+
+
+  async pastPerformancewithtype(req, res) {
+    try {
+      const { id, callduration } = req.params;
+      const callDurationValue = callduration ? callduration : null;
+      // Base query
+      let query = {
+        del: 0,
+        close_status: true,
+        closeprice: { $ne: 0 },
+        service: new mongoose.Types.ObjectId(id),
+      };
+
+      // Agar callduration available ho, to usko filter me add karein
+      if (callDurationValue !== null) {
+        query.callduration = callDurationValue;
+      }
+
+      // Signals fetch karein
+      const signals = await Signal_Modal.find(query);
+      const count = signals.length;
+
+      if (count === 0) {
+        return res.status(404).json({
+          status: false,
+          message: "No signals found",
+        });
+      }
+
+      let totalProfit = 0;
+      let totalLoss = 0;
+      let profitCount = 0;
+      let lossCount = 0;
+      let avgreturnpermonth = 0;
+
+      const [firstSignal, lastSignal] = await Promise.all([
+        Signal_Modal.findOne(query).sort({ created_at: 1 }),
+        Signal_Modal.findOne(query).sort({ created_at: -1 }),
+      ]);
+
+      if (!firstSignal || !lastSignal) {
+        return res.status(404).json({
+          status: false,
+          message: "No signals found",
+        });
+      }
+
+      const firstCreatedAt = firstSignal.created_at;
+      const lastCreatedAt = lastSignal.created_at;
+
+      const startYear = firstCreatedAt.getFullYear();
+      const startMonth = firstCreatedAt.getMonth();
+      const endYear = lastCreatedAt.getFullYear();
+      const endMonth = lastCreatedAt.getMonth();
+
+      const yearDifference = endYear - startYear;
+      const monthDifference = endMonth - startMonth;
+      const monthsBetween = yearDifference * 12 + monthDifference;
+
+      signals.forEach((signal) => {
+        const entryPrice = parseFloat(signal.price);
+        const exitPrice = parseFloat(signal.closeprice);
+        const callType = signal.calltype;
+
+        if (!isNaN(entryPrice) && !isNaN(exitPrice)) {
+          let profitOrLoss = callType === "BUY" ? exitPrice - entryPrice : entryPrice - exitPrice;
+
+          if (profitOrLoss >= 0) {
+            totalProfit += ["66dfede64a88602fbbca9b72", "66dfeef84a88602fbbca9b79"].includes(id)
+              ? profitOrLoss * signal.lotsize
+              : profitOrLoss;
+            profitCount++;
+          } else {
+            totalLoss += ["66dfede64a88602fbbca9b72", "66dfeef84a88602fbbca9b79"].includes(id)
+              ? Math.abs(profitOrLoss) * signal.lotsize
+              : Math.abs(profitOrLoss);
+            lossCount++;
+          }
+        }
+      });
+
+      const accuracy = (profitCount / count) * 100;
+      const avgreturnpertrade = (totalProfit - totalLoss) / count;
+      avgreturnpermonth = monthsBetween > 0 ? (totalProfit - totalLoss) / monthsBetween : totalProfit - totalLoss;
+
+      return res.json({
+        status: true,
+        message: "Past performance data fetched successfully",
+        data: {
+          count,
+          totalProfit,
+          totalLoss,
+          profitCount,
+          lossCount,
+          accuracy,
+          avgreturnpertrade,
+          avgreturnpermonth,
+        },
+      });
+    } catch (error) {
+      console.log("Error fetching signal details:", error);
+      return res.status(500).json({
+        status: false,
+        message: "Server error",
+        error: error.message,
+      });
+    }
+  }
+
+
+  async CloseSignalwithtype(req, res) {
+    try {
+      const { service_id, search, page = 1, callduration } = req.body;
+
+      const limit = 15;
+      const skip = (parseInt(page) - 1) * parseInt(limit);
+      const limitValue = parseInt(limit);
+
+      // Base query
+      const query = {
+        service: service_id,
+        close_status: true,
+        closeprice: { $ne: 0 }
+      };
+
+      // Agar callduration exist karta hai to query me add karein
+      if (callduration) {
+        query.callduration = callduration;
+      }
+
+      // Agar search filter exist karta hai to query me add karein
+      if (search && search.trim() !== '') {
+        query.$or = [
+          { tradesymbol: { $regex: search, $options: 'i' } },
+          { calltype: { $regex: search, $options: 'i' } },
+          { price: { $regex: search, $options: 'i' } },
+          { closeprice: { $regex: search, $options: 'i' } }
+        ];
+      }
+
+      // Fetch signals and sort by createdAt in descending order
+      const signals = await Signal_Modal.find(query)
+        .sort({ created_at: -1 })
+        .skip(skip)
+        .limit(limitValue)
+        .lean();
+
+      const protocol = req.protocol; // 'http' or 'https'
+      const baseUrl = `${protocol}://${req.headers.host}`; // Base URL for constructing report path
+
+      const signalsWithReportUrls = signals.map(signal => ({
+        ...signal,
+        report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null
+      }));
+
+      const totalSignals = await Signal_Modal.countDocuments(query);
+
+      return res.json({
+        status: true,
+        message: "Signals retrieved successfully",
+        data: signalsWithReportUrls,
+        pagination: {
+          total: totalSignals,
+          page: parseInt(page),
+          limit: parseInt(limit),
+          totalPages: Math.ceil(totalSignals / limit),
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching signals:", error);
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
+
+  async updatePerformanceStatus(req, res) {
+    try {
+      const { client_id, performance_status } = req.body;
+      // Validate required fields
+      if (!client_id) {
+        return res.status(400).json({ message: "Client ID are required." });
+      }
+
+      // Find client by ID
+      const client = await Clients_Modal.findById(client_id);
+      if (!client) {
+        return res.status(404).json({ message: "Client not found." });
+      }
+
+      // Update performance status (0 or 1)
+      client.performance_status = performance_status;
+      await client.save();
+
+      return res.status(200).json({ message: "Performance status updated successfully.", data: client });
+
+    } catch (error) {
+      return res.status(500).json({ message: "Something went wrong.", error: error.message });
+    }
+  }
+
 
 
 }
@@ -4504,6 +6450,10 @@ function formatDate(date) {
   return `${day}/${month}/${year}`;
 
 }
+
+
+
+
 
 
 

@@ -15,13 +15,13 @@ const Dashboard11 = ({ monthexpiry }) => {
       value1:
         monthexpiry?.monthexpiry?.length > 0
           ? monthexpiry?.monthexpiry?.some(
-              (item) => fDateMonth(item?.month) === currentMonthYear
-            )
+            (item) => fDateMonth(item?.month) === currentMonthYear
+          )
             ? monthexpiry?.monthexpiry.reduce((acc, item) => {
-                return fDateMonth(item?.month) === currentMonthYear
-                  ? acc + (item.noofclient || 0)
-                  : acc;
-              }, 0)
+              return fDateMonth(item?.month) === currentMonthYear
+                ? acc + (item.noofclient || 0)
+                : acc;
+            }, 0)
             : 0
           : 0,
 
@@ -145,15 +145,14 @@ const Dashboard11 = ({ monthexpiry }) => {
     <div className="theme-10-dashboard dashboard-card">
       <div className="row mt-2">
         {cardsData
-        
+
           .map((item, index) => {
             return (
               <div key={index} className="col-md-4 mb-4">
                 <div className="card shadow-sm border-light rounded">
                   <div
-                    className={`card-header ${
-                      item.index % 2 === 0 ? "bg-success" : "bg-primary"
-                    } text-white`}
+                    className={`card-header ${item.index % 2 === 0 ? "bg-success" : "bg-primary"
+                      } text-white`}
                   >
                     <h5>{item.label}</h5>
                   </div>
@@ -167,7 +166,7 @@ const Dashboard11 = ({ monthexpiry }) => {
                         <>
                           <h6>
                             {" "}
-                            <Link className="" to={item.link}>
+                            <Link className="" to={{ pathname: item.link }} state={item.state || {}}>
                               <i className="fa-regular fa-eye pe-1"></i>View
                             </Link>
                           </h6>
@@ -180,13 +179,12 @@ const Dashboard11 = ({ monthexpiry }) => {
                       <div
                         className="progress-bar"
                         style={{
-                          width: `${
-                            item.value1
-                              ? item.value1 > 100
-                                ? 100
-                                : item.value1
-                              : 0
-                          }%`, // Ensures the progress bar width is between 0 and 100
+                          width: `${item.value1
+                            ? item.value1 > 100
+                              ? 100
+                              : item.value1
+                            : 0
+                            }%`, // Ensures the progress bar width is between 0 and 100
                         }}
                       ></div>
                     </div>

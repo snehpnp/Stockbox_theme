@@ -23,6 +23,11 @@ const BannerSchema = new Schema({
         trim: true,
         default: null
     },
+    type: {
+        type: String,
+        trim: true,
+        default: null
+    },
     del: {
         type: Boolean,
         default: false // assuming false means not deleted

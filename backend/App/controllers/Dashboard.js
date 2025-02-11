@@ -758,7 +758,6 @@ class Dashboard {
     try {
       const { serviceid, startdate, enddate, search, page = 1 } = req.body;
 
-      console.log(req.body);
       let limit = 10;
       // Build the filter object dynamically
       const filter = {};
@@ -997,6 +996,179 @@ class Dashboard {
   }
 
 
+  async pastPerformancewithtype(req, res) {
+    try {
+      const { id, callduration } = req.params;
+      const callDurationValue = callduration ? callduration : null;
+      // Base query
+      let query = {
+        del: 0,
+        close_status: true,
+        closeprice: { $ne: 0 },
+        service: new mongoose.Types.ObjectId(id),
+      };
+  
+      // Agar callduration available ho, to usko filter me add karein
+      if (callDurationValue !== null) {
+        query.callduration = callDurationValue;
+      }
+  
+      // Signals fetch karein
+      const signals = await Signal_Modal.find(query);
+      const count = signals.length;
+  
+      if (count === 0) {
+        return res.status(404).json({
+          status: false,
+          message: "No signals found",
+        });
+      }
+  
+      let totalProfit = 0;
+      let totalLoss = 0;
+      let profitCount = 0;
+      let lossCount = 0;
+      let avgreturnpermonth = 0;
+  
+      const [firstSignal, lastSignal] = await Promise.all([
+        Signal_Modal.findOne(query).sort({ created_at: 1 }),
+        Signal_Modal.findOne(query).sort({ created_at: -1 }),
+      ]);
+  
+      if (!firstSignal || !lastSignal) {
+        return res.status(404).json({
+          status: false,
+          message: "No signals found",
+        });
+      }
+  
+      const firstCreatedAt = firstSignal.created_at;
+      const lastCreatedAt = lastSignal.created_at;
+  
+      const startYear = firstCreatedAt.getFullYear();
+      const startMonth = firstCreatedAt.getMonth();
+      const endYear = lastCreatedAt.getFullYear();
+      const endMonth = lastCreatedAt.getMonth();
+  
+      const yearDifference = endYear - startYear;
+      const monthDifference = endMonth - startMonth;
+      const monthsBetween = yearDifference * 12 + monthDifference;
+  
+      signals.forEach((signal) => {
+        const entryPrice = parseFloat(signal.price);
+        const exitPrice = parseFloat(signal.closeprice);
+        const callType = signal.calltype;
+  
+        if (!isNaN(entryPrice) && !isNaN(exitPrice)) {
+          let profitOrLoss = callType === "BUY" ? exitPrice - entryPrice : entryPrice - exitPrice;
+  
+          if (profitOrLoss >= 0) {
+            totalProfit += ["66dfede64a88602fbbca9b72", "66dfeef84a88602fbbca9b79"].includes(id)
+              ? profitOrLoss * signal.lotsize
+              : profitOrLoss;
+            profitCount++;
+          } else {
+            totalLoss += ["66dfede64a88602fbbca9b72", "66dfeef84a88602fbbca9b79"].includes(id)
+              ? Math.abs(profitOrLoss) * signal.lotsize
+              : Math.abs(profitOrLoss);
+            lossCount++;
+          }
+        }
+      });
+  
+      const accuracy = (profitCount / count) * 100;
+      const avgreturnpertrade = (totalProfit - totalLoss) / count;
+      avgreturnpermonth = monthsBetween > 0 ? (totalProfit - totalLoss) / monthsBetween : totalProfit - totalLoss;
+  
+      return res.json({
+        status: true,
+        message: "Past performance data fetched successfully",
+        data: {
+          count,
+          totalProfit,
+          totalLoss,
+          profitCount,
+          lossCount,
+          accuracy,
+          avgreturnpertrade,
+          avgreturnpermonth,
+        },
+      });
+    } catch (error) {
+      console.log("Error fetching signal details:", error);
+      return res.status(500).json({
+        status: false,
+        message: "Server error",
+        error: error.message,
+      });
+    }
+  }
+  
+
+  async CloseSignalwithtype(req, res) {
+    try {
+      const { service_id, search, page = 1, callduration } = req.body;
+  
+      const limit = 15;
+      const skip = (parseInt(page) - 1) * parseInt(limit);
+      const limitValue = parseInt(limit);
+  
+      // Base query
+      const query = {
+        service: service_id,
+        close_status: true,
+        closeprice: { $ne: 0 }
+      };
+  
+      // Agar callduration exist karta hai to query me add karein
+      if (callduration) {
+        query.callduration = callduration;
+      }
+  
+      // Agar search filter exist karta hai to query me add karein
+      if (search && search.trim() !== '') {
+        query.$or = [
+          { tradesymbol: { $regex: search, $options: 'i' } },
+          { calltype: { $regex: search, $options: 'i' } },
+          { price: { $regex: search, $options: 'i' } },
+          { closeprice: { $regex: search, $options: 'i' } }
+        ];
+      }
+  
+      // Fetch signals and sort by createdAt in descending order
+      const signals = await Signal_Modal.find(query)
+        .sort({ created_at: -1 })
+        .skip(skip)
+        .limit(limitValue)
+        .lean();
+  
+      const protocol = req.protocol; // 'http' or 'https'
+      const baseUrl = `${protocol}://${req.headers.host}`; // Base URL for constructing report path
+  
+      const signalsWithReportUrls = signals.map(signal => ({
+        ...signal,
+        report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null
+      }));
+  
+      const totalSignals = await Signal_Modal.countDocuments(query);
+  
+      return res.json({
+        status: true,
+        message: "Signals retrieved successfully",
+        data: signalsWithReportUrls,
+        pagination: {
+          total: totalSignals,
+          page: parseInt(page),
+          limit: parseInt(limit),
+          totalPages: Math.ceil(totalSignals / limit),
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching signals:", error);
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
+  
 
 
 

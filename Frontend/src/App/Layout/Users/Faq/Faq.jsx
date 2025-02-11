@@ -39,20 +39,18 @@ const Faq = () => {
       <Content
         Page_title="FAQ"
         button_title="Add Basket"
-        button_status={true}
+        button_status={false}
       >
         <div className="page-content">
 
-          <div className="card">
-            <div className="card-body">
-              <h5 className="card-title">Need Help ?</h5>
-              <hr />
+         
+             
               {isLoading ? <Loader /> : <div className="accordion accordion-flush" id="accordionExample2">
                 {faq && faq.length > 0 ? (
 
                   faq.map((item, index) => (
                     <div className="accordion-item" key={item._id}>
-                      <h2 className="accordion-header" id={`heading${index}`}>
+                      <h2 className="accordion-header border-bottom" id={`heading${index}`}>
                         <button
                           className="accordion-button"
                           type="button"
@@ -81,8 +79,7 @@ const Faq = () => {
                 )}
 
               </div>}
-            </div>
-          </div>
+           
         </div>
 
       </Content>

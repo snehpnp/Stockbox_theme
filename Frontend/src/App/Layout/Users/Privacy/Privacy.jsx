@@ -42,9 +42,8 @@ const Privacy = () => {
 
           <div className="card">
             {isLoading ? <Loader /> : <div className="card-body">
-              <h5 className="card-title">Privacy & Policy</h5>
-              <hr />
-              <div dangerouslySetInnerHTML={{ __html: privacyPolicy }} />
+             
+              <div className="privacy-data" dangerouslySetInnerHTML={{ __html: privacyPolicy }} />
             </div>}
           </div>
         </div>
