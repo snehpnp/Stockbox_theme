@@ -1109,7 +1109,7 @@ class Dashboard {
     try {
       const { service_id, search, page = 1, callduration } = req.body;
   
-      const limit = 15;
+      const limit = 10;
       const skip = (parseInt(page) - 1) * parseInt(limit);
       const limitValue = parseInt(limit);
   
