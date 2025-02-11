@@ -106,7 +106,6 @@ export default function Employee() {
             <Route path="/dashboard" element={<Dashbord />} />
             {permission.includes("viewbanner") ? <Route path="/banner" element={<Banner />} /> : ""}
 
-
             {permission.includes("vewbasket") ? <Route path="/basket" element={<Basket />} /> : ""}
             {permission.includes("addbasket") ? <Route path="/addbasket" element={<AddBasket />} /> : ""}
             {permission.includes("basketdetail") ? <Route path="/viewdetail/:id" element={<Viewbasketdetail />} /> : ""}
