@@ -220,7 +220,7 @@ const Service = () => {
       name: "Title",
       selector: (row) => row.title,
       sortable: true,
-      width: "200px",
+      width: "795px",
     },
   ];
 
