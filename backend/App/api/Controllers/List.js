@@ -286,6 +286,8 @@ class List {
 
   async getPlansByPlancategoryId(req, res) {
     try {
+    
+    
       const pipeline = [
         // Match all plancategories
         {
@@ -325,6 +327,7 @@ class List {
                             $switch: {
                               branches: [
                                 { case: { $eq: ['$validity', '1 month'] }, then: 1 },
+                                { case: { $eq: ['$validity', '2 months'] }, then: 2 },
                                 { case: { $eq: ['$validity', '3 months'] }, then: 3 },
                                 { case: { $eq: ['$validity', '6 months'] }, then: 6 },
                                 { case: { $eq: ['$validity', '9 months'] }, then: 9 },
@@ -366,33 +369,50 @@ class List {
         // Lookup to get associated services
         {
           $lookup: {
-            from: 'services', // Collection name for services
-            let: { serviceIds: { $split: ['$service', ','] } }, // Split service string into array
+            from: 'services',
+            let: {
+              serviceIds: {
+                $filter: {
+                  input: { $split: ['$service', ','] },
+                  as: 'id',
+                  cond: { $eq: [{ $strLenCP: '$$id' }, 24] } // Ensure only 24-char valid ObjectIds
+                }
+              }
+            },
             pipeline: [
               {
                 $match: {
                   $expr: {
                     $and: [
                       {
-                        $in: ['$_id', { $map: { input: '$$serviceIds', as: 'id', in: { $toObjectId: '$$id' } } }],
+                        $in: [
+                          '$_id',
+                          {
+                            $map: {
+                              input: '$$serviceIds',
+                              as: 'id',
+                              in: { $toObjectId: '$$id' } // Convert only valid ObjectIds
+                            }
+                          }
+                        ]
                       },
-                      { $eq: ['$status', true] }, // Status must be true
-                      { $eq: ['$del', false] }, // del must be false
-                    ],
-                  },
-                },
+                      { $eq: ['$status', true] },
+                      { $eq: ['$del', false] }
+                    ]
+                  }
+                }
               },
-              // Optionally project fields in the services
               {
                 $project: {
-                  _id: 1, // Service ID
-                  title: 1, // Service title
-                },
-              },
+                  _id: 1,
+                  title: 1
+                }
+              }
             ],
-            as: 'services', // Name of the array field to add
-          },
+            as: 'services'
+          }
         },
+        
         // Project only the necessary fields
         {
           $project: {
