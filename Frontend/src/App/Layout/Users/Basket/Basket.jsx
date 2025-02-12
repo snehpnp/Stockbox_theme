@@ -212,7 +212,7 @@ function Basket() {
                 <div className="col-md-12 col-lg-4 mb-3" key={item?.id}>
                   <div className="card radius-10 overflow-hidden">
                     <div className="card-body">
-                      <h5>{item?.title}</h5>
+                      <h5>{item?.title} ({item?.themename})</h5>
                     </div>
                     <div className="progress-wrapper">
                       <div className="progress" style={{ height: 7 }}>

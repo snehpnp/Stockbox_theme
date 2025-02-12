@@ -1,14 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import Content from "../../../components/Contents/Content";
-import { RebalanceBasket, GetBasketSell, getversionhistory, ExitPlaceorderstockbasket, GetUserData, AddStockplaceorder } from '../../../Services/UserService/User';
+import { RebalanceBasket, GetBasketSell, getversionhistory, GetLivePricedata, ExitPlaceorderstockbasket, GetUserData, AddStockplaceorder } from '../../../Services/UserService/User';
 import { useLocation, useParams } from 'react-router-dom';
 import Loader from '../../../../Utils/Loader';
 import { IndianRupee } from "lucide-react";
 import Swal from "sweetalert2";
 import ReusableModal from '../../../components/Models/ReusableModal';
+import { soket_url } from '../../../../Utils/config';
+import io from 'socket.io-client';
+import $ from "jquery";
 
 
 const RebalanceStock = () => {
+
+
+
+  const SOCKET_SERVER_URL = "https://stockboxpnp.pnpuniverse.com:1001/"
+
+  const socket = io(SOCKET_SERVER_URL, { transports: ['websocket'] });
 
 
   const token = localStorage.getItem("token");
@@ -26,12 +35,16 @@ const RebalanceStock = () => {
   const [userDetail, setUserDetail] = useState();
   const [showModal, setShowModal] = useState(false);
   const [showModal1, setShowModal1] = useState(false);
+  const [showModal2, setShowModal2] = useState(false);
   const [inputdata, setInputdata] = useState({});
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [isExitorder, setIsExitorder] = useState(false);
   const [data, setData] = useState({});
   const [viewdata, setViewdata] = useState([]);
+  const [basket, setBasketdata] = useState([]);
 
+  const [isChecked, setIsChecked] = useState(false);
 
 
 
@@ -43,6 +56,48 @@ const RebalanceStock = () => {
 
 
 
+
+  // const groupByVersion = (data) => {
+  //   return data.reduce((acc, item) => {
+  //     if (!acc[item.version]) {
+  //       acc[item.version] = [];
+  //     }
+  //     acc[item.version].push(item);
+  //     return acc;
+  //   }, {});
+
+  // };
+
+
+
+  // const getbasketRebalance = async () => {
+  //   try {
+  //     const data = { id: id, clientid: userid };
+  //     const response = await RebalanceBasket(data, token);
+  //     if (response.status) {
+  //       const groupedData = groupByVersion(response.data);
+  //       setBaskets(groupedData);
+  //     }
+  //   } catch (error) {
+  //     console.log("error", error);
+  //   }
+  //   setIsLoading(false);
+  // };
+
+
+  // 
+
+
+
+  const groupByVersion = (data) => {
+    return data.reduce((acc, item) => {
+      if (!acc[item.version]) {
+        acc[item.version] = [];
+      }
+      acc[item.version].push({ ...item, livePrice: null });
+      return acc;
+    }, {});
+  };
 
   const getbasketRebalance = async () => {
     try {
@@ -61,6 +116,75 @@ const RebalanceStock = () => {
 
 
 
+
+
+  // useEffect(() => {
+
+  // const handleLiveData = (livedata) => {
+  //   console.log("livedata", livedata)
+  //   setBaskets((prevBaskets) => {
+  //     return Object.keys(prevBaskets).reduce((acc, version) => {
+  //       acc[version] = prevBaskets[version].map((item) =>
+  //         item.instrument_token === livedata.tk
+  //           ? { ...item, livePrice: livedata.lp }
+  //           : item
+  //       );
+  //       return acc;
+  //     }, {});
+  //   });
+  // };
+
+  //   socket.on("Live_data", handleLiveData);
+
+  //   return () => {
+  //     socket.off("Live_data", handleLiveData);
+  //   };
+  // }, []);
+
+
+  // useEffect(() => {
+
+  //   const handleLiveData = (livedata) => {
+  //     console.log("Live Data:", livedata);
+  //     $(`#stock-price-${livedata.tk}`).text(livedata.lp);
+  //   };
+
+  //   socket.on("Live_data", handleLiveData);
+
+  //   return () => {
+  //     socket.off("Live_data", handleLiveData);
+  //   };
+  // }, []);
+
+  useEffect(() => {
+    const handleLiveData = (livedata) => {
+      console.log("livedata", livedata);
+
+      setBaskets((prevBaskets) => {
+        return Object.keys(prevBaskets).reduce((acc, version) => {
+          acc[version] = prevBaskets[version].map((item) => {
+            if (item.instrument_token === livedata.tk) {
+              $(`#stock-price-${livedata.tk}`).text(livedata.lp);
+              return { ...item, price: livedata.lp };
+            }
+            return item;
+          });
+          return acc;
+        }, {});
+      });
+    };
+
+    socket.on("Live_data", handleLiveData);
+
+    return () => {
+      socket.off("Live_data", handleLiveData);
+    };
+  }, []);
+
+
+
+
+
   const getuserdetail = async () => {
     try {
       const response = await GetUserData(userid, token);
@@ -74,12 +198,15 @@ const RebalanceStock = () => {
 
 
 
-  const getbasketsell = async () => {
+
+
+
+  const getbasketsell = async (item) => {
     try {
-      const data = { basket_id: id, clientid: userid, brokerid: userDetail, version: "" };
+      const data = { basket_id: id, clientid: userid, brokerid: userDetail, version: item[0]?.version };
       const response = await GetBasketSell(data, token);
       if (response.status) {
-        console.log("response", response.data)
+        console.log("resp", response.data)
       }
     } catch (error) {
       console.log("error", error);
@@ -158,16 +285,20 @@ const RebalanceStock = () => {
 
 
 
-  const SellExistOrder = async (basketData) => {
+  const SellExistOrder = async () => {
     try {
+      setIsExitorder(true);
+
       const data = {
         basket_id: id,
         clientid: userid,
         brokerid: userDetail,
-        version: basketData[0]?.version || "",
+        version: basket[0]?.version || "",
         ids: "",
       };
       const response = await ExitPlaceorderstockbasket(data, token);
+      setIsExitorder(false);
+
       if (response.status) {
         Swal.fire({
           icon: "success",
@@ -184,6 +315,7 @@ const RebalanceStock = () => {
         });
       }
     } catch (error) {
+      setIsExitorder(false);
       console.error("API Error:", error);
       Swal.fire({
         icon: "error",
@@ -196,16 +328,7 @@ const RebalanceStock = () => {
 
 
 
-  const groupByVersion = (data) => {
-    return data.reduce((acc, item) => {
-      if (!acc[item.version]) {
-        acc[item.version] = [];
-      }
-      acc[item.version].push(item);
-      return acc;
-    }, {});
-
-  };
+  console.log("baskets", baskets)
 
 
 
@@ -233,7 +356,9 @@ const RebalanceStock = () => {
                   className={`btn ms-2 ${version == 1 ? "btn-danger" : "btn-success"}`}
                   onClick={() => {
                     if (version == 1) {
-                      SellExistOrder(baskets[version]);
+                      getbasketsell(baskets[version])
+                      setShowModal2(true);
+                      setBasketdata(baskets[version])
                     } else {
                       setShowModal(true);
                       setData(baskets[version]);
@@ -253,17 +378,23 @@ const RebalanceStock = () => {
                       <th>Price</th>
                       <th>CMP</th>
                       <th>Weightage</th>
+                      <th>Quantity</th>
                     </tr>
                   </thead>
                   <tbody>
                     {baskets[version].map((stock) => (
                       <tr key={stock._id}>
                         <td>{stock.name}</td>
-                        <td> <IndianRupee /> {stock.price}</td>
-                        <td>{stock.total_value / stock.quantity}</td>
+                        <td><IndianRupee /> {stock.price}</td>
+                        <td id={`stock-price-${stock.instrument_token}`}>
+                          {stock.livePrice ? stock.livePrice : "-"}
+                        </td>
                         <td>{stock.weightage}%</td>
+                        <td>{stock.quantity}</td>
                       </tr>
                     ))}
+
+
                   </tbody>
                 </table>
               </div>
@@ -331,14 +462,16 @@ const RebalanceStock = () => {
                   <th>Name</th>
                   <th>Price</th>
                   <th>Quantity</th>
+                  <th>Type</th>
                 </tr>
               </thead>
               <tbody>
                 {isLoading1 ? <Loader /> : viewdata?.map((stock) => (
-                  <tr key={stock._id}>
-                    <td>{stock.tradesymbol}</td>
-                    <td> <IndianRupee /> {stock.price}</td>
-                    <td>{stock.quantity}</td>
+                  <tr key={stock?._id}>
+                    <td>{stock?.tradesymbol}</td>
+                    <td> <IndianRupee /> {stock?.price}</td>
+                    <td>{stock?.quantity}</td>
+                    <td>{stock?.ordertype}</td>
                   </tr>
                 ))}
               </tbody>
@@ -346,6 +479,43 @@ const RebalanceStock = () => {
           </div>
         }
       />
+
+      <ReusableModal
+        show={showModal2}
+        onClose={() => setShowModal2(false)}
+        title={<>Exit Order</>}
+        body={
+          <div className="table-responsive">
+            <label className="d-flex align-items-center">
+              Order 1
+              <input
+                type="checkbox"
+                checked={isChecked}
+                onChange={(e) => setIsChecked(e.target.checked)}
+                className="ms-2"
+              />
+            </label>
+          </div>
+        }
+        footer={
+          <>
+            <button
+              className="btn btn-primary"
+              onClick={() => SellExistOrder()}
+              disabled={isExitorder || !isChecked}
+            >
+              Exit Order
+            </button>
+            <button className="btn btn-secondary"
+              onClick={() => setShowModal2(false)}
+              disabled={isExitorder}
+            >
+              Cancel
+            </button>
+          </>
+        }
+      />
+
 
 
     </Content>

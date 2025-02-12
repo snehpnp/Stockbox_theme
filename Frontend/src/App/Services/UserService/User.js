@@ -924,3 +924,22 @@ export async function ExitPlaceorderstockbasket(data, token) {
         return err;
     }
 }
+
+
+
+// get live price 
+
+export async function GetLivePricedata(token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}api/getliveprice`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
