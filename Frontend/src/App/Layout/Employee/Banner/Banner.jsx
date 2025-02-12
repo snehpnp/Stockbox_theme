@@ -28,7 +28,7 @@ const Banner = () => {
     const [isLoading, setIsLoading] = useState(true)
 
     const [showModal, setShowModal] = useState(false);
-    
+
 
     const [isAddSubmittion, setIsAddSubmittion] = useState(false);
 
@@ -353,7 +353,7 @@ const Banner = () => {
                     </div> : ""}
                     {permission.includes("deletebanner") ? <div>
                         <Tooltip placement="top" overlay="Delete">
-                            <Trash2 onClick={() => Deletebannerlist(row._id)} className='ms-2'/>
+                            <Trash2 onClick={() => Deletebannerlist(row._id)} className='ms-2' />
                         </Tooltip>
                     </div> : ""}
                 </>
@@ -425,164 +425,164 @@ const Banner = () => {
                                     <i className="bx bx-search" />
                                 </span>
                             </div> */}
-                            {permission.includes("addbanner") ? 
-                            <div className="ms-auto">
-                            <button
-                              type="button"
-                              className="btn btn-primary"
-                              onClick={(e) => {
-                                setShowModal(true);
-                              }}
-                            >
-                              <i className="bx bxs-plus-square" />
-                              Add Banner
-                            </button>
-            
-                            {/* ADD BANNER */}
-                            <ReusableModal
-                              show={showModal}
-                              onClose={() => setShowModal(false)}
-                              title={<>Add Banner</>}
-                              body={
-                                <>
-                                  <div className="">
-                                    <div className="col-md-12">
-                                      <label htmlFor="imageUpload">Upload Image</label>
-                                      <span className="text-danger">*</span>
-                                      <input
-                                        ref={fileInputRef}
-                                        className="form-control mb-3"
-                                        type="file"
-                                        accept="image/*"
-                                        id="imageUpload"
-                                        onChange={(e) =>
-                                          setTitle({
-                                            ...title,
-                                            image: e.target.files[0],
-                                          })
-                                        }
-                                      />
-                                    </div>
-                                    <div className="col-md-12">
-                                      <label htmlFor="hyperlink">HyperLink</label>
-                                      <input
-                                        className="form-control mb-2"
-                                        type="text"
-                                        id="hyperlink"
-                                        placeholder="Enter link"
-                                        value={title.hyperlink}
-                                        onChange={(e) =>
-                                          setTitle({
-                                            ...title,
-                                            hyperlink: e.target.value,
-                                          })
-                                        }
-                                      />
-                                    </div>
-                                  </div>
-                                </>
-                              }
-                              footer={
-                                <>
-                                  <button
-                                    type="button"
-                                    className="btn btn-primary"
-                                    onClick={AddBanner}
-                                  >
-                                    Save
-                                  </button>
-                                  <button
-                                    className="btn btn-primary rounded-1"
-                                    onClick={() => setShowModal(false)}
-                                  >
-                                    Cancel
-                                  </button>
-                                </>
-                              }
-                            />
-            
-                            {/* UPDATE BANNER */}
-                            <ReusableModal
-                              show={model}
-                              onClose={() => setModel(false)}
-                              title={<> Update Banner</>}
-                              body={
-                                <>
-                                  <div className="row">
-                                    <div className="col-md-12">
-                                      <label htmlFor="imageUpload">Image</label>
-                                      <span className="text-danger">*</span>
-                                      <input
-                                        className="form-control mb-3"
-                                        type="file"
-                                        accept="image/*"
-                                        id="imageUpload"
-                                        onChange={(e) => {
-                                          const file = e.target.files[0];
-                                          if (file) {
-                                            updateServiceTitle({ image: file });
-                                          }
+                            {permission.includes("addbanner") ?
+                                <div className="ms-auto">
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        onClick={(e) => {
+                                            setShowModal(true);
                                         }}
-                                      />
-                                    </div>
-                                    <div className="col-md-2">
-                                      {updatetitle.image && (
-                                        <div className="file-preview">
-                                          <img
-                                            src={
-                                              typeof updatetitle.image === "string"
-                                                ? `${image_baseurl}uploads/banner/${updatetitle.image}`
-                                                : URL.createObjectURL(updatetitle.image)
-                                            }
-                                            alt="Image Preview"
-                                            className="image-preview mt-4"
-                                            style={{
-                                              width: "68px",
-                                              height: "auto",
-                                            }}
-                                          />
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
-                                  <div className="row">
-                                    <div className="col-md-12">
-                                      <label htmlFor="hyperlink">HyperLink</label>
-                                      <input
-                                        className="form-control mb-2"
-                                        type="text"
-                                        placeholder="Enter blog Title"
-                                        value={updatetitle.hyperlink}
-                                        onChange={(e) =>
-                                          updateServiceTitle({
-                                            hyperlink: e.target.value,
-                                          })
+                                    >
+                                        <i className="bx bxs-plus-square" />
+                                        Add Banner
+                                    </button>
+
+                                    {/* ADD BANNER */}
+                                    <ReusableModal
+                                        show={showModal}
+                                        onClose={() => setShowModal(false)}
+                                        title={<>Add Banner</>}
+                                        body={
+                                            <>
+                                                <div className="">
+                                                    <div className="col-md-12">
+                                                        <label htmlFor="imageUpload">Upload Image</label>
+                                                        <span className="text-danger">*</span>
+                                                        <input
+                                                            ref={fileInputRef}
+                                                            className="form-control mb-3"
+                                                            type="file"
+                                                            accept="image/*"
+                                                            id="imageUpload"
+                                                            onChange={(e) =>
+                                                                setTitle({
+                                                                    ...title,
+                                                                    image: e.target.files[0],
+                                                                })
+                                                            }
+                                                        />
+                                                    </div>
+                                                    <div className="col-md-12">
+                                                        <label htmlFor="hyperlink">HyperLink</label>
+                                                        <input
+                                                            className="form-control mb-2"
+                                                            type="text"
+                                                            id="hyperlink"
+                                                            placeholder="Enter link"
+                                                            value={title.hyperlink}
+                                                            onChange={(e) =>
+                                                                setTitle({
+                                                                    ...title,
+                                                                    hyperlink: e.target.value,
+                                                                })
+                                                            }
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </>
                                         }
-                                      />
-                                    </div>
-                                  </div>
-                                </>
-                              }
-                              footer={
-                                <>
-                                  <button
-                                    type="button"
-                                    className="btn btn-primary"
-                                    onClick={updatebanner}
-                                  >
-                                    Save
-                                  </button>
-                                  <button
-                                    className="btn btn-primary rounded-1"
-                                    onClick={() => setModel(false)}
-                                  >
-                                    Cancel
-                                  </button>
-                                </>
-                              }
-                            />
-                            
-                          </div> : ""}
+                                        footer={
+                                            <>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-primary"
+                                                    onClick={AddBanner}
+                                                >
+                                                    Save
+                                                </button>
+                                                <button
+                                                    className="btn btn-primary rounded-1"
+                                                    onClick={() => setShowModal(false)}
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </>
+                                        }
+                                    />
+
+                                    {/* UPDATE BANNER */}
+                                    <ReusableModal
+                                        show={model}
+                                        onClose={() => setModel(false)}
+                                        title={<> Update Banner</>}
+                                        body={
+                                            <>
+                                                <div className="row">
+                                                    <div className="col-md-12">
+                                                        <label htmlFor="imageUpload">Image</label>
+                                                        <span className="text-danger">*</span>
+                                                        <input
+                                                            className="form-control mb-3"
+                                                            type="file"
+                                                            accept="image/*"
+                                                            id="imageUpload"
+                                                            onChange={(e) => {
+                                                                const file = e.target.files[0];
+                                                                if (file) {
+                                                                    updateServiceTitle({ image: file });
+                                                                }
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <div className="col-md-2">
+                                                        {updatetitle.image && (
+                                                            <div className="file-preview">
+                                                                <img
+                                                                    src={
+                                                                        typeof updatetitle.image === "string"
+                                                                            ? `${image_baseurl}uploads/banner/${updatetitle.image}`
+                                                                            : URL.createObjectURL(updatetitle.image)
+                                                                    }
+                                                                    alt="Image Preview"
+                                                                    className="image-preview mt-4"
+                                                                    style={{
+                                                                        width: "68px",
+                                                                        height: "auto",
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className="row">
+                                                    <div className="col-md-12">
+                                                        <label htmlFor="hyperlink">HyperLink</label>
+                                                        <input
+                                                            className="form-control mb-2"
+                                                            type="text"
+                                                            placeholder="Enter blog Title"
+                                                            value={updatetitle.hyperlink}
+                                                            onChange={(e) =>
+                                                                updateServiceTitle({
+                                                                    hyperlink: e.target.value,
+                                                                })
+                                                            }
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </>
+                                        }
+                                        footer={
+                                            <>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-primary"
+                                                    onClick={updatebanner}
+                                                >
+                                                    Save
+                                                </button>
+                                                <button
+                                                    className="btn btn-primary rounded-1"
+                                                    onClick={() => setModel(false)}
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </>
+                                        }
+                                    />
+
+                                </div> : ""}
                         </div>
 
                         {isLoading ? (
