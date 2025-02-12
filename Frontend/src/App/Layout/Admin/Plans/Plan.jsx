@@ -12,7 +12,7 @@ import ReusableModal from '../../../components/Models/ReusableModal';
 const Plan = () => {
 
 
-    
+
     const [clients, setClients] = useState([]);
     const [category, setCategory] = useState([]);
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
@@ -325,9 +325,8 @@ const Plan = () => {
                                                                                     <div className="col-md-3">
                                                                                         <b>Description</b>
                                                                                     </div>
-                                                                                    <div className="col-md-9">
+                                                                                    <div className="">
                                                                                         <textarea className='form-control ' value={stripHtmlTags(client?.description || '')} >{client?.description}</textarea>
-
                                                                                     </div>
                                                                                 </div>
                                                                             </li>

@@ -152,15 +152,15 @@ const ClientRequest = () => {
             sortable: true,
             width: '200px',
         },
-        {
-            name: 'Service',
-            selector: row =>
-                row?.planData?.serviceTitles?.length > 0
-                    ? row?.planData?.serviceTitles.join(", ")
-                    : row?.basketData?.map(item => item.title).join(", "),
-            sortable: true,
-            width: '200px',
-        },
+        // {
+        //     name: 'Service',
+        //     selector: row =>
+        //         row?.planData?.serviceTitles?.length > 0
+        //             ? row?.planData?.serviceTitles.join(", ")
+        //             : row?.basketData?.map(item => item.title).join(", "),
+        //     sortable: true,
+        //     width: '200px',
+        // },
         {
             name: 'Entry time',
             selector: row => fDateTime(row.created_at),

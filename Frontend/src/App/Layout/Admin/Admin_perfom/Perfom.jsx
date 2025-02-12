@@ -15,7 +15,7 @@ import ReusableModal from '../../../components/Models/ReusableModal';
 const Perform = () => {
 
 
-    
+
     const token = localStorage.getItem('token');
     const [clients, setClients] = useState([]);
     const [searchInput, setSearchInput] = useState("");
@@ -337,7 +337,7 @@ const Perform = () => {
                                                                             <div className="col-lg-6">
 
                                                                                 <div className="p-3">
-                                                                                    <b className="mb-0">Avg.return / trade</b>
+                                                                                    <b className="mb-0">Avg.return / trade :  </b>
                                                                                     <small className="mb-0">
                                                                                         {item?.avgreturnpertrade?.toFixed(2)}
 
@@ -346,7 +346,7 @@ const Perform = () => {
                                                                             </div>
                                                                             <div className="col-lg-6 ">
                                                                                 <div className="p-3">
-                                                                                    <b className="mb-0">  Avg.return / month</b>
+                                                                                    <b className="mb-0">  Avg.return/month : </b>
                                                                                     <small className="mb-0">
                                                                                         {item?.avgreturnpermonth?.toFixed(2)}
                                                                                     </small>

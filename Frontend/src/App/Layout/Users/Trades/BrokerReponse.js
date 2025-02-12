@@ -7,7 +7,10 @@ const BrokerResponse = () => {
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
+
   const [responsedata, setResponseData] = useState([]);
+
+
 
   const getBrokerHistory = async () => {
     try {
@@ -21,11 +24,16 @@ const BrokerResponse = () => {
     }
   };
 
+
+
   useEffect(() => {
     getBrokerHistory();
   }, []);
 
+
   let BrokerDAta = ["Demo", "Angel", "Alice Blue", "Kotak Neo", "Market Hub"];
+
+
 
   return (
     <Content
