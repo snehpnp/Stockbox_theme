@@ -7,14 +7,15 @@ import Loader from "../../../../Utils/Loader";
 import Swal from "sweetalert2";
 import io from 'socket.io-client';
 import $ from "jquery";
+import { soket_url } from '../../../../Utils/config';
 
 
 
 const BasketStockList = () => {
 
 
-  const SOCKET_SERVER_URL = "https://stockboxpnp.pnpuniverse.com:1001/"
-  // const SOCKET_SERVER_URL = soket_url
+  // const SOCKET_SERVER_URL = "https://stockboxpnp.pnpuniverse.com:1001/"
+  const SOCKET_SERVER_URL = soket_url
 
   const socket = io(SOCKET_SERVER_URL, { transports: ['websocket'] });
 

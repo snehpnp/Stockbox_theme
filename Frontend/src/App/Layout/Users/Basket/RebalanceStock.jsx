@@ -14,8 +14,8 @@ import $ from "jquery";
 const RebalanceStock = () => {
 
 
-  const SOCKET_SERVER_URL = "https://stockboxpnp.pnpuniverse.com:1001/"
-  // const SOCKET_SERVER_URL = soket_url
+  // const SOCKET_SERVER_URL = "https://stockboxpnp.pnpuniverse.com:1001/"
+  const SOCKET_SERVER_URL = soket_url
 
   const socket = io(SOCKET_SERVER_URL, { transports: ['websocket'] });
 
