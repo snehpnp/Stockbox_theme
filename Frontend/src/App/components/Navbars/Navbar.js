@@ -36,8 +36,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [model, setModel] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [isChecked1, setIsChecked1] = useState(false);
   const [getstatus, setGetstatus] = useState([]);
   const [badgecount, setBadgecount] = useState([]);
+  // const [badgecount1, setBadgecount1] = useState([]);
   const [viewmodel, setViewModel] = useState(false);
   const [UserDetail, setUserDetail] = useState([]);
   const [userNotification, setUserNotification] = useState([]);
@@ -46,6 +48,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     apikey: "",
     secretkey: "",
   });
+
+
+
 
   const Logout = () => {
     localStorage.clear();
@@ -103,7 +108,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
 
   const getdemoclient = async () => {
-    if (Role == "ADMIN") {
+    if (Role === "ADMIN") {
       try {
         const response = await getDashboardNotification(token);
         if (response.status) {
@@ -113,7 +118,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       } catch (error) {
         console.log("error", error);
       }
-    } else if (Role == "USER") {
+    } else if (Role === "USER") {
       try {
         const response = await GetNotificationData({ user_id: userid }, token);
         if (response.status) {
@@ -178,6 +183,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
+
+
+
   const getstatusdetaile = async () => {
     if (
       !statusinfo.aliceuserid ||
@@ -193,11 +201,13 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       });
       return;
     }
+
     const data = {
       aliceuserid: statusinfo.aliceuserid || getstatus[0].aliceuserid,
       apikey: statusinfo.apikey || getstatus[0].apikey,
       secretkey: statusinfo.secretkey || getstatus[0].secretkey,
     };
+
     try {
       const response = await gettradestatus(data, token);
       if (response.status === true && response.url) {
@@ -207,6 +217,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       console.log("error", error);
     }
   };
+
+
+
 
   const UpdateloginOff = async (e) => {
     const dataoff = e.target.checked ? 1 : 0;
@@ -247,6 +260,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     });
   };
 
+
+
+
   const handleToggle = () => {
     if (getstatus[0]?.brokerloginstatus === 1) {
       setIsChecked(!isChecked);
@@ -260,14 +276,17 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
+
   useEffect(() => {
     if (getstatus[0]?.brokerloginstatus === 1) {
       setIsChecked(true);
     }
     if (UserDetail?.tradingstatus === 1) {
-      setIsChecked(true);
+      setIsChecked1(true);
     }
   }, [getstatus, UserDetail]);
+
+
 
   const getuserdetail = async () => {
     try {
@@ -279,6 +298,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       console.log("error", error);
     }
   };
+
 
   const TradingBtnCall = async (e) => {
     if (UserDetail.dlinkstatus == 0) {
@@ -411,8 +431,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                         type="checkbox"
                         role="switch"
                         id="flexSwitchCheckDark"
-                        disabled={isChecked}
-                        checked={isChecked}
+                        disabled={isChecked1}
+                        checked={isChecked1}
                         onClick={(e) => TradingBtnCall()}
                       />
                     </div>
@@ -625,7 +645,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                         data-bs-toggle="dropdown"
                         aria-expanded="false"
                       >
-                        {badgecount ? (
+                        {userNotification?.length ? (
                           <span
                             className="alert-count"
                             style={{
@@ -641,10 +661,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                               zIndex: 1051,
                             }}
                           >
-                            {badgecount > 100 ? "99+" : badgecount}
+                            {userNotification?.length > 100 ? "99+" : userNotification?.length}
                           </span>
                         ) : null}
-                        <FaBell size={20} />
+                        <FaBell size={20} className="" />
                       </div>
 
                       <div

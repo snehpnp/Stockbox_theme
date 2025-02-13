@@ -6,56 +6,13 @@ import { useFormik } from "formik";
 import Content from "../../../components/Contents/Content";
 import { GetUserData } from "../../../Services/UserService/User";
 import { UpdateBroker } from "../../../Services/UserService/User";
-
+import BrokersData from "../../../../Utils/BrokersData";
 
 const Demat = () => {
 
 
-  const [showModal, setShowModal] = useState(false);
-  const [modalTitle, setModalTitle] = useState("");
-  const [userDetail, setUserDetail] = useState();
-  const [dlinkstatus, setDlinkstatus] = useState(false);
-  const [brokerData, setBrokerData] = useState([]);
 
-
-
-  const token = localStorage.getItem("token");
-  const userid = localStorage.getItem("id");
-
-
-
-  const getuserdetail = async () => {
-    try {
-      const response = await GetUserData(userid, token);
-      if (response.status) {
-        setUserDetail(response.data?.brokerid);
-        setDlinkstatus(response.data?.dlinkstatus == 1);
-        setBrokerData(response.data);
-      }
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
-
-
-
-  useEffect(() => {
-    getuserdetail();
-  }, []);
-
-
-
-
-  const handleShowModal = (title) => {
-    setModalTitle(title);
-    setShowModal(true);
-  };
-
-
-  const handleCloseModal = () => setShowModal(false);
-
-
-  const brokers = [
+  const [brokers, setbrokers] = useState([
     {
       id: 1,
       name: "Angel One",
@@ -77,7 +34,68 @@ const Demat = () => {
       name: "Market Hub",
       img: "https://media.licdn.com/dms/image/v2/D560BAQEB5MsFZkdKwg/company-logo_200_200/company-logo_200_200/0/1681292585114/market_hub_stock_broking_pvt_ltd__logo?e=1746057600&v=beta&t=9YGrMbiPySe_qefvVi7OuaBOhjgc-BbupTeRPPIp1jE",
     },
-  ];
+  ])
+
+
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [userDetail, setUserDetail] = useState();
+  const [dlinkstatus, setDlinkstatus] = useState(false);
+  const [brokerData, setBrokerData] = useState({});
+
+  const [viewmodel, setViewModel] = useState(false);
+
+
+  useEffect(() => {
+    getuserdetail();
+  }, []);
+
+
+
+
+  const token = localStorage.getItem("token");
+  const userid = localStorage.getItem("id");
+
+
+
+  const getuserdetail = async () => {
+    try {
+      const response = await GetUserData(userid, token);
+      if (response.status) {
+        setUserDetail(response.data?.brokerid);
+        setDlinkstatus(response.data?.dlinkstatus == 1);
+        setBrokerData(response.data);
+        if (response.data?.dlinkstatus == 1) {
+          const filteredBrokers = brokers.filter(
+            (data) => data.id === response.data?.brokerid
+          );
+          setbrokers(filteredBrokers);
+        }
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+
+  const handleShowModal = (title) => {
+    setModalTitle(title);
+    if (brokerData.dlinkstatus == 0) {
+      setViewModel(true);
+    } else {
+      if (brokerData.brokerid == 1) {
+        window.location.href = `https://smartapi.angelone.in/publisher-login?api_key=${brokerData.apikey}`;
+      } else if (brokerData.brokerid == 2) {
+        window.location.href = `https://ant.aliceblueonline.com/?appcode=${brokerData.apikey}`;
+      } else if (brokerData.brokerid == 3) {
+      } else if (brokerData.brokerid == 4) {
+      }
+    }
+  };
+
+
+
 
 
 
@@ -137,72 +155,66 @@ const Demat = () => {
 
 
 
-  const formik = useFormik({
-    initialValues: fieldTypes.reduce((acc, field) => {
-      acc[field.key] = "";
-      return acc;
-    }, {}),
-    enableReinitialize: true,
-    validate: (values) => { },
-    onSubmit: async (values) => {
-      let data = { ...values, brokerid: userDetail, id: userid };
-      console.log("data", data);
+  // const formik = useFormik({
+  //   initialValues: fieldTypes.reduce((acc, field) => {
+  //     acc[field.key] = "";
+  //     return acc;
+  //   }, {}),
+  //   enableReinitialize: true,
+  //   validate: (values) => { },
+  //   onSubmit: async (values) => {
 
-    },
-  });
 
-  useEffect(() => {
-    formik.setValues(
-      fieldTypes.reduce((acc, field) => {
-        acc[field.key] = brokerData[field.key] || "";
-        return acc;
-      }, {})
-    );
-  }, [userDetail]);
+
+  //   },
+  // });
+
+
+  // useEffect(() => {
+  //   formik.setValues(
+  //     fieldTypes.reduce((acc, field) => {
+  //       acc[field.key] = brokerData[field.key] || "";
+  //       return acc;
+  //     }, {})
+  //   );
+  // }, [userDetail]);
+
+
+  const closeBrokerModal = () => {
+    setViewModel(false);
+  };
+
 
 
   return (
     <div>
-      <Content
-        Page_title="Supported Broker"
-        button_status={false}
-        backbutton_status={false}
-      >
-        <div className="page-content">
+
+      <Content Page_title="Supported Broker" button_status={false} backbutton_status={false}>
+        <div className="page-content d-block">
           <div className="row row-cols-1 row-cols-lg-2 row-cols-xl-4 justify-content-center align-items-center">
-            {brokers
-              .filter((broker) =>
-                dlinkstatus ? broker.id === userDetail : true
-              )
-              .map((broker) => (
-                <div className="col-md-4 col-sm-6 mb-3" key={broker.id}>
-                  <div
-                    className="card radius-5"
-                    onClick={() => setUserDetail(broker.id)}
-                  >
-                    <div
-                      className="card-body p-2 text-center cursor-pointer"
-                      onClick={() => handleShowModal(broker.name)}
-                    >
-                      <div className="p-4 border radius-5">
-                        <img
-                        className="img-fluid"
-                          src={broker.img}
-                         
-                         
-                          alt={broker.name}
-                        />
-                        <h5 className="mb-0 mt-5">{broker.name}</h5>
-                      </div>
+
+            {brokers?.map((broker) => (
+              <div className="col-md-4 col-sm-6 mb-3" key={broker?.id}>
+                <div className="card radius-5" onClick={() => setUserDetail(broker?.id)}>
+                  <div className="card-body p-2 text-center cursor-pointer" onClick={() => handleShowModal(broker?.name)}>
+                    <div className="p-4 border radius-5">
+                      <img className="img-fluid" src={broker?.img} alt={broker?.name} />
+                      <h5 className="mb-0 mt-5">{broker?.name}</h5>
                     </div>
                   </div>
                 </div>
-              ))}
+              </div>
+            ))}
+
+            {viewmodel && (
+              <BrokersData closeModal={closeBrokerModal} data={brokerData} />
+            )}
           </div>
         </div>
       </Content>
 
-      <ReusableModal
+
+      {/* <ReusableModal
         show={showModal}
         onClose={handleCloseModal}
         title={<>{modalTitle}</>}
@@ -214,7 +226,7 @@ const Demat = () => {
             BtnStatus={true}
           />
         }
-      />
+      /> */}
     </div>
   );
 };

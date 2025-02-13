@@ -5,8 +5,18 @@ import { useLocation } from "react-router-dom";
 import { BasketStockListdata, AddStockplaceorder, PortfolioStock, GetUserData } from "../../../Services/UserService/User";
 import Loader from "../../../../Utils/Loader";
 import Swal from "sweetalert2";
+import io from 'socket.io-client';
+import $ from "jquery";
+
+
 
 const BasketStockList = () => {
+
+
+  const SOCKET_SERVER_URL = "https://stockboxpnp.pnpuniverse.com:1001/"
+  // const SOCKET_SERVER_URL = soket_url
+
+  const socket = io(SOCKET_SERVER_URL, { transports: ['websocket'] });
 
 
   useEffect(() => {
@@ -32,7 +42,6 @@ const BasketStockList = () => {
   const [activeTab, setActiveTab] = useState("baskets");
 
 
-
   const [isLoading, setIsLoading] = useState(false);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
@@ -40,6 +49,125 @@ const BasketStockList = () => {
   const [inputdata, setInputdata] = useState({});
   const [userDetail, setUserDetail] = useState();
   const [portfolio, setPortfolio] = useState([]);
+  const [totalPL, setTotalPL] = useState(0);
+  const [currentValue, setCurrentValue] = useState(0);
+
+  const [totalPL1, setTotalPL1] = useState(0);
+  const [currentValue1, setCurrentValue1] = useState(0);
+
+
+
+
+  // calculation of Basket base
+
+  const calculateValues1 = () => {
+    let totalPL = 0;
+    let currentVal = 0;
+
+    portfolio.forEach((item) => {
+      const livePriceElement = document.getElementById(`stock-price-${item.instrument_token}`);
+      const livePrice = livePriceElement ? parseFloat(livePriceElement.innerText) : null;
+
+      if (livePrice && !isNaN(livePrice)) {
+        currentVal += livePrice * item.quantity;
+        totalPL += (livePrice - item.price) * item.quantity;
+      }
+    });
+
+    setCurrentValue1(currentVal);
+    setTotalPL1(totalPL);
+  };
+
+
+  const handleLiveData = (livedata) => {
+
+    const stockData = purchasedata?.find((item) => item?.instrument_token === livedata?.tk);
+    if (stockData) {
+      const priceElement = $(`#stock-price-${livedata.tk}`);
+
+      if (priceElement.length && livedata.lp && stockData.price) {
+        priceElement.text(livedata.lp);
+
+        if (livedata.lp > stockData.price) {
+          priceElement.css({ color: "green", transition: "color 0.5s ease-in-out" });
+        } else if (livedata.lp < stockData.price) {
+          priceElement.css({ color: "red", transition: "color 0.5s ease-in-out" });
+        }
+
+        calculateValues1()
+      }
+    }
+
+  };
+
+
+  useEffect(() => {
+
+    socket.on("Live_data", handleLiveData);
+
+    return () => {
+      socket.off("Live_data", handleLiveData);
+    };
+  }, [purchasedata]);
+
+
+
+
+  // calculation of  portfolio base
+
+
+
+  const calculateValues = () => {
+    let totalPL = 0;
+    let currentVal = 0;
+
+    portfolio.forEach((item) => {
+      const livePriceElement = document.getElementById(`stock-prices-${item.ordertoken}`);
+      const livePrice = livePriceElement ? parseFloat(livePriceElement.innerText) : null;
+
+      if (livePrice && !isNaN(livePrice)) {
+        currentVal += livePrice * item.totalQuantity;
+        totalPL += (livePrice - item.price) * item.totalQuantity;
+      }
+    });
+
+    setCurrentValue(currentVal);
+    setTotalPL(totalPL);
+  };
+
+
+
+
+  const handleLiveData1 = (livedata) => {
+    const stockData = portfolio?.find((item) => item?.ordertoken === livedata?.tk);
+    if (stockData) {
+      const priceElement = $(`#stock-prices-${livedata.tk}`);
+
+      if (priceElement.length && livedata.lp && stockData.price) {
+        console.log("stockData", stockData)
+        priceElement.text(livedata.lp);
+
+        if (livedata.lp > stockData.price) {
+          priceElement.css({ color: "green", transition: "color 0.5s ease-in-out" });
+        } else if (livedata.lp < stockData.price) {
+          priceElement.css({ color: "red", transition: "color 0.5s ease-in-out" });
+        }
+        calculateValues();
+      }
+    }
+
+  };
+
+
+
+  useEffect(() => {
+    socket.on("Live_data", handleLiveData1);
+    return () => {
+      socket.off("Live_data", handleLiveData1);
+    };
+  }, [portfolio]);
+
+
 
 
 
@@ -137,6 +265,8 @@ const BasketStockList = () => {
 
 
 
+  const totalInvestment = portfolio.reduce((acc, curr) => acc + curr.price * curr.totalQuantity, 0);
+
 
   return (
     <div className="basket-stock-list">
@@ -202,7 +332,7 @@ const BasketStockList = () => {
                           <li className="list-group-item ">
                             Current Value
                             <hr />
-                            <h5 className="mb-0">₹10</h5>
+                            <h5 className="mb-0">₹ {currentValue1.toFixed(2)}</h5>
                           </li>
                         </ul>
                       </div>
@@ -215,7 +345,7 @@ const BasketStockList = () => {
                           <li className="list-group-item ">
                             Total P&L
                             <hr />
-                            <h5 className="mb-0">₹1055666</h5>
+                            <h5 className="mb-0">₹ {totalPL1.toFixed(2)}</h5>
                           </li>
                         </ul>
                       </div>
@@ -231,7 +361,6 @@ const BasketStockList = () => {
                           <th>Suggested Price</th>
                           <th>Stock Weightage</th>
                           <th>Current Market Price</th>
-                          <th>Current Value</th>
                           <th>Quanty</th>
                           <th>Price</th>
                         </tr>
@@ -242,8 +371,9 @@ const BasketStockList = () => {
                             <td>{item?.name}</td>
                             <td>{item?.price}</td>
                             <td>{item?.weightage}</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td id={`stock-price-${item?.instrument_token}`} >
+                              <span className="stock-price"> {"-"} </span>
+                            </td>
                             <td>{item?.quantity}</td>
                             <td>{item?.price}</td>
                           </tr>
@@ -276,7 +406,7 @@ const BasketStockList = () => {
                           <li className="list-group-item ">
                             Total Investment
                             <hr />
-                            <h5 className="mb-0">₹ {item?.mininvamount}</h5>
+                            <h5 className="mb-0">₹ {totalInvestment.toFixed(2)}</h5>
                           </li>
                         </ul>
                       </div>
@@ -289,7 +419,7 @@ const BasketStockList = () => {
                           <li className="list-group-item ">
                             Current Value
                             <hr />
-                            <h5 className="mb-0">₹10</h5>
+                            <h5 className="mb-0">₹ {currentValue.toFixed(2)}</h5>
                           </li>
                         </ul>
                       </div>
@@ -302,7 +432,7 @@ const BasketStockList = () => {
                           <li className="list-group-item ">
                             Total P&L
                             <hr />
-                            <h5 className="mb-0">₹1055666</h5>
+                            <h5 className="mb-0">₹ {totalPL.toFixed(2)}</h5>
                           </li>
                         </ul>
                       </div>
@@ -316,25 +446,24 @@ const BasketStockList = () => {
                         <tr>
                           <th>Symbol</th>
                           <th>Suggested Price</th>
-                          {/* <th>Stock Weightage</th> */}
                           <th>Current Market Price</th>
-                          <th>Current Value</th>
                           <th>Quanty</th>
-                          <th>Price</th>
                         </tr>
                       </thead>
                       <tbody>
                         {portfolio?.map((item) => (
+
                           <tr key={item?.name}>
                             <td>{item?.tradesymbol}</td>
                             <td>{item?.price}</td>
-                            {/* <td>{item?.weightage}</td> */}
-                            <td>0</td>
-                            <td>0</td>
+                            <td id={`stock-prices-${item?.ordertoken}`} >
+                              <span className="stock-prices"> {"-"} </span>
+                            </td>
                             <td>{item?.totalQuantity}</td>
-                            <td>{item?.price}</td>
                           </tr>
-                        ))}
+                        ))
+                        }
+
                       </tbody>
                     </table>
                   </div>

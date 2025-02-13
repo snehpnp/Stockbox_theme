@@ -14,8 +14,8 @@ import $ from "jquery";
 const RebalanceStock = () => {
 
 
-
   const SOCKET_SERVER_URL = "https://stockboxpnp.pnpuniverse.com:1001/"
+  // const SOCKET_SERVER_URL = soket_url
 
   const socket = io(SOCKET_SERVER_URL, { transports: ['websocket'] });
 
@@ -26,8 +26,9 @@ const RebalanceStock = () => {
   const location = useLocation();
   const item = location?.state?.data;
 
-
   const { id } = useParams();
+
+
 
   const [isLoading, setIsLoading] = useState(true);
   const [isLoading1, setIsLoading1] = useState(true);
@@ -40,10 +41,9 @@ const RebalanceStock = () => {
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
   const [isExitorder, setIsExitorder] = useState(false);
-  const [data, setData] = useState({});
+  const [data, setData] = useState([]);
   const [viewdata, setViewdata] = useState([]);
   const [basket, setBasketdata] = useState([]);
-
   const [isChecked, setIsChecked] = useState(false);
 
 
@@ -53,39 +53,6 @@ const RebalanceStock = () => {
     getbasketRebalance();
     getuserdetail();
   }, []);
-
-
-
-
-  // const groupByVersion = (data) => {
-  //   return data.reduce((acc, item) => {
-  //     if (!acc[item.version]) {
-  //       acc[item.version] = [];
-  //     }
-  //     acc[item.version].push(item);
-  //     return acc;
-  //   }, {});
-
-  // };
-
-
-
-  // const getbasketRebalance = async () => {
-  //   try {
-  //     const data = { id: id, clientid: userid };
-  //     const response = await RebalanceBasket(data, token);
-  //     if (response.status) {
-  //       const groupedData = groupByVersion(response.data);
-  //       setBaskets(groupedData);
-  //     }
-  //   } catch (error) {
-  //     console.log("error", error);
-  //   }
-  //   setIsLoading(false);
-  // };
-
-
-  // 
 
 
 
@@ -99,11 +66,14 @@ const RebalanceStock = () => {
     }, {});
   };
 
+
+
   const getbasketRebalance = async () => {
     try {
       const data = { id: id, clientid: userid };
       const response = await RebalanceBasket(data, token);
       if (response.status) {
+        setData(response.data)
         const groupedData = groupByVersion(response.data);
         setBaskets(groupedData);
       }
@@ -113,73 +83,39 @@ const RebalanceStock = () => {
     setIsLoading(false);
   };
 
+  const handleLiveData = (livedata) => {
+    if (data) {
+      const stockData = data?.find((item) => item?.instrument_token === livedata?.tk);
+
+      if (stockData) {
+        const priceElement = $(`#stock-price-${livedata.tk}`);
+
+        if (priceElement.length && livedata.lp && stockData.price) {
+          priceElement.text(livedata.lp);
 
 
+          if (livedata.lp > stockData.price) {
+            priceElement.css({ color: "green", transition: "color 0.5s ease-in-out" });
+          } else if (livedata.lp < stockData.price) {
+            priceElement.css({ color: "red", transition: "color 0.5s ease-in-out" });
+          }
+        }
+      }
+    }
 
 
-
-  // useEffect(() => {
-
-  // const handleLiveData = (livedata) => {
-  //   console.log("livedata", livedata)
-  //   setBaskets((prevBaskets) => {
-  //     return Object.keys(prevBaskets).reduce((acc, version) => {
-  //       acc[version] = prevBaskets[version].map((item) =>
-  //         item.instrument_token === livedata.tk
-  //           ? { ...item, livePrice: livedata.lp }
-  //           : item
-  //       );
-  //       return acc;
-  //     }, {});
-  //   });
-  // };
-
-  //   socket.on("Live_data", handleLiveData);
-
-  //   return () => {
-  //     socket.off("Live_data", handleLiveData);
-  //   };
-  // }, []);
-
-
-  // useEffect(() => {
-
-  //   const handleLiveData = (livedata) => {
-  //     console.log("Live Data:", livedata);
-  //     $(`#stock-price-${livedata.tk}`).text(livedata.lp);
-  //   };
-
-  //   socket.on("Live_data", handleLiveData);
-
-  //   return () => {
-  //     socket.off("Live_data", handleLiveData);
-  //   };
-  // }, []);
+  };
 
   useEffect(() => {
-    const handleLiveData = (livedata) => {
-      console.log("livedata", livedata);
-
-      setBaskets((prevBaskets) => {
-        return Object.keys(prevBaskets).reduce((acc, version) => {
-          acc[version] = prevBaskets[version].map((item) => {
-            if (item.instrument_token === livedata.tk) {
-              $(`#stock-price-${livedata.tk}`).text(livedata.lp);
-              return { ...item, price: livedata.lp };
-            }
-            return item;
-          });
-          return acc;
-        }, {});
-      });
-    };
 
     socket.on("Live_data", handleLiveData);
 
     return () => {
       socket.off("Live_data", handleLiveData);
     };
-  }, []);
+  }, [data]);
+
+
 
 
 
@@ -326,11 +262,7 @@ const RebalanceStock = () => {
     }
   };
 
-
-
-  console.log("baskets", baskets)
-
-
+  // console.log("baskets", baskets && [...baskets[1], ...baskets[2]])
 
   return (
     <Content
@@ -386,14 +318,13 @@ const RebalanceStock = () => {
                       <tr key={stock._id}>
                         <td>{stock.name}</td>
                         <td><IndianRupee /> {stock.price}</td>
-                        <td id={`stock-price-${stock.instrument_token}`}>
-                          {stock.livePrice ? stock.livePrice : "-"}
+                        <td id={`stock-price-${stock.instrument_token}`} >
+                          <span className="live-price"> {stock.livePrice ? stock.livePrice : "-"} </span>
                         </td>
                         <td>{stock.weightage}%</td>
                         <td>{stock.quantity}</td>
                       </tr>
                     ))}
-
 
                   </tbody>
                 </table>
