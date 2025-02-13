@@ -23,12 +23,38 @@ const nodemailer = require('nodemailer');
 const socketIo = require("socket.io");
 const server = http.createServer(app);
 
+
+//socket setup 
+
+// var privateKey = fs.readFileSync('../crt/privkey.pem', 'utf8');
+// var certificate = fs.readFileSync('../crt/fullchain.pem', 'utf8');
+// var credentials = { key: privateKey, cert: certificate };
+// const httpsserver = https.createServer(credentials, app);
+
+
+// live code
+
+// const io = socketIo(httpsserver, {
+//   cors: {
+//     origin: "*",
+//     credentials: true
+//   }
+// });
+
+
+
+
 const io = socketIo(server, {
   cors: {
     origin: "*", // Allow all origins
     credentials: true
   }
 });
+
+
+
+
+
 
 
 
@@ -93,6 +119,7 @@ const Addtocart_Modal = db.Addtocart;
 const { Alice_Socket } = require("./App/Utils/AliceSocket.js");
 
 
+
 const corsOpts = {
   origin: '*',
 
@@ -109,6 +136,9 @@ const corsOpts = {
 app.options("*", cors())
 
 app.use(cors(corsOpts));
+
+
+
 
 // Body-parser middleware setup
 app.use(bodyparser.urlencoded({ extended: true }));
@@ -129,6 +159,8 @@ app.get("/test", async (req, res) => {
 require('./App/Routes/index')(app)
 require('./App/api/Routes/index')(app)
 
+
+// httpsserver.listen(1001)
 const PORT = process.env.PORT || 3002;
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
