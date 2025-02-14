@@ -47,7 +47,7 @@ const { orderplace } = require('../../Controllers/Aliceblue');
 const { angleorderplace } = require('../../Controllers/Angle')
 const { kotakneoorderplace } = require('../../Controllers/Kotakneo')
 const { markethuborderplace } = require('../../Controllers/Markethub')
-
+const { zerodhaorderplace } = require('../../Controllers/Zerotha')
 
 
 mongoose = require('mongoose');
@@ -4167,6 +4167,76 @@ class List {
               }
 
             }
+            else if (brokerid == 5) {
+
+              if (!isFundChecked) {
+                const orders = await Basketorder_Modal.find({
+                  tradesymbol: tradesymbol,
+                  clientid: clientid,
+                  basket_id: basket_id,
+                  version: version,
+                  borkerid: brokerid
+                })
+                  .sort({ createdAt: -1 }) // Sort by `createdAt` in descending order
+                  .limit(1);
+
+
+                if (orders.length > 0) {
+                  const order = orders[0]; // Use the first order if only one is relevant
+                  howmanytimebuy = (order.howmanytimebuy || 0) + 1; // Increment the `howmanytimebuy` value
+                }
+              }
+
+              const authToken = client.authtoken;
+              const apikey = client.apikey;
+
+            
+              let config = {
+                method: 'post',
+                url: 'https://api.kite.trade/user/margins',
+                headers: {
+                    'Authorization': 'token ' + apikey + ':' + authToken
+                },
+            };
+
+
+              const response = await axios(config);
+
+              if (response.data.status == 'success') {
+                const responseData = response.data.data;
+
+
+                if (!isFundChecked) {
+                  isFundChecked = true; // Set the flag to true
+                  const net = parseFloat(responseData,equity.net); // Convert responseData.net to a float
+                  const total = parseFloat(totalAmount);
+
+                  if (total >= net) {
+                    return res.json({
+                      status: false,
+                      message: "Insufficient funds in your broker account.",
+                    });
+                  }
+                }
+
+
+
+                respo = await zerodhaorderplace({
+                  id: clientid,
+                  basket_id: basket_id,
+                  quantity,
+                  price: lpPrice,
+                  tradesymbol: tradesymbol,
+                  instrumentToken: instrumentToken,
+                  version: stock.version,
+                  brokerid: brokerid,
+                  calltype: "BUY",
+                  howmanytimebuy // Increment version for the new stock order
+                });
+
+              }
+
+            }
 
           }
 
@@ -4351,6 +4421,20 @@ class List {
               howmanytimebuy: ids
             });
 
+          }
+          if (brokerid == 5) {
+            respo = await zerodhaorderplace({
+              id: clientid,
+              basket_id: basket_id,
+              quantity: netQuantity,
+              price: lpPrice,
+              tradesymbol: tradesymbol,
+              instrumentToken: instrumentToken,
+              version: version,
+              brokerid: brokerid,
+              calltype: "SELL",
+              howmanytimebuy: ids
+            });
           }
         } catch (innerError) {
           // console.error(`Error processing stock ${tradesymbol}:`, innerError);
@@ -6452,6 +6536,35 @@ class List {
     } catch (error) {
         return res.status(500).json({ message: "Something went wrong.", error: error.message });
     }
+}
+
+
+
+
+async checkClientToken(req, res) {
+  try {
+      const { client_id, token } = req.body;
+      // Validate required fields
+      if (!client_id ) {
+          return res.status(400).json({ message: "Client ID are required." });
+      }
+
+      // Find client by ID
+      const client = await Clients_Modal.findById(client_id);
+      if (!client) {
+          return res.status(404).json({ message: "Client not found." });
+      }
+    if(client.token == token){
+     return res.status(200).json({ status: true, });
+     }
+    else
+     {
+     return res.status(200).json({ status: false, });
+     }
+
+  } catch (error) {
+      return res.status(500).json({ message: "Something went wrong.", error: error.message });
+  }
 }
 
   

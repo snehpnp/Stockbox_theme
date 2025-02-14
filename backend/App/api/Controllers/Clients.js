@@ -1337,7 +1337,11 @@ class Clients {
       // Conditional URL assignment based on brokerid
       if (brokerid == 1) {
         url = `https://smartapi.angelone.in/publisher-login?api_key=${apikey}`;
-      } else {
+      }
+      else if (brokerid == 5) {
+        url = `https://kite.zerodha.com/connect/login?v=3&api_key=${apikey}`;
+      }
+      else {
         url = `https://ant.aliceblueonline.com/?appcode=${apikey}`;
       }
 
