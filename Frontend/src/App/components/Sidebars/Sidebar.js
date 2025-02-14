@@ -87,6 +87,9 @@ const Sidebar = () => {
     padding: isTopbar ? "0 20px" : "10px",
   };
 
+
+
+
   useEffect(() => {
     if (isTopbar) {
       document.body.classList.add("sidebar-horizontal-container");
@@ -97,9 +100,15 @@ const Sidebar = () => {
     }
   }, [isTopbar]);
 
+
+
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
+
+
+
+
 
   useEffect(() => {
     if (isCollapsed) {
@@ -111,6 +120,9 @@ const Sidebar = () => {
     }
   }, [isCollapsed]);
 
+
+
+  
   return (
     <>
       <div

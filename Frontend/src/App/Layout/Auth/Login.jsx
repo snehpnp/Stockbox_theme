@@ -10,8 +10,7 @@ import { basicsettinglist } from "../../Services/Admin/Admin";
 import $ from "jquery";
 
 const Login = () => {
-  let logoSrc =
-    "https://www.pms.crmplus.in/files/system/_file5c2e1123e834d-site-logo.png";
+
 
   const navigate = useNavigate();
   const [information, setInformation] = useState([]);
@@ -115,7 +114,9 @@ const Login = () => {
             <div className="login-wrapper">
               <div className="background"></div>
               <div className="login-container active">
-                <img src={logoSrc} alt="Logo" />
+                <img
+                  src={`${image_baseurl}uploads/basicsetting/${information[0]?.logo}`}
+                  alt="Logo" />
                 <div className="inner-div mt-4">
                   <form className="login-form" onSubmit={handleLogin}>
                     <div className="form-item">
@@ -254,7 +255,9 @@ const Login = () => {
           ) : (
             <div className="glass-container">
               <div className="wrapper">
-                <img src={logoSrc} alt="Logo" />
+                <img
+                  src={`${image_baseurl}uploads/basicsetting/${information[0]?.logo}`}
+                  alt="Logo" />
                 <form onSubmit={handleLogin}>
                   <div>
                     <label htmlFor="username-input">

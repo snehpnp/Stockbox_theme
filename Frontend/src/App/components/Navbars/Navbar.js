@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Logo from "../Images/LOGO.png";
 import ProfileImage from "../Images/logo1.png";
 import { FaBell } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
@@ -18,6 +17,8 @@ import BrokersData from "../../../Utils/BrokersData";
 import axios from "axios";
 import { GetUserData } from "../../Services/UserService/User";
 import { GetNotificationData } from "../../Services/UserService/User";
+
+
 
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   useEffect(() => {
@@ -333,7 +334,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
               <div className="d-flex align-items-center">
                 <a className="navbar-brand me-1 p-0" href="#">
                   <img
-                    src={Logo}
+                    src={`${image_baseurl}uploads/basicsetting/${getstatus[0]?.logo}`}
                     alt="Logo"
                     style={{
                       width: "150px",
