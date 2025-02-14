@@ -149,8 +149,11 @@ app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 let ws;
 const url = "wss://ws1.aliceblueonline.com/NorenWS/"
+
+
 app.get("/test", async (req, res) => {
   Alice_Socket();
+ return res.send("Done");
 });
 
 

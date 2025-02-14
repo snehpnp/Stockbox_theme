@@ -50,6 +50,14 @@ cron.schedule('0 6 * * *', async () => {
 });
 
 
+cron.schedule('0 9 * * *', async () => {
+    await downloadZerodhatoken();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
+
+
 cron.schedule('0 4 * * *', async () => {
     await TradingStatusOff();
 }, {
@@ -862,6 +870,59 @@ async function downloadKotakNeotoken(req, res) {
 }
 
 
+
+
+async function downloadZerodhatoken(req, res) {
+    try {
+       
+        const TokenUrl = [
+            {
+                url: `https://api.kite.trade/instruments`,
+                key: "Zerodha"
+            },
+
+        ];
+
+        // Use Promise.all to handle all download requests concurrently
+        const downloadPromises = TokenUrl.map((data) => {
+            const filePath = path.join(__dirname, '../../', 'tokenzerodha', `${data.key}.csv`);
+            const fileUrl = data.url;
+            
+            return axios({
+                method: 'get',
+                url: fileUrl,
+                responseType: 'stream',
+            })
+                .then((response) => {
+                    return new Promise((resolve, reject) => {
+                        const writer = fs.createWriteStream(filePath);
+                        response.data.pipe(writer);
+                        writer.on('finish', resolve);
+                        writer.on('error', reject);
+                    });
+                })
+                .catch((error) => {
+                    // console.log(`Error downloading file from ${fileUrl}:`, error);
+                  //  throw new Error(`Error downloading file from ${fileUrl}`);
+                });
+        });
+
+        // Wait for all downloads to complete
+        await Promise.all(downloadPromises);
+
+        // Send the response once all files are downloaded
+        return res.send("Done");
+
+
+    } catch (error) {
+        // console.log('An unexpected error occurred:', error);
+        return res.send("error",error);
+
+    }
+}
+
+
+
 async function calculateCAGRForBaskets() {
     const result = await Basket_Modal.aggregate([
         {
@@ -1109,6 +1170,24 @@ async function fetchMarketHubOrder(client, order) {
 }
 
 
+async function fetchZerodhaOrder(client, order) {
+    const authToken = client.authtoken;
+    const apikey = client.apikey;
+
+   
+    var config = {
+        method: 'get',
+        url: 'https://api.kite.trade/orders/' + orderid,
+        headers: {
+            'Authorization': 'token ' + apikey + ':' + authToken
+        }
+    };
+
+
+    return await axios(config);
+}
+
+
 async function processPendingOrders(req, res) {
     const summary = { processed: 0, failed: 0, skipped: 0, errors: [] };
 
@@ -1160,6 +1239,9 @@ async function processPendingOrders(req, res) {
                         break;
                     case 4:
                         response = await fetchMarketHubOrder(client, order);
+                        break;
+                        case 5:
+                        response = await fetchZerodhaOrder(client, order);
                         break;
                     default:
                         console.log(`Skipping order ${order.orderid}: Unsupported broker ID.`);
@@ -1214,4 +1296,4 @@ async function processPendingOrders(req, res) {
 
 
 
-  module.exports = { AddBulkStockCron,DeleteTokenAliceToken,TradingStatusOff,CheckExpireSignalCash,CheckExpireSignalFutureOption,PlanExpire,downloadKotakNeotoken,calculateCAGRForBaskets,processPendingOrders };
+  module.exports = { AddBulkStockCron,DeleteTokenAliceToken,TradingStatusOff,CheckExpireSignalCash,CheckExpireSignalFutureOption,PlanExpire,downloadKotakNeotoken,calculateCAGRForBaskets,processPendingOrders,downloadZerodhatoken };

@@ -346,7 +346,7 @@ class Kotakneo {
 
                 if (signal.segment.toLowerCase() === 'o') {
                     matchedLines = lines.filter(line =>
-                        new RegExp(`.*(${pattern}).*.*(nse_fo).*.*(${input_symbol}).*.*(${optiontype}).*`, 'i').test(line)
+                        new RegExp(`.*(${pattern}).*.*(nse_fo).*.*(${stock.symbol}).*.*(${optiontype}).*`, 'i').test(line)
                     );
                 } else if (signal.segment.toLowerCase() === 'f') {
                     matchedLines = lines.filter(line =>
@@ -606,7 +606,7 @@ class Kotakneo {
 
                     if (signal.segment.toLowerCase() === 'o') {
                         matchedLines = lines.filter(line =>
-                            new RegExp(`.*(${pattern}).*.*(nse_fo).*.*(${input_symbol}).*.*(${optiontype}).*`, 'i').test(line)
+                            new RegExp(`.*(${pattern}).*.*(nse_fo).*.*(${stock.symbol}).*.*(${optiontype}).*`, 'i').test(line)
                         );
                     } else if (signal.segment.toLowerCase() === 'f') {
                         matchedLines = lines.filter(line =>
@@ -961,7 +961,7 @@ class Kotakneo {
 
                     if (signal.segment.toLowerCase() === 'o') {
                         matchedLines = lines.filter(line =>
-                            new RegExp(`.*(${pattern}).*.*(nse_fo).*.*(${input_symbol}).*.*(${optiontype}).*`, 'i').test(line)
+                            new RegExp(`.*(${pattern}).*.*(nse_fo).*.*(${stock.symbol}).*.*(${optiontype}).*`, 'i').test(line)
                         );
                     } else if (signal.segment.toLowerCase() === 'f') {
                         matchedLines = lines.filter(line =>

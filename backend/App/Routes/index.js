@@ -32,6 +32,10 @@ module.exports = function (app) {
     app.use(require("./Superadmin/Theme"))
 
     app.use(require("./Stockrating"))
+    app.use(require("./Upstox"))
+    app.use(require("./Zerodha"))
+
+
 
 
 
