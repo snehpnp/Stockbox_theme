@@ -344,7 +344,7 @@ const AddBasket = () => {
       <DynamicForm
         fields={fields}
         formik={formik}
-       
+
         btn_name="Add Basket"
         btn_name1="Cancel"
         sumit_btn={true}

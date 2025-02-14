@@ -4,6 +4,8 @@ import { Formik, Form, Field } from "formik";
 import Swal from "sweetalert2";
 import { Link, useNavigate } from "react-router-dom";
 import { image_baseurl } from "../../../../Utils/config";
+import Loader from "../../../../Utils/Loader";
+
 
 const ReferAndEarn = () => {
 
@@ -36,7 +38,7 @@ const ReferAndEarn = () => {
   };
 
   if (!clients) {
-    return <div>Loading...</div>;
+    return <div><Loader /></div>;
   }
 
 
@@ -123,7 +125,7 @@ const ReferAndEarn = () => {
               {({ setFieldValue, values }) => (
                 <Form className="card-body p-4">
                   <div className="p-4 border radius-15">
-                    {/* Title field */}
+
                     <div className="row mb-3 align-items-center">
                       <label htmlFor="refer_title" className="col-sm-3 col-form-label">
                         <b>Title</b>
@@ -146,7 +148,7 @@ const ReferAndEarn = () => {
                       </div>
                     </div>
 
-                    {/* Sender Earn field */}
+
                     <div className="row mb-3 align-items-center">
                       <label htmlFor="sender_earn" className="col-sm-3 col-form-label">
                         <b>Sender Earn</b>
@@ -170,7 +172,7 @@ const ReferAndEarn = () => {
                       </div>
                     </div>
 
-                    {/* Receiver Earn field */}
+
                     <div className="row mb-3 align-items-center">
                       <label htmlFor="receiver_earn" className="col-sm-3 col-form-label">
                         <b>Receiver Earn</b>

@@ -4,7 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import Swal from 'sweetalert2';
 import { Link, useNavigate } from 'react-router-dom';
 import { image_baseurl } from '../../../../Utils/config';
-
+import Loader from '../../../../Utils/Loader';
 
 
 const Generalsettings = () => {
@@ -32,7 +32,7 @@ const Generalsettings = () => {
     }, []);
 
     if (!clients) {
-        return <div>Loading...</div>;
+        return <div><Loader /></div>;
     }
 
 
@@ -72,7 +72,7 @@ const Generalsettings = () => {
                                 offer_image: null,
 
                             }}
-                            onSubmit={async (values) => {
+                            onSubmit={async (values, { resetForm }) => {
                                 const req = {
                                     from_name: values.from_name,
                                     address: values.address,
@@ -96,6 +96,11 @@ const Generalsettings = () => {
                                             timerProgressBar: true,
                                         });
                                         setIsModified(false);
+                                        document.querySelectorAll('input[name="offer_image"], input[name="logo"], input[name="favicon"]').forEach(input => {
+                                            input.value = "";
+                                        });
+
+
                                     } else {
                                         Swal.fire({
                                             title: "Error",
@@ -186,6 +191,7 @@ const Generalsettings = () => {
                                                 <div className="col-sm-8">
                                                     <input
                                                         name="favicon"
+                                                        accept="image/*"
                                                         type="file"
                                                         className="form-control"
 
@@ -211,6 +217,7 @@ const Generalsettings = () => {
                                                     <input
                                                         name="logo"
                                                         type="file"
+                                                        accept="image/*"
                                                         className="form-control"
                                                         onChange={(event) => setFieldValue("logo", event.currentTarget.files[0])}
 
@@ -227,13 +234,14 @@ const Generalsettings = () => {
                                             </div>
 
                                             <div className="row mb-3 align-items-center">
-                                                <label htmlFor="logo" className="col-sm-3 col-form-label">
+                                                <label htmlFor="offer_image" className="col-sm-3 col-form-label">
                                                     <b>Offer Image</b>
                                                 </label>
                                                 <div className="col-sm-8">
                                                     <input
                                                         name="offer_image"
                                                         type="file"
+                                                        accept="image/*"
                                                         className="form-control"
                                                         onChange={(event) => setFieldValue("offer_image", event.currentTarget.files[0])}
 
@@ -298,7 +306,7 @@ const Generalsettings = () => {
                     font-size: 12px;
                 }
             `}</style>
-        </div>
+        </div >
     );
 };
 
