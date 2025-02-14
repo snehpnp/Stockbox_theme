@@ -6,6 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { image_baseurl } from "../../../../Utils/config";
 
 const ReferAndEarn = () => {
+
+
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const [clients, setClients] = useState(null);
@@ -28,9 +30,9 @@ const ReferAndEarn = () => {
 
   const handleFieldChange = (fieldName, value, setFieldValue) => {
     if (value === "" || (Number(value) <= 100 && !isNaN(value))) {
-      setFieldValue(fieldName, value); 
+      setFieldValue(fieldName, value);
     }
-    setIsChanged(true); 
+    setIsChanged(true);
   };
 
   if (!clients) {
@@ -39,10 +41,9 @@ const ReferAndEarn = () => {
 
 
 
-
   return (
     <div className="page-content">
-      <div className="page-breadcrumb  d-flex align-items-center mb-3">
+      <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
         <div className="breadcrumb-title pe-3">Refer And Earn</div>
         <div className="ps-3">
           <nav aria-label="breadcrumb">
@@ -69,8 +70,8 @@ const ReferAndEarn = () => {
                 refer_description: clients[0]?.refer_description || "",
                 refer_status: clients[0]?.refer_status || "",
                 refer_image: null,
-                Multipletime: clients[0]?.refer_status === 1, 
-                Singletime: clients[0]?.refer_status === 0, 
+                Multipletime: clients[0]?.refer_status === 1,
+                Singletime: clients[0]?.refer_status === 0,
               }}
               onSubmit={async (values) => {
                 const req = {
@@ -102,7 +103,12 @@ const ReferAndEarn = () => {
                       timerProgressBar: true,
                     });
                   }
-                  setIsChanged(false); // Reset after successful update
+                  setIsChanged(false);
+                  const fileInput = document.querySelector('input[name="refer_image"]');
+                  if (fileInput) {
+                    fileInput.value = "";
+                  }
+
                 } catch (error) {
                   Swal.fire({
                     title: "Error",
@@ -188,7 +194,7 @@ const ReferAndEarn = () => {
                       </div>
                     </div>
 
-                    {/* Description field */}
+
                     <div className="row mb-3 align-items-center">
                       <label htmlFor="refer_description" className="col-sm-3 col-form-label">
                         <b>Description</b>
@@ -219,10 +225,16 @@ const ReferAndEarn = () => {
                           name="refer_image"
                           type="file"
                           className="form-control"
+                          accept="image/*"
                           onChange={(event) => {
-                            handleFieldChange("refer_image", event.currentTarget.files[0], setFieldValue);
+                            const file = event.currentTarget.files[0];
+                            if (file) {
+                              setFieldValue("refer_image", file);
+                              setIsChanged(true);
+                            }
                           }}
                         />
+
                       </div>
                       <div className="col-sm-3">
                         {clients[0]?.refer_image && (

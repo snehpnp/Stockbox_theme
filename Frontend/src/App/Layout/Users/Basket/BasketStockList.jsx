@@ -14,8 +14,8 @@ import { soket_url } from '../../../../Utils/config';
 const BasketStockList = () => {
 
 
-  // const SOCKET_SERVER_URL = "https://stockboxpnp.pnpuniverse.com:1001/"
-  const SOCKET_SERVER_URL = soket_url
+  const SOCKET_SERVER_URL = "https://stockboxpnp.pnpuniverse.com:1001/"
+  // const SOCKET_SERVER_URL = soket_url
 
   const socket = io(SOCKET_SERVER_URL, { transports: ['websocket'] });
 
@@ -65,9 +65,12 @@ const BasketStockList = () => {
     let totalPL = 0;
     let currentVal = 0;
 
-    portfolio.forEach((item) => {
-      const livePriceElement = document.getElementById(`stock-price-${item.instrument_token}`);
-      const livePrice = livePriceElement ? parseFloat(livePriceElement.innerText) : null;
+
+
+
+    purchasedata.forEach((item) => {
+      const livePriceElement = $(`#stock-price-${item.instrument_token}`);
+      const livePrice = livePriceElement.length ? parseFloat(livePriceElement.text()) : null;
 
       if (livePrice && !isNaN(livePrice)) {
         currentVal += livePrice * item.quantity;
@@ -75,13 +78,16 @@ const BasketStockList = () => {
       }
     });
 
-    setCurrentValue1(currentVal);
-    setTotalPL1(totalPL);
+    // jQuery se values update karo bina state change kiye
+    $("#current-value").text(`₹ ${currentVal.toFixed(2)}`);
+    $("#total-pl").text(`₹ ${totalPL.toFixed(2)}`);
   };
 
 
-  const handleLiveData = (livedata) => {
 
+
+
+  const handleLiveData = (livedata) => {
     const stockData = purchasedata?.find((item) => item?.instrument_token === livedata?.tk);
     if (stockData) {
       const priceElement = $(`#stock-price-${livedata.tk}`);
@@ -95,11 +101,13 @@ const BasketStockList = () => {
           priceElement.css({ color: "red", transition: "color 0.5s ease-in-out" });
         }
 
-        calculateValues1()
+        calculateValues1();
       }
     }
-
   };
+
+
+
 
 
   useEffect(() => {
@@ -333,7 +341,7 @@ const BasketStockList = () => {
                           <li className="list-group-item ">
                             Current Value
                             <hr />
-                            <h5 className="mb-0">₹ {currentValue1.toFixed(2)}</h5>
+                            <h5 id="current-value" className="mb-0">₹ 0.00</h5>
                           </li>
                         </ul>
                       </div>
@@ -346,7 +354,7 @@ const BasketStockList = () => {
                           <li className="list-group-item ">
                             Total P&L
                             <hr />
-                            <h5 className="mb-0">₹ {totalPL1.toFixed(2)}</h5>
+                            <h5 id="total-pl" className="mb-0">₹ 0.00</h5>
                           </li>
                         </ul>
                       </div>
