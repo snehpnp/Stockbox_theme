@@ -47,7 +47,7 @@ const { orderplace } = require('../../Controllers/Aliceblue');
 const { angleorderplace } = require('../../Controllers/Angle')
 const { kotakneoorderplace } = require('../../Controllers/Kotakneo')
 const { markethuborderplace } = require('../../Controllers/Markethub')
-const { zerodhaorderplace } = require('../../Controllers/Zerotha')
+const { zerodhaorderplace } = require('../../Controllers/Zerodha')
 
 
 mongoose = require('mongoose');
