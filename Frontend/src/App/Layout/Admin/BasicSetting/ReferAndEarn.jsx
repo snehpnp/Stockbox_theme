@@ -215,7 +215,7 @@ const ReferAndEarn = () => {
                       </div>
                     </div>
 
-                    {/* Image upload */}
+
                     <div className="row mb-3 align-items-center">
                       <label htmlFor="refer_image" className="col-sm-3 col-form-label">
                         <b>Image</b>
@@ -249,7 +249,6 @@ const ReferAndEarn = () => {
                       </div>
                     </div>
 
-                    {/* Multiple Time and Single Time checkboxes */}
                     <div className="d-flex">
                       <div className="col-sm-7">
                         <div className="input-group">
@@ -263,7 +262,7 @@ const ReferAndEarn = () => {
                               setFieldValue("Multipletime", isChecked);
                               setFieldValue("refer_status", isChecked ? 1 : 0);
                               setFieldValue("Singletime", !isChecked);
-                              setIsChanged(true); // Mark changes
+                              setIsChanged(true);
                             }}
                           />
                           <label htmlFor="Multipletime" className="form-check-label">
@@ -283,7 +282,7 @@ const ReferAndEarn = () => {
                               setFieldValue("Singletime", isChecked);
                               setFieldValue("refer_status", isChecked ? 0 : 1);
                               setFieldValue("Multipletime", !isChecked);
-                              setIsChanged(true); // Mark changes
+                              setIsChanged(true);
                             }}
                           />
                           <label htmlFor="Singletime" className="form-check-label">
@@ -293,7 +292,7 @@ const ReferAndEarn = () => {
                       </div>
                     </div>
 
-                    {/* Submit button */}
+
                     <div className="row">
                       <label className="col-sm-3 col-form-label" />
                       <div className="col-sm-9">
