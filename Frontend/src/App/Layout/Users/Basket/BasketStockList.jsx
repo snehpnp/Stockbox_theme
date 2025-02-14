@@ -18,7 +18,7 @@ const BasketStockList = () => {
   // const SOCKET_SERVER_URL = soket_url
 
 
-  
+
   const socket = io(SOCKET_SERVER_URL, { transports: ['websocket'] });
 
 
@@ -180,14 +180,14 @@ const BasketStockList = () => {
       }
     });
 
-  
+
     const currentValueElement = $("#current-value1");
     const totalPLElement = $("#total-pl1");
 
     currentValueElement.text(`₹ ${currentVal.toFixed(2)}`);
     totalPLElement.text(`₹ ${totalPL.toFixed(2)}`);
 
-  
+
     if (currentVal >= totalInvestment) {
       currentValueElement.css({ color: "green", transition: "color 0.5s ease-in-out" });
     } else {
@@ -423,9 +423,9 @@ const BasketStockList = () => {
                         <tr>
                           <th>Symbol</th>
                           <th>Suggested Price</th>
-                          <th>Stock Weightage</th>
+                          <th>Quantity</th>
                           <th>Current Market Price</th>
-                          <th>Quanty</th>
+                          <th>Stock Weightage</th>
 
                         </tr>
                       </thead>
@@ -434,11 +434,11 @@ const BasketStockList = () => {
                           <tr key={item?.name}>
                             <td>{item?.name}</td>
                             <td>{item?.price}</td>
-                            <td>{item?.weightage}</td>
+                            <td>{item?.quantity}</td>
                             <td id={`stock-price-${item?.instrument_token}`} >
                               <span className="stock-price"> {"-"} </span>
                             </td>
-                            <td>{item?.quantity}</td>
+                            <td>{item?.weightage}%</td>
 
                           </tr>
                         ))}
@@ -511,7 +511,7 @@ const BasketStockList = () => {
                           <th>Symbol</th>
                           <th>Suggested Price</th>
                           <th>Current Market Price</th>
-                          <th>Quanty</th>
+                          <th>Quantity</th>
                         </tr>
                       </thead>
                       <tbody>

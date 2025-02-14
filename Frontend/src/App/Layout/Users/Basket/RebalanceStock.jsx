@@ -326,9 +326,9 @@ const RebalanceStock = () => {
                     <tr>
                       <th>Name</th>
                       <th>Price</th>
+                      <th>Quantity</th>
                       <th>CMP</th>
                       <th>Weightage</th>
-                      <th>Quantity</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -336,11 +336,11 @@ const RebalanceStock = () => {
                       <tr key={stock._id}>
                         <td>{stock.name}</td>
                         <td><IndianRupee /> {stock.price}</td>
+                        <td>{stock.quantity}</td>
                         <td id={`stock-price-${stock.instrument_token}`} >
                           <span className="live-price"> {stock.livePrice ? stock.livePrice : "-"} </span>
                         </td>
                         <td>{stock.weightage}%</td>
-                        <td>{stock.quantity}</td>
                       </tr>
                     ))}
 
