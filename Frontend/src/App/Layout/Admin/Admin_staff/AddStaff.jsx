@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { AddStaffClient } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
+import CustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const AddStaff = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const AddStaff = () => {
   const token = localStorage.getItem("token");
 
   const [loading, setLoading] = useState(false);
-  
+
 
   const validate = (values) => {
     let errors = {};
@@ -83,7 +84,7 @@ const AddStaff = () => {
           timer: 1500,
           timerProgressBar: true,
         });
-      setLoading(false)
+        setLoading(false)
       }
     } catch (error) {
       setLoading(false)
@@ -175,11 +176,11 @@ const AddStaff = () => {
 
   return (
     <Content
-    Page_title="Add New Employee"
-    button_status={false}
-    backbutton_status={true}
-    backForword={true}
-  >
+      Page_title="Add New Employee"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
       <DynamicForm
         fields={fields}
         // page_title="Add New Employee"
