@@ -14,8 +14,8 @@ import { soket_url } from '../../../../Utils/config';
 const BasketStockList = () => {
 
 
-  const SOCKET_SERVER_URL = "https://stockboxpnp.pnpuniverse.com:1001/"
-  // const SOCKET_SERVER_URL = soket_url
+  // const SOCKET_SERVER_URL = "https://stockboxpnp.pnpuniverse.com:1001/"
+  const SOCKET_SERVER_URL = soket_url
 
 
 
