@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import { useLocation } from "react-router-dom";
-import { BasketStockListdata, AddStockplaceorder, PortfolioStock, GetUserData } from "../../../Services/UserService/User";
+import { BasketStockListdata, AddStockplaceorder, GetLivePricedata, PortfolioStock, GetUserData } from "../../../Services/UserService/User";
 import Loader from "../../../../Utils/Loader";
 import Swal from "sweetalert2";
 import io from 'socket.io-client';
@@ -17,6 +17,8 @@ const BasketStockList = () => {
   const SOCKET_SERVER_URL = "https://stockboxpnp.pnpuniverse.com:1001/"
   // const SOCKET_SERVER_URL = soket_url
 
+
+  
   const socket = io(SOCKET_SERVER_URL, { transports: ['websocket'] });
 
 
@@ -24,6 +26,7 @@ const BasketStockList = () => {
     getbasketpurchasedata();
     getuserdetail();
     getportfolio();
+    // getlivepricedata();
   }, []);
 
 
@@ -50,11 +53,32 @@ const BasketStockList = () => {
   const [inputdata, setInputdata] = useState({});
   const [userDetail, setUserDetail] = useState();
   const [portfolio, setPortfolio] = useState([]);
-  const [totalPL, setTotalPL] = useState(0);
-  const [currentValue, setCurrentValue] = useState(0);
+  const [getlivedata, setLiveprice] = useState([])
 
-  const [totalPL1, setTotalPL1] = useState(0);
-  const [currentValue1, setCurrentValue1] = useState(0);
+
+  const totalInvestment = portfolio.reduce((acc, curr) => acc + curr.price * curr.totalQuantity, 0);
+  const totalInvestment1 = purchasedata.reduce((acc, curr) => acc + curr.price * curr.quantity, 0);
+
+
+
+  // const getlivepricedata = async () => {
+  //   try {
+  //     const response = await GetLivePricedata(userid, token);
+  //     if (response.status) {
+  //       const getlive = purchasedata.map((purchase) => {
+  //         return response?.data
+  //           .filter((item) => item.token == purchase.instrument_token)
+  //           .map((item) => item.lp);
+  //       });
+
+  //       setLiveprice(getlive);
+  //       // console.log(getlive);
+  //       // console.log("response?.data", response?.data);
+  //     }
+  //   } catch (error) {
+  //     console.log("error", error);
+  //   }
+  // };
 
 
 
@@ -64,7 +88,7 @@ const BasketStockList = () => {
   const calculateValues1 = () => {
     let totalPL = 0;
     let currentVal = 0;
-
+    let totalInvestment = 0;
 
 
 
@@ -73,17 +97,33 @@ const BasketStockList = () => {
       const livePrice = livePriceElement.length ? parseFloat(livePriceElement.text()) : null;
 
       if (livePrice && !isNaN(livePrice)) {
+        const investment = item.price * item.quantity;
+        totalInvestment += investment;
         currentVal += livePrice * item.quantity;
         totalPL += (livePrice - item.price) * item.quantity;
       }
     });
 
-    // jQuery se values update karo bina state change kiye
-    $("#current-value").text(`₹ ${currentVal.toFixed(2)}`);
-    $("#total-pl").text(`₹ ${totalPL.toFixed(2)}`);
+
+    const currentValueElement = $("#current-value");
+    const totalPLElement = $("#total-pl");
+
+    currentValueElement.text(`₹ ${currentVal.toFixed(2)}`);
+    totalPLElement.text(`₹ ${totalPL.toFixed(2)}`);
+
+
+    if (currentVal >= totalInvestment) {
+      currentValueElement.css({ color: "green", transition: "color 0.5s ease-in-out" });
+    } else {
+      currentValueElement.css({ color: "red", transition: "color 0.5s ease-in-out" });
+    }
+
+    if (totalPL >= 0) {
+      totalPLElement.css({ color: "green", transition: "color 0.5s ease-in-out" });
+    } else {
+      totalPLElement.css({ color: "red", transition: "color 0.5s ease-in-out" });
+    }
   };
-
-
 
 
 
@@ -107,9 +147,6 @@ const BasketStockList = () => {
   };
 
 
-
-
-
   useEffect(() => {
 
     socket.on("Live_data", handleLiveData);
@@ -129,21 +166,40 @@ const BasketStockList = () => {
   const calculateValues = () => {
     let totalPL = 0;
     let currentVal = 0;
+    let totalInvestment = 0;
 
     portfolio.forEach((item) => {
-      const livePriceElement = document.getElementById(`stock-prices-${item.ordertoken}`);
-      const livePrice = livePriceElement ? parseFloat(livePriceElement.innerText) : null;
+      const livePriceElement = $(`#stock-prices-${item.ordertoken}`);
+      const livePrice = livePriceElement.length ? parseFloat(livePriceElement.text()) : null;
 
       if (livePrice && !isNaN(livePrice)) {
+        const investment = item.price * item.totalQuantity;
+        totalInvestment += investment;
         currentVal += livePrice * item.totalQuantity;
         totalPL += (livePrice - item.price) * item.totalQuantity;
       }
     });
 
-    setCurrentValue(currentVal);
-    setTotalPL(totalPL);
-  };
+  
+    const currentValueElement = $("#current-value1");
+    const totalPLElement = $("#total-pl1");
 
+    currentValueElement.text(`₹ ${currentVal.toFixed(2)}`);
+    totalPLElement.text(`₹ ${totalPL.toFixed(2)}`);
+
+  
+    if (currentVal >= totalInvestment) {
+      currentValueElement.css({ color: "green", transition: "color 0.5s ease-in-out" });
+    } else {
+      currentValueElement.css({ color: "red", transition: "color 0.5s ease-in-out" });
+    }
+
+    if (totalPL >= 0) {
+      totalPLElement.css({ color: "green", transition: "color 0.5s ease-in-out" });
+    } else {
+      totalPLElement.css({ color: "red", transition: "color 0.5s ease-in-out" });
+    }
+  };
 
 
 
@@ -153,7 +209,6 @@ const BasketStockList = () => {
       const priceElement = $(`#stock-prices-${livedata.tk}`);
 
       if (priceElement.length && livedata.lp && stockData.price) {
-        console.log("stockData", stockData)
         priceElement.text(livedata.lp);
 
         if (livedata.lp > stockData.price) {
@@ -274,7 +329,7 @@ const BasketStockList = () => {
 
 
 
-  const totalInvestment = portfolio.reduce((acc, curr) => acc + curr.price * curr.totalQuantity, 0);
+
 
 
   return (
@@ -328,7 +383,7 @@ const BasketStockList = () => {
                           <li className="list-group-item ">
                             Total Investment
                             <hr />
-                            <h5 className="mb-0">₹ {item?.mininvamount}</h5>
+                            <h5 className="mb-0">₹ {totalInvestment1.toFixed(2)}</h5>
                           </li>
                         </ul>
                       </div>
@@ -371,7 +426,7 @@ const BasketStockList = () => {
                           <th>Stock Weightage</th>
                           <th>Current Market Price</th>
                           <th>Quanty</th>
-                          <th>Price</th>
+
                         </tr>
                       </thead>
                       <tbody>
@@ -384,7 +439,7 @@ const BasketStockList = () => {
                               <span className="stock-price"> {"-"} </span>
                             </td>
                             <td>{item?.quantity}</td>
-                            <td>{item?.price}</td>
+
                           </tr>
                         ))}
                       </tbody>
@@ -428,7 +483,7 @@ const BasketStockList = () => {
                           <li className="list-group-item ">
                             Current Value
                             <hr />
-                            <h5 className="mb-0">₹ {currentValue.toFixed(2)}</h5>
+                            <h5 id="current-value1" className="mb-0">₹ 0.00</h5>
                           </li>
                         </ul>
                       </div>
@@ -441,7 +496,7 @@ const BasketStockList = () => {
                           <li className="list-group-item ">
                             Total P&L
                             <hr />
-                            <h5 className="mb-0">₹ {totalPL.toFixed(2)}</h5>
+                            <h5 id="total-pl1" className="mb-0">₹ 0.00</h5>
                           </li>
                         </ul>
                       </div>
@@ -486,7 +541,6 @@ const BasketStockList = () => {
               </>
           )
         }
-
 
         <ReusableModal
           show={showModal}

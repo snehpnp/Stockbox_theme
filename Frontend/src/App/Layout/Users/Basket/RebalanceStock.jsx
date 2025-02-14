@@ -45,6 +45,7 @@ const RebalanceStock = () => {
   const [viewdata, setViewdata] = useState([]);
   const [basket, setBasketdata] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
+  const [getlivedata, setLiveprice] = useState([])
 
 
 
@@ -52,6 +53,7 @@ const RebalanceStock = () => {
   useEffect(() => {
     getbasketRebalance();
     getuserdetail();
+    getlivepricedata();
   }, []);
 
 
@@ -117,6 +119,22 @@ const RebalanceStock = () => {
 
 
 
+  const getlivepricedata = async () => {
+    try {
+      const response = await GetLivePricedata(userid, token);
+      if (response.status) {
+        const getlive = response?.data
+          .filter((item) => item.token === data?.instrument_token)
+          .map((item) => item.lp);
+
+        setLiveprice(getlive);
+        console.log(getlive);
+        console.log("response?.data", response?.data);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
 
 
