@@ -351,11 +351,11 @@ const Viewclientdetail = () => {
                 <div className="row justify-content-center align-items-center">
                   {client.map(({ id, FullName, Email, PhoneNo }) => (
                     <div key={id} className="row">
-                      <div className="col-md-4 d-flex align-items-center">
+                      <div className="col-md-3 d-flex align-items-center">
                         <strong>Full Name</strong>
-                        <p className="my-0 ms-4">{FullName}</p>
+                        <p className="my-0 ms-3">{FullName}</p>
                       </div>
-                      <div className="col-md-4 d-flex align-items-center">
+                      <div className="col-md-5 d-flex align-items-center">
                         <strong>Email</strong>
                         <p className="my-0 ms-4">{Email}</p>
                       </div>

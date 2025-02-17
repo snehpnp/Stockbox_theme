@@ -26,7 +26,7 @@ const AddSignal = () => {
   const [selectitem, setSelectitem] = useState("");
   const [showDropdown, setShowDropdown] = useState(true);
 
-  
+
 
 
 
@@ -84,6 +84,7 @@ const AddSignal = () => {
       if (!values.tag1) errors.tag1 = 'Please Enter Target1';
       if (values.calltype === "BUY") {
 
+
         if (values.price && values.tag1 && values.price > values.tag1) {
           errors.tag1 = "Please Enter Greater Than Entry Price";
         }
@@ -91,6 +92,11 @@ const AddSignal = () => {
         if (values.tag2 && values.tag1 > values.tag2) {
           errors.tag2 = "Please Enter Greater Than Target1";
         }
+
+        if (values.tag3 && !values.tag2) {
+          errors.tag2 = "Please Enter Target2";
+        }
+
 
         if (values.tag3 && values.tag2 && values.tag2 > values.tag3) {
           errors.tag3 = "Please Enter Greater Than Target2";
@@ -106,10 +112,13 @@ const AddSignal = () => {
           errors.tag1 = "Please Enter Less Than Entry Price";
         }
 
+
         if (values.tag2 && values.tag1 < values.tag2) {
           errors.tag2 = "Please Enter Less Than Target1";
         }
-
+        if (values.tag3 && !values.tag2) {
+          errors.tag2 = "Please Enter Target2";
+        }
         if (values.tag3 && values.tag2 && values.tag2 < values.tag3) {
           errors.tag3 = "Please Enter Less Than Target2";
         }
