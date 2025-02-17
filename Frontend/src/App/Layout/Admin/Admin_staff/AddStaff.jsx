@@ -74,7 +74,7 @@ const AddStaff = () => {
           timerProgressBar: true,
         });
         setTimeout(() => {
-          navigate("/admin/employee");
+          navigate("/admin/staff");
         }, 1500);
       } else {
         Swal.fire({

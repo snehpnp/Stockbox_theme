@@ -1,5 +1,4 @@
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
 
 const CustomAlert = ({
     title = "Alert",
@@ -8,8 +7,6 @@ const CustomAlert = ({
     timer = 2000,
     navigateTo = "",
 }) => {
-    const navigate = useNavigate();
-
     Swal.fire({
         title: `<strong style="
       font-size: 22px; 
@@ -49,8 +46,8 @@ const CustomAlert = ({
         willClose: () => {
             if (navigateTo) {
                 setTimeout(() => {
-                    navigate(navigateTo);
-                }, 200);
+                    window.location.href = navigateTo;
+                }, 200); // Ensure smooth transition before navigation
             }
         },
     });
@@ -59,6 +56,8 @@ const CustomAlert = ({
 export default CustomAlert;
 
 
+
+// how to use
 
 // how to use
 
