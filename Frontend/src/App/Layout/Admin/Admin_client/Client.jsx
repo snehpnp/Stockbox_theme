@@ -924,7 +924,7 @@ const Client = () => {
                                         >
                                           <div className="d-flex justify-content-between w-100">
                                             <div>
-                                              <strong className="text-secondary m-2">
+                                              <strong className=" heading-color  m-2">
                                                 Detail
                                               </strong>
                                               <strong className="text-success m-2 activestrong">
@@ -1052,7 +1052,7 @@ const Client = () => {
                                     >
                                       <div className="d-flex justify-content-between w-100">
                                         <div>
-                                          <strong className="text-secondary m-2">
+                                          <strong className="m-2 heading-color">
                                             Detail
                                           </strong>
                                           <strong className="text-success m-2 activestrong">

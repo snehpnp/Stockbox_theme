@@ -7,7 +7,7 @@ import { SquarePen, Trash2, PanelBottomOpen, Eye, RefreshCcw, IndianRupee, Arrow
 import Swal from 'sweetalert2';
 import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
-import { fDateTime } from '../../../../Utils/Date_formate';
+import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
 import { exportToCSV } from '../../../../Utils/ExportData';
 import Loader from '../../../../Utils/Loader';
 
@@ -225,7 +225,7 @@ const History = () => {
             name: 'Coupon Id',
             selector: row => row.coupon ? row.coupon : "N/A",
             sortable: true,
-            width: '200px',
+            width: '250px',
         },
 
 
@@ -248,9 +248,9 @@ const History = () => {
         },
         {
             name: 'Purchase Date.',
-            selector: row => fDateTime(row?.created_at),
+            selector: row => fDateTimeH(row?.created_at),
             sortable: true,
-            width: '200px',
+            width: '270px',
         },
         {
             name: 'Invoice',

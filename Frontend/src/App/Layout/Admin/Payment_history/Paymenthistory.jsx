@@ -7,7 +7,7 @@ import { SquarePen, Trash2, PanelBottomOpen, Eye, RefreshCcw, IndianRupee, Arrow
 import Swal from 'sweetalert2';
 import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
-import { fDateTime } from '../../../../Utils/Date_formate';
+import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
 import { exportToCSV } from '../../../../Utils/ExportData';
 
 
@@ -109,8 +109,8 @@ const History = () => {
             const response = await getPayementhistorywithfilter(data, token);
             if (response.status) {
                 let filteredData = response.data;
-                console.log("response response",response);
-                
+                console.log("response response", response);
+
                 setTotalRows(response.pagination.total)
                 setClients(filteredData);
             }
@@ -244,9 +244,9 @@ const History = () => {
         },
         {
             name: 'Purchase Date.',
-            selector: row => fDateTime(row?.created_at),
+            selector: row => fDateTimeH(row?.created_at),
             sortable: true,
-            width: '200px',
+            width: '270px',
         },
         {
             name: 'Invoice',
@@ -328,7 +328,7 @@ const History = () => {
                         </nav>
                     </div>
                 </div>
-                
+
                 <div className="card">
                     <div className="card-body">
                         <div className="d-sm-flex align-items-center mb-4 gap-3 justify-content-between">
