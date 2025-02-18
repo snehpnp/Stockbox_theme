@@ -286,8 +286,8 @@ class List {
 
   async getPlansByPlancategoryId(req, res) {
     try {
-    
-    
+
+
       const pipeline = [
         // Match all plancategories
         {
@@ -412,7 +412,7 @@ class List {
             as: 'services'
           }
         },
-        
+
         // Project only the necessary fields
         {
           $project: {
@@ -4189,14 +4189,14 @@ class List {
               const authToken = client.authtoken;
               const apikey = client.apikey;
 
-            
+
               let config = {
                 method: 'post',
                 url: 'https://api.kite.trade/user/margins',
                 headers: {
-                    'Authorization': 'token ' + apikey + ':' + authToken
+                  'Authorization': 'token ' + apikey + ':' + authToken
                 },
-            };
+              };
 
 
               const response = await axios(config);
@@ -4207,7 +4207,7 @@ class List {
 
                 if (!isFundChecked) {
                   isFundChecked = true; // Set the flag to true
-                  const net = parseFloat(responseData,equity.net); // Convert responseData.net to a float
+                  const net = parseFloat(responseData, equity.net); // Convert responseData.net to a float
                   const total = parseFloat(totalAmount);
 
                   if (total >= net) {
@@ -6540,33 +6540,32 @@ class List {
 
 
 
-async checkClientToken(req, res) {
-  try {
+  async checkClientToken(req, res) {
+    try {
       const { client_id, token } = req.body;
       // Validate required fields
-      if (!client_id ) {
-          return res.status(400).json({ message: "Client ID are required." });
+      if (!client_id) {
+        return res.status(400).json({ message: "Client ID are required." });
       }
 
       // Find client by ID
       const client = await Clients_Modal.findById(client_id);
       if (!client) {
-          return res.status(404).json({ message: "Client not found." });
+        return res.status(404).json({ message: "Client not found." });
       }
-    if(client.token == token){
-     return res.status(200).json({ status: true, });
-     }
-    else
-     {
-     return res.status(200).json({ status: false, });
-     }
+      if (client.token == token) {
+        return res.status(200).json({ status: true, });
+      }
+      else {
+        return res.status(200).json({ status: false, });
+      }
 
-  } catch (error) {
+    } catch (error) {
       return res.status(500).json({ message: "Something went wrong.", error: error.message });
+    }
   }
-}
 
-  
+
 
 }
 

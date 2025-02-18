@@ -13,9 +13,12 @@ const Notification = () => {
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
+
+
   const GetNotificationDataApi = async () => {
     try {
-      const response = await GetNotificationData({ user_id: userid }, token);
+      const data = { user_id: userid, page: currentPage };
+      const response = await GetNotificationData(data, token);
       if (response.status) {
         setNotificationData(response.data);
       }
@@ -25,15 +28,28 @@ const Notification = () => {
     setIsLoading(false);
   };
 
+
+
   useEffect(() => {
     GetNotificationDataApi();
-  }, []);
+  }, [currentPage]);
+
+
+
 
   const indexOfLastNotification = currentPage * notificationsPerPage;
   const indexOfFirstNotification = indexOfLastNotification - notificationsPerPage;
   const currentNotifications = notificationData.slice(indexOfFirstNotification, indexOfLastNotification);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const nextPage = () => setCurrentPage((prevPage) => prevPage + 1);
+  const prevPage = () => setCurrentPage((prevPage) => prevPage - 1);
+
+
+  console.log("currentPage", currentPage)
+
+
 
   return (
     <Content
@@ -81,6 +97,11 @@ const Notification = () => {
         {!isLoading && notificationData.length > 0 && (
           <nav>
             <ul className="pagination justify-content-center mt-4">
+              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                <button className="page-link" onClick={prevPage}>
+                  Previous
+                </button>
+              </li>
               {Array.from({ length: Math.ceil(notificationData.length / notificationsPerPage) }).map((_, index) => (
                 <li key={index} className={`page-item ${currentPage === index + 1 ? "active" : ""}`}>
                   <button className="page-link" onClick={() => paginate(index + 1)}>
@@ -88,6 +109,11 @@ const Notification = () => {
                   </button>
                 </li>
               ))}
+              <li>
+                <button className="page-link" onClick={nextPage}>
+                  Next
+                </button>
+              </li>
             </ul>
           </nav>
         )}
