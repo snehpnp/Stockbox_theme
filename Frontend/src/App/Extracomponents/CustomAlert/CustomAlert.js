@@ -1,70 +1,39 @@
 import Swal from "sweetalert2";
 
-const CustomAlert = ({
-    title = "Alert",
-    message = "",
-    icon = "info",
-    timer = 2000,
-    navigateTo = "",
-}) => {
-    Swal.fire({
-        title: `<strong style="
-      font-size: 22px; 
-      font-weight: bold; 
-      color: #333;
-    ">${title}</strong>`,
-        html: `<p style="
-      font-size: 16px;
-      color: #555;
-      font-weight: 500;
-      text-align: center;
-      margin-top: 10px;
-    ">${message}</p>`,
-        icon,
-        showConfirmButton: false,
-        timer,
-        timerProgressBar: true,
-        backdrop: "rgba(0, 0, 0, 0.4)",
-        customClass: {
-            popup: "swal-popup",
-        },
-        willOpen: () => {
-            setTimeout(() => {
-                let popup = document.querySelector(".swal-popup");
-                if (popup) {
-                    popup.style.cssText = `
-            border-radius: 15px !important;
-            padding: 25px !important;
-            background: #fff !important;
-            box-shadow: 0px 5px 18px rgba(0, 0, 0, 0.25);
-            border: 2px solid #ddd !important;
-            transition: all 0.3s ease-in-out;
-          `;
-                }
-            }, 10);
-        },
-        willClose: () => {
-            if (navigateTo) {
-                setTimeout(() => {
-                    window.location.href = navigateTo;
-                }, 200); // Ensure smooth transition before navigation
-            }
-        },
-    });
+const showCustomAlert = (message, navigate, redirectTo) => {
+  Swal.fire({
+    title: "🎉 Success!",
+    text: message,
+    icon: "success",
+    timer: 2000,
+    timerProgressBar: true,
+    showConfirmButton: false,
+    didClose: () => {
+      navigate(redirectTo);
+    },
+    width: '90%',
+    padding: '0',
+    background: 'transparent',
+    html: `
+      <div style="width: 90%; background-color: white; border-radius: 10px; animation: 0.5s 1 alert_container_animation; position: relative;">
+        <div style="padding: 20px; border-radius: 10px 10px 0px 0px; text-align: center; background: linear-gradient(80deg, #67FF86, #1FB397);">
+          <h1>🎉 Success!</h1>
+        </div>
+        <div style="padding: 15px; text-align: center;">
+          <h2 style="font-size: 20px;">Congratulations!</h2>
+          <p style="font-size: 14px; color: #525252; line-height: 1.5em; margin-top: 5px;">${message}</p>
+        </div>
+       
+      </div>
+    `,
+    customClass: {
+      popup: "alert_modal",
+      title: "alert_heading",
+      content: "alert_details",
+      footer: "alert_footer",
+    },
+    animation: "0.5s ease-in-out",
+  });
 };
 
-export default CustomAlert;
-
-
-
-// how to use
-
-// how to use
-
-//  CustomAlert({
-//           title: "🎉 Client Created Successfully!",
-//           message: "Your client has been added successfully.",
-//           icon: "success",
-//           timer: 2000,
-//           navigateTo: "/admin/employee",
-//         });
+export default showCustomAlert;

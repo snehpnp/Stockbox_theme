@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { AddStaffClient } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
-import CustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const AddStaff = () => {
   const navigate = useNavigate();
@@ -66,16 +66,18 @@ const AddStaff = () => {
     try {
       const response = await AddStaffClient(req, token);
       if (response.status) {
-        Swal.fire({
-          title: "Create Successful!",
-          text: response.message,
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        setTimeout(() => {
-          navigate("/admin/staff");
-        }, 1500);
+        const redirectTo = "/admin/staff";
+        showCustomAlert(response.message, navigate, redirectTo);
+        // Swal.fire({
+        //   title: "Create Successful!",
+        //   text: response.message,
+        //   icon: "success",
+        //   timer: 1500,
+        //   timerProgressBar: true,
+        // });
+        // setTimeout(() => {
+        //   navigate("/admin/staff");
+        // }, 1500);
       } else {
         Swal.fire({
           title: "Error",

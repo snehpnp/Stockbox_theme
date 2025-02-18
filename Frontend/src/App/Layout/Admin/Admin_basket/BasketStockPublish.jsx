@@ -25,7 +25,7 @@ const BasketStockPublish = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
 
-  //state for loading
+
   const [isLoading, setIsLoading] = useState(true)
 
 
@@ -36,13 +36,10 @@ const BasketStockPublish = () => {
 
 
 
-  // Fetch basket list
   const getbasketlist = async () => {
     try {
       const data = { page: currentPage, search: searchInput || "" }
       const response = await BasketAllActiveListbyfilter(data, token);
-      // console.log("BasketAllActiveListbyfilter",response);
-
       if (response.status) {
         setTotalRows(response.pagination.total);
         setClients(response.data);
@@ -411,7 +408,7 @@ const BasketStockPublish = () => {
               />
             </>
           )}
-          
+
         </div>
       </div>
     </div>
