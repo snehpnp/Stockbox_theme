@@ -148,7 +148,12 @@ const HelpDesk = () => {
                                 </div>
                             ))
                         ) : (
-                            <div>No messages available.</div>
+                            <div className="text-center mt-5">
+                                <img
+                                    src="/assets/images/norecordfound.png"
+                                    alt="No Records Found"
+                                />
+                            </div>
                         )}
                     </div>}
                 </Tab>

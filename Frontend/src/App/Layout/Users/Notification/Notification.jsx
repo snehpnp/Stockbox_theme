@@ -5,20 +5,13 @@ import Content from '../../../components/Contents/Content';
 import Loader from "../../../../Utils/Loader";
 
 const Notification = () => {
-
-
   const [notificationData, setNotificationData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [notificationsPerPage] = useState(10);
-  const [isLoading, setIsLoading] = useState(true)
-
-
+  const [isLoading, setIsLoading] = useState(true);
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
-
-
-
 
   const GetNotificationDataApi = async () => {
     try {
@@ -29,15 +22,12 @@ const Notification = () => {
     } catch (error) {
       console.log(error);
     }
-    setIsLoading(false)
+    setIsLoading(false);
   };
-
-
 
   useEffect(() => {
     GetNotificationDataApi();
   }, []);
-
 
   const indexOfLastNotification = currentPage * notificationsPerPage;
   const indexOfFirstNotification = indexOfLastNotification - notificationsPerPage;
@@ -52,45 +42,55 @@ const Notification = () => {
       backbutton_status={true}
     >
       <div className="page-content">
-        {isLoading ? <Loader /> : <div className="notifications-list">
-          {currentNotifications.map((notification, index) => (
-            <div key={index} className="notification-item d-flex align-items-center border-bottom py-3">
-              <div
-                className="rounded-circle p-2 border d-flex align-items-center justify-content-center btn-primary"
-                style={{ width: "50px", height: "50px", textAlign: "center" }}
-              >
-                <Bell />
-              </div>
-
-              <div className="flex-grow-1 ms-3">
-                <div className="d-flex justify-content-between align-items-center">
-                  <h6 className="mt-0 mb-1 text-dark">{notification.title}</h6>
-                  <small className="text-muted">
-                    {new Date(notification.createdAt).toLocaleString()}
-                  </small>
-                </div>
-                <p className="mt-0 mb-1">{notification.message}</p>
-
-              </div>
+        {isLoading ? (
+          <Loader />
+        ) : notificationData.length === 0 ? (
+          <div className="text-center text-muted mt-4">
+            <div className="text-center mt-5">
+              <img
+                src="/assets/images/norecordfound.png"
+                alt="No Records Found"
+              />
             </div>
-          ))}
-        </div>}
-
-
-        <nav>
-          <ul className="pagination justify-content-center mt-4">
-            {Array.from({ length: Math.ceil(notificationData.length / notificationsPerPage) }).map((_, index) => (
-              <li key={index} className={`page-item ${currentPage === index + 1 ? "active" : ""}`}>
-                <button
-                  className="page-link"
-                  onClick={() => paginate(index + 1)}
+          </div>
+        ) : (
+          <div className="notifications-list">
+            {currentNotifications.map((notification, index) => (
+              <div key={index} className="notification-item d-flex align-items-center border-bottom py-3">
+                <div
+                  className="rounded-circle p-2 border d-flex align-items-center justify-content-center btn-primary"
+                  style={{ width: "50px", height: "50px", textAlign: "center" }}
                 >
-                  {index + 1}
-                </button>
-              </li>
+                  <Bell />
+                </div>
+
+                <div className="flex-grow-1 ms-3">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h6 className="mt-0 mb-1 text-dark">{notification.title}</h6>
+                    <small className="text-muted">
+                      {new Date(notification.createdAt).toLocaleString()}
+                    </small>
+                  </div>
+                  <p className="mt-0 mb-1">{notification.message}</p>
+                </div>
+              </div>
             ))}
-          </ul>
-        </nav>
+          </div>
+        )}
+
+        {!isLoading && notificationData.length > 0 && (
+          <nav>
+            <ul className="pagination justify-content-center mt-4">
+              {Array.from({ length: Math.ceil(notificationData.length / notificationsPerPage) }).map((_, index) => (
+                <li key={index} className={`page-item ${currentPage === index + 1 ? "active" : ""}`}>
+                  <button className="page-link" onClick={() => paginate(index + 1)}>
+                    {index + 1}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
       </div>
     </Content>
   );

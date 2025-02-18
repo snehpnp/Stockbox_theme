@@ -91,7 +91,7 @@ const PaymentHistory = () => {
   const gethistory = async () => {
     try {
       const response = await GETPlanList(userid, token);
-  
+
 
       if (response.status) {
         let filteredData = response?.data;
@@ -198,11 +198,6 @@ const PaymentHistory = () => {
 
 
 
-
-
-
-
-
   return (
     <div>
       <div className="page-content">
@@ -225,54 +220,13 @@ const PaymentHistory = () => {
         <div className="card">
           <div className="card-body">
             <div className="d-lg-flex align-items-center mb-4 gap-3 justify-content-between">
-
-              {/* <div className="position-relative">
-                <input
-                  type="text"
-                  className="form-control ps-5 radius-10"
-                  placeholder="Search Payment History"
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  value={searchInput}
-                />
-                <span className="position-absolute top-50 product-show translate-middle-y">
-                  <i className="bx bx-search" />
-                </span>
-
-              </div> */}
             </div>
-            {/* <div className='row mb-2'>
-              <div className="col-md-3">
-                <input
-                  type="date"
-                  className="form-control"
-                  onChange={(e) => setStartDate(e.target.value)}
-                  value={startDate}
-                />
-              </div>
 
-
-              <div className='col-md-3'>
-                <input
-                  type="date"
-                  className="form-control"
-                  onChange={(e) => setEndDate(e.target.value)}
-                  value={endDate}
-                />
-              </div>
-
-              <div className="col-md-1">
-                <div className="refresh-icon mt-1">
-                  <RefreshCcw onClick={resethandle} />
-                </div>
-              </div>
-            </div> */}
             {isLoading ? (
               <Loader />
             ) : (
               <>
-
-
-                <div className="table-responsive">
+                {clients.length > 0 ? <div className="table-responsive">
                   <Table
                     columns={columns}
                     data={clients}
@@ -280,7 +234,12 @@ const PaymentHistory = () => {
                     currentPage={currentPage}
                     onPageChange={handlePageChange}
                   />
-                </div>
+                </div> : <div className="text-center mt-5">
+                  <img
+                    src="/assets/images/norecordfound.png"
+                    alt="No Records Found"
+                  />
+                </div>}
               </>
             )}
           </div>
