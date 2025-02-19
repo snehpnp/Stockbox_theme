@@ -282,12 +282,8 @@ class List {
     }
   }
 
-
-
   async getPlansByPlancategoryId(req, res) {
     try {
-    
-    
       const pipeline = [
         // Match all plancategories
         {
@@ -299,85 +295,87 @@ class List {
         // Lookup to get associated plans
         {
           $lookup: {
-            from: 'plans', // Collection name for plans
-            let: { categoryId: '$_id' }, // Define a variable for the category ID
+            from: "plans",
+            let: { categoryId: "$_id" },
             pipeline: [
-              // Match plans with specific category and additional filters
               {
                 $match: {
                   $expr: {
                     $and: [
-                      { $eq: ['$category', '$$categoryId'] }, // Match by category
-                      { $eq: ['$status', 'active'] }, // Status must be 'active'
-                      { $eq: ['$del', false] }, // del must be false
+                      { $eq: ["$category", "$$categoryId"] },
+                      { $eq: ["$status", "active"] },
+                      { $eq: ["$del", false] },
                     ],
                   },
                 },
               },
-              // Calculate price per month based on validity
               {
                 $addFields: {
                   pricePerMonth: {
                     $cond: {
-                      if: { $ne: ['$validity', null] }, // Check if validity is not null
+                      if: { $ne: ["$validity", null] },
                       then: {
                         $divide: [
-                          '$price', // Total price
+                          "$price",
                           {
                             $switch: {
                               branches: [
-                                { case: { $eq: ['$validity', '1 month'] }, then: 1 },
-                                { case: { $eq: ['$validity', '2 months'] }, then: 2 },
-                                { case: { $eq: ['$validity', '3 months'] }, then: 3 },
-                                { case: { $eq: ['$validity', '6 months'] }, then: 6 },
-                                { case: { $eq: ['$validity', '9 months'] }, then: 9 },
-                                { case: { $eq: ['$validity', '1 year'] }, then: 12 },
-                                { case: { $eq: ['$validity', '2 years'] }, then: 24 },
-                                { case: { $eq: ['$validity', '3 years'] }, then: 36 },
-                                { case: { $eq: ['$validity', '4 years'] }, then: 48 },
-                                { case: { $eq: ['$validity', '5 years'] }, then: 60 },
+                                { case: { $eq: ["$validity", "1 month"] }, then: 1 },
+                                { case: { $eq: ["$validity", "2 months"] }, then: 2 },
+                                { case: { $eq: ["$validity", "3 months"] }, then: 3 },
+                                { case: { $eq: ["$validity", "6 months"] }, then: 6 },
+                                { case: { $eq: ["$validity", "9 months"] }, then: 9 },
+                                { case: { $eq: ["$validity", "1 year"] }, then: 12 },
+                                { case: { $eq: ["$validity", "2 years"] }, then: 24 },
+                                { case: { $eq: ["$validity", "3 years"] }, then: 36 },
+                                { case: { $eq: ["$validity", "4 years"] }, then: 48 },
+                                { case: { $eq: ["$validity", "5 years"] }, then: 60 },
                               ],
-                              default: 1, // Default to 1 month if validity doesn't match
+                              default: 1,
                             },
                           },
                         ],
                       },
-                      else: '$price', // If no validity is specified, fallback to the full price
+                      else: "$price",
                     },
                   },
                 },
               },
-              // Sort by pricePerMonth or validity for ascending order
               {
-                $sort: { pricePerMonth: 1 }, // Sorting by price per month in ascending order
+                $sort: { pricePerMonth: 1 },
               },
-              // Optionally project fields in the plans
               {
                 $project: {
-                  _id: 1, // Plan ID
-                  title: 1, // Plan title
-                  description: 1, // Plan description
-                  price: 1, // Plan price
-                  validity: 1, // Plan validity
-                  pricePerMonth: 1, // Price per month
+                  _id: 1,
+                  title: 1,
+                  description: 1,
+                  price: 1,
+                  validity: 1,
+                  pricePerMonth: 1,
                 },
               },
             ],
-            as: 'plans', // Name of the array field to add
+            as: "plans",
+          },
+        },
+        // Remove categories where plans are empty
+        {
+          $match: {
+            plans: { $ne: [] },
           },
         },
         // Lookup to get associated services
         {
           $lookup: {
-            from: 'services',
+            from: "services",
             let: {
               serviceIds: {
                 $filter: {
-                  input: { $split: ['$service', ','] },
-                  as: 'id',
-                  cond: { $eq: [{ $strLenCP: '$$id' }, 24] } // Ensure only 24-char valid ObjectIds
-                }
-              }
+                  input: { $split: ["$service", ","] },
+                  as: "id",
+                  cond: { $eq: [{ $strLenCP: "$$id" }, 24] },
+                },
+              },
             },
             pipeline: [
               {
@@ -386,66 +384,54 @@ class List {
                     $and: [
                       {
                         $in: [
-                          '$_id',
+                          "$_id",
                           {
                             $map: {
-                              input: '$$serviceIds',
-                              as: 'id',
-                              in: { $toObjectId: '$$id' } // Convert only valid ObjectIds
-                            }
-                          }
-                        ]
+                              input: "$$serviceIds",
+                              as: "id",
+                              in: { $toObjectId: "$$id" },
+                            },
+                          },
+                        ],
                       },
-                      { $eq: ['$status', true] },
-                      { $eq: ['$del', false] }
-                    ]
-                  }
-                }
+                      { $eq: ["$status", true] },
+                      { $eq: ["$del", false] },
+                    ],
+                  },
+                },
               },
               {
                 $project: {
                   _id: 1,
-                  title: 1
-                }
-              }
+                  title: 1,
+                },
+              },
             ],
-            as: 'services'
-          }
+            as: "services",
+          },
         },
-        
-        // Project only the necessary fields
+        // Final projection
         {
           $project: {
-            title: 1, // Plancategory title
-            plans: {
-              _id: 1, // Plan ID
-              title: 1, // Plan title
-              description: 1, // Plan description
-              price: 1, // Plan price
-              validity: 1, // Plan validity
-              pricePerMonth: 1, // Price per month
-            },
-            services: {
-              _id: 1, // Service ID
-              title: 1, // Service title
-            },
+            title: 1,
+            plans: 1,
+            services: 1,
           },
         },
       ];
       const result = await Plancategory_Modal.aggregate(pipeline);
-
+  
       return res.json({
         status: true,
         message: "Data retrieved successfully",
         data: result,
       });
-
     } catch (error) {
       console.log(error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
-
+  
 
   async getallPlan(req, res) {
     try {
