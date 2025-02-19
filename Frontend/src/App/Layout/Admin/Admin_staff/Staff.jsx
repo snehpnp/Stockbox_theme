@@ -11,6 +11,7 @@ import ExportToExcel from '../../../../Utils/ExportCSV';
 import { fDate, fDateTime } from '../../../../Utils/Date_formate';
 import io from 'socket.io-client';
 import { soket_url } from '../../../../Utils/config';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Staff = () => {
 
@@ -60,6 +61,8 @@ const Staff = () => {
         getAdminclient();
     }, []);
 
+
+
     useEffect(() => {
         forCSVdata()
     }, [clients]);
@@ -82,46 +85,66 @@ const Staff = () => {
 
     // staff delete 
 
+    // const DeleteStaff = async (_id) => {
+    //     try {
+
+    //         const result = await Swal.fire({
+    //             title: 'Are you sure?',
+    //             text: 'Do you want to delete this Employee member? This action cannot be undone.',
+    //             icon: 'warning',
+    //             showCancelButton: true,
+    //             confirmButtonText: 'Yes, delete it!',
+    //             cancelButtonText: 'No, cancel',
+    //         });
+
+    //         if (result.isConfirmed) {
+    //             const response = await deleteStaff(_id, token);
+    //             socket.emit("deactivestaff", { id: _id, msg: "logout" });
+    //             if (response.status) {
+    //                 Swal.fire({
+    //                     title: 'Deleted!',
+    //                     text: 'The Employee has been successfully deleted.',
+    //                     icon: 'success',
+    //                     confirmButtonText: 'OK',
+    //                 });
+    //                 getAdminclient();
+    //             }
+    //         } else {
+
+    //             Swal.fire({
+    //                 title: 'Cancelled',
+    //                 text: 'The Employee deletion was cancelled.',
+    //                 icon: 'info',
+    //                 confirmButtonText: 'OK',
+    //             });
+    //         }
+    //     } catch (error) {
+    //         Swal.fire({
+    //             title: 'Error!',
+    //             text: 'There was an error deleting the Employee.',
+    //             icon: 'error',
+    //             confirmButtonText: 'Try Again',
+    //         });
+
+    //     }
+    // };
+
     const DeleteStaff = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this Employee member? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
-
-            if (result.isConfirmed) {
-                const response = await deleteStaff(_id, token);
-                socket.emit("deactivestaff", { id: _id, msg: "logout" });
-                if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The Employee has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
-                    getAdminclient();
+            showCustomAlert("error", "Do you want to delete this Employee member? This action cannot be undone.", navigate, null, async () => {
+                try {
+                    socket.emit("deactivestaff", { id: _id, msg: "logout" });
+                    const response = await deleteStaff(_id, token);
+                    if (response.status) {
+                        showCustomAlert("success", "Employee successfully deleted!", navigate, null);
+                        getAdminclient();
+                    }
+                } catch (error) {
+                    showCustomAlert("error", "There was an error deleting the Employee.", navigate, null);
                 }
-            } else {
-
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The Employee deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
-            }
-        } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the Employee.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
             });
-
+        } catch (error) {
+            showCustomAlert("error", "There was an error with the confirmation process.");
         }
     };
 
@@ -136,6 +159,9 @@ const Staff = () => {
     const updatepermission = async (row) => {
         navigate("/admin/staff/staffpermission/" + row._id, { state: { row } })
     }
+
+
+
 
 
 
@@ -260,11 +286,11 @@ const Staff = () => {
         // },
 
         // {
-        //     name: 'Permission',
+        //     name: 'testing',
         //     cell: row => (
         //         <>
         //             <div>
-        //                 <UserPen onClick={() => updatepermission(row)} />
+        //                 <UserCog onClick={() => testing()} />
         //             </div>
         //         </>
         //     ),
@@ -337,28 +363,28 @@ const Staff = () => {
                                         </span>
                                     </div>
                                     <div className="d-sm-flex gap-3 justify-content-lg-end w-100 mt-3 mt-lg-0">
-                                    <div className="flaot-lg-end">
-                                        <Link
-                                            to="/admin/addstaff"
-                                            className="btn btn-primary"
-                                        >
-                                            <i
-                                                className="bx bxs-plus-square"
-                                                aria-hidden="true"
-                                            />
-                                            Add Employee
-                                        </Link>
-                                    </div>
-                                    <div className="ms-0 ms-sm-0 mt-2 mt-sm-0" >
-                                        <ExportToExcel
-                                            className="btn btn-primary "
-                                            apiData={ForGetCSV}
-                                            fileName={'All Users'} />
+                                        <div className="flaot-lg-end">
+                                            <Link
+                                                to="/admin/addstaff"
+                                                className="btn btn-primary"
+                                            >
+                                                <i
+                                                    className="bx bxs-plus-square"
+                                                    aria-hidden="true"
+                                                />
+                                                Add Employee
+                                            </Link>
+                                        </div>
+                                        <div className="ms-0 ms-sm-0 mt-2 mt-sm-0" >
+                                            <ExportToExcel
+                                                className="btn btn-primary "
+                                                apiData={ForGetCSV}
+                                                fileName={'All Users'} />
 
+                                        </div>
                                     </div>
                                 </div>
-                                    </div>
-                                    
+
 
                                 <Table
                                     columns={columns}

@@ -5,6 +5,7 @@ import { LoginApi } from "../../Services/Auth/Login";
 import { image_baseurl } from "../../../Utils/config";
 import { Link } from "react-router-dom";
 import BgImg from "./bg-login-img.png";
+import showCustomAlert from "../../Extracomponents/CustomAlert/CustomAlert";
 
 import { basicsettinglist } from "../../Services/Admin/Admin";
 import $ from "jquery";
@@ -23,11 +24,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     if (username.trim() === "" || password.trim() === "") {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Please enter both username and password",
-      });
+      showCustomAlert("error", "Please enter both Username and Password", navigate, null);
       return;
     }
 
@@ -48,7 +45,7 @@ const Login = () => {
               ? "EMPLOYEE"
               : ""
       );
-
+      showCustomAlert("success", "Login successful !", navigate, null);
       Swal.fire({
         icon: "success",
         title: "Success",

@@ -1,39 +1,102 @@
 import Swal from "sweetalert2";
 
-const showCustomAlert = (message, navigate, redirectTo) => {
-  Swal.fire({
-    title: "🎉 Success!",
-    text: message,
-    icon: "success",
-    timer: 2000,
-    timerProgressBar: true,
-    showConfirmButton: false,
-    didClose: () => {
-      navigate(redirectTo);
-    },
-    width: '90%',
-    padding: '0',
-    background: 'transparent',
-    html: `
-      <div style="width: 90%; background-color: white; border-radius: 10px; animation: 0.5s 1 alert_container_animation; position: relative;">
-        <div style="padding: 20px; border-radius: 10px 10px 0px 0px; text-align: center; background: linear-gradient(80deg, #67FF86, #1FB397);">
-          <h1>🎉 Success!</h1>
+const showCustomAlert = (type, message, navigate, redirectTo, onConfirm) => {
+  const theme = JSON.parse(localStorage.getItem("theme")) || {};
+
+  let title = "🎉 Success!";
+  let bgColor = theme.BtnPriBgCol || "#3e1b4a";
+  let textColor = theme.BtnPriTxtCol || "#ffffff";
+  let confirmBtnColor = theme.BtnPriBgCol || "#3e1b4a";
+  let cancelBtnColor = theme.BtnSecBgCol || "#6c757d";
+  let confirmTextColor = theme.BtnPriTxtCol || "#ffffff";
+  let cancelTextColor = theme.BtnSecTxtCol || "#ffffff";
+
+  if (type === "error") {
+    title = "❌ Warning !";
+    bgColor = theme.BtnPriBgCol || "#d9534f";
+    textColor = theme.BtnPriTxtCol || "#ffffff";
+  } else if (type === "confirm") {
+    title = "⚠️ Are you sure?";
+    bgColor = theme.BtnPriBgCol || "#f0ad4e";
+    textColor = theme.BtnPriTxtCol || "#ffffff";
+  }
+
+  if (type === "confirm") {
+    Swal.fire({
+      width: "400px",
+      padding: "0",
+      background: "transparent",
+      showConfirmButton: false,
+      showCancelButton: false,
+      html: `
+        <div style="width: 100%; height: auto; max-height: 250px; 
+          border-radius: 12px; box-shadow: 0 6px 15px rgba(0,0,0,0.2); overflow: hidden; position: relative; 
+          background: ${theme.WrapperColor || "#fff"}; text-align: center;">
+          
+          <div style="padding: 20px; border-radius: 12px 12px 0 0; text-align: center;
+            background: ${bgColor}; color: ${textColor}; font-weight: bold;">
+            <h1 style="margin: 0; font-size: 20px;">${title}</h1>
+          </div>
+          
+          <div style="padding: 20px; color: ${theme.fontColor || "#000"};">
+            <p style="font-size: 16px; margin: 5px 0;">${message}</p>
+          </div>
+
+          <div style="display: flex; justify-content: center; padding: 10px;">
+            <button id="confirmBtn" style="background: ${confirmBtnColor}; color: ${confirmTextColor}; 
+              border: none; padding: 10px 20px; margin: 5px; border-radius: 8px; cursor: pointer; font-size: 14px;">
+              Yes
+            </button>
+            <button id="cancelBtn" style="background: ${cancelBtnColor}; color: ${cancelTextColor}; 
+              border: none; padding: 10px 20px; margin: 5px; border-radius: 8px; cursor: pointer; font-size: 14px;">
+              No
+            </button>
+          </div>
         </div>
-        <div style="padding: 15px; text-align: center;">
-          <h2 style="font-size: 20px;">Congratulations!</h2>
-          <p style="font-size: 14px; color: #525252; line-height: 1.5em; margin-top: 5px;">${message}</p>
+      `,
+      didRender: () => {
+        document.getElementById("confirmBtn").addEventListener("click", () => {
+          Swal.close();
+          if (onConfirm) onConfirm();
+        });
+        document.getElementById("cancelBtn").addEventListener("click", () => {
+          Swal.close();
+        });
+      },
+    });
+  } else {
+    Swal.fire({
+      width: "400px",
+      padding: "0",
+      background: "transparent",
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+      didClose: () => {
+        navigate(redirectTo);
+      },
+      html: `
+        <div style="width: 100%; height: auto; max-height: 250px; 
+          border-radius: 12px; box-shadow: 0 6px 15px rgba(0,0,0,0.2); overflow: hidden; position: relative; 
+          background: ${theme.WrapperColor || "#fff"}; text-align: center;">
+          
+          <div style="padding: 20px; border-radius: 12px 12px 0 0; text-align: center;
+            background: ${bgColor}; color: ${textColor}; font-weight: bold;">
+            <h1 style="margin: 0; font-size: 20px;">${title}</h1>
+          </div>
+          
+          <div style="padding: 20px; color: ${theme.fontColor || "#000"};">
+            <p style="font-size: 16px; margin: 5px 0;">${message}</p>
+          </div>
         </div>
-       
-      </div>
-    `,
-    customClass: {
-      popup: "alert_modal",
-      title: "alert_heading",
-      content: "alert_details",
-      footer: "alert_footer",
-    },
-    animation: "0.5s ease-in-out",
-  });
+      `,
+    });
+  }
 };
 
 export default showCustomAlert;
+
+
+
+//  const redirectTo = "/admin/staff";
+//         showCustomAlert("success", "Employee Add Succesfully ", navigate, redirectTo);

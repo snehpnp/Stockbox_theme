@@ -67,7 +67,7 @@ const AddStaff = () => {
       const response = await AddStaffClient(req, token);
       if (response.status) {
         const redirectTo = "/admin/staff";
-        showCustomAlert(response.message, navigate, redirectTo);
+        showCustomAlert("success", response.message, navigate, redirectTo);
         // Swal.fire({
         //   title: "Create Successful!",
         //   text: response.message,
@@ -79,24 +79,26 @@ const AddStaff = () => {
         //   navigate("/admin/staff");
         // }, 1500);
       } else {
-        Swal.fire({
-          title: "Error",
-          text: response.message,
-          icon: "error",
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("error", response.message, navigate);
+        // Swal.fire({
+        //   title: "Error",
+        //   text: response.message,
+        //   icon: "error",
+        //   timer: 1500,
+        //   timerProgressBar: true,
+        // });
         setLoading(false)
       }
     } catch (error) {
       setLoading(false)
-      Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred. Please try again later.",
-        icon: "error",
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert("error", "An unexpected error occurred. Please try again later.");
+      // Swal.fire({
+      //   title: "Error",
+      //   text: "An unexpected error occurred. Please try again later.",
+      //   icon: "error",
+      //   timer: 1500,
+      //   timerProgressBar: true,
+      // });
     }
   };
 
