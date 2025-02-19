@@ -7,7 +7,11 @@ import { Link } from "react-router-dom";
 import { basicsettinglist } from "../../Services/Admin/Admin";
 import $ from "jquery";
 import BgImg from "./bg-login-img.png";
+import showCustomAlert from "../../Extracomponents/CustomAlert/CustomAlert";
+
+
 const Userlogin = () => {
+
   const navigate = useNavigate();
   const [email, setemail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,12 +28,7 @@ const Userlogin = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     if (email.trim() === "" || password.trim() === "") {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Please enter both email and password",
-      });
-      return;
+      showCustomAlert("error", "Please enter both email and password ", navigate, null)
     }
 
     setIsLoading(true);
@@ -40,22 +39,9 @@ const Userlogin = () => {
       localStorage.setItem("token", ResData.data?.token);
       localStorage.setItem("id", ResData.data?.id);
       localStorage.setItem("Role", "USER");
-
-      Swal.fire({
-        icon: "success",
-        title: "Success",
-        text: "Login successful!",
-        timer: 1500,
-      }).then(() => {
-        navigate("/user/dashboard");
-        window.location.reload();
-      });
+      showCustomAlert("success", "Login successful!", navigate, "/user/dashboard")
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: ResData.message,
-      });
+      showCustomAlert("error", ResData.message, navigate, null)
     }
   };
 
@@ -75,13 +61,13 @@ const Userlogin = () => {
       errors.password = "Password must be at least 6 characters long";
     }
 
-    // Set errors before exiting early
+
     if (Object.keys(errors).length > 0) {
       setErrors(errors);
-      return; // Early exit if there are errors
+      return;
     }
 
-    setIsLoading(true); // Set loading state before making the API request
+    setIsLoading(true);
 
     try {
       const ResData = await UserLoginApi({
@@ -95,16 +81,7 @@ const Userlogin = () => {
         localStorage.setItem("Role", "USER");
 
         localStorage.setItem("email", email);
-
-        Swal.fire({
-          icon: "success",
-          title: "Success",
-          text: "Login successful!",
-          timer: 1500,
-        }).then(() => {
-          navigate("/user/dashboard");
-          window.location.reload();
-        });
+        showCustomAlert("success", "Login successful!", navigate, "/user/dashboard")
       } else {
         errors.other = ResData.message;
         setErrors(errors);
@@ -113,7 +90,7 @@ const Userlogin = () => {
       errors.password = "An error occurred while processing your request.";
       setErrors(errors);
     } finally {
-      setIsLoading(false); // Always stop loading after the API call completes
+      setIsLoading(false);
     }
   };
 
@@ -211,9 +188,8 @@ const Userlogin = () => {
                                       className="input-group-text bg-transparent"
                                     >
                                       <i
-                                        className={`bx ${
-                                          showPassword ? "bx-show" : "bx-hide"
-                                        }`}
+                                        className={`bx ${showPassword ? "bx-show" : "bx-hide"
+                                          }`}
                                       />
                                     </a>
                                   </div>

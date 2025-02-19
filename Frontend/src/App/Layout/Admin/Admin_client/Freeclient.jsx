@@ -12,6 +12,7 @@ import { IndianRupee } from 'lucide-react';
 import { exportToCSV } from '../../../../Utils/ExportData';
 import Loader from '../../../../Utils/Loader';
 import ReusableModal from '../../../components/Models/ReusableModal';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Freeclient = () => {
 
@@ -323,69 +324,34 @@ const Freeclient = () => {
 
 
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: response.message || 'Plan updated successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
-
+                showCustomAlert("Success", response.message);
                 setUpdatetitle({ plan_id: "", client_id: "", price: "" });
                 getdemoclient();
                 handleCancel()
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: response.message || 'There was an error updating the Plan.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", response.message);
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'Server error',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'Server error');
         }
     };
 
 
     // assign basket 
     const UpdateBasketservice = async () => {
-
         try {
             const data = { basket_id: basketdetail.basket_id, client_id: client._id, price: basketdetail.price, };
             const response = await BasketSubscription(data, token);
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Basket service updated successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
-
+                showCustomAlert("Success", 'Basket service updated successfully')
                 setBasketdetail({ basket_id: "", client_id: "", price: "" });
                 getdemoclient();
                 handleCancel()
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: response.message || 'There was an error updating the Basket.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", response.message)
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error updating the Basket.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'There was an error updating the Basket.')
         }
     };
 

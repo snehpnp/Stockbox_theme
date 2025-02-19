@@ -131,7 +131,7 @@ const Staff = () => {
 
     const DeleteStaff = async (_id) => {
         try {
-            showCustomAlert("error", "Do you want to delete this Employee member? This action cannot be undone.", navigate, null, async () => {
+            showCustomAlert("confirm", "Do you want to delete this Employee member? This action cannot be undone.", navigate, null, async () => {
                 try {
                     socket.emit("deactivestaff", { id: _id, msg: "logout" });
                     const response = await deleteStaff(_id, token);

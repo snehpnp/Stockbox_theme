@@ -967,7 +967,7 @@ const Signal = () => {
             <ReusableModal
                 show={model}
                 onClose={() => setModel(false)}
-                title="Close Signal"
+                title={`Close Signal ${closedata?.tradesymbol ?? ''}`}
                 size='lg'
                 body={
                     <>

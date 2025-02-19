@@ -4,6 +4,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import Swal from 'sweetalert2';
 import { ForgetPasswordApi } from '../../Services/Admin/Admin';
+import showCustomAlert from '../../Extracomponents/CustomAlert/CustomAlert';
 
 const Forgetpassworduser = () => {
 
@@ -20,21 +21,11 @@ const Forgetpassworduser = () => {
             };
             const response = await ForgetPasswordApi(data, token);
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: response.message || 'Password reset email sent successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
+                showCustomAlert("Success", response.message, null, null)
                 resetForm();
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: response.message || 'There was an error sending the password reset email.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", response.message, null, null)
+
             }
         } catch (error) {
             Swal.fire({

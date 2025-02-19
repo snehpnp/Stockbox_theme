@@ -7,7 +7,7 @@ import { Tooltip } from 'antd';
 import Swal from "sweetalert2";
 import { Addstockbasketform } from "../../../Services/Admin/Admin";
 import Content from "../../../components/Contents/Content";
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 const AddStock = () => {
 
@@ -144,11 +144,8 @@ const AddStock = () => {
 
 
     if (invalidStocks.length > 0) {
-      Swal.fire(
-        "Error",
-        "Each stock's weightage should be greater than zero.",
-        "error"
-      );
+      showCustomAlert("error", "Each stock's weightage should be greater than zero.", null, null)
+      setLoading(false);
       return;
     }
 
@@ -159,16 +156,15 @@ const AddStock = () => {
     });
 
     if (totalWeightage !== 100) {
-      Swal.fire(
-        "Error",
-        "Total weightage of all stocks must be exactly 100.",
-        "error"
-      );
+      showCustomAlert("error", "Total weightage of all stocks must be exactly 100.", null, null)
+      setLoading(false);
+
       return;
     }
 
     if (!basket_id) {
-      Swal.fire("Error", "Basket ID is missing. Please try again.", "error");
+      showCustomAlert("error", "Basket ID is missing. Please try again.", null, null)
+      setLoading(false);
       return;
     }
 
@@ -177,11 +173,8 @@ const AddStock = () => {
     );
 
     if (emptyType.length > 0) {
-      Swal.fire(
-        "Warning",
-        "Please select type.",
-        "warning"
-      );
+      showCustomAlert("error", "Please select type.", null, null)
+      setLoading(false);
       return;
     }
 
@@ -200,19 +193,15 @@ const AddStock = () => {
     try {
       const response = await Addstockbasketform(requestData);
       if (response?.status) {
-        Swal.fire("Success", response.message, "success");
-        setTimeout(() => navigate(redirectTo), 1500);
+        showCustomAlert("Success", response.message, navigate, redirectTo)
+
       } else {
-        Swal.fire("Error", response.message, "error");
+        showCustomAlert("error", response.message, null, null)
       }
+      setLoading(false);
     } catch (error) {
       setLoading(false);
-
-      Swal.fire(
-        "Error",
-        "An unexpected error occurred. Please try again.",
-        "error"
-      );
+      showCustomAlert("error", "An unexpected error occurred. Please try again.", null, null)
     }
 
   };
@@ -238,7 +227,7 @@ const AddStock = () => {
 
   return (
     <Content
-      Page_title="Add Stock"
+      Page_title={header}
       button_status={false}
       backbutton_status={true}
       backForword={true}

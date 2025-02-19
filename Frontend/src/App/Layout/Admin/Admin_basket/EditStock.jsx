@@ -7,7 +7,7 @@ import { Tooltip } from 'antd';
 import axios from "axios";
 import * as Config from "../../../../Utils/config";
 import Content from "../../../components/Contents/Content";
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 const EditStock = () => {
@@ -184,7 +184,8 @@ const EditStock = () => {
         setLoading(true);
         try {
             if (Object.keys(formValues).length === 0) {
-                Swal.fire("Error", "Stock is required for edit", "warning");
+                showCustomAlert("error", "Stock is required for edit", "warning");
+
                 return;
             }
 
@@ -193,11 +194,7 @@ const EditStock = () => {
             );
 
             if (invalidStocks.length > 0) {
-                Swal.fire(
-                    "Error",
-                    "Each stock's weightage should be greater than zero.",
-                    "error"
-                );
+                showCustomAlert("error", "Each stock's weightage should be greater than zero.");
                 return;
             }
 
@@ -207,11 +204,7 @@ const EditStock = () => {
             );
 
             if (totalWeightage !== 100) {
-                Swal.fire(
-                    "Error",
-                    "Total weightage of all stocks must be exactly 100.",
-                    "error"
-                );
+                showCustomAlert("error", "Total weightage of all stocks must be exactly 100.");
                 return;
             }
 
@@ -220,7 +213,7 @@ const EditStock = () => {
             );
 
             if (emptyType.length > 0) {
-                Swal.fire("Warning", "Please select type.", "warning");
+                showCustomAlert("error", "Please select type.");
                 return;
             }
 
@@ -241,17 +234,13 @@ const EditStock = () => {
 
             const response = await updateStockList(requestData);
             if (response?.status) {
-                Swal.fire("Success", response.message, "success");
-                setTimeout(() => navigate("/admin/basket"), 1500);
+                showCustomAlert("Success", response.message, navigate, "/admin/basket");
             } else {
-                Swal.fire("Error", response.message, "error");
+                showCustomAlert("error", response.message);
             }
         } catch (error) {
-            Swal.fire(
-                "Error",
-                "An unexpected error occurred. Please try again.",
-                "error"
-            );
+            showCustomAlert("error", "An unexpected error occurred. Please try again.");
+
         } finally {
             setLoading(false);
         }

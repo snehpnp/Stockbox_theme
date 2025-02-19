@@ -8,7 +8,7 @@ import Table from '../../../Extracomponents/Table1';
 import { BasketAllList, deletebasket, Basketstatus, changestatusrebalance, getstocklistById } from "../../../Services/Admin/Admin";
 import { fDate } from "../../../../Utils/Date_formate";
 import Loader from "../../../../Utils/Loader";
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 const Basket = () => {
@@ -59,48 +59,70 @@ const Basket = () => {
 
 
 
+  // const handleSwitchChange = async (event, id) => {
+  //   const originalChecked = true;
+  //   const user_active_status = originalChecked
+  //   const data = { id: id, status: user_active_status };
+
+  //   const result = await Swal.fire({
+  //     title: "Do you want to save the changes?",
+  //     showCancelButton: true,
+  //     confirmButtonText: "Save",
+  //     cancelButtonText: "Cancel",
+  //     allowOutsideClick: false,
+  //   });
+
+  //   if (result.isConfirmed) {
+  //     try {
+  //       const response = await Basketstatus(data, token);
+
+  //       if (response.status) {
+  //         Swal.fire({
+  //           title: "Saved!",
+  //           icon: "success",
+  //           timer: 1000,
+  //           timerProgressBar: true,
+  //         });
+  //         setTimeout(() => {
+  //           Swal.close();
+  //         }, 1000);
+  //       }
+  //       getbasketlist();
+  //     } catch (error) {
+  //       Swal.fire(
+  //         "Error",
+  //         "There was an error processing your request.",
+  //         "error"
+  //       );
+  //     }
+  //   } else if (result.dismiss === Swal.DismissReason.cancel) {
+  //     event.target.checked = !originalChecked;
+  //     getbasketlist();
+  //   }
+  // };
+
+
+
+
   const handleSwitchChange = async (event, id) => {
     const originalChecked = true;
     const user_active_status = originalChecked
     const data = { id: id, status: user_active_status };
+    const confirmed = await showCustomAlert("confirm", "Do you want to save the changes ?");
+    if (!confirmed) return;
 
-    const result = await Swal.fire({
-      title: "Do you want to save the changes?",
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      cancelButtonText: "Cancel",
-      allowOutsideClick: false,
-    });
-
-    if (result.isConfirmed) {
-      try {
-        const response = await Basketstatus(data, token);
-        if (response.status) {
-          Swal.fire({
-            title: "Saved!",
-            icon: "success",
-            timer: 1000,
-            timerProgressBar: true,
-          });
-          setTimeout(() => {
-            Swal.close();
-          }, 1000);
-        }
+    try {
+      const response = await Basketstatus(data, token);
+      if (response.status) {
+        showCustomAlert("Success", "Publish Stock Successfully ")
         getbasketlist();
-      } catch (error) {
-        Swal.fire(
-          "Error",
-          "There was an error processing your request.",
-          "error"
-        );
+      } else {
+        showCustomAlert("error", response.message)
       }
-    } else if (result.dismiss === Swal.DismissReason.cancel) {
-      event.target.checked = !originalChecked;
-      getbasketlist();
+    } catch (error) {
+      showCustomAlert("error", "There was an error processing your request.")
     }
   };
-
-
 
 
 
@@ -109,39 +131,19 @@ const Basket = () => {
     const originalChecked = event.target.checked;
     const user_active_status = originalChecked
     const data = { id: id, status: user_active_status };
-    const result = await Swal.fire({
-      title: "Do you want to save the changes?",
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      cancelButtonText: "Cancel",
-      allowOutsideClick: false,
-    });
+    const confirmed = await showCustomAlert("confirm", "Do you want to save the changes ?");
 
-    if (result.isConfirmed) {
-      try {
-        const response = await changestatusrebalance(data, token);
-        if (response.status) {
-          Swal.fire({
-            title: "Saved!",
-            icon: "success",
-            timer: 1000,
-            timerProgressBar: true,
-          });
-          setTimeout(() => {
-            Swal.close();
-          }, 1000);
-        }
-        getbasketlist();
-      } catch (error) {
-        Swal.fire(
-          "Error",
-          "There was an error processing your request.",
-          "error"
-        );
+    if (!confirmed) return
+    try {
+      const response = await changestatusrebalance(data, token);
+      if (response.status) {
+        showCustomAlert("Success", "Publish Stock Successfully ")
+      } else {
+        showCustomAlert("error", response.message)
       }
-    } else if (result.dismiss === Swal.DismissReason.cancel) {
-      event.target.checked = !originalChecked;
       getbasketlist();
+    } catch (error) {
+      showCustomAlert("error", "There was an error processing your request.")
     }
   };
 
@@ -153,41 +155,18 @@ const Basket = () => {
 
   const Deletebasket = async (_id) => {
     try {
-      const result = await Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to delete this item? This action cannot be undone.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel",
-      });
-
-      if (result.isConfirmed) {
-        const response = await deletebasket(_id, token);
-        if (response.status) {
-          Swal.fire({
-            title: "Deleted!",
-            text: "The item has been successfully deleted.",
-            icon: "success",
-            confirmButtonText: "OK",
-          });
-          getbasketlist();
-        }
+      const result = await showCustomAlert("confirm", "Do you want to delete this item? This action cannot be undone.");
+      if (!result) return
+      const response = await deletebasket(_id, token);
+      if (response.status) {
+        showCustomAlert("Success", "The item has been successfully deleted.")
+        getbasketlist();
       } else {
-        Swal.fire({
-          title: "Cancelled",
-          text: "The item deletion was cancelled.",
-          icon: "info",
-          confirmButtonText: "OK",
-        });
+        showCustomAlert("error", response.message)
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error deleting the item.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error", "There was an error deleting the item.")
+
     }
   };
 

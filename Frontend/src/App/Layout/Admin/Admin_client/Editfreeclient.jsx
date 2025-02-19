@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { UpdateClient } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
-
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 const Editfreeclient = () => {
@@ -21,7 +21,6 @@ const Editfreeclient = () => {
   const validate = (values) => {
     let errors = {};
 
-    // Full Name Validation
     if (!values.FullName) {
       errors.FullName = "Please Enter Full Name";
     } else if (!/^[A-Za-z\s]+$/.test(values.FullName)) {
@@ -32,8 +31,6 @@ const Editfreeclient = () => {
       errors.FullName = "Full Name should not exceed 50 characters";
     }
 
-
-    // Email Validation
     if (!values.Email) {
       errors.Email = "Please Enter Email";
     } else if (
@@ -42,7 +39,6 @@ const Editfreeclient = () => {
       errors.Email = "Please Enter a Valid Email Address";
     }
 
-    // Phone Number Validation
     if (!values.PhoneNo) {
       errors.PhoneNo = "Please Enter Phone Number";
     } else if (!/^\d{10}$/.test(values.PhoneNo)) {
@@ -62,41 +58,16 @@ const Editfreeclient = () => {
       PhoneNo: values.PhoneNo,
       // password: values.password,
       id: id,
-    };
-
+    }
     try {
       const response = await UpdateClient(req, token);
-      // console.log("Resoonse",response)
-
-
       if (response.status) {
-        Swal.fire({
-          title: "Update Successful!",
-          text: response.message,
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        setTimeout(() => {
-          navigate("/admin/freeclient");
-        }, 1500);
+        showCustomAlert("Success", response.message, navigate, "/admin/freeclient");
       } else {
-        Swal.fire({
-          title: "Error",
-          text: response.message,
-          icon: "error",
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("error", response.message);
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred. Please try again later.",
-        icon: "error",
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert("error", "An unexpected error occurred. Please try again later.");
     }
   };
 

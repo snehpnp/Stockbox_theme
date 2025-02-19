@@ -34,7 +34,7 @@ import { IndianRupee } from "lucide-react";
 import { exportToCSV } from "../../../../Utils/ExportData";
 import Table from "../../../Extracomponents/Table1";
 import Loader from "../../../../Utils/Loader";
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 
@@ -325,44 +325,23 @@ const Client = () => {
   const handleSwitchChange = async (event, id) => {
     const originalChecked = event.target.checked;
     const user_active_status = originalChecked ? "1" : "0";
-    const data = { id: id, status: user_active_status };
+    const data = { id, status: user_active_status };
 
-    const result = await Swal.fire({
-      title: "Do you want to save the changes?",
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      cancelButtonText: "Cancel",
-      allowOutsideClick: false,
-    });
+    const result = await showCustomAlert("confirm", "Do you want to save the changes?");
+    if (!result) return;
 
-    if (result.isConfirmed) {
-      try {
-        const response = await UpdateClientStatus(data, token);
-        if (response.status) {
-          Swal.fire({
-            title: "Saved!",
-            icon: "success",
-            timer: 1000,
-            timerProgressBar: true,
-          });
-          setTimeout(() => {
-            Swal.close();
-          }, 1000);
-        }
-        // Reload the plan list
-        getAdminclient();
-      } catch (error) {
-        Swal.fire(
-          "Error",
-          "There was an error processing your request.",
-          "error"
-        );
+    try {
+      const response = await UpdateClientStatus(data, token);
+      if (response.status) {
+        showCustomAlert("success", "Status Changed");
       }
-    } else if (result.dismiss === Swal.DismissReason.cancel) {
-      event.target.checked = !originalChecked;
       getAdminclient();
+    } catch (error) {
+      showCustomAlert("error", "There was an error processing your request.");
     }
   };
+
+
 
   // Update service
   const Updateplansubscription = async () => {
@@ -375,34 +354,19 @@ const Client = () => {
       const response = await PlanSubscription(data, token);
 
       if (response && response.status) {
-        Swal.fire({
-          title: "Success!",
-          text: response.message || "Plan updated successfully.",
-          icon: "success",
-          confirmButtonText: "OK",
-          timer: 2000,
-        });
-
+        showCustomAlert("success", response.message);
         setUpdatetitle({ plan_id: "", client_id: "", price: "" });
         getAdminclient();
         handleCancel();
       } else {
-        Swal.fire({
-          title: "Error!",
-          text: response.message || "There was an error updating the Plan.",
-          icon: "error",
-          confirmButtonText: "Try Again",
-        });
+        showCustomAlert("error", response.message);
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "Server error",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error", "Server error");
     }
   };
+
+
 
   // assign basket
   const UpdateBasketservice = async () => {
@@ -414,32 +378,15 @@ const Client = () => {
       };
       const response = await BasketSubscription(data, token);
       if (response && response.status) {
-        Swal.fire({
-          title: "Success!",
-          text: "Basket service updated successfully.",
-          icon: "success",
-          confirmButtonText: "OK",
-          timer: 2000,
-        });
-
+        showCustomAlert("Success", "Basket service updated successfully.");
         setBasketdetail({ basket_id: "", client_id: "", price: "" });
         getAdminclient();
         handleCancel();
       } else {
-        Swal.fire({
-          title: "Error!",
-          text: response.message || "There was an error updating the Basket.",
-          icon: "error",
-          confirmButtonText: "Try Again",
-        });
+        showCustomAlert("error", response.message);
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error updating the Basket.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error", "There was an error updating the Basket.");
     }
   };
 
