@@ -1882,7 +1882,7 @@ class Clients {
                 }
               },
               {
-                $project: { FullName: 1, Email: 1, PhoneNo: 1 } // Get only required fields
+                $project: { FullName: 1, Email: 1, PhoneNo: 1, wamount: 1 } // Get only required fields
               }
             ],
             as: "client_details" // The resulting array of matched documents from clients

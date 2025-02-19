@@ -3,7 +3,7 @@ const multer = require('multer');
 const path = require('path');
 
 
-const {GetAccessToken,placeOrder,ExitplaceOrder,checkOrder,checkOrderBasket} = require('../Controllers/Angle')
+const {GetAccessToken,placeOrder,ExitplaceOrder,checkOrder,checkOrderBasket} = require('../Controllers/Upstox')
 
 router.get('/upstox/getaccesstoken', GetAccessToken);
 router.post('/upstox/placeorder', placeOrder);

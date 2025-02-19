@@ -10,17 +10,23 @@ const Stock_Modal = db.Stock;
 const Order_Modal = db.Order;
 const Basketorder_Modal = db.Basketorder;
 
+
+const qs = require("querystring");
+const jwt = require("jsonwebtoken");
+const path = require('path');
+const { exec } = require('child_process');
+const fs = require('fs');
+
 class Upstox {
 
     async GetAccessToken(req, res) {
         try {
-            var keystr = req.query.key;
+            var tokenCode = req.query.code;
+            var email = req.query.state;
 
+            if (tokenCode != undefined) {
 
-            if (keystr != undefined) {
-                var key = keystr.split('?auth_token=')[0];
-
-                const client = await Clients_Modal.findById(key);
+                const client = await Clients_Modal.findOne({ Email: email,ActiveStatus:1,del:0 });
 
                 if (!client) {
                     return res.status(404).json({
@@ -28,26 +34,38 @@ class Upstox {
                         message: "Client not found"
                     });
                 }
+                var hosts = req.headers.host;
 
-                var auth_token = keystr.split('?auth_token=')[1];
+                const requestData = new URLSearchParams();
+                requestData.append("code", tokenCode);
+                requestData.append("client_id", client.apikey);
+                requestData.append("client_secret", client.apisecret);
+                requestData.append("redirect_uri", `https://stockboxpnp.pnpuniverse.com/backend/upstox/getaccesstoken`);
+                requestData.append("grant_type", "authorization_code");
+        
+                const url = "https://api-v2.upstox.com/login/authorization/token";
+                const headers = {
+                    Accept: "application/json",
+                    "Api-Version": "2.0",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                };
+        
+                // Make the POST request
+                const response = await axios.post(url, requestData.toString(), { headers });
 
-                if (!auth_token) {
-                    return res.status(404).json({
-                        status: false,
-                        message: "Auth Token is required"
-                    });
-                }
+                if (response.data && response.data.access_token) {
+                   const auth_token = response.data.access_token;
 
-                const brokerlink = await Clients_Modal.findByIdAndUpdate(
-                    key,
+                   const brokerlink = await Clients_Modal.findOneAndUpdate(
+                    { Email: email }, // Find by email
                     {
                         authtoken: auth_token,  // Update authtoken
-                        dlinkstatus: 1,                        // Update dlinkstatus
-                        tradingstatus: 1                       // Update tradingstatus
+                        dlinkstatus: 1,         // Update dlinkstatus
+                        tradingstatus: 1        // Update tradingstatus
                     },
                     {
-                        new: true, // Return the updated document
-                        useFindAndModify: false // Prevent deprecation warning (optional)
+                        new: true,  // Return the updated document
+                        useFindAndModify: false // Prevent deprecation warning
                     }
                 );
 
@@ -55,7 +73,10 @@ class Upstox {
                     status: true,
                     message: "Broker login successfully",
                 });
-
+            }
+            else {
+                return res.status(500).json({ status: false, message: response.data });
+            }
 
             } else {
 
@@ -153,7 +174,35 @@ class Upstox {
                 });
             }
 
+            
+            const searchToken = stock.instrument_token; // Instrument Token to search
+            const filePath = path.join(__dirname, "../../tokenupstox/complete.csv");
+            
+            let tradingsymbol = null; // Declare outside for global scope
+            
+            try {
+                const data = fs.readFileSync(filePath, "utf8");
+                const lines = data.split("\n");
+            
+                for (const line of lines) {
+                    const parts = line.split(",");
+            
+                    if (parts.length > 1 && parts[1].replace(/"/g, "") === searchToken) {
+                        tradingsymbol = parts[0].replace(/"/g, ""); // Assign value to global variable
+                        break;
+                    }
+                }
+            } catch (err) {
+                console.error("Error reading file:", err);
+            }
+            
+            console.log("Found Trading Symbol:", tradingsymbol); // Now it will work correctly
+            
 
+return res.json({
+    status: true,
+    message: "Order Placed Successfully"
+});
 
             var data = JSON.stringify({
                 "variety": "NORMAL",

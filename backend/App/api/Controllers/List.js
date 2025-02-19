@@ -6181,17 +6181,16 @@ class List {
         }))
       };
 
-
-      //   const query = {
-      //     service: service_id,
-      //     close_status: false,
-      //     $or: uniquePlanIds.map((planId, index) => {
-      //         return {
-      //             planid: { $regex: `(^|,)${planId}($|,)` }
-      //             created_at: { $lte: planEnds[index] } // Compare created_at with the plan_end date of each subscription
-      //         };
-      //     })
-      // };
+    //   const query = {
+    //     service: service_id,
+    //     close_status: false,
+    //     $or: uniquePlanIds.map((planId, index) => {
+    //         return {
+    //             planid: { $regex: `(^|,)${planId}($|,)` }
+    //             created_at: { $lte: planEnds[index] } // Compare created_at with the plan_end date of each subscription
+    //         };
+    //     })
+    // };
 
 
       //console.log("Final Query:", JSON.stringify(query, null, 2));
@@ -6212,7 +6211,7 @@ class List {
 
 
       const signals = await Signal_Modal.find(query)
-        .sort({ created_at: -1 })
+        .sort({ closedate: -1 })
         .skip(skip)
         .limit(limitValue)
         .lean();
