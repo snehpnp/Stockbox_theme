@@ -6183,7 +6183,6 @@ class List {
         }))
       };
 
-
     //   const query = {
     //     service: service_id,
     //     close_status: false,
@@ -6214,7 +6213,7 @@ class List {
 
 
       const signals = await Signal_Modal.find(query)
-        .sort({ created_at: -1 })
+        .sort({ closedate: -1 })
         .skip(skip)
         .limit(limitValue)
         .lean();
