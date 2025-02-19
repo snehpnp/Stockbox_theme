@@ -15,13 +15,14 @@ const AddStock = () => {
   const { id: basket_id } = useParams();
   const [selectedServices, setSelectedServices] = useState([]);
   const [options, setOptions] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [formikValues, setFormikValues] = useState({});
   const [weightagecounting, setWeightagecounting] = useState(0);
   const [currentlocation, setCurrentlocation] = useState({})
   const [header, setHeader] = useState("Add Stock")
-
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [loadingPublish, setLoadingPublish] = useState(false);
+  const [loadingOptions, setLoadingOptions] = useState(false);
 
 
   const navigate = useNavigate();
@@ -43,8 +44,8 @@ const AddStock = () => {
       setOptions([]);
       return;
     }
+    setLoadingOptions(true);
 
-    setLoading(true);
     try {
       const response = await axios.post(
         `${Config.base_url}stock/getstockbysymbol`,
@@ -67,7 +68,7 @@ const AddStock = () => {
       console.error("Error fetching options:", error);
       setOptions([]);
     } finally {
-      setLoading(false);
+      setLoadingOptions(false);
     }
   };
 
@@ -131,10 +132,8 @@ const AddStock = () => {
   };
 
   const handleSubmit = async (status) => {
-    setLoading(true);
-
     if (Object.keys(formikValues).length === 0) {
-      Swal.fire("Warning", "Please add stock", "warning");
+      showCustomAlert("error", "Please add stock", null, null)
       return;
     }
 
@@ -145,7 +144,6 @@ const AddStock = () => {
 
     if (invalidStocks.length > 0) {
       showCustomAlert("error", "Each stock's weightage should be greater than zero.", null, null)
-      setLoading(false);
       return;
     }
 
@@ -157,14 +155,11 @@ const AddStock = () => {
 
     if (totalWeightage !== 100) {
       showCustomAlert("error", "Total weightage of all stocks must be exactly 100.", null, null)
-      setLoading(false);
-
       return;
     }
 
     if (!basket_id) {
       showCustomAlert("error", "Basket ID is missing. Please try again.", null, null)
-      setLoading(false);
       return;
     }
 
@@ -174,7 +169,6 @@ const AddStock = () => {
 
     if (emptyType.length > 0) {
       showCustomAlert("error", "Please select type.", null, null)
-      setLoading(false);
       return;
     }
 
@@ -189,6 +183,11 @@ const AddStock = () => {
       publishstatus: status === 1,
     };
 
+    if (status === 1) {
+      setLoadingPublish(true);
+    } else {
+      setLoadingSubmit(true);
+    }
 
     try {
       const response = await Addstockbasketform(requestData);
@@ -198,10 +197,11 @@ const AddStock = () => {
       } else {
         showCustomAlert("error", response.message, null, null)
       }
-      setLoading(false);
     } catch (error) {
-      setLoading(false);
       showCustomAlert("error", "An unexpected error occurred. Please try again.", null, null)
+    } finally {
+      setLoadingSubmit(false);
+      setLoadingPublish(false);
     }
 
   };
@@ -245,9 +245,9 @@ const AddStock = () => {
                 placeholder="Search and select stocks..."
                 isClearable
                 isMulti
-                isLoading={loading}
+                isLoading={loadingOptions}
                 noOptionsMessage={() =>
-                  loading ? "Loading..." : "No options found"
+                  loadingOptions ? "Loading..." : "No options found"
                 }
               />
               <div className="row">
@@ -334,18 +334,17 @@ const AddStock = () => {
               type="button"
               className="btn btn-primary mt-4"
               onClick={() => handleSubmit(0)}
-              disabled={loading}
+              disabled={loadingSubmit}
             >
-              {loading ? "Submitting..." : "Submit"}
+              {loadingSubmit ? "Submitting..." : "Submit"}
             </button>
             <button
               type="button"
               className="btn btn-primary mt-4 ms-2"
               onClick={() => handleSubmit(1)}
-              disabled={loading}
+              disabled={loadingPublish}
             >
-              {loading ? "Publishing..." : " Submit & Publish"}
-
+              {loadingPublish ? "Publishing..." : "Submit & Publish"}
             </button>
           </form>
         </div>

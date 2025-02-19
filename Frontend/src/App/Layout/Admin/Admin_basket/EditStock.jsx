@@ -19,12 +19,14 @@ const EditStock = () => {
     const { stock } = location.state || {};
     const [selectedServices, setSelectedServices] = useState([]);
     const [options, setOptions] = useState([]);
-    const [loading, setLoading] = useState(false);
     const [inputValue, setInputValue] = useState("");
     const [formValues, setFormValues] = useState({});
     const [weightagecounting, setWeightagecounting] = useState(0);
     const [currentlocation, setCurrentlocation] = useState({})
 
+    const [loadingSubmit, setLoadingSubmit] = useState(false);
+    const [loadingPublish, setLoadingPublish] = useState(false);
+    const [loadingOptions, setLoadingOptions] = useState(false);
 
 
 
@@ -78,7 +80,8 @@ const EditStock = () => {
             setOptions([]);
             return;
         }
-        setLoading(true);
+        setLoadingOptions(true);
+
         try {
             const response = await axios.post(
                 `${Config.base_url}stock/getstockbysymbol`,
@@ -103,7 +106,7 @@ const EditStock = () => {
             console.error("Error fetching options:", error);
             setOptions([]);
         } finally {
-            setLoading(false);
+            setLoadingOptions(false);
         }
     };
 
@@ -181,7 +184,6 @@ const EditStock = () => {
 
 
     const handleSubmit = async (status) => {
-        setLoading(true);
         try {
             if (Object.keys(formValues).length === 0) {
                 showCustomAlert("error", "Stock is required for edit", "warning");
@@ -232,17 +234,25 @@ const EditStock = () => {
                 publishstatus: status === 0 ? false : status === 1 ? true : "",
             };
 
+            if (status === 1) {
+                setLoadingPublish(true);
+            } else {
+                setLoadingSubmit(true);
+            }
+
+
             const response = await updateStockList(requestData);
             if (response?.status) {
                 showCustomAlert("Success", response.message, navigate, "/admin/basket");
             } else {
                 showCustomAlert("error", response.message);
+
             }
         } catch (error) {
             showCustomAlert("error", "An unexpected error occurred. Please try again.");
-
         } finally {
-            setLoading(false);
+            setLoadingSubmit(false);
+            setLoadingPublish(false);
         }
     };
 
@@ -278,8 +288,8 @@ const EditStock = () => {
                         placeholder="Search and select stocks..."
                         isClearable
                         isMulti
-                        isLoading={loading}
-                        noOptionsMessage={() => (loading ? "Loading..." : "No options found")}
+                        isLoading={loadingOptions}
+                        noOptionsMessage={() => (loadingOptions ? "Loading..." : "No options found")}
                     />
 
                     <div className="row">
@@ -351,17 +361,17 @@ const EditStock = () => {
                         type="button"
                         className="btn btn-primary mt-4"
                         onClick={() => handleSubmit(0)}
-                        disabled={loading}
+                        disabled={loadingSubmit}
                     >
-                        {loading ? "Submitting..." : "Submit"}
+                        {loadingSubmit ? "Submitting..." : "Submit"}
                     </button>
                     <button
                         type="button"
                         className="btn btn-primary mt-4 ms-2"
                         onClick={() => handleSubmit(1)}
-                        disabled={loading}
+                        disabled={loadingPublish}
                     >
-                        {loading ? "Publishing..." : "Submit & Publish"}
+                        {loadingPublish ? "Publishing..." : "Submit & Publish"}
                     </button>
 
                 </div>

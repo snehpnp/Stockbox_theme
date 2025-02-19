@@ -251,18 +251,18 @@ const Viewclientdetail = () => {
 
     {
       name: "Purchase Date",
-      selector: (row) => (row?.created_at ? fDateTime(row?.created_at) : ""),
-      width: "180px",
+      selector: (row) => (row?.created_at ? fDateTimeH(row?.created_at) : ""),
+      width: "260px",
     },
     {
       name: "Start Date",
-      selector: (row) => (row?.plan_start ? fDateTime(row?.plan_start) : ""),
-      width: "180px",
+      selector: (row) => (row?.plan_start ? fDateTimeH(row?.plan_start) : ""),
+      width: "260px",
     },
     {
       name: "Expiry Date",
-      selector: (row) => (row?.plan_end ? fDateTime(row?.plan_end) : ""),
-      width: "195px",
+      selector: (row) => (row?.plan_end ? fDateTimeH(row?.plan_end) : ""),
+      width: "260px",
     },
   ];
 
