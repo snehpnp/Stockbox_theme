@@ -4811,7 +4811,7 @@ class List {
               {
                 type: { $in: ['close signal', 'open signal'] },
                 $or: subscriptions.map((sub) => ({
-                  segmentid: { $regex: `(^|,)${sub.plan_id}($|,)` }, // Match plan_id in segmentid
+                  segmentid: { $regex: `(^|,)${sub.plan_category_id}($|,)` }, // Match plan_id in segmentid
                   createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
                 }))
               },
