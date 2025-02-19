@@ -376,18 +376,14 @@ const AddSignal = () => {
       showWhen: (values) => values.segment === "O"
     },
     {
-      name: 'entrytype',
-      label: 'Entry Type',
-      type: 'select',
-      options: [
-        { label: 'At', value: 'At' },
-        { label: 'Above', value: 'Above' },
-        { label: 'Below', value: 'Below' },
-      ],
+      name: 'price',
+      label: 'Entry Price',
+      type: 'number',
       label_size: 12,
       col_size: 6,
       star: true
     },
+
     {
       name: 'callduration',
       label: 'Trade Duration',
@@ -426,9 +422,14 @@ const AddSignal = () => {
       star: true
     },
     {
-      name: 'price',
-      label: 'Entry Price',
-      type: 'number',
+      name: 'entrytype',
+      label: 'Entry Type',
+      type: 'select',
+      options: [
+        { label: 'At', value: 'At' },
+        { label: 'Above', value: 'Above' },
+        { label: 'Below', value: 'Below' },
+      ],
       label_size: 12,
       col_size: 6,
       star: true
@@ -441,9 +442,6 @@ const AddSignal = () => {
       col_size: 6,
       star: false
     },
-
-
-
     {
       name: 'tag1',
       label: 'Target-1',

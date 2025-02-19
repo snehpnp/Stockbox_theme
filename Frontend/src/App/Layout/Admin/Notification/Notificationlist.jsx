@@ -5,6 +5,7 @@ import Table from '../../../Extracomponents/Table1';
 import { exportToCSV } from '../../../../Utils/ExportData';
 import { getAllNotificationlist } from '../../../Services/Admin/Admin';
 import { fDateTime } from '../../../../Utils/Date_formate';
+import Content from '../../../components/Contents/Content';
 
 
 
@@ -84,34 +85,31 @@ const Notificationlist = () => {
 
 
     return (
-        <div className="page-content">
-            <div className="page-breadcrumb  d-flex align-items-center mb-3">
-                <div className="breadcrumb-title pe-3">All Notification</div>
-                <div className="ps-3">
-                    <Link to="/admin/dashboard">
-                        <i className="bx bx-home-alt" />
-                    </Link>
-                </div>
-            </div>
-            <hr />
-            <div className="card">
-                <div className="card-body">
-                    <div className="d-lg-flex align-items-center mb-4 gap-3">
-                        <div className="position-relative">
-                            <input
-                                type="text"
-                                className="form-control ps-5 radius-10"
-                                placeholder="Search notification"
-                                value={searchInput}
-                                onChange={(e) => setSearchInput(e.target.value)}
-                            />
-                            <span className="position-absolute top-50 product-show translate-middle-y">
-                                <i className="bx bx-search" />
-                            </span>
-                        </div>
+        <Content
+            Page_title="Add Basket"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
+            <div className="page-content">
+                <div className="card">
+                    <div className="card-body">
+                        <div className="d-lg-flex align-items-center mb-4 gap-3">
+                            <div className="position-relative">
+                                <input
+                                    type="text"
+                                    className="form-control ps-5 radius-10"
+                                    placeholder="Search notification"
+                                    value={searchInput}
+                                    onChange={(e) => setSearchInput(e.target.value)}
+                                />
+                                <span className="position-absolute top-50 product-show translate-middle-y">
+                                    <i className="bx bx-search" />
+                                </span>
+                            </div>
 
 
-                        {/* <div
+                            {/* <div
                             className="ms-2"
                             onClick={(e) => getexportfile()}
                         >
@@ -131,17 +129,18 @@ const Notificationlist = () => {
 
 
 
+                        </div>
+                        <Table
+                            columns={columns}
+                            data={clients}
+                            totalRows={totalRows}
+                            currentPage={currentPage}
+                            onPageChange={handlePageChange}
+                        />
                     </div>
-                    <Table
-                        columns={columns}
-                        data={clients}
-                        totalRows={totalRows}
-                        currentPage={currentPage}
-                        onPageChange={handlePageChange}
-                    />
                 </div>
             </div>
-        </div>
+        </Content>
     );
 };
 
