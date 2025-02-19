@@ -3686,11 +3686,19 @@ class List {
         .skip((page - 1) * limit)  // Pagination
         .limit(parseInt(limit));   // Limit the number of records
 
+        const totalcount = await Notification_Modal.countDocuments(queryConditions);
+
       // Return the response with notifications
       return res.json({
         status: true,
         message: "Notifications fetched successfully",
-        data: result
+        data: result,
+        pagination: {
+          total: totalcount, // Total records count
+          page: page, // Current page
+          limit: limit, // Records per page
+          totalPages: Math.ceil(totalcount / limit) // Total pages
+        }
       });
     } catch (error) {
       // console.error(error);
@@ -4834,12 +4842,29 @@ class List {
         .skip((page - 1) * limit) // Pagination
         .limit(parseInt(limit)); // Limit the number of records
   
+
+        const totalcount = await Notification_Modal.countDocuments(queryConditions);
+
       // Return the response with notifications
       return res.json({
         status: true,
         message: "Notifications fetched successfully",
-        data: result
+        data: result,
+        pagination: {
+          total: totalcount, // Total records count
+          page: page, // Current page
+          limit: limit, // Records per page
+          totalPages: Math.ceil(totalcount / limit) // Total pages
+        }
       });
+
+
+      // // Return the response with notifications
+      // return res.json({
+      //   status: true,
+      //   message: "Notifications fetched successfully",
+      //   data: result
+      // });
     } catch (error) {
       // console.error(error);
       return res.status(500).json({ status: false, message: "Server error", data: [] });
