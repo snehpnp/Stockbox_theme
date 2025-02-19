@@ -92,7 +92,7 @@ const ClientOrderlist = () => {
 
     const getorder = async () => {
         try {
-            const data = { page: currentPage, clientid: userid, signalid: "" }
+            const data = { page: currentPage, clientid: "", signalid: "" }
             const response = await getOrderlistofclient(data, token);
             if (response.status) {
                 let filteredData = response.data;
