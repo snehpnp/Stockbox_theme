@@ -118,12 +118,12 @@ const Updatecoupon = () => {
       limitation: values.limitation,
       id: row._id,
     };
-    console.log("req data", req);
+    ;
 
 
     try {
       const response = await updateCouponbyadmin(req, token);
-      console.log("datata", response);
+
 
       if (response.status) {
         Swal.fire({
