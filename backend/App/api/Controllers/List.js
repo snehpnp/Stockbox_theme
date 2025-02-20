@@ -79,7 +79,6 @@ class List {
         data: bannerWithImageUrls
       });
     } catch (error) {
-      console.log("Error retrieving Banner:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -420,7 +419,7 @@ class List {
         },
       ];
       const result = await Plancategory_Modal.aggregate(pipeline);
-  
+
       return res.json({
         status: true,
         message: "Data retrieved successfully",
@@ -430,7 +429,7 @@ class List {
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
-  
+
 
   async getallPlan(req, res) {
     try {
@@ -3685,7 +3684,7 @@ class List {
         .skip((page - 1) * limit)  // Pagination
         .limit(parseInt(limit));   // Limit the number of records
 
-        const totalcount = await Notification_Modal.countDocuments(queryConditions);
+      const totalcount = await Notification_Modal.countDocuments(queryConditions);
 
       // Return the response with notifications
       return res.json({
@@ -4840,9 +4839,9 @@ class List {
         .sort({ createdAt: -1 })
         .skip((page - 1) * limit) // Pagination
         .limit(parseInt(limit)); // Limit the number of records
-  
 
-        const totalcount = await Notification_Modal.countDocuments(queryConditions);
+
+      const totalcount = await Notification_Modal.countDocuments(queryConditions);
 
       // Return the response with notifications
       return res.json({
@@ -6176,11 +6175,11 @@ class List {
 
       const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
 
-    
+
       // const uniquePlanIds = [
       //   ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
       // ].map(id => new ObjectId(id));
-      
+
 
       const query = {
         service: service_id,
@@ -6192,16 +6191,16 @@ class List {
         }))
       };
 
-    //   const query = {
-    //     service: service_id,
-    //     close_status: false,
-    //     $or: uniquePlanIds.map((planId, index) => {
-    //         return {
-    //             planid: { $regex: `(^|,)${planId}($|,)` }
-    //             created_at: { $lte: planEnds[index] } // Compare created_at with the plan_end date of each subscription
-    //         };
-    //     })
-    // };
+      //   const query = {
+      //     service: service_id,
+      //     close_status: false,
+      //     $or: uniquePlanIds.map((planId, index) => {
+      //         return {
+      //             planid: { $regex: `(^|,)${planId}($|,)` }
+      //             created_at: { $lte: planEnds[index] } // Compare created_at with the plan_end date of each subscription
+      //         };
+      //     })
+      // };
 
 
       //console.log("Final Query:", JSON.stringify(query, null, 2));
@@ -6534,13 +6533,12 @@ class List {
       if (!client) {
         return res.status(404).json({ message: "Client not found." });
       }
-    if(client.login_token == token){
-     return res.status(200).json({ status: true, });
-     }
-    else
-     {
-     return res.status(200).json({ status: false, });
-     }
+      if (client.login_token == token) {
+        return res.status(200).json({ status: true, });
+      }
+      else {
+        return res.status(200).json({ status: false, });
+      }
 
       // Update performance status (0 or 1)
       client.performance_status = performance_status;
