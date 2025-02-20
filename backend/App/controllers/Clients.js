@@ -2710,7 +2710,7 @@ class Clients {
   async orderListDetail(req, res) {
     try {
       const { clientid, signalid, page = 1 } = req.body; // Default pagination values
-      const limit = 1;
+      const limit = 10;
       const pageSize = parseInt(limit);
       const skip = (parseInt(page) - 1) * pageSize;
   

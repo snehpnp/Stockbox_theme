@@ -294,6 +294,7 @@ class Coupon {
   
       const image = req.files && req.files['image'] ? req.files['image'][0].filename : null;
     
+
       // Prepare the update object with the fields to update
       const updateFields = {
         name,
