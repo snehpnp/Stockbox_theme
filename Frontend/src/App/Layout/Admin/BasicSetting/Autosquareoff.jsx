@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { basicsettinglist, Updatesquareoffdata } from '../../../Services/Admin/Admin';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import Swal from 'sweetalert2';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { ArrowDown } from 'lucide-react';
-
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Autosquareoff = () => {
 
@@ -113,31 +112,12 @@ const Autosquareoff = () => {
                 try {
                   const response = await Updatesquareoffdata(req, token);
                   if (response.status) {
-                    Swal.fire({
-                      title: "Update Successful!",
-                      text: "Auto Squareoff updated successfully",
-                      icon: "success",
-                      timer: 1500,
-                      timerProgressBar: true,
-                    });
+                    showCustomAlert("Success", "Auto Squareoff updated successfully")
                   } else {
-                    Swal.fire({
-                      title: "Error",
-                      text: response.message,
-                      icon: "error",
-                      timer: 1500,
-                      timerProgressBar: true,
-                    });
+                    showCustomAlert("error", response.message)
                   }
                 } catch (error) {
-
-                  Swal.fire({
-                    title: "Error",
-                    text: "An unexpected error occurred. Please try again later.",
-                    icon: "error",
-                    timer: 1500,
-                    timerProgressBar: true,
-                  });
+                  showCustomAlert("error", "An unexpected error occurred. Please try again later.")
                 } finally {
                   setSubmitting(false);
                 }

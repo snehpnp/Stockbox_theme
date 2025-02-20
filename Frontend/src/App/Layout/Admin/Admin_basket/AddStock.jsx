@@ -4,7 +4,6 @@ import { useNavigate, Link, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import * as Config from "../../../../Utils/config";
 import { Tooltip } from 'antd';
-import Swal from "sweetalert2";
 import { Addstockbasketform } from "../../../Services/Admin/Admin";
 import Content from "../../../components/Contents/Content";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";

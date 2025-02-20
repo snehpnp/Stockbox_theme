@@ -3,12 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getClientRequestforfilter, DeleteClientRequest } from '../../../../Services/Admin/Admin';
 import Table from '../../../../Extracomponents/Table1';
 import { SquarePen, Trash2, PanelBottomOpen, Eye, RefreshCcw, IndianRupee } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { image_baseurl } from '../../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDateTime } from '../../../../../Utils/Date_formate';
 import Loader from '../../../../../Utils/Loader'
-
+import showCustomAlert from '../../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 
@@ -77,42 +76,20 @@ const ClientRequest = () => {
 
     const DeleteClient = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this Client? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert("confirm", 'Do you want to delete this member? This action cannot be undone.');
 
-            if (result.isConfirmed) {
+            if (result) {
                 const response = await DeleteClientRequest(_id, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The Client has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
+                    showCustomAlert("Success", 'The Client has been successfully deleted.');
                     gethistory();
                 }
             } else {
+                showCustomAlert("error", 'The Client deletion was cancelled.');
 
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The Client deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the Client.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'There was an error deleting the Client.');
 
         }
     };
@@ -131,19 +108,19 @@ const ClientRequest = () => {
             name: 'Full Name',
             selector: row => row?.FullName,
             sortable: true,
-            width: '200px',
+            width: '250px',
         },
         {
             name: 'Email',
             selector: row => row?.Email,
             sortable: true,
-            width: '300px',
+            width: '350px',
         },
         {
             name: 'Phone',
             selector: row => row?.PhoneNo,
             sortable: true,
-            width: '200px',
+            width: '250px',
         },
 
         {
@@ -165,7 +142,7 @@ const ClientRequest = () => {
             name: 'Entry time',
             selector: row => fDateTime(row.created_at),
             sortable: true,
-            width: '250px',
+            width: '200px',
         },
 
 

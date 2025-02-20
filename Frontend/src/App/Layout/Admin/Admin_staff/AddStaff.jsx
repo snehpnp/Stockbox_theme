@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { AddStaffClient } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
@@ -66,39 +65,16 @@ const AddStaff = () => {
     try {
       const response = await AddStaffClient(req, token);
       if (response.status) {
-        const redirectTo = "/admin/staff";
-        showCustomAlert("success", response.message, navigate, redirectTo);
-        // Swal.fire({
-        //   title: "Create Successful!",
-        //   text: response.message,
-        //   icon: "success",
-        //   timer: 1500,
-        //   timerProgressBar: true,
-        // });
-        // setTimeout(() => {
-        //   navigate("/admin/staff");
-        // }, 1500);
+        showCustomAlert("success", response.message, navigate, "/admin/staff");
+
       } else {
         showCustomAlert("error", response.message, navigate);
-        // Swal.fire({
-        //   title: "Error",
-        //   text: response.message,
-        //   icon: "error",
-        //   timer: 1500,
-        //   timerProgressBar: true,
-        // });
         setLoading(false)
       }
     } catch (error) {
       setLoading(false)
       showCustomAlert("error", "An unexpected error occurred. Please try again later.");
-      // Swal.fire({
-      //   title: "Error",
-      //   text: "An unexpected error occurred. Please try again later.",
-      //   icon: "error",
-      //   timer: 1500,
-      //   timerProgressBar: true,
-      // });
+
     }
   };
 

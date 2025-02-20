@@ -24,7 +24,9 @@ import { exportToCSV } from "../../../../Utils/ExportData";
 import Select from "react-select";
 import Content from "../../../components/Contents/Content";
 
+
 const Viewclientdetail = () => {
+  
   const { id } = useParams();
   const token = localStorage?.getItem("token");
 

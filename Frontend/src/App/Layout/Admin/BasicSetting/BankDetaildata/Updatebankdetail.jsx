@@ -1,11 +1,11 @@
 import React from "react";
 import { useFormik } from "formik";
 import DynamicForm from "../../../../Extracomponents/FormicForm";
-import Swal from "sweetalert2";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UpdateBankDetailbyadmin } from "../../../../Services/Admin/Admin";
 import { image_baseurl } from "../../../../../Utils/config";
 import Content from "../../../../components/Contents/Content";
+import showCustomAlert from "../../../../Extracomponents/CustomAlert/CustomAlert";
 
 const Updatebankdetail = () => {
 
@@ -43,33 +43,12 @@ const Updatebankdetail = () => {
     try {
       const response = await UpdateBankDetailbyadmin(req, token);
       if (response.status) {
-        Swal.fire({
-          title: "Update Successful!",
-          text: response.message,
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        setTimeout(() => {
-          navigate("/admin/bankdetail");
-        }, 1500);
+        showCustomAlert("Success", response.message, navigate, "/admin/bankdetail")
       } else {
-        Swal.fire({
-          title: "Error",
-          text: response.message,
-          icon: "error",
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("error", response.message)
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred. Please try again later.",
-        icon: "error",
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert("error", "An unexpected error occurred. Please try again later.")
     }
   };
 

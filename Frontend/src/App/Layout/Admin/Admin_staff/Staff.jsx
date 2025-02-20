@@ -5,7 +5,6 @@ import { GetStaff } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table';
 import { Eye, Pencil, Trash2, UserCog } from 'lucide-react';
 import { deleteStaff, updateStaffstatus } from '../../../Services/Admin/Admin';
-import Swal from 'sweetalert2';
 import { Tooltip } from 'antd';
 import ExportToExcel from '../../../../Utils/ExportCSV';
 import { fDate, fDateTime } from '../../../../Utils/Date_formate';
@@ -173,48 +172,25 @@ const Staff = () => {
 
         const user_active_status = event.target.checked ? "1" : "0";
         const data = { id: id, status: user_active_status }
-
-        const result = await Swal.fire({
-            title: "Do you want to save the changes?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
-
-        if (result.isConfirmed) {
+        const result = showCustomAlert("confirm", "Do you want to save the changes?")
+        if (result) {
             try {
                 const response = await updateStaffstatus(data, token)
                 if (response.status) {
 
                     if (!event.target.checked) {
-
                         socket.emit("deactivestaff", { id: id, msg: "logout" });
                     }
+                    showCustomAlert("Success", "Status Changed!")
 
-
-                    Swal.fire({
-                        title: "Saved!",
-                        icon: "success",
-                        timer: 1500,
-                        timerProgressBar: true,
-                    });
-
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1500);
                 }
                 getAdminclient();
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+                showCustomAlert("Success", "Status Changed!", "There was an error processing your request.")
+
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-            event.target.checked = !event.target.checked
-            // Swal.fire("Cancelled","No changes were made.","info")
+        } else {
+            event.target.checked = !user_active_status
             getAdminclient();
         }
 

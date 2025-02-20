@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Table from '../../../Extracomponents/Table1';
 import { Settings2, Eye, SquarePen, Trash2, Download, ArrowDownToLine } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { FreeClientList, FreeClientListWithFilter, PlanSubscription, BasketSubscription, DeleteFreeClient, getcategoryplan, getplanlist, getPlanbyUser, BasketAllActiveList } from '../../../Services/Admin/Admin';
 import { Tooltip } from 'antd';
 import { image_baseurl } from '../../../../Utils/config';
@@ -227,44 +226,19 @@ const Freeclient = () => {
 
     const DeleteClient = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this member? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert("confirm", 'Do you want to delete this member? This action cannot be undone.');
 
-            if (result.isConfirmed) {
+            if (result) {
                 const response = await DeleteFreeClient(_id, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The Client has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
+                    showCustomAlert("Success", 'Do you want to delete this member? This action cannot be undone.');
                     getdemoclient();
-
                 }
             } else {
-
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The  deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
+                showCustomAlert("error", 'The deletion was cancelled.');
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the Member.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
-
+            showCustomAlert("error", 'The deletion was cancelled.');
         }
     };
 

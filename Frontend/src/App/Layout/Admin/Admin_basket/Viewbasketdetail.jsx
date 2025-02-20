@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { Viewbasket, getstocklistById } from "../../../Services/Admin/Admin";
-import Swal from "sweetalert2";
 import { useNavigate, useParams, Link, useLocation } from "react-router-dom";
 import { Tooltip } from 'antd';
 import { SquarePen, Eye } from 'lucide-react';
 import { image_baseurl } from "../../../../Utils/config";
 import { Modal } from 'react-bootstrap';
 import Content from "../../../components/Contents/Content";
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 function cleanHtmlContent(html) {
@@ -332,8 +331,8 @@ const Viewbasketdetail = () => {
         });
       }
     } catch (error) {
-      console.error("Error fetching basket details:", error);
-      Swal.fire("Error", "Failed to fetch basket details.", "error");
+      showCustomAlert("error", "Failed to fetch basket details.");
+
     }
   };
 

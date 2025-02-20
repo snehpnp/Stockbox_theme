@@ -4,7 +4,6 @@ import axios from 'axios';
 import { GetClient } from '../../../Services/Admin/Admin';
 // import Table from '../../../components/Table';
 import { Settings2, Eye, SquarePen, Trash2, Download, ArrowDownToLine, RefreshCcw } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { deleteClient, UpdateClientStatus, PlanSubscription, getplanlist, BasketSubscription, BasketAllList, getcategoryplan, getPlanbyUser, DeleteClientHistory, getclientExportfile } from '../../../Services/Admin/Admin';
 import { Tooltip } from 'antd';
 import { fDateTime } from '../../../../Utils/Date_formate';
@@ -336,21 +335,21 @@ const ClientDeleteHistory = () => {
         <div>
             <div>
                 <div className="page-content">
-   <div className="page-breadcrumb  d-flex align-items-center mb-3 ">
-                            <div className="breadcrumb-title pe-3">Client Delete History</div>
-                            <div className="ps-3">
-                                <nav aria-label="breadcrumb">
-                                    <ol className="breadcrumb mb-0 p-0">
-                                        <li className="breadcrumb-item">
-                                            <Link to="/admin/dashboard">
-                                                <i className="bx bx-home-alt" />
-                                            </Link>
-                                        </li>
-                                    </ol>
-                                </nav>
-                            </div>
+                    <div className="page-breadcrumb  d-flex align-items-center mb-3 ">
+                        <div className="breadcrumb-title pe-3">Client Delete History</div>
+                        <div className="ps-3">
+                            <nav aria-label="breadcrumb">
+                                <ol className="breadcrumb mb-0 p-0">
+                                    <li className="breadcrumb-item">
+                                        <Link to="/admin/dashboard">
+                                            <i className="bx bx-home-alt" />
+                                        </Link>
+                                    </li>
+                                </ol>
+                            </nav>
                         </div>
-                 
+                    </div>
+
 
                     <hr />
 

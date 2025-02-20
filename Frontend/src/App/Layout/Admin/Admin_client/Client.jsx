@@ -12,7 +12,6 @@ import {
   ArrowDownToLine,
   RefreshCcw,
 } from "lucide-react";
-import Swal from "sweetalert2";
 import {
   deleteClient,
   UpdateClientStatus,
@@ -281,41 +280,20 @@ const Client = () => {
 
   const DeleteClient = async (_id) => {
     try {
-      const result = await Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to delete this Client member? This action cannot be undone.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel",
-      });
+      const result = await showCustomAlert("confirm", "Do you want to delete this Client member? This action cannot be undone.");
 
-      if (result.isConfirmed) {
+      if (result) {
         const response = await deleteClient(_id, token);
         if (response.status) {
-          Swal.fire({
-            title: "Deleted!",
-            text: "The Client has been successfully deleted.",
-            icon: "success",
-            confirmButtonText: "OK",
-          });
+          showCustomAlert("error", "The Client has been successfully deleted.");
           getAdminclient();
         }
       } else {
-        Swal.fire({
-          title: "Cancelled",
-          text: "The Client deletion was cancelled.",
-          icon: "info",
-          confirmButtonText: "OK",
-        });
+        showCustomAlert("error", "The Client deletion was cancelled.");
+
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error deleting the Client.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error", "There was an error deleting the Client.");
     }
   };
 
@@ -555,12 +533,7 @@ const Client = () => {
                   setClientid(row);
                   getplanlistassinstatus(row._id);
                 } else {
-                  Swal.fire({
-                    title: "Reminder",
-                    text: "Activate the client first Then assign the package.",
-                    icon: "warning",
-                    confirmButtonText: "OK",
-                  });
+                  showCustomAlert("error", "Activate the client first Then assign the package.");
                 }
               }}
               style={{ cursor: "pointer", color: "orange" }}

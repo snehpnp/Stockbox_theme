@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { basicsettinglist, updatePayementgateway, UpdatePaymentstatus } from '../../../Services/Admin/Admin';
-import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+
+
 
 const Payementgateway = () => {
     const token = localStorage.getItem('token');
@@ -51,34 +53,19 @@ const Payementgateway = () => {
             type === "paymentstatus"
                 ? { paymentstatus: user_active_status, officepaymenystatus: clients?.officepaymenystatus }
                 : { paymentstatus: clients?.paymentstatus, officepaymenystatus: user_active_status };
+        const result = await showCustomAlert("confirm", "Do you want to save the changes?")
 
-        const result = await Swal.fire({
-            title: "Do you want to save the changes?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
-
-        if (result.isConfirmed) {
+        if (result) {
             try {
                 const response = await UpdatePaymentstatus(data, token);
                 if (response?.status) {
-                    Swal.fire({
-                        title: "Saved!",
-                        icon: "success",
-                        timer: 1000,
-                        timerProgressBar: true,
-                    });
+                    showCustomAlert("Success", "Status Changed")
                     setOnlinePaymentEnabled(user_active_status === 1);
                     getApidetail();
                 }
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+                showCustomAlert("error", "There was an error processing your request.")
+
             }
         }
     };
@@ -86,36 +73,19 @@ const Payementgateway = () => {
     const UpdateApi = async () => {
         try {
             if (!updateapi.razorpay_key.trim() || !updateapi.razorpay_secret.trim()) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Update Failed',
-                    text: 'Please fill all the required fields.',
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
+                showCustomAlert("error", 'Please fill all the required fields.')
                 return;
             }
 
             const data = { ...updateapi, id: user_id };
             const response = await updatePayementgateway(data, token);
             if (response?.status) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Update Successful!',
-                    text: 'Your API information was updated successfully.',
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
+                showCustomAlert("Success", 'Your API information was updated successfully.')
                 setInitialValues(updateapi);
             }
         } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Update Failed',
-                text: 'There was an error updating the API information. Please try again.',
-                timer: 1500,
-                timerProgressBar: true,
-            });
+            showCustomAlert("error", 'There was an error updating the API information. Please try again.')
+
         }
     };
 

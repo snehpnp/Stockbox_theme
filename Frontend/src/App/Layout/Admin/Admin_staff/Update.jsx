@@ -1,10 +1,10 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { UpdateStaff } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Update = () => {
   const navigate = useNavigate();
@@ -15,11 +15,7 @@ const Update = () => {
 
   const validate = (values) => {
     const errors = {};
-
-    // Regex to check for numbers
     const numberRegex = /[0-9]/;
-
-    // Regex to check for special characters
     const specialCharRegex = /[^a-zA-Z\s]/;
 
     if (!values.FullName) {
@@ -59,40 +55,17 @@ const Update = () => {
 
     try {
       const response = await UpdateStaff(req, token);
-
-      console.log("response", response);
-
-
       if (response.status) {
-        Swal.fire({
-          title: "Update Successful!",
-          text: response.message,
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        setTimeout(() => {
-          navigate("/admin/staff");
-        }, 1500);
+        showCustomAlert("Success", response.message, navigate, "/admin/staff")
       } else {
-        Swal.fire({
-          title: "Error",
-          text: response.error.message,
-          icon: "error",
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("Success", response.error.message)
+
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred. Please try again later.",
-        icon: "error",
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert("Success", "An unexpected error occurred. Please try again later.",)
     }
   };
+
 
   const formik = useFormik({
     initialValues: {
@@ -143,15 +116,7 @@ const Update = () => {
       disable: false,
       star: true
     },
-    // {
-    //   name: "password",
-    //   label: "Password",
-    //   type: "password", 
-    //   label_size: 12,
-    //   col_size: 3,
-    //   disable: false,
-    //   star:true
-    // },
+
   ];
 
   return (
@@ -171,8 +136,8 @@ const Update = () => {
         btn_name1_route={"/admin/staff"}
         additional_field={<></>}
       />
-      </Content>
-    
+    </Content>
+
   );
 };
 

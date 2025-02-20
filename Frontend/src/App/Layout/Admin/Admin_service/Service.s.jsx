@@ -9,7 +9,9 @@ import {
 } from "../../../Services/Admin/Admin";
 import Table from "../../../Extracomponents/Table";
 import { SquarePen, Trash2, PanelBottomOpen } from "lucide-react";
-import Swal from "sweetalert2";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+
+
 
 const Service = () => {
   const navigate = useNavigate();
@@ -57,34 +59,20 @@ const Service = () => {
       const response = await UpdateService(data, token);
 
       if (response && response.status) {
-        Swal.fire({
-          title: "Success!",
-          text: "Service updated successfully.",
-          icon: "success",
-          confirmButtonText: "OK",
-          timer: 2000,
-        });
-
+        showCustomAlert("Success", "Service updated successfully.")
         setUpdatetitle({ title: "", id: "" });
         getAdminservice();
         setModel(false);
       } else {
-        Swal.fire({
-          title: "Error!",
-          text: "There was an error updating the service.",
-          icon: "error",
-          confirmButtonText: "Try Again",
-        });
+        showCustomAlert("error", "There was an error updating the service.")
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error updating the service.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error", "There was an error updating the service.")
+
     }
   };
+
+
 
   // Add service
   const addservice = async () => {
@@ -92,14 +80,7 @@ const Service = () => {
       const data = { title: title.title, add_by: userid };
       const response = await AddService(data, token);
       if (response && response.status) {
-        Swal.fire({
-          title: "Success!",
-          text: "Service added successfully.",
-          icon: "success",
-          confirmButtonText: "OK",
-          timer: 2000,
-        });
-
+        showCustomAlert("Success", "Service added successfully.")
         setTitle({ title: "", add_by: "" });
         getAdminservice();
 
@@ -109,58 +90,35 @@ const Service = () => {
           bootstrapModal.hide();
         }
       } else {
-        Swal.fire({
-          title: "Error!",
-          text: "There was an error adding the service.",
-          icon: "error",
-          confirmButtonText: "Try Again",
-        });
+        showCustomAlert("error", "There was an error adding the service.")
+
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error adding the service.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error", "There was an error adding the service.")
+
     }
   };
+
+
+
 
   // Update status
   const handleSwitchChange = async (event, id) => {
     const user_active_status = event.target.checked ? "true" : "false";
     const data = { id: id, status: user_active_status };
-    const result = await Swal.fire({
-      title: "Do you want to save the changes?",
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      cancelButtonText: "Cancel",
-      allowOutsideClick: false,
-    });
-
-    if (result.isConfirmed) {
+    const result = await showCustomAlert("confirm", "Do you want to save the changes?")
+    if (result) {
       try {
         const response = await UpdateServiceStatus(data, token);
         if (response.status) {
-          Swal.fire({
-            title: "Saved!",
-            icon: "success",
-            timer: 1000,
-            timerProgressBar: true,
-          });
-          setTimeout(() => {
-            Swal.close();
-          }, 1000);
+          showCustomAlert("Success", "Saved!")
         }
         getAdminservice();
       } catch (error) {
-        Swal.fire(
-          "Error",
-          "There was an error processing your request.",
-          "error"
-        );
+        showCustomAlert("error", "There was an error processing your request.")
       }
-    } else if (result.dismiss === Swal.DismissReason.cancel) {
+    } else {
+      event.target.checked = !user_active_status;
       getAdminservice();
     }
   };
@@ -171,41 +129,20 @@ const Service = () => {
 
   const DeleteService = async (_id) => {
     try {
-      const result = await Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to delete this ? This action cannot be undone.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel",
-      });
-
-      if (result.isConfirmed) {
+      const result = await showCustomAlert("confirm", "Do you want to delete this ? This action cannot be undone.")
+      if (result) {
         const response = await Deleteservices(_id, token);
         if (response.status) {
-          Swal.fire({
-            title: "Deleted!",
-            text: "The staff has been successfully deleted.",
-            icon: "success",
-            confirmButtonText: "OK",
-          });
+          showCustomAlert("Success", "The Service has been successfully deleted.")
           getAdminservice();
         }
       } else {
-        Swal.fire({
-          title: "Cancelled",
-          text: "The staff deletion was cancelled.",
-          icon: "info",
-          confirmButtonText: "OK",
-        });
+        showCustomAlert("error", "The service deletion was cancelled.")
+
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error deleting the staff.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error", "There was an error deleting the Service.")
+
     }
   };
 

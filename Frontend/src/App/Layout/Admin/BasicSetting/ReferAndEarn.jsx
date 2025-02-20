@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { basicsettinglist, UpdatereferAndEarn } from "../../../Services/Admin/Admin";
 import { Formik, Form, Field } from "formik";
-import Swal from "sweetalert2";
 import { Link, useNavigate } from "react-router-dom";
 import { image_baseurl } from "../../../../Utils/config";
 import Loader from "../../../../Utils/Loader";
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 const ReferAndEarn = () => {
 
@@ -89,21 +88,9 @@ const ReferAndEarn = () => {
                   const response = await UpdatereferAndEarn(req, token);
 
                   if (response.status) {
-                    Swal.fire({
-                      title: "Update Successful!",
-                      text: response.message,
-                      icon: "success",
-                      timer: 1500,
-                      timerProgressBar: true,
-                    });
+                    showCustomAlert("Success", response.message)
                   } else {
-                    Swal.fire({
-                      title: "Error",
-                      text: response.message,
-                      icon: "error",
-                      timer: 1500,
-                      timerProgressBar: true,
-                    });
+                    showCustomAlert("error", response.message)
                   }
                   setIsChanged(false);
                   const fileInput = document.querySelector('input[name="refer_image"]');
@@ -112,13 +99,8 @@ const ReferAndEarn = () => {
                   }
 
                 } catch (error) {
-                  Swal.fire({
-                    title: "Error",
-                    text: "An unexpected error occurred. Please try again later.",
-                    icon: "error",
-                    timer: 1500,
-                    timerProgressBar: true,
-                  });
+                  showCustomAlert("error", "An unexpected error occurred. Please try again later.")
+
                 }
               }}
             >
