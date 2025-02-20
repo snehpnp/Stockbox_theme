@@ -294,6 +294,17 @@ class Coupon {
   
       const image = req.files && req.files['image'] ? req.files['image'][0].filename : null;
     
+      const coupon = await Coupon_Modal.findById(id);
+      if (!coupon) {
+          return res.status(404).json({ status: false, message: "Coupon not found" });
+      }
+
+      const oldTotalLimitation = coupon.totallimitation; 
+      const oldLimitation = coupon.limitation; 
+
+      const remainingOld = oldTotalLimitation - oldLimitation;  
+      const updatedLimitation = limitation - (oldTotalLimitation - remainingOld);
+
 
       // Prepare the update object with the fields to update
       const updateFields = {
@@ -306,7 +317,7 @@ class Coupon {
         minpurchasevalue,
         mincouponvalue,
         description,
-        limitation,
+        limitation:updatedLimitation,
         service,
         totallimitation:limitation
       };

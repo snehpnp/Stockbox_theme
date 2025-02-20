@@ -296,7 +296,7 @@ class Clients {
 
 
       const token = crypto.randomBytes(10).toString('hex'); // 10 bytes = 20 hex characters
-      client.token = token;
+      client.login_token = token;
       client.devicetoken = devicetoken;
       await client.save();
 

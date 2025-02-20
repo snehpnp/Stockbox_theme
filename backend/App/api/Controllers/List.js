@@ -6179,15 +6179,15 @@ class List {
       const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
 
     
-      const uniquePlanIds = [
-        ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
-      ].map(id => new ObjectId(id));
+      // const uniquePlanIds = [
+      //   ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
+      // ].map(id => new ObjectId(id));
       
 
       const query = {
         service: service_id,
         close_status: true,
-        $or: uniquePlanIds.map((planId, index) => ({
+        $or: planIds.map((planId, index) => ({
           planid: planId.toString(), // Matching the planid with regex
           created_at: { $lte: planEnds[index] },  
           closedate: { $gte: planStarts[index] }      // Checking if created_at is <= to planEnds
@@ -6564,7 +6564,7 @@ async checkClientToken(req, res) {
       if (!client) {
           return res.status(404).json({ message: "Client not found." });
       }
-    if(client.token == token){
+    if(client.login_token == token){
      return res.status(200).json({ status: true, });
      }
     else
