@@ -354,7 +354,10 @@ const Perform = () => {
 
                                                                         </div>
                                                                         <div className='p-3'>
-                                                                            <b className='text-black p-0'>Ideal Hit Accuracy</b><br />
+                                                                            <b className='text-black p-0'>Ideal Hit Accuracy : <small className="mb-0">
+                                                                                {item?.accuracy?.toFixed(2)}
+                                                                            </small>
+                                                                            </b><br />
                                                                             <b className='text-black p-0'>Ideal Hit Closed : <small className="mb-0">
                                                                                 {item?.count}
 

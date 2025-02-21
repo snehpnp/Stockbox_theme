@@ -241,7 +241,7 @@ const Freeclient = () => {
         try {
             const result = await Swal.fire({
                 title: 'Are you sure?',
-                text: 'Do you want to delete this member? This action cannot be undone.',
+                text: 'Do you want to delete this member This action cannot be undone.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, delete it!',

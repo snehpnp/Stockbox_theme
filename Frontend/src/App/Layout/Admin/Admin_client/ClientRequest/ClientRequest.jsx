@@ -76,7 +76,7 @@ const ClientRequest = () => {
 
     const DeleteClient = async (_id) => {
         try {
-            const result = await showCustomAlert("confirm", 'Do you want to delete this member? This action cannot be undone.');
+            const result = await showCustomAlert("confirm", 'Do you want to delete this member This action cannot be undone.');
 
             if (result) {
                 const response = await DeleteClientRequest(_id, token);
