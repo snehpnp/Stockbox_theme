@@ -9,6 +9,7 @@ const Planmanage = db.Planmanage;
 const BasicSetting_Modal = db.BasicSetting;
 const Freetrial_Modal = db.Freetrial;
 const Adminnotification_Modal = db.Adminnotification;
+const Refer_Modal = db.Refer;
 
 
 
@@ -1168,6 +1169,86 @@ class Dashboard {
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
+  async referEarn(req, res) {
+    try {
+      const { clientName, page = 1 } = req.body; // Extract filter and pagination from the body
+      const limit = 10;
+      const skip = (page - 1) * limit; // Calculate skip for pagination
+  
+      // Find clients matching the provided name (case-insensitive)
+      let clientIds = [];
+      if (clientName) {
+        const clients = await Clients_Modal.find({
+          FullName: { $regex: clientName, $options: "i" } // Case-insensitive search
+        }).select('_id'); // Only select client IDs
+  
+        clientIds = clients.map(client => client._id.toString());
+      }
+  
+      // Build filter for Refer_Modal
+      const filter = clientName
+        ? { user_id: { $in: clientIds } }
+        : {}; // If no clientName is provided, fetch all data
+  
+      // Get total records for pagination
+      const totalRecords = await Refer_Modal.countDocuments(filter);
+  
+      // Fetch referral data with filter, pagination, and sorting
+      const result = await Refer_Modal.find(filter)
+        .sort({ created_at: -1 })
+        .skip(skip)
+        .limit(limit);
+  
+      // Process result to attach client name and amount type
+      const processedResult = await Promise.all(result.map(async (entry) => {
+        let amountType = null;
+        let clientName = null;
+  
+        const userClient = await Clients_Modal.findById(entry.user_id);
+        const tokenClient = await Clients_Modal.findOne({ refer_token: entry.token });
+  
+        if (userClient) {
+          clientName = userClient.FullName || "";
+  
+          amountType = {
+            type: 'receiver',
+            amount: entry.receiveramount
+          };
+        } else if (tokenClient) {
+          clientName = tokenClient.FullName || "";
+  
+          amountType = {
+            type: 'sender',
+            amount: entry.senderamount
+          };
+        }
+  
+        return {
+          ...entry.toObject(),
+          amountType,
+          clientName
+        };
+      }));
+  
+      // Respond with processed result and pagination metadata
+      return res.json({
+        status: true,
+        message: "Referral data retrieved successfully",
+        data: processedResult,
+        pagination: {
+          totalRecords,
+          currentPage: page,
+          totalPages: Math.ceil(totalRecords / limit),
+          limit
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching referral data with filter and pagination:", error);
+      return res.status(500).json({ status: false, message: "Server error", data: [] });
+    }
+  }
+  
+  
   
 
 

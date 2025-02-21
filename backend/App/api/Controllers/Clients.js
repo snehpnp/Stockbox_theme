@@ -161,7 +161,7 @@ class Clients {
         }
 
         const finalMailBody = mailtemplate.mail_body.replace('{resetToken}', resetToken);
-        const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+        const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
 
         // Replace placeholders with actual values
         const finalHtml = htmlTemplate
@@ -309,8 +309,8 @@ class Clients {
           PhoneNo: client.PhoneNo,
           id: client.id,
           token: token,
-          angleredirecturl: `${req.protocol}://${req.headers.host}/backend/angle/getaccesstoken?key=${client._id}`,
-          aliceredirecturl: `${req.protocol}://${req.headers.host}/backend/aliceblue/getaccesstoken?key=${client._id}`
+          angleredirecturl: `https://${req.headers.host}/backend/angle/getaccesstoken?key=${client._id}`,
+          aliceredirecturl: `https://${req.headers.host}/backend/aliceblue/getaccesstoken?key=${client._id}`
         },
       });
     } catch (error) {
@@ -372,7 +372,7 @@ class Clients {
         }
 
         const finalMailBody = mailtemplate.mail_body.replace('{resetToken}', resetToken);
-        const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+        const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
         // Replace placeholders with actual values
         const finalHtml = htmlTemplate
           .replace(/{{company_name}}/g, settings.website_title)
@@ -1059,7 +1059,7 @@ class Clients {
       const PhoneNo = client.PhoneNo;
       // Define the redirect URL
       const baseUrl = "https://app.digio.in/#/gateway/login/";
-      const redirectUrl = encodeURIComponent(`${req.protocol}://${req.headers.host}`);
+      const redirectUrl = encodeURIComponent(`https://${req.headers.host}`);
 
       const fullUrl = `${baseUrl}${doc_id}/${refid}/${PhoneNo}?redirect_url=${redirectUrl}`;
 
@@ -1511,7 +1511,7 @@ class Clients {
         }
 
         const finalMailBody = mailtemplate.mail_body.replace('{resetToken}', resetToken);
-        const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+        const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
         // Replace placeholders with actual values
         const finalHtml = htmlTemplate
           .replace(/{{company_name}}/g, settings.website_title)

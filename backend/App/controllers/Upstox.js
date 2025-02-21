@@ -136,9 +136,9 @@ class Upstox {
 
             // Determine product type based on segment and call duration
             if (signal.callduration === "Intraday") {
-                producttype = "INTRADAY";
+                producttype = "I";
             } else {
-                producttype = signal.segment === "C" ? "DELIVERY" : "CARRYFORWARD";
+                producttype = signal.segment === "C" ? "D" : "D";
             }
 
             // Query Stock_Modal based on segment type
@@ -199,48 +199,42 @@ class Upstox {
             console.log("Found Trading Symbol:", tradingsymbol); // Now it will work correctly
             
 
-return res.json({
+
+
+var data = JSON.stringify({
+    "quantity": quantity,
+    "product": producttype,
+    "validity": "DAY",
+    "price": 0,
+    "tag": "string",
+    "instrument_token": tradingsymbol,
+    "order_type": "MARKET",
+    "transaction_type": signal.calltype,
+    "disclosed_quantity": 0,
+    "trigger_price": 0,
+    "is_amo": false
+});
+
+
+          
+
+
+let config = {
+    method: 'post',
+  maxBodyLength: Infinity,
+    url: 'https://api-hft.upstox.com/v2/order/place',
+    headers: { 
+      'Content-Type': 'application/json',
+     'Authorization': `Bearer ${authToken}`
+    },
+    data : data
+  };
+  
+  return res.json({
     status: true,
     message: "Order Placed Successfully"
 });
 
-            var data = JSON.stringify({
-                "variety": "NORMAL",
-                "tradingsymbol": stock.tradesymbol,
-                "symboltoken": stock.instrument_token,
-                "transactiontype": signal.calltype,
-                "exchange": exchange,
-                "ordertype": "MARKET",
-                "producttype": producttype,
-                "duration": "DAY",
-                "price": 0,
-                "squareoff": "0",
-                "stoploss": "0",
-                "quantity": quantity
-            });
-
-
-
-
-
-            const config = {
-                method: 'post',
-                url: 'https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/placeOrder',
-                //  url: 'https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/getOrderBook',
-
-                headers: {
-                    'Authorization': `Bearer ${authToken}`,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-UserType': 'USER',
-                    'X-SourceID': 'WEB',
-                    'X-ClientLocalIP': 'CLIENT_LOCAL_IP', // Replace with actual IP
-                    'X-ClientPublicIP': 'CLIENT_PUBLIC_IP', // Replace with actual IP
-                    'X-MACAddress': 'MAC_ADDRESS', // Replace with actual MAC address
-                    'X-PrivateKey': client.apikey // Replace with actual API key
-                },
-                data: data
-            };
 
 
             //  const response = await axios(config);
