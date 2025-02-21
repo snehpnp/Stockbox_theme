@@ -166,7 +166,7 @@ const Updatecoupon = () => {
       enddate: row?.enddate ? new Date(row.enddate).toISOString().split("T")[0] : "",
       minpurchasevalue: row?.minpurchasevalue || "",
       mincouponvalue: row?.mincouponvalue || "",
-      limitation: row?.limitation || "",
+      limitation: row?.totallimitation || "",
       service: row?.service ? row?.service : "",
       id: "",
     },
