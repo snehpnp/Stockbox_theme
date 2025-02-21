@@ -22,7 +22,7 @@ const AddStock = () => {
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [loadingPublish, setLoadingPublish] = useState(false);
   const [loadingOptions, setLoadingOptions] = useState(false);
-
+  const [description, setDescription] = useState("")
 
   const navigate = useNavigate();
 
@@ -180,7 +180,9 @@ const AddStock = () => {
       basket_id,
       stocks: stocksWithStatus,
       publishstatus: status === 1,
+      comments: description
     };
+
 
     if (status === 1) {
       setLoadingPublish(true);
@@ -222,6 +224,7 @@ const AddStock = () => {
 
 
   }, [formikValues])
+
 
 
   return (
@@ -323,12 +326,27 @@ const AddStock = () => {
                               readOnly={fieldKey === "name"}
                             />
                           )}
+
+
                         </div>
+
                       )
                   )}
+
                 </div>
+
               </div>
             )))}
+            <div style={{ marginTop: "15px" }}>
+              <label>Rationale</label>
+              <textarea
+                className="form-control"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
+
+
             <button
               type="button"
               className="btn btn-primary mt-4"

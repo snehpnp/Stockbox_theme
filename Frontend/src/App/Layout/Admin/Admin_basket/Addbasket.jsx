@@ -213,7 +213,9 @@ const AddBasket = () => {
         { value: "Monthly", label: "Monthly" },
         { value: "Quarterly", label: "Quarterly" },
         { value: "Half Yearly", label: "Half Yearly" },
-        { value: "Yearly", label: "Yearly" }
+        { value: "Yearly", label: "Yearly" },
+        { value: "Market Condition", label: "Market Condition" },
+        { value: "Need basis", label: "Need basis" }
       ],
     },
     {

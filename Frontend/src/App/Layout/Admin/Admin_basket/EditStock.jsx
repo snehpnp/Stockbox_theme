@@ -26,6 +26,7 @@ const EditStock = () => {
     const [loadingSubmit, setLoadingSubmit] = useState(false);
     const [loadingPublish, setLoadingPublish] = useState(false);
     const [loadingOptions, setLoadingOptions] = useState(false);
+    const [description, setDescription] = useState(stock && stock[0]?.comment || "")
 
 
 
@@ -231,6 +232,7 @@ const EditStock = () => {
                 stocks: stocksWithStatus,
                 version,
                 publishstatus: status === 0 ? false : status === 1 ? true : "",
+                comments: description
             };
 
             if (status === 1) {
@@ -356,6 +358,16 @@ const EditStock = () => {
                             </div>
                         </div>
                     ))}
+
+                    <div style={{ marginTop: "15px" }}>
+                        <label>Rationale</label>
+                        <textarea
+                            className="form-control"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                        />
+                    </div>
+
                     <button
                         type="button"
                         className="btn btn-primary mt-4"
