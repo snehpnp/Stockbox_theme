@@ -86,7 +86,7 @@ const Notificationlist = () => {
 
     return (
         <Content
-            Page_title="Add Basket"
+            Page_title="Notitfications"
             button_status={false}
             backbutton_status={true}
             backForword={true}
