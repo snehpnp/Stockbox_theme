@@ -48,6 +48,7 @@ const { angleorderplace } = require('../../Controllers/Angle')
 const { kotakneoorderplace } = require('../../Controllers/Kotakneo')
 const { markethuborderplace } = require('../../Controllers/Markethub')
 const { zerodhaorderplace } = require('../../Controllers/Zerodha')
+const { upstoxorderplace } = require('../../Controllers/Upstox')
 
 
 mongoose = require('mongoose');
@@ -4229,6 +4230,76 @@ class List {
               }
 
             }
+            else if (brokerid == 6) {
+
+              if (!isFundChecked) {
+                const orders = await Basketorder_Modal.find({
+                  tradesymbol: tradesymbol,
+                  clientid: clientid,
+                  basket_id: basket_id,
+                  version: version,
+                  borkerid: brokerid
+                })
+                  .sort({ createdAt: -1 }) // Sort by `createdAt` in descending order
+                  .limit(1);
+
+
+                if (orders.length > 0) {
+                  const order = orders[0]; // Use the first order if only one is relevant
+                  howmanytimebuy = (order.howmanytimebuy || 0) + 1; // Increment the `howmanytimebuy` value
+                }
+              }
+
+              const authToken = client.authtoken;
+              const apikey = client.apikey;
+
+            
+              let config = {
+                method: 'post',
+                url: 'https://api-hft.upstox.com/v2/user/get-funds-and-margin',
+                headers: {
+                     Authorization: `Bearer ${authToken}`,
+                },
+            };
+
+
+              const response = await axios(config);
+
+              if (response.data.status == 'success') {
+                const responseData = response.data.data;
+
+
+                if (!isFundChecked) {
+                  isFundChecked = true; // Set the flag to true
+                  const net = parseFloat(responseData,equity.available_margin); // Convert responseData.net to a float
+                  const total = parseFloat(totalAmount);
+
+                  if (total >= net) {
+                    return res.json({
+                      status: false,
+                      message: "Insufficient funds in your broker account.",
+                    });
+                  }
+                }
+
+
+
+                respo = await upstoxorderplace({
+                  id: clientid,
+                  basket_id: basket_id,
+                  quantity,
+                  price: lpPrice,
+                  tradesymbol: tradesymbol,
+                  instrumentToken: instrumentToken,
+                  version: stock.version,
+                  brokerid: brokerid,
+                  calltype: "BUY",
+                  howmanytimebuy // Increment version for the new stock order
+                });
+
+              }
+
+            }
 
           }
 
@@ -4414,7 +4485,7 @@ class List {
             });
 
           }
-          if (brokerid == 5) {
+         else if (brokerid == 5) {
             respo = await zerodhaorderplace({
               id: clientid,
               basket_id: basket_id,
@@ -4428,6 +4499,22 @@ class List {
               howmanytimebuy: ids
             });
           }
+          else   if (brokerid == 6) {
+            respo = await upstoxorderplace({
+              id: clientid,
+              basket_id: basket_id,
+              quantity: netQuantity,
+              price: lpPrice,
+              tradesymbol: tradesymbol,
+              instrumentToken: instrumentToken,
+              version: version,
+              brokerid: brokerid,
+              calltype: "SELL",
+              howmanytimebuy: ids
+            });
+          }
+
+
         } catch (innerError) {
           // console.error(`Error processing stock ${tradesymbol}:`, innerError);
           continue; // Skip this stock in case of an error
