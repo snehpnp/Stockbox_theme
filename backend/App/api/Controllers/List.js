@@ -80,6 +80,7 @@ class List {
         data: bannerWithImageUrls
       });
     } catch (error) {
+      console.log("Error retrieving Banner:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -427,6 +428,7 @@ class List {
         data: result,
       });
     } catch (error) {
+      console.log(error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -3771,9 +3773,6 @@ class List {
     }
   }
 
-
-
-
   async placeOrder(req, res) {
     try {
       const { basket_id, clientid, brokerid, investmentamount, type } = req.body;
@@ -3785,6 +3784,8 @@ class List {
           message: "Basket not found.",
         });
       }
+
+
 
       if (investmentamount < basket.mininvamount) {
         return res.json({
@@ -3831,12 +3832,13 @@ class List {
         });
       }
 
-
+      // Total investment amount
       const totalAmount = investmentamount;
 
+      // Initialize an array to store the calculated stock orders
       const stockOrders = [];
       let respo;
-      let isFundChecked = false;
+      let isFundChecked = false; // Flag to ensure we check funds only once
       // Iterate over each stock to calculate allocated amount and quantity
       for (const stock of existingStocks) {
         const { tradesymbol, weightage, name } = stock;
@@ -3845,7 +3847,7 @@ class List {
           // Fetch stock data from Stock_Modal
           const stockData = await Stock_Modal.findOne({ tradesymbol });
           if (!stockData) {
-
+            console.log(`Stock data not found for trade symbol: ${tradesymbol}`);
             continue; // Skip this stock if no data found
           }
 
@@ -4253,14 +4255,14 @@ class List {
               const authToken = client.authtoken;
               const apikey = client.apikey;
 
-            
+
               let config = {
                 method: 'post',
                 url: 'https://api-hft.upstox.com/v2/user/get-funds-and-margin',
                 headers: {
-                     Authorization: `Bearer ${authToken}`,
+                  Authorization: `Bearer ${authToken}`,
                 },
-            };
+              };
 
 
               const response = await axios(config);
@@ -4271,7 +4273,7 @@ class List {
 
                 if (!isFundChecked) {
                   isFundChecked = true; // Set the flag to true
-                  const net = parseFloat(responseData,equity.available_margin); // Convert responseData.net to a float
+                  const net = parseFloat(responseData, equity.available_margin); // Convert responseData.net to a float
                   const total = parseFloat(totalAmount);
 
                   if (total >= net) {
@@ -4485,7 +4487,7 @@ class List {
             });
 
           }
-         else if (brokerid == 5) {
+          else if (brokerid == 5) {
             respo = await zerodhaorderplace({
               id: clientid,
               basket_id: basket_id,
@@ -4499,7 +4501,7 @@ class List {
               howmanytimebuy: ids
             });
           }
-          else   if (brokerid == 6) {
+          else if (brokerid == 6) {
             respo = await upstoxorderplace({
               id: clientid,
               basket_id: basket_id,
@@ -4741,9 +4743,9 @@ class List {
       }
 
       const planIds = subscriptions
-      .map(sub => sub.plan_category_id)
-      .filter(id => id != null); // Filters out null and undefined
-  
+        .map(sub => sub.plan_category_id)
+        .filter(id => id != null); // Filters out null and undefined
+
 
 
       const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
@@ -6262,10 +6264,10 @@ class List {
       }
 
       const planIds = subscriptions
-    .map(sub => sub.plan_category_id)
-    .filter(id => id != null); // Filters out null and undefined
+        .map(sub => sub.plan_category_id)
+        .filter(id => id != null); // Filters out null and undefined
 
-    
+
       const planStarts = subscriptions.map(sub => new Date(sub.plan_start));
       const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
 
@@ -6413,7 +6415,7 @@ class List {
 
       const protocol = req.protocol;
       const baseUrl = `https://${req.headers.host}`;
-  
+
       // Enhance the signals with additional info
       const signalsWithReportUrls = await Promise.all(
         signals.map(async (signal) => {
@@ -6591,7 +6593,7 @@ class List {
 
       const protocol = req.protocol; // 'http' or 'https'
       const baseUrl = `https://${req.headers.host}`; // Base URL for constructing report path
-  
+
       const signalsWithReportUrls = signals.map(signal => ({
         ...signal,
         report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null
@@ -6629,12 +6631,6 @@ class List {
       if (!client) {
         return res.status(404).json({ message: "Client not found." });
       }
-      if (client.login_token == token) {
-        return res.status(200).json({ status: true, });
-      }
-      else {
-        return res.status(200).json({ status: false, });
-      }
 
       // Update performance status (0 or 1)
       client.performance_status = performance_status;
@@ -6646,7 +6642,6 @@ class List {
       return res.status(500).json({ message: "Something went wrong.", error: error.message });
     }
   }
-
 
 
 
@@ -6664,7 +6659,7 @@ class List {
       if (!client) {
         return res.status(404).json({ message: "Client not found." });
       }
-      if (client.token == token) {
+      if (client.login_token == token) {
         return res.status(200).json({ status: true, });
       }
       else {
