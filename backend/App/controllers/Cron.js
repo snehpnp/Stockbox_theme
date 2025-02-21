@@ -1007,19 +1007,11 @@ async function downloadAndExtractUpstox(req, res) {
         await pipeline(response.data, createGunzip(), fs.createWriteStream(extractedFilePath));
 
         // Send success response
-        return res.json({
-            status: true,
-            message: "Download and extraction completed successfully",
-            filePath: extractedFilePath,
-        });
+        return res.send("Done");
 
     } catch (err) {
         console.error("Error:", err);
-        return res.status(500).json({
-            status: false,
-            message: "An error occurred while downloading and extracting",
-            error: err.message,
-        });
+        return res.send("Not Done");
     }
 }
 

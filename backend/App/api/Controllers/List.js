@@ -62,7 +62,7 @@ class List {
 
       const banners = await Banner_Modal.find({ del: false, status: true });
       const protocol = req.protocol; // Will be 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       const bannerWithImageUrls = banners.map(banner => {
         return {
@@ -94,7 +94,7 @@ class List {
       const blogs = await Blogs_Modal.find({ del: false, status: true })
         .sort({ created_at: -1 });
       const protocol = req.protocol; // Will be 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       const blogsWithImageUrls = blogs.map(blog => {
         return {
@@ -146,7 +146,7 @@ class List {
         .limit(pageSize);
 
       const protocol = req.protocol; // 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       const blogsWithImageUrls = blogs.map(blog => {
         return {
@@ -183,7 +183,7 @@ class List {
       const news = await News_Modal.find({ del: false, status: true })
         .sort({ created_at: -1 });
       const protocol = req.protocol; // Will be 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       const newsWithImageUrls = news.map(newss => {
         return {
@@ -234,7 +234,7 @@ class List {
         .limit(pageSize);
 
       const protocol = req.protocol; // 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       const newsWithImageUrls = news.map(newss => {
         return {
@@ -934,7 +934,7 @@ class List {
           let finalMailBody = mailtemplate.mail_body
             .replace('{clientName}', `${client.FullName}`);
 
-          const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+          const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
 
           // Replace placeholders with actual values
           const finalHtml = htmlTemplate
@@ -1127,7 +1127,7 @@ class List {
           let finalMailBody = mailtemplate.mail_body
             .replace('{clientName}', `${client.FullName}`);
 
-          const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+          const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
 
           // Replace placeholders with actual values
           const finalHtml = htmlTemplate
@@ -1387,7 +1387,7 @@ class List {
       });
 
       const protocol = req.protocol; // Will be 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       const resultWithImageUrls = result.map(results => {
 
@@ -1574,7 +1574,7 @@ class List {
 
       const protocol = req.protocol; // Will be 'http' or 'https'
 
-      const baseUrl = `${protocol}://${req.headers.host}`; // Construct the base URL
+      const baseUrl = `https://${req.headers.host}`; // Construct the base URL
 
 
 
@@ -1739,7 +1739,7 @@ class List {
 
       const protocol = req.protocol; // Will be 'http' or 'https'
 
-      const baseUrl = `${protocol}://${req.headers.host}`; // Construct the base URL
+      const baseUrl = `https://${req.headers.host}`; // Construct the base URL
 
 
       if (search && search.trim() !== '') {
@@ -1970,7 +1970,7 @@ class List {
 
       const protocol = req.protocol; // Will be 'http' or 'https'
 
-      const baseUrl = `${protocol}://${req.headers.host}`; // Construct the base URL
+      const baseUrl = `https://${req.headers.host}`; // Construct the base URL
 
       const signalsWithReportUrls = signals.map(signal => {
 
@@ -2087,7 +2087,7 @@ class List {
       const baskets = await Basket_Modal.find({ del: false, status: true });
 
       const protocol = req.protocol; // 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       // Update each basket's image path
       baskets.forEach(basket => {
@@ -2293,7 +2293,7 @@ class List {
 
 
       const protocol = req.protocol; // 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       result.forEach(basket => {
         if (basket.image) {
@@ -3206,7 +3206,7 @@ class List {
 
 
       const protocol = req.protocol; // Will be 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
 
 
@@ -3712,7 +3712,7 @@ class List {
       const banks = await Bank_Modal.find({ del: false, status: true, type: 1 });
 
       const protocol = req.protocol; // 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`; // Construct base URL dynamically
+      const baseUrl = `https://${req.headers.host}`; // Construct base URL dynamically
       console.log(baseUrl);
       const bankWithImageUrls = banks.map(bank => {
         return {
@@ -3745,7 +3745,7 @@ class List {
 
       const protocol = req.protocol;
 
-      const baseUrl = `${protocol}://${req.headers.host}`; // Construct base URL dynamically
+      const baseUrl = `https://${req.headers.host}`; // Construct base URL dynamically
 
       const bankWithImageUrls = banks.map(bank => {
         return {
@@ -4653,7 +4653,12 @@ class List {
         });
       }
 
-      const planIds = subscriptions.map(sub => sub.plan_category_id);
+      const planIds = subscriptions
+      .map(sub => sub.plan_category_id)
+      .filter(id => id != null); // Filters out null and undefined
+  
+
+
       const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
 
       const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
@@ -4691,7 +4696,7 @@ class List {
       //console.log("Final Query:", JSON.stringify(query, null, 2));
       const protocol = req.protocol; // Will be 'http' or 'https'
 
-      const baseUrl = `${protocol}://${req.headers.host}`; // Construct the base URL
+      const baseUrl = `https://${req.headers.host}`; // Construct the base URL
 
 
 
@@ -5421,7 +5426,7 @@ class List {
           let finalMailBody = mailtemplate.mail_body
             .replace('{clientName}', `${client.FullName}`);
 
-          const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+          const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
 
           // Replace placeholders with actual values
           const finalHtml = htmlTemplate
@@ -5619,7 +5624,7 @@ class List {
 
 
       const protocol = req.protocol; // 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       // Update each basket's image path
       result.forEach(basket => {
@@ -5858,7 +5863,7 @@ class List {
           let finalMailBody = mailtemplate.mail_body
             .replace('{clientName}', `${client.FullName}`);
 
-          const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+          const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
 
           // Replace placeholders with actual values
           const finalHtml = htmlTemplate
@@ -6169,7 +6174,11 @@ class List {
         });
       }
 
-      const planIds = subscriptions.map(sub => sub.plan_category_id);
+      const planIds = subscriptions
+    .map(sub => sub.plan_category_id)
+    .filter(id => id != null); // Filters out null and undefined
+
+    
       const planStarts = subscriptions.map(sub => new Date(sub.plan_start));
       const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
 
@@ -6206,7 +6215,7 @@ class List {
       //console.log("Final Query:", JSON.stringify(query, null, 2));
       const protocol = req.protocol; // Will be 'http' or 'https'
 
-      const baseUrl = `${protocol}://${req.headers.host}`; // Construct the base URL
+      const baseUrl = `https://${req.headers.host}`; // Construct the base URL
 
 
 
@@ -6316,8 +6325,8 @@ class List {
         .lean();
 
       const protocol = req.protocol;
-      const baseUrl = `${protocol}://${req.headers.host}`;
-
+      const baseUrl = `https://${req.headers.host}`;
+  
       // Enhance the signals with additional info
       const signalsWithReportUrls = await Promise.all(
         signals.map(async (signal) => {
@@ -6494,8 +6503,8 @@ class List {
         .lean();
 
       const protocol = req.protocol; // 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`; // Base URL for constructing report path
-
+      const baseUrl = `https://${req.headers.host}`; // Base URL for constructing report path
+  
       const signalsWithReportUrls = signals.map(signal => ({
         ...signal,
         report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null

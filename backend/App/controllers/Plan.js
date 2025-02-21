@@ -6,6 +6,11 @@ const PlanSubscription_Modal = db.PlanSubscription;
 const Planmanage = db.Planmanage;
 const Clients_Modal = db.Clients;
 const License_Modal = db.License;
+const Refer_Modal = db.Refer;
+const BasicSetting_Modal = db.BasicSetting;
+const Addtocart_Modal = db.Addtocart;
+
+
 const Adminnotification_Modal = db.Adminnotification;
 
 class Plan {
@@ -388,6 +393,16 @@ async  statusChange(req, res) {
           });
       }
 
+
+
+      if (status === 'inactive') {
+        const deleteResult = await Addtocart_Modal.deleteMany({
+            plan_id: id,  // Matching plan ID
+            status: false // Status should be false (equivalent to 0)
+        });
+
+    }
+
       return res.json({
           status: true,
           message: "Status updated successfully",
@@ -674,6 +689,82 @@ try {
       client.freetrial  = 1; 
       await client.save();
        }
+
+
+
+       const settings = await BasicSetting_Modal.findOne();
+
+       const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
+ 
+       if (client.refer_status && client.token) {
+         if (refertokens.length > 0) {
+         }
+         else {
+ 
+           const senderamount = (price * settings.sender_earn) / 100;
+           const receiveramount = (price * settings.receiver_earn) / 100;
+ 
+           const results = new Refer_Modal({
+             token: client.token,
+             user_id: client._id,
+             senderearn: settings.sender_earn,
+             receiverearn: settings.receiver_earn,
+             senderamount: senderamount,
+             receiveramount: receiveramount,
+             status: 1
+           })
+           await results.save();
+ 
+           client.wamount += receiveramount;
+           await client.save();
+           const sender = await Clients_Modal.findOne({ refer_token: client.token, del: 0, ActiveStatus: 1 });
+ 
+           if (sender) {
+             sender.wamount += senderamount;
+             await sender.save();
+           } else {
+             // console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
+           }
+ 
+         }
+ 
+       }
+ 
+       if (refertokens.length > 0) {
+         for (const refertoken of refertokens) {
+           const senderamount = (price * refertoken.senderearn) / 100;
+           const receiveramount = (price * refertoken.receiverearn) / 100;
+ 
+           refertoken.senderamount = senderamount;
+           refertoken.receiveramount = receiveramount;
+           refertoken.status = 1;
+ 
+           await refertoken.save();
+ 
+           // Update client's wallet amount
+           client.wamount += receiveramount;
+           await client.save();
+ 
+           // Update sender's wallet amount
+           const sender = await Clients_Modal.findOne({ refer_token: refertoken.token, del: 0, ActiveStatus: 1 });
+ 
+           if (sender) {
+             sender.wamount += senderamount;
+             await sender.save();
+           } else {
+             // console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
+           }
+         }
+       } else {
+         console.log('No referral tokens found.');
+       }
+ 
+
+
+
+
+
+
 
 
 
@@ -1227,6 +1318,75 @@ try {
       client.freetrial  = 1; 
       await client.save();
        }
+
+
+       const settings = await BasicSetting_Modal.findOne();
+
+       const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
+ 
+       if (client.refer_status && client.token) {
+         if (refertokens.length > 0) {
+         }
+         else {
+ 
+           const senderamount = (price * settings.sender_earn) / 100;
+           const receiveramount = (price * settings.receiver_earn) / 100;
+ 
+           const results = new Refer_Modal({
+             token: client.token,
+             user_id: client._id,
+             senderearn: settings.sender_earn,
+             receiverearn: settings.receiver_earn,
+             senderamount: senderamount,
+             receiveramount: receiveramount,
+             status: 1
+           })
+           await results.save();
+ 
+           client.wamount += receiveramount;
+           await client.save();
+           const sender = await Clients_Modal.findOne({ refer_token: client.token, del: 0, ActiveStatus: 1 });
+ 
+           if (sender) {
+             sender.wamount += senderamount;
+             await sender.save();
+           } else {
+             // console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
+           }
+ 
+         }
+ 
+       }
+ 
+       if (refertokens.length > 0) {
+         for (const refertoken of refertokens) {
+           const senderamount = (price * refertoken.senderearn) / 100;
+           const receiveramount = (price * refertoken.receiverearn) / 100;
+ 
+           refertoken.senderamount = senderamount;
+           refertoken.receiveramount = receiveramount;
+           refertoken.status = 1;
+ 
+           await refertoken.save();
+ 
+           // Update client's wallet amount
+           client.wamount += receiveramount;
+           await client.save();
+ 
+           // Update sender's wallet amount
+           const sender = await Clients_Modal.findOne({ refer_token: refertoken.token, del: 0, ActiveStatus: 1 });
+ 
+           if (sender) {
+             sender.wamount += senderamount;
+             await sender.save();
+           } else {
+             // console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
+           }
+         }
+       } else {
+         console.log('No referral tokens found.');
+       }
+ 
 
 
 

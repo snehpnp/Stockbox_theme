@@ -283,6 +283,7 @@ class Coupon {
       }
 
      
+
   
 
       if (!id) {
@@ -299,11 +300,19 @@ class Coupon {
           return res.status(404).json({ status: false, message: "Coupon not found" });
       }
 
-      const oldTotalLimitation = coupon.totallimitation; 
-      const oldLimitation = coupon.limitation; 
 
-      const remainingOld = oldTotalLimitation - oldLimitation;  
+      if (limitation < coupon.totallimitation) {
+        return res.status(400).json({ status: false, message: "Limitation should be equal to or greater than the total limitation" });
+      }
+
+
+      const oldTotalLimitation = coupon.totallimitation; 
+      const remainingOld = coupon.limitation; 
+
+      // const remainingOld = oldTotalLimitation - oldLimitation;  
       const updatedLimitation = limitation - (oldTotalLimitation - remainingOld);
+
+
 
 
       // Prepare the update object with the fields to update
