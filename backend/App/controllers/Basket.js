@@ -245,7 +245,7 @@ class Basket {
 
   async AddStockInBasketForm(req, res) {
     try {
-      const { basket_id, stocks, publishstatus } = req.body; // Get basket_id and stocks from the request body
+      const { basket_id, stocks, publishstatus, comments} = req.body; // Get basket_id and stocks from the request body
 
       // Validate basket existence
       const basket = await Basket_Modal.findById(basket_id);
@@ -411,7 +411,7 @@ class Basket {
               total_value,
               quantity,
               type,
-              comment: comment || '',
+              comment: comments || '',
               version,
               weightage: percentage,
               status: status,
@@ -442,7 +442,7 @@ class Basket {
 
   async UpdateStockInBasketForm(req, res) {
     try {
-      const { basket_id, stocks, version, publishstatus } = req.body; // Include version in request body
+      const { basket_id, stocks, version, publishstatus, comments } = req.body; // Include version in request body
 
       // Validate basket existence
       const basket = await Basket_Modal.findById(basket_id);
@@ -616,7 +616,7 @@ class Basket {
           total_value,
           quantity,
           type,
-          comment: comment || '',
+          comment: comments || '',
           version,
           weightage: percentage,
           status: status,
