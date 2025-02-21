@@ -1272,7 +1272,7 @@ async function fetchZerodhaOrder(client, order) {
    
     var config = {
         method: 'get',
-        url: 'https://api.kite.trade/orders/' + orderid,
+        url: 'https://api.kite.trade/orders/' + order.orderid,
         headers: {
             'Authorization': 'token ' + apikey + ':' + authToken
         }
@@ -1281,6 +1281,30 @@ async function fetchZerodhaOrder(client, order) {
 
     return await axios(config);
 }
+
+
+
+async function fetchUpstoxOrder(client, order) {
+    const authToken = client.authtoken;
+    const apikey = client.apikey;
+
+   
+
+
+    var config = {
+        method: 'get',
+        url: 'https://api-v2.upstox.com/order/details',
+        headers: {
+           Authorization: `Bearer ${authToken}`,
+        },
+        params: {
+           order_id: order.orderid
+       }
+    };
+
+    return await axios(config);
+}
+
 
 
 async function processPendingOrders(req, res) {
@@ -1335,8 +1359,11 @@ async function processPendingOrders(req, res) {
                     case 4:
                         response = await fetchMarketHubOrder(client, order);
                         break;
-                        case 5:
+                    case 5:
                         response = await fetchZerodhaOrder(client, order);
+                        break;
+                    case 6:
+                        response = await fetchUpstoxOrder(client, order);
                         break;
                     default:
                         console.log(`Skipping order ${order.orderid}: Unsupported broker ID.`);
