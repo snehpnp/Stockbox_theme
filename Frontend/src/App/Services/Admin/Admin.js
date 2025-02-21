@@ -3314,3 +3314,20 @@ export async function getOrderlistofclient(data, token) {
         return err;
     }
 }
+
+
+
+export async function getReferAndEarnlist(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}dashboard/referearn`, data, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}

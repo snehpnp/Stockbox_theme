@@ -80,6 +80,7 @@ import Updatecoupon from "../Layout/Admin/Coupon/Updatecoupon";
 import Apiinfo from "../Layout/Admin/BasicSetting/Apiinfo";
 import ClientOrderlist from "../Layout/Admin/ClientOrderlist/ClientOrderlist";
 import Changepass from "../Layout/Auth/Changepass";
+import ReferAndEarnlist from "../Layout/Admin/BasicSetting/ReferAndEarnlist";
 
 
 
@@ -204,6 +205,7 @@ export default function App() {
       <Route path="/updatecondition" element={<Updatecondition />} />
 
       <Route path="/orderlist" element={<ClientOrderlist />} />
+      <Route path="/referAndEarnlist" element={<ReferAndEarnlist />} />
 
     </Routes>
   );
