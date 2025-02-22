@@ -319,6 +319,7 @@ const ClientOrderlist = () => {
                                     className="form-control"
 
                                 >
+                                    <option value="">Select</option>
                                     <option value="1">Angel One</option>
                                     <option value="2">Alice Blue</option>
                                     <option value="3">Kotak Neo</option>
