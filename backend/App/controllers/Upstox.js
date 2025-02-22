@@ -123,6 +123,9 @@ class Upstox {
 
 
             const authToken = client.authtoken;
+            const apikey = client.apikey;
+
+
             let optiontype, exchange, producttype;
 
             if (signal.segment === "C") {
@@ -273,7 +276,7 @@ let config = {
                         var hosts = req.headers.host;
 
                         if (response.data.message == "Invalid Token") {
-                            url = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=124c6797-b28d-47b1-91e5-6c26f7cb9a02&redirect_uri=https://${hosts}/backend/upstox/getaccesstoken&state=${client.Email}`;
+                            url = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=${apikey}&redirect_uri=https://${hosts}/backend/upstox/getaccesstoken&state=${client.Email}`;
                         }
                         return res.status(500).json({
                             status: false,
@@ -335,6 +338,7 @@ let config = {
 
 
             const authToken = client.authtoken;
+            const apikey = client.apikey;
             let optiontype, exchange, producttype;
 
             if (signal.segment === "C") {
@@ -526,7 +530,7 @@ let config = {
                             var hosts = req.headers.host;
 
                         if (response.data.message == "Invalid Token") {
-                            url = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=124c6797-b28d-47b1-91e5-6c26f7cb9a02&redirect_uri=https://${hosts}/backend/upstox/getaccesstoken&state=${client.Email}`;
+                            url = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=${apikey}&redirect_uri=https://${hosts}/backend/upstox/getaccesstoken&state=${client.Email}`;
                         }
                             return res.status(500).json({
                                 status: false,
@@ -618,7 +622,6 @@ let config = {
             const authToken = client.authtoken;
             const userId = client.apikey;
 
-
             var config = {
                              method: 'get',
                              url: 'https://api-v2.upstox.com/order/details',
@@ -693,6 +696,7 @@ let config = {
 
 
             const authToken = client.authtoken;
+            const apikey = client.apikey;
             let optiontype, exchange, producttype;
 
             if (signal.segment === "C") {
@@ -879,7 +883,7 @@ let config = {
                         else {
                             let url;
                             if (response.data.message == "Invalid Token") {
-                                url = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=124c6797-b28d-47b1-91e5-6c26f7cb9a02&redirect_uri=https://${hosts}/backend/upstox/getaccesstoken&state=${client.Email}`;
+                                url = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=${apikey}&redirect_uri=https://${hosts}/backend/upstox/getaccesstoken&state=${client.Email}`;
                             }
                             return {
                                 status: false,

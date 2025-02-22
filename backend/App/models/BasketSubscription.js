@@ -61,6 +61,14 @@ const BasketSubscriptionSchema = new Schema({
         enum: ['active', 'inactive', 'expired'], // Example statuses
         default: 'active'
     },
+    gst: {
+        type: Number,
+        default: 0
+    },
+    gstamount: {
+        type: Number,
+        default: 0
+    },
     del: {
         type: Boolean,
         default: false // Indicates whether the subscription is marked as deleted
