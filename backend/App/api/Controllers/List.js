@@ -5238,14 +5238,27 @@ class List {
       const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
 
       ////////////////// 17/10/2024 ////////////////////////
+
+      const settings = await BasicSetting_Modal.findOne();
+      let total = plan.price-discountPerPlan; // Use let for reassignable variables
+      let totalgst = 0;
+      
+      if (settings.gst > 0) {
+        totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
+        total = total + totalgst;
+      }
+
+
       // Create a new plan subscription record
       const newSubscription = new PlanSubscription_Modal({
         plan_id,
         plan_category_id: plan.category._id,
         client_id,
-        total: plan.price-discountPerPlan,
+        total: total,
         plan_price: plan.price,
         discount: discountPerPlan,
+        gstamount:totalgst,
+        gst: settings.gst,
         coupon: coupon_code,
         plan_start: start,
         plan_end: end,
@@ -5303,7 +5316,6 @@ class List {
         await client.save();
       }
 
-      const settings = await BasicSetting_Modal.findOne();
 
       const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
 
