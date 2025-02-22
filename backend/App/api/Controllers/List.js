@@ -1523,6 +1523,99 @@ class List {
   }
 
 
+
+
+  async applyCouponwithplan(req, res) {
+
+
+    try {
+      const { code, purchaseValue, planid } = req.body;
+      // Find the coupon by code
+      const coupon = await Coupon_Modal.findOne({ code, status: 'true', del: false });
+      if (!coupon) {
+        return res.status(404).json({ message: 'Coupon not found or is inactive' });
+      }
+
+
+
+
+      // Check if the coupon is within the valid date range
+      const currentDate = new Date();
+      const currentDateOnly = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()); // Strip time
+      const startDateOnly = new Date(coupon.startdate.getFullYear(), coupon.startdate.getMonth(), coupon.startdate.getDate());
+      const endDateOnly = new Date(coupon.enddate.getFullYear(), coupon.enddate.getMonth(), coupon.enddate.getDate());
+
+      if (currentDateOnly < startDateOnly || currentDateOnly > endDateOnly) {
+        return res.status(400).json({ status: false, message: 'Coupon is not valid at this time' });
+      }
+
+
+      // Check if the purchase meets the minimum purchase value requirement
+      if (purchaseValue < coupon.minpurchasevalue) {
+        return res.status(400).json({ status: false, message: `Minimum purchase value required is ${coupon.minpurchasevalue}` });
+      }
+      // Calculate the discount based on the coupon type
+      let discount = 0;
+      if (coupon.type === 'fixed') {
+        discount = coupon.value;
+      } else if (coupon.type === 'percentage') {
+        discount = (coupon.value / 100) * purchaseValue;
+      }
+
+      if (discount > purchaseValue) {
+        return res.status(400).json({ status: false, message: "Discount should be less than the purchase value." });
+      }
+
+
+      if (coupon.limitation <= 0) {
+        return res.status(400).json({ status: false, message: 'Coupon usage limit has been reached' });
+      }
+      if (coupon.service && coupon.service != 0) {
+        const plan = await Plan_Modal.findById(planid)
+          .populate('category')
+          .exec();
+        if (coupon.service != plan.category?.service) {
+
+          return res.status(404).json({ status: false, message: 'Service Does not match' });
+        }
+      }
+
+      // Ensure the discount does not exceed the minimum coupon value
+
+      if (coupon.mincouponvalue) {
+        if (discount > coupon.mincouponvalue) {
+          discount = coupon.mincouponvalue;
+        }
+      }
+
+      // Calculate the final price after applying the discount
+      const finalPrice = purchaseValue - discount;
+
+      const settings = await BasicSetting_Modal.findOne();
+      let total = finalPrice; // Use let for reassignable variables
+      let totalgst = 0;
+      
+      if (settings.gst > 0) {
+        totalgst = (finalPrice * settings.gst) / 100; // Use settings.gst instead of gst
+        total = finalPrice + totalgst;
+      }
+
+
+      return res.status(200).json({
+        status: true,
+        message: 'Coupon applied successfully',
+        originalPrice: purchaseValue,
+        discount,
+        finalPrice:total,
+        totalgst,
+
+      });
+    } catch (error) {
+      return res.status(500).json({ status: false, message: 'Server error', error: error.message });
+    }
+  }
+
+
   async showSignalsToClients(req, res) {
     try {
       const { service_id, client_id, search, page = 1 } = req.body;
@@ -5034,6 +5127,7 @@ class List {
       for (let i = 0; i < length; i++) {
         orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
       }
+      const settings = await BasicSetting_Modal.findOne();
 
 
       for (const plan_id of plan_ids) {
@@ -5239,7 +5333,6 @@ class List {
 
       ////////////////// 17/10/2024 ////////////////////////
 
-      const settings = await BasicSetting_Modal.findOne();
       let total = plan.price-discountPerPlan; // Use let for reassignable variables
       let totalgst = 0;
       
