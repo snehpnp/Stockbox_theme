@@ -1017,6 +1017,7 @@ try {
             discount: 1,
             validity:1,
             planDetails: 1,
+            gstamount: 1,
             clientName: '$clientDetails.FullName',
             clientEmail: '$clientDetails.Email',
             clientPhoneNo: '$clientDetails.PhoneNo',
@@ -1291,6 +1292,14 @@ try {
 
 
 ////////////////// 17/10/2024 ////////////////////////
+const settings = await BasicSetting_Modal.findOne();
+let total = plan.price; // Use let for reassignable variables
+let totalgst = 0;
+
+if (settings.gst > 0) {
+  totalgst = (plan.price * settings.gst) / 100; // Use settings.gst instead of gst
+  total = plan.price + totalgst;
+}
 
   
       // Create a new plan subscription record
@@ -1298,7 +1307,9 @@ try {
         plan_id,
         plan_category_id: plan.category._id,
         client_id,
-        total: plan.price,
+        total: total,
+        gstamount:totalgst,
+        gst: settings.gst,
         plan_price: price,
         plan_start: start,
         plan_end: end,
@@ -1320,7 +1331,6 @@ try {
        }
 
 
-       const settings = await BasicSetting_Modal.findOne();
 
        const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
  
