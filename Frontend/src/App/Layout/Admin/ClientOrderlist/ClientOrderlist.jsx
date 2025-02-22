@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getPayementhistory, getOrderlistofclient } from '../../../Services/Admin/Admin';
 
-import Table from '../../../Extracomponents/Table1';
-import Table1 from '../../../Extracomponents/Table';
+import Table1 from '../../../Extracomponents/Table1';
+import Table from '../../../Extracomponents/Table';
 import { RefreshCcw, IndianRupee, Eye, ArrowDownToLine } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
-import { fDateTime } from '../../../../Utils/Date_formate';
+import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
 import { exportToCSV } from '../../../../Utils/ExportData';
 import ReusableModal from '../../../components/Models/ReusableModal';
 
@@ -29,6 +28,7 @@ const ClientOrderlist = () => {
     const [endDate, setEndDate] = useState("");
 
     const [showModal, setShowModal] = useState(false);
+    const [text, setText] = useState([]);
 
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -96,7 +96,7 @@ const ClientOrderlist = () => {
             const response = await getOrderlistofclient(data, token);
             if (response.status) {
                 let filteredData = response.data;
-                setTotalRows(response.pagination.totalRecords)
+                setTotalRows(response.pagination?.totalRecords)
                 setClients(filteredData);
             }
         } catch (error) {
@@ -121,7 +121,13 @@ const ClientOrderlist = () => {
             width: '100px',
         },
         {
-            name: 'Full Name',
+            name: 'Date',
+            selector: row => fDateTimeH(row?.createdAt),
+            sortable: true,
+            width: '300px',
+        },
+        {
+            name: 'Name',
             selector: row => row?.clientDetails?.FullName,
             sortable: true,
             width: '200px',
@@ -130,26 +136,62 @@ const ClientOrderlist = () => {
             name: 'Email',
             selector: row => row?.clientDetails?.Email,
             sortable: true,
-            width: '300px',
+            width: '320px',
         },
         {
-            name: 'Phone',
+            name: 'Phone No',
             selector: row => row?.clientDetails?.PhoneNo,
             sortable: true,
             width: '200px',
         },
         {
-            name: 'Order_ID',
-            selector: row => row.orderid ? row.orderid : "Make By Admin",
+            name: 'Order Status',
+            selector: row => row?.data?.data?.status,
             sortable: true,
             width: '200px',
+        },
+        {
+            name: 'Entry Type',
+            selector: row => row?.data?.data?.transactiontype,
+            sortable: true,
+            width: '200px',
+        },
+        {
+            name: 'Symbol',
+            selector: row => row?.data?.data?.tradingsymbol,
+            sortable: true,
+            width: '300px',
+        },
+        {
+            name: 'Price',
+            selector: row => row?.data?.data?.price,
+            sortable: true,
+            width: '200px',
+        },
+        {
+            name: 'Quantity',
+            selector: row => row?.data?.data?.quantity,
+            sortable: true,
+            width: '200px',
+        },
+        {
+            name: 'Broker',
+            selector: row => row?.borkerid,
+            sortable: true,
+            width: '200px',
+        },
+        {
+            name: 'Order Id',
+            selector: row => row?.data?.data?.orderid,
+            sortable: true,
+            width: '300px',
         },
         {
             name: "Actions",
             selector: (row) => (
                 <div className="d-flex">
                     <Tooltip title="view">
-                        <Eye onClick={() => { setShowModal(true) }} />
+                        <Eye onClick={() => { setShowModal(true); setText(row?.data?.data?.text) }} />
                     </Tooltip>
 
                 </div>
@@ -161,52 +203,6 @@ const ClientOrderlist = () => {
     ];
 
 
-    const columns1 = [
-        {
-            name: 'S.No',
-            selector: (row, index) => (currentPage - 1) * 10 + index + 1,
-            sortable: false,
-            width: '100px',
-        },
-        {
-            name: 'Symbol',
-            selector: row => row?.signalDetails?.tradesymbol,
-            sortable: true,
-            width: '200px',
-        },
-        {
-            name: 'Stock',
-            selector: row => row?.signalDetails?.stock,
-            sortable: true,
-            width: '300px',
-        },
-        {
-            name: 'Call Type',
-            selector: row => row?.signalDetails?.calltype,
-            sortable: true,
-            width: '200px',
-        },
-        {
-            name: 'Call Duration',
-            selector: row => row.signalDetails?.callduration,
-            sortable: true,
-            width: '200px',
-        },
-        {
-            name: 'Entry Type',
-            selector: row => row.signalDetails?.entrytype,
-            sortable: true,
-            width: '200px',
-        },
-        {
-            name: 'Price',
-            selector: row => row.signalDetails?.price,
-            sortable: true,
-            width: '200px',
-        },
-
-
-    ];
 
 
     return (
@@ -232,7 +228,7 @@ const ClientOrderlist = () => {
                     <div className="card-body">
                         <div className="d-sm-flex align-items-center mb-4 gap-3 justify-content-between">
 
-                            {/* <div className="position-relative">
+                            <div className="position-relative">
                                 <input
                                     type="text"
                                     className="form-control ps-5 radius-10"
@@ -244,7 +240,7 @@ const ClientOrderlist = () => {
                                     <i className="bx bx-search" />
                                 </span>
 
-                            </div> */}
+                            </div>
 
 
                             {/* <div>
@@ -271,7 +267,7 @@ const ClientOrderlist = () => {
                         </div>
 
                         <div className="table-responsive">
-                            <Table
+                            <Table1
                                 columns={columns}
                                 data={clients}
                                 totalRows={totalRows}
@@ -287,21 +283,17 @@ const ClientOrderlist = () => {
                 show={showModal}
                 onClose={() => setShowModal(false)}
                 title={<>Signal Detail</>}
-                size="xl"
+                size="l"
                 body={
                     <>
                         <div className="card custom-card">
-                            <div>
-                                <Table1
-                                    columns={columns1}
-                                    data={clients}
-                                    pagination
-                                    striped
-                                    highlightOnHover
-                                    dense
-                                />
-                            </div>
+                            <textarea
+                                className="w-full h-full border-none outline-none p-2 resize-none bg-transparent"
+                                value={text}
+                                onChange={(e) => setText(e.target.value)}
+                            />
                         </div>
+
                     </>
                 }
             />

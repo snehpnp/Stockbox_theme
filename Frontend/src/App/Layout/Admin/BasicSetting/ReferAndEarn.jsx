@@ -88,7 +88,7 @@ const ReferAndEarn = () => {
                   const response = await UpdatereferAndEarn(req, token);
 
                   if (response.status) {
-                    showCustomAlert("Success", response.message)
+                    showCustomAlert("Success", "Refer and Earn Updated Successfully")
                   } else {
                     showCustomAlert("error", response.message)
                   }

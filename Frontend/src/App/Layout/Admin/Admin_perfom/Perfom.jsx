@@ -278,8 +278,7 @@ const Perform = () => {
         getperformdata(serviceId);
         getdatabysegment(serviceId)
         setserviceid(serviceId)
-        setActiveTab1(null)
-        setSelectedOption("All")
+
     };
 
 
