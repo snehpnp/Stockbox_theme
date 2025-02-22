@@ -176,7 +176,7 @@ const ClientOrderlist = () => {
         },
         {
             name: 'Broker',
-            selector: row => row?.borkerid,
+            selector: row => row?.borkerid == 1 ? "Angel One" : row?.borkerid == 2 ? "Alice Blue" : row?.borkerid == 3 ? "Kotak Neo" : row?.borkerid == 4 ? "Market Hub" : "",
             sortable: true,
             width: '200px',
         },
@@ -264,6 +264,75 @@ const ClientOrderlist = () => {
                                     </button>
                                 </div>
                             </div> */}
+                        </div>
+                        <div className='row mb-2'>
+                            <div className="col-md-3 col-sm-4 mb-3 mb-sm-0">
+                                <label htmlFor="">From Date</label>
+                                <input
+                                    type="date"
+                                    className="form-control"
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    value={startDate}
+                                />
+                            </div>
+
+
+                            <div className='col-md-3 col-sm-4 mb-3 mb-sm-0'>
+                                <label htmlFor="">To Date</label>
+
+                                <input
+                                    type="date"
+                                    className="form-control"
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                    value={endDate}
+                                />
+                            </div>
+                            <div className='col-md-3 col-sm-4 mb-3 mb-sm-0'>
+                                <label htmlFor="">Type</label>
+
+                                <select
+                                    className="form-control"
+
+                                >
+                                    <option value="">Select</option>
+                                    <option value="BUY">BUY</option>
+                                    <option value="SELL">SELL</option>
+                                </select>
+                            </div>
+                            <div className='col-md-3 col-sm-4 mb-3 mb-sm-0'>
+                                <label htmlFor="">Status</label>
+
+                                <select
+                                    className="form-control"
+
+                                >
+                                    <option value="">Select</option>
+                                    <option value="BUY">Pending</option>
+                                    <option value="SELL">Rejected</option>
+                                    <option value="SELL">Completed</option>
+                                </select>
+                            </div>
+                            <div className='col-md-3 col-sm-4 mb-3 mb-sm-0 mt-1'>
+                                <label htmlFor="">Broker</label>
+
+                                <select
+                                    className="form-control"
+
+                                >
+                                    <option value="1">Angel One</option>
+                                    <option value="2">Alice Blue</option>
+                                    <option value="3">Kotak Neo</option>
+                                    <option value="4">Market Hub</option>
+                                </select>
+                            </div>
+
+
+
+                            <div className="col-md-1 col-sm-2">
+                                <div className="refresh-icon mt-4">
+                                    <RefreshCcw onClick={resethandle} />
+                                </div>
+                            </div>
                         </div>
 
                         <div className="table-responsive">
