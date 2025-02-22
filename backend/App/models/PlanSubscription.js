@@ -67,6 +67,14 @@ const PlanSubscriptionSchema = new Schema({
         ref: 'Plancategory', 
         default: null
     },
+    gst: {
+        type: Number,
+        default: 0
+    },
+    gstamount: {
+        type: Number,
+        default: 0
+    },
     del: {
         type: Boolean,
         default: false // Indicates whether the subscription is marked as deleted

@@ -246,6 +246,11 @@ const BasicSettingSchema = new Schema({
         trim: true,
         default: null
     },
+    gst: {
+        type: Number,
+        trim: true,
+        default: 0
+    },
 
 }, {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }

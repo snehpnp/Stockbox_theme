@@ -3214,7 +3214,7 @@ class List {
 
 
    const result = await BasicSetting_Modal.findOne()
-  .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image')
+  .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst')
   .exec();
 
    if (result) {  
@@ -4894,15 +4894,16 @@ class List {
             clientid: null,
             $or: [
               // Global notifications for 'close signal' and 'open signal'
-              {
-                type: { $in: ['close signal', 'open signal'] },
-                $or: subscriptions.map((sub) => ({
-                  segmentid: { $regex: `(^|,)${sub.plan_category_id}($|,)` }, // Match plan_id in segmentid
-                  createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
-                }))
-              },
-              // Global notifications for 'add broadcast'
-            //  { type: 'add broadcast' },
+              ...(subscriptions.length > 0
+                ? [{
+                    type: { $in: ['close signal', 'open signal'] },
+                    $or: subscriptions.map((sub) => ({
+                      segmentid: { $regex: `(^|,)${sub.plan_category_id}($|,)` }, // Match plan_id in segmentid
+                      createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
+                    }))
+                  }]
+                : []),
+                
               // Include all other types of notifications (e.g., add coupon, blogs, news, etc.)
               { type: { $nin: ['close signal', 'open signal', 'add broadcast'] } }
             ]
@@ -4934,9 +4935,8 @@ class List {
         .skip((page - 1) * limit) // Pagination
         .limit(parseInt(limit)); // Limit the number of records
   
-
-        const totalcount = await Notification_Modal.countDocuments(queryConditions);
-
+      const totalcount = await Notification_Modal.countDocuments(queryConditions);
+  
       // Return the response with notifications
       return res.json({
         status: true,
@@ -4949,16 +4949,7 @@ class List {
           totalPages: Math.ceil(totalcount / limit) // Total pages
         }
       });
-
-
-      // // Return the response with notifications
-      // return res.json({
-      //   status: true,
-      //   message: "Notifications fetched successfully",
-      //   data: result
-      // });
     } catch (error) {
-      // console.error(error);
       return res.status(500).json({ status: false, message: "Server error", data: [] });
     }
   }
