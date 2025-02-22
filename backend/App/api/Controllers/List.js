@@ -3213,9 +3213,9 @@ class List {
 
 
 
-   const result = await BasicSetting_Modal.findOne()
-  .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst')
-  .exec();
+      const result = await BasicSetting_Modal.findOne()
+        .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst')
+        .exec();
 
       if (result) {
         result.logo = `${baseUrl}/uploads/basicsetting/${result.logo}`;
@@ -4896,14 +4896,14 @@ class List {
               // Global notifications for 'close signal' and 'open signal'
               ...(subscriptions.length > 0
                 ? [{
-                    type: { $in: ['close signal', 'open signal'] },
-                    $or: subscriptions.map((sub) => ({
-                      segmentid: { $regex: `(^|,)${sub.plan_category_id}($|,)` }, // Match plan_id in segmentid
-                      createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
-                    }))
-                  }]
+                  type: { $in: ['close signal', 'open signal'] },
+                  $or: subscriptions.map((sub) => ({
+                    segmentid: { $regex: `(^|,)${sub.plan_category_id}($|,)` }, // Match plan_id in segmentid
+                    createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
+                  }))
+                }]
                 : []),
-                
+
               // Include all other types of notifications (e.g., add coupon, blogs, news, etc.)
               { type: { $nin: ['close signal', 'open signal', 'add broadcast'] } }
             ]
@@ -4934,9 +4934,9 @@ class List {
         .sort({ createdAt: -1 })
         .skip((page - 1) * limit) // Pagination
         .limit(parseInt(limit)); // Limit the number of records
-  
+
       const totalcount = await Notification_Modal.countDocuments(queryConditions);
-  
+
       // Return the response with notifications
       return res.json({
         status: true,
