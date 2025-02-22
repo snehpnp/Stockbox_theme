@@ -5860,9 +5860,6 @@ class List {
         orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
       }
 
-
-
-
       for (const basket_id of basket_ids) {
 
       const basket = await Basket_Modal.findOne({
@@ -5899,13 +5896,25 @@ class List {
       const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
 
 
+
+      let total = basket.basket_price-discountPerPlan; // Use let for reassignable variables
+      let totalgst = 0;
+      
+      if (settings.gst > 0) {
+        totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
+        total = total + totalgst;
+      }
+
+
       // Create a new subscription
       const newSubscription = new BasketSubscription_Modal({
         basket_id,
         client_id,
-        total: basket.basket_price-discountPerPlan,
+        total: total,
         plan_price: basket.basket_price,
         discount: discountPerPlan,
+        gstamount:totalgst,
+        gst: settings.gst,
         coupon: coupon,
         startdate: start,
         enddate: end,
