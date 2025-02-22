@@ -6,12 +6,15 @@ const { Readable } = require('stream');
 const upload = require('../Utils/multerHelper'); 
 const multer = require('multer');
 
+
+
 const Basket_Modal = db.Basket;
 const Basketstock_Modal = db.Basketstock;
 const Stock_Modal = db.Stock;
 const Liveprice_Modal = db.Liveprice;
 const BasketSubscription_Modal = db.BasketSubscription;
 const Clients_Modal = db.Clients;
+const BasicSetting_Modal = db.BasicSetting;
 
 
 class Basket {
@@ -1303,6 +1306,101 @@ class Basket {
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
+
+
+
+  async addBasketSubscriptionWithPlan(req, res) {
+    try {
+      const { basket_id, client_id, price } = req.body;
+
+      // Validate input
+      if (!basket_id || !client_id) {
+        return res.status(400).json({ status: false, message: 'Missing required fields' });
+      }
+
+
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+      if (!client) {
+        return res.status(400).json({ status: false, message: 'Client Not Actived' });
+      }
+
+
+      const basket = await Basket_Modal.findOne({
+        _id: basket_id,
+        del: false
+      });
+
+
+
+      // Map plan validity to months
+      const validityMapping = {
+        '1 month': 1,
+        '2 months': 2,
+        '3 months': 3,
+        '6 months': 6,
+        '9 months': 9,
+        '1 year': 12,
+        '2 years': 24,
+        '3 years': 36,
+        '4 years': 48,
+        '5 years': 60,
+      };
+
+      const monthsToAdd = validityMapping[basket.validity];
+      if (monthsToAdd === undefined) {
+        return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+      }
+
+      const start = new Date();
+      const end = new Date(start);
+      end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+      end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+
+
+
+
+      const settings = await BasicSetting_Modal.findOne();
+      let total = basket.basket_price; // Use let for reassignable variables
+      let totalgst = 0;
+      
+      if (settings.gst > 0) {
+        totalgst = (basket.basket_price * settings.gst) / 100; // Use settings.gst instead of gst
+        total = basket.basket_price + totalgst;
+      }
+      
+
+      // Create a new subscription
+      const newSubscription = new BasketSubscription_Modal({
+        basket_id,
+        client_id,
+        total: total,
+        plan_price: basket.basket_price,
+        gstamount:totalgst,
+        gst: settings.gst,
+        startdate: start,
+        enddate: end,
+        validity: basket.validity,
+      });
+
+
+
+      // Save to the database
+      const savedSubscription = await newSubscription.save();
+
+      // Respond with the created subscription
+      return res.status(201).json({
+        status: true,
+        message: 'Subscription added successfully',
+        data: savedSubscription
+      });
+
+    } catch (error) {
+      // console.log(error);
+      return res.status(500).json({ status: false, message: 'Server error', data: [] });
+    }
+  }
+
+
 
 
   async BasketSubscriptionList(req, res) {

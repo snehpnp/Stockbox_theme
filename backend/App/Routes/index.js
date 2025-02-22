@@ -34,6 +34,7 @@ module.exports = function (app) {
     app.use(require("./Stockrating"))
     app.use(require("./Upstox"))
     app.use(require("./Zerodha"))
+    app.use(require("./Dhan"))
 
 
 

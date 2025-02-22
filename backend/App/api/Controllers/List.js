@@ -3213,9 +3213,9 @@ class List {
 
 
 
-      const result = await BasicSetting_Modal.findOne()
-        .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst')
-        .exec();
+   const result = await BasicSetting_Modal.findOne()
+  .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst')
+  .exec();
 
       if (result) {
         result.logo = `${baseUrl}/uploads/basicsetting/${result.logo}`;
@@ -4896,14 +4896,14 @@ class List {
               // Global notifications for 'close signal' and 'open signal'
               ...(subscriptions.length > 0
                 ? [{
-                  type: { $in: ['close signal', 'open signal'] },
-                  $or: subscriptions.map((sub) => ({
-                    segmentid: { $regex: `(^|,)${sub.plan_category_id}($|,)` }, // Match plan_id in segmentid
-                    createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
-                  }))
-                }]
+                    type: { $in: ['close signal', 'open signal'] },
+                    $or: subscriptions.map((sub) => ({
+                      segmentid: { $regex: `(^|,)${sub.plan_category_id}($|,)` }, // Match plan_id in segmentid
+                      createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
+                    }))
+                  }]
                 : []),
-
+                
               // Include all other types of notifications (e.g., add coupon, blogs, news, etc.)
               { type: { $nin: ['close signal', 'open signal', 'add broadcast'] } }
             ]
@@ -4934,9 +4934,9 @@ class List {
         .sort({ createdAt: -1 })
         .skip((page - 1) * limit) // Pagination
         .limit(parseInt(limit)); // Limit the number of records
-
+  
       const totalcount = await Notification_Modal.countDocuments(queryConditions);
-
+  
       // Return the response with notifications
       return res.json({
         status: true,
@@ -5261,36 +5261,10 @@ class List {
 
 
 
-      ////////////////// 17/10/2024 ////////////////////////
-
-      const settings = await BasicSetting_Modal.findOne();
-      let total = plan.price-discountPerPlan; // Use let for reassignable variables
-      let totalgst = 0;
-      
-      if (settings.gst > 0) {
-        totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
-        total = total + totalgst;
-      }
-
-
-      // Create a new plan subscription record
-      const newSubscription = new PlanSubscription_Modal({
-        plan_id,
-        plan_category_id: plan.category._id,
-        client_id,
-        total: total,
-        plan_price: plan.price,
-        discount: discountPerPlan,
-        gstamount:totalgst,
-        gst: settings.gst,
-        coupon: coupon_code,
-        plan_start: start,
-        plan_end: end,
-        validity: plan.validity,
-        orderid: orderid,
-        ordernumber:`INV-${orderNumber}`,
-        ordernumber:`INV-${orderNumber}.pdf`,
-      });
+      const updatedItems = await Addtocart_Modal.updateMany(
+        { client_id: client_id, status: false, basket_id: null }, // Find all matching items
+        { $set: { status: true } } // Update status to true
+      );
 
 
       if (coupon_code) {
@@ -5328,6 +5302,7 @@ class List {
         await client.save();
       }
 
+      const settings = await BasicSetting_Modal.findOne();
 
       const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
 
