@@ -48,6 +48,7 @@ const { angleorderplace } = require('../../Controllers/Angle')
 const { kotakneoorderplace } = require('../../Controllers/Kotakneo')
 const { markethuborderplace } = require('../../Controllers/Markethub')
 const { zerodhaorderplace } = require('../../Controllers/Zerodha')
+const { upstoxorderplace } = require('../../Controllers/Upstox')
 
 
 mongoose = require('mongoose');
@@ -62,7 +63,7 @@ class List {
 
       const banners = await Banner_Modal.find({ del: false, status: true });
       const protocol = req.protocol; // Will be 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       const bannerWithImageUrls = banners.map(banner => {
         return {
@@ -95,7 +96,7 @@ class List {
       const blogs = await Blogs_Modal.find({ del: false, status: true })
         .sort({ created_at: -1 });
       const protocol = req.protocol; // Will be 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       const blogsWithImageUrls = blogs.map(blog => {
         return {
@@ -147,7 +148,7 @@ class List {
         .limit(pageSize);
 
       const protocol = req.protocol; // 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       const blogsWithImageUrls = blogs.map(blog => {
         return {
@@ -184,7 +185,7 @@ class List {
       const news = await News_Modal.find({ del: false, status: true })
         .sort({ created_at: -1 });
       const protocol = req.protocol; // Will be 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       const newsWithImageUrls = news.map(newss => {
         return {
@@ -235,7 +236,7 @@ class List {
         .limit(pageSize);
 
       const protocol = req.protocol; // 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       const newsWithImageUrls = news.map(newss => {
         return {
@@ -282,12 +283,8 @@ class List {
     }
   }
 
-
-
   async getPlansByPlancategoryId(req, res) {
     try {
-    
-    
       const pipeline = [
         // Match all plancategories
         {
@@ -299,85 +296,87 @@ class List {
         // Lookup to get associated plans
         {
           $lookup: {
-            from: 'plans', // Collection name for plans
-            let: { categoryId: '$_id' }, // Define a variable for the category ID
+            from: "plans",
+            let: { categoryId: "$_id" },
             pipeline: [
-              // Match plans with specific category and additional filters
               {
                 $match: {
                   $expr: {
                     $and: [
-                      { $eq: ['$category', '$$categoryId'] }, // Match by category
-                      { $eq: ['$status', 'active'] }, // Status must be 'active'
-                      { $eq: ['$del', false] }, // del must be false
+                      { $eq: ["$category", "$$categoryId"] },
+                      { $eq: ["$status", "active"] },
+                      { $eq: ["$del", false] },
                     ],
                   },
                 },
               },
-              // Calculate price per month based on validity
               {
                 $addFields: {
                   pricePerMonth: {
                     $cond: {
-                      if: { $ne: ['$validity', null] }, // Check if validity is not null
+                      if: { $ne: ["$validity", null] },
                       then: {
                         $divide: [
-                          '$price', // Total price
+                          "$price",
                           {
                             $switch: {
                               branches: [
-                                { case: { $eq: ['$validity', '1 month'] }, then: 1 },
-                                { case: { $eq: ['$validity', '2 months'] }, then: 2 },
-                                { case: { $eq: ['$validity', '3 months'] }, then: 3 },
-                                { case: { $eq: ['$validity', '6 months'] }, then: 6 },
-                                { case: { $eq: ['$validity', '9 months'] }, then: 9 },
-                                { case: { $eq: ['$validity', '1 year'] }, then: 12 },
-                                { case: { $eq: ['$validity', '2 years'] }, then: 24 },
-                                { case: { $eq: ['$validity', '3 years'] }, then: 36 },
-                                { case: { $eq: ['$validity', '4 years'] }, then: 48 },
-                                { case: { $eq: ['$validity', '5 years'] }, then: 60 },
+                                { case: { $eq: ["$validity", "1 month"] }, then: 1 },
+                                { case: { $eq: ["$validity", "2 months"] }, then: 2 },
+                                { case: { $eq: ["$validity", "3 months"] }, then: 3 },
+                                { case: { $eq: ["$validity", "6 months"] }, then: 6 },
+                                { case: { $eq: ["$validity", "9 months"] }, then: 9 },
+                                { case: { $eq: ["$validity", "1 year"] }, then: 12 },
+                                { case: { $eq: ["$validity", "2 years"] }, then: 24 },
+                                { case: { $eq: ["$validity", "3 years"] }, then: 36 },
+                                { case: { $eq: ["$validity", "4 years"] }, then: 48 },
+                                { case: { $eq: ["$validity", "5 years"] }, then: 60 },
                               ],
-                              default: 1, // Default to 1 month if validity doesn't match
+                              default: 1,
                             },
                           },
                         ],
                       },
-                      else: '$price', // If no validity is specified, fallback to the full price
+                      else: "$price",
                     },
                   },
                 },
               },
-              // Sort by pricePerMonth or validity for ascending order
               {
-                $sort: { pricePerMonth: 1 }, // Sorting by price per month in ascending order
+                $sort: { pricePerMonth: 1 },
               },
-              // Optionally project fields in the plans
               {
                 $project: {
-                  _id: 1, // Plan ID
-                  title: 1, // Plan title
-                  description: 1, // Plan description
-                  price: 1, // Plan price
-                  validity: 1, // Plan validity
-                  pricePerMonth: 1, // Price per month
+                  _id: 1,
+                  title: 1,
+                  description: 1,
+                  price: 1,
+                  validity: 1,
+                  pricePerMonth: 1,
                 },
               },
             ],
-            as: 'plans', // Name of the array field to add
+            as: "plans",
+          },
+        },
+        // Remove categories where plans are empty
+        {
+          $match: {
+            plans: { $ne: [] },
           },
         },
         // Lookup to get associated services
         {
           $lookup: {
-            from: 'services',
+            from: "services",
             let: {
               serviceIds: {
                 $filter: {
-                  input: { $split: ['$service', ','] },
-                  as: 'id',
-                  cond: { $eq: [{ $strLenCP: '$$id' }, 24] } // Ensure only 24-char valid ObjectIds
-                }
-              }
+                  input: { $split: ["$service", ","] },
+                  as: "id",
+                  cond: { $eq: [{ $strLenCP: "$$id" }, 24] },
+                },
+              },
             },
             pipeline: [
               {
@@ -386,49 +385,38 @@ class List {
                     $and: [
                       {
                         $in: [
-                          '$_id',
+                          "$_id",
                           {
                             $map: {
-                              input: '$$serviceIds',
-                              as: 'id',
-                              in: { $toObjectId: '$$id' } // Convert only valid ObjectIds
-                            }
-                          }
-                        ]
+                              input: "$$serviceIds",
+                              as: "id",
+                              in: { $toObjectId: "$$id" },
+                            },
+                          },
+                        ],
                       },
-                      { $eq: ['$status', true] },
-                      { $eq: ['$del', false] }
-                    ]
-                  }
-                }
+                      { $eq: ["$status", true] },
+                      { $eq: ["$del", false] },
+                    ],
+                  },
+                },
               },
               {
                 $project: {
                   _id: 1,
-                  title: 1
-                }
-              }
+                  title: 1,
+                },
+              },
             ],
-            as: 'services'
-          }
+            as: "services",
+          },
         },
-        
-        // Project only the necessary fields
+        // Final projection
         {
           $project: {
-            title: 1, // Plancategory title
-            plans: {
-              _id: 1, // Plan ID
-              title: 1, // Plan title
-              description: 1, // Plan description
-              price: 1, // Plan price
-              validity: 1, // Plan validity
-              pricePerMonth: 1, // Price per month
-            },
-            services: {
-              _id: 1, // Service ID
-              title: 1, // Service title
-            },
+            title: 1,
+            plans: 1,
+            services: 1,
           },
         },
       ];
@@ -439,8 +427,8 @@ class List {
         message: "Data retrieved successfully",
         data: result,
       });
-
     } catch (error) {
+      console.log(error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -949,7 +937,7 @@ class List {
           let finalMailBody = mailtemplate.mail_body
             .replace('{clientName}', `${client.FullName}`);
 
-          const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+          const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
 
           // Replace placeholders with actual values
           const finalHtml = htmlTemplate
@@ -1142,7 +1130,7 @@ class List {
           let finalMailBody = mailtemplate.mail_body
             .replace('{clientName}', `${client.FullName}`);
 
-          const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+          const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
 
           // Replace placeholders with actual values
           const finalHtml = htmlTemplate
@@ -1402,7 +1390,7 @@ class List {
       });
 
       const protocol = req.protocol; // Will be 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       const resultWithImageUrls = result.map(results => {
 
@@ -1535,6 +1523,99 @@ class List {
   }
 
 
+
+
+  async applyCouponwithplan(req, res) {
+
+
+    try {
+      const { code, purchaseValue, planid } = req.body;
+      // Find the coupon by code
+      const coupon = await Coupon_Modal.findOne({ code, status: 'true', del: false });
+      if (!coupon) {
+        return res.status(404).json({ message: 'Coupon not found or is inactive' });
+      }
+
+
+
+
+      // Check if the coupon is within the valid date range
+      const currentDate = new Date();
+      const currentDateOnly = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()); // Strip time
+      const startDateOnly = new Date(coupon.startdate.getFullYear(), coupon.startdate.getMonth(), coupon.startdate.getDate());
+      const endDateOnly = new Date(coupon.enddate.getFullYear(), coupon.enddate.getMonth(), coupon.enddate.getDate());
+
+      if (currentDateOnly < startDateOnly || currentDateOnly > endDateOnly) {
+        return res.status(400).json({ status: false, message: 'Coupon is not valid at this time' });
+      }
+
+
+      // Check if the purchase meets the minimum purchase value requirement
+      if (purchaseValue < coupon.minpurchasevalue) {
+        return res.status(400).json({ status: false, message: `Minimum purchase value required is ${coupon.minpurchasevalue}` });
+      }
+      // Calculate the discount based on the coupon type
+      let discount = 0;
+      if (coupon.type === 'fixed') {
+        discount = coupon.value;
+      } else if (coupon.type === 'percentage') {
+        discount = (coupon.value / 100) * purchaseValue;
+      }
+
+      if (discount > purchaseValue) {
+        return res.status(400).json({ status: false, message: "Discount should be less than the purchase value." });
+      }
+
+
+      if (coupon.limitation <= 0) {
+        return res.status(400).json({ status: false, message: 'Coupon usage limit has been reached' });
+      }
+      if (coupon.service && coupon.service != 0) {
+        const plan = await Plan_Modal.findById(planid)
+          .populate('category')
+          .exec();
+        if (coupon.service != plan.category?.service) {
+
+          return res.status(404).json({ status: false, message: 'Service Does not match' });
+        }
+      }
+
+      // Ensure the discount does not exceed the minimum coupon value
+
+      if (coupon.mincouponvalue) {
+        if (discount > coupon.mincouponvalue) {
+          discount = coupon.mincouponvalue;
+        }
+      }
+
+      // Calculate the final price after applying the discount
+      const finalPrice = purchaseValue - discount;
+
+      const settings = await BasicSetting_Modal.findOne();
+      let total = finalPrice; // Use let for reassignable variables
+      let totalgst = 0;
+
+      if (settings.gst > 0) {
+        totalgst = (finalPrice * settings.gst) / 100; // Use settings.gst instead of gst
+        total = finalPrice + totalgst;
+      }
+
+
+      return res.status(200).json({
+        status: true,
+        message: 'Coupon applied successfully',
+        originalPrice: purchaseValue,
+        discount,
+        finalPrice: total,
+        totalgst,
+
+      });
+    } catch (error) {
+      return res.status(500).json({ status: false, message: 'Server error', error: error.message });
+    }
+  }
+
+
   async showSignalsToClients(req, res) {
     try {
       const { service_id, client_id, search, page = 1 } = req.body;
@@ -1589,7 +1670,7 @@ class List {
 
       const protocol = req.protocol; // Will be 'http' or 'https'
 
-      const baseUrl = `${protocol}://${req.headers.host}`; // Construct the base URL
+      const baseUrl = `https://${req.headers.host}`; // Construct the base URL
 
 
 
@@ -1754,7 +1835,7 @@ class List {
 
       const protocol = req.protocol; // Will be 'http' or 'https'
 
-      const baseUrl = `${protocol}://${req.headers.host}`; // Construct the base URL
+      const baseUrl = `https://${req.headers.host}`; // Construct the base URL
 
 
       if (search && search.trim() !== '') {
@@ -1985,7 +2066,7 @@ class List {
 
       const protocol = req.protocol; // Will be 'http' or 'https'
 
-      const baseUrl = `${protocol}://${req.headers.host}`; // Construct the base URL
+      const baseUrl = `https://${req.headers.host}`; // Construct the base URL
 
       const signalsWithReportUrls = signals.map(signal => {
 
@@ -2102,7 +2183,7 @@ class List {
       const baskets = await Basket_Modal.find({ del: false, status: true });
 
       const protocol = req.protocol; // 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       // Update each basket's image path
       baskets.forEach(basket => {
@@ -2308,7 +2389,7 @@ class List {
 
 
       const protocol = req.protocol; // 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       result.forEach(basket => {
         if (basket.image) {
@@ -3221,12 +3302,12 @@ class List {
 
 
       const protocol = req.protocol; // Will be 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
 
 
       const result = await BasicSetting_Modal.findOne()
-        .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image')
+        .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst')
         .exec();
 
       if (result) {
@@ -3699,11 +3780,19 @@ class List {
         .skip((page - 1) * limit)  // Pagination
         .limit(parseInt(limit));   // Limit the number of records
 
+      const totalcount = await Notification_Modal.countDocuments(queryConditions);
+
       // Return the response with notifications
       return res.json({
         status: true,
         message: "Notifications fetched successfully",
-        data: result
+        data: result,
+        pagination: {
+          total: totalcount, // Total records count
+          page: page, // Current page
+          limit: limit, // Records per page
+          totalPages: Math.ceil(totalcount / limit) // Total pages
+        }
       });
     } catch (error) {
       // console.error(error);
@@ -3719,7 +3808,7 @@ class List {
       const banks = await Bank_Modal.find({ del: false, status: true, type: 1 });
 
       const protocol = req.protocol; // 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`; // Construct base URL dynamically
+      const baseUrl = `https://${req.headers.host}`; // Construct base URL dynamically
       console.log(baseUrl);
       const bankWithImageUrls = banks.map(bank => {
         return {
@@ -3752,7 +3841,7 @@ class List {
 
       const protocol = req.protocol;
 
-      const baseUrl = `${protocol}://${req.headers.host}`; // Construct base URL dynamically
+      const baseUrl = `https://${req.headers.host}`; // Construct base URL dynamically
 
       const bankWithImageUrls = banks.map(bank => {
         return {
@@ -3777,9 +3866,6 @@ class List {
     }
   }
 
-
-
-
   async placeOrder(req, res) {
     try {
       const { basket_id, clientid, brokerid, investmentamount, type } = req.body;
@@ -3791,6 +3877,8 @@ class List {
           message: "Basket not found.",
         });
       }
+
+
 
       if (investmentamount < basket.mininvamount) {
         return res.json({
@@ -3837,12 +3925,13 @@ class List {
         });
       }
 
-
+      // Total investment amount
       const totalAmount = investmentamount;
 
+      // Initialize an array to store the calculated stock orders
       const stockOrders = [];
       let respo;
-      let isFundChecked = false;
+      let isFundChecked = false; // Flag to ensure we check funds only once
       // Iterate over each stock to calculate allocated amount and quantity
       for (const stock of existingStocks) {
         const { tradesymbol, weightage, name } = stock;
@@ -3851,7 +3940,7 @@ class List {
           // Fetch stock data from Stock_Modal
           const stockData = await Stock_Modal.findOne({ tradesymbol });
           if (!stockData) {
-
+            console.log(`Stock data not found for trade symbol: ${tradesymbol}`);
             continue; // Skip this stock if no data found
           }
 
@@ -4189,14 +4278,14 @@ class List {
               const authToken = client.authtoken;
               const apikey = client.apikey;
 
-            
+
               let config = {
                 method: 'post',
                 url: 'https://api.kite.trade/user/margins',
                 headers: {
-                    'Authorization': 'token ' + apikey + ':' + authToken
+                  'Authorization': 'token ' + apikey + ':' + authToken
                 },
-            };
+              };
 
 
               const response = await axios(config);
@@ -4207,7 +4296,7 @@ class List {
 
                 if (!isFundChecked) {
                   isFundChecked = true; // Set the flag to true
-                  const net = parseFloat(responseData,equity.net); // Convert responseData.net to a float
+                  const net = parseFloat(responseData, equity.net); // Convert responseData.net to a float
                   const total = parseFloat(totalAmount);
 
                   if (total >= net) {
@@ -4221,6 +4310,76 @@ class List {
 
 
                 respo = await zerodhaorderplace({
+                  id: clientid,
+                  basket_id: basket_id,
+                  quantity,
+                  price: lpPrice,
+                  tradesymbol: tradesymbol,
+                  instrumentToken: instrumentToken,
+                  version: stock.version,
+                  brokerid: brokerid,
+                  calltype: "BUY",
+                  howmanytimebuy // Increment version for the new stock order
+                });
+
+              }
+
+            }
+            else if (brokerid == 6) {
+
+              if (!isFundChecked) {
+                const orders = await Basketorder_Modal.find({
+                  tradesymbol: tradesymbol,
+                  clientid: clientid,
+                  basket_id: basket_id,
+                  version: version,
+                  borkerid: brokerid
+                })
+                  .sort({ createdAt: -1 }) // Sort by `createdAt` in descending order
+                  .limit(1);
+
+
+                if (orders.length > 0) {
+                  const order = orders[0]; // Use the first order if only one is relevant
+                  howmanytimebuy = (order.howmanytimebuy || 0) + 1; // Increment the `howmanytimebuy` value
+                }
+              }
+
+              const authToken = client.authtoken;
+              const apikey = client.apikey;
+
+
+              let config = {
+                method: 'post',
+                url: 'https://api-hft.upstox.com/v2/user/get-funds-and-margin',
+                headers: {
+                  Authorization: `Bearer ${authToken}`,
+                },
+              };
+
+
+              const response = await axios(config);
+
+              if (response.data.status == 'success') {
+                const responseData = response.data.data;
+
+
+                if (!isFundChecked) {
+                  isFundChecked = true; // Set the flag to true
+                  const net = parseFloat(responseData, equity.available_margin); // Convert responseData.net to a float
+                  const total = parseFloat(totalAmount);
+
+                  if (total >= net) {
+                    return res.json({
+                      status: false,
+                      message: "Insufficient funds in your broker account.",
+                    });
+                  }
+                }
+
+
+
+                respo = await upstoxorderplace({
                   id: clientid,
                   basket_id: basket_id,
                   quantity,
@@ -4421,7 +4580,7 @@ class List {
             });
 
           }
-          if (brokerid == 5) {
+          else if (brokerid == 5) {
             respo = await zerodhaorderplace({
               id: clientid,
               basket_id: basket_id,
@@ -4435,6 +4594,22 @@ class List {
               howmanytimebuy: ids
             });
           }
+          else if (brokerid == 6) {
+            respo = await upstoxorderplace({
+              id: clientid,
+              basket_id: basket_id,
+              quantity: netQuantity,
+              price: lpPrice,
+              tradesymbol: tradesymbol,
+              instrumentToken: instrumentToken,
+              version: version,
+              brokerid: brokerid,
+              calltype: "SELL",
+              howmanytimebuy: ids
+            });
+          }
+
+
         } catch (innerError) {
           // console.error(`Error processing stock ${tradesymbol}:`, innerError);
           continue; // Skip this stock in case of an error
@@ -4660,7 +4835,12 @@ class List {
         });
       }
 
-      const planIds = subscriptions.map(sub => sub.plan_category_id);
+      const planIds = subscriptions
+        .map(sub => sub.plan_category_id)
+        .filter(id => id != null); // Filters out null and undefined
+
+
+
       const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
 
       const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
@@ -4698,7 +4878,7 @@ class List {
       //console.log("Final Query:", JSON.stringify(query, null, 2));
       const protocol = req.protocol; // Will be 'http' or 'https'
 
-      const baseUrl = `${protocol}://${req.headers.host}`; // Construct the base URL
+      const baseUrl = `https://${req.headers.host}`; // Construct the base URL
 
 
 
@@ -4807,15 +4987,16 @@ class List {
             clientid: null,
             $or: [
               // Global notifications for 'close signal' and 'open signal'
-              {
-                type: { $in: ['close signal', 'open signal'] },
-                $or: subscriptions.map((sub) => ({
-                  segmentid: { $regex: `(^|,)${sub.plan_id}($|,)` }, // Match plan_id in segmentid
-                  createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
-                }))
-              },
-              // Global notifications for 'add broadcast'
-              //  { type: 'add broadcast' },
+              ...(subscriptions.length > 0
+                ? [{
+                  type: { $in: ['close signal', 'open signal'] },
+                  $or: subscriptions.map((sub) => ({
+                    segmentid: { $regex: `(^|,)${sub.plan_category_id}($|,)` }, // Match plan_id in segmentid
+                    createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
+                  }))
+                }]
+                : []),
+
               // Include all other types of notifications (e.g., add coupon, blogs, news, etc.)
               { type: { $nin: ['close signal', 'open signal', 'add broadcast'] } }
             ]
@@ -4847,14 +5028,21 @@ class List {
         .skip((page - 1) * limit) // Pagination
         .limit(parseInt(limit)); // Limit the number of records
 
+      const totalcount = await Notification_Modal.countDocuments(queryConditions);
+
       // Return the response with notifications
       return res.json({
         status: true,
         message: "Notifications fetched successfully",
-        data: result
+        data: result,
+        pagination: {
+          total: totalcount, // Total records count
+          page: page, // Current page
+          limit: limit, // Records per page
+          totalPages: Math.ceil(totalcount / limit) // Total pages
+        }
       });
     } catch (error) {
-      // console.error(error);
       return res.status(500).json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -4939,6 +5127,7 @@ class List {
       for (let i = 0; i < length; i++) {
         orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
       }
+      const settings = await BasicSetting_Modal.findOne();
 
 
       for (const plan_id of plan_ids) {
@@ -5142,14 +5331,26 @@ class List {
         const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
 
         ////////////////// 17/10/2024 ////////////////////////
+
+        let total = plan.price - discountPerPlan; // Use let for reassignable variables
+        let totalgst = 0;
+
+        if (settings.gst > 0) {
+          totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
+          total = total + totalgst;
+        }
+
+
         // Create a new plan subscription record
         const newSubscription = new PlanSubscription_Modal({
           plan_id,
           plan_category_id: plan.category._id,
           client_id,
-          total: plan.price - discountPerPlan,
+          total: total,
           plan_price: plan.price,
           discount: discountPerPlan,
+          gstamount: totalgst,
+          gst: settings.gst,
           coupon: coupon_code,
           plan_start: start,
           plan_end: end,
@@ -5207,7 +5408,6 @@ class List {
         await client.save();
       }
 
-      const settings = await BasicSetting_Modal.findOne();
 
       const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
 
@@ -5411,7 +5611,7 @@ class List {
           let finalMailBody = mailtemplate.mail_body
             .replace('{clientName}', `${client.FullName}`);
 
-          const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+          const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
 
           // Replace placeholders with actual values
           const finalHtml = htmlTemplate
@@ -5609,7 +5809,7 @@ class List {
 
 
       const protocol = req.protocol; // 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       // Update each basket's image path
       result.forEach(basket => {
@@ -5659,9 +5859,6 @@ class List {
         orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
       }
 
-
-
-
       for (const basket_id of basket_ids) {
 
         const basket = await Basket_Modal.findOne({
@@ -5698,13 +5895,25 @@ class List {
         const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
 
 
+
+        let total = basket.basket_price - discountPerPlan; // Use let for reassignable variables
+        let totalgst = 0;
+
+        if (settings.gst > 0) {
+          totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
+          total = total + totalgst;
+        }
+
+
         // Create a new subscription
         const newSubscription = new BasketSubscription_Modal({
           basket_id,
           client_id,
-          total: basket.basket_price - discountPerPlan,
+          total: total,
           plan_price: basket.basket_price,
           discount: discountPerPlan,
+          gstamount: totalgst,
+          gst: settings.gst,
           coupon: coupon,
           startdate: start,
           enddate: end,
@@ -5848,7 +6057,7 @@ class List {
           let finalMailBody = mailtemplate.mail_body
             .replace('{clientName}', `${client.FullName}`);
 
-          const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+          const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
 
           // Replace placeholders with actual values
           const finalHtml = htmlTemplate
@@ -6159,28 +6368,31 @@ class List {
         });
       }
 
-      const planIds = subscriptions.map(sub => sub.plan_category_id);
+      const planIds = subscriptions
+        .map(sub => sub.plan_category_id)
+        .filter(id => id != null); // Filters out null and undefined
+
+
       const planStarts = subscriptions.map(sub => new Date(sub.plan_start));
       const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
 
       const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
 
 
-      const uniquePlanIds = [
-        ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
-      ].map(id => new ObjectId(id));
+      // const uniquePlanIds = [
+      //   ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
+      // ].map(id => new ObjectId(id));
 
 
       const query = {
         service: service_id,
         close_status: true,
-        $or: uniquePlanIds.map((planId, index) => ({
+        $or: planIds.map((planId, index) => ({
           planid: planId.toString(), // Matching the planid with regex
           created_at: { $lte: planEnds[index] },
           closedate: { $gte: planStarts[index] }      // Checking if created_at is <= to planEnds
         }))
       };
-
 
       //   const query = {
       //     service: service_id,
@@ -6197,7 +6409,7 @@ class List {
       //console.log("Final Query:", JSON.stringify(query, null, 2));
       const protocol = req.protocol; // Will be 'http' or 'https'
 
-      const baseUrl = `${protocol}://${req.headers.host}`; // Construct the base URL
+      const baseUrl = `https://${req.headers.host}`; // Construct the base URL
 
 
 
@@ -6212,7 +6424,7 @@ class List {
 
 
       const signals = await Signal_Modal.find(query)
-        .sort({ created_at: -1 })
+        .sort({ closedate: -1 })
         .skip(skip)
         .limit(limitValue)
         .lean();
@@ -6307,7 +6519,7 @@ class List {
         .lean();
 
       const protocol = req.protocol;
-      const baseUrl = `${protocol}://${req.headers.host}`;
+      const baseUrl = `https://${req.headers.host}`;
 
       // Enhance the signals with additional info
       const signalsWithReportUrls = await Promise.all(
@@ -6485,7 +6697,7 @@ class List {
         .lean();
 
       const protocol = req.protocol; // 'http' or 'https'
-      const baseUrl = `${protocol}://${req.headers.host}`; // Base URL for constructing report path
+      const baseUrl = `https://${req.headers.host}`; // Base URL for constructing report path
 
       const signalsWithReportUrls = signals.map(signal => ({
         ...signal,
@@ -6539,34 +6751,32 @@ class List {
 
 
 
-
-async checkClientToken(req, res) {
-  try {
+  async checkClientToken(req, res) {
+    try {
       const { client_id, token } = req.body;
       // Validate required fields
-      if (!client_id ) {
-          return res.status(400).json({ message: "Client ID are required." });
+      if (!client_id) {
+        return res.status(400).json({ message: "Client ID are required." });
       }
 
       // Find client by ID
       const client = await Clients_Modal.findById(client_id);
       if (!client) {
-          return res.status(404).json({ message: "Client not found." });
+        return res.status(404).json({ message: "Client not found." });
       }
-    if(client.token == token){
-     return res.status(200).json({ status: true, });
-     }
-    else
-     {
-     return res.status(200).json({ status: false, });
-     }
+      if (client.login_token == token) {
+        return res.status(200).json({ status: true, });
+      }
+      else {
+        return res.status(200).json({ status: false, });
+      }
 
-  } catch (error) {
+    } catch (error) {
       return res.status(500).json({ message: "Something went wrong.", error: error.message });
+    }
   }
-}
 
-  
+
 
 }
 

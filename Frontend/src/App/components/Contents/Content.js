@@ -1,6 +1,8 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { House, Tally1 } from "lucide-react";
+import { ArrowRight, ArrowLeft } from 'lucide-react';
+
 
 const Content = ({
   Page_title,
@@ -104,7 +106,7 @@ const Content = ({
 
 
                 >
-                  <i className={`fa-solid fa-arrow-left`}></i> Back
+                  <ArrowLeft /> Back
                 </button>
               )}
             </div>

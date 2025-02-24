@@ -2,15 +2,15 @@ import React, { useState, useEffect } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { Viewbasket, getstocklistById } from "../../../Services/Admin/Admin";
-import Swal from "sweetalert2";
 import { useNavigate, useParams, Link, useLocation } from "react-router-dom";
 import { Tooltip } from 'antd';
 import { SquarePen, Eye } from 'lucide-react';
 import { image_baseurl } from "../../../../Utils/config";
 import { Modal } from 'react-bootstrap';
 import Content from "../../../components/Contents/Content";
-
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import { fDate } from "../../../../Utils/Date_formate";
+import ReusableModal from '../../../components/Models/ReusableModal';
 
 function cleanHtmlContent(html) {
 
@@ -250,6 +250,7 @@ const Viewbasketdetail = () => {
   const location = useLocation()
 
   const [showModal, setShowModal] = useState(false);
+  const [viewRationale, setViewRationale] = useState(false);
 
 
 
@@ -332,8 +333,8 @@ const Viewbasketdetail = () => {
         });
       }
     } catch (error) {
-      console.error("Error fetching basket details:", error);
-      Swal.fire("Error", "Failed to fetch basket details.", "error");
+      showCustomAlert("error", "Failed to fetch basket details.");
+
     }
   };
 
@@ -443,15 +444,23 @@ const Viewbasketdetail = () => {
                               <div key={version}>
                                 <h5 className="mt-4 mb-3">Stock Details</h5>
                                 <div className="d-flex justify-content-between align-items-center">
-                                  <h6>Version {version}</h6>
-                                  {versionStocks[0].status === 0 ? (
-                                    <Tooltip title="Update All">
-                                      <SquarePen className="cursor-pointer" onClick={() => updateStock(versionStocks)} />
-                                    </Tooltip>
-                                  ) : (
-                                    ""
-                                  )}
+                                  <h6>Version {version} ({fDate(versionStocks[0]?.created_at)})</h6>
+
+                                  <div className="d-flex align-items-center">
+                                    <div title="View Rationale">
+                                      <Eye className="cursor-pointer me-2" onClick={() => setViewRationale(true)} />
+                                    </div>
+
+                                    {versionStocks[0].status === 0 ? (
+                                      <Tooltip title="Update All">
+                                        <SquarePen className="cursor-pointer" onClick={() => updateStock(versionStocks)} />
+                                      </Tooltip>
+                                    ) : (
+                                      ""
+                                    )}
+                                  </div>
                                 </div>
+
                                 <table className="table table-bordered">
                                   <thead>
                                     <tr>
@@ -493,6 +502,18 @@ const Viewbasketdetail = () => {
 
           </div>
         </div>
+
+        <ReusableModal
+          show={viewRationale}
+          onClose={() => setViewRationale(false)}
+          title={<>Rationale</>}
+          body={
+            <>
+              {stockdata[0]?.comment}
+            </>
+          }
+
+        />
       </>
     </Content>
   );

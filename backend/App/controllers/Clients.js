@@ -209,8 +209,9 @@ class Clients {
 
   async getClient(req, res) {
     try {
-      const { } = req.body;
 
+    
+      const { } = req.body;
       //  const result = await Clients_Modal.find({ del: 0 }).sort({ createdAt: -1 });
 
       const result = await Clients_Modal.aggregate([
@@ -1882,7 +1883,7 @@ class Clients {
                 }
               },
               {
-                $project: { FullName: 1, Email: 1, PhoneNo: 1 } // Get only required fields
+                $project: { FullName: 1, Email: 1, PhoneNo: 1, wamount: 1 } // Get only required fields
               }
             ],
             as: "client_details" // The resulting array of matched documents from clients
@@ -2710,7 +2711,7 @@ class Clients {
   async orderListDetail(req, res) {
     try {
       const { clientid, signalid, page = 1 } = req.body; // Default pagination values
-      const limit = 1;
+      const limit = 10;
       const pageSize = parseInt(limit);
       const skip = (parseInt(page) - 1) * pageSize;
   

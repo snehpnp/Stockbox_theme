@@ -182,6 +182,10 @@ const clientsModel = new Schema({
         enum: [1, 0],
         default: 0
     },
+    login_token: {
+        type: String,
+        default: null
+    },
 
 }, {
     timestamps: true

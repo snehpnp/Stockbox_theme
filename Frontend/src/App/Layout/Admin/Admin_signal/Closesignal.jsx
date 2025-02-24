@@ -12,7 +12,6 @@ import {
   ArrowDownToLine,
   CircleX
 } from "lucide-react";
-import Swal from "sweetalert2";
 import {
   GetSignallist,
   GetSignallistWithFilter,
@@ -29,7 +28,7 @@ import Select from "react-select";
 import { Tooltip } from "antd";
 import { image_baseurl } from "../../../../Utils/config";
 import ReusableModal from "../../../components/Models/ReusableModal";
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 
@@ -474,32 +473,15 @@ const Closesignal = () => {
 
       const response = await UpdatesignalReport(data, token);
       if (response && response.status) {
-        Swal.fire({
-          title: "Success!",
-          text: response.message || "File updated successfully.",
-          icon: "success",
-          confirmButtonText: "OK",
-          timer: 2000,
-        });
-
+        showCustomAlert("Success", response.message)
         setUpdatetitle({ report: "", id: "", description: "" });
         setModel1(false);
         getAllSignal();
       } else {
-        Swal.fire({
-          title: "Error!",
-          text: response.message || "There was an error updating the file.",
-          icon: "error",
-          confirmButtonText: "Try Again",
-        });
+        showCustomAlert("error", response.message)
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "server error",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error", "Server Error")
     }
   };
 
@@ -760,12 +742,7 @@ const Closesignal = () => {
                     const file = e.target.files[0];
                     if (file) {
                       if (file.type !== "application/pdf") {
-                        Swal.fire({
-                          title: 'Error!',
-                          text: 'Only PDF files are allowed!',
-                          icon: 'error',
-                          confirmButtonText: 'Try Again',
-                        });
+                        showCustomAlert("error", 'Only PDF files are Allowed!')
                         return;
                       }
                       updateServiceTitle({ report: file });

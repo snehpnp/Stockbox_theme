@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { addStaffpermission, getstaffperuser } from '../../../Services/Admin/Admin';
 import { Subscript } from 'lucide-react';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+
 
 const Staffpermission = () => {
     const navigate = useNavigate();
@@ -43,37 +44,17 @@ const Staffpermission = () => {
             permissions,
             id: row._id,
         };
-
         try {
             const response = await addStaffpermission(req, token);
             if (response.status) {
-                Swal.fire({
-                    title: 'Update Successful!',
-                    text: response.message,
-                    icon: 'success',
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
-                setTimeout(() => {
-                    navigate('/admin/staff');
-                }, 1500);
+                showCustomAlert("Success", response.message, navigate, '/admin/staff')
             } else {
-                Swal.fire({
-                    title: 'Error',
-                    text: response.message,
-                    icon: 'error',
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
+                showCustomAlert("error", response.message)
+
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error',
-                text: 'An unexpected error occurred. Please try again later.',
-                icon: 'error',
-                timer: 1500,
-                timerProgressBar: true,
-            });
+            showCustomAlert("error", 'An unexpected error occurred. Please try again later.')
+
         }
     };
 
@@ -1626,11 +1607,11 @@ const Staffpermission = () => {
 
     return (
         <Content
-      Page_title="Edit Permission"
-      button_status={false}
-      backbutton_status={true}
-      backForword={true}
-    >
+            Page_title="Edit Permission"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
             <DynamicForm
                 fields={fields}
                 page_title="Edit Permission"

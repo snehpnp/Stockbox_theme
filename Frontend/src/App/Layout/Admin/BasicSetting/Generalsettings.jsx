@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { basicsettinglist, Updatebasicsettings } from '../../../Services/Admin/Admin';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import Swal from 'sweetalert2';
 import { Link, useNavigate } from 'react-router-dom';
 import { image_baseurl } from '../../../../Utils/config';
 import Loader from '../../../../Utils/Loader';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+
 
 
 const Generalsettings = () => {
@@ -88,13 +89,7 @@ const Generalsettings = () => {
                                 try {
                                     const response = await Updatebasicsettings(req, token);
                                     if (response.status) {
-                                        Swal.fire({
-                                            title: "Update Successful!",
-                                            text: response.message,
-                                            icon: "success",
-                                            timer: 1500,
-                                            timerProgressBar: true,
-                                        });
+                                        showCustomAlert("Success", response.message)
                                         setIsModified(false);
                                         document.querySelectorAll('input[name="offer_image"], input[name="logo"], input[name="favicon"]').forEach(input => {
                                             input.value = "";
@@ -102,22 +97,11 @@ const Generalsettings = () => {
 
 
                                     } else {
-                                        Swal.fire({
-                                            title: "Error",
-                                            text: response.message,
-                                            icon: "error",
-                                            timer: 1500,
-                                            timerProgressBar: true,
-                                        });
+                                        showCustomAlert("error", response.message)
                                     }
                                 } catch (error) {
-                                    Swal.fire({
-                                        title: "Error",
-                                        text: "An unexpected error occurred. Please try again later.",
-                                        icon: "error",
-                                        timer: 1500,
-                                        timerProgressBar: true,
-                                    });
+                                    showCustomAlert("error", "An unexpected error occurred. Please try again later.")
+
                                 }
                             }}
                         >

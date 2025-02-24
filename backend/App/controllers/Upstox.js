@@ -10,17 +10,23 @@ const Stock_Modal = db.Stock;
 const Order_Modal = db.Order;
 const Basketorder_Modal = db.Basketorder;
 
+
+const qs = require("querystring");
+const jwt = require("jsonwebtoken");
+const path = require('path');
+const { exec } = require('child_process');
+const fs = require('fs');
+
 class Upstox {
 
     async GetAccessToken(req, res) {
         try {
-            var keystr = req.query.key;
+            var tokenCode = req.query.code;
+            var email = req.query.state;
 
+            if (tokenCode != undefined) {
 
-            if (keystr != undefined) {
-                var key = keystr.split('?auth_token=')[0];
-
-                const client = await Clients_Modal.findById(key);
+                const client = await Clients_Modal.findOne({ Email: email,ActiveStatus:1,del:0 });
 
                 if (!client) {
                     return res.status(404).json({
@@ -28,26 +34,37 @@ class Upstox {
                         message: "Client not found"
                     });
                 }
+                var hosts = req.headers.host;
 
-                var auth_token = keystr.split('?auth_token=')[1];
+                const requestData = new URLSearchParams();
+                requestData.append("code", tokenCode);
+                requestData.append("client_id", client.apikey);
+                requestData.append("client_secret", client.apisecret);
+                requestData.append("redirect_uri", `https://${hosts}/backend/upstox/getaccesstoken`); 
+                requestData.append("grant_type", "authorization_code");
+                const url = "https://api-v2.upstox.com/login/authorization/token";
+                const headers = {
+                    Accept: "application/json",
+                    "Api-Version": "2.0",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                };
+        
+                // Make the POST request
+                const response = await axios.post(url, requestData.toString(), { headers });
 
-                if (!auth_token) {
-                    return res.status(404).json({
-                        status: false,
-                        message: "Auth Token is required"
-                    });
-                }
+                if (response.data && response.data.access_token) {
+                   const auth_token = response.data.access_token;
 
-                const brokerlink = await Clients_Modal.findByIdAndUpdate(
-                    key,
+                   const brokerlink = await Clients_Modal.findOneAndUpdate(
+                    { Email: email }, // Find by email
                     {
                         authtoken: auth_token,  // Update authtoken
-                        dlinkstatus: 1,                        // Update dlinkstatus
-                        tradingstatus: 1                       // Update tradingstatus
+                        dlinkstatus: 1,         // Update dlinkstatus
+                        tradingstatus: 1        // Update tradingstatus
                     },
                     {
-                        new: true, // Return the updated document
-                        useFindAndModify: false // Prevent deprecation warning (optional)
+                        new: true,  // Return the updated document
+                        useFindAndModify: false // Prevent deprecation warning
                     }
                 );
 
@@ -55,7 +72,10 @@ class Upstox {
                     status: true,
                     message: "Broker login successfully",
                 });
-
+            }
+            else {
+                return res.status(500).json({ status: false, message: response.data });
+            }
 
             } else {
 
@@ -103,6 +123,9 @@ class Upstox {
 
 
             const authToken = client.authtoken;
+            const apikey = client.apikey;
+
+
             let optiontype, exchange, producttype;
 
             if (signal.segment === "C") {
@@ -115,9 +138,9 @@ class Upstox {
 
             // Determine product type based on segment and call duration
             if (signal.callduration === "Intraday") {
-                producttype = "INTRADAY";
+                producttype = "I";
             } else {
-                producttype = signal.segment === "C" ? "DELIVERY" : "CARRYFORWARD";
+                producttype = signal.segment === "C" ? "D" : "D";
             }
 
             // Query Stock_Modal based on segment type
@@ -153,45 +176,63 @@ class Upstox {
                 });
             }
 
+            
+            const searchToken = stock.instrument_token; // Instrument Token to search
+            const filePath = path.join(__dirname, "../../tokenupstox/complete.csv");
+            
+            let tradingsymbol = null; // Declare outside for global scope
+            
+            try {
+                const data = fs.readFileSync(filePath, "utf8");
+                const lines = data.split("\n");
+            
+                for (const line of lines) {
+                    const parts = line.split(",");
+            
+                    if (parts.length > 1 && parts[1].replace(/"/g, "") === searchToken) {
+                        tradingsymbol = parts[0].replace(/"/g, ""); // Assign value to global variable
+                        break;
+                    }
+                }
+            } catch (err) {
+                console.error("Error reading file:", err);
+            }
+            
+            
 
 
-            var data = JSON.stringify({
-                "variety": "NORMAL",
-                "tradingsymbol": stock.tradesymbol,
-                "symboltoken": stock.instrument_token,
-                "transactiontype": signal.calltype,
-                "exchange": exchange,
-                "ordertype": "MARKET",
-                "producttype": producttype,
-                "duration": "DAY",
-                "price": 0,
-                "squareoff": "0",
-                "stoploss": "0",
-                "quantity": quantity
-            });
+
+var data = JSON.stringify({
+    "quantity": quantity,
+    "product": producttype,
+    "validity": "DAY",
+    "price": 0,
+    "tag": "string",
+    "instrument_token": tradingsymbol,
+    "order_type": "MARKET",
+    "transaction_type": signal.calltype,
+    "disclosed_quantity": 0,
+    "trigger_price": 0,
+    "is_amo": false
+});
 
 
+          
 
 
+let config = {
+    method: 'post',
+  maxBodyLength: Infinity,
+    url: 'https://api-hft.upstox.com/v2/order/place',
+    headers: { 
+      'Content-Type': 'application/json',
+     'Authorization': `Bearer ${authToken}`
+    },
+    data : data
+  };
+  
 
-            const config = {
-                method: 'post',
-                url: 'https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/placeOrder',
-                //  url: 'https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/getOrderBook',
 
-                headers: {
-                    'Authorization': `Bearer ${authToken}`,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-UserType': 'USER',
-                    'X-SourceID': 'WEB',
-                    'X-ClientLocalIP': 'CLIENT_LOCAL_IP', // Replace with actual IP
-                    'X-ClientPublicIP': 'CLIENT_PUBLIC_IP', // Replace with actual IP
-                    'X-MACAddress': 'MAC_ADDRESS', // Replace with actual MAC address
-                    'X-PrivateKey': client.apikey // Replace with actual API key
-                },
-                data: data
-            };
 
 
             //  const response = await axios(config);
@@ -199,18 +240,17 @@ class Upstox {
             axios(config)
                 .then(async (response) => {
 
-                    if (response.data.message == 'SUCCESS') {
-
+                    if (response.data.data != undefined) {
                         const finalExitQuantity = exitquantity && exitquantity > 0 ? exitquantity : quantity;
 
 
                         const order = new Order_Modal({
                             clientid: client._id,
                             signalid: signal._id,
-                            orderid: response.data.data.orderid,
-                            uniqueorderid: response.data.data.uniqueorderid,
+                            orderid: response.data.data.order_id,
+                            uniqueorderid: response.data.data.order_id,
                             ordertype: signal.calltype,
-                            borkerid: 1,
+                            borkerid: 6,
                             quantity: quantity,
                             ordertoken: stock.instrument_token,
                             tsprice: tsprice,
@@ -233,13 +273,15 @@ class Upstox {
                     }
                     else {
                         let url;
+                        var hosts = req.headers.host;
+
                         if (response.data.message == "Invalid Token") {
-                            url = `https://smartapi.angelone.in/publisher-login?api_key=${client.apikey}`;
+                            url = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=${apikey}&redirect_uri=https://${hosts}/backend/upstox/getaccesstoken&state=${client.Email}`;
                         }
                         return res.status(500).json({
                             status: false,
                             url: url,
-                            message: response.data.message
+                            message: "Invalid Token"
                         });
                     }
 
@@ -247,7 +289,7 @@ class Upstox {
                 .catch(async (error) => {
                     return res.status(500).json({
                         status: false,
-                        message: response.data.message
+                        message: error.response ? error.response.data : error.message  // ✅ Proper error handling
                     });
 
                 });
@@ -256,7 +298,7 @@ class Upstox {
             // console.error("Error placing order:", error); // Log the error
             return res.status(500).json({
                 status: false,
-                message: error.response ? error.response.data : "An error occurred while placing the order"
+                message: error.response ? error.response.data : error.message
             });
         }
     }
@@ -296,6 +338,7 @@ class Upstox {
 
 
             const authToken = client.authtoken;
+            const apikey = client.apikey;
             let optiontype, exchange, producttype;
 
             if (signal.segment === "C") {
@@ -308,9 +351,9 @@ class Upstox {
 
             // Determine product type based on segment and call duration
             if (signal.callduration === "Intraday") {
-                producttype = "INTRADAY";
+                producttype = "I";
             } else {
-                producttype = signal.segment === "C" ? "DELIVERY" : "CARRYFORWARD";
+                producttype = signal.segment === "C" ? "D" : "D";
             }
 
             // Query Stock_Modal based on segment type
@@ -347,11 +390,35 @@ class Upstox {
             }
 
 
+
+            const searchToken = stock.instrument_token; // Instrument Token to search
+            const filePath = path.join(__dirname, "../../tokenupstox/complete.csv");
+            
+            let tradingsymbol = null; // Declare outside for global scope
+            
+            try {
+                const data = fs.readFileSync(filePath, "utf8");
+                const lines = data.split("\n");
+            
+                for (const line of lines) {
+                    const parts = line.split(",");
+            
+                    if (parts.length > 1 && parts[1].replace(/"/g, "") === searchToken) {
+                        tradingsymbol = parts[0].replace(/"/g, ""); // Assign value to global variable
+                        break;
+                    }
+                }
+            } catch (err) {
+                console.error("Error reading file:", err);
+            }
+            
+
+
             let holdingData = { qty: 0 };
             let positionData = { qty: 0 };
             let totalValue = 0;  // Declare totalValue outside the blocks
             try {
-                positionData = await CheckPosition(client.apikey, authToken, stock.segment, stock.instrument_token, producttype, signal.calltype, stock.tradesymbol);
+                positionData = await CheckPosition(client.apikey, authToken, stock.segment, stock.instrument_token, producttype, signal.calltype, stock.tradesymbol,tradingsymbol);
             } catch (error) {
                 //   console.error('Error in CheckPosition:', error.message);
 
@@ -360,7 +427,7 @@ class Upstox {
 
             if (stock.segment == "C") {
                 try {
-                    holdingData = await CheckHolding(client.apikey, authToken, stock.segment, stock.instrument_token, producttype, signal.calltype);
+                    holdingData = await CheckHolding(client.apikey, authToken, stock.segment, stock.instrument_token, producttype, signal.calltype,tradingsymbol);
 
                 } catch (error) {
                     // console.error('Error in CheckHolding:', error.message);
@@ -382,53 +449,56 @@ class Upstox {
             }
 
             if (totalValue >= quantity) {
+
+
+
+
                 var data = JSON.stringify({
-                    "variety": "NORMAL",
-                    "tradingsymbol": stock.tradesymbol,
-                    "symboltoken": stock.instrument_token,
-                    "transactiontype": calltypes,
-                    "exchange": exchange,
-                    "ordertype": "MARKET",
-                    "producttype": producttype,
-                    "duration": "DAY",
+                    "quantity": quantity,
+                    "product": producttype,
+                    "validity": "DAY",
                     "price": 0,
-                    "squareoff": "0",
-                    "stoploss": "0",
-                    "quantity": quantity
+                    "tag": "string",
+                    "instrument_token": tradingsymbol,
+                    "order_type": "MARKET",
+                    "transaction_type": calltypes,
+                    "disclosed_quantity": 0,
+                    "trigger_price": 0,
+                    "is_amo": false
                 });
-
-
-                const config = {
+                
+                
+                          
+                
+                
+                let config = {
                     method: 'post',
-                    url: 'https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/placeOrder',
-
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-UserType': 'USER',
-                        'X-SourceID': 'WEB',
-                        'X-ClientLocalIP': 'CLIENT_LOCAL_IP',
-                        'X-ClientPublicIP': 'CLIENT_PUBLIC_IP',
-                        'X-MACAddress': 'MAC_ADDRESS',
-                        'X-PrivateKey': client.apikey
+                  maxBodyLength: Infinity,
+                    url: 'https://api-hft.upstox.com/v2/order/place',
+                    headers: { 
+                      'Content-Type': 'application/json',
+                     'Authorization': `Bearer ${authToken}`
                     },
-                    data: data
-                };
+                    data : data
+                  };
+                  
+                
+
+
 
                 axios(config)
                     .then(async (response) => {
 
-                        if (response.data.message == 'SUCCESS') {
+                        if (response.data.data != undefined) {
 
 
                             const order = new Order_Modal({
                                 clientid: client._id,
                                 signalid: signal._id,
-                                orderid: response.data.data.orderid,
-                                uniqueorderid: response.data.data.uniqueorderid,
+                                orderid: response.data.data.order_id,
+                                uniqueorderid: response.data.data.order_id,
                                 ordertype: calltypes,
-                                borkerid: 1,
+                                borkerid: 6,
                                 quantity: quantity,
                             });
 
@@ -457,13 +527,15 @@ class Upstox {
                         }
                         else {
                             let url;
-                            if (response.data.message == "Invalid Token") {
-                                url = `https://smartapi.angelone.in/publisher-login?api_key=${client.apikey}`;
-                            }
+                            var hosts = req.headers.host;
+
+                        if (response.data.message == "Invalid Token") {
+                            url = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=${apikey}&redirect_uri=https://${hosts}/backend/upstox/getaccesstoken&state=${client.Email}`;
+                        }
                             return res.status(500).json({
                                 status: false,
                                 url: url,
-                                message: response.data.message
+                                message: "Invalid Token"
                             });
                         }
 
@@ -471,7 +543,7 @@ class Upstox {
                     .catch(async (error) => {
                         return res.status(500).json({
                             status: false,
-                            message: response.data.message
+                            message: error.response ? error.response.data : error.message  // ✅ Proper error handling
                         });
 
                     });
@@ -490,7 +562,8 @@ class Upstox {
             // console.error("Error placing order:", error); // Log the error
             return res.status(500).json({
                 status: false,
-                message: error.response ? error.response.data : "An error occurred while placing the order"
+                message: error.response ? error.response.data : error.message  // ✅ Proper error handling
+
             });
         }
     }
@@ -513,11 +586,6 @@ class Upstox {
                     message: "Order not found for this client"
                 });
             }
-
-
-
-
-
 
             const client = await Clients_Modal.findById(clientid);
             if (!client) {
@@ -543,7 +611,7 @@ class Upstox {
             }
 
 
-            if (order.borkerid != 1) {
+            if (order.borkerid != 6) {
                 return res.status(404).json({
                     status: false,
                     message: "Order not found for this Broker"
@@ -554,23 +622,17 @@ class Upstox {
             const authToken = client.authtoken;
             const userId = client.apikey;
 
-
-            const uniorderId = order.uniqueorderid;
-            const config = {
-                method: 'get',
-                url: `https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/details/${uniorderId}`, // Use dynamic orderid
-                headers: {
-                    'Authorization': 'Bearer ' + authToken,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-UserType': 'USER',
-                    'X-SourceID': 'WEB',
-                    'X-ClientLocalIP': 'CLIENT_LOCAL_IP',
-                    'X-ClientPublicIP': 'CLIENT_PUBLIC_IP',
-                    'X-MACAddress': 'MAC_ADDRESS',
-                    'X-PrivateKey': userId
-                },
-            };
+            var config = {
+                             method: 'get',
+                             url: 'https://api-v2.upstox.com/order/details',
+                             headers: {
+                                Authorization: `Bearer ${authToken}`,
+                             },
+                             params: {
+                                order_id: orderId
+                            }
+                         };
+         
 
             const response = await axios(config); // Use await with axios
 
@@ -594,7 +656,7 @@ class Upstox {
 
 
 
-    async orderexitangle(item) {
+    async orderexitupstox(item) {
 
         try {
             const { clientid, signalid, quantity, stockInfo_lp, exitquantity, _id } = item;
@@ -634,6 +696,7 @@ class Upstox {
 
 
             const authToken = client.authtoken;
+            const apikey = client.apikey;
             let optiontype, exchange, producttype;
 
             if (signal.segment === "C") {
@@ -646,9 +709,9 @@ class Upstox {
 
             // Determine product type based on segment and call duration
             if (signal.callduration === "Intraday") {
-                producttype = "INTRADAY";
+                producttype = "I";
             } else {
-                producttype = signal.segment === "C" ? "DELIVERY" : "CARRYFORWARD";
+                producttype = signal.segment === "C" ? "D" : "D";
             }
 
             // Query Stock_Modal based on segment type
@@ -685,12 +748,32 @@ class Upstox {
             }
 
 
+            let tradingsymbol = null; // Declare outside for global scope
+            
+            try {
+                const data = fs.readFileSync(filePath, "utf8");
+                const lines = data.split("\n");
+            
+                for (const line of lines) {
+                    const parts = line.split(",");
+            
+                    if (parts.length > 1 && parts[1].replace(/"/g, "") === searchToken) {
+                        tradingsymbol = parts[0].replace(/"/g, ""); // Assign value to global variable
+                        break;
+                    }
+                }
+            } catch (err) {
+                console.error("Error reading file:", err);
+            }
+            
+
+
 
             let holdingData = { qty: 0 };
             let positionData = { qty: 0 };
             let totalValue = 0;  // Declare totalValue outside the blocks
             try {
-                positionData = await CheckPosition(client.apikey, authToken, stock.segment, stock.instrument_token, producttype, signal.calltype, stock.tradesymbol);
+                positionData = await CheckPosition(client.apikey, authToken, stock.segment, stock.instrument_token, producttype, signal.calltype, stock.tradesymbol,tradingsymbol);
             } catch (error) {
                 //   console.error('Error in CheckPosition:', error.message);
 
@@ -699,7 +782,7 @@ class Upstox {
 
             if (stock.segment == "C") {
                 try {
-                    holdingData = await CheckHolding(client.apikey, authToken, stock.segment, stock.instrument_token, producttype, signal.calltype);
+                    holdingData = await CheckHolding(client.apikey, authToken, stock.segment, stock.instrument_token, producttype, signal.calltype,tradingsymbol);
 
                 } catch (error) {
                     // console.error('Error in CheckHolding:', error.message);
@@ -721,53 +804,56 @@ class Upstox {
             }
 
             if (totalValue >= exitquantity) {
+              
+              
+              
                 var data = JSON.stringify({
-                    "variety": "NORMAL",
-                    "tradingsymbol": stock.tradesymbol,
-                    "symboltoken": stock.instrument_token,
-                    "transactiontype": calltypes,
-                    "exchange": exchange,
-                    "ordertype": "MARKET",
-                    "producttype": producttype,
-                    "duration": "DAY",
+                    "quantity": quantity,
+                    "product": producttype,
+                    "validity": "DAY",
                     "price": 0,
-                    "squareoff": "0",
-                    "stoploss": "0",
-                    "quantity": exitquantity
+                    "tag": "string",
+                    "instrument_token": tradingsymbol,
+                    "order_type": "MARKET",
+                    "transaction_type": calltypes,
+                    "disclosed_quantity": 0,
+                    "trigger_price": 0,
+                    "is_amo": false
                 });
-
-
-                const config = {
+                
+                
+                          
+                
+                
+                let config = {
                     method: 'post',
-                    url: 'https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/placeOrder',
-
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-UserType': 'USER',
-                        'X-SourceID': 'WEB',
-                        'X-ClientLocalIP': 'CLIENT_LOCAL_IP',
-                        'X-ClientPublicIP': 'CLIENT_PUBLIC_IP',
-                        'X-MACAddress': 'MAC_ADDRESS',
-                        'X-PrivateKey': client.apikey
+                  maxBodyLength: Infinity,
+                    url: 'https://api-hft.upstox.com/v2/order/place',
+                    headers: { 
+                      'Content-Type': 'application/json',
+                     'Authorization': `Bearer ${authToken}`
                     },
-                    data: data
-                };
+                    data : data
+                  };
+                  
+                
 
-                return axios(config)
+
+
+                axios(config)
                     .then(async (response) => {
 
-                        if (response.data.message == 'SUCCESS') {
+                        if (response.data.data != undefined) {
+
 
 
                             const order = new Order_Modal({
                                 clientid: client._id,
                                 signalid: signal._id,
-                                orderid: response.data.data.orderid,
-                                uniqueorderid: response.data.data.uniqueorderid,
+                                orderid: response.data.data.order_id,
+                                uniqueorderid: response.data.data.order_id,
                                 ordertype: calltypes,
-                                borkerid: 1,
+                                borkerid: 6,
                                 quantity: exitquantity,
                             });
 
@@ -797,12 +883,13 @@ class Upstox {
                         else {
                             let url;
                             if (response.data.message == "Invalid Token") {
-                                url = `https://smartapi.angelone.in/publisher-login?api_key=${client.apikey}`;
+                                url = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=${apikey}&redirect_uri=https://${hosts}/backend/upstox/getaccesstoken&state=${client.Email}`;
                             }
                             return {
                                 status: false,
                                 url: url,
-                                message: response.data.message
+                                message: error.response ? error.response.data : error.message  // ✅ Proper error handling
+
                             };
                         }
 
@@ -810,7 +897,8 @@ class Upstox {
                     .catch(async (error) => {
                         return {
                             status: false,
-                            message: response.data.message
+                            message: error.response ? error.response.data : error.message  // ✅ Proper error handling
+
                         };
 
                     });
@@ -829,7 +917,7 @@ class Upstox {
             // console.error("Error placing order:", error); // Log the error
             return {
                 status: false,
-                message: error.response ? error.response.data : "An error occurred while placing the order"
+                message: error.response ? error.response.data : error.message  // ✅ Proper error handling
             };
         }
     }
@@ -837,7 +925,7 @@ class Upstox {
 
 
 
-    async angleorderplace(item) {
+    async upstoxorderplace(item) {
 
         try {
             const { id, quantity, price, version, basket_id, tradesymbol, instrumentToken, calltype, brokerid, howmanytimebuy } = item;
@@ -858,7 +946,7 @@ class Upstox {
                 };
             }
 
-            if (brokerid != 1) {
+            if (brokerid != 6) {
                 return {
                     status: false,
                     message: "Invalid Broker Place Order"
@@ -868,20 +956,42 @@ class Upstox {
 
             let exchange, producttype;
             exchange = "NSE";
-            producttype = "DELIVERY";
+            producttype = "D";
 
             if (calltype == "BUY") { } else {
+
+
+                let tradingsymbol = null; // Declare outside for global scope
+            
+                try {
+                    const data = fs.readFileSync(filePath, "utf8");
+                    const lines = data.split("\n");
+                
+                    for (const line of lines) {
+                        const parts = line.split(",");
+                
+                        if (parts.length > 1 && parts[1].replace(/"/g, "") === searchToken) {
+                            tradingsymbol = parts[0].replace(/"/g, ""); // Assign value to global variable
+                            break;
+                        }
+                    }
+                } catch (err) {
+                    console.error("Error reading file:", err);
+                }
+                
+    
+
                 let holdingData = { qty: 0 };
                 let positionData = { qty: 0 };
                 let totalValue = 0;  // Declare totalValue outside the blocks
                 try {
-                    positionData = await CheckPosition(userId, authToken, "C", instrumentToken, producttype, calltype, tradesymbol);
+                    positionData = await CheckPosition(userId, authToken, "C", instrumentToken, producttype, calltype, tradesymbol,tradingsymbol);
 
                 } catch (error) {
                 }
 
                 try {
-                    holdingData = await CheckHolding(userId, authToken, "C", instrumentToken, producttype, calltype);
+                    holdingData = await CheckHolding(userId, authToken, "C", instrumentToken, producttype, calltype, tradingsymbol);
 
                 } catch (error) {
                 }
@@ -904,64 +1014,59 @@ class Upstox {
             }
 
 
+
+
+              
             var data = JSON.stringify({
-                "variety": "NORMAL",
-                "tradingsymbol": tradesymbol,
-                "symboltoken": instrumentToken,
-                "transactiontype": calltype,
-                "exchange": exchange,
-                "ordertype": "MARKET",
-                "producttype": producttype,
-                "duration": "DAY",
+                "quantity": quantity,
+                "product": producttype,
+                "validity": "DAY",
                 "price": 0,
-                "squareoff": "0",
-                "stoploss": "0",
-                "quantity": quantity
+                "tag": "string",
+                "instrument_token": tradingsymbol,
+                "order_type": "MARKET",
+                "transaction_type": calltype,
+                "disclosed_quantity": 0,
+                "trigger_price": 0,
+                "is_amo": false
             });
-
-
-
-
-
-            const config = {
+            
+            
+                      
+            
+            
+            let config = {
                 method: 'post',
-                url: 'https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/placeOrder',
-                //  url: 'https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/getOrderBook',
-
-                headers: {
-                    'Authorization': `Bearer ${authToken}`,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-UserType': 'USER',
-                    'X-SourceID': 'WEB',
-                    'X-ClientLocalIP': 'CLIENT_LOCAL_IP', // Replace with actual IP
-                    'X-ClientPublicIP': 'CLIENT_PUBLIC_IP', // Replace with actual IP
-                    'X-MACAddress': 'MAC_ADDRESS', // Replace with actual MAC address
-                    'X-PrivateKey': client.apikey // Replace with actual API key
+              maxBodyLength: Infinity,
+                url: 'https://api-hft.upstox.com/v2/order/place',
+                headers: { 
+                  'Content-Type': 'application/json',
+                 'Authorization': `Bearer ${authToken}`
                 },
-                data: data
-            };
+                data : data
+              };
+              
 
-
-
-            //  const response = await axios(config);
 
             return axios(config)
                 .then(async (response) => {
 
 
 
-                    if (response.data.message == 'SUCCESS') {
+                    if (response.data.data != undefined) {
 
+
+
+                       
 
 
                         const order = new Basketorder_Modal({
                             clientid: client._id,
                             tradesymbol: tradesymbol,
-                            orderid: response.data.data.orderid,
-                            uniqueorderid: response.data.data.uniqueorderid,
+                            orderid: response.data.data.order_id,
+                            uniqueorderid: response.data.data.order_id,
                             ordertype: calltype,
-                            borkerid: 1,
+                            borkerid: 6,
                             price: price,
                             quantity: quantity,
                             ordertoken: instrumentToken,
@@ -980,7 +1085,7 @@ class Upstox {
                                     version: version,
                                     clientid: client._id,
                                     basket_id: basket_id,
-                                    brokerid: '1',
+                                    brokerid: '6',
                                     exitstatus: 0,
                                     ordertype: 'BUY',
                                     howmanytimebuy: { $nin: howmanytimebuy }  // Only update if howmanytimebuy is not in [1, 2]
@@ -1067,7 +1172,7 @@ class Upstox {
             }
 
 
-            if (order.borkerid != 1) {
+            if (order.borkerid != 6) {
                 return res.status(404).json({
                     status: false,
                     message: "Order not found for this Broker"
@@ -1079,22 +1184,15 @@ class Upstox {
             const userId = client.apikey;
 
 
-            const uniorderId = order.uniqueorderid;
-
-            const config = {
+            var config = {
                 method: 'get',
-                url: `https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/details/${uniorderId}`, // Use dynamic orderid
+                url: 'https://api-v2.upstox.com/order/details',
                 headers: {
-                    'Authorization': 'Bearer ' + authToken,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-UserType': 'USER',
-                    'X-SourceID': 'WEB',
-                    'X-ClientLocalIP': 'CLIENT_LOCAL_IP',
-                    'X-ClientPublicIP': 'CLIENT_PUBLIC_IP',
-                    'X-MACAddress': 'MAC_ADDRESS',
-                    'X-PrivateKey': userId
+                   Authorization: `Bearer ${authToken}`,
                 },
+                params: {
+                   order_id: orderId
+               }
             };
 
             const response = await axios(config); // Use await with axios
@@ -1124,22 +1222,17 @@ class Upstox {
 
 
 
-async function CheckPosition(userId, authToken, segment, instrument_token, producttype, calltype, trading_symbol) {
+async function CheckPosition(userId, authToken, segment, instrument_token, producttype, calltype, trading_symbol,tradingsymbol) {
 
 
     var config = {
         method: 'get',
-        url: 'https://apiconnect.angelbroking.com/rest/secure/angelbroking/order/v1/getPosition',
+        url: 'https://api.upstox.com/v2/portfolio/short-term-positions',
         headers: {
+            'accept': ' application/json',
+            'Api-Version': ' 2.0',
             'Authorization': 'Bearer ' + authToken,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-UserType': 'USER',
-            'X-SourceID': 'WEB',
-            'X-ClientLocalIP': 'CLIENT_LOCAL_IP',
-            'X-ClientPublicIP': 'CLIENT_PUBLIC_IP',
-            'X-MACAddress': 'MAC_ADDRESS',
-            'X-PrivateKey': userId
+            'Content-Type': 'application/json'
         },
     };
 
@@ -1147,17 +1240,14 @@ async function CheckPosition(userId, authToken, segment, instrument_token, produ
         const response = await axios(config);  // Wait for the response
 
 
-        if (response.data.data != null && response.data.message == "SUCCESS") {
-            const Exist_entry_order = response.data.data.find(item1 => item1.symboltoken === instrument_token);
+        if (response.data.data != undefined) {
 
-            if (Exist_entry_order !== undefined) {
+            const Exist_entry_order = response.data.data.find(item1 => item1.instrument_token === tradingsymbol);
+
+            if (Exist_entry_order != undefined) {
                 let possition_qty;
-                if (segment.toUpperCase() === 'C') {
-                    possition_qty = parseInt(Exist_entry_order.buyqty) - parseInt(Exist_entry_order.sellqty);
-                } else {
-                    possition_qty = Exist_entry_order.netqty;
-                }
-
+                    possition_qty = parseInt(Exist_entry_order.day_buy_quantity) - parseInt(Exist_entry_order.day_sell_quantity);
+                
                 if (possition_qty === 0) {
                     return {
                         status: false,
@@ -1195,33 +1285,26 @@ async function CheckPosition(userId, authToken, segment, instrument_token, produ
 
 
 
-async function CheckHolding(userId, authToken, segment, instrument_token, producttype, calltype) {
+async function CheckHolding(userId, authToken, segment, instrument_token, producttype, calltype,tradingsymbol) {
 
 
     var config = {
         method: 'get',
-        url: 'https://apiconnect.angelone.in/rest/secure/angelbroking/portfolio/v1/getAllHolding',
+        url: 'https://api.upstox.com/v2/portfolio/long-term-holdings',
         headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-UserType': 'USER',
-            'X-SourceID': 'WEB',
-            'X-ClientLocalIP': 'CLIENT_LOCAL_IP',
-            'X-ClientPublicIP': 'CLIENT_PUBLIC_IP',
-            'X-MACAddress': 'MAC_ADDRESS',
-            'X-PrivateKey': userId
+            'accept': ' application/json',
+            'Api-Version': ' 2.0',
+            'Authorization': 'Bearer ' + authToken,
+            'Content-Type': 'application/json'
         },
     };
-
     try {
         const response = await axios(config);
 
-        if (response.data.message == "SUCCESS") {
+        if (response.data.data != undefined) {
 
-            const existEntryOrder = response.data.data.holdings.find(item1 => item1.symboltoken === instrument_token && item1.product === producttype);
+            const existEntryOrder = response.data.data.find(item1 => item1.instrument_token === tradingsymbol);
             let possition_qty = 0;
-
 
 
             if (existEntryOrder != undefined) {

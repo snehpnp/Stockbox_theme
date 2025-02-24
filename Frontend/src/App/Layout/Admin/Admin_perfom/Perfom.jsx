@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getPerformerstatus, GetService, getperformacebysegment, getperformacebysegmentwithfilter } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table1';
-import Swal from 'sweetalert2';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import { Link } from 'react-router-dom';
 import { Settings2, Eye, IndianRupee } from 'lucide-react';
@@ -279,6 +278,7 @@ const Perform = () => {
         getperformdata(serviceId);
         getdatabysegment(serviceId)
         setserviceid(serviceId)
+
     };
 
 
@@ -355,7 +355,10 @@ const Perform = () => {
 
                                                                         </div>
                                                                         <div className='p-3'>
-                                                                            <b className='text-black p-0'>Ideal Hit Accuracy</b><br />
+                                                                            <b className='text-black p-0'>Ideal Hit Accuracy : <small className="mb-0">
+                                                                                {item?.accuracy?.toFixed(2)}
+                                                                            </small>
+                                                                            </b><br />
                                                                             <b className='text-black p-0'>Ideal Hit Closed : <small className="mb-0">
                                                                                 {item?.count}
 

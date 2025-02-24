@@ -12,6 +12,7 @@ const {orderexitangle} = require('../Controllers/Angle')
 const {orderexitkotakneo} = require('../Controllers/Kotakneo')
 const {orderexitmarkethub} = require('../Controllers/Markethub')
 const {orderexitzerodha} = require('../Controllers/Zerodha')
+const {orderexitupstox} = require('../Controllers/Upstox')
 
 
 
@@ -74,6 +75,10 @@ async function ExitplaceOrder(item) {
     {
        orderexitzerodha(item)
     }
+    else if(item.borkerid==6)
+      {
+         orderexitupstox(item)
+      }
 }
 
 

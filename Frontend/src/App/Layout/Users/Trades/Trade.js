@@ -404,8 +404,8 @@ function Trade() {
               value={selectedService}
               onChange={(e) => setSelectedService(e.target.value)}
             >
-              {service.map((item) => (
-                <option key={item._id} value={item._id}>
+              {service?.map((item) => (
+                <option key={item?._id} value={item?._id}>
                   {item?.title}
                 </option>
               ))}
@@ -445,7 +445,8 @@ function Trade() {
         </ul>
 
         <div className="tab-content">
-          {isLoading ? <Loader /> : tradeData[selectedTab]?.map(renderTradeCard)}
+          {isLoading ?
+            <Loader /> : tradeData[selectedTab]?.map(renderTradeCard)}
         </div>
         <div className="pagination-controls d-flex justify-content-between mt-3">
           <button

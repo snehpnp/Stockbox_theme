@@ -10,6 +10,12 @@ var dateTime = require('node-datetime');
 const cron = require('node-cron');
 const WebSocket = require('ws');
 var CryptoJS = require("crypto-js");
+
+const { createGunzip } = require("zlib");
+const { pipeline } = require("stream/promises");
+
+
+
 const Stock_Modal = db.Stock;
 const Clients_Modal = db.Clients;
 const Signal_Modal = db.Signal;
@@ -50,13 +56,20 @@ cron.schedule('0 6 * * *', async () => {
 });
 
 
-cron.schedule('0 9 * * *', async () => {
+cron.schedule('15 6 * * *', async () => {
     await downloadZerodhatoken();
 }, {
     scheduled: true,
     timezone: "Asia/Kolkata"
 });
 
+
+cron.schedule('30 6 * * *', async () => {
+    await downloadAndExtractUpstox();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
 
 cron.schedule('0 4 * * *', async () => {
     await TradingStatusOff();
@@ -294,28 +307,75 @@ async function AddBulkStockCron(req, res) {
   }
   
 const DeleteTokenAliceToken = async (req, res) => {
+    // const pipeline = [
+    //     {
+    //         $addFields: {
+    //             expiryDate: {
+    //                 $dateFromString: {
+    //                     dateString: {
+    //                         $concat: [
+    //                             { $substr: ["$expiry", 4, 4] }, // Year
+    //                             "-",
+    //                             { $substr: ["$expiry", 2, 2] }, // Month
+    //                             "-",
+    //                             { $substr: ["$expiry", 0, 2] } // Day
+    //                         ]
+    //                     },
+    //                     format: "%Y-%m-%d"
+    //                 }
+    //             }
+    //         }
+    //     },
+    //     {
+    //         $match: {
+    //             expiryDate: { $lt: new Date() }
+    //         }
+    //     },
+    //     {
+    //         $group: {
+    //             _id: null,
+    //             idsToDelete: { $push: "$_id" } // Collecting all matching _id values
+    //         }
+    //     },
+    //     {
+    //         $project: {
+    //             _id: 0,
+    //             idsToDelete: 1
+    //         }
+    //     },
+  
+    // ];
+
+
     const pipeline = [
+        {
+            $match: {
+                expiry: { $type: "string", $ne: "", $regex: /^[0-9]{8}$/ } // Ensures expiry is exactly 8 digits (DDMMYYYY)
+            }
+        },
         {
             $addFields: {
                 expiryDate: {
                     $dateFromString: {
                         dateString: {
                             $concat: [
-                                { $substr: ["$expiry", 4, 4] }, // Year
+                                { $substr: ["$expiry", 4, 4] }, // Year (YYYY)
                                 "-",
-                                { $substr: ["$expiry", 2, 2] }, // Month
+                                { $substr: ["$expiry", 2, 2] }, // Month (MM)
                                 "-",
-                                { $substr: ["$expiry", 0, 2] } // Day
+                                { $substr: ["$expiry", 0, 2] } // Day (DD)
                             ]
                         },
-                        format: "%Y-%m-%d"
+                        format: "%Y-%m-%d",
+                        onError: null, // If conversion fails, set expiryDate to null
+                        onNull: null
                     }
                 }
             }
         },
         {
             $match: {
-                expiryDate: { $lt: new Date() }
+                expiryDate: { $lt: new Date() } // Delete expired tokens
             }
         },
         {
@@ -329,9 +389,9 @@ const DeleteTokenAliceToken = async (req, res) => {
                 _id: 0,
                 idsToDelete: 1
             }
-        },
-  
+        }
     ];
+
     const result = await Stock_Modal.aggregate(pipeline)
     if (result.length > 0) {
         const idsToDelete = result.map(item => item._id);
@@ -922,6 +982,41 @@ async function downloadZerodhatoken(req, res) {
 }
 
 
+async function downloadAndExtractUpstox(req, res) {
+    try {
+        const url = "https://assets.upstox.com/market-quote/instruments/exchange/complete.csv.gz";
+
+        // Create a folder to store the extracted file
+        const outputFolder = path.join(__dirname, "../../tokenupstox");
+      
+
+        if (!fs.existsSync(outputFolder)) {
+            fs.mkdirSync(outputFolder, { recursive: true });
+        }
+
+        // Define the extracted file path
+        const extractedFilePath = path.join(outputFolder, "complete.csv");
+
+        // Download and extract in a single stream
+        const response = await axios({
+            method: "get",
+            url: url,
+            responseType: "stream",
+        });
+
+        await pipeline(response.data, createGunzip(), fs.createWriteStream(extractedFilePath));
+
+        // Send success response
+        return res.send("Done");
+
+    } catch (err) {
+        console.error("Error:", err);
+        return res.send("Not Done");
+    }
+}
+
+
+
 
 async function calculateCAGRForBaskets() {
     const result = await Basket_Modal.aggregate([
@@ -1177,7 +1272,7 @@ async function fetchZerodhaOrder(client, order) {
    
     var config = {
         method: 'get',
-        url: 'https://api.kite.trade/orders/' + orderid,
+        url: 'https://api.kite.trade/orders/' + order.orderid,
         headers: {
             'Authorization': 'token ' + apikey + ':' + authToken
         }
@@ -1186,6 +1281,30 @@ async function fetchZerodhaOrder(client, order) {
 
     return await axios(config);
 }
+
+
+
+async function fetchUpstoxOrder(client, order) {
+    const authToken = client.authtoken;
+    const apikey = client.apikey;
+
+   
+
+
+    var config = {
+        method: 'get',
+        url: 'https://api-v2.upstox.com/order/details',
+        headers: {
+           Authorization: `Bearer ${authToken}`,
+        },
+        params: {
+           order_id: order.orderid
+       }
+    };
+
+    return await axios(config);
+}
+
 
 
 async function processPendingOrders(req, res) {
@@ -1240,8 +1359,11 @@ async function processPendingOrders(req, res) {
                     case 4:
                         response = await fetchMarketHubOrder(client, order);
                         break;
-                        case 5:
+                    case 5:
                         response = await fetchZerodhaOrder(client, order);
+                        break;
+                    case 6:
+                        response = await fetchUpstoxOrder(client, order);
                         break;
                     default:
                         console.log(`Skipping order ${order.orderid}: Unsupported broker ID.`);
@@ -1296,4 +1418,4 @@ async function processPendingOrders(req, res) {
 
 
 
-  module.exports = { AddBulkStockCron,DeleteTokenAliceToken,TradingStatusOff,CheckExpireSignalCash,CheckExpireSignalFutureOption,PlanExpire,downloadKotakNeotoken,calculateCAGRForBaskets,processPendingOrders,downloadZerodhatoken };
+  module.exports = { AddBulkStockCron,DeleteTokenAliceToken,TradingStatusOff,CheckExpireSignalCash,CheckExpireSignalFutureOption,PlanExpire,downloadKotakNeotoken,calculateCAGRForBaskets,processPendingOrders,downloadZerodhatoken,downloadAndExtractUpstox };

@@ -9,6 +9,7 @@ import { ArrowDownToLine, } from 'lucide-react';
 import { IndianRupee } from 'lucide-react';
 import Content from '../../../components/Contents/Content';
 
+
 const Signaldetail = () => {
 
 

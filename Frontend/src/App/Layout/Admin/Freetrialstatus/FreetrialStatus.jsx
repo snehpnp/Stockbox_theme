@@ -115,19 +115,19 @@ const FreetrialStatus = () => {
       name: 'Previous Status',
       selector: (row) => `${row.olddays} Day`,
       sortable: true,
-      width: '200px',
+      width: '250px',
     },
     {
       name: 'Updated Status',
       selector: (row) => `${row.newdays} Day`,
       sortable: true,
-      width: '200px',
+      width: '250px',
     },
     {
       name: 'Created At',
       selector: (row) => fDateTime(row.createdAt),
       sortable: true,
-      width: '200px',
+      width: '250px',
     },
     {
       name: 'Updated At',

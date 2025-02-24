@@ -193,7 +193,7 @@ const Demat = () => {
         <div className="page-content d-block">
           <div className="row row-cols-1 row-cols-lg-2 row-cols-xl-4 justify-content-center align-items-center">
 
-            {brokers?.map((broker) => (
+            {brokers.length > 0 ? brokers?.map((broker) => (
               <div className="col-md-4 col-sm-6 mb-3" key={broker?.id}>
                 <div className="card radius-5" onClick={() => setUserDetail(broker?.id)}>
                   <div className="card-body p-2 text-center cursor-pointer" onClick={() => handleShowModal(broker?.name)}>
@@ -204,7 +204,12 @@ const Demat = () => {
                   </div>
                 </div>
               </div>
-            ))}
+            )) : <div className="text-center mt-5">
+              <img
+                src="/assets/images/norecordfound.png"
+                alt="No Records Found"
+              />
+            </div>}
 
             {viewmodel && (
               <BrokersData closeModal={closeBrokerModal} data={brokerData} />

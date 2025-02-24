@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 import { LoginApi } from "../../Services/Auth/Login";
 import { image_baseurl } from "../../../Utils/config";
 import { Link } from "react-router-dom";
 import BgImg from "./bg-login-img.png";
+import showCustomAlert from "../../Extracomponents/CustomAlert/CustomAlert";
 
 import { basicsettinglist } from "../../Services/Admin/Admin";
 import $ from "jquery";
@@ -22,12 +23,9 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     if (username.trim() === "" || password.trim() === "") {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Please enter both username and password",
-      });
+      showCustomAlert("error", "Please enter both Username and Password", navigate, null);
       return;
     }
 
@@ -38,40 +36,34 @@ const Login = () => {
     if (ResData.status) {
       localStorage.setItem("token", ResData.data?.token);
       localStorage.setItem("id", ResData.data?.id);
-      localStorage.setItem(
-        "Role",
-        ResData?.data?.Role === 0
-          ? "SUPERADMIN"
-          : ResData?.data?.Role === 1
-            ? "ADMIN"
-            : ResData?.data?.Role === 2
-              ? "EMPLOYEE"
-              : ""
-      );
 
-      Swal.fire({
-        icon: "success",
-        title: "Success",
-        text: "Login successful!",
-        timer: 1500,
-      }).then(() => {
-        if (ResData?.data?.Role === 0) {
-          navigate("/superadmin/company");
-        } else if (ResData?.data?.Role === 1) {
-          navigate("/admin/dashboard");
-        } else if (ResData?.data?.Role === 2) {
-          navigate("/employee/dashboard");
-        }
+      const roleMap = {
+        0: "SUPERADMIN",
+        1: "ADMIN",
+        2: "EMPLOYEE",
+      };
+
+      const role = roleMap[ResData?.data?.Role] || "";
+      localStorage.setItem("Role", role);
+
+      const redirectTo = () => {
+        const routes = {
+          0: "/superadmin/company",
+          1: "/admin/dashboard",
+          2: "/employee/dashboard",
+        };
+        navigate(routes[ResData?.data?.Role] || "/");
         window.location.reload();
-      });
+      };
+
+      showCustomAlert("success", "Login successful!", navigate, redirectTo);
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: ResData.message,
-      });
+      showCustomAlert("error", ResData.message, navigate, null);
     }
   };
+
+
+
 
   const getsettinglist = async () => {
     try {

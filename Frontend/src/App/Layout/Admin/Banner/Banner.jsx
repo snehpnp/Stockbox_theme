@@ -9,14 +9,18 @@ import {
 } from "../../../Services/Admin/Admin";
 import Table from "../../../Extracomponents/Table";
 import { SquarePen, Trash2, PanelBottomOpen, Eye } from "lucide-react";
-import Swal from "sweetalert2";
 import { fDateTime } from "../../../../Utils/Date_formate";
 import { image_baseurl } from "../../../../Utils/config";
 import { Tooltip } from "antd";
 import Loader from "../../../../Utils/Loader";
 import ReusableModal from "../../../components/Models/ReusableModal";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+
+
 
 const Banner = () => {
+
+
   const navigate = useNavigate();
   const [clients, setClients] = useState([]);
   const [model, setModel] = useState(false);
@@ -24,6 +28,8 @@ const Banner = () => {
   const [searchInput, setSearchInput] = useState("");
   const fileInputRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
+
+
 
   //state for loading
   const [isLoading, setIsLoading] = useState(true);
@@ -44,8 +50,12 @@ const Banner = () => {
     hyperlink: "",
   });
 
+
+
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
+
+
 
   // Getting services
   const getBanner = async () => {
@@ -67,11 +77,11 @@ const Banner = () => {
     });
   };
 
+
+
   useEffect(() => {
     getBanner();
   }, [searchInput]);
-
-  
 
 
 
@@ -86,32 +96,15 @@ const Banner = () => {
       const response = await UpdateBanner(data, token);
 
       if (response && response.status) {
-        Swal.fire({
-          title: "Success!",
-          text: response.message || "Banner updated successfully.",
-          icon: "success",
-          confirmButtonText: "OK",
-          timer: 2000,
-        });
-
+        showCustomAlert("Success", response.message)
         setUpdatetitle({ title: "", id: "", hyperlink: "", image: "" });
         getBanner();
         setModel(false);
       } else {
-        Swal.fire({
-          title: "Error!",
-          text: response.message || "There was an error updating the Banner.",
-          icon: "error",
-          confirmButtonText: "Try Again",
-        });
+        showCustomAlert("error", response.message)
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "server error",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error", "server error")
     }
   };
 
@@ -129,123 +122,66 @@ const Banner = () => {
 
       const response = await Addbanner(data, token);
       if (response && response.status) {
-        Swal.fire({
-          title: "Success!",
-          text: response.message || "Banner added successfully.",
-          icon: "success",
-          confirmButtonText: "OK",
-          timer: 2000,
-        });
-
+        showCustomAlert("Success", response.message)
         setTitle({ title: "", add_by: "", hyperlink: "", image: "" });
         fileInputRef.current.value = "";
         getBanner();
+        setShowModal(false)
 
-        const modal = document.getElementById("exampleModal");
-        const bootstrapModal = window.bootstrap.Modal.getInstance(modal);
-        if (bootstrapModal) {
-          bootstrapModal.hide();
-        }
       } else {
-        Swal.fire({
-          title: "Error!",
-          text: response.message || "There was an error adding.",
-          icon: "error",
-          confirmButtonText: "Try Again",
-        });
+        showCustomAlert("error", response.message)
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "server error",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error", "server error")
+
     }
   };
 
 
 
 
-  
+
 
   const handleSwitchChange = async (event, id) => {
     const user_active_status = event.target.checked ? "true" : "false";
     const data = { id: id, status: user_active_status };
-    const result = await Swal.fire({
-      title: "Do you want to save the changes?",
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      cancelButtonText: "Cancel",
-      allowOutsideClick: false,
-    });
-
-    if (result.isConfirmed) {
+    const result = await showCustomAlert("confirm", "Do you want to save the changes?")
+    if (result) {
       try {
         const response = await changeBannerStatus(data, token);
         if (response.status) {
-          Swal.fire({
-            title: "Saved!",
-            icon: "success",
-            timer: 1000,
-            timerProgressBar: true,
-          });
-          setTimeout(() => {
-            Swal.close();
-          }, 1000);
+          showCustomAlert("Success", "Status Changed")
         }
         getBanner();
       } catch (error) {
-        Swal.fire(
-          "Error",
-          "There was an error processing your request.",
-          "error"
-        );
+        showCustomAlert("error", "There was an error processing your request.")
       }
-    } else if (result.dismiss === Swal.DismissReason.cancel) {
+    } else {
+      event.target.checked = !user_active_status
       getBanner();
     }
   };
+
+
+
 
   // delete news
 
   const Deletebannerlist = async (_id) => {
     try {
-      const result = await Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to delete this ? This action cannot be undone.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel",
-      });
-
-      if (result.isConfirmed) {
+      const result = await showCustomAlert("confirm", "Do you want to delete this This action cannot be undone.")
+      if (result) {
         const response = await DeleteBanner(_id, token);
         if (response.status) {
-          Swal.fire({
-            title: "Deleted!",
-            text: "The Banner has been successfully deleted.",
-            icon: "success",
-            confirmButtonText: "OK",
-          });
+          showCustomAlert("Success", "The Banner has been successfully deleted.")
           getBanner();
         }
       } else {
-        Swal.fire({
-          title: "Cancelled",
-          text: "The Banner deletion was cancelled.",
-          icon: "info",
-          confirmButtonText: "OK",
-        });
+        showCustomAlert("error", "The Banner deletion was cancelled.")
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error deleting the Banner.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error", "There was an error deleting the Banner.")
+
     }
   };
 

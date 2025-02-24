@@ -9,6 +9,7 @@ import Loader from "../../../../Utils/Loader";
 
 const Subscription = () => {
 
+  const token = localStorage.getItem("token");
 
   const [planData, setPlanData] = useState([]);
   const [basketData, setBasketData] = useState([]);
@@ -16,7 +17,6 @@ const Subscription = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [discription, setDiscription] = useState("");
   const id = localStorage.getItem("id");
-  const token = localStorage.getItem("token");
   const [isLoading, setIsLoading] = useState(true)
   const [servicedata, setServicedata] = useState([])
 
@@ -42,7 +42,7 @@ const Subscription = () => {
     } catch (err) {
       console.log("erorr")
     }
-    setIsLoading(false)
+    // setIsLoading(false)
   };
 
 
@@ -102,6 +102,7 @@ const Subscription = () => {
 
 
   const renderAccordionItems = () => {
+
     return planData?.map((accordion) => (
       <div
         key={accordion._id}
@@ -204,7 +205,7 @@ const Subscription = () => {
 
 
   const renderAccordionItems1 = () => {
-    return basketData?.map((accordion) => (
+    return basketData && basketData?.map((accordion) => (
       <div
         key={accordion._id}
         className="accordion-item rounded-3 border-0 shadow mb-2"
@@ -324,130 +325,58 @@ const Subscription = () => {
           </ul>
 
 
-          {isLoading ? <Loader /> 
-          : activeTab === "plan" && (
-            <div>
-            <div className="row">
-  {servicedata && servicedata.length > 0 ? (
-    servicedata.map((item, index) => (
-      <div key={index} className="col-md-4 mb-3">
-        <div className="card">
-          <ul className="list-group list-group-flush mt-0">
-            <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
-              {item?.serviceName} <span></span>
-            </li>
-            <li className="list-group-item d-flex justify-content-between align-items-center">
-              Expiry Date
-              <span className="badge bg-primary rounded-pill badgespan">
-                {fDate(item?.enddate)}
-              </span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    ))
-  ) : (
-    <>
-      
-      
-      <div className="dark text-center">
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 240 160"
-    width="240"
-    height="160"
-  >
-    <defs>
-      {/* Gradients for light and dark modes */}
-      <linearGradient id="bgGradient" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#f0f0f0" />
-        <stop offset="100%" stopColor="#dcdcdc" />
-      </linearGradient>
-      <linearGradient id="bgGradientDark" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#333333" />
-        <stop offset="100%" stopColor="#1a1a1a" />
-      </linearGradient>
-
-      {/* Drop shadow filter for subtle 3D effect */}
-      <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-        <feDropShadow dx="0" dy="2" stdDeviation="2" floodColor="rgba(0,0,0,0.3)" />
-      </filter>
-    </defs>
-
-    <g id="laptop" filter="url(#shadow)">
-      {/* Laptop outer body */}
-      <rect x="20" y="20" width="200" height="100" rx="10" ry="10" fill="#cccccc" />
-
-      {/* Laptop screen */}
-      <rect
-        x="30"
-        y="30"
-        width="180"
-        height="80"
-        rx="5"
-        ry="5"
-        className="screen-bg"
-      />
-
-      {/* Loader dots */}
-      <g id="loader-dots">
-        <circle cx="110" cy="65" r="3" className="dot" style={{ animationDelay: '0s' }} />
-        <circle cx="120" cy="65" r="3" className="dot" style={{ animationDelay: '0.2s' }} />
-        <circle cx="130" cy="65" r="3" className="dot" style={{ animationDelay: '0.4s' }} />
-      </g>
-
-      {/* "No Data Found" text inside the screen */}
-      <text
-        x="120"
-        y="85"
-        textAnchor="middle"
-        dominantBaseline="middle"
-        fill="#ffffff"
-        style={{ fontSize: '14px', fontFamily: 'Arial, sans-serif' }}
-      >
-        No Data Found
-      </text>
-
-      {/* Laptop base/keyboard */}
-      <rect x="30" y="120" width="180" height="10" rx="3" ry="3" fill="#888888" />
-    </g>
-  </svg>
-</div>
-
-
-
-
-</>
-  
-  )}
-</div>
-
-
-              <div className="mt-4">
-                <div
-                  className="accordion accordion-flush"
-                  id="accordionFlushExample"
-                >
-                  {renderAccordionItems()}
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <>
+              {activeTab === "plan" && (
+                <div>
+                  <div className="row">
+                    {servicedata && servicedata.length > 0 ? (
+                      servicedata.map((item, index) => (
+                        <div key={index} className="col-md-4 mb-3">
+                          <div className="card">
+                            <ul className="list-group list-group-flush mt-0">
+                              <li className="list-group-item d-flex justify-content-between align-items-center headingfont">
+                                {item?.serviceName} <span></span>
+                              </li>
+                              <li className="list-group-item d-flex justify-content-between align-items-center">
+                                Expiry Date
+                                <span className="badge bg-primary rounded-pill badgespan">
+                                  {fDate(item?.enddate)}
+                                </span>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center mt-5">
+                        <img
+                          src="/assets/images/norecordfound.png"
+                          alt="No Records Found"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <div className="mt-4">
+                    <div className="accordion accordion-flush" id="accordionFlushExample">
+                      {renderAccordionItems()}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              )}
+
+              {activeTab === "basket" && (
+                <div className="mt-4">
+                  <div className="accordion accordion-flush" id="accordionFlushExample">
+                    {renderAccordionItems1()}
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
-
-
-
-          {activeTab === "basket" && (
-            <div className="mt-4">
-              <div
-                className="accordion accordion-flush"
-                id="accordionFlushExample"
-              >
-                {renderAccordionItems1()}
-
-              </div>
-            </div>
-          )}
         </div>
 
         <ReusableModal

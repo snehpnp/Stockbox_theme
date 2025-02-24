@@ -26,7 +26,6 @@ import ClientDeleteHistory from "../Layout/Admin/Admin_client/ClientDeleteHistor
 import ClientSignaldetail from "../Layout/Admin/Admin_client/ClientSignaldetail";
 import ClientRequest from "../Layout/Admin/Admin_client/ClientRequest/ClientRequest";
 import Faq from "../Layout/Admin/Admin_faq/Faq";
-import Kyc from "../Layout/Admin/Admin_kyc/Kyc";
 import Perform from "../Layout/Admin/Admin_perfom/Perfom";
 import Service from "../Layout/Admin/Admin_service/Service.s";
 import Banner from "../Layout/Admin/Banner/Banner";
@@ -80,6 +79,8 @@ import Addcoupon from "../Layout/Admin/Coupon/Addcoupon";
 import Updatecoupon from "../Layout/Admin/Coupon/Updatecoupon";
 import Apiinfo from "../Layout/Admin/BasicSetting/Apiinfo";
 import ClientOrderlist from "../Layout/Admin/ClientOrderlist/ClientOrderlist";
+import Changepass from "../Layout/Auth/Changepass";
+import ReferAndEarnlist from "../Layout/Admin/BasicSetting/ReferAndEarnlist";
 
 
 
@@ -122,7 +123,7 @@ export default function App() {
 
       <Route path="/faq" element={<Faq />} />
       <Route path="/paymenthistory" element={<PaymentHistory />} />
-      <Route path="/kyc" element={<Kyc />} />
+
       <Route path="/perfom" element={<Perform />} />
       <Route path="/service" element={<Service />} />
       <Route path="/banner" element={<Banner />} />
@@ -165,7 +166,7 @@ export default function App() {
       <Route path="/QRdetails" element={<QRDetails />} />
 
 
-      {/* <Route path="/changepass" element={<Changepass />} /> */}
+      <Route path="/changepass" element={<Changepass />} />
       <Route path="/help" element={<Help />} />
       <Route path="/paymentrequest" element={<PaymentRequest />} />
 
@@ -204,6 +205,7 @@ export default function App() {
       <Route path="/updatecondition" element={<Updatecondition />} />
 
       <Route path="/orderlist" element={<ClientOrderlist />} />
+      <Route path="/referAndEarnlist" element={<ReferAndEarnlist />} />
 
     </Routes>
   );

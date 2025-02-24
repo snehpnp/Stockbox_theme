@@ -96,6 +96,12 @@ const Admin = [
     name: "WithdrawalRequest"
   },
   {
+    label: "Refer And Earn List",
+    icon: "HelpingHand",
+    link: "/admin/referAndEarnlist",
+    name: "ReferAndEarnList"
+  },
+  {
     label: "Blogs",
     icon: "Paintbrush",
     link: "/admin/blogs",

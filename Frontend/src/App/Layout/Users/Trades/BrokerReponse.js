@@ -161,62 +161,13 @@ const BrokerResponse = () => {
               </div>
             </div>
           )) :
-          <div className="dark text-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 240 160"
-              width="240"
-              height="160"
-            >
-              <defs>
-
-                <linearGradient id="bgGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#f0f0f0" />
-                  <stop offset="100%" stopColor="#dcdcdc" />
-                </linearGradient>
-                <linearGradient id="bgGradientDark" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#333333" />
-                  <stop offset="100%" stopColor="#1a1a1a" />
-                </linearGradient>
-                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="0" dy="2" stdDeviation="2" floodColor="rgba(0,0,0,0.3)" />
-                </filter>
-              </defs>
-              <g id="laptop" filter="url(#shadow)">
-
-                <rect x="20" y="20" width="200" height="100" rx="10" ry="10" fill="#cccccc" />
-
-
-                <rect
-                  x="30"
-                  y="30"
-                  width="180"
-                  height="80"
-                  rx="5"
-                  ry="5"
-                  className="screen-bg"
-                />
-
-
-                <g id="loader-dots">
-                  <circle cx="110" cy="65" r="3" className="dot" />
-                  <circle cx="120" cy="65" r="3" className="dot" />
-                  <circle cx="130" cy="65" r="3" className="dot" />
-                </g>
-                <text
-                  x="120"
-                  y="85"
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  fill="#ffffff"
-                  style={{ fontSize: '14px', fontFamily: 'Arial, sans-serif' }}
-                >
-                  No Data Found
-                </text>
-                <rect x="30" y="120" width="180" height="10" rx="3" ry="3" fill="#888888" />
-              </g>
-            </svg>
-          </div>}
+          <div className="text-center mt-5">
+            <img
+              src="/assets/images/norecordfound.png"
+              alt="No Records Found"
+            />
+          </div>
+        }
       </div>
     </Content>
   );

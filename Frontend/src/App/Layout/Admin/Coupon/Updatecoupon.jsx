@@ -118,12 +118,12 @@ const Updatecoupon = () => {
       limitation: values.limitation,
       id: row._id,
     };
-    console.log("req data", req);
+    ;
 
 
     try {
       const response = await updateCouponbyadmin(req, token);
-      console.log("datata", response);
+
 
       if (response.status) {
         Swal.fire({
@@ -166,7 +166,7 @@ const Updatecoupon = () => {
       enddate: row?.enddate ? new Date(row.enddate).toISOString().split("T")[0] : "",
       minpurchasevalue: row?.minpurchasevalue || "",
       mincouponvalue: row?.mincouponvalue || "",
-      limitation: row?.limitation || "",
+      limitation: row?.totallimitation || "",
       service: row?.service ? row?.service : "",
       id: "",
     },

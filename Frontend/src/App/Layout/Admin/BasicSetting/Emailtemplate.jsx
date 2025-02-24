@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getemailtemplate, UpdateTemplate } from '../../../Services/Admin/Admin';
-import Swal from 'sweetalert2';
 import Table from '../../../Extracomponents/Table';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import { image_baseurl } from '../../../../Utils/config';
 import { SquarePen, Trash2, PanelBottomOpen } from 'lucide-react';
 import ReusableModal from '../../../components/Models/ReusableModal';
-
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Emailtemplate = () => {
 
@@ -57,32 +56,17 @@ const Emailtemplate = () => {
             const response = await UpdateTemplate(data, token);
 
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Template updated successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
-
+                showCustomAlert("Success", 'Template updated successfully.')
                 setUpdatetitle({ title: "", id: "" });
                 gettemplatelist();
                 setModel(false);
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'There was an error updating the Template.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", 'There was an error updating the Template.')
+
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error updating the Template.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'There was an error updating the Template.')
+
         }
     };
 

@@ -1617,6 +1617,222 @@ const finalResult = result.map(item => ({
 }
 
 
+  
+async closeSignalwithplan(req, res) {
+  try {
+
+   
+    const { id, targethit1,targethit2,targethit3,targetprice1,targetprice2,targetprice3,slprice,exitprice,closestatus,closetype, close_description } = req.body;
+   
+
+    const Signal = await Signal_Modal.findById(id);
+
+    if (!Signal) {
+        return res.status(404).json({
+            status: false,
+            message: "Signal not found"
+        });
+    }
+  let serviceName;
+  let service;
+    if (Signal.segment == "C") {
+      serviceName = "Cash";
+      service = "66d2c3bebf7e6dc53ed07626";
+    
+    } else if (Signal.segment == "O") {
+      serviceName = "Option";
+      service = "66dfeef84a88602fbbca9b79";
+    } else {
+      serviceName = "Future";
+      service = "66dfede64a88602fbbca9b72";
+    }
+
+    let stock = Signal.stock;
+
+
+
+    let close_status = false;
+    let closeprice = null;
+    let closedate = null;
+   
+    let  notificationTitle;
+    let notificationBody;
+    if (closetype === "1") {
+      // Close at target price
+      close_status = true;
+      closeprice = targetprice3 || targetprice2 || targetprice1;
+      closedate = new Date();
+    
+
+       notificationTitle = 'Important Update';
+       notificationBody =`${serviceName} ${stock} CLOSED All Target Achieved`;
+
+
+
+    } else if (closetype === "2") {
+
+      
+      // Close based on closestatus and target price
+      close_status = closestatus;
+    
+      if (close_status=="true") {
+        closeprice = targetprice3 || targetprice2 || targetprice1;
+        closedate = new Date();
+      }
+
+      if(targetprice3)
+      {
+        notificationBody =`${serviceName} ${stock} CLOSED All Target Achieved`;
+      }
+      else 
+      if(targetprice2)
+      {
+        var targetachive ="2nd";
+        if(close_status=="true") {
+         notificationBody =`${serviceName} ${stock} CLOSED Book Profits ${targetachive} Target Achived`;
+         }
+        else {
+        notificationBody =`${serviceName} ${stock} PARTIALLY CLOSED Book Partial Profits ${targetachive} Target Achived`;
+        }
+      }
+      else
+      {
+        var targetachive ="1st";
+        
+        if(close_status=="true") {
+            notificationBody =`${serviceName} ${stock} CLOSED Book Profits ${targetachive} Target Achived`;
+             }
+            else {
+            notificationBody =`${serviceName} ${stock} PARTIALLY CLOSED Book Partial Profits ${targetachive} Target Achived`;
+            }
+      }
+
+       notificationTitle = 'Important Update';
+
+    } else if (closetype === "3") {
+      // Close at stop-loss price
+      close_status = true;
+      closeprice = slprice;
+      closedate = new Date();
+    
+       notificationTitle = 'Important Update';
+      notificationBody =`${serviceName} ${stock} CLOSED SL Triggered`;
+        
+
+    } else if (closetype === "4") {
+      // Close at exit price
+      close_status = true;
+      closeprice = exitprice;
+      closedate = new Date();
+
+       notificationTitle = 'Important Update';
+       notificationBody =`${serviceName} ${stock} CLOSED Exit Position AT ${exitprice}`;
+
+    }
+    else if (closetype === "5") {
+      // Close at exit price
+      close_status = true;
+      closeprice = 0;
+      closedate = new Date();
+
+       notificationTitle = 'Important Update';
+       notificationBody =`Avoid This Signal`;
+
+    }
+    
+    if (!id) {
+      return res.status(400).json({
+        status: false,
+        message: "Signal ID is required",
+      });
+    }
+
+    const updatedSignal = await Signal_Modal.findByIdAndUpdate(
+      id,
+      {
+          closeprice:closeprice,
+          close_status:close_status,
+          close_description,
+          targethit1,
+          targethit2,
+          targethit3,
+          targetprice1,
+          targetprice2,
+          targetprice3,
+          closedate: closedate
+      },
+      { signal: true, runValidators: true } // Options: return the updated document and run validators
+    );
+
+    // const clients = await Clients_Modal.find({
+    //   del: 0,
+    //   ActiveStatus: 1,
+    //   devicetoken: { $exists: true, $ne: null }
+    // }).select('devicetoken');
+    
+    const today = new Date();
+
+    const clients = await Clients_Modal.find({
+      del: 0,
+      ActiveStatus: 1,
+      devicetoken: { $exists: true, $ne: null },
+      _id: {
+        $in: await Planmanage.find({
+          serviceid: service,  // Replace `service` with your actual service value
+          enddate: { $gte: today }
+        }).distinct('clientid')  // Assuming 'clientid' is the field linking to Clients_Modal
+      }
+    }).select('devicetoken');
+
+
+    const tokens = clients.map(client => client.devicetoken);
+
+    if (tokens.length > 0) {
+
+      const resultn = new Notification_Modal({
+        segmentid:Signal.planid,
+        type:"close signal",
+        title: notificationTitle,
+        message: notificationBody
+    });
+
+    await resultn.save();
+
+
+    try {
+      // Send notifications to all device tokens
+      await sendFCMNotification(notificationTitle, notificationBody, tokens,"close signal");
+      // console.log('Notifications sent successfully');
+    } catch (error) {
+  
+    }
+
+
+    }
+
+    if (!updatedSignal) {
+      return res.status(404).json({
+        status: false,
+        message: "Signal not found",
+      });
+    }
+
+    return res.json({
+      status: true,
+      message: "Signal Closed successfully",
+      data: updatedSignal,
+    });
+
+  } catch (error) {
+    // console.error("Error updating Signal:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+}
+
 
 
 }

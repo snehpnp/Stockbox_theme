@@ -54,6 +54,7 @@ class BasicSetting {
           officepaymenystatus,
           refer_status,
           invoicestatus,
+          gst,
         } = req.body;
 
         const existingSetting = await BasicSetting_Modal.findOne({});
@@ -115,6 +116,7 @@ class BasicSetting {
           refer_status,
           invoicestatus,
           offer_image,
+          gst,
         };
 
         const options = {

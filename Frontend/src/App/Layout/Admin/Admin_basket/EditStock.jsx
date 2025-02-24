@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { updateStockList } from "../../../Services/Admin/Admin";
-import Swal from "sweetalert2";
 import { Tooltip } from 'antd';
 import axios from "axios";
 import * as Config from "../../../../Utils/config";
 import Content from "../../../components/Contents/Content";
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 const EditStock = () => {
@@ -19,12 +18,15 @@ const EditStock = () => {
     const { stock } = location.state || {};
     const [selectedServices, setSelectedServices] = useState([]);
     const [options, setOptions] = useState([]);
-    const [loading, setLoading] = useState(false);
     const [inputValue, setInputValue] = useState("");
     const [formValues, setFormValues] = useState({});
     const [weightagecounting, setWeightagecounting] = useState(0);
     const [currentlocation, setCurrentlocation] = useState({})
 
+    const [loadingSubmit, setLoadingSubmit] = useState(false);
+    const [loadingPublish, setLoadingPublish] = useState(false);
+    const [loadingOptions, setLoadingOptions] = useState(false);
+    const [description, setDescription] = useState(stock && stock[0]?.comment || "")
 
 
 
@@ -78,7 +80,8 @@ const EditStock = () => {
             setOptions([]);
             return;
         }
-        setLoading(true);
+        setLoadingOptions(true);
+
         try {
             const response = await axios.post(
                 `${Config.base_url}stock/getstockbysymbol`,
@@ -103,7 +106,7 @@ const EditStock = () => {
             console.error("Error fetching options:", error);
             setOptions([]);
         } finally {
-            setLoading(false);
+            setLoadingOptions(false);
         }
     };
 
@@ -181,10 +184,10 @@ const EditStock = () => {
 
 
     const handleSubmit = async (status) => {
-        setLoading(true);
         try {
             if (Object.keys(formValues).length === 0) {
-                Swal.fire("Error", "Stock is required for edit", "warning");
+                showCustomAlert("error", "Stock is required for edit", "warning");
+
                 return;
             }
 
@@ -193,11 +196,7 @@ const EditStock = () => {
             );
 
             if (invalidStocks.length > 0) {
-                Swal.fire(
-                    "Error",
-                    "Each stock's weightage should be greater than zero.",
-                    "error"
-                );
+                showCustomAlert("error", "Each stock's weightage should be greater than zero.");
                 return;
             }
 
@@ -207,11 +206,7 @@ const EditStock = () => {
             );
 
             if (totalWeightage !== 100) {
-                Swal.fire(
-                    "Error",
-                    "Total weightage of all stocks must be exactly 100.",
-                    "error"
-                );
+                showCustomAlert("error", "Total weightage of all stocks must be exactly 100.");
                 return;
             }
 
@@ -220,7 +215,7 @@ const EditStock = () => {
             );
 
             if (emptyType.length > 0) {
-                Swal.fire("Warning", "Please select type.", "warning");
+                showCustomAlert("error", "Please select type.");
                 return;
             }
 
@@ -237,23 +232,28 @@ const EditStock = () => {
                 stocks: stocksWithStatus,
                 version,
                 publishstatus: status === 0 ? false : status === 1 ? true : "",
+                comments: description
             };
+
+            if (status === 1) {
+                setLoadingPublish(true);
+            } else {
+                setLoadingSubmit(true);
+            }
+
 
             const response = await updateStockList(requestData);
             if (response?.status) {
-                Swal.fire("Success", response.message, "success");
-                setTimeout(() => navigate("/admin/basket"), 1500);
+                showCustomAlert("Success", response.message, navigate, "/admin/basket");
             } else {
-                Swal.fire("Error", response.message, "error");
+                showCustomAlert("error", response.message);
+
             }
         } catch (error) {
-            Swal.fire(
-                "Error",
-                "An unexpected error occurred. Please try again.",
-                "error"
-            );
+            showCustomAlert("error", "An unexpected error occurred. Please try again.");
         } finally {
-            setLoading(false);
+            setLoadingSubmit(false);
+            setLoadingPublish(false);
         }
     };
 
@@ -289,8 +289,8 @@ const EditStock = () => {
                         placeholder="Search and select stocks..."
                         isClearable
                         isMulti
-                        isLoading={loading}
-                        noOptionsMessage={() => (loading ? "Loading..." : "No options found")}
+                        isLoading={loadingOptions}
+                        noOptionsMessage={() => (loadingOptions ? "Loading..." : "No options found")}
                     />
 
                     <div className="row">
@@ -358,21 +358,31 @@ const EditStock = () => {
                             </div>
                         </div>
                     ))}
+
+                    <div style={{ marginTop: "15px" }}>
+                        <label>Rationale</label>
+                        <textarea
+                            className="form-control"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                        />
+                    </div>
+
                     <button
                         type="button"
                         className="btn btn-primary mt-4"
                         onClick={() => handleSubmit(0)}
-                        disabled={loading}
+                        disabled={loadingSubmit}
                     >
-                        {loading ? "Submitting..." : "Submit"}
+                        {loadingSubmit ? "Submitting..." : "Submit"}
                     </button>
                     <button
                         type="button"
                         className="btn btn-primary mt-4 ms-2"
                         onClick={() => handleSubmit(1)}
-                        disabled={loading}
+                        disabled={loadingPublish}
                     >
-                        {loading ? "Publishing..." : "Submit & Publish"}
+                        {loadingPublish ? "Publishing..." : "Submit & Publish"}
                     </button>
 
                 </div>

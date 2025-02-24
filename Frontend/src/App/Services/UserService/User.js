@@ -591,17 +591,19 @@ export async function GetBroadcastData(token) {
 
 export async function GetNotificationData(data, token) {
     try {
-        const res = await axios.get(`${Config.base_url}api/list/notification/${data.user_id}`, {
+        const res = await axios.get(`${Config.base_url}api/list/notification/${data.user_id}?${data.page}`, {
             headers: {
-                Authorization: `${token}`,
+                Authorization: ` ${token}`,
             },
         });
 
         return res?.data;
     } catch (err) {
-        return err;
+        console.error('Error fetching notifications:', err.message || err);
+        throw new Error('Failed to fetch notifications');
     }
 }
+
 
 // api/list/blogspagination
 

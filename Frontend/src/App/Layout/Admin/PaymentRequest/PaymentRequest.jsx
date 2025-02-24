@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { PaymentRequestlist, ChangePaymentStatus } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table';
 import Swal from 'sweetalert2';
-import { fDateTime, fDate } from '../../../../Utils/Date_formate';
+import { fDateTime, fDateTimeH, fDate } from '../../../../Utils/Date_formate';
 import { Link } from 'react-router-dom';
 import { IndianRupee } from 'lucide-react';
-
+import { GetUserData } from '../../../Services/UserService/User';
 
 
 const PaymentRequest = () => {
+
 
 
 
@@ -17,8 +18,6 @@ const PaymentRequest = () => {
     const [searchInput, setSearchInput] = useState("");
     const [activeTab, setActiveTab] = useState('Pending');
     const [selectedValues, setSelectedValues] = useState({});
-
-
 
 
 
@@ -81,7 +80,6 @@ const PaymentRequest = () => {
 
 
 
-
     useEffect(() => {
         getpaymentrequest();
     }, [searchInput]);
@@ -118,13 +116,13 @@ const PaymentRequest = () => {
         },
         {
             name: 'Available balance',
-            selector: row => <div> <IndianRupee />{row.amount}</div>,
+            selector: row => <div> <IndianRupee />{row?.client_details?.wamount}</div>,
             sortable: true,
             width: '220px',
         },
         {
             name: 'Amount',
-            selector: row => <div> <IndianRupee />{row.amount}</div>,
+            selector: row => <div> <IndianRupee />{row?.amount}</div>,
             sortable: true,
             width: '130px',
         },

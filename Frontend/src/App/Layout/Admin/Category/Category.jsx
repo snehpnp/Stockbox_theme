@@ -524,7 +524,7 @@ const Category = () => {
                                                     onClick={Updatecategory}
                                                     disabled={!updatetitle.title || !updatetitle.service}
                                                 >
-                                                    Update Service
+                                                    Update Category
                                                 </button>
                                             </>
                                         }

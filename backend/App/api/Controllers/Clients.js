@@ -161,7 +161,7 @@ class Clients {
         }
 
         const finalMailBody = mailtemplate.mail_body.replace('{resetToken}', resetToken);
-        const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+        const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
 
         // Replace placeholders with actual values
         const finalHtml = htmlTemplate
@@ -283,7 +283,7 @@ class Clients {
 
 
       const token = crypto.randomBytes(10).toString('hex'); // 10 bytes = 20 hex characters
-      client.token = token;
+      client.login_token = token;
       client.devicetoken = devicetoken;
       await client.save();
 
@@ -296,8 +296,10 @@ class Clients {
           PhoneNo: client.PhoneNo,
           id: client.id,
           token: token,
-          angleredirecturl: `${req.protocol}://${req.headers.host}/backend/angle/getaccesstoken?key=${client._id}`,
-          aliceredirecturl: `${req.protocol}://${req.headers.host}/backend/aliceblue/getaccesstoken?key=${client._id}`
+          angleredirecturl: `https://${req.headers.host}/backend/angle/getaccesstoken?key=${client._id}`,
+          aliceredirecturl: `https://${req.headers.host}/backend/aliceblue/getaccesstoken?key=${client._id}`,
+          zerodharedirecturl : `https://${req.headers.host}/backend/zerodha/getaccesstoken?key=${client.Email}`,
+          upstoxredirecturl : `https://${req.headers.host}/backend/upstox/getaccesstoken&state=${client.Email}`
         },
       });
     } catch (error) {
@@ -359,7 +361,7 @@ class Clients {
         }
 
         const finalMailBody = mailtemplate.mail_body.replace('{resetToken}', resetToken);
-        const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+        const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
         // Replace placeholders with actual values
         const finalHtml = htmlTemplate
           .replace(/{{company_name}}/g, settings.website_title)
@@ -1046,7 +1048,7 @@ class Clients {
       const PhoneNo = client.PhoneNo;
       // Define the redirect URL
       const baseUrl = "https://app.digio.in/#/gateway/login/";
-      const redirectUrl = encodeURIComponent(`${req.protocol}://${req.headers.host}`);
+      const redirectUrl = encodeURIComponent(`https://${req.headers.host}`);
 
       const fullUrl = `${baseUrl}${doc_id}/${refid}/${PhoneNo}?redirect_url=${redirectUrl}`;
 
@@ -1320,6 +1322,7 @@ class Clients {
 
       // Initialize the url variable
       let url;
+      var hosts = req.headers.host;
 
       // Conditional URL assignment based on brokerid
       if (brokerid == 1) {
@@ -1327,6 +1330,9 @@ class Clients {
       }
       else if (brokerid == 5) {
         url = `https://kite.zerodha.com/connect/login?v=3&api_key=${apikey}`;
+      }
+      else if (brokerid == 6) {
+        url = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=124c6797-b28d-47b1-91e5-6c26f7cb9a02&redirect_uri=https://${hosts}/backend/upstox/getaccesstoken&state=${client.Email}`;
       }
       else {
         url = `https://ant.aliceblueonline.com/?appcode=${apikey}`;
@@ -1498,7 +1504,7 @@ class Clients {
         }
 
         const finalMailBody = mailtemplate.mail_body.replace('{resetToken}', resetToken);
-        const logo = `${req.protocol}://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+        const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
         // Replace placeholders with actual values
         const finalHtml = htmlTemplate
           .replace(/{{company_name}}/g, settings.website_title)

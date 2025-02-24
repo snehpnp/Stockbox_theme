@@ -287,82 +287,84 @@ const Service = () => {
         {isLoading ? (
           <Loader />
         ) : (
-          <div className="pricing-container price1  mt-4">
-            <div className="row row-cols-1 row-cols-md-1 row-cols-lg-3 row-cols-xl-3">
-              {getFilteredPlans?.map(
-                (item) =>
-                  item?.plans?.length > 0 && (
-                    <div className="col col-lg-6 " key={item?._id}>
-                      <div className="card card1 mb-4">
-                        <div className="card-body">
-                          <div className="d-flex align-items-center">
-                            <div className="text-left">
-                              <span className="price-original">
-                                {Array?.isArray(item?.services) &&
-                                  item.services.length > 0
-                                  ? item?.services
-                                    ?.map((service) =>
-                                      typeof service.title === "string"
-                                        ? service.title
-                                          .split(/(?=[A-Z])/)
-                                          .join(" + ")
-                                        : "N/A"
-                                    )
-                                    .join(" + ")
-                                  : "N/A"}
-                              </span>
-                              <h5 className="mb-0">{item?.title}</h5>
-                            </div>
-                            <div className="ms-auto">
-                              <div className="price">
-                                <span className="price-current">
-                                  <IndianRupee />
-                                  {item?.plans[0]?.price}
+          <div className="pricing-container price1 mt-4">
+            {getFilteredPlans?.length > 0 ? (
+              <div className="row row-cols-1 row-cols-md-1 row-cols-lg-3 row-cols-xl-3">
+                {getFilteredPlans.map(
+                  (item) =>
+                    item?.plans?.length > 0 && (
+                      <div className="col col-lg-6" key={item?._id}>
+                        <div className="card card1 mb-4">
+                          <div className="card-body">
+                            <div className="d-flex align-items-center">
+                              <div className="text-left">
+                                <span className="price-original">
+                                  {Array.isArray(item?.services) && item.services.length > 0
+                                    ? item.services
+                                      .map((service) =>
+                                        typeof service.title === "string"
+                                          ? service.title.split(/(?=[A-Z])/).join(" + ")
+                                          : "N/A"
+                                      )
+                                      .join(" + ")
+                                    : "N/A"}
                                 </span>
+                                <h5 className="mb-0">{item?.title}</h5>
+                              </div>
+                              <div className="ms-auto">
+                                <div className="price">
+                                  <span className="price-current">
+                                    <IndianRupee />
+                                    {item?.plans[0]?.price}
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <hr />
-                          <ul className="features">
-                            <li>
-                              <b>Validity</b>: {item?.plans[0]?.validity}{" "}
-                            </li>
-                            <li>
-                              <b>Description</b>:
-                              <textarea
-                                className="form-control"
-                                value={stripHtmlTags(
-                                  item?.plans[0]?.description || ""
-                                )}
-                                readOnly
-                              />
-                            </li>
-                          </ul>
-                          <div className="d-block d-sm-flex  align-items-center justify-content-between mt-4">
-                            <button
-                              className="btn btn-secondary rounded-1 mt-2 mt-sm-0 me-2 me-sm-0"
-                              onClick={() => {
-                                setViewModel(true);
-                                setDiscription(item?.plans[0]?.description);
-                              }}
-                            >
-                              Know More
-                            </button>
+                            <hr />
+                            <ul className="features">
+                              <li>
+                                <b>Validity</b>: {item?.plans[0]?.validity}{" "}
+                              </li>
+                              <li>
+                                <b>Description</b>:
+                                <textarea
+                                  className="form-control"
+                                  value={stripHtmlTags(item?.plans[0]?.description || "")}
+                                  readOnly
+                                />
+                              </li>
+                            </ul>
+                            <div className="d-block d-sm-flex align-items-center justify-content-between mt-4">
+                              <button
+                                className="btn btn-secondary rounded-1 mt-2 mt-sm-0 me-2 me-sm-0"
+                                onClick={() => {
+                                  setViewModel(true);
+                                  setDiscription(item?.plans[0]?.description);
+                                }}
+                              >
+                                Know More
+                              </button>
 
-                            <button
-                              className="btn btn-primary rounded-1 mt-2 mt-sm-0"
-                              onClick={() => handleShowModal(item)}
-                            >
-                              Subscribe Now
-                            </button>
+                              <button
+                                className="btn btn-primary rounded-1 mt-2 mt-sm-0"
+                                onClick={() => handleShowModal(item)}
+                              >
+                                Subscribe Now
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )
-              )}
-            </div>
+                    )
+                )}
+              </div>
+            ) : (
+              <div className="text-center mt-4">
+                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+              </div>
+            )}
           </div>
+
         )}
       </div>
 
