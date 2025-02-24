@@ -26,12 +26,15 @@ const Company = () => {
   const [searchInput, setSearchInput] = useState("");
   const [themes, setThemes] = useState([]);
 
-  const [isLoader,setIsLoader] = useState(true)
+  const [isLoader, setIsLoader] = useState(true)
 
   useEffect(() => {
     getAdminclient();
     GetAllThemes();
   }, [searchInput]);
+
+
+
 
   const getAdminclient = async () => {
     try {
@@ -52,6 +55,9 @@ const Company = () => {
     }
   };
 
+
+
+
   const GetAllThemes = async () => {
     try {
       const response = await GetAllThemesNameApi();
@@ -63,9 +69,14 @@ const Company = () => {
     }
   };
 
+
+
+
   const updateCompany = async (row) => {
     navigate("/superadmin/companyupdate/", { state: { row } });
   };
+
+
 
   const DeleteCompanydata = async (_id) => {
     try {
@@ -106,6 +117,9 @@ const Company = () => {
       });
     }
   };
+
+
+
 
   // update status
   const handleSwitchChange = async (event, id) => {
@@ -149,9 +163,13 @@ const Company = () => {
     }
   };
 
+
+
   const companydetail = async (_id) => {
     navigate(`/superadmin/companydetail/${_id}`);
   };
+
+
 
   const UpdateTheme = async (id, theme_id) => {
     const data = { id: id, theme_id: theme_id };
@@ -257,9 +275,9 @@ const Company = () => {
           <Tooltip title="Update">
             <UserPen onClick={() => updateCompany(row)} />
           </Tooltip>
-          <Tooltip title="delete">
+          {/* <Tooltip title="delete">
             <Trash2 onClick={() => DeleteCompanydata(row._id)} />
-          </Tooltip>
+          </Tooltip> */}
         </>
       ),
       ignoreRowClick: true,
@@ -311,12 +329,12 @@ const Company = () => {
                   </Link>
                 </div>
               </div>
-              {isLoader?(
-                <Loader/>
-              ):(
+              {isLoader ? (
+                <Loader />
+              ) : (
                 <>
-              <Table columns={columns} data={clients} />
-              </>
+                  <Table columns={columns} data={clients} />
+                </>
               )}
             </div>
           </div>
