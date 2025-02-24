@@ -48,10 +48,11 @@ const ClientOrderlist = () => {
         setSearchInput("")
         setStartDate("")
         setEndDate("")
+        setBroker("")
+        setOrdertype("")
 
 
     }
-
 
 
     const getexportfile = async () => {
