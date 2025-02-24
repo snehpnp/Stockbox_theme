@@ -2710,7 +2710,7 @@ class Clients {
 
   async orderListDetail(req, res) {
     try {
-      const { clientid, signalid, page = 1 ,fromDate, toDate, ordertype, borkerid} = req.body; // Default pagination values
+      const { clientid, signalid, page = 1 ,fromDate, toDate, ordertype, borkerid, search} = req.body; // Default pagination values
       const limit = 10;
       const pageSize = parseInt(limit);
       const skip = (parseInt(page) - 1) * pageSize;
@@ -2739,9 +2739,8 @@ class Clients {
       }
       
   
-      console.log('req.body',req.body);
 
-console.log('matchCondition',matchCondition);
+
   
       const result = await Order_Modal.aggregate([
         {
@@ -2782,6 +2781,15 @@ console.log('matchCondition',matchCondition);
           },
         },
         {
+          $match: search ? {
+            $or: [
+              { "clientDetails.FullName": { $regex: search, $options: "i" } },
+              { "clientDetails.Email": { $regex: search, $options: "i" } },
+              { "clientDetails.PhoneNo": { $regex: search, $options: "i" } }
+            ]
+          } : {}
+        },
+        {
           $project: {
             orderid: 1,
             clientid: 1,
@@ -2813,7 +2821,51 @@ console.log('matchCondition',matchCondition);
       ]);
   
       // Get total count for pagination metadata
-      const totalRecords = await Order_Modal.countDocuments(matchCondition);
+      // const totalRecords = await Order_Modal.countDocuments(matchCondition);
+
+
+      const countPipeline = [
+        { $match: matchCondition },
+        {
+          $addFields: {
+            signalObjectId: { $toObjectId: "$signalid" },
+            clientObjectId: { $toObjectId: "$clientid" },
+          },
+        },
+        {
+          $lookup: {
+            from: "clients",
+            localField: "clientObjectId",
+            foreignField: "_id",
+            as: "clientDetails",
+          },
+        },
+        {
+          $unwind: {
+            path: "$clientDetails",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      ];
+      
+      // Add search filter if provided
+      if (search) {
+        countPipeline.push({
+          $match: {
+            $or: [
+              { "clientDetails.FullName": { $regex: search, $options: "i" } },
+              { "clientDetails.Email": { $regex: search, $options: "i" } },
+              { "clientDetails.PhoneNo": { $regex: search, $options: "i" } },
+            ],
+          },
+        });
+      }
+      
+      // Count the documents
+      countPipeline.push({ $count: "totalRecords" });
+      
+      const countResult = await Order_Modal.aggregate(countPipeline);
+      const totalRecords = countResult[0] ? countResult[0].totalRecords : 0;
   
       return res.json({
         status: true,
