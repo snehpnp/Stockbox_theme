@@ -26,6 +26,8 @@ const ClientOrderlist = () => {
     const [ForGetCSV, setForGetCSV] = useState([])
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
+    const [ordertype, setOrdertype] = useState("");
+    const [broker, setBroker] = useState("");
 
     const [showModal, setShowModal] = useState(false);
     const [text, setText] = useState([]);
@@ -92,7 +94,7 @@ const ClientOrderlist = () => {
 
     const getorder = async () => {
         try {
-            const data = { page: currentPage, clientid: "", signalid: "" }
+            const data = { fromDate: startDate, toDate: endDate, ordertype: ordertype, borkerid: broker, page: currentPage, clientid: "", signalid: "" }
             const response = await getOrderlistofclient(data, token);
             if (response.status) {
                 let filteredData = response.data;
@@ -108,7 +110,7 @@ const ClientOrderlist = () => {
 
     useEffect(() => {
         getorder();
-    }, [currentPage]);
+    }, [currentPage, startDate, endDate, broker, ordertype]);
 
 
 
@@ -266,7 +268,7 @@ const ClientOrderlist = () => {
                             </div> */}
                         </div>
                         <div className='row mb-2'>
-                            <div className="col-md-3 col-sm-4 mb-3 mb-sm-0">
+                            <div className="col-md-2 col-sm-4 mb-3 mb-sm-0">
                                 <label htmlFor="">From Date</label>
                                 <input
                                     type="date"
@@ -277,7 +279,7 @@ const ClientOrderlist = () => {
                             </div>
 
 
-                            <div className='col-md-3 col-sm-4 mb-3 mb-sm-0'>
+                            <div className='col-md-2 col-sm-4 mb-3 mb-sm-0'>
                                 <label htmlFor="">To Date</label>
 
                                 <input
@@ -287,11 +289,12 @@ const ClientOrderlist = () => {
                                     value={endDate}
                                 />
                             </div>
-                            <div className='col-md-3 col-sm-4 mb-3 mb-sm-0'>
+                            <div className='col-md-2 col-sm-4 mb-3 mb-sm-0'>
                                 <label htmlFor="">Type</label>
-
                                 <select
                                     className="form-control"
+                                    value={ordertype}
+                                    onChange={(e) => setOrdertype(e.target.value)}
 
                                 >
                                     <option value="">Select</option>
@@ -299,37 +302,28 @@ const ClientOrderlist = () => {
                                     <option value="SELL">SELL</option>
                                 </select>
                             </div>
-                            <div className='col-md-3 col-sm-4 mb-3 mb-sm-0'>
-                                <label htmlFor="">Status</label>
-
-                                <select
-                                    className="form-control"
-
-                                >
-                                    <option value="">Select</option>
-                                    <option value="BUY">Pending</option>
-                                    <option value="SELL">Rejected</option>
-                                    <option value="SELL">Completed</option>
-                                </select>
-                            </div>
-                            <div className='col-md-3 col-sm-4 mb-3 mb-sm-0 mt-1'>
+                            <div className='col-md-2 col-sm-4 mb-3 mb-sm-0 '>
                                 <label htmlFor="">Broker</label>
 
                                 <select
                                     className="form-control"
-
+                                    value={broker}
+                                    onChange={(e) => setBroker(e.target.value)}
                                 >
                                     <option value="">Select</option>
                                     <option value="1">Angel One</option>
                                     <option value="2">Alice Blue</option>
                                     <option value="3">Kotak Neo</option>
                                     <option value="4">Market Hub</option>
+                                    <option value="5">Zerodha</option>
+                                    <option value="6">Upstox</option>
+                                    <option value="7">Dhan</option>
                                 </select>
                             </div>
 
 
 
-                            <div className="col-md-1 col-sm-2">
+                            <div className="col-md-1 col-sm-2 mt-1">
                                 <div className="refresh-icon mt-4">
                                     <RefreshCcw onClick={resethandle} />
                                 </div>
