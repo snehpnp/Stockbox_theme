@@ -15,7 +15,11 @@ import Swal from "sweetalert2";
 import Loader from "../../../../Utils/Loader";
 import ReusableModal from "../../../components/Models/ReusableModal";
 
+
+
 const Service = () => {
+
+
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
   const applyButtonRef = useRef(null);
@@ -39,11 +43,16 @@ const Service = () => {
 
   const [discription, setDiscription] = useState("");
 
+
+
   useEffect(() => {
     getPlan();
     getCoupon();
     getkeybydata();
   }, []);
+
+
+
 
   const handleCouponSelect = (coupon) => {
     setManualCoupon(coupon?.code);
@@ -52,6 +61,9 @@ const Service = () => {
       applyButtonRef.current.focus();
     }
   };
+
+
+
 
   const applyCoupon = async (coupon) => {
     try {
