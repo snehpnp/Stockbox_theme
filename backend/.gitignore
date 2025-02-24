@@ -37,3 +37,5 @@ D:\Stockbox_theme\Backend\.env
 
 # .gitignore
 .env
+
+/Backend/.env
