@@ -94,7 +94,7 @@ const ClientOrderlist = () => {
 
     const getorder = async () => {
         try {
-            const data = { fromDate: startDate, toDate: endDate, ordertype: ordertype, borkerid: broker, page: currentPage, clientid: "", signalid: "" }
+            const data = { fromDate: startDate, toDate: endDate, ordertype: ordertype, borkerid: broker, page: currentPage, search: searchInput, clientid: "", signalid: "" }
             const response = await getOrderlistofclient(data, token);
             if (response.status) {
                 let filteredData = response.data;
@@ -110,7 +110,7 @@ const ClientOrderlist = () => {
 
     useEffect(() => {
         getorder();
-    }, [currentPage, startDate, endDate, broker, ordertype]);
+    }, [currentPage, startDate, endDate, broker, ordertype, searchInput]);
 
 
 
@@ -244,28 +244,6 @@ const ClientOrderlist = () => {
 
                             </div>
 
-
-                            {/* <div>
-
-                                <div
-                                    className="ms-sm-2 mt-2 mt-sm-0"
-                                    onClick={(e) => getexportfile()}
-                                >
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary float-md-end"
-                                        data-toggle="tooltip"
-                                        data-placement="top"
-                                        title="Export To Excel"
-                                        delay={{ show: "0", hide: "100" }}
-
-                                    >
-                                        <i className="bx bxs-download" aria-hidden="true"></i>
-
-                                        Export-Excel
-                                    </button>
-                                </div>
-                            </div> */}
                         </div>
                         <div className='row mb-2'>
                             <div className="col-md-2 col-sm-4 mb-3 mb-sm-0">
