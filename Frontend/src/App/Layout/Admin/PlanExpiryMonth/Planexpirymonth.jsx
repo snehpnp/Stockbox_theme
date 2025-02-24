@@ -10,9 +10,7 @@ import Content from '../../../components/Contents/Content';
 
 const Planexpirymonth = () => {
 
-    const { id } = useParams();
     const token = localStorage?.getItem('token');
-
     const [data, setData] = useState([]);
 
 
@@ -56,23 +54,7 @@ const Planexpirymonth = () => {
             sortable: true,
             width: '300px',
         },
-        // {
-        //     name: 'Created_At',
-        //     selector: row => fDateTime(row.created_at),
-        //     sortable: true,
-        //     width: '300px',
-        // },
 
-        // {
-        //     name: 'Purchase Date',
-        //     selector: row => fDateTime(row.plan_start),
-        //     width: '180px'
-        // },
-        // {
-        //     name: 'Expiry Date',
-        //     selector: row => fDateTime(row.plan_end),
-        //     width: '180px'
-        // },
     ];
 
 
