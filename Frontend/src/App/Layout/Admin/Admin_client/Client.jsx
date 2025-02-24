@@ -230,7 +230,7 @@ const Client = () => {
                 ? "active"
                 : clientStatus === "expired"
                   ? "expired"
-                  : "",
+                  : expired === "NA" ? "NA" : "",
         add_by: "",
       };
       const response = await AllclientFilter(data, token);
@@ -676,7 +676,8 @@ const Client = () => {
                     >
                       <option value="">Select Client</option>
                       <option value="active">Active</option>
-                      <option value="expired">Expired </option>0
+                      <option value="expired">Expired </option>
+                      <option value="NA">N/A</option>
                     </select>
                   </div>
                 </div>
