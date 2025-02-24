@@ -405,7 +405,6 @@ class Clients {
       }
 
 
-      console.log("matchConditions",matchConditions);
 
 
       if (search && search.trim() !== "") {
