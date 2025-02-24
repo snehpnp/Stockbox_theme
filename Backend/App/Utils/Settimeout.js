@@ -13,6 +13,7 @@ const {orderexitkotakneo} = require('../Controllers/Kotakneo')
 const {orderexitmarkethub} = require('../Controllers/Markethub')
 const {orderexitzerodha} = require('../Controllers/Zerodha')
 const {orderexitupstox} = require('../Controllers/Upstox')
+const {orderexitdhan} = require('../Controllers/Dhan')
 
 
 
@@ -59,26 +60,30 @@ async function ExitplaceOrder(item) {
     {
       orderexitangle(item)
     }
-  else if(item.borkerid==2)
-  {
+   else if(item.borkerid==2)
+   {
     orderexit(item)
-  }
-  else if(item.borkerid==3)
-  {
+   }
+   else if(item.borkerid==3)
+   {
       orderexitkotakneo(item)
-  }
-  else if(item.borkerid==4)
-  {
+   }
+   else if(item.borkerid==4)
+   {
      orderexitmarkethub(item)
+   }
+   else if(item.borkerid==5)
+   {
+      orderexitzerodha(item)
   }
-  else if(item.borkerid==5)
-    {
-       orderexitzerodha(item)
-    }
-    else if(item.borkerid==6)
-      {
-         orderexitupstox(item)
-      }
+  else if(item.borkerid==6)
+  {
+      orderexitupstox(item)
+  }
+  else if(item.borkerid==7)
+  {
+      orderexitdhan(item)
+  }
 }
 
 

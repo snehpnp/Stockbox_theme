@@ -1307,6 +1307,28 @@ async function fetchUpstoxOrder(client, order) {
 
 
 
+
+async function fetchDhanOrder(client, order) {
+    const authToken = client.authtoken;
+    const apikey = client.apikey;
+
+   
+    var config = {
+        method: 'get',
+        url: 'https://api.dhan.co/orders/' + order.orderid,
+        headers: {
+            'access-token': authToken,
+            'Content-Type': 'application/json'
+        },
+    };
+
+   
+
+    return await axios(config);
+}
+
+
+
 async function processPendingOrders(req, res) {
     const summary = { processed: 0, failed: 0, skipped: 0, errors: [] };
 
@@ -1364,6 +1386,9 @@ async function processPendingOrders(req, res) {
                         break;
                     case 6:
                         response = await fetchUpstoxOrder(client, order);
+                        break;
+                    case 7:
+                        response = await fetchDhanOrder(client, order);
                         break;
                     default:
                         console.log(`Skipping order ${order.orderid}: Unsupported broker ID.`);
