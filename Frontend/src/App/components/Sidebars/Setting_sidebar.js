@@ -213,7 +213,7 @@ export default function Setting_sidebar() {
 
   return (
     <>
-      {RoleData == "SUPERADMIN" || RoleData =="ADMIN" && (
+      {RoleData == "SUPERADMIN" && (
         <>
           <span
             className="text-dark sidebar-setting-toggle-button"

@@ -33,9 +33,6 @@ const Company = () => {
     GetAllThemes();
   }, [searchInput]);
 
-
-
-
   const getAdminclient = async () => {
     try {
       const response = await GetCompanylist(token);
@@ -55,9 +52,6 @@ const Company = () => {
     }
   };
 
-
-
-
   const GetAllThemes = async () => {
     try {
       const response = await GetAllThemesNameApi();
@@ -69,14 +63,9 @@ const Company = () => {
     }
   };
 
-
-
-
   const updateCompany = async (row) => {
     navigate("/superadmin/companyupdate/", { state: { row } });
   };
-
-
 
   const DeleteCompanydata = async (_id) => {
     try {
@@ -117,9 +106,6 @@ const Company = () => {
       });
     }
   };
-
-
-
 
   // update status
   const handleSwitchChange = async (event, id) => {
@@ -163,13 +149,9 @@ const Company = () => {
     }
   };
 
-
-
   const companydetail = async (_id) => {
     navigate(`/superadmin/companydetail/${_id}`);
   };
-
-
 
   const UpdateTheme = async (id, theme_id) => {
     const data = { id: id, theme_id: theme_id };
