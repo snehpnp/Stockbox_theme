@@ -2710,7 +2710,7 @@ class Clients {
 
   async orderListDetail(req, res) {
     try {
-      const { clientid, signalid, page = 1 } = req.body; // Default pagination values
+      const { clientid, signalid, page = 1 ,fromDate, toDate, ordertype, borkerid} = req.body; // Default pagination values
       const limit = 10;
       const pageSize = parseInt(limit);
       const skip = (parseInt(page) - 1) * pageSize;
@@ -2719,6 +2719,29 @@ class Clients {
       const matchCondition = {};
       if (clientid) matchCondition.clientid = clientid;
       if (signalid) matchCondition.signalid = signalid;
+      if (ordertype) matchCondition.ordertype = ordertype; // BUY or SELL
+      if (borkerid) matchCondition.borkerid = borkerid;
+  
+      // Filter by date range
+      if (fromDate && toDate) {
+        matchCondition.createdAt = {
+          $gte: new Date(fromDate),
+          $lte: new Date(toDate)
+        };
+      } else if (fromDate) {
+        matchCondition.createdAt = {
+          $gte: new Date(fromDate)
+        };
+      } else if (toDate) {
+        matchCondition.createdAt = {
+          $lte: new Date(toDate)
+        };
+      }
+      
+  
+      console.log('req.body',req.body);
+
+console.log('matchCondition',matchCondition);
   
       const result = await Order_Modal.aggregate([
         {

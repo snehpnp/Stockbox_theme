@@ -50,7 +50,7 @@ class Dhan {
           };
       
           const response = await axios.request(config);
-      
+      console.log(response.data);
 
           if (response.data.dhanClientId === apikey) {
 
@@ -263,164 +263,109 @@ class Dhan {
                 });
             }
 
-            
-
-            const pattern = stock.instrument_token;
-            let ts = null; // Initialize `ts` with a default value
-
-            let filePath_token;
-
-            if (signal.segment.toLowerCase() === 'o') {
-                filePath_token = '../../tokenkotakneo/KOTAK_NFO.csv';
-            } else if (signal.segment.toLowerCase() === 'f') {
-                filePath_token = '../../tokenkotakneo/KOTAK_NFO.csv';
-            } else {
-                filePath_token = '../../tokenkotakneo/KOTAK_NSE.csv';
-            }
-
-            const filePath1 = path.join(__dirname, filePath_token);
-
-            fs.readFile(filePath1, 'utf8', (err, data) => {
-                if (err) {
-                    // console.error(`Error reading file: ${err}`);
-                    return;
-                }
-
-                const lines = data.split('\n');
-                let matchedLines;
-
-                if (signal.segment.toLowerCase() === 'o') {
-                    matchedLines = lines.filter(line =>
-                        new RegExp(`.*(${pattern}).*.*(nse_fo).*.*(${stock.symbol}).*.*(${optiontype}).*`, 'i').test(line)
-                    );
-                } else if (signal.segment.toLowerCase() === 'f') {
-                    matchedLines = lines.filter(line =>
-                        new RegExp(`.*(${pattern}).*.*(nse_fo).*`, 'i').test(line)
-                    );
-                } else {
-                    matchedLines = lines.filter(line =>
-                        new RegExp(`.*(${pattern}).*.*(nse_cm).*`, 'i').test(line)
-                    );
-                }
-
-                if (matchedLines.length > 0) {
-                    const parts = matchedLines[0].split(','); // Extract parts from the first (and only) matched line
-                    ts = parts[5]; // Get the value from the 6th column (index 5)
-
-
                     const correlationId = crypto.randomBytes(12).toString('hex').substring(0, 25);
 
                     var data = JSON.stringify({
                         "dhanClientId": apikey,
-                        "correlationId": correlationId,
                         "transactionType": signal.calltype,
                         "exchangeSegment": exchange,
                         "productType": producttype,
                         "orderType": "MARKET",
                         "validity": "DAY",
-                        "securityId": "string",
-                        "quantity": quantity,
+                        "securityId": stock.instrument_token,
+                        "quantity": parseInt(quantity),
                         "disclosedQuantity": 0,
                         "price": 0,
                         "triggerPrice": 0,
                         "afterMarketOrder": true,
                         "amoTime": "OPEN",
-                        "boProfitValue": -3.402823669209385e+38,
-                        "boStopLossValue": -3.402823669209385e+38
+                        "boProfitValue": 0,
+                        "boStopLossValue": 0
                       });
 
 
-                    // var data = JSON.stringify({
-                    //     "am": "NO",
-                    //     "dq": "0",
-                    //     "es": exchange,
-                    //     "mp": "0",
-                    //     "pc": producttype,
-                    //     "pf": "N",
-                    //     "pr": price,
-                    //     "pt": "MKT",
-                    //     "qt": quantity,
-                    //     "rt": "DAY",
-                    //     "tp": "0",
-                    //     "ts": ts,
-                    //     "tt": calltype
-                    // });
-                    const requestData = `jData=${data}`;
 
-                    let url = `https://gw-napi.kotaksecurities.com/Orders/2.0/quick/order/rule/ms/place?sId=${client.hserverid}`;
-
-                    let config = {
+                      let config = {
                         method: 'post',
                         maxBodyLength: Infinity,
-                        url: url,
+                        url: 'https://api.dhan.co/orders',
                         headers: {
-                            'accept': 'application/json',
-                            'Sid': client.kotakneo_sid,
-                            'Auth': client.authtoken,
-                            'neo-fin-key': 'neotradeapi',
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'Authorization': 'Bearer ' + client.oneTimeToken
+                            'access-token': authToken,
+                            'Content-Type': 'application/json'
                         },
-                        data: requestData
+                        data: data
+                
                     };
 
 
 
                     axios(config)
-                        .then(async (response) => {
-                            // Log full response for debugging purposes
+                    .then(async (response) => {
+                        if (response.data.orderStatus != undefined) {
 
-                            if (response.data.stat === 'Ok') {
 
-                                const finalExitQuantity = exitquantity && exitquantity > 0 ? exitquantity : quantity;
+                            const finalExitQuantity = exitquantity && exitquantity > 0 ? exitquantity : quantity;
 
-                                const order = new Order_Modal({
-                                    clientid: client._id,
-                                    signalid: signal._id,
-                                    orderid: response.data.nOrdNo,
-                                    ordertype: signal.calltype,
-                                    borkerid: 3,
-                                    quantity: quantity,
-                                    ordertoken: stock.instrument_token,
-                                    tsprice: tsprice,
-                                    tsstatus: tsstatus,
-                                    slprice: slprice,
-                                    exitquantity: finalExitQuantity,
-                                    exchange: exchangess
-                                });
-
-                                await order.save();
-
-                                return res.json({
-                                    status: true,
-                                    data: response.data,
-                                    message: "Order Placed Successfully"
-                                });
-                            } else {
-                                // Log response if the status isn't 'Ok'
-                                // console.log("Error in response:", response);
-                                return res.status(500).json({
-                                    status: false,
-                                    message: response.data.message || 'Unknown error in response'
-                                });
-                            }
-                        })
-                        .catch(async (error) => {
-                            // Log full error for debugging purposes
-                            return res.status(500).json({
-                                status: false,
-                                message: error
+                            const order = new Order_Modal({
+                                clientid: client._id,
+                                signalid: signal._id,
+                                orderid: response.data.orderId,
+                                ordertype: signal.calltype,
+                                borkerid: 7,
+                                quantity: quantity,
+                                ordertoken: stock.instrument_token,
+                                tsprice: tsprice,
+                                tsstatus: tsstatus,
+                                slprice: slprice,
+                                exitquantity: finalExitQuantity,
+                                exchange: exchangess
                             });
 
+                            await order.save();
 
+                            return res.json({
+                                status: true,
+                                data: response.data,
+                                message: "Order Placed Successfully"
+                            });
+                        } else {
+                            
+                            return res.status(500).json({
+                                status: false,
+                                message: response.data || 'Unknown error in response'
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                      if (error.response) {
+
+                        return res.status(500).json({
+                            status: false,
+                            message: error.response.data,
                         });
-                }
 
-            });
+
+                      } else if (error.request) {
+                        return res.status(500).json({
+                            status: false,
+                            message: error.request,
+                        });
+
+                      } else {
+                        return res.status(500).json({
+                            status: false,
+                            message: error.message,
+                        });
+
+
+                      }
+                    });
+              
         } catch (error) {
             // console.error("Error placing order:", error); // Log the error
             return res.status(500).json({
                 status: false,
+                count: 3,
                 message: error.response ? error.response.data : "An error occurred while placing the order"
             });
         }
@@ -432,6 +377,8 @@ class Dhan {
 
         try {
             const { id, signalid, quantity, price } = req.body;
+
+           
 
             const client = await Clients_Modal.findById(id);
             if (!client) {
@@ -459,22 +406,27 @@ class Dhan {
             }
 
 
+            const apikey = client.apikey;
 
             const authToken = client.authtoken;
-            let optiontype, exchange, producttype;
+            let optiontype, exchange, producttype, exchangess;
 
             if (signal.segment === "C") {
-                exchange = "nse_cm";
+                exchange = "NSE_EQ";
+                exchangess: "NSE"
+
             } else {
                 optiontype = signal.segment === "F" ? "UT" : signal.optiontype;
-                exchange = "nse_fo";
+                exchange = "NSE_FNO";
+                exchangess: "NFO"
+
             }
 
             // Determine product type based on segment and call duration
             if (signal.callduration === "Intraday") {
-                producttype = "MIS";
+                producttype = "INTRADAY";
             } else {
-                producttype = signal.segment === "C" ? "CNC" : "NRML";
+                producttype = signal.segment === "C" ? "CNC" : "MARGIN";
             }
 
             // Query Stock_Modal based on segment type
@@ -515,7 +467,7 @@ class Dhan {
             let positionData = { qty: 0 };
             let totalValue = 0;  // Declare totalValue outside the blocks
             try {
-                const positionData = await CheckPosition(client.apikey, stock.segment, stock.instrument_token);
+                const positionData = await CheckPosition(authToken, stock.segment, stock.instrument_token);
             } catch (error) {
          
 
@@ -523,7 +475,7 @@ class Dhan {
 
             if (stock.segment == "C") {
                 try {
-                    const holdingData = await CheckHolding(client.apikey, stock.segment, stock.instrument_token);
+                    const holdingData = await CheckHolding(authToken, stock.segment, stock.instrument_token);
                 } catch (error) {
                 
                 }
@@ -533,146 +485,124 @@ class Dhan {
                 totalValue = Math.abs(positionData.qty)
             }
 
-            let calltypes;
             let calltypess;
             if (signal.calltype === 'BUY') {
-                calltypes = "S";
                 calltypess = "SEll";
             }
             else {
-                calltypes = "B";
                 calltypess = "BUY";
             }
 
             if (totalValue >= quantity) {
 
-                const pattern = stock.instrument_token;
-                let ts = null; // Initialize `ts` with a default value
 
-                let filePath_token;
 
-                if (signal.segment.toLowerCase() === 'o') {
-                    filePath_token = '../../tokenkotakneo/KOTAK_NFO.csv';
-                } else if (signal.segment.toLowerCase() === 'f') {
-                    filePath_token = '../../tokenkotakneo/KOTAK_NFO.csv';
-                } else {
-                    filePath_token = '../../tokenkotakneo/KOTAK_NSE.csv';
-                }
 
-                const filePath1 = path.join(__dirname, filePath_token);
 
-                fs.readFile(filePath1, 'utf8', (err, data) => {
-                    if (err) {
-                        // console.error(`Error reading file: ${err}`);
-                        return;
-                    }
+                var data = JSON.stringify({
+                    "dhanClientId": apikey,
+                    "transactionType": calltypess,
+                    "exchangeSegment": exchange,
+                    "productType": producttype,
+                    "orderType": "MARKET",
+                    "validity": "DAY",
+                    "securityId": stock.instrument_token,
+                    "quantity": parseInt(quantity),
+                    "disclosedQuantity": 0,
+                    "price": 0,
+                    "triggerPrice": 0,
+                    "afterMarketOrder": true,
+                    "amoTime": "OPEN",
+                    "boProfitValue": 0,
+                    "boStopLossValue": 0
+                  });
 
-                    const lines = data.split('\n');
-                    let matchedLines;
 
-                    if (signal.segment.toLowerCase() === 'o') {
-                        matchedLines = lines.filter(line =>
-                            new RegExp(`.*(${pattern}).*.*(nse_fo).*.*(${stock.symbol}).*.*(${optiontype}).*`, 'i').test(line)
-                        );
-                    } else if (signal.segment.toLowerCase() === 'f') {
-                        matchedLines = lines.filter(line =>
-                            new RegExp(`.*(${pattern}).*.*(nse_fo).*`, 'i').test(line)
-                        );
-                    } else {
-                        matchedLines = lines.filter(line =>
-                            new RegExp(`.*(${pattern}).*.*(nse_cm).*`, 'i').test(line)
-                        );
-                    }
 
-                    if (matchedLines.length > 0) {
-                        const parts = matchedLines[0].split(','); // Extract parts from the first (and only) matched line
-                        ts = parts[5]; // Get the value from the 6th column (index 5)
+                  let config = {
+                    method: 'post',
+                    maxBodyLength: Infinity,
+                    url: 'https://api.dhan.co/orders',
+                    headers: {
+                        'access-token': authToken,
+                        'Content-Type': 'application/json'
+                    },
+                    data: data
+            
+                };
 
-                        var data = JSON.stringify({
-                            "am": "NO",
-                            "dq": "0",
-                            "es": exchange,
-                            "mp": "0",
-                            "pc": producttype,
-                            "pf": "N",
-                            "pr": price,
-                            "pt": "MKT",
-                            "qt": quantity,
-                            "rt": "DAY",
-                            "tp": "0",
-                            "ts": ts,
-                            "tt": calltypes
+
+
+                axios(config)
+                .then(async (response) => {
+                    if (response.data.orderStatus != undefined) {
+
+
+                        const order = new Order_Modal({
+                            clientid: client._id,
+                            signalid: signal._id,
+                            orderid: response.data.orderId,
+                            ordertype: calltypess,
+                            borkerid: 7,
+                            quantity: quantity,
                         });
 
-                        const requestData = `jData=${data}`;
+                        await order.save();
 
-                        let url = `https://gw-napi.kotaksecurities.com/Orders/2.0/quick/order/rule/ms/place?sId=${client.hserverid}`;
+                        const orderupdate = await Order_Modal.findOne({
+                            clientid: id,
+                            signalid,
+                            borkerid
+                        });
 
-                        let config = {
-                            method: 'post',
-                            maxBodyLength: Infinity,
-                            url: url,
-                            headers: {
-                                'accept': 'application/json',
-                                'Sid': client.kotakneo_sid,
-                                'Auth': client.authtoken,
-                                'neo-fin-key': 'neotradeapi',
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                                'Authorization': 'Bearer ' + client.oneTimeToken
-                            },
-                            data: requestData
-                        };
+                        if (orderupdate) {
+                            orderupdate.tsstatus = 0;
+                            await orderupdate.save();
+                        }
 
 
-
-                        axios(config)
-                            .then(async (response) => {
-                                if (response.data.stat === 'Ok') {
-                                    const order = new Order_Modal({
-                                        clientid: client._id,
-                                        signalid: signal._id,
-                                        orderid: response.data.nOrdNo,
-                                        ordertype: calltypess,
-                                        borkerid: 3,
-                                        quantity: quantity,
-                                    });
-
-                                    await order.save();
-
-                                    const orderupdate = await Order_Modal.findOne({
-                                        clientid: id,
-                                        signalid,
-                                        borkerid
-                                    });
-
-                                    if (orderupdate) {
-                                        orderupdate.tsstatus = 0;
-                                        await orderupdate.save();
-                                    }
+                        return res.json({
+                            status: true,
+                            data: response.data,
+                            message: "Order Placed Successfully"
+                        });
 
 
-                                    return res.json({
-                                        status: true,
-                                        data: response.data,
-                                        message: "Order Placed Successfully"
-                                    });
-                                } else {
-                                    // Log response if the status isn't 'Ok'
-                                    return res.status(500).json({
-                                        status: false,
-                                        message: response.data.message || 'Unknown error in response'
-                                    });
-                                }
-                            })
-                            .catch(async (error) => {
-                                return res.status(500).json({
-                                    status: false,
-                                    message: error
-                                });
-                            });
+
+
+                    } else {
+                        
+                        return res.status(500).json({
+                            status: false,
+                            message: response.data || 'Unknown error in response'
+                        });
                     }
+                })
+                .catch((error) => {
+                  if (error.response) {
 
+                    return res.status(500).json({
+                        status: false,
+                        message: error.response.data,
+                    });
+
+
+                  } else if (error.request) {
+                    return res.status(500).json({
+                        status: false,
+                        message: error.request,
+                    });
+
+                  } else {
+                    return res.status(500).json({
+                        status: false,
+                        message: error.message,
+                    });
+
+
+                  }
                 });
+                   
             }
         } catch (error) {
             return res.status(500).json({
@@ -726,7 +656,7 @@ class Dhan {
             }
 
 
-            if (order.borkerid != 3) {
+            if (order.borkerid != 7) {
                 return res.status(404).json({
                     status: false,
                     message: "Order not found for this Broker"
@@ -738,26 +668,14 @@ class Dhan {
             const userId = client.apikey;
 
 
-            const uniorderId = order.orderid;
 
-            var data_orderHistory = qs.stringify({
-                jData: '{"nOrdNo":"' + uniorderId + '"}',
-            });
-            let url1 = `https://gw-napi.kotaksecurities.com/Orders/2.0/quick/order/history?sId=${client.hserverid}`;
-
-            let config = {
-                method: "post",
-                maxBodyLength: Infinity,
-                url: url1,
+            var config = {
+                method: 'get',
+                url: 'https://api.dhan.co/orders/' + order.orderid,
                 headers: {
-                    accept: "application/json",
-                    Sid: client.kotakneo_sid,
-                    Auth: client.authtoken,
-                    "neo-fin-key": "neotradeapi",
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    Authorization: "Bearer " + client.oneTimeToken,
+                    'access-token': authToken,
+                    'Content-Type': 'application/json'
                 },
-                data: data_orderHistory,
             };
 
             const response = await axios(config); // Use await with axios
@@ -779,7 +697,7 @@ class Dhan {
         }
     }
 
-    async orderexitkotakneo(item) {
+    async orderexitdhan(item) {
 
         try {
             const { clientid, signalid, quantity, stockInfo_lp, exitquantity, _id } = item;
@@ -792,48 +710,55 @@ class Dhan {
 
             const price = stockInfo_lp;
 
-            const client = await Clients_Modal.findById(clientid);
+          
+
+            const client = await Clients_Modal.findById(id);
             if (!client) {
-                return {
+                return res.status(404).json({
                     status: false,
                     message: "Client not found"
-                };
+                });
             }
 
 
             if (client.tradingstatus == 0) {
-                return {
+                return res.status(404).json({
                     status: false,
                     message: "Client Broker Not Login, Please Login With Broker"
-                };
+                });
             }
 
 
             const signal = await Signal_Modal.findById(signalid);
             if (!signal) {
-                return {
+                return res.status(404).json({
                     status: false,
                     message: "Signal not found"
-                };
+                });
             }
 
 
+            const apikey = client.apikey;
 
             const authToken = client.authtoken;
-            let optiontype, exchange, producttype;
+            let optiontype, exchange, producttype, exchangess;
 
             if (signal.segment === "C") {
-                exchange = "nse_cm";
+                exchange = "NSE_EQ";
+                exchangess: "NSE"
+
             } else {
                 optiontype = signal.segment === "F" ? "UT" : signal.optiontype;
-                exchange = "nse_fo";
+                exchange = "NSE_FNO";
+                exchangess: "NFO"
+
             }
 
             // Determine product type based on segment and call duration
             if (signal.callduration === "Intraday") {
-                producttype = "MIS";
+                producttype = "INTRADAY";
             } else {
-                producttype = signal.segment === "C" ? "CNC" : "NRML";
+                producttype = signal.segment === "C" ? "CNC" : "MARGIN";
             }
 
             let stock;
@@ -870,7 +795,7 @@ class Dhan {
             let positionData = { qty: 0 };
             let totalValue = 0;  // Declare totalValue outside the blocks
             try {
-                const positionData = await CheckPosition(client.apikey, stock.segment, stock.instrument_token);
+                const positionData = await CheckPosition(authToken, stock.segment, stock.instrument_token);
             } catch (error) {
                 
 
@@ -878,7 +803,7 @@ class Dhan {
 
             if (stock.segment == "C") {
                 try {
-                    const holdingData = await CheckHolding(client.apikey, stock.segment, stock.instrument_token);
+                    const holdingData = await CheckHolding(authToken, stock.segment, stock.instrument_token);
                 } catch (error) {
                     
                 }
@@ -888,146 +813,114 @@ class Dhan {
                 totalValue = Math.abs(positionData.qty)
             }
 
-            let calltypes;
             let calltypess;
             if (signal.calltype === 'BUY') {
-                calltypes = "S";
                 calltypess = "SEll";
             }
             else {
-                calltypes = "B";
                 calltypess = "BUY";
             }
 
             if (totalValue >= exitquantity) {
 
-                const pattern = stock.instrument_token;
-                let ts = null; // Initialize `ts` with a default value
 
-                let filePath_token;
 
-                if (signal.segment.toLowerCase() === 'o') {
-                    filePath_token = '../../tokenkotakneo/KOTAK_NFO.csv';
-                } else if (signal.segment.toLowerCase() === 'f') {
-                    filePath_token = '../../tokenkotakneo/KOTAK_NFO.csv';
-                } else {
-                    filePath_token = '../../tokenkotakneo/KOTAK_NSE.csv';
-                }
 
-                const filePath1 = path.join(__dirname, filePath_token);
 
-                fs.readFile(filePath1, 'utf8', (err, data) => {
-                    if (err) {
-                        // console.error(`Error reading file: ${err}`);
-                        return;
-                    }
 
-                    const lines = data.split('\n');
-                    let matchedLines;
+                var data = JSON.stringify({
+                    "dhanClientId": apikey,
+                    "transactionType": calltypess,
+                    "exchangeSegment": exchange,
+                    "productType": producttype,
+                    "orderType": "MARKET",
+                    "validity": "DAY",
+                    "securityId": stock.instrument_token,
+                    "quantity": parseInt(quantity),
+                    "disclosedQuantity": 0,
+                    "price": 0,
+                    "triggerPrice": 0,
+                    "afterMarketOrder": true,
+                    "amoTime": "OPEN",
+                    "boProfitValue": 0,
+                    "boStopLossValue": 0
+                  });
 
-                    if (signal.segment.toLowerCase() === 'o') {
-                        matchedLines = lines.filter(line =>
-                            new RegExp(`.*(${pattern}).*.*(nse_fo).*.*(${stock.symbol}).*.*(${optiontype}).*`, 'i').test(line)
-                        );
-                    } else if (signal.segment.toLowerCase() === 'f') {
-                        matchedLines = lines.filter(line =>
-                            new RegExp(`.*(${pattern}).*.*(nse_fo).*`, 'i').test(line)
-                        );
-                    } else {
-                        matchedLines = lines.filter(line =>
-                            new RegExp(`.*(${pattern}).*.*(nse_cm).*`, 'i').test(line)
-                        );
-                    }
 
-                    if (matchedLines.length > 0) {
-                        const parts = matchedLines[0].split(','); // Extract parts from the first (and only) matched line
-                        ts = parts[5]; // Get the value from the 6th column (index 5)
 
-                        var data = JSON.stringify({
-                            "am": "NO",
-                            "dq": "0",
-                            "es": exchange,
-                            "mp": "0",
-                            "pc": producttype,
-                            "pf": "N",
-                            "pr": price,
-                            "pt": "MKT",
-                            "qt": exitquantity,
-                            "rt": "DAY",
-                            "tp": "0",
-                            "ts": ts,
-                            "tt": calltypes
+                  let config = {
+                    method: 'post',
+                    maxBodyLength: Infinity,
+                    url: 'https://api.dhan.co/orders',
+                    headers: {
+                        'access-token': authToken,
+                        'Content-Type': 'application/json'
+                    },
+                    data: data
+            
+                };
+
+
+
+                axios(config)
+                .then(async (response) => {
+                    if (response.data.orderStatus != undefined) {
+
+
+                        const order = new Order_Modal({
+                            clientid: client._id,
+                            signalid: signal._id,
+                            orderid: response.data.orderId,
+                            ordertype: calltypess,
+                            borkerid: 7,
+                            quantity: exitquantity,
                         });
 
-                        const requestData = `jData=${data}`;
 
-                        let url = `https://gw-napi.kotaksecurities.com/Orders/2.0/quick/order/rule/ms/place?sId=${client.hserverid}`;
 
-                        let config = {
-                            method: 'post',
-                            maxBodyLength: Infinity,
-                            url: url,
-                            headers: {
-                                'accept': 'application/json',
-                                'Sid': client.kotakneo_sid,
-                                'Auth': client.authtoken,
-                                'neo-fin-key': 'neotradeapi',
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                                'Authorization': 'Bearer ' + client.oneTimeToken
-                            },
-                            data: requestData
-                        };
+                        return res.json({
+                            status: true,
+                            data: response.data,
+                            message: "Order Placed Successfully"
+                        });
 
 
 
-                        return axios(config)
-                            .then(async (response) => {
-                                if (response.data.stat === 'Ok') {
-                                    const order = new Order_Modal({
-                                        clientid: client._id,
-                                        signalid: signal._id,
-                                        orderid: response.data.nOrdNo,
-                                        ordertype: calltypess,
-                                        borkerid: 3,
-                                        quantity: exitquantity,
-                                    });
 
-                                    await order.save();
-
-
-                                    // const orderupdate = await Order_Modal.findOne({
-                                    //     clientid,
-                                    //     signalid,
-                                    //     borkerid
-                                    // });
-
-                                    // if (orderupdate) {
-                                    //     orderupdate.tsstatus = 0;
-                                    //     await orderupdate.save();
-                                    // }
-
-
-                                    return {
-                                        status: true,
-                                        data: response.data ? null : "Order Successfully",
-                                    };
-                                } else {
-                                    // Log response if the status isn't 'Ok'
-                                    return {
-                                        status: false,
-                                        message: response.data.message || 'Unknown error in response'
-                                    };
-                                }
-                            })
-                            .catch(async (error) => {
-                                return {
-                                    status: false,
-                                    message: error
-                                };
-                            });
+                    } else {
+                        
+                        return res.status(500).json({
+                            status: false,
+                            message: response.data || 'Unknown error in response'
+                        });
                     }
+                })
+                .catch((error) => {
+                  if (error.response) {
 
+                    return res.status(500).json({
+                        status: false,
+                        message: error.response.data,
+                    });
+
+
+                  } else if (error.request) {
+                    return res.status(500).json({
+                        status: false,
+                        message: error.request,
+                    });
+
+                  } else {
+                    return res.status(500).json({
+                        status: false,
+                        message: error.message,
+                    });
+
+
+                  }
                 });
+                   
+                   
             }
         } catch (error) {
             return {
@@ -1040,7 +933,7 @@ class Dhan {
     }
 
 
-    async kotakneoorderplace(item) {
+    async dhanorderplace(item) {
        
         try {
             const { id, quantity, price, version, basket_id, tradesymbol, instrumentToken, calltype, brokerid, howmanytimebuy } = item;
@@ -1061,7 +954,7 @@ class Dhan {
                 };
             }
 
-            if (brokerid != 3) {
+            if (brokerid != 7) {
                 return {
                     status: false,
                     message: "Invalid Broker Place Order"
@@ -1069,35 +962,27 @@ class Dhan {
             }
 
             const authToken = client.authtoken;
-
+            const apikey = client.apikey;
 
             let exchange, producttype;
-            exchange = "nse_cm";
+            exchange = "NSE_EQ";
             producttype = "CNC";
 
 
-            const pattern = instrumentToken;
-            let ts = null; // Initialize `ts` with a default value
 
-            let filePath_token;
-
-                filePath_token = '../../tokenkotakneo/KOTAK_NSE.csv';
-
-            const filePath1 = path.join(__dirname, filePath_token);
-
-            if (calltype == "B") { } else {
+            if (calltype == "BUY") { } else {
                 let holdingData = { qty: 0 };
                 let positionData = { qty: 0 };
                 let totalValue = 0;  // Declare totalValue outside the blocks
                 try {
-                    positionData = await CheckPosition(client.apikey, "C", instrumentToken);
+                    positionData = await CheckPosition(authToken, "C", instrumentToken);
 
                 } catch (error) {
                 }
 
               
                     try {
-                        holdingData = await CheckHolding(client.apikey, "C", instrumentToken);
+                        holdingData = await CheckHolding(authToken, "C", instrumentToken);
 
                     } catch (error) {
                     }
@@ -1117,58 +1002,37 @@ class Dhan {
 
             }
 
-            fs.readFile(filePath1, 'utf8', (err, data) => {
-                if (err) {
-                    // console.error(`Error reading file: ${err}`);
-                    return;
-                }
-            
-                const lines = data.split('\n');
-                let matchedLines;
-            
-             
-                    matchedLines = lines.filter(line => 
-                        new RegExp(`.*(${pattern}).*.*(nse_cm).*`, 'i').test(line)
-                    );
-              
-            
-                if (matchedLines.length > 0) {
-                 const parts = matchedLines[0].split(','); // Extract parts from the first (and only) matched line
-                 ts = parts[5]; // Get the value from the 6th column (index 5)
-          
 
             var data = JSON.stringify({
-                "am": "NO",
-                "dq": "0",
-                "es": exchange,
-                "mp": "0",
-                "pc": producttype,
-                "pf": "N",
-                "pr": price,
-                "pt": "MKT",
-                "qt": quantity,
-                "rt": "DAY",
-                "tp": "0",
-                "ts": ts,
-                "tt": calltype
-            });
-            const requestData = `jData=${data}`;
+                "dhanClientId": apikey,
+                "transactionType": calltype,
+                "exchangeSegment": exchange,
+                "productType": producttype,
+                "orderType": "MARKET",
+                "validity": "DAY",
+                "securityId": instrumentToken,
+                "quantity": parseInt(quantity),
+                "disclosedQuantity": 0,
+                "price": 0,
+                "triggerPrice": 0,
+                "afterMarketOrder": true,
+                "amoTime": "OPEN",
+                "boProfitValue": 0,
+                "boStopLossValue": 0
+              });
 
-            let url = `https://gw-napi.kotaksecurities.com/Orders/2.0/quick/order/rule/ms/place?sId=${client.hserverid}`;
 
-            let config = {
+
+              let config = {
                 method: 'post',
                 maxBodyLength: Infinity,
-                url: url,
+                url: 'https://api.dhan.co/orders',
                 headers: {
-                    'accept': 'application/json',
-                    'Sid': client.kotakneo_sid,
-                    'Auth': client.authtoken,
-                    'neo-fin-key': 'neotradeapi',
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': 'Bearer ' + client.oneTimeToken
+                    'access-token': authToken,
+                    'Content-Type': 'application/json'
                 },
-                data: requestData
+                data: data
+        
             };
 
 
@@ -1177,13 +1041,13 @@ class Dhan {
                 .then(async (response) => {
                     // Log full response for debugging purposes
 
-                    if (response.data.stat === 'Ok') {
+                    if (response.data.orderStatus != undefined) {
                         const order = new Basketorder_Modal({
                             clientid: client._id,
                             tradesymbol: tradesymbol,
-                            orderid: response.data.nOrdNo,
+                            orderid: response.data.orderId,
                             ordertype: calltype,
-                            borkerid: 3,
+                            borkerid: 7,
                             price: price,
                             quantity: quantity,
                             ordertoken: instrumentToken,
@@ -1197,15 +1061,15 @@ class Dhan {
 
 
 
-                        if(calltype =="S") {
+                        if(calltype =="SELL") {
                             await Basketorder_Modal.updateMany(
                                 {
                                   version: version,
                                   clientid: client._id,
                                   basket_id: basket_id,
-                                  brokerid: '3',
+                                  brokerid: '7',
                                   exitstatus: 0,
-                                  ordertype: 'B',
+                                  ordertype: 'BUY',
                                   howmanytimebuy: { $nin: howmanytimebuy }  // Only update if howmanytimebuy is not in [1, 2]
                                 },
                                 {
@@ -1219,22 +1083,38 @@ class Dhan {
                         };
                     }
                     else {
-
-                        return {
+                        return res.status(500).json({
                             status: false,
-                            message: response.data
-                        };
+                            message: response.data || 'Unknown error in response'
+                        });
                     }
 
                 })
-                .catch(async (error) => {
-                    return {
-                        status: false,
-                        message: error
-                    };
-                });
-            }
-            });
+                .catch((error) => {
+                    if (error.response) {
+  
+                      return res.status(500).json({
+                          status: false,
+                          message: error.response.data,
+                      });
+  
+  
+                    } else if (error.request) {
+                      return res.status(500).json({
+                          status: false,
+                          message: error.request,
+                      });
+  
+                    } else {
+                      return res.status(500).json({
+                          status: false,
+                          message: error.message,
+                      });
+  
+  
+                    }
+                  });
+           
         } catch (error) {
             return {
                 status: false,
@@ -1287,7 +1167,7 @@ class Dhan {
             }
 
 
-            if (order.borkerid != 3) {
+            if (order.borkerid != 7) {
                 return res.status(404).json({
                     status: false,
                     message: "Order not found for this Broker"
@@ -1299,28 +1179,14 @@ class Dhan {
             const userId = client.apikey;
 
 
-            const uniorderId = order.orderid;
-
-            var data_orderHistory = qs.stringify({
-                jData: '{"nOrdNo":"' + uniorderId + '"}',
-            });
-            let url1 = `https://gw-napi.kotaksecurities.com/Orders/2.0/quick/order/history?sId=${client.hserverid}`;
-
-            let config = {
-                method: "post",
-                maxBodyLength: Infinity,
-                url: url1,
+            var config = {
+                method: 'get',
+                url: 'https://api.dhan.co/orders/' + order.orderid,
                 headers: {
-                    accept: "application/json",
-                    Sid: client.kotakneo_sid,
-                    Auth: client.authtoken,
-                    "neo-fin-key": "neotradeapi",
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    Authorization: "Bearer " + client.oneTimeToken,
+                    'access-token': authToken,
+                    'Content-Type': 'application/json'
                 },
-                data: data_orderHistory,
             };
-
             const response = await axios(config); // Use await with axios
 
             order.data = response.data;
@@ -1345,44 +1211,30 @@ class Dhan {
 
 }
 
-async function CheckPosition(userId, segment, instrument_token) {
+async function CheckPosition(authToken, segment, instrument_token) {
 
-    const client = await Clients_Modal.findOne({ apikey: userId });
-    if (!client) {
-        return res.status(404).json({
-            status: false,
-            message: "Client not found"
-        });
-    }
 
-    var position_url = `https://gw-napi.kotaksecurities.com/Orders/2.0/quick/user/positions?sId=${client.hserverid}`
-    let config = {
+
+    var config = {
         method: 'get',
-        maxBodyLength: Infinity,
-        url: position_url,
+        url: 'https://api.dhan.co/positions',
         headers: {
-            'accept': 'application/json',
-            'Sid': client.kotakneo_sid,
-            'Auth': client.authtoken,
-            'neo-fin-key': 'neotradeapi',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Bearer ' + client.oneTimeToken
-        }
-
+            'access-token': authToken,
+            'Content-Type': 'application/json'
+        },
     };
-
-
+      
+      
     try {
         const response = await axios(config);  // Wait for the response
 
 
-        if (response.data.stat == "Ok") {
-            const Exist_entry_order = response.data.data.find(item1 => item1.tok === instrument_token);
-
+        if (Array.isArray(response.data)) {
+            const Exist_entry_order = response.data.find(item1 => item1.securityId === instrument_token);
             if (Exist_entry_order !== undefined) {
                 let possition_qty;
 
-                possition_qty = parseInt(Exist_entry_order.flBuyQty) - parseInt(Exist_entry_order.flSellQty);
+                possition_qty = parseInt(Exist_entry_order.buyQty) - parseInt(Exist_entry_order.sellQty);
 
 
                 if (possition_qty === 0) {
@@ -1423,42 +1275,30 @@ async function CheckPosition(userId, segment, instrument_token) {
 
 
 
-async function CheckHolding(userId, segment, instrument_token) {
-    const client = await Clients_Modal.findOne({ apikey: userId });
-    if (!client) {
-        return res.status(404).json({
-            status: false,
-            message: "Client not found"
-        });
-    }
+async function CheckHolding(authToken, segment, instrument_token) {
+   
 
-    var holding_url = `https://gw-napi.kotaksecurities.com/Portfolio/1.0/portfolio/v1/holdings?alt=false`
-    let config = {
+    var config = {
         method: 'get',
-        maxBodyLength: Infinity,
-        url: holding_url,
+        url: 'https://api.dhan.co/positions',
         headers: {
-            'accept': 'application/json',
-            'Sid': client.kotakneo_sid,
-            'Auth': client.authtoken,
-            'neo-fin-key': 'neotradeapi',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Bearer ' + client.oneTimeToken
-        }
-
+            'access-token': authToken,
+            'Content-Type': 'application/json'
+        },
     };
 
     try {
         const response = await axios(config);
 
 
-        if (response.data.message == "SUCCESS") {
+        if (Array.isArray(response.data)) {
 
-            const existEntryOrder = response.data.find(item1 => item1.instrumentToken === instrument_token);
+            const existEntryOrder = response.data.find(item1 => item1.securityId === instrument_token);
+
             let possition_qty = 0;
             if (existEntryOrder != undefined) {
                 if (segment.toUpperCase() == 'C') {
-                    possition_qty = parseInt(existEntryOrder.quantity);
+                    possition_qty = parseInt(existEntryOrder.availableQty);
                 }
             }
             return {
