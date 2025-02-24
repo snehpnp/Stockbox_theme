@@ -1,6 +1,6 @@
 # 📦 Stock Box
 
-**🚀 Automatic Trading Platform**
+**🚀 Automatic Trading Platform...**
 
 
 ## 📝 Project Description
