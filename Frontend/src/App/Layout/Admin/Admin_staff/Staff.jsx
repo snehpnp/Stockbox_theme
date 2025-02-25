@@ -169,31 +169,30 @@ const Staff = () => {
     // update status
 
     const handleSwitchChange = async (event, id) => {
-
         const user_active_status = event.target.checked ? "1" : "0";
-        const data = { id: id, status: user_active_status }
-        const result = showCustomAlert("confirm", "Do you want to save the changes?")
-        if (result) {
-            try {
-                const response = await updateStaffstatus(data, token)
-                if (response.status) {
+        const data = { id, status: user_active_status };
 
-                    if (!event.target.checked) {
-                        socket.emit("deactivestaff", { id: id, msg: "logout" });
-                    }
-                    showCustomAlert("Success", "Status Changed!")
-
-                }
-                getAdminclient();
-            } catch (error) {
-                showCustomAlert("Success", "Status Changed!", "There was an error processing your request.")
-
+        try {
+            const result = await showCustomAlert("confirm", "Do you want to save the changes?");
+            if (!result) {
+                event.target.checked = !event.target.checked;
+                return;
             }
-        } else {
-            event.target.checked = !user_active_status
+            const response = await updateStaffstatus(data, token);
+            if (response?.status) {
+                if (!event.target.checked) {
+                    socket.emit("deactivestaff", { id, msg: "logout" });
+                }
+                showCustomAlert("success", "Status Changed!");
+            } else {
+                throw new Error("Failed to update status");
+            }
+        } catch (error) {
+            event.target.checked = !event.target.checked;
+            showCustomAlert("error", "Status Change Failed", "There was an error processing your request.");
+        } finally {
             getAdminclient();
         }
-
     };
 
 
