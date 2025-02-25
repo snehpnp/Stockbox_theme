@@ -6930,7 +6930,7 @@ async LatestSignalsWithoutActivePlan(req, res) {
     // Fetch all non-active plan signals based on client_id only
     const exclusionQuery = {
       close_status: false,
-      planid: { $nin: activePlanIdStrings, $ne: null, $exists: true }
+      planid: { $nin: [...activePlanIdStrings, null, ""] }
     };
 
     const latestSignals = await Signal_Modal.find(exclusionQuery)
