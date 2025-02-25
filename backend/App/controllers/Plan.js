@@ -502,6 +502,8 @@ async  addPlanSubscription(req, res) {
         return res.status(400).json({ status: false, message: 'Client Not Actived' });
       }
 
+
+
       // Fetch the plan and populate the category
       const plan = await Plan_Modal.findById(plan_id)
         .populate('category')
@@ -511,6 +513,9 @@ async  addPlanSubscription(req, res) {
         return res.status(404).json({ status: false, message: 'Plan not found' });
       }
   
+
+      const settings = await BasicSetting_Modal.findOne();
+
       // Map plan validity to months
       const validityMapping = {
         '1 month': 1,
@@ -664,12 +669,21 @@ try {
 
 ////////////////// 17/10/2024 ////////////////////////
 
-  
+let total = plan.price; // Use let for reassignable variables
+let totalgst = 0;
+
+if (settings.gst > 0 && settings.gststatus==1) {
+  totalgst = (plan.price * settings.gst) / 100; // Use settings.gst instead of gst
+  total = plan.price + totalgst;
+}
+
       // Create a new plan subscription record
       const newSubscription = new PlanSubscription_Modal({
         plan_id,
         client_id,
-        total: plan.price,
+        total: total,
+        gstamount:totalgst,
+        gst: settings.gst,
         plan_price: price,
         plan_start: start,
         plan_end: end,
@@ -692,7 +706,6 @@ try {
 
 
 
-       const settings = await BasicSetting_Modal.findOne();
 
        const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
  
@@ -1296,7 +1309,7 @@ const settings = await BasicSetting_Modal.findOne();
 let total = plan.price; // Use let for reassignable variables
 let totalgst = 0;
 
-if (settings.gst > 0) {
+if (settings.gst > 0 && settings.gststatus==1) {
   totalgst = (plan.price * settings.gst) / 100; // Use settings.gst instead of gst
   total = plan.price + totalgst;
 }

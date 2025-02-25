@@ -1278,12 +1278,25 @@ class Basket {
 
 
 
+      const settings = await BasicSetting_Modal.findOne();
+      let total = basket.basket_price; // Use let for reassignable variables
+      let totalgst = 0;
+      
+      if (settings.gst > 0 && settings.gststatus==1) {
+        totalgst = (basket.basket_price * settings.gst) / 100; // Use settings.gst instead of gst
+        total = basket.basket_price + totalgst;
+      }
+      
+     
+
       // Create a new subscription
       const newSubscription = new BasketSubscription_Modal({
         basket_id,
         client_id,
-        total: price,
+        total: total,
         plan_price: basket.basket_price,
+        gstamount:totalgst,
+        gst: settings.gst,
         startdate: start,
         enddate: end,
         validity: basket.validity,
@@ -1363,7 +1376,7 @@ class Basket {
       let total = basket.basket_price; // Use let for reassignable variables
       let totalgst = 0;
       
-      if (settings.gst > 0) {
+      if (settings.gst > 0 && settings.gststatus==1) {
         totalgst = (basket.basket_price * settings.gst) / 100; // Use settings.gst instead of gst
         total = basket.basket_price + totalgst;
       }
