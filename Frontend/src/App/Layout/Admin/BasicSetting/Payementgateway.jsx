@@ -52,6 +52,8 @@ const Payementgateway = () => {
         setUpdateapi((prev) => ({ ...prev, [field]: value }));
     };
 
+
+
     const handleSwitchChange = async (event, type) => {
         const user_active_status = event.target.checked ? 1 : 0;
         const data =
@@ -74,12 +76,6 @@ const Payementgateway = () => {
             }
         }
     };
-
-
-
-
-
-
 
 
     const UpdateApi = async () => {
