@@ -2048,6 +2048,31 @@ export async function UpdatePaymentstatus(data, token) {
 
 
 
+
+// gst stataus update 
+
+export async function UpdatePaymentGSTstatus(data, token) {
+    const formData = new FormData();
+    formData.append('gststatus', data.gststatus);
+    try {
+        const res = await axios.post(`${Config.base_url}basicsetting/add`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+
+
 // get email template page
 
 export async function getemailtemplate(token) {

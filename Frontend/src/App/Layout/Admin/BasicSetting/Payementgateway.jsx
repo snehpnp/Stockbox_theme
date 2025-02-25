@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { basicsettinglist, updatePayementgateway, UpdatePaymentstatus } from '../../../Services/Admin/Admin';
+import { basicsettinglist, updatePayementgateway, UpdatePaymentstatus, UpdatePaymentGSTstatus } from '../../../Services/Admin/Admin';
 import { Link } from 'react-router-dom';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
@@ -12,12 +12,17 @@ const Payementgateway = () => {
     const [clients, setClients] = useState(null);
     const [onlinePaymentEnabled, setOnlinePaymentEnabled] = useState(false);
 
+
+
     const [initialValues, setInitialValues] = useState({
         razorpay_secret: "",
         razorpay_key: "",
         paymentstatus: "",
-        officepaymenystatus: ""
+        officepaymenystatus: "",
+        gststatus: ""
     });
+
+
 
     const [updateapi, setUpdateapi] = useState(initialValues);
 
@@ -70,6 +75,13 @@ const Payementgateway = () => {
         }
     };
 
+
+
+
+
+
+
+
     const UpdateApi = async () => {
         try {
             if (!updateapi.razorpay_key.trim() || !updateapi.razorpay_secret.trim()) {
@@ -89,6 +101,8 @@ const Payementgateway = () => {
         }
     };
 
+
+
     const SwitchField = ({ label, checked, onChange }) => (
         <div className="col-md-6 d-flex justify-content-between align-items-center mb-3">
             <label className="form-label">{label}</label>
@@ -102,6 +116,29 @@ const Payementgateway = () => {
             </div>
         </div>
     );
+
+
+
+    const GSThandleSwitchChange = async (event) => {
+        const user_active_status = event.target.checked ? 1 : 0;
+        const data = { gststatus: user_active_status }
+        const result = await showCustomAlert("confirm", "Do you want to save the changes?")
+        if (result) {
+            try {
+                const response = await UpdatePaymentGSTstatus(data, token);
+                if (response?.status) {
+                    showCustomAlert("Success", "Status Changed")
+                    getApidetail();
+                }
+            } catch (error) {
+                showCustomAlert("error", "There was an error processing your request.")
+
+            }
+        }
+    };
+
+
+
 
     return (
         <div className="page-content">
@@ -133,6 +170,11 @@ const Payementgateway = () => {
                                     label="Offline Payment Status"
                                     checked={clients?.officepaymenystatus === 1}
                                     onChange={(e) => handleSwitchChange(e, "officepaymenystatus")}
+                                />
+                                <SwitchField
+                                    label="GST Status"
+                                    checked={clients?.gststatus === 1}
+                                    onChange={(e) => GSThandleSwitchChange(e)}
                                 />
                             </form>
                         </div>
