@@ -86,7 +86,7 @@ const Notificationlist = () => {
 
     return (
         <Content
-            Page_title="Notitfications"
+            Page_title="Notification"
             button_status={false}
             backbutton_status={true}
             backForword={true}
