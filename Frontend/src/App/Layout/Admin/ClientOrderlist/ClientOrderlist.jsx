@@ -33,6 +33,7 @@ const ClientOrderlist = () => {
     const [text, setText] = useState([]);
 
 
+
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRows, setTotalRows] = useState(0);
 
@@ -53,6 +54,7 @@ const ClientOrderlist = () => {
 
 
     }
+
 
 
     const getexportfile = async () => {
@@ -89,10 +91,6 @@ const ClientOrderlist = () => {
 
 
 
-
-
-
-
     const getorder = async () => {
         try {
             const data = { fromDate: startDate, toDate: endDate, ordertype: ordertype, borkerid: broker, page: currentPage, search: searchInput, clientid: "", signalid: "" }
@@ -101,6 +99,7 @@ const ClientOrderlist = () => {
                 let filteredData = response.data;
                 setTotalRows(response.pagination?.totalRecords)
                 setClients(filteredData);
+                console.log("filteredData", filteredData)
             }
         } catch (error) {
             console.log("Error fetching services:", error);
@@ -149,31 +148,31 @@ const ClientOrderlist = () => {
         },
         {
             name: 'Order Status',
-            selector: row => row?.data?.data?.status,
+            selector: row => row?.data?.data?.status || "-",
             sortable: true,
             width: '200px',
         },
         {
             name: 'Entry Type',
-            selector: row => row?.data?.data?.transactiontype,
+            selector: row => row?.signalDetails?.calltype,
             sortable: true,
             width: '200px',
         },
         {
             name: 'Symbol',
-            selector: row => row?.data?.data?.tradingsymbol,
+            selector: row => row?.signalDetails?.tradesymbol,
             sortable: true,
             width: '300px',
         },
         {
             name: 'Price',
-            selector: row => row?.data?.data?.price,
+            selector: row => row?.signalDetails?.price,
             sortable: true,
             width: '200px',
         },
         {
             name: 'Quantity',
-            selector: row => row?.data?.data?.quantity,
+            selector: row => row?.quantity,
             sortable: true,
             width: '200px',
         },
@@ -185,7 +184,7 @@ const ClientOrderlist = () => {
         },
         {
             name: 'Order Id',
-            selector: row => row?.data?.data?.orderid,
+            selector: row => row?.orderid,
             sortable: true,
             width: '300px',
         },
