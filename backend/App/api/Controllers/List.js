@@ -3350,7 +3350,7 @@ class List {
 
 
    const result = await BasicSetting_Modal.findOne()
-  .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst')
+  .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst gststatus')
   .exec();
 
    if (result) {  
@@ -6909,6 +6909,79 @@ async checkClientToken(req, res) {
       return res.status(500).json({ message: "Something went wrong.", error: error.message });
   }
 }
+
+async LatestSignalsWithoutActivePlan(req, res) {
+  try {
+    const { client_id } = req.body;
+    const limit = 10;
+
+    // Fetch all subscriptions
+    const subscriptions = await PlanSubscription_Modal.find({ client_id });
+
+    // Extract active plan IDs and their end dates
+    const activePlanIds = subscriptions
+      .filter(sub => sub.status === "active" && new Date(sub.plan_end) >= new Date())
+      .map(sub => sub.plan_category_id)
+      .filter(id => id != null);
+
+    // Convert plan IDs to strings for comparison
+    const activePlanIdStrings = activePlanIds.map(id => id.toString());
+
+    // Fetch all non-active plan signals based on client_id only
+    const exclusionQuery = {
+      close_status: false,
+      planid: { $nin: activePlanIdStrings, $ne: null, $exists: true }
+    };
+
+    const latestSignals = await Signal_Modal.find(exclusionQuery)
+      .sort({ created_at: -1 })
+      .lean();
+
+    const protocol = req.protocol;
+    const baseUrl = `${protocol}://${req.headers.host}`;
+
+    // Attach report URLs and purchase details, limiting to 2 signals per plan
+    let signalsWithDetails = [];
+    const planSignalCount = {}; // Track how many signals per plan
+
+    for (const signal of latestSignals) {
+      const planId = signal.planid ? signal.planid.toString() : "noPlan";
+      if (!planSignalCount[planId]) {
+        planSignalCount[planId] = 0;
+      }
+
+      if (planSignalCount[planId] < 2) {
+        const order = await Order_Modal.findOne({
+          clientid: client_id,
+          signalid: signal._id
+        }).lean();
+
+        signalsWithDetails.push({
+          ...signal,
+          report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
+          purchased: order ? true : false,
+          order_quantity: order ? order.quantity : 0
+        });
+
+        planSignalCount[planId]++;
+      }
+
+      if (signalsWithDetails.length >= limit) break; // Stop after 10 signals total
+    }
+
+    return res.json({
+      status: true,
+      message: "Latest 10 signals retrieved successfully, limiting 2 signals per plan.",
+      data: signalsWithDetails,
+   
+    });
+  } catch (error) {
+    console.error("Error fetching signals:", error);
+    return res.json({ status: false, message: "Server error", data: [] });
+  }
+}
+
+
 
   
 
