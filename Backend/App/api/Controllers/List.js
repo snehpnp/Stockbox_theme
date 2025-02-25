@@ -556,6 +556,10 @@ class List {
         return res.status(400).json({ status: false, message: 'Missing required fields' });
       }
 
+
+      const settings = await BasicSetting_Modal.findOne();
+
+
       // Fetch the plan and populate the category
       const plan = await Plan_Modal.findById(plan_id)
         .populate('category')
@@ -713,15 +717,27 @@ class List {
       }
 
 
+
+      let total = plan.price - discount; // Use let for reassignable variables
+      let totalgst = 0;
+
+      if (settings.gst > 0 && settings.gststatus == 1) {
+        totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
+        total = total + totalgst;
+      }
+
+
       ////////////////// 17/10/2024 ////////////////////////
       // Create a new plan subscription record
       const newSubscription = new PlanSubscription_Modal({
         plan_id,
         client_id,
-        total: price,
+        total: total,
         plan_price: plan.price,
         discount: discount,
         coupon: coupon_code,
+        gstamount: totalgst,
+        gst: settings.gst,
         plan_start: start,
         plan_end: end,
         validity: plan.validity,
@@ -768,7 +784,6 @@ class List {
         await client.save();
       }
 
-      const settings = await BasicSetting_Modal.findOne();
 
       const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
 
@@ -1026,13 +1041,27 @@ class List {
       end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
       end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
 
+
+
+
+      let total = basket.basket_price - discount; // Use let for reassignable variables
+      let totalgst = 0;
+
+      if (settings.gst > 0 && settings.gststatus == 1) {
+        totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
+        total = total + totalgst;
+      }
+
+
       // Create a new subscription
       const newSubscription = new BasketSubscription_Modal({
         basket_id,
         client_id,
-        total: price,
+        total: total,
         plan_price: basket.basket_price,
         discount: discount,
+        gstamount: totalgst,
+        gst: settings.gst,
         coupon: coupon,
         startdate: start,
         enddate: end,
@@ -1512,12 +1541,24 @@ class List {
       // Calculate the final price after applying the discount
       const finalPrice = purchaseValue - discount;
 
+
+      const settings = await BasicSetting_Modal.findOne();
+      let total = finalPrice; // Use let for reassignable variables
+      let totalgst = 0;
+
+      if (settings.gst > 0 && settings.gststatus == 1) {
+        totalgst = (finalPrice * settings.gst) / 100; // Use settings.gst instead of gst
+        total = finalPrice + totalgst;
+      }
+
+
       return res.status(200).json({
         status: true,
         message: 'Coupon applied successfully',
         originalPrice: purchaseValue,
         discount,
-        finalPrice
+        finalPrice: total,
+        totalgst,
       });
     } catch (error) {
       return res.status(500).json({ status: false, message: 'Server error', error: error.message });
@@ -1597,7 +1638,7 @@ class List {
       let total = finalPrice; // Use let for reassignable variables
       let totalgst = 0;
 
-      if (settings.gst > 0) {
+      if (settings.gst > 0 && settings.gststatus == 1) {
         totalgst = (finalPrice * settings.gst) / 100; // Use settings.gst instead of gst
         total = finalPrice + totalgst;
       }
@@ -4421,7 +4462,7 @@ class List {
               const authToken = client.authtoken;
               const apikey = client.apikey;
 
-            
+
               const config = {
                 method: 'get',
                 url: 'https://api.dhan.co/fundlimit',
@@ -4430,7 +4471,7 @@ class List {
                   'access-token': authtoken
                 }
               };
-          
+
 
 
               const response = await axios(config);
@@ -4685,7 +4726,7 @@ class List {
               howmanytimebuy: ids
             });
           }
-          else   if (brokerid == 7) {
+          else if (brokerid == 7) {
             respo = await dhanorderplace({
               id: clientid,
               basket_id: basket_id,
@@ -5426,7 +5467,7 @@ class List {
         let total = plan.price - discountPerPlan; // Use let for reassignable variables
         let totalgst = 0;
 
-        if (settings.gst > 0) {
+        if (settings.gst > 0 && settings.gststatus == 1) {
           totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
           total = total + totalgst;
         }
@@ -5990,7 +6031,7 @@ class List {
         let total = basket.basket_price - discountPerPlan; // Use let for reassignable variables
         let totalgst = 0;
 
-        if (settings.gst > 0) {
+        if (settings.gst > 0 && settings.gststatus == 1) {
           totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
           total = total + totalgst;
         }
@@ -6884,14 +6925,6 @@ function formatDate(date) {
   return `${day}/${month}/${year}`;
 
 }
-
-
-
-
-
-
-
-
 
 
 module.exports = new List();
