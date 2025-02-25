@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Tooltip } from "antd";
 import { SuperAdmin, Admin, User, Employee } from "../Sidebars/Sidebar_config";
+import { getstaffperuser } from "../../Services/Admin/Admin";
+import { permissionMapping } from "./EmployeeManagement";
 
 import {
   UserRoundPlus,
@@ -45,6 +47,13 @@ import {
 import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
+
+  const userid = localStorage.getItem('id');
+  const token = localStorage.getItem('token');
+
+
+
+  const [permission, setPermission] = useState([]);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isTopbar, setIsTopbar] = useState(false);
   const [openTab, setOpenTab] = useState(null);
@@ -54,11 +63,15 @@ const Sidebar = () => {
     localStorage.getItem("Role") == "SUPERADMIN"
       ? SuperAdmin
       : localStorage.getItem("Role") == "ADMIN"
-      ? Admin
-      : localStorage.getItem("Role") == "USER"
-      ? User
-      : Employee
+        ? Admin
+        : localStorage.getItem("Role") == "USER"
+          ? User
+          : Employee
   );
+
+  useEffect(() => {
+    getpermissioninfo()
+  }, [])
 
   useEffect(() => {
     if (theme && theme.sidebarPosition === "Header") {
@@ -87,9 +100,6 @@ const Sidebar = () => {
     padding: isTopbar ? "0 20px" : "10px",
   };
 
-
-
-
   useEffect(() => {
     if (isTopbar) {
       document.body.classList.add("sidebar-horizontal-container");
@@ -100,15 +110,9 @@ const Sidebar = () => {
     }
   }, [isTopbar]);
 
-
-
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
-
-
-
-
 
   useEffect(() => {
     if (isCollapsed) {
@@ -122,7 +126,39 @@ const Sidebar = () => {
 
 
 
-  
+  async function getpermissioninfo() {
+    try {
+      const response = await getstaffperuser(userid, token);
+      if (response.status) {
+        const filterpermission = response.data.permissions.map((item) => {
+          return item
+        })
+        setPermission(filterpermission);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  }
+
+
+  useEffect(() => {
+    if (permission.length > 0) {
+      const filteredRoutes = routes.filter(route =>
+        permission.some(perm => permissionMapping[perm] === route.name)
+      );
+
+      const dashboardRoute = routes.find(route => route.name === "Dashboard");
+      if (dashboardRoute && !filteredRoutes.some(route => route.name === "Dashboard")) {
+        filteredRoutes.unshift(dashboardRoute);
+      }
+
+      setRoutes(filteredRoutes);
+    }
+  }, [permission]);
+
+
+
+
   return (
     <>
       <div
@@ -163,9 +199,8 @@ const Sidebar = () => {
                     {/* Parent Tab */}
                     <div
                       onClick={() => tab.children && toggleSubmenu(tab.name)}
-                      className={`sidebar-color sidebar-link ${
-                        location.pathname === tab.link ? "active" : ""
-                      }`}
+                      className={`sidebar-color sidebar-link ${location.pathname === tab.link ? "active" : ""
+                        }`}
                       style={{
                         display: "flex",
                         alignItems: "center",
@@ -177,9 +212,8 @@ const Sidebar = () => {
                     >
                       <Link
                         to={tab.link}
-                        className={`sidebar-color sidebar-link ${
-                          location.pathname === tab.link ? "active" : ""
-                        }`}
+                        className={`sidebar-color sidebar-link ${location.pathname === tab.link ? "active" : ""
+                          }`}
                         style={{
                           textDecoration: "none",
                           display: "flex",
@@ -214,15 +248,13 @@ const Sidebar = () => {
                         {tab.children.map((child) => (
                           <li
                             key={child.name}
-                            className={`sidebar-subitem ${
-                              location.pathname === child.link ? "active" : ""
-                            }`}
+                            className={`sidebar-subitem ${location.pathname === child.link ? "active" : ""
+                              }`}
                           >
                             <Link
                               to={child.link}
-                              className={`sidebar-color sidebar-sublink ${
-                                location.pathname === child.link ? "active" : ""
-                              }`}
+                              className={`sidebar-color sidebar-sublink ${location.pathname === child.link ? "active" : ""
+                                }`}
                               style={{
                                 textDecoration: "none",
                                 display: "flex",
