@@ -70,7 +70,7 @@ const Sidebar = () => {
   );
 
   useEffect(() => {
-    getpermissioninfo()
+    getPermissionInfo()
   }, [])
 
   useEffect(() => {
@@ -126,19 +126,17 @@ const Sidebar = () => {
 
 
 
-  async function getpermissioninfo() {
+  async function getPermissionInfo() {
     try {
       const response = await getstaffperuser(userid, token);
-      if (response.status) {
-        const filterpermission = response.data.permissions.map((item) => {
-          return item
-        })
-        setPermission(filterpermission);
+      if (response?.status && Array.isArray(response.data?.permissions)) {
+        setPermission(response.data.permissions);
       }
     } catch (error) {
-      console.log("error", error);
+      console.error("Error fetching permissions:", error);
     }
   }
+
 
 
   useEffect(() => {
