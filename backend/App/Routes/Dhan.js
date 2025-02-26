@@ -4,7 +4,7 @@ const path = require('path');
 
 const {GetAccessToken,placeOrder,ExitplaceOrder,checkOrder,checkOrderBasket} = require('../Controllers/Dhan')
 
-router.get('/dhan/getaccesstoken', GetAccessToken);
+router.post('/dhan/getaccesstoken', GetAccessToken);
 router.post('/dhan/placeorder', placeOrder);
 router.post('/dhan/exitplaceorder', ExitplaceOrder);
 router.post('/dhan/checkorder', checkOrder);
