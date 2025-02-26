@@ -1347,7 +1347,9 @@ class List {
             plan_start: { $first: '$plan_start' }, // Keep the plan_start
             plan_end: { $first: '$plan_end' },
             created_at: { $first: '$created_at' },
-            orderid: { $first: '$orderid' }, // Keep the plan_end
+            orderid: { $first: '$orderid' },
+            gstamount: { $first: '$gstamount' },
+            gst: { $first: '$gst' },
             planDetails: { $first: '$planDetails' }, // First instance of planDetails
             categoryDetails: { $first: '$categoryDetails' }, // First instance of categoryDetails
             serviceNames: { $push: '$serviceDetails.title' }
@@ -1371,6 +1373,8 @@ class List {
             plan_start: 1, // Plan start date
             plan_end: 1,
             orderid: 1,
+            gstamount: 1,
+            gst: 1,
             created_at: 1, // Plan end date
             planDetails: 1, // Details from the plans collection
             categoryDetails: 1, // Details from the plan categories collection
