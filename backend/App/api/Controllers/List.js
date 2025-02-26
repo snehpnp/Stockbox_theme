@@ -33,6 +33,7 @@ const Mailtemplate_Modal = db.Mailtemplate;
 const Requestclient_Modal = db.Requestclient;
 const Addtocart_Modal = db.Addtocart;
 const Stockrating_Modal = db.Stockrating;
+const Basketghaphdata_Modal = db.Basketgraphdata;
 
 
 const { sendEmail } = require('../../Utils/emailService');
@@ -6909,7 +6910,7 @@ async checkClientToken(req, res) {
       return res.status(500).json({ message: "Something went wrong.", error: error.message });
   }
 }
-
+/*
 async LatestSignalsWithoutActivePlan(req, res) {
   try {
     const { client_id } = req.body;
@@ -6980,8 +6981,196 @@ async LatestSignalsWithoutActivePlan(req, res) {
     return res.json({ status: false, message: "Server error", data: [] });
   }
 }
+*/
+/*
+async LatestSignalsWithoutActivePlan(req, res) {
+  try {
+    const { client_id } = req.body;
+    // const limit = 10;
+
+    // Step 1: Fetch all subscriptions for the client
+    const subscriptions = await PlanSubscription_Modal.find({ client_id });
+
+    // Step 2: Extract active plan IDs
+    const activePlanIds = subscriptions
+      .filter(sub => sub.status === "active" && new Date(sub.plan_end) >= new Date())
+      .map(sub => sub.plan_category_id)
+      .filter(id => id != null)
+      .map(id => id.toString());
+
+    // Step 3: Exclude signals from active plans
+    const exclusionQuery = {
+      close_status: false,
+      planid: { $nin: [...activePlanIds, null, ""] }
+    };
+
+    // Step 4: Fetch signals, sorted by creation date
+    const latestSignals = await Signal_Modal.find(exclusionQuery)
+      .sort({ created_at: -1 })
+      .lean();
+
+    // Step 5: Group by callduration and limit to 2 per callduration
+    const protocol = req.protocol;
+    const baseUrl = `${protocol}://${req.headers.host}`;
+
+    let signalsWithDetails = [];
+    const callDurationCount = {}; // Track how many signals per callduration
+
+    for (const signal of latestSignals) {
+      const callduration = signal.callduration ? signal.callduration.toString() : "noDuration";
+
+      // Initialize count for this callduration
+      if (!callDurationCount[callduration]) {
+        callDurationCount[callduration] = 0;
+      }
+
+      // Add up to 2 signals per callduration
+      if (callDurationCount[callduration] < 2) {
+        // Check if the signal was purchased
+        const order = await Order_Modal.findOne({
+          clientid: client_id,
+          signalid: signal._id
+        }).lean();
+
+        signalsWithDetails.push({
+          ...signal,
+          report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
+          purchased: !!order,
+          order_quantity: order ? order.quantity : 0
+        });
+
+        callDurationCount[callduration]++;
+      }
+
+      // Stop after reaching the overall limit
+      // if (signalsWithDetails.length >= limit) break;
+    }
+
+    // Step 6: Return processed signals
+    return res.json({
+      status: true,
+      message: "Latest signals fetched successfully, showing 2 signals per callduration.",
+      data: signalsWithDetails
+    });
+  } catch (error) {
+    console.error("Error fetching signals:", error);
+    return res.json({ status: false, message: "Server error", data: [] });
+  }
+}
+*/
+async LatestSignalsWithoutActivePlan(req, res) {
+  try {
+    const { client_id } = req.body;
+    const limit = 10;
+
+    // Step 1: Fetch all subscriptions for the client
+    const subscriptions = await PlanSubscription_Modal.find({ client_id });
+
+    // Step 2: Extract active plan IDs
+    const activePlanIds = subscriptions
+      .filter(sub => sub.status === "active" && new Date(sub.plan_end) >= new Date())
+      .map(sub => sub.plan_category_id)
+      .filter(id => id != null)
+      .map(id => id.toString());
+
+    // Step 3: Exclude signals from active plans
+    const exclusionQuery = {
+      close_status: false,
+      planid: { $nin: [...activePlanIds, null, ""] }
+    };
+
+    // Step 4: Fetch all relevant signals
+    const latestSignals = await Signal_Modal.find(exclusionQuery)
+      .sort({ created_at: -1 })
+      .lean();
+
+    // Step 5: Define the priority order for call durations
+    const priorityOrder = [
+      "Multi Bagger",
+      "Long Term",
+      "Short Term",
+      "Swing",
+      "BTST",
+      "Intraday"
+    ];
+
+    // Step 6: Sort signals according to the priority and limit 2 per type
+    const protocol = req.protocol;
+    const baseUrl = `${protocol}://${req.headers.host}`;
+
+    let signalsWithDetails = [];
+    const callDurationCount = {}; // Track how many signals per call duration
+
+    for (const type of priorityOrder) {
+      const filteredSignals = latestSignals.filter(
+        (signal) => signal.callduration === type
+      );
+
+      for (let i = 0; i < Math.min(2, filteredSignals.length); i++) {
+        const signal = filteredSignals[i];
+
+        // Check if the signal was purchased
+        const order = await Order_Modal.findOne({
+          clientid: client_id,
+          signalid: signal._id
+        }).lean();
+
+        signalsWithDetails.push({
+          ...signal,
+          report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
+          purchased: !!order,
+          order_quantity: order ? order.quantity : 0
+        });
+
+        if (signalsWithDetails.length >= limit) break;
+      }
+
+      if (signalsWithDetails.length >= limit) break;
+    }
+
+    // Step 7: Return processed signals
+    return res.json({
+      status: true,
+      message: "Latest signals fetched successfully with 2 signals per call duration in priority order.",
+      data: signalsWithDetails
+    });
+  } catch (error) {
+    console.error("Error fetching signals:", error);
+    return res.json({ status: false, message: "Server error", data: [] });
+  }
+}
 
 
+
+async getBasketGraphData(req, res) { 
+  try {
+  const { basket_id,limit } = req.body;
+
+  // Check if basket_id is provided
+  if (!basket_id) {
+    return res.status(400).json({ status: false, message: 'basket_id is required' });
+  }
+
+  // Fetch data from Basketstock_Modal using basket_id
+  const basketData = await Basketghaphdata_Modal.find({ basket_id }).limit(limit).lean();
+
+  // If no data found
+  if (!basketData || basketData.length === 0) {
+    return res.status(404).json({ status: false, message: 'No data found for this basket_id' });
+  }
+
+  // Send response with data
+  return res.status(200).json({
+    status: true,
+    message: 'Basket data fetched successfully',
+    data: basketData
+  });
+
+} catch (error) {
+  console.error("Error fetching basket data:", error);
+  return res.status(500).json({ status: false, message: 'Server error', data: [] });
+}
+}
 
   
 

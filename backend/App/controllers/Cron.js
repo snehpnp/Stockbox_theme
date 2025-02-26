@@ -24,6 +24,8 @@ const Notification_Modal = db.Notification;
 const Planmanage = db.Planmanage;
 const Basket_Modal = db.Basket;
 const Order_Modal = db.Order;
+const Basketghaphdata_Modal = db.Basketgraphdata;
+const Basketstock_Modal = db.Basketstock;
 
 
 //const JsonFile = require("../../uploads/json/config.json");
@@ -93,6 +95,15 @@ cron.schedule('0 16 * * *', async () => {
     scheduled: true,
     timezone: "Asia/Kolkata"
 });
+
+
+cron.schedule('30 16 * * *', async () => {
+    await addBasketgraphdata();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
+
 
 
 // cron.schedule(`${JsonFile.cashexpiretime} ${JsonFile.cashexpirehours} * * *`, async () => {
@@ -1431,16 +1442,200 @@ async function processPendingOrders(req, res) {
         });
     }
 }
+// Fetch current price from the API with error handling
+async function getCurrentPrice(tradesymbol) {
+    try {
+        // Make API request
+        const response = await axios.get('http://stockboxapis.cmots.com/api/BseNseDelayedData/NSE');
+
+        // Access the stock data array from the response
+        const stockData = response.data.data; // Assuming data is under 'data'
+        if (Array.isArray(stockData)) {
+            // Find the stock with the matching SYMBOL
+            const stock = stockData.find(item => item.SYMBOL === tradesymbol);
+
+            // Return the price and prev_close if found, otherwise return 0
+            return stock ? { price: stock.price, prev_close: stock.prev_close } : { price: 0, prev_close: 0 };
+        } else {
+            return { price: 0, prev_close: 0 }; // Return 0 if data isn't in expected format
+        }
+
+    } catch (error) {
+        return { price: 0, prev_close: 0 }; // Return 0 if there's an error
+    }
+}
+
+// Main function to calculate profit/loss for baskets
+async function addBasketgraphdata(req, res) {
+    try {
+        // Step 1: Get the latest version for each basket_id
+        const latestVersions = await Basketstock_Modal.aggregate([
+            {
+                $group: {
+                    _id: "$basket_id",
+                    latestVersion: { $max: "$version" }
+                }
+            }
+        ]);
+
+        // Step 2: Build a filter query for all latest versions with status = 1
+        const versionFilters = latestVersions.map((basket) => ({
+            basket_id: basket._id,
+            version: basket.latestVersion,
+            status: 1
+        }));
+
+        // Step 3: Fetch all stocks matching the latest version and status = 1
+        const stocks = await Basketstock_Modal.find({ $or: versionFilters }).lean();
+
+        // Step 4: Calculate total profit/loss and profit/loss percentage for each basket
+        const basketProfitLossMap = {};
+        const basketProfitLossPercentageMap = {};
+
+        for (const stock of stocks) {
+            const { basket_id, price, quantity, tradesymbol, name } = stock;
+
+            // Fetch current price and prev_close
+            const { price: currentPrice, prev_close } = await getCurrentPrice(name);
+
+            // Calculate profit/loss
+            const profitLoss = (currentPrice - price) * quantity;
+
+            // Calculate profit/loss percentage (if prev_close is not 0)
+            let profitLossPercentage = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+
+            // Aggregate profit/loss and percentage by basket_id
+            if (!basketProfitLossMap[basket_id]) {
+                basketProfitLossMap[basket_id] = 0;
+                basketProfitLossPercentageMap[basket_id] = 0;
+            }
+            basketProfitLossMap[basket_id] += profitLoss;
+            basketProfitLossPercentageMap[basket_id] = profitLossPercentage; // Storing latest percentage
+        }
+
+        // Step 5: Insert profit/loss and percentage only if today's record doesn't exist
+        const basketProfitLoss = [];
+
+        for (const [basket_id, totalProfitLoss] of Object.entries(basketProfitLossMap)) {
+            basketProfitLoss.push({
+                basket_id: basket_id,
+                profitloss: totalProfitLoss.toFixed(2),
+                profitlosspercentage: basketProfitLossPercentageMap[basket_id].toFixed(2),
+                created_at: new Date(),
+                updated_at: new Date()
+            });
+        }
+
+        // Insert new records if any
+        if (basketProfitLoss.length > 0) {
+            await Basketghaphdata_Modal.insertMany(basketProfitLoss);
+        }
+
+        return res.json({
+            status: true,
+            message: "Profit/Loss inserted successfully for baskets without today's record",
+            data: basketProfitLoss
+        });
+
+    } catch (error) {
+        return res.json({ status: false, message: "Server error", data: [] });
+    }
+}
 
 
-////////////////////////// auto respose for order //////////////////////////
+async function addBasketVolatilityData(req, res) {
+    try {
+        // Step 1: Get the latest version for each basket_id
+        const latestVersions = await Basketstock_Modal.aggregate([
+            {
+                $group: {
+                    _id: "$basket_id",
+                    latestVersion: { $max: "$version" }
+                }
+            }
+        ]);
+
+        // Step 2: Build a filter query for all latest versions with status = 1
+        const versionFilters = latestVersions.map((basket) => ({
+            basket_id: basket._id,
+            version: basket.latestVersion,
+            status: 1
+        }));
+
+        // Step 3: Fetch all stocks matching the latest version and status = 1
+        const stocks = await Basketstock_Modal.find({ $or: versionFilters }).lean();
+
+        // Step 4: Calculate total portfolio value and weighted beta for each basket
+        const basketVolatilityMap = {};
+
+        for (const stock of stocks) {
+            const { basket_id, quantity, name, beta } = stock;
+
+            // Fetch current closing price (prev_close will be considered as the closing price)
+            const { prev_close: closingPrice } = await getCurrentPrice(name);
+
+            // Calculate total stock value
+            const stockValue = quantity * closingPrice;
+
+            // Store stock values for each basket
+            if (!basketVolatilityMap[basket_id]) {
+                basketVolatilityMap[basket_id] = {
+                    totalPortfolioValue: 0,
+                    weightedBetaSum: 0
+                };
+            }
+
+            basketVolatilityMap[basket_id].totalPortfolioValue += stockValue;
+            basketVolatilityMap[basket_id].weightedBetaSum += (beta * stockValue);
+        }
+
+        // Step 5: Calculate portfolio beta and determine volatility level
+        const basketVolatilityData = [];
+
+        for (const [basket_id, data] of Object.entries(basketVolatilityMap)) {
+            const { totalPortfolioValue, weightedBetaSum } = data;
+
+            // Calculate Portfolio Beta
+            const portfolioBeta = totalPortfolioValue !== 0 ? weightedBetaSum / totalPortfolioValue : 0;
+
+            // Determine Portfolio Volatility Level
+            let volatilityLevel = "Low";
+            if (portfolioBeta > 1.30) {
+                volatilityLevel = "High";
+            } else if (portfolioBeta > 0.75) {
+                volatilityLevel = "Moderate";
+            }
+
+            basketVolatilityData.push({
+                basket_id: basket_id,
+                portfolio_beta: portfolioBeta.toFixed(4),
+                volatility_level: volatilityLevel,
+                created_at: new Date(),
+                updated_at: new Date()
+            });
+        }
+
+        // Step 6: Insert the portfolio volatility data into the database
+        // if (basketVolatilityData.length > 0) {
+        //     await BasketVolatility_Modal.insertMany(basketVolatilityData);
+        // }
+
+        return res.json({
+            status: true,
+            message: "Portfolio Volatility inserted successfully",
+            data: basketVolatilityData
+        });
+
+    } catch (error) {
+        return res.json({ status: false, message: "Server error", data: [] });
+    }
+}
+
+
+  
+  
 
 
 
 
-
-
-
-
-
-  module.exports = { AddBulkStockCron,DeleteTokenAliceToken,TradingStatusOff,CheckExpireSignalCash,CheckExpireSignalFutureOption,PlanExpire,downloadKotakNeotoken,calculateCAGRForBaskets,processPendingOrders,downloadZerodhatoken,downloadAndExtractUpstox };
+  module.exports = { AddBulkStockCron,DeleteTokenAliceToken,TradingStatusOff,CheckExpireSignalCash,CheckExpireSignalFutureOption,PlanExpire,downloadKotakNeotoken,calculateCAGRForBaskets,processPendingOrders,downloadZerodhatoken,downloadAndExtractUpstox,addBasketgraphdata,addBasketVolatilityData };
