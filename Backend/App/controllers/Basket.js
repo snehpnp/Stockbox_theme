@@ -443,6 +443,150 @@ class Basket {
     }
   }
 
+
+
+  async AddStockInBasketFormClient(req, res) {
+      try {
+          const { basket_id, stocks, publishstatus, comments } = req.body;
+  
+          // Validate basket existence
+          const basket = await Basket_Modal.findById(basket_id);
+          if (!basket) {
+              return res.status(400).json({
+                  status: false,
+                  message: "Basket not found.",
+              });
+          }
+  
+          // Fetch latest version for the basket
+          const latestVersion = await Basketstock_Modal.aggregate([
+              { $match: { basket_id, status: 1 } },
+              { $group: { _id: null, maxVersion: { $max: "$version" } } }
+          ]);
+  
+          let existingStocks = [];
+          if (latestVersion.length > 0) {
+              const maxVersion = latestVersion[0].maxVersion;
+              existingStocks = await Basketstock_Modal.find({ basket_id, status: 1, version: maxVersion });
+          }
+  
+          // Publish status check
+          if (publishstatus === true) {
+              const checkpublishornot = await Basketstock_Modal.find({ basket_id, status: 1 });
+              if (checkpublishornot.length === 0) {
+                  basket.status = true;
+                  basket.publishstatus = true;
+                  await basket.save();
+              }
+          }
+  
+          let totalAmount = existingStocks.length > 0 ? existingStocks.reduce((sum, stock) => sum + stock.total_value, 0) : basket.mininvamount;
+          let remainingAmount = totalAmount;
+  
+          if (!Array.isArray(stocks) || stocks.length === 0) {
+              return res.status(400).json({
+                  status: false,
+                  message: "Stocks data is required and should be an array.",
+              });
+          }
+  
+          // 🔹 Fetch Company Master Data
+          const response = await fetch("http://stockboxapis.cmots.com/api/CompanyMaster");
+          const companyMasterData = await response.json();
+
+          
+          // Convert API response to a dictionary for faster lookup
+          const companyLookup = {};
+          for (const company of companyMasterData.data) {
+              companyLookup[company.NSESymbol] = company.mcaptype;
+          }
+          const bulkOps = [];
+  
+          for (const stock of stocks) {
+              const { name, tradesymbol, percentage, price, comment, status } = stock;
+  
+              const currentPrice = price;
+              if (!currentPrice) {
+                  return res.status(400).json({
+                      status: false,
+                      message: `No market price found for ${tradesymbol}`,
+                  });
+              }
+  
+              const stockDatas = await Stock_Modal.findOne({ tradesymbol });
+              const instrumentTokens = stockDatas ? stockDatas.instrument_token : null;
+  
+              if (instrumentTokens) {
+                  const existingDocument = await Liveprice_Modal.findOne({ token: instrumentTokens });
+                  if (!existingDocument) {
+                      await Liveprice_Modal.create({
+                          token: instrumentTokens,
+                          lp: currentPrice,
+                          exc: "NSE",
+                          curtime: `${new Date().getHours().toString().padStart(2, '0')}${new Date().getMinutes().toString().padStart(2, '0')}`,
+                          ft: "1234566"
+                      });
+                  }
+              }
+  
+              // 🔹 Find MCAP Type from API Data using lookup
+              const mcapType = companyLookup[name] || "Small Cap";
+  
+              const allocatedAmount = (percentage / 100) * totalAmount;
+              if (allocatedAmount > remainingAmount) {
+                  return res.status(400).json({
+                      status: false,
+                      message: `Insufficient funds to allocate ${allocatedAmount} for ${tradesymbol}`,
+                  });
+              }
+  
+              // Calculate quantity and total value
+              const quantity = Math.floor(allocatedAmount / currentPrice);
+              const total_value = quantity * currentPrice;
+  
+              remainingAmount -= total_value;
+  
+              const version = existingStocks.length > 0 ? existingStocks[0].version + 1 : 1;
+  
+              bulkOps.push({
+                  insertOne: {
+                      document: {
+                          basket_id,
+                          name,
+                          tradesymbol,
+                          price: currentPrice,
+                          total_value,
+                          quantity,
+                          type: mcapType,  // ✅ Inserted MCAP Type
+                          comment: comments || '',
+                          version,
+                          weightage: percentage,
+                          status,
+                      },
+                  },
+              });
+          }
+  
+          // Execute the bulk insert
+          const result = await Basketstock_Modal.bulkWrite(bulkOps);
+  
+          return res.json({
+              status: true,
+              message: "Stocks added successfully with MCAP Type.",
+              data: result,
+          });
+  
+      } catch (error) {
+          return res.status(500).json({
+              status: false,
+              message: "Server error",
+              error: error.message,
+          });
+      }
+  }
+  
+
+
   async UpdateStockInBasketForm(req, res) {
     try {
       const { basket_id, stocks, version, publishstatus, comments } = req.body; // Include version in request body
@@ -646,6 +790,155 @@ class Basket {
       });
     }
   }
+
+
+  async UpdateStockInBasketFormClient(req, res) {
+    try {
+      const { basket_id, stocks, version, publishstatus, comments } = req.body;
+  
+      // Validate basket existence
+      const basket = await Basket_Modal.findById(basket_id);
+      if (!basket) {
+        return res.status(400).json({
+          status: false,
+          message: "Basket not found.",
+        });
+      }
+  
+      // Fetch CompanyMaster Data
+      const response = await fetch("http://stockboxapis.cmots.com/api/CompanyMaster");
+      const companyMasterData = await response.json();
+  
+      // Create lookup object for `type` (mcaptype)
+      const companyLookup = {};
+      if (companyMasterData && Array.isArray(companyMasterData.data)) {
+        for (const company of companyMasterData.data) {
+          if (company.NSESymbol && company.mcaptype) {
+            companyLookup[company.NSESymbol.trim()] = company.mcaptype.trim();
+          }
+        }
+      }
+  
+      let existingStocks = [];
+      const latestVersion = await Basketstock_Modal.aggregate([
+        { $match: { basket_id, status: 1 } },
+        { $group: { _id: null, maxVersion: { $max: "$version" } } }
+      ]);
+  
+      if (latestVersion.length > 0) {
+        const maxVersion = latestVersion[0].maxVersion;
+        existingStocks = await Basketstock_Modal.find({
+          basket_id,
+          status: 1,
+          version: maxVersion
+        });
+      }
+  
+      if (publishstatus == true) {
+        const checkpublishornot = await Basketstock_Modal.find({ basket_id, status: 1 });
+        if (checkpublishornot.length === 0) {
+          basket.status = true;
+          basket.publishstatus = true;
+          await basket.save();
+        }
+      }
+  
+      await Basketstock_Modal.deleteMany({ basket_id, version });
+  
+      let totalAmount = existingStocks.length > 0 ? existingStocks.reduce((sum, stock) => sum + (stock.price * stock.quantity), 0) : basket.mininvamount;
+  
+      let remainingAmount = totalAmount;
+      if (!Array.isArray(stocks) || stocks.length === 0) {
+        return res.status(400).json({
+          status: false,
+          message: "Stocks data is required and should be an array.",
+        });
+      }
+  
+      const bulkOps = [];
+      for (const stock of stocks) {
+        const { name, tradesymbol, percentage, price, comment, status } = stock;
+  
+        // Get `type` from API
+        const type = companyLookup[name] || "Small Cap";
+  
+        const currentPrice = price;
+        if (!currentPrice) {
+          return res.status(400).json({
+            status: false,
+            message: `No market price found for ${tradesymbol}`,
+          });
+        }
+  
+        const stockDatas = await Stock_Modal.findOne({ tradesymbol: tradesymbol });
+        const instrumentTokens = stockDatas?.instrument_token;
+  
+        if (instrumentTokens) {
+          const existingDocument = await Liveprice_Modal.findOne({ token: instrumentTokens });
+  
+          if (!existingDocument) {
+            await Liveprice_Modal.create({
+              token: instrumentTokens,
+              lp: currentPrice,
+              exc: "NSE",
+              curtime: `${new Date().getHours().toString().padStart(2, '0')}${new Date().getMinutes().toString().padStart(2, '0')}`,
+              ft: "1234566"
+            });
+          }
+        }
+  
+        // Calculate allocation
+        const allocatedAmount = (percentage / 100) * totalAmount;
+        if (allocatedAmount > remainingAmount) {
+          return res.status(400).json({
+            status: false,
+            message: `Insufficient funds to allocate ${allocatedAmount} for ${tradesymbol}`,
+          });
+        }
+  
+        const quantity = Math.floor(allocatedAmount / currentPrice);
+        const total_value = quantity * currentPrice;
+        remainingAmount -= total_value;
+  
+        const version = existingStocks.length > 0 ? existingStocks[0].version + 1 : 1;
+  
+        bulkOps.push({
+          insertOne: {
+            document: {
+              basket_id,
+              name,
+              tradesymbol,
+              price: currentPrice,
+              total_value,
+              quantity,
+              type, // ✅ Insert `type` from API
+              comment: comments || '',
+              version,
+              weightage: percentage,
+              status: status,
+            },
+          },
+        });
+      }
+  
+      // Execute the bulk insert
+      const result = await Basketstock_Modal.bulkWrite(bulkOps);
+  
+      return res.json({
+        status: true,
+        message: "Stocks updated successfully.",
+        data: result,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: false,
+        message: "Server error",
+        error: error.message,
+      });
+    }
+  }
+  
+
 
   /*
   async getBasket(req, res) {
