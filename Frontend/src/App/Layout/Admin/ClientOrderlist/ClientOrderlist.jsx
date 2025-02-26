@@ -165,6 +165,12 @@ const ClientOrderlist = () => {
             width: '300px',
         },
         {
+            name: 'Segment',
+            selector: row => row?.signalDetails?.segment === "C" ? "CASH" : row?.signalDetails?.segment === "O" ? "OPTION" : row?.signalDetails?.segment === "F" ? "FUTURE" : "-",
+            sortable: true,
+            width: '300px',
+        },
+        {
             name: 'Price',
             selector: row => row?.signalDetails?.price,
             sortable: true,
@@ -332,6 +338,7 @@ const ClientOrderlist = () => {
                             <textarea
                                 className="w-full h-full border-none outline-none p-2 resize-none bg-transparent"
                                 value={text}
+                                readOnly
                                 onChange={(e) => setText(e.target.value)}
                             />
                         </div>
