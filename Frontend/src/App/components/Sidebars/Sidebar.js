@@ -141,9 +141,24 @@ const Sidebar = () => {
 
   useEffect(() => {
     if (permission.length > 0) {
-      const filteredRoutes = routes.filter(route =>
-        permission.some(perm => permissionMapping[perm] === route.name)
-      );
+      const filteredRoutes = routes.map(route => {
+        if (route.children) {
+          const filteredChildren = route.children.filter(child =>
+            permission.some(perm =>
+              permissionMapping[perm]?.includes(child.name)
+            )
+          );
+
+          if (filteredChildren.length > 0) {
+            return { ...route, children: filteredChildren };
+          }
+        } else {
+          return permission.some(perm =>
+            permissionMapping[perm]?.includes(route.name)
+          ) ? route : null;
+        }
+        return null;
+      }).filter(route => route !== null);
 
       const dashboardRoute = routes.find(route => route.name === "Dashboard");
       if (dashboardRoute && !filteredRoutes.some(route => route.name === "Dashboard")) {
