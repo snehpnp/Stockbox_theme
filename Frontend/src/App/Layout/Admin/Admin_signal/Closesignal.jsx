@@ -433,7 +433,7 @@ const Closesignal = () => {
                   onClick={() => {
                     setModel1(true);
                     setServiceid(row);
-                    setUpdatetitle({ report: row.report, id: row._id, description: updatetitle.description });
+                    setUpdatetitle({ report: row.report, id: row._id, description: row.description });
                   }}
                 />
               </Tooltip>
