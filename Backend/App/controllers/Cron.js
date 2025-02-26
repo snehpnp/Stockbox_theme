@@ -104,7 +104,12 @@ cron.schedule('30 16 * * *', async () => {
     timezone: "Asia/Kolkata"
 });
 
-
+cron.schedule('30 17 * * *', async () => {
+await addBasketVolatilityData();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
 
 // cron.schedule(`${JsonFile.cashexpiretime} ${JsonFile.cashexpirehours} * * *`, async () => {
 //     await CheckExpireSignalCash();
@@ -1162,6 +1167,10 @@ async function calculateCAGRForBaskets() {
         if (years >= 1 && startingPrice > 0) {
             cagr = ((Math.pow(currentPrice / startingPrice, 1 / years) - 1) * 100).toFixed(2);
         }
+        else
+        {
+            cagr = (((currentPrice - startingPrice) / startingPrice) * 100).toFixed(2);
+        }
 
         // Update the basket with the calculated CAGR
         await Basket_Modal.updateOne(
@@ -1445,25 +1454,29 @@ async function processPendingOrders(req, res) {
 // Fetch current price from the API with error handling
 async function getCurrentPrice(tradesymbol) {
     try {
+    
         // Make API request
         const response = await axios.get('http://stockboxapis.cmots.com/api/BseNseDelayedData/NSE');
 
         // Access the stock data array from the response
         const stockData = response.data.data; // Assuming data is under 'data'
+   
         if (Array.isArray(stockData)) {
             // Find the stock with the matching SYMBOL
             const stock = stockData.find(item => item.SYMBOL === tradesymbol);
 
-            // Return the price and prev_close if found, otherwise return 0
-            return stock ? { price: stock.price, prev_close: stock.prev_close } : { price: 0, prev_close: 0 };
+            return stock 
+                ? { price: stock.price, prev_close: stock.prev_close, co_code: stock.co_code } 
+                : { price: 0, prev_close: 0, co_code: null };
         } else {
-            return { price: 0, prev_close: 0 }; // Return 0 if data isn't in expected format
+            return { price: 0, prev_close: 0, co_code: null }; // Return default values if data format is unexpected
         }
 
     } catch (error) {
-        return { price: 0, prev_close: 0 }; // Return 0 if there's an error
+        return { price: 0, prev_close: 0, co_code: null }; // Return default values in case of an error
     }
 }
+
 
 // Main function to calculate profit/loss for baskets
 async function addBasketgraphdata(req, res) {
@@ -1491,15 +1504,17 @@ async function addBasketgraphdata(req, res) {
         // Step 4: Calculate total profit/loss and profit/loss percentage for each basket
         const basketProfitLossMap = {};
         const basketProfitLossPercentageMap = {};
+        const basketStockTypes = {};
+
 
         for (const stock of stocks) {
-            const { basket_id, price, quantity, tradesymbol, name } = stock;
+            const { basket_id, price, quantity, tradesymbol, name, type } = stock;
 
             // Fetch current price and prev_close
-            const { price: currentPrice, prev_close } = await getCurrentPrice(name);
-
+            const { price: currentPrice, prev_close, co_code  } = await getCurrentPrice(name);
+           
             // Calculate profit/loss
-            const profitLoss = (currentPrice - price) * quantity;
+            const profitLoss = (currentPrice - prev_close) * quantity;
 
             // Calculate profit/loss percentage (if prev_close is not 0)
             let profitLossPercentage = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
@@ -1508,10 +1523,44 @@ async function addBasketgraphdata(req, res) {
             if (!basketProfitLossMap[basket_id]) {
                 basketProfitLossMap[basket_id] = 0;
                 basketProfitLossPercentageMap[basket_id] = 0;
+                basketStockTypes[basket_id] = new Set(); // Initialize stock types set
             }
             basketProfitLossMap[basket_id] += profitLoss;
             basketProfitLossPercentageMap[basket_id] = profitLossPercentage; // Storing latest percentage
+            basketStockTypes[basket_id].add(type); // Add stock type to set
         }
+
+
+
+        let profitLossPercentageMapApi = {}; // ✅ Store API-based percentages for each basket
+
+for (const [basket_id, stockTypeSet] of Object.entries(basketStockTypes)) {
+    const typesArray = Array.from(stockTypeSet);
+
+    let profitLossPercentageapi = 0; // Initialize per basket
+
+    if (typesArray.includes("Small Cap") && typesArray.includes("Mid Cap") && typesArray.includes("Large Cap")) {
+        // No API call for this case
+    } else if (typesArray.includes("Small Cap") && typesArray.includes("Mid Cap")) {
+        // No API call for this case
+    } else if (typesArray.includes("Mid Cap") && typesArray.includes("Large Cap")) {
+        // No API call for this case
+    } else if (typesArray.includes("Small Cap")) {
+        const { price: currentPrice, prev_close } = await getCurrentPrice('CNX100');
+        profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+    } else if (typesArray.includes("Large Cap")) {
+        const { price: currentPrice, prev_close } = await getCurrentPrice('CNX500');
+        profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+    } else {
+        const { price: currentPrice, prev_close } = await getCurrentPrice('NMIDCAP150');
+        profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+    }
+
+    // ✅ Store API-based profit loss percentage per basket_id
+    profitLossPercentageMapApi[basket_id] = profitLossPercentageapi;
+}
+
+
 
         // Step 5: Insert profit/loss and percentage only if today's record doesn't exist
         const basketProfitLoss = [];
@@ -1521,7 +1570,7 @@ async function addBasketgraphdata(req, res) {
                 basket_id: basket_id,
                 profitloss: totalProfitLoss.toFixed(2),
                 profitlosspercentage: basketProfitLossPercentageMap[basket_id].toFixed(2),
-                created_at: new Date(),
+                apiprofitloss: profitLossPercentageMapApi[basket_id]?.toFixed(2) || "0.00", // ✅ Corrected API-Based Percentage                created_at: new Date(),
                 updated_at: new Date()
             });
         }
@@ -1569,13 +1618,20 @@ async function addBasketVolatilityData(req, res) {
         const basketVolatilityMap = {};
 
         for (const stock of stocks) {
-            const { basket_id, quantity, name, beta } = stock;
+            const { basket_id, quantity, name } = stock;
 
             // Fetch current closing price (prev_close will be considered as the closing price)
-            const { prev_close: closingPrice } = await getCurrentPrice(name);
+            const { price: currentPrice, prev_close, co_code  } = await getCurrentPrice(name);
 
+
+            const beta = await getBetaByCoCode(co_code);
+
+            if (beta === null) {
+                console.log(`Beta not found for co_code: ${co_code}`);
+                continue; // Skip if beta is not available
+            }
             // Calculate total stock value
-            const stockValue = quantity * closingPrice;
+            const stockValue = quantity * prev_close;
 
             // Store stock values for each basket
             if (!basketVolatilityMap[basket_id]) {
@@ -1589,6 +1645,7 @@ async function addBasketVolatilityData(req, res) {
             basketVolatilityMap[basket_id].weightedBetaSum += (beta * stockValue);
         }
 
+
         // Step 5: Calculate portfolio beta and determine volatility level
         const basketVolatilityData = [];
 
@@ -1598,12 +1655,13 @@ async function addBasketVolatilityData(req, res) {
             // Calculate Portfolio Beta
             const portfolioBeta = totalPortfolioValue !== 0 ? weightedBetaSum / totalPortfolioValue : 0;
 
+
             // Determine Portfolio Volatility Level
             let volatilityLevel = "Low";
             if (portfolioBeta > 1.30) {
                 volatilityLevel = "High";
             } else if (portfolioBeta > 0.75) {
-                volatilityLevel = "Moderate";
+                volatilityLevel = "Medium";
             }
 
             basketVolatilityData.push({
@@ -1613,13 +1671,17 @@ async function addBasketVolatilityData(req, res) {
                 created_at: new Date(),
                 updated_at: new Date()
             });
+
+            await Basket_Modal.updateOne(
+                { _id: basket_id },
+                { $set: { type: volatilityLevel } }
+            );
+        
+    
+
         }
 
-        // Step 6: Insert the portfolio volatility data into the database
-        // if (basketVolatilityData.length > 0) {
-        //     await BasketVolatility_Modal.insertMany(basketVolatilityData);
-        // }
-
+      
         return res.json({
             status: true,
             message: "Portfolio Volatility inserted successfully",
@@ -1632,7 +1694,21 @@ async function addBasketVolatilityData(req, res) {
 }
 
 
-  
+async function getBetaByCoCode(co_code) {
+    try {
+        const apiUrl = `http://stockboxapis.cmots.com/api/BetaStockWise/NSE/-/${co_code}`;
+        const response = await axios.get(apiUrl);
+
+        if (response.data.success && Array.isArray(response.data.data)) {
+            const stockInfo = response.data.data.find(item => item.co_code === co_code);
+            return stockInfo ? stockInfo.Beta : 0;
+        }
+        return 0;
+    } catch (error) {
+        console.error(`Error fetching Beta for co_code: ${co_code}`, error);
+        return 0;
+    }
+}
   
 
 
