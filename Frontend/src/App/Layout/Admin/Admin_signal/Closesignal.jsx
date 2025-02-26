@@ -34,10 +34,7 @@ import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 const Closesignal = () => {
 
-
-
   const [activeTab, setActiveTab] = useState("table");
-
   const token = localStorage.getItem("token");
   const [searchInput, setSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
