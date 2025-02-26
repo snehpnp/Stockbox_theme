@@ -933,55 +933,67 @@ const Signal = () => {
 
                                     <p>
 
-                                        <label className='fs-14'><b> Target 1 :</b></label>
-                                        <input
-                                            type="number"
-                                            className='form-control'
-                                            style={{ width: "50%" }}
-                                            disabled
-                                            value={closedata.targetprice1 || closedata.tag1}
-                                            onChange={(e) =>
-                                                setClosedata({
-                                                    ...closedata,
-                                                    targetprice1: e.target.value,
-                                                })
-                                            }
+                                        {closedata.tag1 &&
+                                            <>
+                                                <label className='fs-14'><b> Target 1 :</b></label>
+                                                <input
+                                                    type="number"
+                                                    className='form-control'
+                                                    style={{ width: "50%" }}
+                                                    disabled
+                                                    value={closedata.targetprice1 || closedata.tag1}
+                                                    onChange={(e) =>
+                                                        setClosedata({
+                                                            ...closedata,
+                                                            targetprice1: e.target.value,
+                                                        })
+                                                    }
 
-                                        />
-
-                                    </p>
-
-                                    <p>
-                                        <label className='fs-14'><b> Target 2 :</b></label>
-                                        <input
-                                            type="number"
-                                            style={{ width: "50%" }}
-                                            className='form-control'
-                                            disabled
-                                            value={closedata.targetprice2 || closedata.tag2}
-                                            onChange={(e) =>
-                                                setClosedata({
-                                                    ...closedata,
-                                                    targetprice2: e.target.value,
-                                                })
-                                            } />
+                                                />
+                                            </>
+                                        }
 
                                     </p>
 
                                     <p>
-                                        <label className='fs-14'><b> Target 3 :</b></label>
-                                        <input
-                                            type="number"
-                                            style={{ width: "50%" }}
-                                            className='form-control'
-                                            disabled
-                                            value={closedata.targetprice3 || closedata.tag3}
-                                            onChange={(e) =>
-                                                setClosedata({
-                                                    ...closedata,
-                                                    targetprice3: e.target.value,
-                                                })
-                                            } />
+                                        {closedata.tag2 &&
+                                            <>
+                                                <label className='fs-14'><b> Target 2 :</b></label>
+                                                <input
+                                                    type="number"
+                                                    style={{ width: "50%" }}
+                                                    className='form-control'
+                                                    disabled
+                                                    value={closedata.targetprice2 || closedata.tag2}
+                                                    onChange={(e) =>
+                                                        setClosedata({
+                                                            ...closedata,
+                                                            targetprice2: e.target.value,
+                                                        })
+                                                    } />
+                                            </>
+                                        }
+
+                                    </p>
+
+                                    <p>
+                                        {closedata.tag3 &&
+                                            <>
+                                                <label className='fs-14'><b> Target 3 :</b></label>
+                                                <input
+                                                    type="number"
+                                                    style={{ width: "50%" }}
+                                                    className='form-control'
+                                                    disabled
+                                                    value={closedata.targetprice3 || closedata.tag3}
+                                                    onChange={(e) =>
+                                                        setClosedata({
+                                                            ...closedata,
+                                                            targetprice3: e.target.value,
+                                                        })
+                                                    } />
+                                            </>
+                                        }
 
                                     </p>
 

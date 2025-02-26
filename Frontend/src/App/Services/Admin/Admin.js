@@ -2071,6 +2071,26 @@ export async function UpdatePaymentGSTstatus(data, token) {
 
 
 
+export async function UpdateGST(data, token) {
+    const formData = new FormData();
+    formData.append('gst', data.gst);
+    try {
+        const res = await axios.post(`${Config.base_url}basicsetting/add`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
 
 
 // get email template page

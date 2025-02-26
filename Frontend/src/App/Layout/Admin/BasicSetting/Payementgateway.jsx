@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { basicsettinglist, updatePayementgateway, UpdatePaymentstatus, UpdatePaymentGSTstatus } from '../../../Services/Admin/Admin';
+import { basicsettinglist, updatePayementgateway, UpdatePaymentstatus, UpdatePaymentGSTstatus, UpdateGST } from '../../../Services/Admin/Admin';
 import { Link } from 'react-router-dom';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
@@ -12,7 +12,7 @@ const Payementgateway = () => {
     const [clients, setClients] = useState(null);
     const [onlinePaymentEnabled, setOnlinePaymentEnabled] = useState(false);
 
-
+    const [addgst, setAddgst] = useState("");
 
     const [initialValues, setInitialValues] = useState({
         razorpay_secret: "",
@@ -35,6 +35,7 @@ const Payementgateway = () => {
                 setInitialValues(clientData);
                 setUpdateapi(clientData);
                 setOnlinePaymentEnabled(clientData.paymentstatus === 1);
+                setAddgst(clientData.gst)
             }
         } catch (error) {
             console.log('Error fetching API details:', error);
@@ -135,6 +136,21 @@ const Payementgateway = () => {
 
 
 
+    const UpdateGstdata = async () => {
+        try {
+            const data = { gst: addgst };
+            const response = await UpdateGST(data, token);
+            if (response?.status) {
+                showCustomAlert("Success", 'GST updated successfully.');
+                getApidetail();
+            }
+        } catch (error) {
+            showCustomAlert("error", 'There was an error updating GST. Please try again.');
+        }
+    };
+
+
+
 
     return (
         <div className="page-content">
@@ -175,6 +191,32 @@ const Payementgateway = () => {
                             </form>
                         </div>
                     </div>
+
+                    <div className="card mb-4">
+                        <div className="card-header">GST</div>
+                        <div className="card-body">
+                            <form className="row">
+                                <div className="col-md-12 d-flex align-items-center">
+                                    <input
+                                        type="number"
+                                        className="form-control me-2"
+                                        id="gst"
+                                        value={addgst}
+                                        onChange={(e) => setAddgst(e.target.value)}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        onClick={UpdateGstdata}
+                                    >
+                                        Update
+                                    </button>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
 
                     <div className="card">
                         <div className="card-header">Razorpay</div>
