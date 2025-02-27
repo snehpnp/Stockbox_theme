@@ -1761,7 +1761,7 @@ async closeSignalwithplan(req, res) {
           targetprice3,
           closedate: closedate
       },
-      { signal: true, runValidators: true } // Options: return the updated document and run validators
+      { new: true, runValidators: true } // Options: return the updated document and run validators
     );
 
     // const clients = await Clients_Modal.find({
