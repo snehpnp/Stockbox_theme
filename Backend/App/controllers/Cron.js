@@ -1755,7 +1755,7 @@ async function getCurrentPrices(req, res) {
 
         return res.json({
             status: true,
-            message: "Portfolio Volatility inserted successfully",
+            message: "Price get successfully",
             data: basketVolatilityData
         });
 
