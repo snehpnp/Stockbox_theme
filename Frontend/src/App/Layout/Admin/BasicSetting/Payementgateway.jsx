@@ -193,7 +193,7 @@ const Payementgateway = () => {
                     </div>
 
                     <div className="card mb-4">
-                        <div className="card-header">GST</div>
+                        <div className="card-header">GST %</div>
                         <div className="card-body">
                             <form className="row">
                                 <div className="col-md-12 d-flex align-items-center">
