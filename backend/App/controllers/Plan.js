@@ -1031,6 +1031,7 @@ if (settings.gst > 0 && settings.gststatus==1) {
             validity:1,
             planDetails: 1,
             gstamount: 1,
+            gst: 1,
             clientName: '$clientDetails.FullName',
             clientEmail: '$clientDetails.Email',
             clientPhoneNo: '$clientDetails.PhoneNo',

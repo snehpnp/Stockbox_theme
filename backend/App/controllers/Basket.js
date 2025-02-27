@@ -1778,6 +1778,8 @@ class Basket {
             discount: 1,
             coupon: 1,
             validity: 1,
+            gstamount: 1,
+            gst: 1,
             status: 1,
             basketDetails: 1,
             invoice: 1,
