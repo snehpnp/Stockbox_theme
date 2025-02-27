@@ -26,7 +26,7 @@ import Content from "../../../components/Contents/Content";
 
 
 const Viewclientdetail = () => {
-  
+
   const { id } = useParams();
   const token = localStorage?.getItem("token");
 
@@ -239,6 +239,13 @@ const Viewclientdetail = () => {
       name: "Amount",
       selector: (row) => <>  <IndianRupee />  {row.plan_price ?? "-"} </>,
       width: "189px",
+    },
+    {
+      name: 'GST',
+      selector: row => row?.total || "-",
+      cell: row => <div>{row?.total} ({row?.gst}% Gst Include)</div>,
+      sortable: true,
+      width: '250px',
     },
     {
       name: "Validity Date",

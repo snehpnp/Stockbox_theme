@@ -188,6 +188,14 @@ const AllBasketHistory = () => {
             sortable: true,
             width: '200px',
         },
+        {
+            name: 'GST',
+            selector: row => row?.total || "-",
+            cell: row => <div>{row?.total} ({row?.gst}% Gst Include)</div>,
+            sortable: true,
+            width: '250px',
+        },
+
 
         // {
         //     name: 'Coupon Id',
