@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getPayementhistory, getOrderlistofclient } from '../../../Services/Admin/Admin';
+import { getPayementhistory, getOrderlistofclient, getOrderlistofclientExport } from '../../../Services/Admin/Admin';
 
 import Table1 from '../../../Extracomponents/Table1';
 import Table from '../../../Extracomponents/Table';
@@ -10,6 +10,7 @@ import { Tooltip } from 'antd';
 import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
 import { exportToCSV } from '../../../../Utils/ExportData';
 import ReusableModal from '../../../components/Models/ReusableModal';
+
 
 
 
@@ -28,6 +29,7 @@ const ClientOrderlist = () => {
     const [endDate, setEndDate] = useState("");
     const [ordertype, setOrdertype] = useState("");
     const [broker, setBroker] = useState("");
+    const [segemnt, setSegemnt] = useState("");
 
     const [showModal, setShowModal] = useState(false);
     const [text, setText] = useState([]);
@@ -51,6 +53,7 @@ const ClientOrderlist = () => {
         setEndDate("")
         setBroker("")
         setOrdertype("")
+        setSegemnt("")
 
 
     }
@@ -59,25 +62,28 @@ const ClientOrderlist = () => {
 
     const getexportfile = async () => {
         try {
-            const response = await getPayementhistory(token);
+            const data = { fromDate: startDate, toDate: endDate, ordertype: ordertype, borkerid: broker, page: currentPage, search: searchInput, clientid: "", signalid: "", segment: segemnt }
+            const response = await getOrderlistofclientExport(data, token);
             if (response.status) {
                 if (response.data?.length > 0) {
                     const csvArr = response.data?.map((item) => ({
-                        Name: item.clientName || "-",
-                        Email: item.clientEmail || "-",
-                        Phone: item.clientPhoneNo || "-",
-                        Title: item?.planCategoryTitle || '-',
-                        ClientSegment: item?.serviceNames.map(statusItem => statusItem || 'N/A')
-                            .join(', ') || 'N/A',
-                        OerderId: item.orderid ? item.orderid : "Make By Admin",
-                        PlanDiscount: item.discount || 0,
-                        CouponID: item.coupon || "N/A",
-                        PlanAmount: item.plan_price || 0,
-                        Total: item?.total || '-',
-                        Validity: item.planDetails?.validity || '-',
-                        PurchaseDate: fDateTime(item.created_at) || '-',
+                        Date: fDateTimeH(item?.createdAt) || "-",
+                        Name: item?.clientDetails?.FullName || "-",
+                        Email: item?.clientDetails?.Email || "-",
+                        PhoneNo: item?.clientDetails?.PhoneNo || "-",
+                        OrderStatus: item?.data?.data?.status || "-",
+                        EntryType: item?.clientDetails?.calltype || "-",
+                        Symbol: item?.clientDetails?.Symbol || "-",
+                        Segment: item?.signalDetails?.segment === "C" ? "CASH" : item?.signalDetails?.segment === "O" ? "OPTION" : item?.signalDetails?.segment === "F" ? "FUTURE" : "-",
+                        Price: item?.clientDetails?.price || "-",
+                        Quantity: item?.quantity || "-",
+                        Broker: item?.borkerid == 1 ? "Angel One" : item?.borkerid == 2 ? "Alice Blue" : item?.borkerid == 3 ? "Kotak Neo" : item?.borkerid == 4 ? "Market Hub" : "",
+                        OrderId: item?.orderid || "-",
+
+
+
                     }));
-                    exportToCSV(csvArr, 'Payment History')
+                    exportToCSV(csvArr, 'Order List')
                 } else {
                     console.log("No data available.");
                 }
@@ -93,13 +99,13 @@ const ClientOrderlist = () => {
 
     const getorder = async () => {
         try {
-            const data = { fromDate: startDate, toDate: endDate, ordertype: ordertype, borkerid: broker, page: currentPage, search: searchInput, clientid: "", signalid: "" }
+            const data = { fromDate: startDate, toDate: endDate, ordertype: ordertype, borkerid: broker, page: currentPage, search: searchInput, clientid: "", signalid: "", segment: segemnt }
             const response = await getOrderlistofclient(data, token);
             if (response.status) {
                 let filteredData = response.data;
                 setTotalRows(response.pagination?.totalRecords)
                 setClients(filteredData);
-                console.log("filteredData", filteredData)
+
             }
         } catch (error) {
             console.log("Error fetching services:", error);
@@ -110,7 +116,7 @@ const ClientOrderlist = () => {
 
     useEffect(() => {
         getorder();
-    }, [currentPage, startDate, endDate, broker, ordertype, searchInput]);
+    }, [currentPage, startDate, endDate, broker, ordertype, searchInput, segemnt]);
 
 
 
@@ -249,6 +255,27 @@ const ClientOrderlist = () => {
                                 </span>
 
                             </div>
+                            <div>
+
+                                <div
+                                    className="ms-sm-2 mt-2 mt-sm-0"
+                                    onClick={(e) => getexportfile()}
+                                >
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary float-md-end"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        title="Export To Excel"
+                                        delay={{ show: "0", hide: "100" }}
+
+                                    >
+                                        <i className="bx bxs-download" aria-hidden="true"></i>
+
+                                        Export-Excel
+                                    </button>
+                                </div>
+                            </div>
 
                         </div>
                         <div className='row mb-2'>
@@ -302,6 +329,21 @@ const ClientOrderlist = () => {
                                     <option value="5">Zerodha</option>
                                     <option value="6">Upstox</option>
                                     <option value="7">Dhan</option>
+                                </select>
+                            </div>
+                            <div className='col-md-2 col-sm-4 mb-3 mb-sm-0 '>
+                                <label htmlFor="">Segement</label>
+
+                                <select
+                                    className="form-control"
+                                    value={segemnt}
+                                    onChange={(e) => setSegemnt(e.target.value)}
+                                >
+                                    <option value="">Select</option>
+                                    <option value="C">CASH</option>
+                                    <option value="F">FUTURE</option>
+                                    <option value="O">OPTION</option>
+
                                 </select>
                             </div>
 

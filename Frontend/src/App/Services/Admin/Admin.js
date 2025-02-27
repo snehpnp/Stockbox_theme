@@ -3362,6 +3362,29 @@ export async function getOrderlistofclient(data, token) {
 
 
 
+
+// order list export 
+
+
+export async function getOrderlistofclientExport(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}client/orderlistdetailexport`, data, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+
+
+
 export async function getReferAndEarnlist(data, token) {
     try {
         const res = await axios.post(`${Config.base_url}dashboard/referearn`, data, {
