@@ -1464,6 +1464,7 @@ async function getCurrentPrice(tradesymbol) {
         if (Array.isArray(stockData)) {
             // Find the stock with the matching SYMBOL
             const stock = stockData.find(item => item.SYMBOL === tradesymbol);
+            
 
             return stock 
                 ? { price: stock.price, prev_close: stock.prev_close, co_code: stock.co_code } 
@@ -1709,9 +1710,66 @@ async function getBetaByCoCode(co_code) {
         return 0;
     }
 }
-  
+
+async function getCurrentPrices(req, res) {
+    try {
+        const { tradesymbol } = req.params;
+
+        // Fetch stock data
+        const stockResponse = await axios.get('http://stockboxapis.cmots.com/api/BseNseDelayedData/NSE');
+        const stockData = stockResponse.data.data; // Assuming 'data' holds the stock array
+
+        let stock = null;
+        let mcaptype = null;
+
+        if (Array.isArray(stockData)) {
+            stock = stockData.find(item => item.SYMBOL === tradesymbol);
+        }
+
+        // Default basketVolatilityData
+        let basketVolatilityData = {
+            price: 0,
+            prev_close: 0,
+            co_code: null,
+            mcaptype: null
+        };
+
+        if (stock) {
+            const { price, prev_close, co_code } = stock;
+            basketVolatilityData = { price, prev_close, co_code, mcaptype: null };
+
+            if (co_code) {
+                // Fetch company master data
+                const companyMasterResponse = await axios.get("http://stockboxapis.cmots.com/api/CompanyMaster");
+                const companyMasterData = companyMasterResponse.data.data; // Assuming company data is in 'data'
+
+                if (Array.isArray(companyMasterData)) {
+                    // Find company by co_code
+                    const company = companyMasterData.find(item => item.co_code === co_code);
+                    if (company) {
+                        basketVolatilityData.mcaptype = company.mcaptype || null;
+                    }
+                }
+            }
+        }
+
+        return res.json({
+            status: true,
+            message: "Portfolio Volatility inserted successfully",
+            data: basketVolatilityData
+        });
+
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return res.status(500).json({
+            status: false,
+            message: "Internal Server Error",
+            data: null
+        });
+    }
+}
 
 
 
 
-  module.exports = { AddBulkStockCron,DeleteTokenAliceToken,TradingStatusOff,CheckExpireSignalCash,CheckExpireSignalFutureOption,PlanExpire,downloadKotakNeotoken,calculateCAGRForBaskets,processPendingOrders,downloadZerodhatoken,downloadAndExtractUpstox,addBasketgraphdata,addBasketVolatilityData };
+  module.exports = { AddBulkStockCron,DeleteTokenAliceToken,TradingStatusOff,CheckExpireSignalCash,CheckExpireSignalFutureOption,PlanExpire,downloadKotakNeotoken,calculateCAGRForBaskets,processPendingOrders,downloadZerodhatoken,downloadAndExtractUpstox,addBasketgraphdata,addBasketVolatilityData,getCurrentPrices };
