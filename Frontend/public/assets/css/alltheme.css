@@ -994,7 +994,52 @@ padding-left: 0;
 
 /* HTML: <div class="loader"></div> */
 /* HTML: <div class="loader"></div> */
+
+
+
 .loader {
+  width: 40px;
+  height: 26px;
+  --c: no-repeat linear-gradient(#000 0 0);
+  background:
+    var(--c) 0 100%,
+    var(--c) 50% 100%,
+    var(--c) 100% 100%;
+  background-size: 8px calc(100% - 4px);
+  position: relative;
+  margin-top: 20px;
+}
+
+.loader:before {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #000;
+  left: 0;
+  top: 0;
+  animation:
+    l3-1 1.5s linear infinite alternate,
+    l3-2 0.75s cubic-bezier(0, 200, .8, 200) infinite;
+}
+
+@keyframes l3-1 {
+  100% {
+    left: calc(100% - 8px)
+  }
+}
+
+@keyframes l3-2 {
+  100% {
+    top: -0.1px
+  }
+}
+
+
+
+
+/* .loader {
   width: 50px;
   aspect-ratio: 1;
   display: grid;
@@ -1021,7 +1066,7 @@ padding-left: 0;
   100% {
     transform: rotate(1turn)
   }
-}
+} */
 /* Fullscreen Blur Background */
 .loader-container {
   /* position: fixed;
