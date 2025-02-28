@@ -834,7 +834,6 @@ class Clients {
 
 
 
-
   async clientKycAndAgreement(req, res) {
     try {
       // Extract data from the request body
@@ -875,7 +874,7 @@ class Clients {
       const datetime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}${ampm}`;
 
       // PDF generation section
-      const templatePath = path.join(__dirname, '../../../template', 'kyc-agreement-template.html');
+      const templatePath = path.join(__dirname, '../../../template', 'kyc-agreement-template-rm.html');
       let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
       // Replace placeholders with actual values
@@ -905,18 +904,25 @@ class Clients {
         path: pdfPath,
         format: 'A4',
         printBackground: true,
-        displayHeaderFooter: true,  // Enable header & footer
+        displayHeaderFooter: true,  // Ensure footer is enabled
         margin: {
-          top: '20mm',
-          right: '10mm',
-          bottom: '50mm',
-          left: '10mm',
+            top: '20mm',
+            right: '10mm',
+            bottom: '70mm',  // Increase bottom margin
+            left: '10mm',
         },
-        footerTemplate: `<p style="background-color:#4380b330; padding: 15px 15px; border-radius: 4px">
-                                    RM Pro” is a brand under The Research Mart Services Pvt. Ltd. offers its Research Services. The Research Mart is licensed as a Research Analyst and is registered with SEBI (Registration Number: INH000009694). 
-                                </p>`,
-      });
+        footerTemplate: `
+    <div style="width:100%; text-align:center; font-size:10px; padding:5px 0;">
+        <hr style="border: 1px solid #145a91; margin-bottom: 8px;">
+        <p style="background-color: #4380b330; padding: 15px; border-radius: 4px; margin: 0; font-size: 10px;">
+            <b>RM Pro</b> is a brand under <b>The Research Mart Services Pvt. Ltd.</b> 
+            offers its Research Services. The Research Mart is licensed as a Research Analyst 
+            and is registered with SEBI (Registration Number: <b>INH000009694</b>).
+        </p>
+    </div>
+`,
 
+    });
       await browser.close();
 
       // Update client with new information
@@ -979,6 +985,7 @@ class Clients {
     }
 
   }
+
 
   async uploadDocument(req, res) {
     const id = req.body.id;
