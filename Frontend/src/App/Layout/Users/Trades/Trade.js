@@ -12,9 +12,9 @@ import {
 } from "../../../Services/UserService/User";
 import { fDate } from "../../../../Utils/Date_formate";
 import { image_baseurl } from "../../../../Utils/config";
-import Swal from "sweetalert2";
-import Loader from "../../../../Utils/Loader";
 
+import Loader from "../../../../Utils/Loader";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 function Trade() {
 
@@ -140,27 +140,13 @@ function Trade() {
       const response = await PlaceOrderApi(data, token, brokerstatus);
 
       if (response.status) {
-        Swal.fire({
-          icon: "success",
-          title: response.message || "Order Placed Successfully!",
-          text: "Your order has been placed successfully.",
-          confirmButtonText: "OK",
-        });
+        showCustomAlert("Success", response.message || "Order Placed Successfully!")
       } else {
-        Swal.fire({
-          icon: "error",
-          title: response.message || "Order Failed",
-          text: "Failed to place the order. Please try again.",
-          confirmButtonText: "Retry",
-        });
+        showCustomAlert("error", response.message || "Failed to place the order. Please try again.")
       }
     } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "An error occurred while placing the order. Please check your network or try again later.",
-        confirmButtonText: "Retry",
-      });
+      showCustomAlert("error", "An error occurred while placing the order. Please check your network or try again later.")
+
     }
   };
 
@@ -175,31 +161,14 @@ function Trade() {
         price: exitorderdata?.price,
 
       };
-
       const response = await ExitPlaceOrderData(data, token, brokerstatus);
-
       if (response.status) {
-        Swal.fire({
-          icon: "success",
-          title: response.message || "Order Exit Successfully!",
-          text: "Your order has been Exit  successfully.",
-          confirmButtonText: "OK",
-        });
+        showCustomAlert("Success", response.message || "Order Exit Successfully!")
       } else {
-        Swal.fire({
-          icon: "error",
-          title: response.message || "Order Failed",
-          text: "Failed to place the order. Please try again.",
-          confirmButtonText: "Retry",
-        });
+        showCustomAlert("error", response.message || "Order Failed")
       }
     } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "An error occurred while placing the order. Please check your network or try again later.",
-        confirmButtonText: "Retry",
-      });
+      showCustomAlert("error", "An error occurred while placing the order. Please check your network or try again later.")
     }
   };
 
@@ -404,8 +373,8 @@ function Trade() {
               value={selectedService}
               onChange={(e) => setSelectedService(e.target.value)}
             >
-              {service?.map((item) => (
-                <option key={item?._id} value={item?._id}>
+              {service.map((item) => (
+                <option key={item._id} value={item._id}>
                   {item?.title}
                 </option>
               ))}
@@ -445,8 +414,7 @@ function Trade() {
         </ul>
 
         <div className="tab-content">
-          {isLoading ?
-            <Loader /> : tradeData[selectedTab]?.map(renderTradeCard)}
+          {isLoading ? <Loader /> : tradeData[selectedTab]?.map(renderTradeCard)}
         </div>
         <div className="pagination-controls d-flex justify-content-between mt-3">
           <button
@@ -663,3 +631,4 @@ function Trade() {
 }
 
 export default Trade;
+
