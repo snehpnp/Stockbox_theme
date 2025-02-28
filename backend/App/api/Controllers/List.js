@@ -2415,6 +2415,7 @@ class List {
             type: 1,
             themename: 1,
             image: 1,
+            url:1,
             short_description: 1,
             rationale: 1,
             methodology: 1,
