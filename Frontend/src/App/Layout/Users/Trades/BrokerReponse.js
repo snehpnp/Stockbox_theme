@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BrokerResponsedata } from "../../../Services/UserService/User";
 import Content from "../../../components/Contents/Content";
+import { fDate, fDateTimeH } from "../../../../Utils/Date_formate";
 
 const BrokerResponse = () => {
   const token = localStorage.getItem("token");
@@ -31,7 +32,8 @@ const BrokerResponse = () => {
   }, []);
 
 
-  let BrokerDAta = ["Demo", "Angel", "Alice Blue", "Kotak Neo", "Market Hub"];
+  let BrokerDAta = ["", "Angel", "Alice Blue", "Kotak Neo", "Market Hub", "Zerodha"];
+
 
 
 
@@ -69,12 +71,12 @@ const BrokerResponse = () => {
                     </div>
 
                     <div>
-                      <span className="badge bg-success badgespan mb-2">
+                      <span className="badge bg-success badgespan mb-2" style={{ marginLeft: "200px" }}>
                         {data.ordertype || "N/A"}
                       </span>
 
                       <p className="m-0 pe-2 pt-2">
-                        Expires on: {data.signalDetails.expirydate || "N/A"}
+                        Expires on: {fDateTimeH(data.createdAt) || "N/A"}
                       </p>
                     </div>
                   </div>
@@ -106,7 +108,7 @@ const BrokerResponse = () => {
                           </tr>
                           <tr>
                             <td>Broker</td>
-                            <td>{BrokerDAta[data.borkerid] || "N/A"}</td>
+                            <td>{BrokerDAta[data?.borkerid] || "N/A"}</td>
                           </tr>
                           <tr>
                             <td>Order Id</td>
@@ -115,30 +117,16 @@ const BrokerResponse = () => {
                           <tr>
                             <td>Order Status</td>
                             <td>
-                              {["Success", "Done", "Ok"].includes(
-                                data.data[0]?.Status
-                              ) ? (
+                              {["Success", "Done", "Ok"].includes(data.data?.data?.at(-1)?.Status) ? (
                                 <span className="badge bg-success badgespan">
-                                  ✅{" "}
-                                  {data.data[0]?.Status
-                                    ? data.data[0]?.Status.toUpperCase()
-                                    : "-"}
+                                  ✅ {data.data.data.map(item => item?.status).at(-1) || "-"}
                                 </span>
                               ) : (
-                                // <span className="badge bg-danger badgespan">
-                                //   ❌{" "}
-                                //   {data.data[0]?.Status
-                                //     ? data.data[0]?.Status.toUpperCase()
-                                //     : "UNKNOWN"}
-                                // </span>
-
                                 <span
                                   className="badge"
                                   style={{ color: "red", fontSize: "0.9rem" }}
                                 >
-                                  {data.data[0]?.Status
-                                    ? data.data[0]?.Status.toUpperCase()
-                                    : "UNKNOWN"}
+                                  ❌ {data.data.data.map(item => item?.status).at(-1) || "UNKNOWN"}
                                 </span>
                               )}
                             </td>
@@ -151,7 +139,9 @@ const BrokerResponse = () => {
                             ) : (
                               <td>Reject Reason </td>
                             )}
-                            <td>{data.data[0]?.rejectionreason || "N/A"}</td>
+                            <td style={{ wordBreak: "break-word", whiteSpace: "normal", maxWidth: "200px" }}>
+                              {data.data.data.map(item => item?.status_message).at(-1) || "N/A"}
+                            </td>
                           </tr>
                         </tbody>
                       </table>
@@ -169,7 +159,7 @@ const BrokerResponse = () => {
           </div>
         }
       </div>
-    </Content>
+    </Content >
   );
 };
 

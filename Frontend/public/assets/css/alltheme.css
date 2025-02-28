@@ -1318,3 +1318,11 @@ svg.lucide {
 .lucide-pencil {
   color: brown;
 }
+
+.date-btn{
+      background-color: #ccc;
+        padding: 5px 10px;
+        font-size: 15px;
+        border-radius: 4px;
+        font-weight: 400;
+}

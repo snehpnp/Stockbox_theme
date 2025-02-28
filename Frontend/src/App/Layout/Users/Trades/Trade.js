@@ -48,6 +48,7 @@ function Trade() {
   })
 
 
+
   const [exitorderdata, setExitOrderdata] = useState({
     id: "",
     signalid: "",
@@ -232,18 +233,78 @@ function Trade() {
 
 
 
+  const calculatePnL = (item) => {
+    if (!item || !item.price || !item.calltype) return "N/A";
+
+    const entryPrice = parseFloat(item.price);
+    const targetPrice = item.closeprice ? parseFloat(item.closeprice) : parseFloat(item.targetprice1);
+    const callType = item.calltype.toUpperCase();
+
+    if (isNaN(entryPrice) || isNaN(targetPrice)) return "N/A";
+
+    let profitLossPercentage = 0;
+
+    if (callType === "BUY") {
+      profitLossPercentage = ((targetPrice - entryPrice) / entryPrice) * 100;
+    } else if (callType === "SELL") {
+      profitLossPercentage = ((entryPrice - targetPrice) / entryPrice) * 100;
+    } else {
+      return "Invalid Call Type";
+    }
+
+    return profitLossPercentage.toFixed(2) + "%";
+  };
+
+
+
+
+
+
+
   const renderTradeCard = (item) => (
     <div className="row" key={item._id}>
       <div className="col-md-12">
-        <div className="trade-card shadow">
-          <div className="row">
+        <div className="trade-card shadow" style={{ backgroundColor: "#dcedf2" }}>
+          <div className="row mb-3">
+            <div className="col-lg-3">
+              <span className="date-btn">
+                <i class="fa-solid fa-calendar me-3"></i>
+                <b>{fDate(item?.created_at)}</b>
+              </span>
+            </div>
+
+            {selectedTab === "live" && <div className="col-lg-3">
+              <button className="btn btn-secondary" style={{ borderRadius: "20px", padding: "0px 10px", fontSize: "15px" }}>
+                Sugg. Qty : {item?.lot}
+              </button>
+            </div>}
+
+            <div className={`${selectedTab === "live" ? "col-lg-3" : "offset-5 col-lg-2"} `}>
+              <button className="btn btn-secondary" style={{ borderRadius: "20px", padding: "0px 10px", fontSize: "15px" }}>
+                {item?.callduration}
+              </button>
+            </div>
+
+
+
+            {selectedTab === "live" ?
+              <div className="col-lg-3 text-end">
+                <button className="btn btn-success" style={{ padding: "0px 10px", fontSize: "15px" }}>
+                  Potential Left :
+                </button>
+              </div> :
+              <div className="col-lg-2 text-end ">
+                <button className={`btn btn-success ${parseFloat(calculatePnL(item)) >= 0 ? "btn-success" : "btn-danger"}`} style={{ padding: "0px 10px", fontSize: "15px" }}>
+                  P&L : {calculatePnL(item)}
+                </button>
+              </div>
+            }
+          </div>
+
+          <div className="row bg-white">
+
             <div className="col-md-2 d-flex align-items-center">
               <div className="trade-header">
-                <div>
-                  <span className="trade-time tradetime1">
-                    <b>{fDate(item?.created_at)}</b>
-                  </span>
-                </div>
                 <div className="mb-3">
                   <span className="trade-type">{item?.callduration}</span>
                 </div>
@@ -302,18 +363,23 @@ function Trade() {
                     }
                     onClick={() => { setExitModel(true); setCalltypedata(item) }}
                   >
-                    EXIT
+                    {item?.purchased === false || new Date(item?.created_at) > new Date() ? "Trade Closed" : "EXIT"}
+
                   </button>
                 ) : (
                   <button
-                    className="btn btn-primary w-100 my-1"
+                    className="w-100 my-1"
                     onClick={() => {
                       setModel(true);
                       setCalltypedata(item);
+                      setOrderdata(item)
                     }}
+                    style={{ backgroundColor: item?.calltype ? "green" : "red", color: "white" }}
                   >
-                    {item?.calltype}
+                    {`BUY${item?.purchased ? " (Add more)" : ""}`}
+
                   </button>
+
                 )}
 
 
@@ -341,6 +407,8 @@ function Trade() {
               </div>
             </div>
           </div>
+
+
         </div>
       </div>
     </div>
