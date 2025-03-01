@@ -35,7 +35,7 @@ const Adminnotification_Modal = db.Adminnotification;
 
 let ws;
 const url = "wss://ws1.aliceblueonline.com/NorenWS/"
-
+/*
 cron.schedule('0 7 * * *', async () => {
     await DeleteTokenAliceToken();
 }, {
@@ -118,6 +118,16 @@ await addBasketVolatilityData();
     timezone: "Asia/Kolkata"
 });
 
+
+cron.schedule('0 9 * * *', async () => {
+    await PlanExpire();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
+
+*/
+
 // cron.schedule(`${JsonFile.cashexpiretime} ${JsonFile.cashexpirehours} * * *`, async () => {
 //     await CheckExpireSignalCash();
 
@@ -190,12 +200,7 @@ fs.watch(jsonFilePath, (eventType) => {
 });
 
 
-cron.schedule('0 9 * * *', async () => {
-    await PlanExpire();
-}, {
-    scheduled: true,
-    timezone: "Asia/Kolkata"
-});
+
 
 
 async function AddBulkStockCron(req, res) {
