@@ -947,5 +947,22 @@ export async function GetLivePricedata(token) {
 }
 
 
+// nse data 
+
+
+
+export async function GetNsePriceData(token) {
+    try {
+        const res = await axios.get(`${Config.base_url}signal/getsymbol`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
 
 

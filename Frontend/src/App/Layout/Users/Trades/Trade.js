@@ -8,8 +8,10 @@ import {
   GetCloseSignalClient,
   PlaceOrderApi,
   GetUserData,
-  ExitPlaceOrderData
+  ExitPlaceOrderData,
+  GetNsePriceData
 } from "../../../Services/UserService/User";
+
 import { fDate } from "../../../../Utils/Date_formate";
 import { image_baseurl } from "../../../../Utils/config";
 
@@ -33,6 +35,7 @@ function Trade() {
   const [description, setDescription] = useState("");
   const [brokerstatus, setBrokerstatus] = useState([])
   const [targetEnabled, setTargetEnabled] = useState(false);
+  const [checkdata, setCheckdata] = useState([])
 
 
 
@@ -46,6 +49,7 @@ function Trade() {
     slprice: "",
     exitquantity: ""
   })
+
 
 
 
@@ -63,7 +67,6 @@ function Trade() {
   );
 
 
-
   const [selectedTab, setSelectedTab] = useState("live");
 
   const [page, setPage] = useState(1);
@@ -73,7 +76,11 @@ function Trade() {
     fetchServiceData();
     fetchData();
     fetchuserDetail()
+    getnsedata()
   }, [selectedService]);
+
+
+
 
   useEffect(() => {
     fetchData();
@@ -99,7 +106,6 @@ function Trade() {
 
 
 
-
   const fetchServiceData = async () => {
     try {
       const response = await GetServicedata(token);
@@ -109,6 +115,24 @@ function Trade() {
       console.error("Error fetching services:", error);
     }
   };
+
+
+  const getnsedata = async () => {
+    try {
+      const response = await GetNsePriceData(token);
+      if (response.status)
+        console.log("res", response.data)
+      const checkdata = response?.data?.data?.map((item) => {
+        return item
+      })
+      setCheckdata(checkdata)
+
+    } catch (error) {
+      console.error("Error fetching services:", error);
+    }
+  };
+
+
 
 
 
@@ -258,26 +282,36 @@ function Trade() {
 
 
   const PotentialLeftButton = (item) => {
-    if (!item) return null;
-    const entryPrice = parseFloat(item.price) || 0;
+    if (!item || !checkdata) return null;
+
+    const matchedStock = checkdata?.find(stock => stock?.SYMBOL === item?.stock);
+    const entryPrice = parseFloat(matchedStock?.price) || 0;
+
     const targetPrices = [
       parseFloat(item.targetprice1) || 0,
       parseFloat(item.targetprice2) || 0,
       parseFloat(item.targetprice3) || 0
-    ];
+    ].filter(price => price > 0);
 
-    const highestTarget = Math.max(...targetPrices.filter(price => price > 0));
-    const potentialLeft = highestTarget ? (highestTarget - entryPrice).toFixed(2) : "N/A";
-    return (
-      <div >
-        {potentialLeft}
-      </div>
-    );
+    let potentialLeft = 0;
+
+    if (item?.calltype === "BUY") {
+      const highestTarget = Math.max(...targetPrices);
+      potentialLeft = highestTarget - entryPrice;
+
+    } else if (item?.calltype === "SELL") {
+      const lowestTarget = Math.min(...targetPrices);
+
+      potentialLeft = entryPrice - lowestTarget;
+
+
+    }
+
+    const potentialPercentage = ((potentialLeft / entryPrice) * 100).toFixed(2);
+    return <div>{potentialPercentage}</div>;
+
+
   };
-
-
-
-
 
 
   const renderTradeCard = (item) => (
@@ -308,8 +342,8 @@ function Trade() {
 
             {selectedTab === "live" ?
               <div className="col-lg-3 text-end">
-                <button className="btn btn-success d-flex " style={{ padding: "0px 10px", fontSize: "15px" }}>
-                  Potential Left:{PotentialLeftButton(item)}%
+                <button className="btn btn-success d-flex " style={{ marginLeft: "40px", padding: "0px 10px", fontSize: "15px" }}>
+                  Potential Left : {PotentialLeftButton(item)}%
                 </button>
               </div> :
               <div className="col-lg-2 text-end ">
@@ -461,6 +495,7 @@ function Trade() {
               onChange={(e) => setSelectedService(e.target.value)}
             >
               {service.map((item) => (
+
                 <option key={item._id} value={item._id}>
                   {item?.title}
                 </option>
