@@ -32,7 +32,7 @@ function Trade() {
   const [tradeData, setTradeData] = useState({ live: [], close: [] });
   const [description, setDescription] = useState("");
   const [brokerstatus, setBrokerstatus] = useState([])
-  const [targetEnabled, setTargetEnabled] = React.useState(false);
+  const [targetEnabled, setTargetEnabled] = useState(false);
 
 
 
@@ -257,6 +257,25 @@ function Trade() {
 
 
 
+  const PotentialLeftButton = (item) => {
+    if (!item) return null;
+    const entryPrice = parseFloat(item.price) || 0;
+    const targetPrices = [
+      parseFloat(item.targetprice1) || 0,
+      parseFloat(item.targetprice2) || 0,
+      parseFloat(item.targetprice3) || 0
+    ];
+
+    const highestTarget = Math.max(...targetPrices.filter(price => price > 0));
+    const potentialLeft = highestTarget ? (highestTarget - entryPrice).toFixed(2) : "N/A";
+    return (
+      <div >
+        {potentialLeft}
+      </div>
+    );
+  };
+
+
 
 
 
@@ -289,8 +308,8 @@ function Trade() {
 
             {selectedTab === "live" ?
               <div className="col-lg-3 text-end">
-                <button className="btn btn-success" style={{ padding: "0px 10px", fontSize: "15px" }}>
-                  Potential Left :
+                <button className="btn btn-success d-flex " style={{ padding: "0px 10px", fontSize: "15px" }}>
+                  Potential Left:{PotentialLeftButton(item)}%
                 </button>
               </div> :
               <div className="col-lg-2 text-end ">
