@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import Table from '../../../Extracomponents/Table';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import ExportToExcel from '../../../../Utils/ExportCSV';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+
 
 const FreetrialStatus = () => {
   const token = localStorage.getItem('token');
@@ -76,25 +78,13 @@ const FreetrialStatus = () => {
       const response = await addfreeClient(data, token);
 
       if (response?.status) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Free Trial Update Successful!',
-          text: 'Your Free Trial Status updated successfully.',
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("Success", "Your Free Trial Status updated successfully.")
         setInitialFreeTrial(addStatus.freetrial);
         setDisableUpdate(true);
         getApidetail();
       }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Update Failed',
-        text: 'There was an error updating the API information. Please try again.',
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert("error", 'There was an error updating the API information. Please try again.')
     }
   };
 

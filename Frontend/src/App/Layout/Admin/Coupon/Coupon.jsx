@@ -4,13 +4,13 @@ import axios from 'axios';
 import { getcouponlist } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table';
 import { Eye, Pencil, Trash2, IndianRupee } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { DeleteCoupon, UpdateClientStatus, CouponStatus, CouponShowstatus, GetService } from '../../../Services/Admin/Admin';
 import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDate, fDateTime } from '../../../../Utils/Date_formate';
 import Loader from '../../../../Utils/Loader';
 import ReusableModal from '../../../components/Models/ReusableModal';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 
@@ -93,47 +93,22 @@ const Coupon = () => {
         navigate("/admin/coupon/updatecoupon/" + row._id, { state: { row } })
     }
 
-
     const DeleteCouponbyadmin = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this coupon? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert("confirm", 'Do you want to delete this coupon This action cannot be undone.')
 
-            if (result.isConfirmed) {
+            if (result) {
                 const response = await DeleteCoupon(_id, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The coupon has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
+                    showCustomAlert("Success", 'The Coupon has been successfully deleted.')
                     getcoupon();
 
                 }
             } else {
-
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The coupon deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
+                showCustomAlert("error", 'The coupon deletion was cancelled.')
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the coupon.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
-
+            showCustomAlert("error", 'There was an error deleting the coupon.')
         }
     };
 
@@ -142,43 +117,25 @@ const Coupon = () => {
 
 
     // update status 
-
     const handleSwitchChange = async (event, id) => {
 
         const user_active_status = event.target.checked === true ? "true" : "false"
 
         const data = { id: id, status: user_active_status }
-        const result = await Swal.fire({
-            title: "Do you want to save the changes?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
+        const result = await showCustomAlert("confirm", "Do you want to save the changes?")
 
-        if (result.isConfirmed) {
+        if (result) {
             try {
                 const response = await CouponStatus(data, token)
                 if (response.status) {
-                    Swal.fire({
-                        title: "Saved!",
-                        icon: "success",
-                        timer: 1000,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1000);
+                    showCustomAlert("Success", 'Changed status')
                 }
                 getcoupon();
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+                showCustomAlert("error", "There was an error processing your request.")
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
+            event.target.checked = !event.target.checked
             getcoupon();
         }
     };
@@ -190,41 +147,23 @@ const Coupon = () => {
         const user_active_status = event.target.checked === true ? "1" : "0"
         const data = { id: id, status: user_active_status }
 
-
-        const result = await Swal.fire({
-            title: "Do you want to save the changes?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
-
-        if (result.isConfirmed) {
+        const result = await showCustomAlert("confirm", "Do you want to save the changes?")
+        if (result) {
             try {
                 const response = await CouponShowstatus(data, token)
                 if (response.status) {
-                    Swal.fire({
-                        title: "Saved!",
-                        icon: "success",
-                        timer: 1000,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1000);
+                    showCustomAlert("Success", 'Changed status')
                 }
                 getcoupon();
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+                showCustomAlert("error", "There was an error processing your request.")
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
+            event.target.checked = !event.target.checked
             getcoupon();
         }
     };
+
 
 
     const columns = [

@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { SendBroadCast, GetService, getBroadCastmessage, ChangeBroadCastStatus, DeleteBroadCastmessage, UpdateCastmessage } from '../../../Services/Admin/Admin';
-import Swal from 'sweetalert2';
 import Table from '../../../Extracomponents/Table';
 import { SquarePen, Trash2, PanelBottomOpen, Eye } from 'lucide-react';
 import { Tooltip } from 'antd';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import Loader from '../../../../Utils/Loader';
-
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 const Message = () => {
@@ -24,7 +23,7 @@ const Message = () => {
     const [servicedata, setServicedata] = useState({});
     const [chatMessages, setChatMessages] = useState([]);
 
-    //state for loading
+
     const [isLoading, setIsLoading] = useState(true)
 
 
@@ -57,41 +56,19 @@ const Message = () => {
 
     const DeleteMessage = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this broadcast message? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert("confirm", 'Do you want to delete this broadcast message This action cannot be undone.')
 
-            if (result.isConfirmed) {
+            if (result) {
                 const response = await DeleteBroadCastmessage(_id, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The message has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
+                    showCustomAlert("Success", 'The message has been successfully deleted.')
                     sendmessagedetail();
                 }
             } else {
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The message deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
+                showCustomAlert("error", 'The message deletion was cancelled.')
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the staff.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'There was an error deleting the staff.')
         }
     };
 

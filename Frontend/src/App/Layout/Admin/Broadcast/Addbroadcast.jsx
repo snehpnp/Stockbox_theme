@@ -5,6 +5,7 @@ import DynamicForm from '../../../Extracomponents/FormicForm';
 import { useNavigate } from 'react-router-dom';
 import { SendBroadCast, GetService } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Addbroadcast = () => {
 
@@ -67,36 +68,15 @@ const Addbroadcast = () => {
         try {
             const response = await SendBroadCast(req, token);
             if (response.status) {
-                Swal.fire({
-                    title: "Send Successful!",
-                    text: response.message,
-                    icon: "success",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
-                setTimeout(() => {
-                    navigate("/admin/message");
-                }, 1500);
+                showCustomAlert("Success", response.message, navigate, "/admin/message")
             } else {
-                Swal.fire({
-                    title: "Alert",
-                    text: response.message,
-                    icon: "warning",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
+                showCustomAlert("error", response.message)
                 setLoading(false)
             }
         } catch (error) {
             setLoading(false)
             // console.error("Error in API call:", error);
-            Swal.fire({
-                title: "Error",
-                text: "An unexpected error occurred. Please try again later.",
-                icon: "error",
-                timer: 1500,
-                timerProgressBar: true,
-            });
+            showCustomAlert("error", "An unexpected error occurred. Please try again later.")
         }
     };
 
