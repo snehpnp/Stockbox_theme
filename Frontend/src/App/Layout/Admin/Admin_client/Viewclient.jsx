@@ -243,7 +243,7 @@ const Viewclientdetail = () => {
     {
       name: 'GST',
       selector: row => row?.total || "-",
-      cell: row => <div>{row?.total} ({row?.gst}% Gst Include)</div>,
+      cell: row => <div>{row?.total} <span style={{ fontSize: "12px" }}>({row?.gst}% Gst Included)</span></div>,
       sortable: true,
       width: '250px',
     },

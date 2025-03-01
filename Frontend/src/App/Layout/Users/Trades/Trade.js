@@ -283,14 +283,14 @@ function Trade() {
 
   const PotentialLeftButton = (item) => {
     if (!item || !checkdata) return null;
-
     const matchedStock = checkdata?.find(stock => stock?.SYMBOL === item?.stock);
     const entryPrice = parseFloat(matchedStock?.price) || 0;
 
+
     const targetPrices = [
-      parseFloat(item.targetprice1) || 0,
-      parseFloat(item.targetprice2) || 0,
-      parseFloat(item.targetprice3) || 0
+      parseFloat(item?.tag1) || 0,
+      parseFloat(item?.tag2) || 0,
+      parseFloat(item?.tag3) || 0
     ].filter(price => price > 0);
 
     let potentialLeft = 0;
@@ -301,7 +301,6 @@ function Trade() {
 
     } else if (item?.calltype === "SELL") {
       const lowestTarget = Math.min(...targetPrices);
-
       potentialLeft = entryPrice - lowestTarget;
 
 
