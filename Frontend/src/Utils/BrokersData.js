@@ -35,6 +35,18 @@ function BrokersData({ data, closeModal }) {
       { key: "apisecret", label: "API Secret", type: "text" },
       { key: "Password", label: "Password", type: "password" },
     ],
+    5: [
+      { key: "apikey", label: "API Key", type: "text" },
+      { key: "apisecret", label: "API Secret", type: "text" },
+    ],
+    6: [
+      { key: "apikey", label: "API Key", type: "text" },
+      { key: "apisecret", label: "API Secret", type: "text" },
+    ],
+    7: [
+      { key: "apikey", label: "API Key", type: "text" },
+      { key: "apisecret", label: "API Secret", type: "text" },
+    ]
   };
 
 
@@ -64,6 +76,14 @@ function BrokersData({ data, closeModal }) {
           window.location.href = loginData.url;
         } else if (brokerId == 3) {
           console.log("Kotak Neo", loginData);
+        } else if (brokerId == 4) {
+          console.log("Zerodha", loginData);
+        } else if (brokerId == 4) {
+          console.log("Upstox", loginData);
+        } else if (brokerId == 6) {
+          console.log("Dhan ", loginData);
+        } else if (brokerId == 7) {
+          console.log("Dhan ", loginData);
         }
       } else {
         Swal.fire({
@@ -80,7 +100,7 @@ function BrokersData({ data, closeModal }) {
     }
   };
 
-  
+
 
   const brokers = [
     {
@@ -96,13 +116,28 @@ function BrokersData({ data, closeModal }) {
     {
       id: 3,
       name: "Kotak Neo",
-      img: "https://play-lh.googleusercontent.com/CpJknJt8JrLZJp9-ETaYMWzqphlTNNqGSiSx05dyoGKFi18HOxM6CVp_JrpoZxrlIys",
+      img: "https://yt3.googleusercontent.com/yM-KyoT9t4jHt8-cqgi_tU0MqbDV6LhgNo7mQkvN8nTsMegf_D1qDwIGYzbWNYUOkgnW7jVuhYA=s900-c-k-c0x00ffffff-no-rj",
     },
     {
       id: 4,
       name: "Market Hub",
       img: "https://media.licdn.com/dms/image/v2/D560BAQEB5MsFZkdKwg/company-logo_200_200/company-logo_200_200/0/1681292585114/market_hub_stock_broking_pvt_ltd__logo?e=1746057600&v=beta&t=9YGrMbiPySe_qefvVi7OuaBOhjgc-BbupTeRPPIp1jE",
     },
+    {
+      id: 5,
+      name: "Zerodha",
+      img: "https://media.licdn.com/dms/image/D4D12AQGJnj8j3sb2TQ/article-cover_image-shrink_720_1280/0/1683270116246?e=2147483647&v=beta&t=H0c3cHnPKzjoiJVSlrKlWw0gD_6I4rnWHGYwVOhrPTs",
+    },
+    {
+      id: 6,
+      name: "Upstox",
+      img: "https://website-assets-fd.freshworks.com/attachments/clogvv27a034uwzoavav3omzt-featured-img-copy2.full.png",
+    },
+    {
+      id: 7,
+      name: "Dhan ",
+      img: "https://play-lh.googleusercontent.com/lVXf_i8Gi3C7eZVWKgeG8U5h_kAzUT0MrmvEAXfM_ihlo44VEk01HgAi6vbBNsSzBQ",
+    }
   ];
 
   useEffect(() => {
@@ -112,7 +147,7 @@ function BrokersData({ data, closeModal }) {
   return (
     <ReusableModal
       show={viewModel}
-      onClose={closeModal} // Use the passed closeModal function to close
+      onClose={closeModal}
       title={<span className="text-xl font-semibold">Select Broker</span>}
       size="xl"
       body={

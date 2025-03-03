@@ -7,6 +7,7 @@ import Content from "../../../components/Contents/Content";
 import { GetUserData } from "../../../Services/UserService/User";
 import { UpdateBroker } from "../../../Services/UserService/User";
 import BrokersData from "../../../../Utils/BrokersData";
+import { base_url } from "../../../../Utils/config";
 
 const Demat = () => {
 
@@ -27,13 +28,28 @@ const Demat = () => {
     {
       id: 3,
       name: "Kotak Neo",
-      img: "https://play-lh.googleusercontent.com/CpJknJt8JrLZJp9-ETaYMWzqphlTNNqGSiSx05dyoGKFi18HOxM6CVp_JrpoZxrlIys",
+      img: "https://yt3.googleusercontent.com/yM-KyoT9t4jHt8-cqgi_tU0MqbDV6LhgNo7mQkvN8nTsMegf_D1qDwIGYzbWNYUOkgnW7jVuhYA=s900-c-k-c0x00ffffff-no-rj",
     },
     {
       id: 4,
       name: "Market Hub",
       img: "https://media.licdn.com/dms/image/v2/D560BAQEB5MsFZkdKwg/company-logo_200_200/company-logo_200_200/0/1681292585114/market_hub_stock_broking_pvt_ltd__logo?e=1746057600&v=beta&t=9YGrMbiPySe_qefvVi7OuaBOhjgc-BbupTeRPPIp1jE",
     },
+    {
+      id: 5,
+      name: "Zerodha",
+      img: "https://media.licdn.com/dms/image/D4D12AQGJnj8j3sb2TQ/article-cover_image-shrink_720_1280/0/1683270116246?e=2147483647&v=beta&t=H0c3cHnPKzjoiJVSlrKlWw0gD_6I4rnWHGYwVOhrPTs",
+    },
+    {
+      id: 6,
+      name: "Upstox",
+      img: "https://website-assets-fd.freshworks.com/attachments/clogvv27a034uwzoavav3omzt-featured-img-copy2.full.png",
+    },
+    {
+      id: 7,
+      name: "Dhan ",
+      img: "https://play-lh.googleusercontent.com/lVXf_i8Gi3C7eZVWKgeG8U5h_kAzUT0MrmvEAXfM_ihlo44VEk01HgAi6vbBNsSzBQ",
+    }
   ])
 
 
@@ -91,6 +107,12 @@ const Demat = () => {
       } else if (brokerData.brokerid == 3) {
       } else if (brokerData.brokerid == 4) {
       }
+      else if (brokerData.brokerid == 5) {
+        window.location.href = `https://kite.zerodha.com/connect/login?v=3&api_key=${brokerData.apikey};`;
+      } else if (brokerData.brokerid == 6) {
+        window.location.href = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=${brokerData.apikey}&redirect_uri=https://${base_url}/backend/upstox/getaccesstoken&state=${brokerData.Email};`;
+      } else if (brokerData.brokerid == 7) {
+      }
     }
   };
 
@@ -100,9 +122,19 @@ const Demat = () => {
 
 
   const brokerFieldsMap = {
-    1: [{ name: "apikey", key: "apikey", label: "API Key", type: "text" }],
+    1: [{
+      name: "apikey",
+      key: "apikey",
+      label: "API Key",
+      type: "text"
+    }],
     2: [
-      { name: "AppCode", key: "AppCode", label: "App Code", type: "text" },
+      {
+        name: "AppCode",
+        key: "AppCode",
+        label: "App Code",
+        type: "text"
+      },
       {
         name: "alice_userid",
         key: "alice_userid",
@@ -117,14 +149,24 @@ const Demat = () => {
       },
     ],
     3: [
-      { name: "apikey", key: "apikey", label: "API Key", type: "text" },
+      {
+        name: "apikey",
+        key: "apikey",
+        label: "API Key",
+        type: "text"
+      },
       {
         name: "apisecret",
         key: "apisecret",
         label: "API Secret",
         type: "text",
       },
-      { name: "user_name", key: "user_name", label: "Username", type: "text" },
+      {
+        name: "user_name",
+        key: "user_name",
+        label: "Username",
+        type: "text"
+      },
       {
         name: "pass_word",
         key: "pass_word",
@@ -133,7 +175,12 @@ const Demat = () => {
       },
     ],
     4: [
-      { name: "apikey", key: "apikey", label: "API Key", type: "text" },
+      {
+        name: "apikey",
+        key: "apikey",
+        label: "API Key",
+        type: "text"
+      },
       {
         name: "apisecret",
         key: "apisecret",
@@ -147,6 +194,32 @@ const Demat = () => {
         type: "password",
       },
     ],
+    5: [
+      {
+        name: "apikey",
+        key: "apikey",
+        label: "API Key",
+        type: "text"
+      }, {
+        name: "apisecret",
+        key: "apisecret",
+        label: "API Secret",
+        type: "text",
+      },
+    ],
+    6: [
+      {
+        name: "apikey",
+        key: "apikey",
+        label: "API Key",
+        type: "text"
+      }, {
+        name: "apisecret",
+        key: "apisecret",
+        label: "API Secret",
+        type: "text",
+      },
+    ]
   };
 
 

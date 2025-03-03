@@ -340,6 +340,12 @@ export async function UpdateBroker(data, token) {
             url = "kotakneo/getaccesstoken";
         } else if (data.brokerid == 4) {
             url = "markethub/getaccesstoken";
+        } else if (data.brokerid == 5) {
+            url = "zerodha/getaccesstoken";
+        } else if (data.brokerid == 6) {
+            url = "upstox/getaccesstoken";
+        } else if (data.brokerid == 7) {
+            url = "dhan/getaccesstoken";
         }
 
         const res = await axios.post(`${Config.base_url}${url}`, data, {
@@ -389,6 +395,12 @@ export async function PlaceOrderApi(data, token, brokerstatus) {
             url = `${Config.base_url}kotakneo/placeorder`;
         } else if (brokerstatus == 4) {
             url = `${Config.base_url}markethub/placeorder`;
+        } if (brokerstatus == 5) {
+            url = `${Config.base_url}zerodha/placeorder`;
+        } if (brokerstatus == 6) {
+            url = `${Config.base_url}upstox/placeorder`;
+        } if (brokerstatus == 7) {
+            url = `${Config.base_url}dhan/placeorder`;
         }
 
         const res = await axios.post(url, data, {
@@ -420,6 +432,12 @@ export async function ExitPlaceOrderData(data, token, brokerstatus) {
             url = `${Config.base_url}kotakneo/exitplaceorder`;
         } else if (brokerstatus == 4) {
             url = `${Config.base_url}markethub/exitplaceorder`;
+        } else if (brokerstatus == 5) {
+            url = `${Config.base_url}zerodha/exitplaceorder`;
+        } else if (brokerstatus == 6) {
+            url = `${Config.base_url}upstox/exitplaceorder`;
+        } else if (brokerstatus == 7) {
+            url = `${Config.base_url}dhan/exitplaceorder`;
         }
 
         const res = await axios.post(url, data, {

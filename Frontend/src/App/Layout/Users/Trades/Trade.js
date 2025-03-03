@@ -631,6 +631,7 @@ function Trade() {
                 <div className="col-md-6">
                   <div className="form-check">
                     <input
+
                       className="form-check-input"
                       type="checkbox"
                       id="targetCheckbox"
@@ -665,7 +666,7 @@ function Trade() {
                 className="form-control"
                 id="sharedInput"
                 placeholder={targetEnabled === 1 ? "Target Price" : targetEnabled === 2 ? "Stoploss Price" : "Select Target/Stoploss"}
-                disabled={targetEnabled === 0}
+                disabled={targetEnabled === 0 || targetEnabled === 1}
                 value={targetEnabled === 1 ? orderdata.tsprice : targetEnabled === 2 ? orderdata.slprice : ""}
                 onChange={(e) => {
                   if (targetEnabled === 1) {
