@@ -498,8 +498,8 @@ const DeleteTokenAliceToken = async (req, res) => {
 
 
 
-  async function TradingStatusOff() {
-    try {
+  async function TradingStatusOff(req, res) {
+        try {
         // Find active clients
         const result = await Clients_Modal.find({ del: 0, ActiveStatus: 1 });
         
@@ -519,18 +519,21 @@ const DeleteTokenAliceToken = async (req, res) => {
 
         const existingSetting = await BasicSetting_Modal.findOne({});
         if (!existingSetting) {
-          return;
         }
 
         if (existingSetting) {
             existingSetting.brokerloginstatus = 0;
             await existingSetting.save();
-        
             // console.log(`Updated trading status ....`);
         } 
 
 
+        return res.send("Done");
+
+
     } catch (error) {
+        return res.send("error",error);
+
         // console.log('Error updating trading status:', error);
     }
 }
@@ -889,11 +892,13 @@ async function PlanExpire(req, res) {
             }
         }
     
-      return;
-    
+        return res.send("Done");
+
+
     } catch (error) {
-        // console.log('Error:', error);
-        return;
+        // console.log('An unexpected error occurred:', error);
+        return res.send("error",error);
+
     }
 }
 
@@ -949,11 +954,13 @@ async function downloadKotakNeotoken(req, res) {
         await Promise.all(downloadPromises);
 
         // Send the response once all files are downloaded
-        return;
+        return res.send("Done");
+
 
     } catch (error) {
         // console.log('An unexpected error occurred:', error);
-        return;
+        return res.send("error",error);
+
     }
 }
 
@@ -1046,7 +1053,7 @@ async function downloadAndExtractUpstox(req, res) {
 
 
 
-async function calculateCAGRForBaskets() {
+async function calculateCAGRForBaskets(req, res) {
     const result = await Basket_Modal.aggregate([
         {
             $match: {
@@ -1191,8 +1198,7 @@ async function calculateCAGRForBaskets() {
         );
     }
     
-    return;
-
+    return res.send("Done");
 }
 
 
@@ -1479,7 +1485,7 @@ async function processPendingOrdersBasket(req, res) {
         endOfDay.setHours(23, 59, 59, 999);
 
         // Fetch orders for the day with status 0
-        const orders = await Basketorder_Modal.find({
+        const orders = await Basketstock_Modal.find({
             status: 0,
             createdAt: { $gte: startOfDay, $lt: endOfDay }
         });
