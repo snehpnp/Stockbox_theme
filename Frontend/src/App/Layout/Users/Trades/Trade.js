@@ -12,7 +12,7 @@ import {
   GetNsePriceData
 } from "../../../Services/UserService/User";
 
-import { fDate } from "../../../../Utils/Date_formate";
+import { fDate, fDateTimeH } from "../../../../Utils/Date_formate";
 import { image_baseurl } from "../../../../Utils/config";
 
 import Loader from "../../../../Utils/Loader";
@@ -58,7 +58,36 @@ function Trade() {
     signalid: "",
     quantity: "",
     price: "",
+    entrytype: ""
   })
+
+
+  const UpdateExitdata = (item) => {
+    setExitModel(true)
+    setExitOrderdata({
+      ...item,
+      price: item.price,
+      quantity: item.order_quantity,
+    });
+  };
+
+
+
+
+
+  const UpdateData = (item) => {
+    setModel(true);
+    setOrderdata({
+      ...item,
+      price: item.price,
+      tsprice: Math.max(item.tag1 || 0, item.tag2 || 0, item.tag3 || 0),
+      slprice: item.stoploss,
+      quantity: item.order_quantity,
+      exitquantity: item.order_quantity
+    });
+  };
+
+
 
 
 
@@ -159,7 +188,7 @@ function Trade() {
         tsprice: orderdata?.tsprice,
         tsstatus: targetEnabled,
         slprice: orderdata?.slprice,
-        exitquantity: orderdata?.exitquantity,
+        exitquantity: orderdata?.quantity,
       };
 
       const response = await PlaceOrderApi(data, token, brokerstatus);
@@ -313,6 +342,9 @@ function Trade() {
   };
 
 
+
+
+
   const renderTradeCard = (item) => (
     <div className="row" key={item._id}>
       <div className="col-md-12">
@@ -321,7 +353,7 @@ function Trade() {
             <div className="col-lg-3">
               <span className="date-btn">
                 <i class="fa-solid fa-calendar me-3"></i>
-                <b>{fDate(item?.created_at)}</b>
+                <b>{fDateTimeH(item?.created_at)}</b>
               </span>
             </div>
 
@@ -358,7 +390,8 @@ function Trade() {
             <div className="col-md-2 d-flex align-items-center">
               <div className="trade-header">
                 <div className="mb-3">
-                  <span className="trade-type">{item?.callduration}</span>
+                  <span className="trade-type">Hold Duration : <br /> {item?.callduration === "Intraday" ? "Intraday" : item?.callduration === "Short Term" ? "(15-30 days)" :
+                    item?.callduration === "Medium Term" ? "(Above 3 month)" : "(Above 1 year)"}</span>
                 </div>
                 <div>
                   <span className="trade-type1">
@@ -380,7 +413,7 @@ function Trade() {
                     ...(selectedTab === "close"
                       ? [{ label: "Exit Price", value: item?.closeprice || "--" }]
                       : []),
-                    { label: "Call Type", value: item?.calltype || "15-30 days" },
+                    { label: "Call Type", value: `${item?.calltype}  ${item?.entrytype}` },
                     { label: "Stoploss", value: item?.stoploss || "--" },
                     { label: "Target", value: item?.tag1 || "--" },
                     { label: "Target", value: item?.tag2 || "--" },
@@ -413,7 +446,7 @@ function Trade() {
                       item?.purchased === false ||
                       new Date(item?.created_at) > new Date()
                     }
-                    onClick={() => { setExitModel(true); setCalltypedata(item) }}
+                    onClick={() => { UpdateExitdata(item); setCalltypedata(item) }}
                   >
                     {item?.purchased === false || new Date(item?.created_at) > new Date() ? "Trade Closed" : "EXIT"}
 
@@ -422,9 +455,8 @@ function Trade() {
                   <button
                     className="w-100 my-1"
                     onClick={() => {
-                      setModel(true);
                       setCalltypedata(item);
-                      setOrderdata(item)
+                      UpdateData(item)
                     }}
                     style={{ backgroundColor: item?.calltype ? "green" : "red", color: "white" }}
                   >
@@ -433,7 +465,6 @@ function Trade() {
                   </button>
 
                 )}
-
 
                 <button
                   className="btn btn-secondary w-100 my-1"
@@ -650,13 +681,14 @@ function Trade() {
                 Exit Price
               </label>
               <input
+                disabled
                 type="number"
                 className="form-control"
                 id="inputQuantity"
                 placeholder="Quantity"
-                value={orderdata?.exitquantity}
+                value={orderdata?.quantity}
                 onChange={(e) => {
-                  setOrderdata({ ...orderdata, exitquantity: e.target.value });
+                  setOrderdata({ ...orderdata, quantity: e.target.value });
                 }}
               />
             </div>
@@ -700,6 +732,22 @@ function Trade() {
                 value={exitorderdata?.price}
                 onChange={(e) => {
                   setExitOrderdata({ ...exitorderdata, price: e.target.value });
+                }}
+              />
+            </div>
+            <div className="col-md-12">
+              <label htmlFor="inputName" className="form-label">
+                Entry Type
+              </label>
+              <input
+                disabled
+                type="string"
+                className="form-control"
+                id="inputName"
+                placeholder=""
+                value={exitorderdata?.calltype}
+                onChange={(e) => {
+                  setExitOrderdata({ ...exitorderdata, calltype: e.target.value });
                 }}
               />
             </div>
