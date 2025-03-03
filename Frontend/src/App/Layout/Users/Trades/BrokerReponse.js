@@ -7,7 +7,7 @@ import { fDate, fDateTimeH } from "../../../../Utils/Date_formate";
 const BrokerResponse = () => {
 
 
-  
+
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
@@ -22,6 +22,7 @@ const BrokerResponse = () => {
       const response = await BrokerResponsedata(data, token);
       if (response.status) {
         setResponseData(response?.data);
+        console.log("response?.data", response?.data)
       }
     } catch (error) {
       console.log("Error fetching broker history:", error);
