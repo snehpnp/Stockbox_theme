@@ -4,12 +4,11 @@ import { RebalanceBasket, GetBasketSell, getversionhistory, GetLivePricedata, Ex
 import { useLocation, useParams } from 'react-router-dom';
 import Loader from '../../../../Utils/Loader';
 import { IndianRupee } from "lucide-react";
-import Swal from "sweetalert2";
 import ReusableModal from '../../../components/Models/ReusableModal';
 import { soket_url } from '../../../../Utils/config';
 import io from 'socket.io-client';
 import $ from "jquery";
-
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const RebalanceStock = () => {
 
@@ -205,33 +204,19 @@ const RebalanceStock = () => {
       setIsConfirming(false);
 
       if (response.status) {
-        Swal.fire({
-          icon: "success",
-          title: response.message || "Order Placed Successfully!",
-          text: "Your order has been placed successfully.",
-          confirmButtonText: "OK",
-        }).then(() => {
-          if (type === 1) {
-            setShowModal(false);
-            setInputdata("")
-          }
-        });
+        showCustomAlert("Success", response.message || "Order Placed Successfully!")
+          .then(() => {
+            if (type === 1) {
+              setShowModal(false);
+              setInputdata("")
+            }
+          });
       } else {
-        Swal.fire({
-          icon: "error",
-          title: response.message || "Order Failed",
-          text: "Failed to place the order. Please try again.",
-          confirmButtonText: "Retry",
-        });
+        showCustomAlert("error", response.message || "Order Failed")
       }
     } catch (error) {
       setIsPlacingOrder(false);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "An error occurred while placing the order. Please check your network or try again later.",
-        confirmButtonText: "Retry",
-      });
+      showCustomAlert("error", "An error occurred while placing the order. Please check your network or try again later.")
     }
   };
 
@@ -254,33 +239,16 @@ const RebalanceStock = () => {
       setIsExitorder(false);
 
       if (response.status) {
-        Swal.fire({
-          icon: "success",
-          title: response.message || "Order Placed Successfully!",
-          text: "Your order has been placed successfully.",
-          confirmButtonText: "OK",
-        });
+        showCustomAlert("Success", response.message || "Order Placed Successfully!")
       } else {
-        Swal.fire({
-          icon: "error",
-          title: response.message || "Order Failed",
-          text: "Failed to place the order. Please try again.",
-          confirmButtonText: "Retry",
-        });
+        showCustomAlert("error", response.message || "Order Failed")
       }
     } catch (error) {
       setIsExitorder(false);
-      console.error("API Error:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "An error occurred while placing the order. Please check your network or try again later.",
-        confirmButtonText: "Retry",
-      });
+      showCustomAlert("error", "An error occurred while placing the order. Please check your network or try again later.")
     }
   };
 
-  // console.log("baskets", baskets && [...baskets[1], ...baskets[2]])
 
   return (
     <Content

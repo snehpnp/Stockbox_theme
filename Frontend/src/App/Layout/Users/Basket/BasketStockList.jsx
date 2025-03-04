@@ -4,7 +4,6 @@ import ReusableModal from "../../../components/Models/ReusableModal";
 import { useLocation } from "react-router-dom";
 import { BasketStockListdata, AddStockplaceorder, GetLivePricedata, PortfolioStock, GetUserData } from "../../../Services/UserService/User";
 import Loader from "../../../../Utils/Loader";
-import Swal from "sweetalert2";
 import io from 'socket.io-client';
 import $ from "jquery";
 import { soket_url } from '../../../../Utils/config';

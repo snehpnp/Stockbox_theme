@@ -311,6 +311,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
         window.location.href = `https://ant.aliceblueonline.com/?appcode=${UserDetail.apikey}`;
       } else if (UserDetail.brokerid == 3) {
       } else if (UserDetail.brokerid == 4) {
+      } else if (UserDetail.brokerid == 5) {
+      } else if (UserDetail.brokerid == 6) {
+      } else if (UserDetail.brokerid == 7) {
       }
     }
   };
