@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
 import { GetBroadcastData } from "../../../Services/UserService/User";
 import { MessageCircleMore } from "lucide-react";
-import Swal from "sweetalert2";
 import Loader from "../../../../Utils/Loader";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 const Broadcast = () => {
   const [broadcastData, setBroadcastData] = useState([]);
@@ -28,11 +28,10 @@ const Broadcast = () => {
       });
     } catch (error) {
       console.log(error);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Something went wrong while fetching broadcast data!",
-      });
+      showCustomAlert(
+        "error",
+        "Something went wrong while fetching broadcast data!",
+      );
 
     }
     setIsLoading(false)
