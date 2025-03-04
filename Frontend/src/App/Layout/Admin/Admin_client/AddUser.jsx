@@ -97,7 +97,6 @@ const AddUser = () => {
   // console.log("traialStatus",traialStatus);
 
   const handleToggleChange = () => {
-    console.log("Custom Clicked", traialStatus);
   }
 
   const fields = [

@@ -66,7 +66,6 @@ const Editbasket = () => {
 
 
   const validate = (values) => {
-    // console.log("values",values);
 
     let errors = {};
 
