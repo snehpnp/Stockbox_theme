@@ -12,7 +12,6 @@ import {
   DeleteClient,
   DeleteDematAccount,
 } from "../../../Services/UserService/User";
-
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
@@ -53,10 +52,10 @@ const Profiles = () => {
       const errors = {};
 
       if (!values.currentPassword) {
-        errors.currentPassword = "Please enter your current password";
+        errors.currentPassword = "Please Enter your current password";
       }
       if (!values.newPassword) {
-        errors.newPassword = "Please enter a new password";
+        errors.newPassword = "Please Enter a new password";
       } else {
         if (values.newPassword.length < 8) {
           errors.newPassword = "Password must be at least 8 characters long";
@@ -76,7 +75,7 @@ const Profiles = () => {
       }
 
       if (!values.confirmPassword) {
-        errors.confirmPassword = "Please confirm your new password";
+        errors.confirmPassword = "Please Confirm your new password";
       } else if (values.newPassword !== values.confirmPassword) {
         errors.confirmPassword = "Passwords do not match";
       }
