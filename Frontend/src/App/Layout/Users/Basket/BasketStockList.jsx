@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import io from 'socket.io-client';
 import $ from "jquery";
 import { soket_url } from '../../../../Utils/config';
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 const BasketStockList = () => {
@@ -297,33 +297,19 @@ const BasketStockList = () => {
       setIsConfirming(false);
 
       if (response.status) {
-        Swal.fire({
-          icon: "success",
-          title: response.message || "Order Placed Successfully!",
-          text: "Your order has been placed successfully.",
-          confirmButtonText: "OK",
-        }).then(() => {
-          if (type === 1) {
-            setShowModal(false);
-            setInputdata("")
-          }
-        });
+        showCustomAlert("Success", response.message || "Order Placed Successfully!")
+          .then(() => {
+            if (type === 1) {
+              setShowModal(false);
+              setInputdata("")
+            }
+          });
       } else {
-        Swal.fire({
-          icon: "error",
-          title: response.message || "Order Failed",
-          text: "Failed to place the order. Please try again.",
-          confirmButtonText: "Retry",
-        });
+        showCustomAlert("error", response.message || "Order Failed")
       }
     } catch (error) {
       setIsPlacingOrder(false);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "An error occurred while placing the order. Please check your network or try again later.",
-        confirmButtonText: "Retry",
-      });
+      showCustomAlert("error", "An error occurred while placing the order. Please check your network or try again later.")
     }
   };
 
@@ -578,7 +564,7 @@ const BasketStockList = () => {
                 onClick={() => BUYstockdata(1)}
                 disabled={isPlacingOrder}
               >
-                {isPlacingOrder ? "Placing Order..." : "Place Order"}
+                Place Order
               </button>
               <button className="btn btn-secondary" onClick={handleCloseModal}>
                 Cancel

@@ -11,10 +11,9 @@ import {
 import { IndianRupee } from "lucide-react";
 import { loadScript } from "../../../../Utils/Razorpayment";
 import { basicsettinglist } from "../../../Services/Admin/Admin";
-import Swal from "sweetalert2";
 import Loader from "../../../../Utils/Loader";
 import ReusableModal from "../../../components/Models/ReusableModal";
-
+import ShowCustomAlert from "../../../../App/Extracomponents/CustomAlert/CustomAlert"
 
 
 const Service = () => {
@@ -76,13 +75,8 @@ const Service = () => {
       const response = await ApplyCoupondata(data, token);
 
       if (response.status) {
-        Swal.fire({
-          title: "Coupon Applied!",
-          text:
-            response.message || "Your discount has been applied successfully.",
-          icon: "success",
-          confirmButtonText: "OK",
-        });
+        ShowCustomAlert("Success", response.message || "Your discount has been applied successfully.")
+
         const originalPrice = selectedPlanDetails?.price || 0;
         const discount = coupondata?.value || 0;
         const discountedPrice = originalPrice - discount;
@@ -90,20 +84,10 @@ const Service = () => {
         setAppliedCoupon(coupondata);
         setDiscountedPrice(discountedPrice);
       } else {
-        Swal.fire({
-          title: "Coupon Error",
-          text: response?.message || "Failed to apply coupon. Please try again.",
-          icon: "error",
-          confirmButtonText: "OK",
-        });
+        ShowCustomAlert("error", response?.message || "Failed to apply coupon. Please try again.")
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error",
-        text: "Something went wrong. Please try again later.",
-        icon: "error",
-        confirmButtonText: "OK",
-      });
+      ShowCustomAlert("error", "Something went wrong. Please try again later.")
     }
   };
 

@@ -22,12 +22,18 @@ const Subscription = () => {
   const [servicedata, setServicedata] = useState([])
   const [gstdata, setGstdata] = useState([]);
 
+
+
+
   useEffect(() => {
-    fetchMySubscription();
-    fetchMyService()
-    fetchBasketMySubscription()
+    if (activeTab === "plan") {
+      fetchMySubscription();
+      fetchMyService()
+    } else if (activeTab === "basket") {
+      fetchBasketMySubscription()
+    }
     getkeybydata()
-  }, []);
+  }, [activeTab]);
 
 
 
@@ -205,11 +211,8 @@ const Subscription = () => {
                         <strong>Purchase Price:</strong>
                       </td>
                       <td>
-                        ₹{(
-                          ((accordion?.plan_price - (accordion?.discount || 0)) +
-                            ((accordion?.plan_price - (accordion?.discount || 0)) * gstdata) / 100)
-                        ) || "--"}
-                        <small className="text-muted"> ({gstdata}% included)</small>
+                        ₹{accordion?.total}
+                        <small className="text-muted"> {accordion?.gstamount ? `(${accordion?.gstamount}% Tax included)` : ""}</small>
                       </td>
                     </tr>
                   </tbody>
@@ -288,8 +291,12 @@ const Subscription = () => {
                       <td>{fDateTime(accordion?.startdate) || "--"}</td>
                     </tr>
                     <tr>
-                      <td><strong>Purchase Price:</strong></td>
+                      <td><strong>Price:</strong></td>
                       <td>₹{accordion?.plan_price || "--"}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Purchase Price:</strong></td>
+                      <td>₹{accordion?.total || "--"} {accordion?.gstamount ? `(${accordion?.gstamount}% Tax included)` : ""}</td>
                     </tr>
                     <tr>
                       <td><strong>Expired On:</strong></td>
