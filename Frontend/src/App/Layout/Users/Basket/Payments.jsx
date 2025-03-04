@@ -80,12 +80,11 @@ const Payments = () => {
             }
 
             const price = item?.basket_price;
-            const finalAmount = Math.round(item?.basket_price * (1 + gstdata / 100) * 100);
-            const displayAmount = (finalAmount / 100)
+            const finalAmount = Math.round(price * (1 + gstdata / 100) * 100);
 
             const options = {
                 key: getkey,
-                amount: displayAmount,
+                amount: finalAmount,
                 name: company,
                 currency: "INR",
                 title: item?.title || "Subscription Basket",
@@ -93,7 +92,7 @@ const Payments = () => {
                     const data = {
                         basket_id: item?._id,
                         client_id: userid,
-                        price: price,
+                        price: finalAmount,
                         discount: 0,
                         orderid: response1?.razorpay_order_id || "",
                     };
@@ -119,6 +118,7 @@ const Payments = () => {
             console.error("Subscription error:", error);
         }
     };
+
 
     return (
         <Content
