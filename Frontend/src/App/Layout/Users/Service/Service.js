@@ -36,6 +36,7 @@ const Service = () => {
   const [coupons, setCoupon] = useState([]);
   const [getkey, setGetkey] = useState([]);
   const [company, setCompany] = useState([]);
+  const [gstdata, setGstdata] = useState([]);
   const [sortCriteria, setSortCriteria] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -69,8 +70,8 @@ const Service = () => {
     try {
       const data = {
         code: coupon?.code,
-        purchaseValue: selectedPlanDetails?.plans?.[0]?.price,
-        planid: selectedPlanDetails?.plans[0]?._id,
+        purchaseValue: selectedPlanDetails?.price,
+        planid: selectedPlanDetails?._id,
       };
       const response = await ApplyCoupondata(data, token);
 
@@ -82,7 +83,7 @@ const Service = () => {
           icon: "success",
           confirmButtonText: "OK",
         });
-        const originalPrice = selectedPlanDetails?.plans?.[0]?.price || 0;
+        const originalPrice = selectedPlanDetails?.price || 0;
         const discount = coupondata?.value || 0;
         const discountedPrice = originalPrice - discount;
         setDiscountedPrice(originalPrice - discount);
@@ -91,7 +92,7 @@ const Service = () => {
       } else {
         Swal.fire({
           title: "Coupon Error",
-          text: response.message || "Failed to apply coupon. Please try again.",
+          text: response?.message || "Failed to apply coupon. Please try again.",
           icon: "error",
           confirmButtonText: "OK",
         });
@@ -111,7 +112,7 @@ const Service = () => {
   const removeCoupon = () => {
     setManualCoupon("");
     setAppliedCoupon(null);
-    setDiscountedPrice(selectedPlanDetails?.plans[0]?.price || "N/A");
+    setDiscountedPrice(selectedPlanDetails?.price || "N/A");
     setAppliedCoupon(null);
   };
 
@@ -120,6 +121,10 @@ const Service = () => {
   const handleSelectChange = (event) => {
     setSelectedPlan(event.target.value);
   };
+
+
+
+
 
   const getCoupon = async () => {
     try {
@@ -132,23 +137,32 @@ const Service = () => {
     }
   };
 
+
+
+
+
   const getkeybydata = async () => {
     try {
       const response = await basicsettinglist();
       if (response.status) {
         setGetkey(response?.data[0]?.razorpay_key);
         setCompany(response?.data[0]?.from_name);
+        setGstdata(response?.data[0]?.gst);
       }
     } catch (error) {
       console.error("Error fetching coupons:", error);
     }
   };
 
+
+
+
+
   const getPlan = async () => {
     try {
       const response = await GetPlanByCategory(token);
       if (response.status) {
-        setPlan(response.data);
+        setPlan(response?.data);
         setCategory(response?.data.sort((a, b) => b._id.localeCompare(a._id)));
       }
     } catch (error) {
@@ -160,25 +174,31 @@ const Service = () => {
 
 
 
+
   const AddSubscribeplan = async (item) => {
     try {
       if (!window.Razorpay) {
         await loadScript("https://checkout.razorpay.com/v1/checkout.js");
       }
+
+      const basePrice = selectedPlanDetails?.price - (discountedPrice || 0);
+      const gstAmount = (basePrice * gstdata) / 100;
+      const finalAmount = (basePrice + gstAmount) * 100;
+
       const options = {
         key: getkey,
-        amount: (discountedPrice || selectedPlanDetails?.plans[0]?.price) * 100,
+        amount: finalAmount,
         name: company,
         currency: "INR",
-        title: item?.plans[0]?.title || "Subscription Plan",
+        title: item?.title || "Subscription Plan",
         handler: async function (response1) {
           const data = {
-            plan_id: item?.plans[0]?._id,
+            plan_id: item?._id,
             client_id: userid,
             coupon_code: appliedCoupon?.code || 0,
             orderid: response1?.orderid,
             discount: appliedCoupon?.value || 0,
-            price: discountedPrice || selectedPlanDetails?.plans[0]?.price || 0,
+            price: finalAmount,
           };
 
           try {
@@ -196,6 +216,7 @@ const Service = () => {
           color: "#F37254",
         },
       };
+
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (error) {
@@ -237,6 +258,7 @@ const Service = () => {
     }
 
     return filteredPlans;
+
   }, [plan, selectedPlan, sortCriteria]);
 
 
@@ -246,6 +268,7 @@ const Service = () => {
     if (!input) return "";
     return input.replace(/<\/?[^>]+(>|$)/g, "");
   };
+
 
 
 
@@ -302,16 +325,16 @@ const Service = () => {
           <div className="pricing-container price1 mt-4">
             {getFilteredPlans?.length > 0 ? (
               <div className="row row-cols-1 row-cols-md-1 row-cols-lg-3 row-cols-xl-3">
-                {getFilteredPlans.map(
-                  (item) =>
-                    item?.plans?.length > 0 && (
-                      <div className="col col-lg-6" key={item?._id}>
+                {getFilteredPlans?.map((item) =>
+                  item?.plans?.length > 0
+                    ? item?.plans?.map((plan, index) => (
+                      <div className="col col-lg-6" key={`${item?._id}-${index}`}>
                         <div className="card card1 mb-4">
                           <div className="card-body">
                             <div className="d-flex align-items-center">
                               <div className="text-left">
                                 <span className="price-original">
-                                  {Array.isArray(item?.services) && item.services.length > 0
+                                  {Array.isArray(item?.services) && item?.services?.length > 0
                                     ? item.services
                                       .map((service) =>
                                         typeof service.title === "string"
@@ -323,35 +346,37 @@ const Service = () => {
                                 </span>
                                 <h5 className="mb-0">{item?.title}</h5>
                               </div>
-                              <div className="ms-auto">
-                                <div className="price">
-                                  <span className="price-current">
-                                    <IndianRupee />
-                                    {item?.plans[0]?.price}
-                                  </span>
-                                </div>
-                              </div>
                             </div>
                             <hr />
+                            <div className="d-flex align-items-center justify-content-between">
+                              <div>
+                                <b>Plan:</b> {plan?.name || `Plan ${index + 1}`}
+                              </div>
+                              <div className="price">
+                                <span className="price-current">
+                                  <IndianRupee /> {plan?.price}
+                                </span>
+                              </div>
+                            </div>
                             <ul className="features">
                               <li>
-                                <b>Validity</b>: {item?.plans[0]?.validity}{" "}
+                                <b>Validity</b>: {plan?.validity}
                               </li>
                               <li>
                                 <b>Description</b>:
                                 <textarea
                                   className="form-control"
-                                  value={stripHtmlTags(item?.plans[0]?.description || "")}
+                                  value={stripHtmlTags(plan?.description || "")}
                                   readOnly
                                 />
                               </li>
                             </ul>
-                            <div className="d-block d-sm-flex align-items-center justify-content-between mt-4">
+                            <div className="d-block d-sm-flex align-items-center justify-content-between mt-3">
                               <button
                                 className="btn btn-secondary rounded-1 mt-2 mt-sm-0 me-2 me-sm-0"
                                 onClick={() => {
                                   setViewModel(true);
-                                  setDiscription(item?.plans[0]?.description);
+                                  setDiscription(plan?.description);
                                 }}
                               >
                                 Know More
@@ -359,7 +384,7 @@ const Service = () => {
 
                               <button
                                 className="btn btn-primary rounded-1 mt-2 mt-sm-0"
-                                onClick={() => handleShowModal(item)}
+                                onClick={() => handleShowModal(plan)}
                               >
                                 Subscribe Now
                               </button>
@@ -367,7 +392,8 @@ const Service = () => {
                           </div>
                         </div>
                       </div>
-                    )
+                    ))
+                    : null
                 )}
               </div>
             ) : (
@@ -375,6 +401,8 @@ const Service = () => {
                 <img src="/assets/images/norecordfound.png" alt="No Records Found" />
               </div>
             )}
+
+
           </div>
 
         )}
@@ -389,24 +417,22 @@ const Service = () => {
         <Modal.Body>
           {selectedPlanDetails && (
             <>
-              {/* Plan Title and Price */}
+
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h5>🏷️ {selectedPlanDetails?.title}</h5>
                 <span className="text-success fw-bold">
                   <IndianRupee />{" "}
-                  {selectedPlanDetails?.plans[0]?.price || "N/A"}
+                  {selectedPlanDetails?.price || "N/A"}
                 </span>
               </div>
 
-              {/* Validity */}
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <span>
                   🕒 <b>Validity:</b>
                 </span>
-                <span>{selectedPlanDetails?.plans[0]?.validity || "N/A"}</span>
+                <span>{selectedPlanDetails?.validity || "N/A"}</span>
               </div>
 
-              {/* Coupon Code Accordion */}
               <Accordion className="mt-3">
                 <Accordion.Item eventKey="0">
                   <Accordion.Header>🎟️ Apply Coupon Code</Accordion.Header>
@@ -589,7 +615,13 @@ const Service = () => {
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <b>💵 Original Price:</b>
                   <span className="text-primary fw-bold">
-                    <IndianRupee /> {selectedPlanDetails?.plans[0]?.price}
+                    <IndianRupee /> {selectedPlanDetails?.price}
+                  </span>
+                </div>
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <b>💰 GST :</b>
+                  <span className="text-primary fw-bold">
+                    <IndianRupee /> {gstdata}％
                   </span>
                 </div>
 
@@ -597,7 +629,7 @@ const Service = () => {
                   <div className="d-flex justify-content-between align-items-center text-danger mb-2">
                     <b>🎟️ Coupon Discount:</b>
                     <span className="fw-bold">
-                      - <IndianRupee /> {appliedCoupon.value}
+                      - <IndianRupee /> {appliedCoupon?.value}
                     </span>
                   </div>
                 )}
@@ -609,9 +641,14 @@ const Service = () => {
                     style={{ fontSize: "1.2rem" }}
                   >
                     <IndianRupee />{" "}
-                    {discountedPrice || selectedPlanDetails?.plans[0]?.price}
+                    {(
+                      (selectedPlanDetails?.price - (discountedPrice || 0)) +
+                      ((selectedPlanDetails?.price - (discountedPrice || 0)) * gstdata) / 100
+                    ).toFixed(2)}
                   </span>
                 </div>
+
+
               </div>
 
               <div className="mt-4">

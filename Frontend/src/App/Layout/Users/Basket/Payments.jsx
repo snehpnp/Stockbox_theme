@@ -21,6 +21,7 @@ const Payments = () => {
 
     const [getkey, setGetkey] = useState([]);
     const [company, setCompany] = useState([]);
+    const [gstdata, setGstdata] = useState([]);
     const [bankdetail, setBankdetail] = useState([]);
     const [qrdata, setQrdata] = useState([]);
 
@@ -63,6 +64,7 @@ const Payments = () => {
             if (response.status) {
                 setGetkey(response?.data[0]?.razorpay_key);
                 setCompany(response?.data[0]?.from_name);
+                setGstdata(response?.data[0]?.gst);
             }
         } catch (error) {
             console.error("Error fetching coupons:", error);
@@ -73,13 +75,17 @@ const Payments = () => {
 
     const AddbasketSubscribeplan = async (item) => {
         try {
-
             if (!window.Razorpay) {
                 await loadScript("https://checkout.razorpay.com/v1/checkout.js");
             }
+
+            const price = item?.basket_price;
+            const finalAmount = Math.round(item?.basket_price * (1 + gstdata / 100) * 100);
+            const displayAmount = (finalAmount / 100)
+
             const options = {
                 key: getkey,
-                amount: item?.basket_price * 100,
+                amount: displayAmount,
                 name: company,
                 currency: "INR",
                 title: item?.title || "Subscription Basket",
@@ -87,10 +93,9 @@ const Payments = () => {
                     const data = {
                         basket_id: item?._id,
                         client_id: userid,
-                        price: item?.basket_price,
-                        discount: response1?.orderid,
-                        orderid: response1?.orderid,
-
+                        price: price,
+                        discount: 0,
+                        orderid: response1?.razorpay_order_id || "",
                     };
 
                     try {
@@ -102,23 +107,18 @@ const Payments = () => {
                         console.error("Error while adding plan subscription:", error);
                     }
                 },
-                prefill: {
-
-                },
+                prefill: {},
                 theme: {
                     color: "#F37254",
                 },
             };
+
             const rzp = new window.Razorpay(options);
             rzp.open();
         } catch (error) {
             console.error("Subscription error:", error);
         }
     };
-
-
-
-
 
     return (
         <Content
@@ -155,15 +155,44 @@ const Payments = () => {
                             <div className="card-header"><HandCoins className="me-2 btn-primary p-1 rounded" />your total saving is off ₹ {Number(item?.full_price) - Number(item?.basket_price)}</div>
                             <div className="card-body">
                                 <div className="d-md-flex justify-content-between">
+                                    <h6 className="card-title mb-0"><strong>validity</strong></h6>
+                                    <h6 className="card-title mb-0"><strong>{item?.validity} Month</strong></h6>
+                                </div>
+                                <div className="d-md-flex justify-content-between">
                                     <h6 className="card-title mb-0"><strong>{item?.title}</strong></h6>
-                                    <h6 className="card-title mb-0"><strong>₹10,000</strong></h6>
+                                    <h6 className="card-title mb-0"><strong>₹  {item?.basket_price}</strong></h6>
+                                </div>
+                                <div className="d-md-flex justify-content-between">
+                                    <h6 className="card-title mb-0"><strong>GST ({gstdata})</strong></h6>
+                                    <h6 className="card-title mb-0"><strong>₹ {(((item?.basket_price) * gstdata) / 100).toFixed(2)}</strong></h6>
+                                </div>
+                                <div className="d-md-flex justify-content-between">
+                                    <h6 className="card-title mb-0"><strong>Total</strong></h6>
+                                    <h6 className="card-title mb-0">
+                                        <strong>
+                                            ₹ {(
+                                                (item?.basket_price) +
+                                                ((item?.basket_price) * gstdata) / 100
+                                            ).toFixed(2)}
+                                        </strong>
+                                    </h6>
                                 </div>
 
-                                <p className="mt-1">
 
-                                    - validity {item?.validity}
-                                </p>
-                                <button className="btn btn-primary w-100" onClick={() => { AddbasketSubscribeplan(item) }} >Subscribe Now <span className="text-decoration-line-through btn btn-primary ">₹ {item?.full_price}</span> ₹ {item?.basket_price}</button>
+
+                                <button className="btn btn-primary w-100" onClick={() => AddbasketSubscribeplan(item)}>
+                                    Subscribe Now
+                                    <span className="text-decoration-line-through btn btn-primary ">
+                                        ₹ {(
+                                            item?.full_price + (item?.full_price * gstdata) / 100
+                                        ).toFixed(2)}
+                                    </span>
+
+                                    ₹  {(
+                                        item?.basket_price + (item?.basket_price * gstdata) / 100
+                                    ).toFixed(2)}
+                                </button>
+
                             </div>
                         </div>
                     </div>

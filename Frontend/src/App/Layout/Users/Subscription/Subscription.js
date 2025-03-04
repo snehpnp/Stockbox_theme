@@ -5,6 +5,7 @@ import Content from "../../../components/Contents/Content";
 import { fDate, fDateTime } from "../../../../Utils/Date_formate";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import Loader from "../../../../Utils/Loader";
+import { basicsettinglist } from "../../../Services/Admin/Admin";
 
 
 const Subscription = () => {
@@ -19,14 +20,27 @@ const Subscription = () => {
   const id = localStorage.getItem("id");
   const [isLoading, setIsLoading] = useState(true)
   const [servicedata, setServicedata] = useState([])
-
+  const [gstdata, setGstdata] = useState([]);
 
   useEffect(() => {
     fetchMySubscription();
     fetchMyService()
     fetchBasketMySubscription()
+    getkeybydata()
   }, []);
 
+
+
+  const getkeybydata = async () => {
+    try {
+      const response = await basicsettinglist();
+      if (response.status) {
+        setGstdata(response?.data[0]?.gst);
+      }
+    } catch (error) {
+      console.error("Error fetching coupons:", error);
+    }
+  };
 
 
 
@@ -170,15 +184,15 @@ const Subscription = () => {
                     </tr>
                     <tr>
                       <td>
-                        <strong>Purchase Price:</strong>
-                      </td>
-                      <td>₹{accordion?.plan_price || "--"}</td>
-                    </tr>
-                    <tr>
-                      <td>
                         <strong>Expired On:</strong>
                       </td>
                       <td>{accordion?.plan_end || "--"}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Discount Price:</strong>
+                      </td>
+                      <td>₹{accordion?.discount || "--"}</td>
                     </tr>
                     <tr>
                       <td>
@@ -188,9 +202,15 @@ const Subscription = () => {
                     </tr>
                     <tr>
                       <td>
-                        <strong>Discount Price:</strong>
+                        <strong>Purchase Price:</strong>
                       </td>
-                      <td>₹{accordion?.discount || "--"}</td>
+                      <td>
+                        ₹{(
+                          ((accordion?.plan_price - (accordion?.discount || 0)) +
+                            ((accordion?.plan_price - (accordion?.discount || 0)) * gstdata) / 100)
+                        ) || "--"}
+                        <small className="text-muted"> ({gstdata}% included)</small>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
