@@ -13,7 +13,7 @@ import {
   DeleteDematAccount,
 } from "../../../Services/UserService/User";
 
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 
@@ -91,18 +91,14 @@ const Profiles = () => {
           localStorage.getItem("token")
         );
         if (response.status) {
-          Swal.fire("Success", "Password changed successfully!", "success");
+          showCustomAlert("Success", "Password changed successfully!")
           setShowModal(false);
           resetForm();
         } else {
-          Swal.fire(
-            "Error",
-            response.message || "Error changing password",
-            "error"
-          );
+          showCustomAlert("error", response.message)
         }
       } catch (error) {
-        Swal.fire("Error", "Something went wrong!", "error");
+        showCustomAlert("error", "Something went wrong!")
       }
     },
   });
@@ -130,7 +126,7 @@ const Profiles = () => {
   const UpdateProfileInfo = async () => {
     try {
       if (!userDetail.FullName) {
-        Swal.fire("Error", "Please enter Full Name", "error");
+        showCustomAlert("error", "Please enter Full Name")
         return;
       }
 
@@ -141,7 +137,7 @@ const Profiles = () => {
       const response = await UpdateUserProfile(Data, token);
       if (response.status) {
         setUserDetail(response.data);
-        Swal.fire("Success", "Profile updated successfully!", "success");
+        showCustomAlert("Success", "Profile updated successfully!")
       }
     } catch (error) {
       console.log("error", error);
@@ -170,7 +166,7 @@ const Profiles = () => {
       if (!email) return;
 
       if (email !== userDetail.Email) {
-        Swal.fire("Error", "Email does not match", "error");
+        showCustomAlert("error", "Email does not match");
         return;
       }
 
@@ -203,28 +199,25 @@ const Profiles = () => {
       });
 
       if (isCancelled) {
-        Swal.fire("Cancelled", "Account deletion was cancelled.", "info");
+        showCustomAlert("error", "Account deletion was cancelled.");
         return;
       }
 
       const response = await DeleteClient(userDetail._id, token);
       if (response.status) {
-        Swal.fire("Deleted!", "Your account has been deleted.", "success");
+        showCustomAlert("Success", "Your account has been deleted.",);
         localStorage.removeItem("token");
         window.location.href = "/login";
       } else {
-        Swal.fire(
-          "Error!",
+        showCustomAlert(
+          "error!",
           response.message || "Something went wrong.",
-          "error"
         );
       }
     } catch (error) {
-      console.error("Error deleting account:", error);
-      Swal.fire(
-        "Error!",
-        "Failed to delete account. Try again later.",
-        "error"
+      showCustomAlert(
+        "error!",
+        "Failed to delete account. Try again later."
       );
     }
   };
@@ -232,31 +225,22 @@ const Profiles = () => {
 
 
   const DeleteDematAccountApi = async () => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this action!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!"
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          console.log("userDetail._id", userid);
-          const response = await DeleteDematAccount({ id: userid }, token);
-          if (response.status) {
-            Swal.fire("Deleted!", "Your account has been deleted.", "success");
-          } else {
-            Swal.fire("Error!", response.message || "Something went wrong.", "error");
-          }
-        } catch (error) {
-          console.error("Error deleting account:", error);
-          Swal.fire("Error!", "Failed to delete account. Try again later.", "error");
+    const result = await showCustomAlert("confirm", "You won't be able to revert this action!")
+    if (result) {
+      try {
+        const response = await DeleteDematAccount({ id: userid }, token);
+        if (response.status) {
+          showCustomAlert("Deleted!", "Your account has been deleted.", "success");
+        } else {
+          showCustomAlert("error", response.message || "Something went wrong.");
         }
+      } catch (error) {
+
+        showCustomAlert("error", "Failed to delete account. Try again later.");
       }
-    });
+    }
   };
+
 
 
 
@@ -334,7 +318,7 @@ const Profiles = () => {
                       defaultValue={userDetail?.FullName}
                       onChange={(e) => {
                         if (!e.target.value) {
-                          Swal.fire("Error", "Please enter Full Name", "error");
+                          showCustomAlert("error", "Please enter Full Name");
                           return;
                         }
                         setUserDetail({

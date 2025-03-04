@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Swal from "sweetalert2"; // Import SweetAlert2
 import { Link } from "react-router-dom";
 import Content from "../../../components/Contents/Content";
 import { basicsettinglist } from "../../../Services/Admin/Admin";
@@ -7,7 +6,7 @@ import { GetUserData, ReferAndEarnData } from "../../../Services/UserService/Use
 import { base_url, image_baseurl } from "../../../../Utils/config";
 import { fDate } from "../../../../Utils/Date_formate";
 import Loader from "../../../../Utils/Loader";
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 const Refer = () => {
@@ -75,12 +74,7 @@ const Refer = () => {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(refertoken?.refer_token);
-    Swal.fire({
-      icon: "success",
-      title: "Referral Code copied to clipboard!",
-      showConfirmButton: false,
-      timer: 1500,
-    });
+    showCustomAlert("Success", "Referral Code copied to clipboard!")
   };
 
 
@@ -94,10 +88,11 @@ const Refer = () => {
           text: `Use my link ${referralLink} to Earn rewards!`,
         })
         .catch((error) =>
-          Swal.fire("Error sharing referral code", error.message, "error")
+          showCustomAlert("error", error.message,)
         );
     } else {
-      Swal.fire("Sharing not supported on this browser.", "", "warning");
+      showCustomAlert("error", "Sharing not supported on this browser.")
+
     }
   };
 
@@ -106,7 +101,7 @@ const Refer = () => {
 
   return (
     <div>
-      { isLoading ?
+      {isLoading ?
         <Loader /> : <Content Page_title="Referral & Rewards" button_status={false}>
           <div className="page-content">
             <div className="row align-items-center">
