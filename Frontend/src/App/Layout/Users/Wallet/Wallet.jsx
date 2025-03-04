@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import { GetUserData, GetWithdrawRequest, GetReferEarning, GetPayoutDetail } from "../../../Services/UserService/User";
-import Swal from 'sweetalert2';
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 
@@ -87,28 +86,15 @@ const Wallet = () => {
       const response = await GetWithdrawRequest(data, token);
 
       if (response.status) {
-        Swal.fire({
-          title: 'Success!',
-          text: response.message || 'Your withdrawal request has been processed successfully.',
-          icon: 'success',
-          confirmButtonText: 'OK'
-        });
+        showCustomAlert("Success", response.message || 'Your withdrawal request has been processed successfully.')
         setRequest({ clientId: "", amount: "" });
       } else {
-        Swal.fire({
-          title: 'Error!',
-          text: response.message || 'There was an issue processing your withdrawal request.',
-          icon: 'error',
-          confirmButtonText: 'Try Again'
-        });
+        showCustomAlert("error", response.message || 'There was an issue processing your withdrawal request.')
+
       }
     } catch (error) {
-      Swal.fire({
-        title: 'Error!',
-        text: 'An unexpected error occurred. Please try again later.',
-        icon: 'error',
-        confirmButtonText: 'OK'
-      });
+      showCustomAlert("error", 'An unexpected error occurred. Please try again later.')
+
     }
   };
 

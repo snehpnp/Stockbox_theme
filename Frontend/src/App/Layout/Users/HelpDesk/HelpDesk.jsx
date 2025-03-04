@@ -4,9 +4,8 @@ import FormicForm from '../../../Extracomponents/Newformicform';
 import { useFormik } from 'formik';
 import { Tabs, Tab } from 'react-bootstrap';
 import { SendHelpRequest, GetHelpMessage } from '../../../Services/UserService/User';
-import Swal from 'sweetalert2';
 import Loader from '../../../../Utils/Loader';
-
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const HelpDesk = () => {
 
@@ -42,33 +41,12 @@ const HelpDesk = () => {
         try {
             const response = await SendHelpRequest(data, token);
             if (response.status) {
-                Swal.fire({
-                    icon: "success",
-                    title: "Message Sent Successfully!",
-                    text: "Your message has been sent successfully!",
-                    timer: 2000,
-                    timerProgressBar: true,
-                    showConfirmButton: false
-                });
+                showCustomAlert("Success", "Your message has been sent successfully!")
             } else {
-                Swal.fire({
-                    icon: "error",
-                    title: "Message Failed",
-                    text: "Message Failed. Please try again.",
-                    timer: 2000,
-                    timerProgressBar: true,
-                    showConfirmButton: false
-                });
+                showCustomAlert("error", "Message Failed. Please try again.")
             }
         } catch (error) {
-            Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: "An error occurred while sending the message. Please check your network or try again later.",
-                timer: 2000,
-                timerProgressBar: true,
-                showConfirmButton: false
-            });
+            showCustomAlert("error", "An error occurred while sending the message. Please check your network or try again later.")
         }
     };
 

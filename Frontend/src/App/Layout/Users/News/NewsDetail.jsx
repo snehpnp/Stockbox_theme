@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
-import Swal from "sweetalert2";
 import { Bell } from "lucide-react";
 import { Link } from "react-router-dom";
 
