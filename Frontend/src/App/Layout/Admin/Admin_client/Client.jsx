@@ -269,6 +269,7 @@ const Client = () => {
   const updateClient = async (row) => {
     navigate("/admin/client/updateclient/" + row._id, { state: { row } });
   };
+  
 
   const signaldetail = async (row) => {
     navigate("/admin/clientsignaldetail/" + row._id, { state: { row } });
@@ -277,6 +278,10 @@ const Client = () => {
   const Clientdetail = async (row) => {
     navigate("/admin/client/clientdetail/" + row._id, { state: { row } });
   };
+
+
+
+
 
   const DeleteClient = async (_id) => {
     try {
