@@ -272,7 +272,7 @@ const Sidebar = () => {
                                 textDecoration: "none",
                                 display: "flex",
                                 alignItems: "center",
-                                gap: "10px",
+                                // gap: "10px",
                               }}
                             >
                               {" "}
