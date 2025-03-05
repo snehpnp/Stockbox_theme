@@ -183,7 +183,7 @@ const Subscription = () => {
                       </td>
                       <td>
                         ₹{accordion?.total}
-                        <small className="text-muted"> {accordion?.gstamount ? `(${accordion?.gstamount}% Tax included)` : ""}</small>
+                        <small className="text-muted"> {accordion?.gst ? `(${accordion?.gst}% Tax included)` : ""}</small>
                       </td>
                     </tr>
                   </tbody>
@@ -267,7 +267,7 @@ const Subscription = () => {
                     </tr>
                     <tr>
                       <td><strong>Purchase Price:</strong></td>
-                      <td>₹{accordion?.total || "--"} {accordion?.gstamount ? `(${accordion?.gstamount}% Tax included)` : ""}</td>
+                      <td>₹{accordion?.total || "--"} {accordion?.gst ? `(${accordion?.gst}% Tax included)` : ""}</td>
                     </tr>
                     <tr>
                       <td><strong>Expired On:</strong></td>

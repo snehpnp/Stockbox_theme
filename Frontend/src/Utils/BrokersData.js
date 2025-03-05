@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import ReusableModal from "../App/components/Models/ReusableModal";
 import { UpdateBroker } from "../App/Services/UserService/User";
 import Swal from "sweetalert2";
+import { SquarePen, Eye } from 'lucide-react';
 
 function BrokersData({ data, closeModal }) {
+
+
   const [viewModel, setViewModel] = useState(true);
   const userId = localStorage.getItem("id");
   const token = localStorage.getItem("token");
@@ -218,7 +221,8 @@ function BrokersData({ data, closeModal }) {
           ) : null}
 
           {showModal && brokerId && (
-            <div className="modal-body mt-6">
+            < div className="modal-body mt-6">
+              <h1>asdad</h1>
               <div>
                 {fields.map((field, index) => (
                   <div key={index} className="mb-4 ">
