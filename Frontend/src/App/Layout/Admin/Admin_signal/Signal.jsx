@@ -129,6 +129,8 @@ const Signal = () => {
     });
 
 
+    console.log("checkedTargets1", checkedTargets1)
+
     const handleCheckboxChange = (e, target) => {
 
         setCheckedTargets1((prevState) => ({
@@ -425,7 +427,7 @@ const Signal = () => {
                         return;
                     }
                 } else if (closedata.calltype === "SELL") {
-                    console.log("SELL", closedata.calltype);
+
 
                     const target1 = parseFloat(closedata.targetprice1) || null;
                     const target2 = parseFloat(closedata.targetprice2) || null;
@@ -480,14 +482,15 @@ const Signal = () => {
             }
 
             const data = {
+
                 id: serviceid._id,
                 closestatus: index === 1 ? checkstatus : "",
                 closetype: index === 0 ? "1" : index === 1 ? "2" : index === 2 ? "3" : index === 3 ? "4" : "5",
                 close_description: closedata.close_description,
 
-                targethit1: index === 1 && closedata.targetprice1 ? checkedTargets1.target1 : "",
-                targethit2: index === 1 && closedata.targetprice2 ? checkedTargets1.target2 : "",
-                targethit3: index === 1 && closedata.targetprice3 ? checkedTargets1.target3 : "",
+                targethit1: index === 1 && closedata.targetprice1 ? 1 : checkedTargets1.target1,
+                targethit2: index === 1 && closedata.targetprice2 ? 1 : checkedTargets1.target2,
+                targethit3: index === 1 && closedata.targetprice3 ? 1 : checkedTargets1.target3,
 
                 targetprice1: index === 0 ? closedata.tag1 : index === 1 ? closedata.targetprice1 : "",
                 targetprice2: index === 0 ? closedata.tag2 : index === 1 ? closedata.targetprice2 : "",
@@ -1046,7 +1049,7 @@ const Signal = () => {
                                                         style={{ width: "50%" }}
                                                         type="number"
                                                         id="targethit1"
-                                                        Value={closedata.targetprice1 || ""}
+                                                        value={closedata.targetprice1 || ""}
                                                         onChange={(e) => handleChange(e, 'targetprice1')}
                                                     />
                                                 </div>
@@ -1074,7 +1077,7 @@ const Signal = () => {
                                                         type="number"
                                                         style={{ width: "50%" }}
                                                         id="targethit2"
-                                                        Value={closedata.targetprice2 || ""}
+                                                        value={closedata.targetprice2 || ""}
                                                         onChange={(e) => handleChange(e, 'targetprice2')}
                                                     />
                                                 </div>
@@ -1102,7 +1105,7 @@ const Signal = () => {
                                                         type="number"
                                                         style={{ width: "50%" }}
                                                         id="targethit3"
-                                                        Value={closedata.targetprice3 || ""}
+                                                        value={closedata.targetprice3 || ""}
                                                         onChange={(e) => handleChange(e, 'targetprice3')}
                                                     />
                                                 </div>
