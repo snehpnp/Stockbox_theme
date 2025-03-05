@@ -499,6 +499,7 @@ const Signal = () => {
                 exitprice: index === 3 ? closedata.exitprice : ""
             };
 
+
             const response = await SignalCloseApi(data, token);
 
             if (response && response.status) {
