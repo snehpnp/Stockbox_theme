@@ -1182,19 +1182,25 @@ async function calculateCAGRForBaskets(req, res) {
         const years = (currentDate - createdAt) / (1000 * 60 * 60 * 24 * 365.25); // Approximate years
 
         // Calculate CAGR
-        let cagr = null;
+        let cagr = 0;
         if (years >= 1 && startingPrice > 0) {
             cagr = ((Math.pow(currentPrice / startingPrice, 1 / years) - 1) * 100).toFixed(2);
         }
         else
         {
-            cagr = (((currentPrice - startingPrice) / startingPrice) * 100).toFixed(2);
+            if (startingPrice > 0) {
+                    cagr = (((currentPrice - startingPrice) / startingPrice) * 100).toFixed(2);
+                }
+                else 
+                {
+                    cagr = 0;
+                }
         }
 
         // Update the basket with the calculated CAGR
         await Basket_Modal.updateOne(
             { _id },
-            { $set: { cagr_live: cagr ? parseFloat(cagr) : null } }
+            { $set: { cagr_live: cagr ? parseFloat(cagr) : 0 } }
         );
     }
     

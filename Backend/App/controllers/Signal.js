@@ -15,7 +15,6 @@ const { sendFCMNotification } = require('./Pushnotification'); // Adjust if nece
 var axios = require('axios');
 
 
-
 class Signal {
 
     async AddSignal(req, res) {
@@ -74,6 +73,8 @@ if (segment == "C") {
 
 
 let stocks;
+let tradesymbols;
+
 if (segment === "C") {
     stocks = await Stock_Modal.findOne({ 
         symbol: stock, 
@@ -93,6 +94,10 @@ if (segment === "C") {
          option_type: optiontype, 
         strike: strikeprice 
     });
+
+
+    tradesymbols = `${stocks.symbol} ${stocks.expiry_str} ${stocks.strike} ${stocks.option_type}`;
+
 }
 
 
@@ -126,6 +131,7 @@ if (!stocks) {
               segment:segment,
               optiontype: optiontype,
               tradesymbol:stocks.tradesymbol,
+              tradesymbols:tradesymbols,
               lotsize: stocks.lotsize,
               entrytype:entrytype,
               lot:lot,
@@ -667,11 +673,12 @@ async getSignalWithFilter(req, res) {
       if (tokens.length > 0) {
   
         const resultn = new Notification_Modal({
-          segmentid:service,
-          type:"close signal",
+          segmentid: service,
+          type: close_status ? "close signal" : "open signal",
           title: notificationTitle,
           message: notificationBody
       });
+      
 
       await resultn.save();
 
@@ -1790,12 +1797,12 @@ async closeSignalwithplan(req, res) {
     if (tokens.length > 0) {
 
       const resultn = new Notification_Modal({
-        segmentid:Signal.planid,
-        type:"close signal",
+        segmentid: service,
+        type: close_status ? "close signal" : "open signal",
         title: notificationTitle,
         message: notificationBody
     });
-
+    
     await resultn.save();
 
 
