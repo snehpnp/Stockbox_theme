@@ -1797,12 +1797,12 @@ async closeSignalwithplan(req, res) {
     if (tokens.length > 0) {
 
       const resultn = new Notification_Modal({
-        segmentid:Signal.planid,
-        type:"close signal",
+        segmentid: service,
+        type: close_status ? "close signal" : "open signal",
         title: notificationTitle,
         message: notificationBody
     });
-
+    
     await resultn.save();
 
 
