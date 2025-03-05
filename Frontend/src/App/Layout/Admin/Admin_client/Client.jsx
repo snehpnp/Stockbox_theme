@@ -213,6 +213,8 @@ const Client = () => {
     }
   };
 
+
+
   const getAdminclient = async () => {
     try {
       const data = {
@@ -233,6 +235,8 @@ const Client = () => {
                   : expired === "NA" ? "NA" : "",
         add_by: "",
       };
+
+
       const response = await AllclientFilter(data, token);
 
       if (response.status) {
@@ -243,6 +247,8 @@ const Client = () => {
       console.error("Error fetching clients:", error);
     }
   };
+
+
 
   const getplanlistassinstatus = async (_id) => {
     try {
@@ -255,6 +261,9 @@ const Client = () => {
     }
   };
 
+
+
+
   const getbasketlist = async () => {
     try {
       const response = await BasketAllList(token);
@@ -266,10 +275,12 @@ const Client = () => {
     }
   };
 
+
+
   const updateClient = async (row) => {
     navigate("/admin/client/updateclient/" + row._id, { state: { row } });
   };
-  
+
 
   const signaldetail = async (row) => {
     navigate("/admin/clientsignaldetail/" + row._id, { state: { row } });

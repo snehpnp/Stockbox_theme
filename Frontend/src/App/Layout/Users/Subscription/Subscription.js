@@ -5,12 +5,14 @@ import Content from "../../../components/Contents/Content";
 import { fDate, fDateTime } from "../../../../Utils/Date_formate";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import Loader from "../../../../Utils/Loader";
-import { basicsettinglist } from "../../../Services/Admin/Admin";
+
 
 
 const Subscription = () => {
 
   const token = localStorage.getItem("token");
+
+
 
   const [planData, setPlanData] = useState([]);
   const [basketData, setBasketData] = useState([]);
@@ -20,7 +22,7 @@ const Subscription = () => {
   const id = localStorage.getItem("id");
   const [isLoading, setIsLoading] = useState(true)
   const [servicedata, setServicedata] = useState([])
-  const [gstdata, setGstdata] = useState([]);
+
 
 
 
@@ -32,23 +34,7 @@ const Subscription = () => {
     } else if (activeTab === "basket") {
       fetchBasketMySubscription()
     }
-    getkeybydata()
   }, [activeTab]);
-
-
-
-  const getkeybydata = async () => {
-    try {
-      const response = await basicsettinglist();
-      if (response.status) {
-        setGstdata(response?.data[0]?.gst);
-      }
-    } catch (error) {
-      console.error("Error fetching coupons:", error);
-    }
-  };
-
-
 
 
   const fetchMySubscription = async () => {
@@ -64,6 +50,9 @@ const Subscription = () => {
     }
     // setIsLoading(false)
   };
+
+
+
 
 
   const fetchBasketMySubscription = async () => {
@@ -95,24 +84,6 @@ const Subscription = () => {
     setIsLoading(false)
   };
 
-
-
-  const columns = [
-    {
-      name: "Basket Name",
-      selector: (row) => row?.categoryDetails?.title,
-      sortable: true,
-      width: "200px",
-    },
-    {
-      name: "Title",
-      selector: (row) => row?.serviceNames,
-    },
-    {
-      name: "Year",
-      selector: (row) => row?.year,
-    },
-  ];
 
 
   const handleViewClick = (plan) => {
