@@ -5047,12 +5047,12 @@ class List {
           signalid: signal._id
         }).lean();
 
-       
         return {
           ...signal,
           report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null, // Append full report URL
           purchased: order ? true : false,
-          order_quantity: order ? order.quantity : 0
+          order_quantity: order ? order.quantity : 0,
+          tradesymbol: signal.segment === "O" ? signal.tradesymbols : signal.tradesymbol
         };
       }));
 
@@ -6584,7 +6584,9 @@ class List {
           ...signal,
           report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null, // Append full report URL
           purchased: order ? true : false,
-          order_quantity: order ? order.quantity : 0
+          order_quantity: order ? order.quantity : 0,
+          tradesymbol: signal.segment === "O" ? signal.tradesymbols : signal.tradesymbol
+
         };
       }));
 

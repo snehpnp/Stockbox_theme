@@ -15,7 +15,6 @@ const { sendFCMNotification } = require('./Pushnotification'); // Adjust if nece
 var axios = require('axios');
 
 
-
 class Signal {
 
     async AddSignal(req, res) {
@@ -74,6 +73,8 @@ if (segment == "C") {
 
 
 let stocks;
+let tradesymbols;
+
 if (segment === "C") {
     stocks = await Stock_Modal.findOne({ 
         symbol: stock, 
@@ -93,6 +94,10 @@ if (segment === "C") {
          option_type: optiontype, 
         strike: strikeprice 
     });
+
+
+    tradesymbols = `${stocks.symbol} ${stocks.expiry_str} ${stocks.strike} ${stocks.option_type}`;
+
 }
 
 
@@ -126,6 +131,7 @@ if (!stocks) {
               segment:segment,
               optiontype: optiontype,
               tradesymbol:stocks.tradesymbol,
+              tradesymbols:tradesymbols,
               lotsize: stocks.lotsize,
               entrytype:entrytype,
               lot:lot,
