@@ -673,11 +673,12 @@ async getSignalWithFilter(req, res) {
       if (tokens.length > 0) {
   
         const resultn = new Notification_Modal({
-          segmentid:service,
-          type:"close signal",
+          segmentid: service,
+          type: close_status ? "close signal" : "open signal",
           title: notificationTitle,
           message: notificationBody
       });
+      
 
       await resultn.save();
 
