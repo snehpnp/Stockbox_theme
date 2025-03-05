@@ -36,7 +36,6 @@ const Signal = () => {
     const location = useLocation();
     const clientStatus = location?.state?.clientStatus;
 
-    //state for loading
     const [isLoading, setIsLoading] = useState(true)
 
 
@@ -129,7 +128,7 @@ const Signal = () => {
     });
 
 
-    console.log("checkedTargets1", checkedTargets1)
+
 
     const handleCheckboxChange = (e, target) => {
 
@@ -251,8 +250,6 @@ const Signal = () => {
             };
 
             const response = await GetSignallistWithFilter(data, token);
-            // console.log("GetSignallistWithFilter", response);
-
 
             if (response && response.status) {
                 setTotalRows(response.pagination.totalRecords);
