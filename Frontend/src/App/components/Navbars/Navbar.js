@@ -17,15 +17,20 @@ import BrokersData from "../../../Utils/BrokersData";
 import axios from "axios";
 import { GetUserData } from "../../Services/UserService/User";
 import { GetNotificationData } from "../../Services/UserService/User";
-
+import { base_url } from "../../../Utils/config";
 
 
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
+
+
+  
   useEffect(() => {
     getdemoclient();
     gettradedetail();
     getuserdetail();
   }, []);
+
+
 
   const navigate = useNavigate();
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
@@ -40,7 +45,6 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const [isChecked1, setIsChecked1] = useState(false);
   const [getstatus, setGetstatus] = useState([]);
   const [badgecount, setBadgecount] = useState([]);
-  // const [badgecount1, setBadgecount1] = useState([]);
   const [viewmodel, setViewModel] = useState(false);
   const [UserDetail, setUserDetail] = useState([]);
   const [userNotification, setUserNotification] = useState([]);
@@ -65,8 +69,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
 
 
-
   const handleNotificationClick = async (event, notification) => {
+
     const user_active_status = "1";
     const data = { id: notification._id, status: user_active_status };
 
@@ -153,6 +157,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     }
   };
 
+
+
+
+
   const gettradedetail = async () => {
     try {
       const response = await basicsettinglist(token);
@@ -222,6 +230,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
 
 
+
+
   const UpdateloginOff = async (e) => {
     const dataoff = e.target.checked ? 1 : 0;
     Swal.fire({
@@ -278,6 +288,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   };
 
 
+
+
   useEffect(() => {
     if (getstatus[0]?.brokerloginstatus === 1) {
       setIsChecked(true);
@@ -286,6 +298,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       setIsChecked1(true);
     }
   }, [getstatus, UserDetail]);
+
 
 
 
@@ -301,6 +314,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   };
 
 
+
+
   const TradingBtnCall = async (e) => {
     if (UserDetail.dlinkstatus == 0) {
       setViewModel(true);
@@ -312,7 +327,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       } else if (UserDetail.brokerid == 3) {
       } else if (UserDetail.brokerid == 4) {
       } else if (UserDetail.brokerid == 5) {
+        window.location.href = `https://kite.zerodha.com/connect/login?v=3&api_key=${UserDetail.apikey};`;
       } else if (UserDetail.brokerid == 6) {
+        window.location.href = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=${UserDetail.apikey}&redirect_uri=https://${base_url}/backend/upstox/getaccesstoken&state=${UserDetail.Email};`
       } else if (UserDetail.brokerid == 7) {
       }
     }

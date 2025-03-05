@@ -110,7 +110,7 @@ const Demat = () => {
       else if (brokerData.brokerid == 5) {
         window.location.href = `https://kite.zerodha.com/connect/login?v=3&api_key=${brokerData.apikey};`;
       } else if (brokerData.brokerid == 6) {
-        window.location.href = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=${brokerData.apikey}&redirect_uri=https://${base_url}/backend/upstox/getaccesstoken&state=${brokerData.Email};`;
+        window.location.href = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=${brokerData.apikey}&redirect_uri=https://${base_url}/backend/upstox/getaccesstoken&state=${brokerData.Email};`
       } else if (brokerData.brokerid == 7) {
       }
     }
