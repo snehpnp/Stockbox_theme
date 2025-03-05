@@ -674,7 +674,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                               top: "-5px",
                               right: "-5px",
                               background: "red",
-                              color: "white",
+                              color: "#fff",
                               fontSize: "12px",
                               fontWeight: "bold",
                               borderRadius: "50%",

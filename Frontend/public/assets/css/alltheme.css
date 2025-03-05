@@ -190,7 +190,7 @@ button.button_sell.active {
 ul.submenu {
   /* background: #ffff; */
   /* box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px; */
-  padding: 0 10px;
+  padding: 0 0px 0px 8px;
 }
 li.sidebar-subitem {
   padding: 7px 0;
@@ -1198,11 +1198,11 @@ div#dropdownMenuLink svg{
 
 
 span.alert-count {
-  top: -5px !important;
+  top: -6px !important;
   right: -10px !important;
   width: 15px;
   height: 15px;
-  padding: 2px 5px !important;
+  padding: 2px 4px !important;
   line-height: 13px !important;
 }
 span.trade-type1 {
