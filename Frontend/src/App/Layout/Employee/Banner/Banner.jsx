@@ -24,7 +24,7 @@ const Banner = () => {
     const [searchInput, setSearchInput] = useState("");
     const [permission, setPermission] = useState([]);
 
-    //state for loading
+
     const [isLoading, setIsLoading] = useState(true)
 
     const [showModal, setShowModal] = useState(false);
@@ -74,6 +74,9 @@ const Banner = () => {
         }
         setIsLoading(false)
     };
+
+
+
 
     const getpermissioninfo = async () => {
         try {
@@ -138,10 +141,9 @@ const Banner = () => {
 
     // Add service
     const AddBanner = async () => {
-        if (isAddSubmittion) return; // Prevent multiple submissions
+        if (isAddSubmittion) return;
 
-
-        setIsAddSubmittion(true); // Set the state to indicate that the process is running
+        setIsAddSubmittion(true);
         try {
             const data = { title: title.title, description: title.description, image: title.image, add_by: userid, hyperlink: title.hyperlink };
 
@@ -184,7 +186,7 @@ const Banner = () => {
             });
         }
         finally {
-            setIsAddSubmittion(false); // Re-enable the button after the update process is done
+            setIsAddSubmittion(false);
         }
     };
 
@@ -288,11 +290,6 @@ const Banner = () => {
         //     width: '150px',
 
         // },
-        // {
-        //     name: 'Title',
-        //     selector: row => row.title,
-        //     sortable: true,
-        // },
         {
             name: 'Image',
             cell: row => <img src={`${image_baseurl}uploads/banner/${row.image}`} alt={row.image} title={row.image} width="50" height="50" />,
@@ -328,11 +325,7 @@ const Banner = () => {
 
 
         },
-        // {
-        //     name: 'Updated At',
-        //     selector: row => fDateTime(row.updated_at),
-        //     sortable: true,
-        // },
+
 
 
         permission.includes("editbanner") || permission.includes("deletebanner") ? {
@@ -368,26 +361,12 @@ const Banner = () => {
 
 
 
-    // const updateServiceTitle = (value) => {
-    //     setUpdatetitle(prev => ({
-    //         ...prev,
-    //         title: value
-    //     }));
-    // };
-
-
     const updateServiceTitle = (updatedField) => {
         setUpdatetitle(prev => ({
             ...prev,
             ...updatedField
         }));
     };
-
-
-
-
-
-
 
 
     return (
@@ -413,18 +392,7 @@ const Banner = () => {
                 <div className="card">
                     <div className="card-body">
                         <div className="d-lg-flex align-items-center mb-4 gap-3">
-                            {/* <div className="position-relative">
-                                <input
-                                    type="text"
-                                    className="form-control ps-5 radius-10"
-                                    placeholder="Search Banner"
-                                    onChange={(e) => setSearchInput(e.target.value)}
-                                    value={searchInput}
-                                />
-                                <span className="position-absolute top-50 product-show translate-middle-y">
-                                    <i className="bx bx-search" />
-                                </span>
-                            </div> */}
+
                             {permission.includes("addbanner") ?
                                 <div className="ms-auto">
                                     <button
@@ -438,7 +406,7 @@ const Banner = () => {
                                         Add Banner
                                     </button>
 
-                                    {/* ADD BANNER */}
+
                                     <ReusableModal
                                         show={showModal}
                                         onClose={() => setShowModal(false)}
@@ -501,7 +469,7 @@ const Banner = () => {
                                         }
                                     />
 
-                                    {/* UPDATE BANNER */}
+
                                     <ReusableModal
                                         show={model}
                                         onClose={() => setModel(false)}
@@ -604,103 +572,7 @@ const Banner = () => {
                     </div>
                 </div>
             </div>
-            {/* {model && (
-                <>
-                    <div className="modal-backdrop fade show"></div>
-                    <div
-                        className="modal fade show"
-                        style={{ display: 'block' }}
-                        tabIndex={-1}
-                        aria-labelledby="exampleModalLabel"
-                        aria-hidden="true"
-                    >
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title" id="exampleModalLabel">
-                                        Update Banner
-                                    </h5>
-                                    <button
-                                        type="button"
-                                        className="btn-close"
-                                        onClick={() => setModel(false)}
-                                    />
-                                </div>
-                                <div className="modal-body">
-                                    <form>
-                                        <div className="row">
-                                            <div className="col-md-10">
-                                                <label htmlFor="imageUpload">Image</label>
-                                                <span className="text-danger">*</span>
-                                                <input
-                                                    className="form-control mb-3"
-                                                    type="file"
-                                                    accept="image/*"
-                                                    id="imageUpload"
-                                                    onChange={(e) => {
-                                                        const file = e.target.files[0];
-                                                        if (file) {
-                                                            updateServiceTitle({ image: file });
-                                                        }
 
-                                                    }}
-                                                />
-                                            </div>
-                                            <div className="col-md-2">
-
-                                                {updatetitle.image && (
-                                                    <div className="file-preview">
-                                                        <img
-                                                            src={
-                                                                typeof updatetitle.image === 'string'
-                                                                    ? `${image_baseurl}uploads/banner/${updatetitle.image}`
-                                                                    : URL.createObjectURL(updatetitle.image)
-                                                            }
-                                                            alt="Image Preview"
-                                                            className="image-preview mt-4"
-                                                            style={{ width: "68px", height: "auto" }}
-                                                        />
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-md-12">
-                                                <label htmlFor="hyperlink">HyperLink</label>
-                                                <input
-                                                    className="form-control mb-2"
-                                                    type="text"
-                                                    placeholder='Enter blog Title'
-                                                    value={updatetitle.hyperlink}
-                                                    onChange={(e) => updateServiceTitle({ hyperlink: e.target.value })}
-                                                />
-                                            </div>
-                                        </div>
-                                    </form>
-
-
-                                </div>
-                                <div className="modal-footer">
-                                    <button
-                                        type="button"
-                                        className="btn btn-secondary"
-                                        onClick={() => setModel(false)}
-                                    >
-                                        Close
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary"
-                                        onClick={updatebanner}
-                                    >
-                                        Update Banner
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </>
-            )} */}
         </div>
     );
 };
