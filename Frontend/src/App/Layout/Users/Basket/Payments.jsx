@@ -163,7 +163,7 @@ const Payments = () => {
                                     <h6 className="card-title mb-0"><strong>₹  {item?.basket_price}</strong></h6>
                                 </div>
                                 <div className="d-md-flex justify-content-between">
-                                    <h6 className="card-title mb-0"><strong>GST ({gstdata})</strong></h6>
+                                    <h6 className="card-title mb-0"><strong>GST ({gstdata}%)</strong></h6>
                                     <h6 className="card-title mb-0"><strong>₹ {(((item?.basket_price) * gstdata) / 100).toFixed(2)}</strong></h6>
                                 </div>
                                 <div className="d-md-flex justify-content-between">
