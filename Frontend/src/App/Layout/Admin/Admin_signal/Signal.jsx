@@ -509,9 +509,6 @@ const Signal = () => {
                 }
             }
 
-
-            return
-
             const data = {
 
                 id: serviceid._id,
