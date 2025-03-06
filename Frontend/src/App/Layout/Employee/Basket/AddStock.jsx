@@ -4,8 +4,8 @@ import { useNavigate, Link, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import * as Config from "../../../../Utils/config";
 import { Tooltip } from 'antd';
-import Swal from "sweetalert2";
 import { Addstockbasketform } from "../../../Services/Admin/Admin";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 
@@ -132,7 +132,7 @@ const AddStock = () => {
 
   const handleSubmit = async (status) => {
     if (Object.keys(formikValues).length === 0) {
-      Swal.fire("Warning", "Please add stock", "warning");
+      showCustomAlert("error", "Please add stock", null, null)
       return;
     }
 
@@ -142,11 +142,7 @@ const AddStock = () => {
 
 
     if (invalidStocks.length > 0) {
-      Swal.fire(
-        "Error",
-        "Each stock's weightage should be greater than zero.",
-        "error"
-      );
+      showCustomAlert("error", "Each stock's weightage should be greater than zero.", null, null)
       return;
     }
 
@@ -157,16 +153,12 @@ const AddStock = () => {
     });
 
     if (totalWeightage !== 100) {
-      Swal.fire(
-        "Error",
-        "Total weightage of all stocks must be exactly 100.",
-        "error"
-      );
+      showCustomAlert("error", "Total weightage of all stocks must be exactly 100.", null, null)
       return;
     }
 
     if (!basket_id) {
-      Swal.fire("Error", "Basket ID is missing. Please try again.", "error");
+      showCustomAlert("error", "Basket ID is missing. Please try again.", null, null)
       return;
     }
 
@@ -185,14 +177,14 @@ const AddStock = () => {
     try {
       const response = await Addstockbasketform(requestData);
       if (response?.status) {
-        Swal.fire("Success", response.message, "success");
+        showCustomAlert("Success", response.message, "success");
         setTimeout(() => navigate(redirectTo), 1500);
       } else {
-        Swal.fire("Error", response.message, "error");
+        showCustomAlert("error", response.message, "error");
       }
     } catch (error) {
-      Swal.fire(
-        "Error",
+      showCustomAlert(
+        "error",
         "An unexpected error occurred. Please try again.",
         "error"
       );

@@ -1,10 +1,10 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { UpdateClient } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 
@@ -56,33 +56,18 @@ const EditClient = () => {
     try {
       const response = await UpdateClient(req, token);
       if (response.status) {
-        Swal.fire({
-          title: "Update Successful!",
-          text: response.message,
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        setTimeout(() => {
-          navigate("/employee/client");
-        }, 1500);
-      } else {
-        Swal.fire({
-          title: "Error",
-          text: response.message,
-          icon: "error",
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("Success", response.message, navigate, "/employee/client");
+      }else {
+        if (response.error.status === false) {
+          showCustomAlert("error", response.error.message);
+        } else if (response.error.status === false) {
+          showCustomAlert("error", response.error.message);
+        } else {
+          showCustomAlert("error", "Email or Mobile number are already exists.");
+        }
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred. Please try again later.",
-        icon: "error",
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert("error", "An unexpected error occurred. Please try again later.");
     }
   };
 

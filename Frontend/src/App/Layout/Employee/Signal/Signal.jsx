@@ -4,7 +4,6 @@ import axios from 'axios';
 import { GetClient } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table1';
 import { Eye, Trash2, RefreshCcw, SquarePen, IndianRupee, ArrowDownToLine } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { GetSignallist, GetSignallistWithFilter, DeleteSignal, SignalCloseApi, getstaffperuser, GetService, GetStockDetail, UpdatesignalReport } from '../../../Services/Admin/Admin';
 import { fDateTimeH } from '../../../../Utils/Date_formate'
 import { exportToCSV } from '../../../../Utils/ExportData';
@@ -13,6 +12,7 @@ import { Tooltip } from 'antd';
 import { image_baseurl } from '../../../../Utils/config';
 import Loader from '../../../../Utils/Loader';
 import ReusableModal from '../../../components/Models/ReusableModal';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 
@@ -309,44 +309,20 @@ const Signal = () => {
 
     const DeleteSignals = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this employee  member? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert("confirm", "Do you want to delete this ? This action cannot be undone.")
 
             if (result.isConfirmed) {
                 const response = await DeleteSignal(_id, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The Employee has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
+                    showCustomAlert("Success", 'The Signal has been successfully deleted.')
                     getAllSignal();
 
                 }
             } else {
-
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The Employee deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
+                showCustomAlert("error", 'The Signal deletion was cancelled.')
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the Employee.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
-
+            showCustomAlert("error", 'There was an error deleting the Signal.')
         }
     };
 
@@ -391,12 +367,7 @@ const Signal = () => {
     const closeSignalperUser = async (index) => {
         try {
             const showValidationError = (message) => {
-                Swal.fire({
-                    title: 'Error!',
-                    text: message,
-                    icon: 'warning',
-                    confirmButtonText: 'OK'
-                });
+                showCustomAlert("error", message)
             };
 
 
@@ -500,15 +471,7 @@ const Signal = () => {
             const response = await SignalCloseApi(data, token);
 
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Signal Closed Successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                    timerProgressBar: true
-                });
-
+                showCustomAlert("Success", 'Signal Closed Successfully.')
                 setClosedata({
                     closeprice: "", close_description: "", targetprice1: "", targetprice2: "", targetprice3: "",
                     targethit1: "", targethit2: "", targethit3: ""
@@ -516,20 +479,12 @@ const Signal = () => {
                 setModel(!model);
                 getAllSignal();
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: response.message || 'There was an error closing the signal.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again'
-                });
+                showCustomAlert("error", response.message)
+
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error updating the service.',
-                icon: 'error',
-                confirmButtonText: 'Try Again'
-            });
+            showCustomAlert("error", 'There was an error updating the service.')
+
         }
     };
 
@@ -716,32 +671,15 @@ const Signal = () => {
             const response = await UpdatesignalReport(data, token);
 
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: response.message || 'File updated successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
-
+                showCustomAlert("Success", response.message)
                 setUpdatetitle({ report: "", id: "", description: "" });
                 setModel1(false);
                 getAllSignal();
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: response.message || 'There was an error updating the file.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", response.message)
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'server error',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", error.message)
         }
     };
 
@@ -1530,12 +1468,7 @@ const Signal = () => {
                                         const file = e.target.files[0];
                                         if (file) {
                                             if (file.type !== "application/pdf") {
-                                                Swal.fire({
-                                                    title: 'Error!',
-                                                    text: 'Only PDF files are allowed!',
-                                                    icon: 'error',
-                                                    confirmButtonText: 'Try Again',
-                                                });
+                                                showCustomAlert("error", 'Only PDF files are allowed!')
                                                 return;
                                             }
                                             updateServiceTitle({ report: file });

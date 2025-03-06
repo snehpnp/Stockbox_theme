@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { updateStockList } from "../../../Services/Admin/Admin";
-import Swal from "sweetalert2";
 import { Tooltip } from 'antd';
 import axios from "axios";
 import * as Config from "../../../../Utils/config";
 import Content from "../../../components/Contents/Content";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 
@@ -165,7 +165,7 @@ const EditStock = () => {
 
     const handleSubmit = async (status) => {
         if (Object.keys(formValues).length === 0) {
-            Swal.fire("Error", "Stock is required for edit", "warning");
+            showCustomAlert("error", "Stock is required for edit", "warning");
             return;
         }
 
@@ -174,11 +174,7 @@ const EditStock = () => {
         );
 
         if (invalidStocks.length > 0) {
-            Swal.fire(
-                "Error",
-                "Each stock's weightage should be greater than zero.",
-                "error"
-            );
+            showCustomAlert("error", "Each stock's weightage should be greater than zero.");
             return;
         }
 
@@ -189,11 +185,7 @@ const EditStock = () => {
         );
 
         if (totalWeightage !== 100) {
-            Swal.fire(
-                "Error",
-                "Total weightage of all stocks must be exactly 100.",
-                "error"
-            );
+            showCustomAlert("error", "Total weightage of all stocks must be exactly 100.");
             return;
         }
 
@@ -215,17 +207,12 @@ const EditStock = () => {
         try {
             const response = await updateStockList(requestData);
             if (response?.status) {
-                Swal.fire("Success", response.message, "success");
-                setTimeout(() => navigate("/employee/basket"), 1500);
+                showCustomAlert("Success", response.message, navigate, "/employee/basket");
             } else {
-                Swal.fire("Error", response.message, "error");
+                showCustomAlert("error", response.message);
             }
         } catch (error) {
-            Swal.fire(
-                "Error",
-                "An unexpected error occurred. Please try again.",
-                "error"
-            );
+            showCustomAlert("error", "An unexpected error occurred. Please try again.");
         }
     };
 

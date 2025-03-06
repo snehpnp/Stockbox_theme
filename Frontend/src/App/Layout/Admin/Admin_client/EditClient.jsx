@@ -81,7 +81,6 @@ const EditClient = () => {
           showCustomAlert("error", response.error.message);
         } else {
           showCustomAlert("error", "Email or Mobile number are already exists.");
-
         }
       }
     } catch (error) {

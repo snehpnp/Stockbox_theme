@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Updatebasket, Viewbasket } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 const Editbasket = () => {
@@ -17,6 +17,9 @@ const Editbasket = () => {
   const token = localStorage.getItem("token");
 
   const [data, setData] = useState("")
+
+  const [loading, setLoading] = useState(false);
+
 
 
   useEffect(() => {
@@ -149,33 +152,15 @@ const Editbasket = () => {
       // return
 
       if (response.status) {
-        Swal.fire({
-          title: "Client Create Successfull !",
-          text: response.message,
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        setTimeout(() => {
-          navigate("/employee/basket");
-        }, 1500);
+        showCustomAlert("Success", response.message, navigate, "/employee/basket");
       } else {
-        Swal.fire({
-          title: "Alert",
-          text: response.message,
-          icon: "warning",
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("error", response.message);
+        setLoading(false)
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred. Please try again later.",
-        icon: "error",
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      setLoading(false)
+      showCustomAlert("error", "An unexpected error occurred. Please try again later.");
+
     }
   };
 

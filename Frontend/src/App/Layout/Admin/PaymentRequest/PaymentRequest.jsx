@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { PaymentRequestlist, ChangePaymentStatus } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table';
-import Swal from 'sweetalert2';
 import { fDateTime, fDateTimeH, fDate } from '../../../../Utils/Date_formate';
 import { Link } from 'react-router-dom';
 import { IndianRupee } from 'lucide-react';
 import { GetUserData } from '../../../Services/UserService/User';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 const PaymentRequest = () => {
@@ -48,32 +48,14 @@ const PaymentRequest = () => {
             };
             const response = await ChangePaymentStatus(data, token);
             if (response.status) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: response.message || "Status updated successfully.",
-                    timer: 2000
-                });
+                showCustomAlert('Success', 'Status updated successfully.')
                 getpaymentrequest();
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: response.message || 'Failed to update the request. Please try again.',
-                    timer: 3000
-                });
+                showCustomAlert('error', 'Failed to update status.')
                 window.location.reload();
-
-
             }
         } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: error.message || 'An unexpected error occurred. Please try again.',
-                timer: 2000
-            });
-
+            showCustomAlert('error', 'Failed to update status.')
         }
     };
 
@@ -192,32 +174,20 @@ const PaymentRequest = () => {
             2: 'Reject',
         };
 
-        const result = await Swal.fire({
-            title: 'Are you sure?',
-            text: `Do you want to change the status to "${statusMap[selectedValue]}"?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, update it!',
-            cancelButtonText: 'No, cancel!',
-        });
+        const result = await showCustomAlert("confirm", "Do you want to save the changes?");
 
-        if (result.isConfirmed) {
+        if (result) {
             try {
                 await Updatestatus(rowId, selectedValue);
                 setSelectedValues((prevValues) => ({
                     ...prevValues,
                     [rowId]: selectedValue,
                 }));
-                // Swal.fire('Updated!', 'The status has been updated.', 'success');
             } catch (error) {
-                Swal.fire('Error!', 'There was a problem updating the status.', 'error');
+                showCustomAlert('error','There was a problem updating the status.')
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
             window.location.reload()
-
-
         }
     };
 

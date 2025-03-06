@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { PaymentRequestlist, ChangePaymentStatus } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table';
-import Swal from 'sweetalert2';
 import { fDateTime, fDate } from '../../../../Utils/Date_formate';
 import { Link } from 'react-router-dom';
 import { IndianRupee } from 'lucide-react';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 const PaymentRequest = () => {
@@ -47,29 +47,13 @@ const PaymentRequest = () => {
             };
             const response = await ChangePaymentStatus(data, token);
             if (response.status) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: response.message || "Status updated successfully.",
-                    timer: 2000
-                });
+                showCustomAlert('Success',"Status updated successfully.")
                 getpaymentrequest();
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: response.message || 'Failed to update the request. Please try again.',
-                    timer: 2000
-                });
+                showCustomAlert('Error', 'Failed to update the request. Please try again.');
             }
         } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: error.message || 'An unexpected error occurred. Please try again.',
-                timer: 2000
-            });
-            console.log("Error:", error);
+            showCustomAlert('Error','An unexpected error occurred. Please try again.')
         }
     };
 
