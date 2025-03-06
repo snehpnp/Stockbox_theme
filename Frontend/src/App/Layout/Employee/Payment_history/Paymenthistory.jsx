@@ -4,7 +4,6 @@ import { getPayementhistory, getPayementhistorywithfilter } from '../../../Servi
 // import Table from '../../../components/Table';
 import Table from '../../../Extracomponents/Table1';
 import { SquarePen, Trash2, PanelBottomOpen, Eye, RefreshCcw, IndianRupee, ArrowDownToLine } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';

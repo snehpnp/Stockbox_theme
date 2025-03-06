@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getplanlist, getcategoryplan, Deleteplan, changeplanstatus, getActivecategoryplan } from '../../../Services/Admin/Admin';
 import { fDateTime } from '../../../../Utils/Date_formate';
-import Swal from 'sweetalert2';
 import Loader from '../../../../Utils/Loader'
 import Content from '../../../components/Contents/Content';
 import ReusableModal from '../../../components/Models/ReusableModal';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 
@@ -66,41 +66,19 @@ const Plan = () => {
 
     const Deleteplanbyadmin = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this plan? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert("confirm", "Do you want to delete this plan? This action cannot be undone.");
 
             if (result.isConfirmed) {
                 const response = await Deleteplan(_id, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The plan has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
+                    showCustomAlert('Success','The plan has been successfully deleted.')
                     getAdminclient();
                 }
             } else {
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The plan deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
+                showCustomAlert('info','The plan deletion was cancelled.')
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the plan.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert('error','There was an error deleting the plan.')
         }
     };
 
@@ -111,39 +89,21 @@ const Plan = () => {
         const user_active_status = originalChecked ? "active" : "inactive";
         const data = { id: id, status: user_active_status };
 
-        const result = await Swal.fire({
-            title: "Do you want Changes The Pakage Status?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
+        const result = await showCustomAlert('confirm','Do you want Changes The Pakage Status?')
 
         if (result.isConfirmed) {
             try {
                 const response = await changeplanstatus(data, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: "Saved!",
-                        icon: "Status changed successfully!",
-                        timer: 1000,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1000);
+                    showCustomAlert('Success', 'The plan status has been successfully updated.')
                 }
                 getcategoryplanlist();
                 getAdminclient();
 
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+                showCustomAlert('error', 'There was an error updating the plan status.')
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
             event.target.checked = !originalChecked;
             getcategoryplanlist();
         }

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { AddClient } from '../../../Services/Admin/Admin';
 import { Link } from 'react-router-dom';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const AddUser = () => { 
   const navigate = useNavigate();
@@ -57,35 +58,14 @@ const AddUser = () => {
     try {
       const response = await AddClient(req, token);
       if (response.status) {
-        Swal.fire({
-          title: "Client Create Successfull !",
-          text: response.message,
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        setTimeout(() => {
-          navigate("/employee/client");
-        }, 1500);
+        showCustomAlert('Success','Client Create Successfull !',navigate,"/employee/client")
       } else {
-        Swal.fire({
-          title: "Alert",
-          text: response.message,
-          icon: "warning",
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert('error',response.message)
         setLoading(false)
       }
     } catch (error) {
       setLoading(false)
-      Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred. Please try again later.",
-        icon: "error",
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert('error','An unexpected error occurred. Please try again later.')
     }
   };
 
@@ -149,7 +129,6 @@ const AddUser = () => {
       const currentValue = formik.values.freetrial; // Store current value
     
       console.log("Current toggle value:", e.target.checked);
-    
       Swal.fire({
         title: currentValue ? "Are you sure you want to disable the free trial?" : "Are you sure you want to enable the free trial?",
         showDenyButton: true,

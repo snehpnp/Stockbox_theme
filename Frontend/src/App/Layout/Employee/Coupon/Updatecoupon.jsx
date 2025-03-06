@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from "formik";
 import DynamicForm from "../../../Extracomponents/FormicForm";
-import Swal from "sweetalert2";
 import { useLocation, useNavigate } from "react-router-dom";
 import { updateCouponbyadmin, GetService } from "../../../Services/Admin/Admin";
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+
 
 
 
@@ -125,36 +126,15 @@ const Updatecoupon = () => {
 
     try {
       const response = await updateCouponbyadmin(req, token);
-      console.log("datata", response);
 
       if (response.status) {
-        Swal.fire({
-          title: "Update Successful!",
-          text: response.message,
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        setTimeout(() => {
-          navigate("/employee/coupon");
-        }, 1500);
+        showCustomAlert("Success", response.message, navigate, "/employee/coupon")
       } else {
-        Swal.fire({
-          title: "Error",
-          text: response.message,
-          icon: "error",
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("error", response.message)
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred. Please try again later.",
-        icon: "error",
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert("error", "An unexpected error occurred. Please try again later.")
+
     }
   };
 

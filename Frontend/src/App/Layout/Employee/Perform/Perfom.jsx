@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getPerformerstatus, GetService, getperformacebysegment, getperformacebysegmentwithfilter } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table1';
-import Swal from 'sweetalert2';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import { Link } from 'react-router-dom';
 import { Settings2, Eye, IndianRupee } from 'lucide-react';

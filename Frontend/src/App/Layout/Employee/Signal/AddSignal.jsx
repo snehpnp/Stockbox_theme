@@ -5,6 +5,7 @@ import { AddSignalByAdmin, GetService, getstockbyservice, getexpirydate, getstoc
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 
@@ -175,45 +176,18 @@ const AddSignal = () => {
 
       try {
         const response = await AddSignalByAdmin(req, token);
-        if (response.status) {
-          Swal.fire({
-            title: 'Create Successful!',
-            text: response.message,
-            icon: 'success',
-            timer: 2000,
-            timerProgressBar: true,
-          });
-          setTimeout(() => {
-            navigate('/employee/signal');
-
-          }, 2000);
-
-
+          if (response.status) {
+          showCustomAlert("Success", response.message, navigate, '/employee/signal')
         } else {
-          Swal.fire({
-            title: 'Alert',
-            text: response.message,
-            icon: 'warning',
-            timer: 1500,
-            timerProgressBar: true,
-          });
-
+          showCustomAlert("error", response.message)
           setLoading(false)
         }
       } catch (error) {
         setLoading(false)
-
-        Swal.fire({
-          title: 'Error',
-          text: 'An unexpected error occurred. Please try again later.',
-          icon: 'error',
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("error", 'An unexpected error occurred. Please try again later.')
       }
     }
   });
-
 
 
 

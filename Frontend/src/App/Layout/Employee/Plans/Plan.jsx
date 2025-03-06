@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getplanlist, getcategoryplan, Deleteplan, changeplanstatus, getstaffperuser, getActivecategoryplan } from '../../../Services/Admin/Admin';
 import { fDateTime } from '../../../../Utils/Date_formate';
-import Swal from 'sweetalert2';
 import Loader from '../../../../Utils/Loader'
 import ReusableModal from '../../../components/Models/ReusableModal';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 
@@ -20,7 +20,7 @@ const Plan = () => {
     const [isLoading, setIsLoading] = useState(true)
 
     const [showViewModal, setShowViewModal] = useState(false);
-    
+
 
 
 
@@ -66,41 +66,20 @@ const Plan = () => {
 
     const Deleteplanbyadmin = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this plan? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert("confirm", "Do you want to delete this plan? This action cannot be undone.");
 
             if (result.isConfirmed) {
                 const response = await Deleteplan(_id, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The plan has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
+                    showCustomAlert('Success', 'The plan has been successfully deleted.')
                     getAdminclient();
                 }
             } else {
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The plan deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
+                showCustomAlert('info', 'The plan deletion was cancelled.')
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the plan.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert('error', 'There was an error deleting the plan.')
+
         }
     };
 
@@ -111,40 +90,22 @@ const Plan = () => {
         const user_active_status = originalChecked ? "active" : "inactive";
         const data = { id: id, status: user_active_status };
 
-        const result = await Swal.fire({
-            title: "Do you want Changes The Pakage Status?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
+        const result = await showCustomAlert('confirm','Do you want Changes The Pakage Status?')
 
         if (result.isConfirmed) {
             try {
                 const response = await changeplanstatus(data, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: "Saved!",
-                        icon: "Status changed successfully!",
-                        timer: 1000,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1000);
+                    showCustomAlert('Success', 'The plan status has been successfully updated.')
                 }
                 // Reload the plan list
                 getcategoryplanlist();
                 getAdminclient();
 
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+                showCustomAlert('error', 'There was an error updating the plan status.')
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
             event.target.checked = !originalChecked;
             getcategoryplanlist();
         }
@@ -171,202 +132,202 @@ const Plan = () => {
     return (
         <Content Page_title="Package" route="/employee/addplan"
             button_status={true} button_title="Add Package">
-        <div className="page-content">
-        
-            
+            <div className="page-content">
 
-            <div className="">
+
+
                 <div className="">
-                    <ul className="nav nav-pills mb-1" role="tablist">
-                        <li className="nav-item" role="presentation">
-                            <a
-                                className={`nav-link ${selectedCategoryId === 'all' ? 'active' : 'No data'}`}
-                                onClick={() => setSelectedCategoryId('all')}
-                                role="tab"
-                                aria-selected={selectedCategoryId === 'all'}
-                                tabIndex={0}
-                            >
-                                <div className="d-flex align-items-center">
-                                    <div className="tab-title">All</div>
-                                </div>
-                            </a>
-                        </li>
-
-                        {category.map((cat) => (
-                            <li className="nav-item" role="presentation" key={cat._id}>
+                    <div className="">
+                        <ul className="nav nav-pills mb-1" role="tablist">
+                            <li className="nav-item" role="presentation">
                                 <a
-                                    className={`nav-link ${cat._id === selectedCategoryId ? 'active' : 'No Data'}`}
-                                    onClick={() => setSelectedCategoryId(cat._id)}
+                                    className={`nav-link ${selectedCategoryId === 'all' ? 'active' : 'No data'}`}
+                                    onClick={() => setSelectedCategoryId('all')}
                                     role="tab"
-                                    aria-selected={cat._id === selectedCategoryId}
+                                    aria-selected={selectedCategoryId === 'all'}
                                     tabIndex={0}
                                 >
                                     <div className="d-flex align-items-center">
-                                        <div className="tab-title">{cat.title}</div>
+                                        <div className="tab-title">All</div>
                                     </div>
                                 </a>
                             </li>
-                        ))}
-                    </ul>
-                    <hr />
 
-                    {isLoading ? (
-                        <Loader />
+                            {category.map((cat) => (
+                                <li className="nav-item" role="presentation" key={cat._id}>
+                                    <a
+                                        className={`nav-link ${cat._id === selectedCategoryId ? 'active' : 'No Data'}`}
+                                        onClick={() => setSelectedCategoryId(cat._id)}
+                                        role="tab"
+                                        aria-selected={cat._id === selectedCategoryId}
+                                        tabIndex={0}
+                                    >
+                                        <div className="d-flex align-items-center">
+                                            <div className="tab-title">{cat.title}</div>
+                                        </div>
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                        <hr />
 
-                    ) : (
+                        {isLoading ? (
+                            <Loader />
 
-                        <div className="tab-content">
-                            <div className="tab-pane fade active show">
-                                <div className="pricing-section mt-5">
-                                    {filteredClients.length > 0 ? (
-                                        <div className="card-container">
-                                            <div className="row">
-                                                {filteredClients.map((client) => (
-                                                    category.find(cat => cat._id === client.category) ?
+                        ) : (
 
-                                                        <div className="col-md-6 mb-3" key={client._id}>
-                                                            <div className="pricing-card">
-                                                                <div className="row ">
-                                                                    <div className="category-name text-center mb-3 col-md-6 d-flex justify-content-start">
-                                                                        <span className="badge bg-primary">
-                                                                            {category.find(cat => cat._id === client.category)?.servicesDetails.map((item, index) => (
-                                                                                <span key={item._id}>
-                                                                                    {item.title}{index < category.find(cat => cat._id === client.category)?.servicesDetails.length - 1 && ', '}
-                                                                                </span>
-                                                                            ))}
-                                                                        </span>
-                                                                    </div>
-                                                                    <div className="category-name text-center mb-3 col-md-6 d-flex justify-content-end">
-                                                                        <span className="badge bg-primary">
-                                                                            {category.find(cat => cat._id === client.category)?.title || ''}
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
+                            <div className="tab-content">
+                                <div className="tab-pane fade active show">
+                                    <div className="pricing-section mt-5">
+                                        {filteredClients.length > 0 ? (
+                                            <div className="card-container">
+                                                <div className="row">
+                                                    {filteredClients.map((client) => (
+                                                        category.find(cat => cat._id === client.category) ?
 
-                                                                <div className="row justify-content-end mb-3">
-                                                                    <div className="col-md-6 d-flex justify-content-start">
-                                                                        <div className="form-check form-switch form-check-info">
-                                                                            <input
-                                                                                id={`rating_${client.status}`}
-                                                                                className="form-check-input toggleswitch"
-                                                                                type="checkbox"
-                                                                                defaultChecked={client.status === "active"}
-                                                                                onChange={(event) => handleSwitchChange(event, client._id)}
-                                                                            />
-                                                                            <label
-                                                                                htmlFor={`rating_${client.ActiveStatus}`}
-                                                                                className="checktoggle checkbox-bg"
-                                                                            ></label>
+                                                            <div className="col-md-6 mb-3" key={client._id}>
+                                                                <div className="pricing-card">
+                                                                    <div className="row ">
+                                                                        <div className="category-name text-center mb-3 col-md-6 d-flex justify-content-start">
+                                                                            <span className="badge bg-primary">
+                                                                                {category.find(cat => cat._id === client.category)?.servicesDetails.map((item, index) => (
+                                                                                    <span key={item._id}>
+                                                                                        {item.title}{index < category.find(cat => cat._id === client.category)?.servicesDetails.length - 1 && ', '}
+                                                                                    </span>
+                                                                                ))}
+                                                                            </span>
+                                                                        </div>
+                                                                        <div className="category-name text-center mb-3 col-md-6 d-flex justify-content-end">
+                                                                            <span className="badge bg-primary">
+                                                                                {category.find(cat => cat._id === client.category)?.title || ''}
+                                                                            </span>
                                                                         </div>
                                                                     </div>
-                                                                </div>
 
-                                                                <div className="row justify-content-between align-items-center">
-                                                                    <div className="col-md-6">
-                                                                        {/* <h3 className="fonth3">{client.title}</h3> */}
-                                                                        <h2 className="fonth2">{client.planType}</h2>
+                                                                    <div className="row justify-content-end mb-3">
+                                                                        <div className="col-md-6 d-flex justify-content-start">
+                                                                            <div className="form-check form-switch form-check-info">
+                                                                                <input
+                                                                                    id={`rating_${client.status}`}
+                                                                                    className="form-check-input toggleswitch"
+                                                                                    type="checkbox"
+                                                                                    defaultChecked={client.status === "active"}
+                                                                                    onChange={(event) => handleSwitchChange(event, client._id)}
+                                                                                />
+                                                                                <label
+                                                                                    htmlFor={`rating_${client.ActiveStatus}`}
+                                                                                    className="checktoggle checkbox-bg"
+                                                                                ></label>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                    <div className="price-section col-md-6">
-                                                                        <span className="discount">{client.discount}</span>
-                                                                        <h3 className="ms-4 fnt">INR {client.price}</h3>
+
+                                                                    <div className="row justify-content-between align-items-center">
+                                                                        <div className="col-md-6">
+                                                                            {/* <h3 className="fonth3">{client.title}</h3> */}
+                                                                            <h2 className="fonth2">{client.planType}</h2>
+                                                                        </div>
+                                                                        <div className="price-section col-md-6">
+                                                                            <span className="discount">{client.discount}</span>
+                                                                            <h3 className="ms-4 fnt">INR {client.price}</h3>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                                <hr />
-                                                                <ul className='p-0'>
-                                                                    <li><b>Validity</b>: {client.validity}</li>
-                                                                    <li><b className='mb-1'>Description</b>:<textarea className='form-control' value={stripHtmlTags(client.description || '')} >{client.description}</textarea></li>
-                                                                    <li><b>Created At</b>: {fDateTime(client.created_at)}</li>
-                                                                </ul>
-                                                                <div className="button-group gap-2 d-sm-flex">
-                                                                    <button
-                                                                        type="button"
-                                                                        className="btnsecond btn btn-primary w-100 w-sm-50"
-                                                                        onClick={() => setShowViewModal(client._id)}
-                                                                    >
-                                                                        View More
-                                                                    </button>
+                                                                    <hr />
+                                                                    <ul className='p-0'>
+                                                                        <li><b>Validity</b>: {client.validity}</li>
+                                                                        <li><b className='mb-1'>Description</b>:<textarea className='form-control' value={stripHtmlTags(client.description || '')} >{client.description}</textarea></li>
+                                                                        <li><b>Created At</b>: {fDateTime(client.created_at)}</li>
+                                                                    </ul>
+                                                                    <div className="button-group gap-2 d-sm-flex">
+                                                                        <button
+                                                                            type="button"
+                                                                            className="btnsecond btn btn-primary w-100 w-sm-50"
+                                                                            onClick={() => setShowViewModal(client._id)}
+                                                                        >
+                                                                            View More
+                                                                        </button>
 
-                                                                    {showViewModal === client._id && (
-                                                                        <ReusableModal
-                                                                            show={true}
-                                                                            onClose={() => setShowViewModal(null)}
-                                                                            title={<>Plan Detail</>}
-                                                                            body={
-                                                                                <ul>
-                                                                                    <li>
-                                                                                        <div className="row justify-content-between">
-                                                                                            <div className="col-md-3">
-                                                                                                <b>Price</b>
+                                                                        {showViewModal === client._id && (
+                                                                            <ReusableModal
+                                                                                show={true}
+                                                                                onClose={() => setShowViewModal(null)}
+                                                                                title={<>Plan Detail</>}
+                                                                                body={
+                                                                                    <ul>
+                                                                                        <li>
+                                                                                            <div className="row justify-content-between">
+                                                                                                <div className="col-md-3">
+                                                                                                    <b>Price</b>
+                                                                                                </div>
+                                                                                                <div className="col-md-9">{client.price}</div>
                                                                                             </div>
-                                                                                            <div className="col-md-9">{client.price}</div>
-                                                                                        </div>
-                                                                                    </li>
-                                                                                    <li>
-                                                                                        <div className="row justify-content-between">
-                                                                                            <div className="col-md-3">
-                                                                                                <b>Validity</b>
+                                                                                        </li>
+                                                                                        <li>
+                                                                                            <div className="row justify-content-between">
+                                                                                                <div className="col-md-3">
+                                                                                                    <b>Validity</b>
+                                                                                                </div>
+                                                                                                <div className="col-md-9">{client.validity}</div>
                                                                                             </div>
-                                                                                            <div className="col-md-9">{client.validity}</div>
-                                                                                        </div>
-                                                                                    </li>
-                                                                                    <li>
-                                                                                        <div className="row justify-content-between">
-                                                                                            <div className="col-md-3">
-                                                                                                <b>Created At</b>
+                                                                                        </li>
+                                                                                        <li>
+                                                                                            <div className="row justify-content-between">
+                                                                                                <div className="col-md-3">
+                                                                                                    <b>Created At</b>
+                                                                                                </div>
+                                                                                                <div className="col-md-9">{fDateTime(client.created_at)}</div>
                                                                                             </div>
-                                                                                            <div className="col-md-9">{fDateTime(client.created_at)}</div>
-                                                                                        </div>
-                                                                                    </li>
-                                                                                    <li>
-                                                                                        <div className="row justify-content-between">
-                                                                                            <div className="col-md-3">
-                                                                                                <b>Updated At</b>
+                                                                                        </li>
+                                                                                        <li>
+                                                                                            <div className="row justify-content-between">
+                                                                                                <div className="col-md-3">
+                                                                                                    <b>Updated At</b>
+                                                                                                </div>
+                                                                                                <div className="col-md-9">{fDateTime(client.updated_at)}</div>
                                                                                             </div>
-                                                                                            <div className="col-md-9">{fDateTime(client.updated_at)}</div>
-                                                                                        </div>
-                                                                                    </li>
-                                                                                    <li>
-                                                                                        <div className="row justify-content-between">
-                                                                                            <div className="col-md-3">
-                                                                                                <b>Description</b>
+                                                                                        </li>
+                                                                                        <li>
+                                                                                            <div className="row justify-content-between">
+                                                                                                <div className="col-md-3">
+                                                                                                    <b>Description</b>
+                                                                                                </div>
+                                                                                                <div className="col-md-9">
+                                                                                                    {stripHtmlTags(client.description || '')}
+                                                                                                </div>
                                                                                             </div>
-                                                                                            <div className="col-md-9">
-                                                                                                {stripHtmlTags(client.description || '')}
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </li>
-                                                                                </ul>
-                                                                            }
-                                                                        />
-                                                                    )}
+                                                                                        </li>
+                                                                                    </ul>
+                                                                                }
+                                                                            />
+                                                                        )}
 
-                                                                    <Link
-                                                                        to={`editplan/${client._id}`}
-                                                                        className="btnprime btn btn-secondary mt-2 mt-sm-0 w-100 w-sm-50"
-                                                                        style={{ color: 'inherit', textDecoration: 'none' }}
-                                                                    >
-                                                                        Edit
-                                                                    </Link>
+                                                                        <Link
+                                                                            to={`editplan/${client._id}`}
+                                                                            className="btnprime btn btn-secondary mt-2 mt-sm-0 w-100 w-sm-50"
+                                                                            style={{ color: 'inherit', textDecoration: 'none' }}
+                                                                        >
+                                                                            Edit
+                                                                        </Link>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                        : ""
-                                                ))}
+                                                            : ""
+                                                    ))}
+                                                </div>
                                             </div>
-                                        </div>
-                                    ) : (
-                                        <div>
-                                            <h5>No Plans Available</h5>
-                                            <div className="text-muted">Please select a category to view details.</div>
-                                        </div>
-                                    )}
+                                        ) : (
+                                            <div>
+                                                <h5>No Plans Available</h5>
+                                                <div className="text-muted">Please select a category to view details.</div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
         </Content>
     );
 };
