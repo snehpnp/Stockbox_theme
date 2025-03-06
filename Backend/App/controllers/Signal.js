@@ -257,11 +257,6 @@ class Signal {
 
     try {
       const { from, to, service, stock } = req.query;
-      // Set today's date and midnight time for filtering
-
-      // Default date range is today
-
-
 
       let fromDate;
       if (from) {

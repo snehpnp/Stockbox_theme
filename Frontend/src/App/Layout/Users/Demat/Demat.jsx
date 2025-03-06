@@ -292,19 +292,6 @@ const Demat = () => {
       </Content>
 
 
-      {/* <ReusableModal
-        show={showModal}
-        onClose={handleCloseModal}
-        title={<>{modalTitle}</>}
-        body={
-          <FormicForm
-            fieldtype={fieldTypes}
-            formik={formik}
-            ButtonName="Submit"
-            BtnStatus={true}
-          />
-        }
-      /> */}
     </div>
   );
 };
