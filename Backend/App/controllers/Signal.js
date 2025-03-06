@@ -674,7 +674,7 @@ async getSignalWithFilter(req, res) {
   
         const resultn = new Notification_Modal({
           segmentid: service,
-          type: close_status ? "close signal" : "open signal",
+          type: close_status == "true" ? "close signal" : "open signal",
           title: notificationTitle,
           message: notificationBody
       });
@@ -1219,6 +1219,7 @@ serviceName = "Future";
 
 
 let stocks;
+let tradesymbols;
 if (segment === "C") {
 stocks = await Stock_Modal.findOne({ 
   symbol: stock, 
@@ -1238,6 +1239,8 @@ stocks = await Stock_Modal.findOne({
    option_type: optiontype, 
   strike: strikeprice 
 });
+tradesymbols = `${stocks.symbol} ${stocks.expiry_str} ${stocks.strike} ${stocks.option_type}`;
+
 }
 
 
@@ -1308,6 +1311,7 @@ return res.status(404).json({
             segment: segment,
             optiontype: optiontype,
             tradesymbol: stocks.tradesymbol,
+            tradesymbols:tradesymbols,
             lotsize: stocks.lotsize,
             entrytype: entrytype,
             lot: lot,
@@ -1797,8 +1801,8 @@ async closeSignalwithplan(req, res) {
     if (tokens.length > 0) {
 
       const resultn = new Notification_Modal({
-        segmentid: service,
-        type: close_status ? "close signal" : "open signal",
+        segmentid: Signal.planid,
+        type: close_status == "true" ? "close signal" : "open signal",
         title: notificationTitle,
         message: notificationBody
     });
