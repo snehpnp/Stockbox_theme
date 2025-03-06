@@ -61,7 +61,7 @@ const BasketStockPublish = () => {
     try {
       const data = { page: currentPage, search: searchInput || "" }
       const response = await BasketAllActiveListbyfilter(data, token);
-      // console.log("BasketAllActiveListbyfilter",response);
+
 
       if (response.status) {
         setTotalRows(response.pagination.total);
@@ -345,7 +345,7 @@ const BasketStockPublish = () => {
             )}
             {permission.includes("basketdetail") &&
               <Tooltip title="view">
-                <Eye onClick={() => viewdetailpage(row)} className='ms-2'/>
+                <Eye onClick={() => viewdetailpage(row)} className='ms-2' />
               </Tooltip>}
             {/* <Tooltip title="Edit">
             <Link
@@ -396,7 +396,7 @@ const BasketStockPublish = () => {
           </nav>
         </div>
       </div>
-      
+
       <div className="card">
         <div className="card-body">
           <div className="d-lg-flex align-items-center mb-4 gap-3">

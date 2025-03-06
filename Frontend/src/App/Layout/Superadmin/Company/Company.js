@@ -155,7 +155,6 @@ const Company = () => {
 
   const UpdateTheme = async (id, theme_id) => {
     const data = { id: id, theme_id: theme_id };
-    console.log(data);
     try {
       const response = await UpdateThemeApi(data);
       if (response.status) {

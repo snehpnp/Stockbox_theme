@@ -96,7 +96,7 @@ const AddUser = () => {
 
 
   const traialStatus = formik.values.freetrial;
-  // console.log("traialStatus",traialStatus);
+
 
   const handleToggleChange = () => {
   }

@@ -66,7 +66,6 @@ const Addplan = () => {
 
     const onSubmit = async (values) => {
         setLoading(!loading);
-        console.log("values", values.Status)
         const req = {
             title: "",
             description: values.description,

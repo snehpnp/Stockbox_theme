@@ -435,7 +435,7 @@ const Signal = () => {
                         return;
                     }
                 } else if (closedata.calltype === "SELL") {
-                    console.log("SELL", closedata.calltype);
+
 
                     const target1 = parseFloat(closedata.targetprice1) || null;
                     const target2 = parseFloat(closedata.targetprice2) || null;
@@ -648,8 +648,8 @@ const Signal = () => {
         },
         {
             name: 'Upload Report',
-          
-         
+
+
             cell: row => (
                 <>
 

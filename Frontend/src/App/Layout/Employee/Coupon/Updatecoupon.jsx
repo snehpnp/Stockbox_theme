@@ -120,12 +120,11 @@ const Updatecoupon = () => {
       limitation: values.limitation,
       id: row._id,
     };
-    console.log("req data", req);
+
 
 
     try {
       const response = await updateCouponbyadmin(req, token);
-      console.log("datata", response);
 
       if (response.status) {
         Swal.fire({
@@ -322,11 +321,11 @@ const Updatecoupon = () => {
 
   return (
     <Content
-    Page_title="Update Coupon Code"
-    button_status={false}
-    backbutton_status={true}
-    backForword={true}
-  >
+      Page_title="Update Coupon Code"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
       <DynamicForm
         fields={fields.filter((field) => !field.showWhen || field.showWhen(formik.values))}
         page_title="Update Coupon Code"
@@ -337,7 +336,7 @@ const Updatecoupon = () => {
         btn_name1_route={"/employee/coupon"}
         additional_field={<></>}
       />
-      </Content>
+    </Content>
   );
 };
 

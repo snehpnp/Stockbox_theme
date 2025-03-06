@@ -75,7 +75,7 @@ const Addbroadcast = () => {
             }
         } catch (error) {
             setLoading(false)
-            // console.error("Error in API call:", error);
+
             showCustomAlert("error", "An unexpected error occurred. Please try again later.")
         }
     };

@@ -61,7 +61,7 @@ const Banner = () => {
     const getBanner = async () => {
         try {
             const response = await getbannerlist(token);
-            console.log("Get banner response", response)
+
             if (response.status) {
                 const filterdata = response.data.filter((item) =>
                     searchInput === "" ||

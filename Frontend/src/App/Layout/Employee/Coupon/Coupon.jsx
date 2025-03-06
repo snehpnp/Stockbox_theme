@@ -37,13 +37,12 @@ const Coupon = () => {
     const [isLoading, setIsLoading] = useState(true)
 
     const [showModal, setShowModal] = useState(false);
-    
+
 
 
     const getcoupon = async () => {
         try {
             const response = await getcouponlist(token);
-            // console.log("response",response.data);
 
             if (response.status) {
                 const filterdata = response.data.filter((item) =>
@@ -65,11 +64,11 @@ const Coupon = () => {
     const getService = async () => {
         try {
             const response = await GetService(token);
-            // console.log("response",response);
+
 
             if (response.status) {
                 setService(response.data)
-                // console.log("chaking",response.data);
+
 
             }
         } catch (error) {
@@ -422,8 +421,8 @@ const Coupon = () => {
                                     <Tooltip placement="top" overlay="View">
                                         <Eye
                                             style={{ marginRight: "10px" }}
-                                            
-                                            onClick={() => {setShowModal(true);setViewpage(row)}}
+
+                                            onClick={() => { setShowModal(true); setViewpage(row) }}
                                         />
                                     </Tooltip>
                                 </div> : ""}
@@ -500,20 +499,20 @@ const Coupon = () => {
 
                         </div>
                         {isLoading ? (
-                    <Loader />
-                ) : (
-                    <>
+                            <Loader />
+                        ) : (
+                            <>
 
-                        <Table
-                            columns={columns}
-                            data={clients}
-                        />
-                    </>
-                )}
+                                <Table
+                                    columns={columns}
+                                    data={clients}
+                                />
+                            </>
+                        )}
                     </div>
                 </div>
 
-               
+
                 {/* <div className="button-group">
 
                     <div
@@ -589,7 +588,7 @@ const Coupon = () => {
                                                 </div>
                                             </div>
                                         </li> */}
-                                        {/* <li>
+                {/* <li>
                                             <div className="row justify-content-between">
                                                 <div className="col-md-8">
                                                     {viewpage?.startdate ? (
@@ -614,7 +613,7 @@ const Coupon = () => {
                                             </div>
                                         </li> */}
 
-                                        {/* <li>
+                {/* <li>
                                             <div className="row justify-content-between">
                                                 <div className="col-md-6">
                                                     <b>Image </b>
@@ -625,7 +624,7 @@ const Coupon = () => {
                                             </div>
                                         </li> */}
 
-                                    {/* </ul>
+                {/* </ul>
                                 </div>
                             </div>
                         </div>

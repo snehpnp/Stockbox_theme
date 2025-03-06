@@ -63,7 +63,7 @@ const Editbasket = () => {
 
 
   const validate = (values) => {
-    // console.log("values",values);
+
 
     let errors = {};
 
@@ -372,12 +372,12 @@ const Editbasket = () => {
 
   return (
     <Content
-        Page_title="Edit Basket"
-        button_status={false}
-        backbutton_status={true}
-        backForword={true}
-      >
-   
+      Page_title="Edit Basket"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
+
       <DynamicForm
         fields={fields}
         formik={formik}
@@ -389,7 +389,7 @@ const Editbasket = () => {
         additional_field={<></>}
 
       />
-    
+
     </Content>
   );
 };

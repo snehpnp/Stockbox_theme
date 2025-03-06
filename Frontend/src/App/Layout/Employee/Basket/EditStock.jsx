@@ -230,7 +230,7 @@ const EditStock = () => {
     };
 
     useEffect(() => {
-        console.log("formValues", formValues)
+
         if (formValues) {
             const newWeightage = Object.values(formValues).reduce((sum, stock) => sum + Number(stock.weightage || 0), 0);
             setWeightagecounting(newWeightage);
@@ -243,14 +243,14 @@ const EditStock = () => {
     return (
 
         <Content
-        Page_title="Edit Stock"
-        button_status={false}
-        backbutton_status={true}
-        backForword={true}
-      >
+            Page_title="Edit Stock"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
 
-        <div className="page-content">
-            {/* <div className="row">
+            <div className="page-content">
+                {/* <div className="row">
                 <div className="col-md-6">
                     <div className="page-breadcrumb  d-flex align-items-center mb-3">
                         <div className="breadcrumb-title pe-3">Edit Stock</div>
@@ -282,108 +282,108 @@ const EditStock = () => {
             </div>
             <hr /> */}
 
-            <div className="card">
+                <div className="card">
 
-                <div className="card-body">
+                    <div className="card-body">
 
-                    <Select
-                        inputValue={inputValue}
-                        onInputChange={setInputValue}
-                        options={options}
-                        onChange={handleServiceChange}
-                        // defaultValue={selectedServices}
-                        value={selectedServices.filter(
-                            (service) => !service.weightage
-                        )}
-                        placeholder="Search and select stocks..."
-                        isClearable
-                        isMulti
-                        isLoading={loading}
-                        noOptionsMessage={() =>
-                            loading ? "Loading..." : "No options found"
-                        }
-                    />
-                    <div className="row">
-                        <div className="col-md-6"></div>
-                        <div className="col-md-6 text-end">
-                            <h6 className="mt-3">Total Weightage : {weightagecounting}</h6>
+                        <Select
+                            inputValue={inputValue}
+                            onInputChange={setInputValue}
+                            options={options}
+                            onChange={handleServiceChange}
+                            // defaultValue={selectedServices}
+                            value={selectedServices.filter(
+                                (service) => !service.weightage
+                            )}
+                            placeholder="Search and select stocks..."
+                            isClearable
+                            isMulti
+                            isLoading={loading}
+                            noOptionsMessage={() =>
+                                loading ? "Loading..." : "No options found"
+                            }
+                        />
+                        <div className="row">
+                            <div className="col-md-6"></div>
+                            <div className="col-md-6 text-end">
+                                <h6 className="mt-3">Total Weightage : {weightagecounting}</h6>
+                            </div>
+
                         </div>
-
-                    </div>
-                    <hr />
-                    {selectedServices.map((service) => (
-                        <div key={service.value} className="mt-4">
-                            <h5>
-                                {service.label}
-                                <button
-                                    type="button"
-                                    className="btn btn-danger btn-sm float-end"
-                                    onClick={() => handleRemoveService(service.value)}
-                                >
-                                    <i className="bx bx-trash" />
-                                </button>
-                            </h5>
-                            <div className="row">
-                                <div className="col-md-3">
-                                    <label>Name</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        value={formValues[service.value]?.name || ""}
-                                        onChange={(e) => handleInputChange(e, service.value, "name")}
-                                    />
-                                </div>
-                                <div className="col-md-3">
-                                    <label>Weightage</label>
-                                    <input
-                                        type="number"
-                                        className="form-control"
-                                        value={formValues[service.value]?.weightage || ""}
-                                        onChange={(e) => handleInputChange(e, service.value, "weightage")}
-                                    />
-                                </div>
-                                <div className="col-md-3">
-                                    <label>Price</label>
-                                    <input
-                                        type="number"
-                                        className="form-control"
-                                        value={formValues[service.value]?.price || ""}
-                                        onChange={(e) => handleInputChange(e, service.value, "price")}
-                                    />
-                                </div>
-                                <div className="col-md-3">
-                                    <label>Type</label>
-                                    <select
-                                        className="form-control"
-                                        value={formValues[service.value]?.type || ""}
-                                        onChange={(e) => handleInputChange(e, service.value, "type")}
+                        <hr />
+                        {selectedServices.map((service) => (
+                            <div key={service.value} className="mt-4">
+                                <h5>
+                                    {service.label}
+                                    <button
+                                        type="button"
+                                        className="btn btn-danger btn-sm float-end"
+                                        onClick={() => handleRemoveService(service.value)}
                                     >
-                                        <option value="">Select Type</option>
-                                        <option value="Large Cap">Large Cap</option>
-                                        <option value="Mid Cap">Mid Cap</option>
-                                        <option value="Small Cap">Small Cap</option>
-                                    </select>
+                                        <i className="bx bx-trash" />
+                                    </button>
+                                </h5>
+                                <div className="row">
+                                    <div className="col-md-3">
+                                        <label>Name</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={formValues[service.value]?.name || ""}
+                                            onChange={(e) => handleInputChange(e, service.value, "name")}
+                                        />
+                                    </div>
+                                    <div className="col-md-3">
+                                        <label>Weightage</label>
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            value={formValues[service.value]?.weightage || ""}
+                                            onChange={(e) => handleInputChange(e, service.value, "weightage")}
+                                        />
+                                    </div>
+                                    <div className="col-md-3">
+                                        <label>Price</label>
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            value={formValues[service.value]?.price || ""}
+                                            onChange={(e) => handleInputChange(e, service.value, "price")}
+                                        />
+                                    </div>
+                                    <div className="col-md-3">
+                                        <label>Type</label>
+                                        <select
+                                            className="form-control"
+                                            value={formValues[service.value]?.type || ""}
+                                            onChange={(e) => handleInputChange(e, service.value, "type")}
+                                        >
+                                            <option value="">Select Type</option>
+                                            <option value="Large Cap">Large Cap</option>
+                                            <option value="Mid Cap">Mid Cap</option>
+                                            <option value="Small Cap">Small Cap</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                    <button
-                        type="button"
-                        className="btn btn-primary mt-4"
-                        onClick={() => handleSubmit(0)}
-                    >
-                        Submit
-                    </button>
-                    <button
-                        type="button"
-                        className="btn btn-primary mt-4 ms-2"
-                        onClick={() => handleSubmit(1)}
-                    >
-                        Submit & Publish
-                    </button>
+                        ))}
+                        <button
+                            type="button"
+                            className="btn btn-primary mt-4"
+                            onClick={() => handleSubmit(0)}
+                        >
+                            Submit
+                        </button>
+                        <button
+                            type="button"
+                            className="btn btn-primary mt-4 ms-2"
+                            onClick={() => handleSubmit(1)}
+                        >
+                            Submit & Publish
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
         </Content>
     );
 };

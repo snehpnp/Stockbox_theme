@@ -192,7 +192,7 @@ const Client = () => {
   const getcategoryplanlist = async () => {
     try {
       const response = await getActivecategoryplan(token);
-      // console.log("getActivecategoryplan", response);
+
 
       if (response.status) {
         setCategory(response.data);

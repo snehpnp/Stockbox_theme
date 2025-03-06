@@ -47,9 +47,6 @@ const Notification = () => {
   const prevPage = () => setCurrentPage((prevPage) => prevPage - 1);
 
 
-  console.log("currentPage", currentPage)
-
-
 
   return (
     <Content

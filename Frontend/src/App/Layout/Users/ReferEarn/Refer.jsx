@@ -48,7 +48,7 @@ const Refer = () => {
       const response = await ReferAndEarnData(data, token);
       if (response.status) {
         setReferData(response.data)
-        console.log("response", response.data)
+
       }
     } catch (error) {
       console.error("Error fetching trade data:", error);

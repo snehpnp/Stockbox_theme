@@ -21,8 +21,7 @@ function Kyc() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Process the form data (e.g., send to API)
-    console.log(formData);
+
     alert("KYC form submitted successfully!");
   };
 

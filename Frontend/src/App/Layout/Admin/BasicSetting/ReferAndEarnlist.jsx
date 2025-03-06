@@ -36,7 +36,7 @@ const ReferAndEarnlist = () => {
             const response = await getReferAndEarnlist(data, token);
             if (response.status) {
                 let filteredData = response.data;
-                console.log("response response", response);
+
 
                 setTotalRows(response.pagination.totalRecords)
                 setClients(filteredData);

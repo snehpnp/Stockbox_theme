@@ -64,7 +64,6 @@ const AddStock = () => {
         setOptions([]);
       }
     } catch (error) {
-      console.error("Error fetching options:", error);
       setOptions([]);
     } finally {
       setLoadingOptions(false);

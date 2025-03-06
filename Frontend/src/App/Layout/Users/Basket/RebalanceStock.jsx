@@ -127,8 +127,6 @@ const RebalanceStock = () => {
           .map((item) => item.lp);
 
         setLiveprice(getlive);
-        console.log(getlive);
-        console.log("response?.data", response?.data);
       }
     } catch (error) {
       console.log("error", error);

@@ -87,7 +87,7 @@ const UserSignup = () => {
       return;
     }
 
-    console.log("formData", formData);
+
 
     const ResData = await UserSignupApi({
       FullName: fullName,
