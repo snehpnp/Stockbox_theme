@@ -379,7 +379,7 @@ const Signal = () => {
 
 
 
-    console.log("closedata", closedata)
+
 
     const closeSignalperUser = async (index, e) => {
         try {
