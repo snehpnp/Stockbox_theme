@@ -18,12 +18,13 @@ import axios from "axios";
 import { GetUserData } from "../../Services/UserService/User";
 import { GetNotificationData } from "../../Services/UserService/User";
 import { base_url } from "../../../Utils/config";
+import showCustomAlert from "../../Extracomponents/CustomAlert/CustomAlert";
 
 
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
 
-  
+
   useEffect(() => {
     getdemoclient();
     gettradedetail();
@@ -318,7 +319,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
   const TradingBtnCall = async (e) => {
     if (UserDetail.dlinkstatus == 0) {
-      setViewModel(true);
+      showCustomAlert("error", "Please Link The Demat Account")
+      navigate("/user/demat")
+      // setViewModel(true);
     } else {
       if (UserDetail.brokerid == 1) {
         window.location.href = `https://smartapi.angelone.in/publisher-login?api_key=${UserDetail.apikey}`;

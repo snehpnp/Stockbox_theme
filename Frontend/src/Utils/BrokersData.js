@@ -4,6 +4,7 @@ import { UpdateBroker } from "../App/Services/UserService/User";
 import Swal from "sweetalert2";
 
 function BrokersData({ data, closeModal, type }) {
+
   const [viewModel, setViewModel] = useState(true);
   const userId = localStorage.getItem("id");
   const token = localStorage.getItem("token");
@@ -28,6 +29,8 @@ function BrokersData({ data, closeModal, type }) {
       setShowModal(true);
     }
   }, [type]);
+
+
 
 
 
@@ -131,6 +134,9 @@ function BrokersData({ data, closeModal, type }) {
     ],
   };
 
+
+
+
   const brokers = [
     {
       id: 1,
@@ -172,9 +178,15 @@ function BrokersData({ data, closeModal, type }) {
   const filteredBrokers = type ? brokers.filter((b) => b.id === type) : brokers;
   const fields = brokerId ? brokerFieldsMap[brokerId] || [] : [];
 
+
+
+
   const handleFieldChange = (key, value) => {
     setStatusInfo((prev) => ({ ...prev, [key]: value }));
   };
+
+
+
 
   const handleSave = async () => {
     setLoading(true);
@@ -205,6 +217,8 @@ function BrokersData({ data, closeModal, type }) {
 
   return (
     <>
+
+
       <ReusableModal
         show={viewModel}
         onClose={closeModal}
