@@ -379,7 +379,7 @@ const Signal = () => {
 
 
 
-
+    console.log("closedata", closedata)
 
     const closeSignalperUser = async (index, e) => {
         try {
@@ -395,6 +395,10 @@ const Signal = () => {
                     const target2 = parseFloat(closedata.targetprice2) || null;
                     const target3 = parseFloat(closedata.targetprice3) || null;
 
+                    if (target1 && target1 < parseFloat(closedata?.price)) {
+                        showValidationError('Target 1 must be Greater Than Entry Price');
+                        return;
+                    }
                     if (target2 && !target1) {
                         showValidationError('Target 1 must be provided if Target 2 is entered.');
                         return;
@@ -425,10 +429,14 @@ const Signal = () => {
                     }
                 } else if (closedata.calltype === "SELL") {
 
-
                     const target1 = parseFloat(closedata.targetprice1) || null;
                     const target2 = parseFloat(closedata.targetprice2) || null;
                     const target3 = parseFloat(closedata.targetprice3) || null;
+
+                    if (target1 && target1 > parseFloat(closedata?.price)) {
+                        showValidationError('Target 1 must be Less Than Entry Price');
+                        return;
+                    }
 
                     if (target2 && !target1) {
                         showValidationError('Target 1 must be provided if Target 2 is Entered.');
@@ -461,6 +469,29 @@ const Signal = () => {
                 }
 
             }
+
+            if (index === 2) {
+                if (!closedata?.slprice || closedata?.slprice == 0) {
+                    showValidationError('Please Fill in The SL Price');
+                    return;
+                }
+
+                if (closedata?.calltype === "BUY") {
+                    if (parseFloat(closedata?.slprice) < parseFloat(closedata?.price)) {
+                        showValidationError('SL price  must be Greater Than Entry Price');
+                        return;
+                    }
+
+                } else if (closedata?.calltype === "SELL") {
+                    if (parseFloat(closedata?.slprice) > parseFloat(closedata?.price)) {
+                        showValidationError('SL price  must be Less Than Entry Price');
+                        return;
+                    }
+                }
+
+            }
+
+
             if (index === 4) {
                 if (!closedata.close_description) {
                     showValidationError('Please Fill in The Description');
@@ -477,6 +508,9 @@ const Signal = () => {
                     return;
                 }
             }
+
+
+            return
 
             const data = {
 
