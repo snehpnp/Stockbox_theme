@@ -63,15 +63,15 @@ const Demat = () => {
   const [viewmodel, setViewModel] = useState(false);
 
 
+  const token = localStorage.getItem("token");
+  const userid = localStorage.getItem("id");
+
+
+
+
   useEffect(() => {
     getuserdetail();
   }, []);
-
-
-
-
-  const token = localStorage.getItem("token");
-  const userid = localStorage.getItem("id");
 
 
 
@@ -228,31 +228,6 @@ const Demat = () => {
 
 
 
-  // const formik = useFormik({
-  //   initialValues: fieldTypes.reduce((acc, field) => {
-  //     acc[field.key] = "";
-  //     return acc;
-  //   }, {}),
-  //   enableReinitialize: true,
-  //   validate: (values) => { },
-  //   onSubmit: async (values) => {
-
-
-
-  //   },
-  // });
-
-
-  // useEffect(() => {
-  //   formik.setValues(
-  //     fieldTypes.reduce((acc, field) => {
-  //       acc[field.key] = brokerData[field.key] || "";
-  //       return acc;
-  //     }, {})
-  //   );
-  // }, [userDetail]);
-
-
   const closeBrokerModal = () => {
     setViewModel(false);
   };
@@ -285,7 +260,7 @@ const Demat = () => {
             </div>}
 
             {viewmodel && (
-              <BrokersData closeModal={closeBrokerModal} data={brokerData} />
+              <BrokersData closeModal={closeBrokerModal} type={userDetail} data={brokerData} />
             )}
           </div>
         </div>

@@ -2,11 +2,8 @@ import React, { useState, useEffect } from "react";
 import ReusableModal from "../App/components/Models/ReusableModal";
 import { UpdateBroker } from "../App/Services/UserService/User";
 import Swal from "sweetalert2";
-import { SquarePen, Eye } from 'lucide-react';
 
-function BrokersData({ data, closeModal }) {
-
-
+function BrokersData({ data, closeModal, type }) {
   const [viewModel, setViewModel] = useState(true);
   const userId = localStorage.getItem("id");
   const token = localStorage.getItem("token");
@@ -19,91 +16,120 @@ function BrokersData({ data, closeModal }) {
 
 
 
-  const brokerFieldsMap = {
+  useEffect(() => {
+    if (type) {
+      setBrokerId(type);
+      setStatusInfo(
+        brokerFieldsMap[type]?.reduce((acc, field) => {
+          acc[field.key] = "";
+          return acc;
+        }, {}) || {}
+      );
+      setShowModal(true);
+    }
+  }, [type]);
 
-    1: [{ key: "apikey", label: "API Key", type: "text" }],
+
+
+  const brokerFieldsMap = {
+    1: [{
+      key: "apikey",
+      label: "API Key",
+      type: "text"
+    }],
     2: [
-      { key: "AppCode", label: "App Code", type: "text" },
-      { key: "alice_userid", label: "User ID", type: "tel" },
-      { key: "apisecret", label: "API Secret", type: "text" },
+      {
+        key: "AppCode",
+        label: "App Code",
+        type: "text"
+      },
+      {
+        key: "alice_userid",
+        label: "User ID",
+        type: "tel"
+      },
+      {
+        key: "apisecret",
+        label: "API Secret",
+        type: "text"
+      },
     ],
     3: [
-      { key: "apikey", label: "API Key", type: "text" },
-      { key: "apisecret", label: "API Secret", type: "text" },
-      { key: "user_name", label: "Username", type: "text" },
-      { key: "pass_word", label: "Password", type: "password" },
+      {
+        key: "apikey",
+        label: "API Key",
+        type: "text"
+      },
+      {
+        key: "apisecret",
+        label: "API Secret",
+        type: "text"
+      },
+      {
+        key: "user_name",
+        label: "Username",
+        type: "text"
+      },
+      {
+        key: "pass_word",
+        label: "Password",
+        type: "password"
+      },
     ],
     4: [
-      { key: "apikey", label: "API Key", type: "text" },
-      { key: "apisecret", label: "API Secret", type: "text" },
-      { key: "Password", label: "Password", type: "password" },
+      {
+        key: "apikey",
+        label: "API Key",
+        type: "text"
+      },
+      {
+        key: "apisecret",
+        label: "API Secret",
+        type: "text"
+      },
+      {
+        key: "Password",
+        label: "Password",
+        type: "password"
+      },
     ],
     5: [
-      { key: "apikey", label: "API Key", type: "text" },
-      { key: "apisecret", label: "API Secret", type: "text" },
+      {
+        key: "apikey",
+        label: "API Key",
+        type: "text"
+      },
+      {
+        key: "apisecret",
+        label: "API Secret",
+        type: "text"
+      },
     ],
     6: [
-      { key: "apikey", label: "API Key", type: "text" },
-      { key: "apisecret", label: "API Secret", type: "text" },
+      {
+        key: "apikey",
+        label: "API Key",
+        type: "text"
+      },
+      {
+        key: "apisecret",
+        label: "API Secret",
+        type: "text"
+      },
     ],
     7: [
-      { key: "apikey", label: "API Key", type: "text" },
-      { key: "apisecret", label: "API Secret", type: "text" },
-    ]
+      {
+        key: "apikey",
+        label: "API Key",
+        type: "text"
+      },
+      {
+        key: "apisecret",
+        label: "API Secret",
+        type: "text"
+      },
+    ],
   };
-
-
-  const fields = brokerFieldsMap[brokerId] || [];
-
-  const handleFieldChange = (key, value) => {
-    setStatusInfo((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
-
-
-
-  const handleSave = async () => {
-    setLoading(true);
-    try {
-      let data = { ...statusInfo, brokerid: brokerId, id: userId };
-      let loginData;
-
-      loginData = await UpdateBroker(data, token);
-
-      if (loginData.status) {
-        if (brokerId == 1) {
-          window.location.href = loginData.url;
-        } else if (brokerId == 2) {
-          window.location.href = loginData.url;
-        } else if (brokerId == 3) {
-          console.log("Kotak Neo", loginData);
-        } else if (brokerId == 4) {
-          console.log("Zerodha", loginData);
-        } else if (brokerId == 4) {
-          console.log("Upstox", loginData);
-        } else if (brokerId == 6) {
-          console.log("Dhan ", loginData);
-        } else if (brokerId == 7) {
-          console.log("Dhan ", loginData);
-        }
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: loginData.message,
-          timer: 2000,
-        });
-      }
-    } catch (error) {
-      console.error("Error during broker login", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
 
   const brokers = [
     {
@@ -143,115 +169,125 @@ function BrokersData({ data, closeModal }) {
     }
   ];
 
+  const filteredBrokers = type ? brokers.filter((b) => b.id === type) : brokers;
+  const fields = brokerId ? brokerFieldsMap[brokerId] || [] : [];
+
+  const handleFieldChange = (key, value) => {
+    setStatusInfo((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      let data = { ...statusInfo, brokerid: brokerId, id: userId };
+      let loginData = await UpdateBroker(data, token);
+
+      if (loginData.status) {
+        window.location.href = loginData.url;
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: loginData.message,
+          timer: 2000,
+        });
+      }
+    } catch (error) {
+      console.error("Error during broker login", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     setBrokerStatus(data?.dlinkStatus);
   }, [data]);
 
   return (
-    <ReusableModal
-      show={viewModel}
-      onClose={closeModal}
-      title={<span className="text-xl font-semibold">Select Broker</span>}
-      size="xl"
-      body={
-        <>
-          {!brokerStatus ? (
-            <div className="page-content flex flex-col items-center">
-              <div className="form-control row d-flex justify-content-center">
-                {brokers.map((broker) => (
-                  <div
-                    key={broker.id}
-                    className="col-lg-2 card card-body d-flex flex-column align-items-center justify-content-center m-2"
-                    onClick={() => {
-                      setBrokerId(broker.id);
-                      setShowModal(true);
-                    }}
-                    style={{
-                      cursor: "pointer",
-                      transition: "transform 0.3s ease-in-out",
-                      transform: "scale(1)",
-                      borderRadius: "15px",
-                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                      padding: "20px",
-                      marginBottom: "20px",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.transform = "scale(1.05)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                  >
+    <>
+      <ReusableModal
+        show={viewModel}
+        onClose={closeModal}
+        title={<span className="text-xl font-semibold">Select Broker</span>}
+        size="xl"
+        body={
+          <>
+            {!brokerStatus ? (
+              <div className="page-content flex flex-col items-center">
+                <div className="form-control row d-flex justify-content-center">
+                  {filteredBrokers.map((broker) => (
                     <div
-                      className="card-image d-flex justify-content-center mb-3"
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        marginBottom: "15px",
+                      key={broker.id}
+                      className="col-lg-2 card card-body d-flex flex-column align-items-center justify-content-center m-2"
+                      onClick={() => {
+                        setBrokerId(broker.id);
+                        setShowModal(true);
                       }}
+                      style={{
+                        cursor: "pointer",
+                        transition: "transform 0.3s ease-in-out",
+                        transform: "scale(1)",
+                        borderRadius: "15px",
+                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                        padding: "20px",
+                        marginBottom: "20px",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.05)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
                     >
-                      <img
-                        src={broker.img}
-                        alt={broker.name}
-                        style={{
-                          height: "80px",
-                          width: "80px",
-                          objectFit: "cover",
-                          borderRadius: "50%",
-                          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.2)",
-                        }}
+                      <div
+                        className="card-image d-flex justify-content-center mb-3"
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <img
+                          src={broker.img}
+                          alt={broker.name}
+                          style={{
+                            height: "80px",
+                            width: "80px",
+                            objectFit: "cover",
+                            borderRadius: "50%",
+                            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.2)",
+                          }}
+                        />
+                      </div>
+                      <h5 className="text-center font-weight-bold">{broker.name}</h5>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {showModal && brokerId && (
+              <div className="modal-body mt-6">
+                <div>
+                  {fields.map((field, index) => (
+                    <div key={index} className="mb-4">
+                      <label className="block text-sm font-medium mb-2">
+                        {field.label}
+                      </label>
+                      <input
+                        type={field.type || "text"}
+                        className="form-control"
+                        value={statusInfo[field.key] || ""}
+                        onChange={(e) => handleFieldChange(field.key, e.target.value)}
                       />
                     </div>
-                    <h5
-                      className="text-center font-weight-bold"
-                      style={{
-                        fontSize: "1.1rem",
-                        fontWeight: "600",
-                        color: "#333",
-                        textAlign: "center",
-                        marginTop: "10px",
-                      }}
-                    >
-                      {broker.name}
-                    </h5>
-                  </div>
-                ))}
+                  ))}
+                  <button className="btn btn-primary" onClick={handleSave} disabled={loading}>
+                    {loading ? "Saving..." : "Save"}
+                  </button>
+                </div>
               </div>
-            </div>
-          ) : null}
-
-          {showModal && brokerId && (
-            < div className="modal-body mt-6">
-              <h1>asdad</h1>
-              <div>
-                {fields.map((field, index) => (
-                  <div key={index} className="mb-4 ">
-                    <label className="block text-sm font-medium mb-2">
-                      {field.label}
-                    </label>
-                    <input
-                      type={field.type || "text"}
-                      className="form-control"
-                      value={statusInfo[field.key] || ""}
-                      onChange={(e) =>
-                        handleFieldChange(field.key, e.target.value)
-                      }
-                    />
-                  </div>
-                ))}
-                <button
-                  className="btn btn-primary"
-                  onClick={handleSave}
-                  disabled={loading}
-                >
-                  {loading ? "Saving..." : "Save"}
-                </button>
-              </div>
-            </div>
-          )}
-        </>
-      }
-    />
+            )}
+          </>
+        }
+      />
+    </>
   );
 }
 
