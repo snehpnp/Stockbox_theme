@@ -230,6 +230,22 @@ function BrokersData({ data, closeModal, type }) {
               <div className="page-content flex flex-col items-center">
                 <div className="form-control row d-flex justify-content-center">
                   {filteredBrokers.map((broker) => (
+
+                    <>      <div>
+                    <img
+                      src={broker.img}
+                      alt={broker.name}
+                      style={{
+                        height: "50px",
+                        width: "50px",
+                        objectFit: "cover",
+                        borderRadius: "50%",
+                        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.2)",
+                      }}
+                    />
+<h5 className=" font-weight-bold mt-2">{broker.name}</h5>
+</div>  
+                  
                     <div
                       key={broker.id}
                       className="col-lg-2 card card-body d-flex flex-column align-items-center justify-content-center m-2"
@@ -240,37 +256,76 @@ function BrokersData({ data, closeModal, type }) {
                       style={{
                         cursor: "pointer",
                         transition: "transform 0.3s ease-in-out",
-                        transform: "scale(1)",
+                        
                         borderRadius: "15px",
                         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
                         padding: "20px",
                         marginBottom: "20px",
                       }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.05)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.transform = "scale(1)")
-                      }
+                      
                     >
+     
                       <div
-                        className="card-image d-flex justify-content-center mb-3"
-                        style={{ display: "flex", justifyContent: "center" }}
-                      >
-                        <img
-                          src={broker.img}
-                          alt={broker.name}
-                          style={{
-                            height: "80px",
-                            width: "80px",
-                            objectFit: "cover",
-                            borderRadius: "50%",
-                            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.2)",
-                          }}
-                        />
+                        className="w-100 card-image mb-3">
+             
+<div className="timeline">
+  <div className="timeline-item">
+    <div className="timeline-header">
+      <div className="timeline-title">First Computer</div>
+      <div className="timeline-date">1995</div>
+    </div>
+    <div className="timeline-content">
+      Got my first computer - a Windows 95 machine. Spent countless hours
+      playing Minesweeper and learning DOS commands.
+    </div>
+  </div>
+  <div className="timeline-item">
+    <div className="timeline-header">
+      <div className="timeline-title">Built My First PC</div>
+      <div className="timeline-date">2001</div>
+    </div>
+    <div className="timeline-content">
+      Assembled my first custom gaming rig with an AMD Athlon processor and
+      GeForce 2 graphics card. The feeling of pressing that power button for the
+      first time was unforgettable.
+    </div>
+  </div>
+  <div className="timeline-item">
+    <div className="timeline-header">
+      <div className="timeline-title">First Smartphone</div>
+      <div className="timeline-date">2007</div>
+    </div>
+    <div className="timeline-content">
+      Got the original iPhone on launch day. Waited in line for 6 hours. Changed
+      my perspective on what mobile computing could be.
+    </div>
+  </div>
+  <div className="timeline-item">
+    <div className="timeline-header">
+      <div className="timeline-title">VR Experience</div>
+      <div className="timeline-date">2015</div>
+    </div>
+    <div className="timeline-content">
+      Tried the Oculus Rift DK2. Mind was blown by the possibilities of virtual
+      reality. Started developing small VR experiments.
+    </div>
+  </div>
+  <div className="timeline-item">
+    <div className="timeline-header">
+      <div className="timeline-title">AI Revolution</div>
+      <div className="timeline-date">2023</div>
+    </div>
+    <div className="timeline-content">
+      Began exploring AI tools and large language models. Started building
+      custom AI applications and automating daily tasks.
+    </div>
+  </div>
+</div>
+
                       </div>
-                      <h5 className="text-center font-weight-bold">{broker.name}</h5>
+                   
                     </div>
+                    </>
                   ))}
                 </div>
               </div>
