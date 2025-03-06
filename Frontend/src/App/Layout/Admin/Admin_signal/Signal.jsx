@@ -390,6 +390,14 @@ const Signal = () => {
             };
 
             if (index === 1) {
+                if (
+                    !closedata.targetprice1?.trim() &&
+                    !closedata.targetprice2?.trim() &&
+                    !closedata.targetprice3?.trim()
+                ) {
+                    showValidationError('Please Filled the Input');
+                    return;
+                }
                 if (closedata.calltype === "BUY") {
                     const target1 = parseFloat(closedata.targetprice1) || null;
                     const target2 = parseFloat(closedata.targetprice2) || null;
