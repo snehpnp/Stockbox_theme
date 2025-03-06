@@ -352,6 +352,7 @@ const Signal = () => {
             "targetprice1": row.targetprice1,
             "targetprice2": row.targetprice2,
             "targetprice3": row.targetprice3,
+            "slprice": row.stoploss
         });
         setClosedata({
             ...row,
@@ -376,7 +377,6 @@ const Signal = () => {
             }));
         }
     }, [closedata.targetprice3]);
-
 
 
 
@@ -485,14 +485,14 @@ const Signal = () => {
                 }
 
                 if (closedata?.calltype === "BUY") {
-                    if (parseFloat(closedata?.slprice) < parseFloat(closedata?.price)) {
-                        showValidationError('SL price  must be Greater Than Entry Price');
+                    if (parseFloat(closedata?.slprice) > parseFloat(closedata?.price)) {
+                        showValidationError('SL price  must be Less Than Entry Price');
                         return;
                     }
 
                 } else if (closedata?.calltype === "SELL") {
-                    if (parseFloat(closedata?.slprice) > parseFloat(closedata?.price)) {
-                        showValidationError('SL price  must be Less Than Entry Price');
+                    if (parseFloat(closedata?.slprice) < parseFloat(closedata?.price)) {
+                        showValidationError('SL price  must be More Than Entry Price');
                         return;
                     }
                 }
@@ -531,7 +531,7 @@ const Signal = () => {
                 targetprice1: index === 0 ? closedata.tag1 : index === 1 ? closedata.targetprice1 : "",
                 targetprice2: index === 0 ? closedata.tag2 : index === 1 ? closedata.targetprice2 : "",
                 targetprice3: index === 0 ? closedata.tag3 : index === 1 ? closedata.targetprice3 : "",
-                slprice: index === 2 ? closedata.slprice : closedata.stoploss,
+                slprice: index === 2 ? closedata.slprice : "",
                 exitprice: index === 3 ? closedata.exitprice : ""
             };
 

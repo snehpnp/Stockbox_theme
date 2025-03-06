@@ -172,7 +172,7 @@ const Signaldetail = () => {
                                                         </li>
                                                         <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                             <h6 className="mb-0">Stoploss</h6>
-                                                            <span className="text-secondary">{item.stoploss || '-'}</span>
+                                                            <span className="text-secondary">{item.closeprice ? item.closeprice : item.stoploss || '-'}</span>
                                                         </li>
                                                         <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                             <h6 className="mb-0">Uploaded Document</h6>
