@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { UserSignupApi } from "../../Services/Auth/Login";
+import { UserSignupApi, UserOtpSubmit } from "../../Services/Auth/Login";
 import { image_baseurl } from "../../../Utils/config";
 import { Link } from "react-router-dom";
 import { basicsettinglist } from "../../Services/Admin/Admin";
 import BgImg from "./bg-login-img.png";
+import ReusableModal from "../../components/Models/ReusableModal";
+import showCustomAlert from "../../Extracomponents/CustomAlert/CustomAlert";
 
 const UserSignup = () => {
   const navigate = useNavigate();
@@ -17,9 +18,23 @@ const UserSignup = () => {
     password: "",
   });
 
+  const [otpInfo, setOtpInfo] = useState({
+    "status": "",
+    "otp": "",
+    "otpmobile": "",
+    "email": "",
+    "message": "",
+  })
+
+  
+
+  const [enteredOtp, setEnteredOtp] = useState("")
+
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [information, setInformation] = useState([]);
+
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
 
   const togglePasswordVisibility = (e) => {
     e.preventDefault();
@@ -79,15 +94,9 @@ const UserSignup = () => {
 
     // Check if there are any errors
     if (Object.values(errors).some((err) => err)) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Please correct the errors before submitting",
-      });
+      showCustomAlert("error","Please correct the errors before submitting")
       return;
     }
-
-
 
     const ResData = await UserSignupApi({
       FullName: fullName,
@@ -97,20 +106,44 @@ const UserSignup = () => {
       token: referralCode,
     });
 
+    console.log("API Response:", ResData);
+
+
     if (ResData.status) {
-      Swal.fire({
-        icon: "success",
-        title: "Success",
-        text: "Signup successful!",
-        timer: 1500,
-      }).then(() => {
-        navigate("/register");
-        window.location.reload();
-      });
+      showCustomAlert("Success",ResData.message)
+      setIsOtpModalOpen(true)
+      setOtpInfo(ResData)
     } else {
-      Swal.fire({ icon: "error", title: "Error", text: ResData.message });
+      showCustomAlert("error", ResData.message );
     }
   };
+
+  const handleOtpSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!enteredOtp) {
+      showCustomAlert("error","Please enter OTP before submitting")
+      return;
+    }
+
+    try {
+      const otpSubmit = await UserOtpSubmit({
+        email: otpInfo.email,
+        otp: enteredOtp,
+      });
+
+      if (enteredOtp == otpInfo.otp) {
+        showCustomAlert("Success","OTP verification successful!",navigate,"/user-login")
+        setIsOtpModalOpen(false); 
+      } else {
+        showCustomAlert("error","Invalid OTP, please try again!")
+      }
+    } catch (error) {
+      showCustomAlert("error","Something went wrong, please try again!")
+    }
+  };
+
+
 
   useEffect(() => {
     const getSettingList = async () => {
@@ -217,6 +250,48 @@ const UserSignup = () => {
           </div>
         </div>
       </div>
+      {isOtpModalOpen && (
+        <ReusableModal
+          show={isOtpModalOpen}
+          onClose={() => setIsOtpModalOpen(false)}
+          title="Enter OTP"
+          body={
+            <form>
+              <div className="row">
+                <div className="col-md-12">
+                  <label htmlFor="otp">Enter OTP</label>
+                  <span className="text-danger">*</span>
+                  <input
+                    type="text"
+                    id="otp"
+                    className="form-control"
+                    value={enteredOtp}
+                    onChange={(e) => setEnteredOtp(e.target.value)} // ✅ Store user OTP
+                  />
+                </div>
+              </div>
+            </form>
+          }
+          footer={
+            <>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setIsOtpModalOpen(false)}
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleOtpSubmit} // ✅ Direct function reference diya hai
+              >
+                Submit
+              </button>
+            </>
+          }
+        />
+      )}
     </div>
   );
 };

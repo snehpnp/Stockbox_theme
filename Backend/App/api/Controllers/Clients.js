@@ -645,12 +645,13 @@ class Clients {
       const { otp, email } = req.body;
 
       if (!otp) {
-        return res.status(400).json({
+        return res.json({
           status: false,
           message: "Please enter otp",
         });
       }
 
+      
       // Find the user by reset token and check if the token is valid
       const client = await Clients_Modal.findOne({
         Email: email
@@ -658,7 +659,7 @@ class Clients {
 
 
       if (!client) {
-        return res.status(400).json({
+        return res.json({
           status: false,
           message: "Something went wrong",
         });
@@ -666,9 +667,6 @@ class Clients {
 
       client.ActiveStatus = 1;
       await client.save();
-
-
-
 
       const titles = 'Important Update';
       const message = `${client.FullName} New Account Signup successfully.`;
