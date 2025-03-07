@@ -37,3 +37,15 @@ export async function UserSignupApi(data) {
     throw error;
   }
 }
+
+
+export async function UserOtpSubmit(data) {
+  try {
+    const response = await axios.post(`${Config.base_url}api/client/otp_submit`, data);
+
+    return response.data;
+  } catch (error) {
+    console.log("Error fetching login:", error.message || error);
+    throw error;
+  }
+}

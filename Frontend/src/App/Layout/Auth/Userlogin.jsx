@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { UserLoginApi } from "../../Services/Auth/Login";
 import { image_baseurl } from "../../../Utils/config";
