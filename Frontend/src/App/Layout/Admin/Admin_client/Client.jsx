@@ -37,6 +37,7 @@ import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 
+
 const Client = () => {
   useEffect(() => {
     getbasketlist();
@@ -189,6 +190,8 @@ const Client = () => {
     }
   };
 
+
+
   const getcategoryplanlist = async () => {
     try {
       const response = await getActivecategoryplan(token);
@@ -201,6 +204,8 @@ const Client = () => {
       console.log("error");
     }
   };
+
+
 
   const getActiveBasketdetail = async () => {
     try {

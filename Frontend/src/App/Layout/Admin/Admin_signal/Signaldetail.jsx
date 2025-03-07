@@ -126,7 +126,7 @@ const Signaldetail = () => {
                                                         </li>
                                                         <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                             <h6 className="mb-0">Exit Price</h6>
-                                                            <span className="text-secondary"><IndianRupee size={16} />{Math.max(item.targetprice2, item.targetprice2, item.targetprice3)
+                                                            <span className="text-secondary"><IndianRupee size={16} />{Math.max(item.targetprice1, item.targetprice2, item.targetprice3)
                                                                 ? Math.max(item.targetprice1, item.targetprice2, item.targetprice3)
                                                                 : item.closeprice || '-'}</span>
                                                         </li>
