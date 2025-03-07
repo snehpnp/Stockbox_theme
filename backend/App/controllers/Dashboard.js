@@ -1249,6 +1249,131 @@ class Dashboard {
   }
   
   
+  async PlanExipreListWithFilterExport(req, res) {
+    try {
+      const { serviceid, startdate, enddate, search } = req.body;
+
+      // Build the filter object dynamically
+      const filter = {};
+      if (serviceid) {
+        filter.serviceid = serviceid;
+      }
+      if (startdate) {
+        const startOfStartDate = new Date(startdate);
+        startOfStartDate.setHours(0, 0, 0, 0); // Start of the day (00:00:00)
+        filter.enddate = { $gte: startOfStartDate }; // Ensure enddate is greater than or equal to startdate
+      }
+
+      // If enddate is provided
+      if (enddate) {
+        const endOfEndDate = new Date(enddate);
+        endOfEndDate.setHours(23, 59, 59, 999); // End of the day (23:59:59)
+
+        // Combine the conditions to make sure the enddate is between startdate and enddate
+        filter.enddate = filter.enddate || {}; // Ensure we don't overwrite existing filter conditions
+        filter.enddate.$lte = endOfEndDate; // Ensure enddate is less than or equal to enddate
+      }
+      // If search term is provided, apply it to client fields (FullName, PhoneNo, Email)
+      let clientFilter = {};
+      if (search && search.trim() !== "") {
+        const regex = new RegExp(search, "i"); // Case-insensitive search
+        clientFilter = {
+          $or: [
+            { FullName: regex },
+            { PhoneNo: regex },
+            { Email: regex }
+          ]
+        };
+      }
+      // Fetch matching client IDs based on the search filter
+      const matchingClients = await Clients_Modal.find(clientFilter).select('_id');
+
+      // If there are no clients that match the search criteria, return an empty response
+      if (matchingClients.length === 0) {
+        return res.json({
+          status: true,
+          message: "No plans found for the given search criteria",
+          data: [],
+          pagination: {
+            total: 0,
+            page: parseInt(page),
+            limit: parseInt(limit),
+            totalPages: 0
+          }
+        });
+      }
+
+      // Add clientid filter to the plan query based on matching clients
+      filter.clientid = { $in: matchingClients.map(client => client._id) };
+
+      // Fetch paginated plans that match the filter
+      const plans = await Planmanage.find(filter)
+        .sort({ enddate: -1 })
+        // .skip((page - 1) * limit)
+        // .limit(parseInt(limit));
+
+      // Get total count of matching plans for pagination metadata
+      // const totalCount = await Planmanage.countDocuments(filter);
+
+      // Prepare an array to store the enriched data
+      const enrichedPlans = [];
+
+      for (let plan of plans) {
+        const service = await Service_Modal.findById(plan.serviceid).select('title');
+        const client = await Clients_Modal.findById(plan.clientid).select('FullName PhoneNo Email');
+
+        enrichedPlans.push({
+          ...plan.toObject(),
+          serviceTitle: service ? service.title : null,
+          clientFullName: client ? client.FullName : null,
+          clientMobile: client ? client.PhoneNo : null,
+          clientEmail: client ? client.Email : null
+        });
+      }
+
+      return res.json({
+        status: true,
+        message: "get",
+        data: enrichedPlans,
+     
+      });
+    } catch (error) {
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
+
+  async CloseSignalWithFilterExport(req, res) {
+    try {
+      const { service_id } = req.body;
+      // Calculate the number of records to skip based on the page and limit
+   
+
+      // Define the query for closed signals by service
+      const query = {
+        service: service_id,
+        close_status: true,
+      };
+
+      // Get the total number of matching records
+
+      // Fetch signals with pagination and sorting
+      const signals = await Signal_Modal.find(query)
+        .sort({ created_at: -1 }) ;
+
+      // Calculate total pages
+
+      // Return the response with pagination info
+      return res.json({
+        status: true,
+        message: "Signals retrieved successfully",
+        data: signals,
+      
+      });
+    } catch (error) {
+      // console.error("Error fetching signals:", error);
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
   
 
 

@@ -2,7 +2,7 @@ const router = require("express").Router()
 const cors = require('cors');
 
 
-const { getcount, getLicense, pastPerformance, pastPerformances, CloseSignal, PlanExipreList, CloseSignalWithFilter, PlanExipreListWithFilter, CompanyStatus, Notification, statusChangeNotifiction, totalClient, NotificationList,allStatusChangeNotifiction,pastPerformancewithtype,CloseSignalwithtype,referEarn } = require('../Controllers/Dashboard')
+const { getcount, getLicense, pastPerformance, pastPerformances, CloseSignal, PlanExipreList, CloseSignalWithFilter, PlanExipreListWithFilter, CompanyStatus, Notification, statusChangeNotifiction, totalClient, NotificationList,allStatusChangeNotifiction,pastPerformancewithtype,CloseSignalwithtype,referEarn,PlanExipreListWithFilterExport,CloseSignalWithFilterExport } = require('../Controllers/Dashboard')
 
 router.get('/dashboard/getcount', getcount);
 router.post('/dashboard/getlicense', getLicense);
@@ -27,5 +27,10 @@ router.get('/dashboard/past-performance-type/:id/:callduration?', pastPerformanc
 router.post('/dashboard/closesignalwithtype', CloseSignalwithtype);
 
 router.post('/dashboard/referearn', referEarn);
+
+
+router.post('/dashboard/planexiprelistwithfilterexport', PlanExipreListWithFilterExport);
+router.post('/dashboard/closesignalwithfilterexport', CloseSignalWithFilterExport);
+
 
 module.exports = router;

@@ -1846,5 +1846,231 @@ async closeSignalwithplan(req, res) {
 
 
 
+async getSignalWithFilterExport(req, res) {
+  try {
+    const { from, to, service, stock, closestatus, search, add_by } = req.body;
+    // let limit = 10;
+    // Date filtering
+    let fromDate;
+    if (from) {
+      fromDate = new Date(from);
+      fromDate.setHours(0, 0, 0, 0); // दिन की शुरुआत (00:00:00)
+    }
+    
+    let toDate;
+    if (to) {
+      toDate = new Date(to);
+      toDate.setHours(23, 59, 59, 999); // दिन का अंत (23:59:59)
+    }
+
+    
+    
+    // Query को बनाएं
+    let query = { del: 0 };
+    // console.log(typeof closestatus, closestatus);
+    
+    if (closestatus === "true") {
+      if (fromDate && toDate) {
+        query.closedate = { $gte: fromDate, $lte: toDate }; 
+      }
+    }
+    else {
+    if (fromDate && toDate) {
+      query.created_at = { $gte: fromDate, $lte: toDate }; 
+    }
+  }
+    
+    if (service) {
+      query.service = service;
+    }
+
+    if (stock) {
+      query.stock = stock;
+    }
+
+    if (closestatus) {
+      query.close_status = closestatus;
+    }
+
+    if (add_by) {
+      query.add_by = add_by;
+    }
+
+    if (search && search.trim() !== '') {
+      query.$or = [
+          { tradesymbol: { $regex: search, $options: 'i' } },
+          { calltype: { $regex: search, $options: 'i' } },
+          { price: { $regex: search, $options: 'i' } },
+          { closeprice: { $regex: search, $options: 'i' } }
+      ];
+  }
+
+    let sortCriteria = { created_at: -1 }; // Default sorting by created_at in descending order
+    if (closestatus === true) {
+      sortCriteria = { closedate: -1 }; // Sort by close_date in descending order if closestatus is true
+    }
+
+    // Convert page and limit to integers and calculate skip
+    // const pageNumber = parseInt(page);
+    // const limitValue = parseInt(limit);
+    // const skip = (pageNumber - 1) * limitValue;
+
+    // Get total count for pagination
+    // const totalRecords = await Signal_Modal.countDocuments(query);
+    // const totalPages = Math.ceil(totalRecords / limitValue);
+
+    // Fetch data with pagination
+    const result = await Signal_Modal.find(query)
+      .populate({ path: 'service', select: 'title' }) // Populate only the title from service
+      .populate({ path: 'stock', select: 'title' })
+      .sort(sortCriteria) // Sort in descending order
+      // .skip(skip) // Pagination: skip items
+      // .limit(limitValue); // Pagination: limit items
+
+    return res.json({
+      status: true,
+      message: "Signals fetched successfully",
+      data: result,
+    });
+  } catch (error) {
+    return res.json({
+      status: false,
+      message: "Server error",
+      data: []
+    });
+  }
+}
+
+
+
+async getSignalWithFilterplanExport(req, res) {
+  try {
+    const { from, to, service, stock, closestatus, search, add_by } = req.body;
+    // Date filtering
+    let fromDate;
+    if (from) {
+      fromDate = new Date(from);
+      fromDate.setHours(0, 0, 0, 0); 
+    }
+    
+    let toDate;
+    if (to) {
+      toDate = new Date(to);
+      toDate.setHours(23, 59, 59, 999); 
+    }
+
+    
+
+    let query = { del: 0 };
+    // console.log(typeof closestatus, closestatus);
+    
+    if (closestatus === "true") {
+      if (fromDate && toDate) {
+        query.closedate = { $gte: fromDate, $lte: toDate }; 
+      }
+    }
+    else {
+    if (fromDate && toDate) {
+      query.created_at = { $gte: fromDate, $lte: toDate }; 
+    }
+  }
+
+
+    
+    if (service) {
+      query.service = service;
+    }
+
+    if (stock) {
+      query.stock = stock;
+    }
+
+
+    if (closestatus) {
+      query.close_status = closestatus;
+    }
+
+    if (add_by) {
+      query.add_by = add_by;
+    }
+
+    if (search && search.trim() !== '') {
+
+
+      const matchingPlans = await Plancategory_Modal.find(
+        { title: { $regex: search, $options: 'i' } },
+        { _id: 1 }
+    );
+
+    const matchingPlanIds = matchingPlans.map(plan => plan._id.toString());
+
+      query.$or = [
+          { tradesymbol: { $regex: search, $options: 'i' } },
+          { calltype: { $regex: search, $options: 'i' } },
+          { price: { $regex: search, $options: 'i' } },
+          { closeprice: { $regex: search, $options: 'i' } },
+          { planid: { $in: matchingPlanIds } }
+      ];
+  }
+
+    let sortCriteria = { created_at: -1 }; // Default sorting by created_at in descending order
+    if (closestatus === true) {
+      sortCriteria = { closedate: -1 }; // Sort by close_date in descending order if closestatus is true
+    }
+
+    // Convert page and limit to integers and calculate skip
+    // const pageNumber = parseInt(page);
+    // const limitValue = parseInt(limit);
+    // const skip = (pageNumber - 1) * limitValue;
+
+    // // Get total count for pagination
+    // const totalRecords = await Signal_Modal.countDocuments(query);
+    // const totalPages = Math.ceil(totalRecords / limitValue);
+
+    // Fetch data with pagination
+    const result = await Signal_Modal.find(query)
+      .populate({ path: 'service', select: 'title' }) // Populate only the title from service
+      .populate({ path: 'stock', select: 'title' })
+      .sort(sortCriteria); // Sort in descending order
+      
+
+
+
+// Extract unique plan IDs
+const planIds = [...new Set(result.map(item => item.planid).filter(id => id))];
+
+// Fetch plan category titles for these planIds
+const planCategories = await Plancategory_Modal.find({ _id: { $in: planIds } }, { _id: 1, title: 1 });
+
+// Convert to a lookup object
+const planCategoryMap = planCategories.reduce((acc, category) => {
+  acc[category._id.toString()] = category.title;
+  return acc;
+}, {});
+
+// Attach plan category titles to result
+const finalResult = result.map(item => ({
+  ...item._doc,
+  plan_category_title: planCategoryMap[item.planid] || null, // Add title or null if not found
+}));
+
+    return res.json({
+      status: true,
+      message: "Signals fetched successfully",
+      data: finalResult,
+    
+    });
+  } catch (error) {
+    return res.json({
+      status: false,
+      message: "Server error",
+      data: []
+    });
+  }
+}
+
+
+
+
 }
 module.exports = new Signal();
