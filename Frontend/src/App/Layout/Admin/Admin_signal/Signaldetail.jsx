@@ -136,11 +136,11 @@ const Signaldetail = () => {
                                                         </li>
                                                         <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                             <h6 className="mb-0">Target-1</h6>
-                                                            <span className="text-secondary">{item.targetprice1 || item.tag1 || '-'}</span>
+                                                            <span className="text-secondary">{item.tag1 || '-'}</span>
                                                         </li>
                                                         <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                             <h6 className="mb-0">Target-3</h6>
-                                                            <span className="text-secondary">{item.targetprice3 || item.tag3 || '-'}</span>
+                                                            <span className="text-secondary">{item.tag3 || '-'}</span>
                                                         </li>
 
                                                     </ul>
