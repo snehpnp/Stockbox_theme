@@ -359,26 +359,19 @@ export async function GetStockDetail(token) {
 
 
 
+
 export async function GetSignallist(data, token) {
     try {
-        const res = await axios.get(`${Config.base_url}signal/list`, {
+        const res = await axios.post(`${Config.base_url}signal/listwithfilterexport`, data, {
             headers: {
-                'Authorization': token,
-                'Content-Type': 'application/x-www-form-urlencoded'
+                data: {},
+                'Authorization': `${token}`,
             },
-            params: {
-                from: data.from,
-                to: data.to,
-                service: data.service,
-                stock: data.stock
-            }
         });
-
         return res?.data;
-    } catch (error) {
-        console.log("Error fetching signals:", error.response ? error.response.data : error.message);
+    } catch (err) {
+        return err.response?.data || err.message;
     }
-
 }
 
 
@@ -2252,9 +2245,9 @@ export async function getstockStrickprice(data, token) {
 
 
 
-export async function getPayementhistory(token) {
+export async function getPayementhistory(data, token) {
     try {
-        const res = await axios.get(`${Config.base_url}plan/paymenthistory`, {
+        const res = await axios.post(`${Config.base_url}plan/paymenthistorywithfilterexport`, data, {
             headers: {
                 'Authorization': `${token}`
             },
@@ -2303,9 +2296,9 @@ export async function getClientRequestforfilter(data, token) {
 
 // get freelist client 
 
-export async function FreeClientList(token) {
+export async function FreeClientList(data, token) {
     try {
-        const res = await axios.get(`${Config.base_url}client/freetriallist`, {
+        const res = await axios.post(`${Config.base_url}client/freetriallistwithfilterexport`, data, {
             headers: {
                 'Authorization': `${token}`
             },
@@ -2754,9 +2747,9 @@ export async function Updatesquareoffdata(data, token) {
 
 
 
-export async function getclientPlanexpiry(token) {
+export async function getclientPlanexpiry(data, token) {
     try {
-        const res = await axios.get(`${Config.base_url}dashboard/planexiprelist`, {
+        const res = await axios.post(`${Config.base_url}dashboard/planexiprelistwithfilterexport`, data, {
             headers: {
                 'Authorization': `${token}`
             },

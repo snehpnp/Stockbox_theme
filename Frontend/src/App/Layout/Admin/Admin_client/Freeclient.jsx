@@ -122,8 +122,8 @@ const Freeclient = () => {
 
     const getexportfile = async () => {
         try {
-
-            const response = await FreeClientList(token);
+            const data = { page: currentPage, search: searchInput, freestatus: clientStatus || "" }
+            const response = await FreeClientList(data, token);
             if (response.status) {
                 if (response.data?.length > 0) {
                     const csvArr = response.data?.map((item) => ({

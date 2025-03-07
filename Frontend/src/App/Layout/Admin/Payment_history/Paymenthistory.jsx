@@ -67,7 +67,8 @@ const History = () => {
 
     const getexportfile = async () => {
         try {
-            const response = await getPayementhistory(token);
+            const data = { page: "", fromDate: startDate, toDate: endDate, search: searchInput }
+            const response = await getPayementhistory(data, token);
             if (response.status) {
                 if (response.data?.length > 0) {
                     const csvArr = response.data?.map((item) => ({

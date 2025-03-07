@@ -34,6 +34,9 @@ import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 const Closesignal = () => {
 
+
+
+
   const [activeTab, setActiveTab] = useState("table");
   const token = localStorage.getItem("token");
   const [searchInput, setSearchInput] = useState("");
@@ -106,7 +109,26 @@ const Closesignal = () => {
 
   const getexportfile = async () => {
     try {
-      const response = await GetSignallist(token);
+      const data = {
+        page: currentPage,
+        from:
+          clientStatus === "todayclosesignal"
+            ? formattedDate
+            : filters.from
+              ? filters.from
+              : "",
+        to:
+          clientStatus === "todayclosesignal"
+            ? formattedDate
+            : filters.to
+              ? filters.to
+              : "",
+        service: filters.service,
+        stock: searchstock,
+        closestatus: "true",
+        search: searchInput,
+      };
+      const response = await GetSignallist(data, token);
       if (response.status) {
         if (response.data?.length > 0) {
           let filterdata = response.data.filter(

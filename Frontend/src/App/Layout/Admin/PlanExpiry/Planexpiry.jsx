@@ -82,7 +82,14 @@ const Planexpiry = () => {
 
     const getexportfile = async () => {
         try {
-            const response = await getclientPlanexpiry(token);
+            const data = {
+                page: currentPage,
+                serviceid: searchStock,
+                startdate: startDate,
+                enddate: endDate,
+                search: searchInput,
+            };
+            const response = await getclientPlanexpiry(data ,token);
             if (response.status) {
                 if (response.data?.length > 0) {
                     const csvArr = response.data?.map((item) => ({

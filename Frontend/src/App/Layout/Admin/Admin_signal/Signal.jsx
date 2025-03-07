@@ -180,7 +180,16 @@ const Signal = () => {
 
     const getexportfile = async () => {
         try {
-            const response = await GetSignallist(token);
+            const data = {
+                from: clientStatus === "todayopensignal" ? formattedDate : filters.from ? filters.from : "",
+                to: clientStatus === "todayopensignal" ? formattedDate : filters.to ? filters.to : "",
+                service: filters.service,
+                stock: searchstock,
+                closestatus: "false",
+                search: searchInput,
+            };
+
+            const response = await GetSignallist(data, token);
 
             if (response.status) {
                 if (response.data?.length > 0) {
