@@ -4329,7 +4329,7 @@ class List {
 
             
               let config = {
-                method: 'post',
+                method: 'get',
                 url: 'https://api.kite.trade/user/margins',
                 headers: {
                     'Authorization': 'token ' + apikey + ':' + authToken
@@ -4345,7 +4345,7 @@ class List {
 
                 if (!isFundChecked) {
                   isFundChecked = true; // Set the flag to true
-                  const net = parseFloat(responseData,equity.net); // Convert responseData.net to a float
+                  const net = parseFloat(responseData.equity.net); // Convert responseData.net to a float
                   const total = parseFloat(totalAmount);
 
                   if (total >= net) {
@@ -4415,7 +4415,7 @@ class List {
 
                 if (!isFundChecked) {
                   isFundChecked = true; // Set the flag to true
-                  const net = parseFloat(responseData,equity.available_margin); // Convert responseData.net to a float
+                  const net = parseFloat(responseData.equity.available_margin); // Convert responseData.net to a float
                   const total = parseFloat(totalAmount);
 
                   if (total >= net) {
