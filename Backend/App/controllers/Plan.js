@@ -1444,6 +1444,152 @@ if (settings.gst > 0 && settings.gststatus==1) {
   }
 
 
+  async paymentHistoryWithFilterExport(req, res) {
+    try {
+      const { fromDate, toDate, search } = req.body; // Extract fromDate, toDate, page, and limit from the request body
+      // let limit = 10;
+      // const skip = (parseInt(page) - 1) * parseInt(limit); // Calculate the number of items to skip based on page and limit
+  
+      // Build match conditions based on the date range
+      const matchConditions = { del: false };
+
+
+      
+      if (fromDate && toDate) {
+        const startOfFromDate = new Date(fromDate);
+        startOfFromDate.setHours(0, 0, 0, 0); 
+      
+        const endOfToDate = new Date(toDate);
+        endOfToDate.setHours(23, 59, 59, 999); 
+      
+        matchConditions.created_at = {
+          $gte: startOfFromDate,
+          $lte: endOfToDate,
+        };
+      }
+
+
+      const searchMatch = search && search.trim() !== "" ? {
+        $or: [
+          { "clientDetails.FullName": { $regex: search, $options: "i" } }, // Search by client name
+          { "clientDetails.Email": { $regex: search, $options: "i" } },    // Search by client email
+          { "clientDetails.PhoneNo": { $regex: search, $options: "i" } }   // Search by client mobile
+        ]
+      } : {};
+  
+      const result = await PlanSubscription_Modal.aggregate([
+        {
+          $match: matchConditions
+        },
+        {
+          $lookup: {
+            from: 'plans', // The name of the plans collection
+            localField: 'plan_id', // The field in PlanSubscription_Modal that references the plans
+            foreignField: '_id', // The field in the plans collection that is referenced
+            as: 'planDetails' // The name of the field in the result that will hold the joined data
+          }
+        },
+        {
+          $unwind: '$planDetails' // Optional: Unwind the result if you expect only one matching plan per subscription
+        },
+        {
+          $lookup: {
+            from: 'plancategories', // The name of the plancategories collection
+            localField: 'planDetails.category', // Field in plans referencing plancategories
+            foreignField: '_id', // The field in the plancategories collection that is referenced
+            as: 'planCategoryDetails' // The name of the field in the result that will hold the joined data
+          }
+        },
+        {
+          $unwind: '$planCategoryDetails' // Unwind if you expect only one matching category
+        },
+        {
+          $lookup: {
+            from: 'services',
+            let: { serviceIds: { $split: ['$planCategoryDetails.service', ','] } },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      {
+                        $in: ['$_id', { $map: { input: '$$serviceIds', as: 'id', in: { $toObjectId: '$$id' } } }]
+                      },
+                      { $eq: ['$status', true] }, // Match active services
+                      { $eq: ['$del', false] } // Match non-deleted services
+                    ]
+                  }
+                }
+              },
+              {
+                $project: {
+                  _id: 1,
+                  title: 1 // Service title
+                }
+              }
+            ],
+            as: 'serviceDetails'
+          }
+        },
+        {
+          $lookup: {
+            from: 'clients', // The name of the clients collection
+            localField: 'client_id', // The field in PlanSubscription_Modal that references the client
+            foreignField: '_id', // The field in the clients collection that is referenced
+            as: 'clientDetails' // The name of the field in the result that will hold the joined client data
+          }
+        },
+        {
+          $unwind: '$clientDetails' // Optional: Unwind the result if you expect only one matching client per subscription
+        },
+        { $match: searchMatch },
+        {
+          $project: {
+            orderid: 1,
+            created_at: 1,
+            plan_price: 1,
+            total: 1,
+            coupon: 1,
+            discount: 1,
+            validity:1,
+            planDetails: 1,
+            gstamount: 1,
+            gst: 1,
+            clientName: '$clientDetails.FullName',
+            clientEmail: '$clientDetails.Email',
+            clientPhoneNo: '$clientDetails.PhoneNo',
+            planCategoryTitle: '$planCategoryDetails.title',
+            serviceNames: { $map: { input: '$serviceDetails', as: 'service', in: '$$service.title' } } // Extract service titles
+          }
+        },
+        {
+          $sort: { created_at: -1 } // Sort by created_at in descending order
+        },
+        // {
+        //   $skip: skip // Pagination: Skip the first 'skip' number of items
+        // },
+        // {
+        //   $limit: parseInt(limit) // Limit the result to 'limit' items
+        // }
+      ]);
+  
+      // Get the total count for pagination
+    
+      // Respond with the retrieved subscriptions
+      return res.json({
+        status: true,
+        message: "Subscriptions retrieved successfully",
+        data: result,
+       
+      });
+  
+    } catch (error) {
+      // console.error(error);
+      return res.status(500).json({ status: false, message: 'Server error', data: [] });
+    }
+  }
+  
+
 
 
 }
