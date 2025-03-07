@@ -126,7 +126,9 @@ const Signaldetail = () => {
                                                         </li>
                                                         <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                             <h6 className="mb-0">Exit Price</h6>
-                                                            <span className="text-secondary"><IndianRupee size={16} />{item.closeprice || '-'}</span>
+                                                            <span className="text-secondary"><IndianRupee size={16} />{Math.max(item.targetprice2, item.targetprice2, item.targetprice3)
+                                                                ? Math.max(item.targetprice1, item.targetprice2, item.targetprice3)
+                                                                : item.closeprice || '-'}</span>
                                                         </li>
                                                         <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                             <h6 className="mb-0">Entry Date & Time</h6>
@@ -168,11 +170,11 @@ const Signaldetail = () => {
                                                         </li>
                                                         <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                             <h6 className="mb-0">Target-2</h6>
-                                                            <span className="text-secondary">{item.targetprice2 || item.tag2 || '-'}</span>
+                                                            <span className="text-secondary">{item.tag2 || '-'}</span>
                                                         </li>
                                                         <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                             <h6 className="mb-0">Stoploss</h6>
-                                                            <span className="text-secondary">{item.closeprice ? item.closeprice : item.stoploss || '-'}</span>
+                                                            <span className="text-secondary">{item.stoploss || '-'}</span>
                                                         </li>
                                                         <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                             <h6 className="mb-0">Uploaded Document</h6>

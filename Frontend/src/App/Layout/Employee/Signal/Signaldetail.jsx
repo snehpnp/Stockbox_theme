@@ -33,20 +33,6 @@ const Signaldetail = () => {
 
 
 
-    // const handleDownload = (item) => {
-
-    //     const url = item.report;
-    //     const link = document.createElement('a');
-    //     link.href = url;
-    //     link.download = url;
-
-    //     document.body.appendChild(link);
-    //     link.click();
-    //     document.body.removeChild(link);
-    // };
-
-
-
     const handleDownload = (item) => {
         const url = item.report;
         const link = document.createElement('a');
@@ -89,6 +75,7 @@ const Signaldetail = () => {
 
 
 
+
     return (
         <Content
             Page_title="Signal Detail"
@@ -98,34 +85,7 @@ const Signaldetail = () => {
         >
             <div>
                 <div className="page-content">
-                    {/* <div className="row">
-                    <div className="col-md-6">
-                        <div className="page-breadcrumb  d-flex align-items-center mb-3">
-                            <div className="breadcrumb-title pe-3">Signal Detail</div>
-                            <div className="ps-3">
-                                <nav aria-label="breadcrumb">
-                                    <ol className="breadcrumb mb-0 p-0">
-                                        <li className="breadcrumb-item">
-                                            <Link to="/employee/dashboard">
-                                                <i className="bx bx-home-alt" />
-                                            </Link>
-                                        </li>
-                                    </ol>
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-md-6 d-flex justify-content-end">
-                        <Link to={redirectTo}>
-                            
-                            <Tooltip title="Back">
-                                <i className="lni lni-arrow-left-circle" style={{ fontSize: "2rem",color:"#000"}}/>
-                            </Tooltip>
-                        </Link>
-                    </div>
-                </div>
 
-                <hr /> */}
 
                     <div className="row justify-content-center">
                         <div className="col-lg-10">
@@ -154,7 +114,9 @@ const Signaldetail = () => {
                                                             </li>
                                                             <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                                 <h6 className="mb-0">Exit Price</h6>
-                                                                <span className="text-secondary"><IndianRupee size={16} />{item.closeprice || '-'}</span>
+                                                                <span className="text-secondary"><IndianRupee size={16} />{Math.max(item.targetprice2, item.targetprice2, item.targetprice3)
+                                                                    ? Math.max(item.targetprice1, item.targetprice2, item.targetprice3)
+                                                                    : item.closeprice || '-'}</span>
                                                             </li>
                                                             <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                                 <h6 className="mb-0">Entry Date & Time</h6>
@@ -162,11 +124,11 @@ const Signaldetail = () => {
                                                             </li>
                                                             <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                                 <h6 className="mb-0">Target-1</h6>
-                                                                <span className="text-secondary">{item.targetprice1 || item.tag1 || '-'}</span>
+                                                                <span className="text-secondary">{item.tag1 || '-'}</span>
                                                             </li>
                                                             <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                                 <h6 className="mb-0">Target-3</h6>
-                                                                <span className="text-secondary">{item.targetprice3 || item.tag3 || '-'}</span>
+                                                                <span className="text-secondary">{item.tag3 || '-'}</span>
                                                             </li>
 
                                                         </ul>
@@ -196,7 +158,7 @@ const Signaldetail = () => {
                                                             </li>
                                                             <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                                 <h6 className="mb-0">Target-2</h6>
-                                                                <span className="text-secondary">{item.targetprice2 || item.tag2 || '-'}</span>
+                                                                <span className="text-secondary">{item.tag2 || '-'}</span>
                                                             </li>
                                                             <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                                 <h6 className="mb-0">Stoploss</h6>
@@ -206,7 +168,7 @@ const Signaldetail = () => {
                                                                 <h6 className="mb-0">Uploaded Document</h6>
                                                                 <span>
                                                                     {item.report ? (
-                                                                        //   <img src={`${image_baseurl}uploads/report/${item.image}`} alt={item.report} width="50" height="50" />
+
                                                                         <div style={{ color: "green", cursor: "pointer" }} onClick={() => handleDownload(item)}>
                                                                             <Tooltip placement="top" overlay="Download">
                                                                                 <ArrowDownToLine />
@@ -239,7 +201,7 @@ const Signaldetail = () => {
                                                             <div className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                                 <h6 className="ms-3">P&L</h6>
                                                                 <h6 className={`text-secondary me-2 ${item.totalGain > 0 ? 'text-success' : 'text-danger'}`}>
-                                                                    {/* <IndianRupee size={16} />  */}
+
                                                                     {item.totalGain !== null ? `${calculatePercentage(item.totalGain, item.price)}%` : '-'}
                                                                 </h6>
                                                             </div>
