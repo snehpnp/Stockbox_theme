@@ -1601,7 +1601,7 @@ class Signal {
       // Attach plan category titles to result
       const finalResult = result.map(item => ({
         ...item._doc,
-        plan_category_title: planCategoryMap[item.planid] || null, // Add title or null if not found
+        plan_category_title: planCategoryMap[item.planid] || null,
       }));
 
       return res.json({

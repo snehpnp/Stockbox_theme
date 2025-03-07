@@ -2930,7 +2930,7 @@ export async function getPlanbyUser(_id, token) {
 export async function getclientExportfile(data, token) {
 
     try {
-        const res = await axios.get(`${Config.base_url}client/listwithfilterexcel`, data, {
+        const res = await axios.post(`${Config.base_url}client/listwithfilterexport`, data, {
             headers: {
                 data: {},
                 'Authorization': `${token}`,

@@ -144,7 +144,26 @@ const Client = () => {
 
   const getexportfile = async () => {
     try {
-      const response = await getclientExportfile(token);
+      const data = {
+        page: currentPage,
+        kyc_verification: searchkyc,
+        status: clientStatus == 1 ? 1 : clientStatus == 0 ? 0 : "",
+        createdby: statuscreatedby,
+        search: searchInput,
+        planStatus:
+          expired === "active"
+            ? "active"
+            : expired === "expired"
+              ? "expired"
+              : clientStatus === "active"
+                ? "active"
+                : clientStatus === "expired"
+                  ? "expired"
+                  : expired === "NA" ? "NA" : "",
+        add_by: "",
+      };
+
+      const response = await getclientExportfile(data, token);
       if (response.status) {
         if (response.data?.length > 0) {
           const csvArr = response.data?.map((item) => ({
@@ -191,7 +210,6 @@ const Client = () => {
   };
 
 
-
   const getcategoryplanlist = async () => {
     try {
       const response = await getActivecategoryplan(token);
@@ -204,8 +222,6 @@ const Client = () => {
       console.log("error");
     }
   };
-
-
 
   const getActiveBasketdetail = async () => {
     try {
