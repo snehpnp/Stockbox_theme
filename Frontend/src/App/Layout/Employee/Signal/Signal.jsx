@@ -6,7 +6,7 @@ import Table from '../../../Extracomponents/Table1';
 import { Eye, Trash2, RefreshCcw, SquarePen, IndianRupee, ArrowDownToLine } from 'lucide-react';
 import { GetSignallist, GetSignallistWithFilter, DeleteSignal, SignalCloseApi, getstaffperuser, GetService, GetStockDetail, UpdatesignalReport } from '../../../Services/Admin/Admin';
 import { fDateTimeH } from '../../../../Utils/Date_formate'
-import { exportToCSV } from '../../../../Utils/ExportData';
+import { exportToCSV, exportToCSV1 } from '../../../../Utils/ExportData';
 import Select from 'react-select';
 import { Tooltip } from 'antd';
 import { image_baseurl } from '../../../../Utils/config';
@@ -184,7 +184,26 @@ const Signal = () => {
 
     const getexportfile = async () => {
         try {
-            const response = await GetSignallist(token);
+            const data = {
+                page: currentPage,
+                from:
+                    clientStatus === "todayopensignal"
+                        ? formattedDate
+                        : filters.from
+                            ? filters.from
+                            : "",
+                to:
+                    clientStatus === "todayopensignal"
+                        ? formattedDate
+                        : filters.to
+                            ? filters.to
+                            : "",
+                service: filters.service,
+                stock: searchstock,
+                openstatus: "true",
+                search: searchInput,
+            };
+            const response = await GetSignallist(data,token);
             if (response.status) {
                 if (response.data?.length > 0) {
                     let filterdata = response.data.filter((item) => item.close_status === false);
@@ -202,6 +221,49 @@ const Signal = () => {
             console.log("Error:", error);
         }
     }
+
+    const getexportfile1 = async () => {
+            try {
+    
+                const data = {
+                    page: currentPage,
+                    from:
+                        clientStatus === "todayopensignal" ? formattedDate : filters.from ? filters.from : "",
+                    to:
+                        clientStatus === "todayopensignal" ? formattedDate : filters.to ? filters.to : "",
+                    service: filters.service,
+                    stock: searchstock,
+                    openstatus: "true",
+                    search: searchInput,
+                };
+                const response = await GetSignallist(data, token);
+                if (response.status) {
+                    if (response.data?.length > 0) {
+                        let filterdata = response.data.filter(
+                            (item) => item.close_status === false
+                        );
+                        const csvArr = filterdata.map((item) => {
+    
+                            const entryType = `${item?.calltype} ${item?.stock} ${item?.expirydate ? `Expiry: ${item.expirydate}` : ""} ${item?.optiontype ? `Option: ${item.optiontype}` : ""} Entry Type: ${item?.entrytype} Price: ${item?.price} Target: ${item?.tag1} ${item?.tag2 ? `/${item.tag2}` : ""} ${item?.tag3 ? `/${item.tag3}` : ""} Stop Loss: ${item?.stoploss}`;
+    
+                            return {
+                                OpenSignal: `${fDateTimeH(item?.created_at)}  Segment: ${item.segment === "C"
+                                    ? "CASH"
+                                    : item.segment === "O"
+                                        ? "OPTION"
+                                        : item.segment === "F"
+                                            ? "FUTURE"
+                                            : ""
+                                    }   Entry Type: ${entryType}`
+                            };
+                        });
+                        exportToCSV1(csvArr, "Open Signal");
+                    }
+                }
+            } catch (error) {
+                console.log("Error:", error);
+            }
+        };
 
 
 
@@ -878,10 +940,31 @@ const Signal = () => {
                                         <i className="bx bxs-plus-square" aria-hidden="true" /> Add Signal
                                     </Link>
                                 </div>}
-                                <div className="ms-0 ms-md-2 mt-2 mt-md-0" onClick={getexportfile}>
+                                {/* <div className="ms-0 ms-md-2 mt-2 mt-md-0" onClick={getexportfile}>
                                     <button type="button" className="btn btn-primary float-md-end" title="Export To Excel">
                                         <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
                                     </button>
+                                </div> */}
+                                 <div className="ms-0 ms-md-2 mt-2 mt-md-0">
+                                    {viewMode === "table" ? (
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary float-md-end"
+                                            title="Export To Excel"
+                                            onClick={getexportfile}
+                                        >
+                                            <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
+                                        </button>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary float-md-end"
+                                            title="Export Card data"
+                                            onClick={getexportfile1}
+                                        >
+                                            <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
+                                        </button>
+                                    )}
                                 </div>
                             </div>
 
