@@ -16,6 +16,37 @@ const AddUser = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const indianStates = [
+    { name: "Andhra Pradesh" },
+    { name: "Arunachal Pradesh" },
+    { name: "Assam" },
+    { name: "Bihar" },
+    { name: "Chhattisgarh" },
+    { name: "Goa" },
+    { name: "Gujarat" },
+    { name: "Haryana" },
+    { name: "Himachal Pradesh" },
+    { name: "Jharkhand" },
+    { name: "Karnataka" },
+    { name: "Kerala" },
+    { name: "Madhya Pradesh" },
+    { name: "Maharashtra" },
+    { name: "Manipur" },
+    { name: "Meghalaya" },
+    { name: "Mizoram" },
+    { name: "Nagaland" },
+    { name: "Odisha" },
+    { name: "Punjab" },
+    { name: "Rajasthan" },
+    { name: "Sikkim" },
+    { name: "Tamil Nadu" },
+    { name: "Telangana" },
+    { name: "Tripura" },
+    { name: "Uttar Pradesh" },
+    { name: "Uttarakhand" },
+    { name: "West Bengal" }
+  ];
+
 
   const validate = (values) => {
     let errors = {};
@@ -42,6 +73,10 @@ const AddUser = () => {
       errors.ConfirmPassword = "Password Must Match";
     }
 
+    if (!values.state) {
+      errors.state = "Please Select State";
+    }
+
     return errors;
   };
 
@@ -53,6 +88,7 @@ const AddUser = () => {
       PhoneNo: values.PhoneNo,
       password: values.password,
       add_by: user_id,
+      state: values.state
     };
 
     try {
@@ -77,6 +113,7 @@ const AddUser = () => {
       password: "",
       ConfirmPassword: "",
       add_by: "",
+      state: "",
     },
     validate,
     onSubmit,
@@ -123,6 +160,19 @@ const AddUser = () => {
       col_size: 6,
       disable: false,
     },
+    {
+      name: "state",
+      label: "Select State",
+      type: 'select',
+      options: indianStates?.map((item) => ({
+          label: item.name, 
+          value: item.name,
+      })),
+      label_size: 12,
+      col_size: 6,
+      disable: false,
+      star: true
+  }
   ];
 
   const handlefreeTrialChange = (e) => {

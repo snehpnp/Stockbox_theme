@@ -15,6 +15,37 @@ const EditClient = () => {
   const location = useLocation();
   const { row } = location.state;
 
+  const indianStates = [
+    { name: "Andhra Pradesh" },
+    { name: "Arunachal Pradesh" },
+    { name: "Assam" },
+    { name: "Bihar" },
+    { name: "Chhattisgarh" },
+    { name: "Goa" },
+    { name: "Gujarat" },
+    { name: "Haryana" },
+    { name: "Himachal Pradesh" },
+    { name: "Jharkhand" },
+    { name: "Karnataka" },
+    { name: "Kerala" },
+    { name: "Madhya Pradesh" },
+    { name: "Maharashtra" },
+    { name: "Manipur" },
+    { name: "Meghalaya" },
+    { name: "Mizoram" },
+    { name: "Nagaland" },
+    { name: "Odisha" },
+    { name: "Punjab" },
+    { name: "Rajasthan" },
+    { name: "Sikkim" },
+    { name: "Tamil Nadu" },
+    { name: "Telangana" },
+    { name: "Tripura" },
+    { name: "Uttar Pradesh" },
+    { name: "Uttarakhand" },
+    { name: "West Bengal" }
+  ];
+
 
 
   const user_id = localStorage.getItem("id");
@@ -35,6 +66,10 @@ const EditClient = () => {
     if (!values.PhoneNo) {
       errors.PhoneNo = "Please Enter Phone Number";
     }
+    if (!values.state) {
+      errors.state = "Please Select State";
+    }
+
     // if (!values.password) {
     //   errors.password = "Please Enter Password";
     // }
@@ -51,6 +86,7 @@ const EditClient = () => {
       PhoneNo: values.PhoneNo,
       // password: values.password,
       id: row._id,
+      state: values.state,
     };
 
     try {
@@ -77,6 +113,7 @@ const EditClient = () => {
       // UserName: row?.UserName || "",
       Email: row?.Email || "",
       PhoneNo: row?.PhoneNo || "",
+      state: row?.state || "",
 
     },
     validate,
@@ -118,6 +155,19 @@ const EditClient = () => {
       col_size: 4,
       disable: false,
     },
+    {
+      name: "state",
+      label: "Select State",
+      type: 'select',
+      options: indianStates?.map((item) => ({
+          label: item.name, 
+          value: item.name,
+      })),
+      label_size: 12,
+      col_size: 4,
+      disable: false,
+      star: true
+  }
     // {
     //   name: "password",
     //   label: "Password",
