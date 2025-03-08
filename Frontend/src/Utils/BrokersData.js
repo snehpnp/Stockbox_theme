@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReusableModal from "../App/components/Models/ReusableModal";
 import { UpdateBroker } from "../App/Services/UserService/User";
 import Swal from "sweetalert2";
+import { base_url } from "./config";
 
 function BrokersData({ data, closeModal, type }) {
 
@@ -182,8 +183,10 @@ function BrokersData({ data, closeModal, type }) {
   const brokerContentMap = {
     1: [
       {
-        title: "Angel One First Step",
+        title: "Angel",
         date: "2010",
+        LinkOne: "https://smartapi.angelbroking.com/",
+        LinkTwo: `${base_url}angelbroking/access_token?email=YOUR_PANEL_EMAIL`,
         content: "Started providing discount brokerage services.",
       },
       {
@@ -260,6 +263,8 @@ function BrokersData({ data, closeModal, type }) {
     setBrokerStatus(data?.dlinkStatus);
   }, [data]);
 
+  console.log("brokerContent", brokerContent)
+
   return (
     <>
 
@@ -315,15 +320,29 @@ function BrokersData({ data, closeModal, type }) {
 
                           {brokerContent?.length > 0 && (
                             <div className="timeline">
+
                               {brokerContent?.map((item, index) => (
+
                                 <div className="timeline-item" key={index}>
                                   <div className="timeline-header">
+                                    <div className="timeline-title">
+                                      <a href={item.LinkOne} target="_blank" rel="noopener noreferrer">
+                                        {item.LinkOne}
+                                      </a>
+                                    </div>
                                     <div className="timeline-title">{item.title}</div>
                                     <div className="timeline-date">{item.date}</div>
                                   </div>
                                   <div className="timeline-content">{item.content}</div>
+                                  <div className="timeline-title">
+                                    <a href={item.LinkTwo} target="_blank" rel="noopener noreferrer">
+                                      {item.LinkOne}
+                                    </a>
+                                  </div>
                                 </div>
-                              ))}
+                              ))
+                              }
+
                             </div>
                           )}
 
