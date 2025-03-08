@@ -3,6 +3,7 @@ import ReusableModal from "../App/components/Models/ReusableModal";
 import { UpdateBroker } from "../App/Services/UserService/User";
 import Swal from "sweetalert2";
 import { base_url } from "./config";
+import { brokerContentMap } from "./BrokerApiInfo";
 
 function BrokersData({ data, closeModal, type }) {
 
@@ -179,50 +180,6 @@ function BrokersData({ data, closeModal, type }) {
 
 
 
-
-  const brokerContentMap = {
-    1: [
-      {
-        title: "Angel",
-        date: "2010",
-        LinkOne: "https://smartapi.angelbroking.com/",
-        LinkTwo: `${base_url}angelbroking/access_token?email=YOUR_PANEL_EMAIL`,
-        content: "Started providing discount brokerage services.",
-      },
-      {
-        title: "Angel One App Launched",
-        date: "2015",
-        content: "Launched its mobile trading app for retail investors.",
-      },
-    ],
-    2: [
-      {
-        title: "Alice Blue Launch",
-        date: "2006",
-        content: "Alice Blue was founded as a full-service brokerage.",
-      },
-      {
-        title: "Discount Brokerage Transition",
-        date: "2018",
-        content: "Shifted to a discount brokerage model.",
-      },
-    ],
-    3: [
-      {
-        title: "Kotak Neo Launch",
-        date: "2022",
-        content: "Kotak Securities introduced the Neo trading platform.",
-      },
-    ],
-
-  };
-
-
-
-
-
-
-
   const filteredBrokers = type ? brokers.filter((b) => b.id === type) : brokers;
   const fields = brokerId ? brokerFieldsMap[brokerId] || [] : [];
 
@@ -263,7 +220,7 @@ function BrokersData({ data, closeModal, type }) {
     setBrokerStatus(data?.dlinkStatus);
   }, [data]);
 
-  console.log("brokerContent", brokerContent)
+
 
   return (
     <>
@@ -321,27 +278,34 @@ function BrokersData({ data, closeModal, type }) {
                           {brokerContent?.length > 0 && (
                             <div className="timeline">
 
-                              {brokerContent?.map((item, index) => (
-
-                                <div className="timeline-item" key={index}>
-                                  <div className="timeline-header">
-                                    <div className="timeline-title">
-                                      <a href={item.LinkOne} target="_blank" rel="noopener noreferrer">
-                                        {item.LinkOne}
+                              <div className="timeline-container">
+                                {brokerContent?.map((item, index) => (
+                                  <div className="timeline-item" key={index}>
+                                    <div className="timeline-header">
+                                      <h2 className="timeline-title">{item.HeadingTitle}</h2>
+                                      <p className="timeline-description">{item.description}</p>
+                                    </div>
+                                    <div className="timeline-content" >
+                                      <p>{item.Apicreate}</p>
+                                      <a href={item.LinkOne} target="_blank" rel="noopener noreferrer" className="timeline-link">
+                                        Visit Angel Broking API
+                                      </a>
+                                      <a href={item.LinkTwo} target="_blank" rel="noopener noreferrer" className="timeline-link">
+                                        Generate Access Token
+                                      </a>
+                                      <p>Example: {item.link3}</p>
+                                      <a href={item.youTube} target="_blank" rel="noopener noreferrer" className="timeline-link">
+                                        Watch Tutorial
                                       </a>
                                     </div>
-                                    <div className="timeline-title">{item.title}</div>
-                                    <div className="timeline-date">{item.date}</div>
+                                    <div className="timeline-images" style={{ margin: "0", padding: "0" }}>
+                                      <img src={item.img1} alt="Angel Step 1" style={{ width: "600px", height: "80px" }} />
+                                      <img src={item.img2} alt="Angel Step 2" style={{ width: "600px", height: "150px" }} />
+                                      {/* <img src={item.img3} alt="Angel Step 3" style={{ width: "600px", height: "80px" }} /> */}
+                                    </div>
                                   </div>
-                                  <div className="timeline-content">{item.content}</div>
-                                  <div className="timeline-title">
-                                    <a href={item.LinkTwo} target="_blank" rel="noopener noreferrer">
-                                      {item.LinkOne}
-                                    </a>
-                                  </div>
-                                </div>
-                              ))
-                              }
+                                ))}
+                              </div>
 
                             </div>
                           )}
