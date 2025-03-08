@@ -16,6 +16,7 @@ const UserSignup = () => {
     phone: "",
     referralCode: "",
     password: "",
+    state: "",
   });
 
   const [otpInfo, setOtpInfo] = useState({
@@ -26,7 +27,38 @@ const UserSignup = () => {
     "message": "",
   })
 
-  
+  const indianStates = [
+    { name: "Andhra Pradesh" },
+    { name: "Arunachal Pradesh" },
+    { name: "Assam" },
+    { name: "Bihar" },
+    { name: "Chhattisgarh" },
+    { name: "Goa" },
+    { name: "Gujarat" },
+    { name: "Haryana" },
+    { name: "Himachal Pradesh" },
+    { name: "Jharkhand" },
+    { name: "Karnataka" },
+    { name: "Kerala" },
+    { name: "Madhya Pradesh" },
+    { name: "Maharashtra" },
+    { name: "Manipur" },
+    { name: "Meghalaya" },
+    { name: "Mizoram" },
+    { name: "Nagaland" },
+    { name: "Odisha" },
+    { name: "Punjab" },
+    { name: "Rajasthan" },
+    { name: "Sikkim" },
+    { name: "Tamil Nadu" },
+    { name: "Telangana" },
+    { name: "Tripura" },
+    { name: "Uttar Pradesh" },
+    { name: "Uttarakhand" },
+    { name: "West Bengal" }
+  ];
+
+
 
   const [enteredOtp, setEnteredOtp] = useState("")
 
@@ -35,6 +67,8 @@ const UserSignup = () => {
   const [information, setInformation] = useState([]);
 
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+
+  const [isReferralEnabled, setIsReferralEnabled] = useState(false);
 
   const togglePasswordVisibility = (e) => {
     e.preventDefault();
@@ -75,6 +109,11 @@ const UserSignup = () => {
           errorMsg = "Full Name is required";
         }
         break;
+      case "state":
+        if (value.trim() === "") {
+          errorMsg = "State is required";
+        }
+        break;
       default:
         break;
     }
@@ -84,25 +123,31 @@ const UserSignup = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    const { fullName, email, phone, referralCode, password } = formData;
+    const { fullName, email, phone, referralCode, password, state } = formData;
 
     // Validate all fields before submitting
     validateField("fullName", fullName);
     validateField("email", email);
     validateField("phone", phone);
     validateField("password", password);
+    validateField("state", state);
 
     // Check if there are any errors
     if (Object.values(errors).some((err) => err)) {
-      showCustomAlert("error","Please correct the errors before submitting")
+      showCustomAlert("error", "Please correct the errors before submitting")
       return;
     }
+
+    console.log("formData", formData)
+
+    // return
 
     const ResData = await UserSignupApi({
       FullName: fullName,
       Email: email,
       PhoneNo: phone,
       password,
+      state: state,
       token: referralCode,
     });
 
@@ -110,11 +155,11 @@ const UserSignup = () => {
 
 
     if (ResData.status) {
-      showCustomAlert("Success",ResData.message)
+      showCustomAlert("Success", ResData.message)
       setIsOtpModalOpen(true)
       setOtpInfo(ResData)
     } else {
-      showCustomAlert("error", ResData.message );
+      showCustomAlert("error", ResData.message);
     }
   };
 
@@ -122,7 +167,7 @@ const UserSignup = () => {
     e.preventDefault();
 
     if (!enteredOtp) {
-      showCustomAlert("error","Please enter OTP before submitting")
+      showCustomAlert("error", "Please enter OTP before submitting")
       return;
     }
 
@@ -133,13 +178,13 @@ const UserSignup = () => {
       });
 
       if (enteredOtp == otpInfo.otp) {
-        showCustomAlert("Success","OTP verification successful!",navigate,"/user-login")
-        setIsOtpModalOpen(false); 
+        showCustomAlert("Success", "OTP verification successful!", navigate, "/user-login")
+        setIsOtpModalOpen(false);
       } else {
-        showCustomAlert("error","Invalid OTP, please try again!")
+        showCustomAlert("error", "Invalid OTP, please try again!")
       }
     } catch (error) {
-      showCustomAlert("error","Something went wrong, please try again!")
+      showCustomAlert("error", "Something went wrong, please try again!")
     }
   };
 
@@ -185,46 +230,93 @@ const UserSignup = () => {
                               { label: "Full Name", name: "fullName", type: "text" },
                               { label: "Email", name: "email", type: "text" },
                               { label: "Phone", name: "phone", type: "text" },
-                              { label: "Referral Code", name: "referralCode", type: "text" },
+                              { label: "Password", name: "password", type: "password" },
+                              { label: "State", name: "state", type: "select" }, // ✅ State added inside map
                             ].map((field) => (
                               <div className="col-12 mb-3" key={field.name}>
                                 <label className="form-label">{field.label}</label>
-                                <input
-                                  type={field.type}
-                                  className={`form-control ${errors[field.name] ? "is-invalid" : ""}`}
-                                  name={field.name}
-                                  value={formData[field.name]}
-                                  onChange={handleChange}
-                                  placeholder={`Enter your ${field.label}`}
-                                />
-                                {errors[field.name] && (
-                                  <div className="invalid-feedback">{errors[field.name]}</div>
+
+                                {field.name === "password" ? (
+                                  <div className="input-group">
+                                    <input
+                                      type={showPassword ? "text" : "password"}
+                                      className={`form-control border-end-0 ${errors.password ? "is-invalid" : ""}`}
+                                      name="password"
+                                      value={formData.password}
+                                      onChange={handleChange}
+                                      placeholder="Enter Password"
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={togglePasswordVisibility}
+                                      className="input-group-text bg-transparent"
+                                    >
+                                      <i className={`bx ${showPassword ? "bx-show" : "bx-hide"}`} />
+                                    </button>
+                                  </div>
+                                ) : field.name === "state" ? (
+                                  <select
+                                    className={`form-control ${errors.state ? "is-invalid" : ""}`}
+                                    name="state"
+                                    value={formData.state}
+                                    onChange={handleChange}
+                                  >
+                                    <option value="">Select State</option>
+                                    {indianStates.map((state, index) => (
+                                      <option key={index} value={state.name}>
+                                        {state.name}
+                                      </option>
+                                    ))}
+                                  </select>
+                                ) : (
+                                  <input
+                                    type={field.type}
+                                    className={`form-control ${errors[field.name] ? "is-invalid" : ""}`}
+                                    name={field.name}
+                                    value={formData[field.name]}
+                                    onChange={handleChange}
+                                    placeholder={`Enter your ${field.label}`}
+                                  />
                                 )}
+
+                                {errors[field.name] && <div className="invalid-feedback">{errors[field.name]}</div>}
                               </div>
                             ))}
+
+                            {/* ✅ Referral Code Checkbox */}
                             <div className="col-12 mb-3">
-                              <label className="form-label">Password</label>
-                              <div className="input-group">
+                              <div className="form-check">
                                 <input
-                                  type={showPassword ? "text" : "password"}
-                                  className={`form-control border-end-0 ${errors.password ? "is-invalid" : ""}`}
-                                  name="password"
-                                  value={formData.password}
-                                  onChange={handleChange}
-                                  placeholder="Enter Password"
+                                  type="checkbox"
+                                  className="form-check-input"
+                                  id="enableReferral"
+                                  checked={isReferralEnabled}
+                                  onChange={() => setIsReferralEnabled(!isReferralEnabled)}
                                 />
-                                <button
-                                  type="button"
-                                  onClick={togglePasswordVisibility}
-                                  className="input-group-text bg-transparent"
-                                >
-                                  <i className={`bx ${showPassword ? "bx-show" : "bx-hide"}`} />
-                                </button>
-                                {errors.password && (
-                                  <div className="invalid-feedback d-block">{errors.password}</div>
-                                )}
+                                <label className="form-check-label" htmlFor="enableReferral">
+                                  Do you have a Referral Code?
+                                </label>
                               </div>
                             </div>
+
+                            {/* ✅ Referral Code Field (Only shows when checkbox is checked) */}
+                            {isReferralEnabled && (
+                              <div className="col-12 mb-3">
+                                <label className="form-label">Referral Code</label>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  name="referralCode"
+                                  value={formData.referralCode}
+                                  onChange={handleChange}
+                                  placeholder="Enter Referral Code"
+                                />
+                              </div>
+                            )}
+
+
+
+
                             <div className="col-12 d-grid">
                               <button type="submit" className="btn btn-primary">
                                 Sign Up
