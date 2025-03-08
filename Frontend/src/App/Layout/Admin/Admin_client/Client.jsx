@@ -405,6 +405,10 @@ const Client = () => {
     }
   };
 
+
+
+
+
   const columns = [
     {
       name: "S.No",
@@ -424,6 +428,12 @@ const Client = () => {
       selector: (row) => row.Email,
       sortable: true,
       width: "350px",
+    },
+    {
+      name: "State",
+      selector: (row) => row?.state || "-",
+      sortable: true,
+      width: "300px",
     },
     {
       name: "Plan Status",
