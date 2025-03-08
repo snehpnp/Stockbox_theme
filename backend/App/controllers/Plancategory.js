@@ -27,13 +27,12 @@ class Plancategory {
                 return res.json({ status: false, message: "Invalid service format" });
             }
     
-            const normalizedTitle = title.trim().toLowerCase();
-            const escapedTitle = normalizedTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            
-             const existingCategory = await Plancategory_Modal.findOne({
-              status : true,
-              del : false,
-               title: { $regex: `^${escapedTitle}$`, $options: 'i' }  // Case-insensitive check
+            const normalizedTitle = title.trim().toLowerCase(); // ✅ Normalize input
+
+            const existingCategory = await Plancategory_Modal.findOne({
+              status: true,
+              del: false,
+              title: { $eq: normalizedTitle } // ✅ Direct exact match (case-insensitive due to normalization)
             });
 
             
@@ -267,17 +266,13 @@ class Plancategory {
         });
       }
 
-      const normalizedTitle = title.trim().toLowerCase();
+      const normalizedTitle = title.trim().toLowerCase(); // ✅ Normalize input
 
-      // ✅ Escape special regex characters
-      const escapedTitle = normalizedTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-      const existingCategory = await Plancategory_Modal.findOne({
-        _id: { $ne: id },
-        status : true,
-        del : false,
-        title: { $regex: `^${escapedTitle}$`, $options: 'i' } // Case-insensitive match
-      });
+const existingCategory = await Plancategory_Modal.findOne({
+  status: true,
+  del: false,
+  title: { $eq: normalizedTitle } // ✅ Direct exact match (case-insensitive due to normalization)
+});
   
       if (existingCategory) {
         return res.json({ status: false, message: "Plan category with this title already exists" });
