@@ -186,6 +186,11 @@ const clientsModel = new Schema({
         type: String,
         default: null
     },
+    state: {
+        type: String,
+        trim: true,
+        default: null
+    },
 
 }, {
     timestamps: true

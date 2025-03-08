@@ -869,7 +869,7 @@ class List {
         await client.save();
       }
 
-      if (settings.invoicestatus == 1) {
+      // if (settings.invoicestatus == 1) {
         const length = 6;
         const digits = '0123456789';
         let orderNumber = '';
@@ -937,7 +937,7 @@ class List {
         savedSubscription.ordernumber = `INV-${orderNumber}`;
         savedSubscription.invoice = `INV-${orderNumber}.pdf`;
         const updatedSubscription = await savedSubscription.save();
-
+        if (settings.invoicestatus == 1) {
 
         const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
         if (!mailtemplate || !mailtemplate.mail_body) {
@@ -1073,7 +1073,7 @@ class List {
       // Save to the database
       const savedSubscription = await newSubscription.save();
 
-      if (settings.invoicestatus == 1) {
+      // if (settings.invoicestatus == 1) {
 
         const length = 6;
         const digits = '0123456789';
@@ -1143,6 +1143,7 @@ class List {
         savedSubscription.invoice = `INV-${orderNumber}.pdf`;
         const updatedSubscription = await savedSubscription.save();
 
+        if (settings.invoicestatus == 1) {
 
         const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
         if (!mailtemplate || !mailtemplate.mail_body) {
@@ -5630,8 +5631,8 @@ class List {
       //   await client.save();
       // }
 
-      if (settings.invoicestatus == 1) {
-
+      // if (settings.invoicestatus == 1) {
+      
 
         let payment_type;
         if (orderid) {
@@ -5732,7 +5733,7 @@ class List {
 
 
 
-
+        if (settings.invoicestatus == 1) {
         const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
         if (!mailtemplate || !mailtemplate.mail_body) {
           throw new Error('Mail template not found');
@@ -6072,7 +6073,7 @@ class List {
       );
 
 
-      if (settings.invoicestatus == 1) {
+      // if (settings.invoicestatus == 1) {
 
 
 
@@ -6174,8 +6175,8 @@ class List {
 
         await browser.close();
 
-
-
+     
+        if (settings.invoicestatus == 1) {
 
         const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
         if (!mailtemplate || !mailtemplate.mail_body) {
