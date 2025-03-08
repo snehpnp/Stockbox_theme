@@ -17,7 +17,7 @@ const PlanExpirymonthDetail = () => {
 
     const location = useLocation()
     const item = location?.state?.row
-    console.log("location", location?.state?.row)
+
 
     const navigate = useNavigate();
 
