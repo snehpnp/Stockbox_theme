@@ -187,7 +187,7 @@ export default function App() {
 
       <Route path="/planexpiry" element={<Planexpiry />} />
       <Route path="/planexpirymonth" element={<Planexpirymonth />} />
-      <Route path="/planExpirymonthDetail" element={<PlanExpirymonthDetail />} />
+      <Route path="/planExpirymonthDetail" element={<PlanExpirymonthDetail/>} />
 
 
 
