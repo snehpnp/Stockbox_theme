@@ -1,23 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { GetPlanexpiryCount } from '../../../Services/Admin/Admin';
-// import Table from '../../../components/Table';
 import Table from '../../../Extracomponents/Table1';
-import { SquarePen, Trash2, PanelBottomOpen, Eye, RefreshCcw, IndianRupee, ArrowDownToLine } from 'lucide-react';
-import Swal from 'sweetalert2';
-import { image_baseurl } from '../../../../Utils/config';
-import { Tooltip } from 'antd';
-import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
-import { exportToCSV } from '../../../../Utils/ExportData';
 import Content from '../../../components/Contents/Content';
-import { fDateMonth } from '../../../../Utils/Date_formate';
+
 
 
 const PlanExpirymonthDetail = () => {
 
     const location = useLocation()
     const item = location?.state?.row
-    console.log("location", location?.state?.row)
+
 
     const navigate = useNavigate();
 

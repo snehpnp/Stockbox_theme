@@ -1459,5 +1459,17 @@ svg.lucide {
     font-size: 0.813rem;
   }
 }
+a.sidebar-color.sidebar-sublink {
+  font-size: 14px;
+}
 
-
+span.alert-count {
+  top: -5px !important;
+  right: -10px !important;
+  width: 17px;
+  height: 17px;
+  padding: 2px 3px !important;
+  line-height: 13px !important;
+  letter-spacing: -1px;
+  font-size: 9px !important;
+}

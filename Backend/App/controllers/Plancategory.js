@@ -27,11 +27,15 @@ class Plancategory {
                 return res.json({ status: false, message: "Invalid service format" });
             }
     
-            const existingCategory = await Plancategory_Modal.findOne({
+            const normalizedTitle = title.trim().toLowerCase();
+            const escapedTitle = normalizedTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            
+             const existingCategory = await Plancategory_Modal.findOne({
               status : true,
               del : false,
-              title: { $regex: `^${title}$`, $options: 'i' } // Case-insensitive check
+               title: { $regex: `^${escapedTitle}$`, $options: 'i' }  // Case-insensitive check
             });
+
             
 
             if (existingCategory) {
@@ -263,12 +267,16 @@ class Plancategory {
         });
       }
 
+      const normalizedTitle = title.trim().toLowerCase();
+
+      // ✅ Escape special regex characters
+      const escapedTitle = normalizedTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
       const existingCategory = await Plancategory_Modal.findOne({
         _id: { $ne: id },
         status : true,
         del : false,
-        title: { $regex: `^${title}$`, $options: 'i' } // Case-insensitive match
+        title: { $regex: `^${escapedTitle}$`, $options: 'i' } // Case-insensitive match
       });
   
       if (existingCategory) {
