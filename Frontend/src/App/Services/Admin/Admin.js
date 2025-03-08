@@ -3392,3 +3392,22 @@ export async function getReferAndEarnlist(data, token) {
         return err;
     }
 }
+
+
+
+/// expiry count 
+
+export async function GetPlanexpiryCount(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}dashboard/getmonthlysubscriptioncounts`, data, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}

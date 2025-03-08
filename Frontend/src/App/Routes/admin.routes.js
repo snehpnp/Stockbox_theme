@@ -81,6 +81,7 @@ import Apiinfo from "../Layout/Admin/BasicSetting/Apiinfo";
 import ClientOrderlist from "../Layout/Admin/ClientOrderlist/ClientOrderlist";
 import Changepass from "../Layout/Auth/Changepass";
 import ReferAndEarnlist from "../Layout/Admin/BasicSetting/ReferAndEarnlist";
+import PlanExpirymonthDetail from "../Layout/Admin/PlanExpiryMonth/PlanExpirymonthDetail";
 
 
 
@@ -186,6 +187,10 @@ export default function App() {
 
       <Route path="/planexpiry" element={<Planexpiry />} />
       <Route path="/planexpirymonth" element={<Planexpirymonth />} />
+      <Route path="/planExpirymonthDetail" element={<PlanExpirymonthDetail />} />
+
+
+
       <Route path="/notificationlist" element={<Notificationlist />} />
 
 
