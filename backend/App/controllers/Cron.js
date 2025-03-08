@@ -1673,20 +1673,35 @@ for (const [basket_id, stockTypeSet] of Object.entries(basketStockTypes)) {
     let profitLossPercentageapi = 0; // Initialize per basket
 
     if (typesArray.includes("Small Cap") && typesArray.includes("Mid Cap") && typesArray.includes("Large Cap")) {
-        // No API call for this case
+       
+        const { price: currentPrice, prev_close } = await getCurrentPrice('NFT500MULT');
+        profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+
     } else if (typesArray.includes("Small Cap") && typesArray.includes("Mid Cap")) {
-        // No API call for this case
+
+        const { price: currentPrice, prev_close } = await getCurrentPrice('MIDSMAL400');
+        profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+
     } else if (typesArray.includes("Mid Cap") && typesArray.includes("Large Cap")) {
-        // No API call for this case
+
+        const { price: currentPrice, prev_close } = await getCurrentPrice('LMIDCAP250');
+        profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+
     } else if (typesArray.includes("Small Cap")) {
+
+        const { price: currentPrice, prev_close } = await getCurrentPrice('CNXSMALLCA');
+        profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+   
+    } else if (typesArray.includes("Large Cap")) {
+       
         const { price: currentPrice, prev_close } = await getCurrentPrice('CNX100');
         profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
-    } else if (typesArray.includes("Large Cap")) {
-        const { price: currentPrice, prev_close } = await getCurrentPrice('CNX500');
-        profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+   
     } else {
+      
         const { price: currentPrice, prev_close } = await getCurrentPrice('NMIDCAP150');
         profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+   
     }
 
     // ✅ Store API-based profit loss percentage per basket_id

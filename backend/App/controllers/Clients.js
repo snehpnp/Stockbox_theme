@@ -31,7 +31,7 @@ class Clients {
 
     try {
 
-      const { FullName, Email, PhoneNo, password, add_by, freetrial } = req.body;
+      const { FullName, Email, PhoneNo, password, add_by, freetrial, state } = req.body;
       if (!FullName) {
         return res.status(400).json({ status: false, message: "fullname is required" });
       }
@@ -111,6 +111,7 @@ class Clients {
         refer_token: refer_tokenss,
         token: refer_tokens,
         freetrial: freetrial,
+        state:state,
         ActiveStatus: 1,
         clientcome: 1
       })
@@ -1622,7 +1623,7 @@ class Clients {
 
   async updateClient(req, res) {
     try {
-      const { id, FullName, Email, PhoneNo } = req.body;
+      const { id, FullName, Email, PhoneNo, state } = req.body;
 
       // Check if the required fields are provided
       if (!FullName) {
@@ -1677,6 +1678,7 @@ class Clients {
           FullName,
           Email,
           PhoneNo,
+          state,
         },
         { new: true, runValidators: true } // Options: return the updated document and run validators
       );

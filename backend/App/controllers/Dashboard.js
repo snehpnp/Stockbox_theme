@@ -10,6 +10,7 @@ const BasicSetting_Modal = db.BasicSetting;
 const Freetrial_Modal = db.Freetrial;
 const Adminnotification_Modal = db.Adminnotification;
 const Refer_Modal = db.Refer;
+const PlanSubscription_Modal = db.PlanSubscription;
 
 
 
@@ -1375,7 +1376,106 @@ class Dashboard {
     }
   }
   
-
+  async getMonthlySubscriptionCounts(req, res) {
+    try {
+      // Extract data from request body
+      const { month, year, search, page = 1 } = req.body;
+      const limit = 10;
+      const pageNumber = parseInt(page);
+      const pageSize = parseInt(limit);
+  
+      // Default to current month and year if not provided
+      const selectedYear = year ? parseInt(year) : new Date().getFullYear();
+      const selectedMonth = month ? parseInt(month) - 1 : new Date().getMonth(); // Adjust for zero-based month index
+  
+      // Get first and last day of the selected month in UTC
+      const firstDayOfMonth = new Date(Date.UTC(selectedYear, selectedMonth, 1, 0, 0, 0));
+      const firstDayOfNextMonth = new Date(Date.UTC(selectedYear, selectedMonth + 1, 1, 0, 0, 0));
+  
+      console.log(`Filtering from: ${firstDayOfMonth.toISOString()} to ${firstDayOfNextMonth.toISOString()}`);
+  
+      // Define mapping for validity conversion
+      const validityMapping = {
+        "1 month": 1, "2 months": 2, "3 months": 3, "6 months": 6,
+        "9 months": 9, "1 year": 12, "2 years": 24, "3 years": 36,
+        "4 years": 48, "5 years": 60
+      };
+  
+      // Fetch subscriptions for the selected month
+      const subscriptions = await PlanSubscription_Modal.find({
+        created_at: { $gte: firstDayOfMonth, $lt: firstDayOfNextMonth }
+      }).select("client_id validity");
+  
+      if (!subscriptions.length) {
+        return res.status(200).json({
+          status: true,
+          message: `No subscriptions found for ${selectedMonth + 1}-${selectedYear}`,
+          data: [],
+          totalRecords: 0
+        });
+      }
+  
+      // Process subscriptions & calculate total months per client
+      const clientSubscriptions = {};
+      for (const sub of subscriptions) {
+        const clientId = sub.client_id.toString();
+        const months = validityMapping[sub.validity] || 0; // Convert validity to months
+  
+        if (!clientSubscriptions[clientId]) {
+          clientSubscriptions[clientId] = { client_id: clientId, totalMonths: 0 };
+        }
+        clientSubscriptions[clientId].totalMonths += months;
+      }
+  
+      // Fetch client details (name, email, phone) using client IDs
+      const clientIds = Object.keys(clientSubscriptions);
+  
+      // Search filter (if search query is provided)
+      let searchFilter = {};
+      if (search) {
+        searchFilter = {
+          $or: [
+            { FullName: { $regex: search, $options: "i" } },
+            { Email: { $regex: search, $options: "i" } },
+            { PhoneNo: { $regex: search, $options: "i" } }
+          ]
+        };
+      }
+  
+      // Fetch total count before pagination
+      const totalRecords = await Clients_Modal.countDocuments({ _id: { $in: clientIds }, ...searchFilter });
+  
+      // Fetch paginated client data
+      const clients = await Clients_Modal.find({ _id: { $in: clientIds }, ...searchFilter })
+        .select("FullName Email PhoneNo")
+        .skip((pageNumber - 1) * pageSize)
+        .limit(pageSize);
+  
+      // Merge client details with subscriptions
+      const finalData = clients.map(client => ({
+        client_id: client._id,
+        client_name: client.FullName,
+        email: client.Email,
+        phone: client.PhoneNo,
+        totalMonths: clientSubscriptions[client._id.toString()].totalMonths
+      }));
+  
+      return res.status(200).json({
+        status: true,
+        message: `Monthly subscription counts retrieved successfully for ${selectedMonth + 1}-${selectedYear}`,
+        data: finalData,
+        totalRecords,
+        currentPage: pageNumber,
+        totalPages: Math.ceil(totalRecords / pageSize)
+      });
+  
+    } catch (error) {
+      console.error("Error fetching monthly subscription counts:", error);
+      return res.status(500).json({ status: false, message: "Server error", data: [] });
+    }
+  }
+  
+  
 
 
 }

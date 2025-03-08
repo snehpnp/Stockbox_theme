@@ -27,7 +27,7 @@ class Clients {
     try {
 
 
-      const { FullName, Email, PhoneNo, password, token } = req.body;
+      const { FullName, Email, PhoneNo, password, token, state } = req.body;
 
       if (!FullName) {
         return res.status(400).json({ status: false, message: "Please enter fullname" });
@@ -113,6 +113,7 @@ class Clients {
         refer_token: refer_tokenss,
         token: refer_tokens,
         refer_status: token ? (settings.refer_status || 0) : 0,
+        state,
         del: 0,
       });
 
