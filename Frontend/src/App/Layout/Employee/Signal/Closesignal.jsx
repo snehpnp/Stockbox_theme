@@ -24,7 +24,7 @@ import {
 } from "../../../Services/Admin/Admin";
 import { fDateTimeSuffix, fDateTimeH } from "../../../../Utils/Date_formate";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { exportToCSV } from "../../../../Utils/ExportData";
+import { exportToCSV, exportToCSV1 } from "../../../../Utils/ExportData";
 import Select from "react-select";
 import { Tooltip } from "antd";
 import { image_baseurl } from "../../../../Utils/config";
@@ -113,7 +113,18 @@ const Closesignal = () => {
 
     const getexportfile = async () => {
         try {
-            const response = await GetSignallist(token);
+            const data = {
+                page: currentPage,
+                from:
+                    clientStatus === "todayclosesignal" ? formattedDate : filters.from ? filters.from : "",
+                to:
+                    clientStatus === "todayclosesignal" ? formattedDate : filters.to ? filters.to : "",
+                service: filters.service,
+                stock: searchstock,
+                closestatus: "true",
+                search: searchInput,
+            };
+            const response = await GetSignallist(data, token);
             if (response.status) {
                 if (response.data?.length > 0) {
                     let filterdata = response.data.filter(
@@ -145,6 +156,74 @@ const Closesignal = () => {
                         };
                     });
                     exportToCSV(csvArr, "Close Signal");
+                }
+            }
+        } catch (error) {
+            console.log("Error:", error);
+        }
+    };
+
+
+    const getexportfile1 = async () => {
+        try {
+            const data = {
+                page: currentPage,
+                from:
+                    clientStatus === "todayclosesignal" ? formattedDate : filters.from ? filters.from : "",
+                to:
+                    clientStatus === "todayclosesignal" ? formattedDate : filters.to ? filters.to : "",
+                service: filters.service,
+                stock: searchstock,
+                closestatus: "true",
+                search: searchInput,
+            };
+
+
+            const response = await GetSignallist(data, token);
+            if (response.status) {
+                if (response.data?.length > 0) {
+                    let filterdata = response.data.filter(
+                        (item) => item.close_status === true
+                    );
+                    const csvArr = filterdata.map((item) => {
+                        let profitAndLossPercentage = 0;
+                        if (item.calltype === "BUY") {
+                            profitAndLossPercentage = (
+                                ((item.closeprice - item.price) / item.price) *
+                                100
+                            ).toFixed(2);
+                        } else if (item.calltype === "SELL") {
+                            profitAndLossPercentage = (
+                                ((item.price - item.closeprice) / item.price) *
+                                100
+                            ).toFixed(2);
+                        }
+
+                        const entryType = `BUY POSITION CLOSED IN ${item.tradesymbol || ""} ${item.expirydate || ""
+                            } ${item.optiontype || ""} SL ${item.stoploss || ""}, ${(() => {
+                                const count = [item.tag1, item.tag2, item.tag3].filter(Boolean).length;
+                                return count === 1
+                                    ? "1st"
+                                    : count === 2
+                                        ? "2nd"
+                                        : count === 3
+                                            ? "3rd"
+                                            : "";
+                            })()
+                            } Target Achieved Exit Price ${item?.closeprice}`;
+
+                        return {
+                            CloseSignal: `${fDateTimeH(item?.created_at)}  Segment: ${item.segment === "C"
+                                ? "CASH"
+                                : item.segment === "O"
+                                    ? "OPTION"
+                                    : item.segment === "F"
+                                        ? "FUTURE"
+                                        : ""
+                                }  P/L: ${profitAndLossPercentage}%   Entry Type: ${entryType}`,
+                        }
+                    });
+                    exportToCSV1(csvArr, "Close Signal");
                 }
             }
         } catch (error) {
@@ -622,7 +701,7 @@ const Closesignal = () => {
                                         <i className="bx bx-search" />
                                     </span>
                                 </div>
-                                <div className="ms-0 ms-md-2 mt-2 mt-md-0" onClick={(e) => getexportfile()}>
+                                {/* <div className="ms-0 ms-md-2 mt-2 mt-md-0" onClick={(e) => getexportfile()}>
                                     <button
                                         type="button"
                                         className="btn btn-primary float-sm-end"
@@ -631,6 +710,29 @@ const Closesignal = () => {
                                         <i className="bx bxs-download" aria-hidden="true"></i>
                                         Export-Excel
                                     </button>
+                                </div> */}
+
+                                <div className="mt-2 mt-sm-0">
+                                    {activeTab === "table" ? (
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary float-sm-end"
+                                            title="Export To Excel"
+                                            onClick={getexportfile}
+                                        >
+                                            <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
+                                        </button>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary float-sm-end"
+                                            title="Export Card data"
+                                            onClick={getexportfile1}
+
+                                        >
+                                            <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
+                                        </button>
+                                    )}
                                 </div>
                             </div>
 

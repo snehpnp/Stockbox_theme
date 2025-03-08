@@ -149,8 +149,6 @@ function Trade() {
   const getnsedata = async () => {
     try {
       const response = await GetNsePriceData(token);
-      if (response.status)
-        console.log("res", response.data)
       const checkdata = response?.data?.data?.map((item) => {
         return item
       })
@@ -410,7 +408,7 @@ function Trade() {
               <div className="trade-content">
                 <div className="d-sm-flex justify-content-between tradehead mb-3">
                   <h3>{item.tradesymbol || "Trade Symbol"}</h3>
-                  <span>{item?.stock}</span>
+                  {/* <span>{item?.stock}</span> */}
                 </div>
                 <div className="trade-details row justify-content-center">
                   {[
@@ -420,9 +418,9 @@ function Trade() {
                       : []),
                     { label: "Call Type", value: `${item?.calltype}  ${item?.entrytype}` },
                     { label: "Stoploss", value: item?.stoploss || "--" },
-                    { label: "Target", value: item?.tag1 || "--" },
-                    { label: "Target", value: item?.tag2 || "--" },
-                    { label: "Target", value: item?.tag3 || "--" },
+                    { label: "Target1", value: item?.tag1 || "--" },
+                    { label: "Target2", value: item?.tag2 || "--" },
+                    { label: "Target3", value: item?.tag3 || "--" },
 
                   ].map((detail, idx) => (
                     <div
@@ -458,7 +456,7 @@ function Trade() {
                   </button>
                 ) : (
                   <button
-                    className="w-100 my-1"
+                    className="btn w-100 my-1"
                     onClick={() => {
                       setCalltypedata(item);
                       UpdateData(item)
@@ -482,17 +480,25 @@ function Trade() {
                   View Detail
                 </button>
                 <button
-                  className={`btn ${item.report ? "btn-success" : "btn-secondary"} w-100 my-1`}
+                  className="btn w-100 my-1"
+                  style={{
+                    backgroundColor: item?.report ? "green" : "white",
+                    color: item?.report ? "white" : "black",
+                    border: "1px solid black",
+                  }}
                   onClick={() => handleDownload(item)}
                 >
                   View Analysis
                 </button>
 
-                <Link to="/user/broker-response">
-                  <button className="btn btn-secondary w-100 my-1">
-                    Broker Response
-                  </button>
-                </Link>
+
+                {item?.purchased && (
+                  <Link to="/user/broker-response">
+                    <button className="btn btn-secondary w-100 my-1">
+                      Broker Response
+                    </button>
+                  </Link>
+                )}
               </div>
             </div>
           </div>
