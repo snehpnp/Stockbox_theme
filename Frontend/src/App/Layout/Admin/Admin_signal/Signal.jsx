@@ -180,7 +180,26 @@ const Signal = () => {
 
     const getexportfile = async () => {
         try {
-            const response = await GetSignallist(token);
+            const data = {
+                page: currentPage,
+                from:
+                    clientStatus === "todayopensignal"
+                        ? formattedDate
+                        : filters.from
+                            ? filters.from
+                            : "",
+                to:
+                    clientStatus === "todayopensignal"
+                        ? formattedDate
+                        : filters.to
+                            ? filters.to
+                            : "",
+                service: filters.service,
+                stock: searchstock,
+                openstatus: "true",
+                search: searchInput,
+            };
+            const response = await GetSignallist(data, token);
 
             if (response.status) {
                 if (response.data?.length > 0) {
@@ -203,7 +222,19 @@ const Signal = () => {
 
     const getexportfile1 = async () => {
         try {
-            const response = await GetSignallist(token);
+
+            const data = {
+                page: currentPage,
+                from:
+                    clientStatus === "todayopensignal" ? formattedDate : filters.from ? filters.from : "",
+                to:
+                    clientStatus === "todayopensignal" ? formattedDate : filters.to ? filters.to : "",
+                service: filters.service,
+                stock: searchstock,
+                openstatus: "true",
+                search: searchInput,
+            };
+            const response = await GetSignallist(data, token);
             if (response.status) {
                 if (response.data?.length > 0) {
                     let filterdata = response.data.filter(

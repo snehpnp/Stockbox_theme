@@ -30,23 +30,15 @@ import { image_baseurl } from "../../../../Utils/config";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
-
-
 const Closesignal = () => {
-
-
-
-
   const [activeTab, setActiveTab] = useState("table");
   const token = localStorage.getItem("token");
   const [searchInput, setSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
   const [header, setheader] = useState("Close Signal");
-
   const [showModal, setShowModal] = useState(false);
   const [description, setDescription] = useState([])
-
   const [updatetitle, setUpdatetitle] = useState({
     report: "",
     id: "",
@@ -56,15 +48,11 @@ const Closesignal = () => {
   const location = useLocation();
   const clientStatus = location?.state?.clientStatus;
 
-
-
   useEffect(() => {
     if (clientStatus == "todayclosesignal") {
       setheader("Todays Close Signal");
     }
   }, [clientStatus]);
-
-
 
   const today = new Date();
   const formattedDate = today.toISOString().slice(0, 10);
@@ -76,25 +64,17 @@ const Closesignal = () => {
     stock: "",
   });
 
-
-
   const [serviceList, setServiceList] = useState([]);
   const [stockList, setStockList] = useState([]);
   const [searchstock, setSearchstock] = useState("");
   const [ForGetCSV, setForGetCSV] = useState([]);
   const [model1, setModel1] = useState(false);
   const [serviceid, setServiceid] = useState({});
-
   const navigate = useNavigate();
   const [clients, setClients] = useState([]);
-
-
-
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-
-
 
   const options = clients.map((item) => ({
     value: item.stock,
@@ -112,17 +92,9 @@ const Closesignal = () => {
       const data = {
         page: currentPage,
         from:
-          clientStatus === "todayclosesignal"
-            ? formattedDate
-            : filters.from
-              ? filters.from
-              : "",
+          clientStatus === "todayclosesignal" ? formattedDate : filters.from ? filters.from : "",
         to:
-          clientStatus === "todayclosesignal"
-            ? formattedDate
-            : filters.to
-              ? filters.to
-              : "",
+          clientStatus === "todayclosesignal" ? formattedDate : filters.to ? filters.to : "",
         service: filters.service,
         stock: searchstock,
         closestatus: "true",
@@ -171,7 +143,20 @@ const Closesignal = () => {
 
   const getexportfile1 = async () => {
     try {
-      const response = await GetSignallist(token);
+      const data = {
+        page: currentPage,
+        from:
+          clientStatus === "todayclosesignal" ? formattedDate : filters.from ? filters.from : "",
+        to:
+          clientStatus === "todayclosesignal" ? formattedDate : filters.to ? filters.to : "",
+        service: filters.service,
+        stock: searchstock,
+        closestatus: "true",
+        search: searchInput,
+      };
+
+
+      const response = await GetSignallist(data, token);
       if (response.status) {
         if (response.data?.length > 0) {
           let filterdata = response.data.filter(
@@ -222,11 +207,6 @@ const Closesignal = () => {
       console.log("Error:", error);
     }
   };
-
-
-
-
-
 
   const getAllSignal = async () => {
     try {

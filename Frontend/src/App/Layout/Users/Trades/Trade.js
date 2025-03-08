@@ -275,13 +275,18 @@ function Trade() {
 
 
   const handleDownload = (item) => {
-    const url = `${image_baseurl}uploads/report/${item.report}`;
-    const link = document.createElement("a");
-    link.href = url;
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    if (item.report == null) {
+      showCustomAlert("error", "No Data Available To See")
+      return
+    } else {
+      const url = `${image_baseurl}uploads/report/${item.report}`;
+      const link = document.createElement("a");
+      link.href = url;
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
 
@@ -477,11 +482,12 @@ function Trade() {
                   View Detail
                 </button>
                 <button
-                  className="btn btn-secondary w-100 my-1"
+                  className={`btn ${item.report ? "btn-success" : "btn-secondary"} w-100 my-1`}
                   onClick={() => handleDownload(item)}
                 >
                   View Analysis
                 </button>
+
                 <Link to="/user/broker-response">
                   <button className="btn btn-secondary w-100 my-1">
                     Broker Response
