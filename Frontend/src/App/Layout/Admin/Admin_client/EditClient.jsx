@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -13,6 +13,42 @@ const EditClient = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { row } = location.state;
+
+
+  const [selectedState, setSelectedState] = useState("");
+
+
+  const indianStates = [
+    { name: "Andhra Pradesh" },
+    { name: "Arunachal Pradesh" },
+    { name: "Assam" },
+    { name: "Bihar" },
+    { name: "Chhattisgarh" },
+    { name: "Goa" },
+    { name: "Gujarat" },
+    { name: "Haryana" },
+    { name: "Himachal Pradesh" },
+    { name: "Jharkhand" },
+    { name: "Karnataka" },
+    { name: "Kerala" },
+    { name: "Madhya Pradesh" },
+    { name: "Maharashtra" },
+    { name: "Manipur" },
+    { name: "Meghalaya" },
+    { name: "Mizoram" },
+    { name: "Nagaland" },
+    { name: "Odisha" },
+    { name: "Punjab" },
+    { name: "Rajasthan" },
+    { name: "Sikkim" },
+    { name: "Tamil Nadu" },
+    { name: "Telangana" },
+    { name: "Tripura" },
+    { name: "Uttar Pradesh" },
+    { name: "Uttarakhand" },
+    { name: "West Bengal" }
+  ];
+
 
 
 
@@ -56,6 +92,9 @@ const EditClient = () => {
       errors.PhoneNo = "Phone Number should be exactly 10 digits";
     }
 
+    if (!values.state) {
+      errors.state = "Please Select State";
+    }
 
     return errors;
   };
@@ -65,6 +104,7 @@ const EditClient = () => {
       FullName: values.FullName,
       Email: values.Email,
       PhoneNo: values.PhoneNo,
+      state: values.state,
       id: row._id,
     };
 
@@ -95,6 +135,7 @@ const EditClient = () => {
       // UserName: row?.UserName || "",
       Email: row?.Email || "",
       PhoneNo: row?.PhoneNo || "",
+      state: row?.state || "",
 
     },
     validate,
@@ -140,9 +181,21 @@ const EditClient = () => {
       col_size: 4,
       disable: false,
       star: true
-
-
     },
+    {
+      name: "state",
+      label: "Select State",
+      type: 'select',
+      options: indianStates?.map((item) => ({
+          label: item.name, 
+          value: item.name,
+      })),
+      label_size: 12,
+      col_size: 3,
+      disable: false,
+      star: true
+  }
+  
     // {
     //   name: "password",
     //   label: "Password",
@@ -168,7 +221,10 @@ const EditClient = () => {
         formik={formik}
         sumit_btn={true}
         btn_name1_route={"/admin/client"}
-        additional_field={<></>}
+        additional_field={<>
+         
+
+        </>}
       />
     </Content>
 

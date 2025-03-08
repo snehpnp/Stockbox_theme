@@ -21,6 +21,41 @@ const AddUser = () => {
 
 
 
+  const indianStates = [
+    { name: "Andhra Pradesh" },
+    { name: "Arunachal Pradesh" },
+    { name: "Assam" },
+    { name: "Bihar" },
+    { name: "Chhattisgarh" },
+    { name: "Goa" },
+    { name: "Gujarat" },
+    { name: "Haryana" },
+    { name: "Himachal Pradesh" },
+    { name: "Jharkhand" },
+    { name: "Karnataka" },
+    { name: "Kerala" },
+    { name: "Madhya Pradesh" },
+    { name: "Maharashtra" },
+    { name: "Manipur" },
+    { name: "Meghalaya" },
+    { name: "Mizoram" },
+    { name: "Nagaland" },
+    { name: "Odisha" },
+    { name: "Punjab" },
+    { name: "Rajasthan" },
+    { name: "Sikkim" },
+    { name: "Tamil Nadu" },
+    { name: "Telangana" },
+    { name: "Tripura" },
+    { name: "Uttar Pradesh" },
+    { name: "Uttarakhand" },
+    { name: "West Bengal" }
+  ];
+
+
+
+
+
   const validate = (values) => {
     let errors = {};
 
@@ -48,6 +83,9 @@ const AddUser = () => {
     } else if (values.password !== values.ConfirmPassword) {
       errors.ConfirmPassword = "Passwords Must Match";
     }
+    if (!values.state) {
+      errors.state = "Please Select State";
+    }
 
     return errors;
   };
@@ -60,8 +98,13 @@ const AddUser = () => {
       PhoneNo: values.PhoneNo,
       password: values.password,
       add_by: user_id,
-      freetrial: values.freetrial
+      freetrial: values.freetrial,
+      state: values.state
     };
+
+    console.log("req",req);
+
+    
 
 
     try {
@@ -89,6 +132,7 @@ const AddUser = () => {
       ConfirmPassword: "",
       freetrial: 0,
       add_by: "",
+      state: "",
     },
     validate,
     onSubmit,
@@ -148,15 +192,19 @@ const AddUser = () => {
       disable: false,
       star: true
     },
-    // {
-    //   name: "freetrial",
-    //   label: "Free trial status",
-    //   type: "togglebtn",
-    //   label_size: 6,
-    //   col_size: 4,
-    //   disable: false,
-    //   star: true,
-    // },
+    {
+      name: "state",
+      label: "Select State",
+      type: 'select',
+      options: indianStates?.map((item) => ({
+          label: item.name, 
+          value: item.name,
+      })),
+      label_size: 12,
+      col_size: 6,
+      disable: false,
+      star: true
+  }
   ];
 
 
@@ -222,6 +270,7 @@ const AddUser = () => {
                 </div>
               </div>
             </div>
+
           </>}
 
         />
