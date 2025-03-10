@@ -7157,6 +7157,37 @@ async getBasketGraphData(req, res) {
 }
 }
 
+
+
+async BasketSubscriptionCount(req, res) {
+  try {
+      const { basketid } = req.body; // assuming basketid is passed in the request
+      const basketObjectId = new mongoose.Types.ObjectId(basketid);
+
+      const result = await BasketSubscription_Modal.aggregate([
+          {
+              $match: { basket_id: basketObjectId } // Filter by basket_id
+          },
+          {
+              $count: "subscription_count" // Count number of purchases
+          }
+      ]);
+
+      const subscriptionCount = result.length > 0 ? result[0].subscription_count : 0;
+
+      res.status(200).json({
+          status: true,
+          message: "Subscription count retrieved successfully.",
+          subscription_count: subscriptionCount
+      });
+  } catch (error) {
+      res.status(500).json({
+          status: false,
+          message: "An error occurred while retrieving the subscription count."
+      });
+  }
+}
+
   
 
 }
