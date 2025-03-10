@@ -1672,7 +1672,6 @@ class Clients {
         return res.status(400).json({ status: false, message: "Phone Number is already Exist" });
       }
 
-      console.log('aaaa');
 
       // Proceed with the update
       const updatedClient = await Clients_Modal.findByIdAndUpdate(

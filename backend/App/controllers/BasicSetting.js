@@ -341,7 +341,6 @@ class BasicSetting {
         });
       }
 
-      console.log("theme_id-----------", theme_id);
 
       // Find the company record (assuming there is only one company)
       let getCompany = await BasicSetting_Modal.findOne(); // Use findOne to get a single document

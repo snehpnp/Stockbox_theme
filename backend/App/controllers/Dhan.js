@@ -50,7 +50,6 @@ class Dhan {
           };
       
           const response = await axios.request(config);
-      console.log(response.data);
 
           if (response.data.dhanClientId === apikey) {
 

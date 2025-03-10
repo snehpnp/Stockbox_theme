@@ -1453,7 +1453,6 @@ async getPlansByService(req, res) {
       },
     ]);
 
-    console.log("Query result:", result);
 
     return res.json({
       status: true,
