@@ -290,7 +290,7 @@ const Service = () => {
                 onChange={(e) => setSortCriteria(e.target.value)}
                 value={sortCriteria}
               >
-                <option value="">Select Segment</option>
+                <option value="">All Segment</option>
                 <option value="Cash">Cash</option>
                 <option value="Future">Future</option>
                 <option value="Option">Option</option>
@@ -413,9 +413,10 @@ const Service = () => {
 
       <Modal show={showModal} onHide={handleCloseModal} centered size="xxl">
         <Modal.Header closeButton>
-          <Modal.Title className="text-center w-100">
+          <Modal.Title style={{ color: "black" }} className="text-center w-100">
             🌟 Plan Details
           </Modal.Title>
+
         </Modal.Header>
         <Modal.Body>
           {selectedPlanDetails && (
