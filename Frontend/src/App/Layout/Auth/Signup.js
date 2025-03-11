@@ -87,10 +87,13 @@ const UserSignup = () => {
 
     switch (name) {
       case "email":
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        if (value.trim() === "") {
+          errorMsg = "Please enter email";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
           errorMsg = "Invalid email format";
         }
         break;
+
       case "phone":
         if (!/^\d{10}$/.test(value)) {
           errorMsg = "Phone number must be 10 digits";
