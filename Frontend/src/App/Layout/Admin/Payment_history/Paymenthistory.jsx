@@ -18,6 +18,8 @@ const History = () => {
 
     const navigate = useNavigate();
     const [clients, setClients] = useState([]);
+    console.log("clients", clients);
+
     const [model, setModel] = useState(false);
     const [serviceid, setServiceid] = useState({});
     const [searchInput, setSearchInput] = useState("");
@@ -261,7 +263,7 @@ const History = () => {
                 <>
 
                     <div className='d-flex '>
-                        {row.invoice ?
+                        {row?.invoice ?
                             <Link className="btn px-2" onClick={() => handleDownload(row)}>
                                 <Tooltip placement="top" overlay="Download">
                                     <ArrowDownToLine />
