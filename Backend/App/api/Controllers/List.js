@@ -83,7 +83,6 @@ class List {
         data: bannerWithImageUrls
       });
     } catch (error) {
-      console.log("Error retrieving Banner:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -115,7 +114,6 @@ class List {
         data: blogsWithImageUrls
       });
     } catch (error) {
-      console.log("Error retrieving blogs:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -172,7 +170,6 @@ class List {
         },
       });
     } catch (error) {
-      console.log("Error retrieving blogs:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -203,7 +200,6 @@ class List {
         data: newsWithImageUrls
       });
     } catch (error) {
-      console.log("Error retrieving news:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -260,7 +256,6 @@ class List {
         },
       });
     } catch (error) {
-      console.log("Error retrieving news:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -431,7 +426,6 @@ class List {
         data: result,
       });
     } catch (error) {
-      console.log(error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -1197,7 +1191,6 @@ class List {
       });
 
     } catch (error) {
-      console.log(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -1256,7 +1249,6 @@ class List {
       });
 
     } catch (error) {
-      console.log(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -1396,7 +1388,6 @@ class List {
       });
 
     } catch (error) {
-      console.log(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -2157,7 +2148,6 @@ class List {
         data: service
       });
     } catch (error) {
-      console.log("Error retrieving Service:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -2178,7 +2168,6 @@ class List {
         data: faq
       });
     } catch (error) {
-      console.log("Error retrieving Faq:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -2215,7 +2204,6 @@ class List {
       });
 
     } catch (error) {
-      console.log("Error fetching Content details:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -2878,7 +2866,6 @@ class List {
     try {
       // Extract basket_id, clientid, and version from request body
       const { basket_id, clientid, version } = req.body; // Fix typo: use req.body instead of req.bady
-      console.log("req.body", req.body);
       // Perform aggregation to fetch orders from BasketOrderModel
       const orders = await Basketorder_Modal.aggregate([
         {
@@ -3014,7 +3001,6 @@ class List {
       });
 
     } catch (error) {
-      console.log("Server error occurred:", error);
       return res.json({
         status: false,
         message: "Server error",
@@ -3147,7 +3133,6 @@ class List {
         }
       });
     } catch (error) {
-      console.log("Error fetching signal details:", error);
 
       return res.status(500).json({
         status: false,
@@ -3500,7 +3485,6 @@ class List {
         avgreturnpertrade = (totalProfit - totalLoss) / count;
 
 
-        console.log("avgreturnpertrade", avgreturnpertrade);
 
         if (monthsBetween > 0) {
           avgreturnpermonth = (totalProfit - totalLoss) / monthsBetween;
@@ -3590,7 +3574,6 @@ class List {
       ]);
 
       // Debug output for troubleshooting
-      console.log('Aggregated Result:', result);
 
 
 
@@ -3859,7 +3842,6 @@ class List {
 
       const protocol = req.protocol; // 'http' or 'https'
       const baseUrl = `https://${req.headers.host}`; // Construct base URL dynamically
-      console.log(baseUrl);
       const bankWithImageUrls = banks.map(bank => {
         return {
           ...bank._doc, // Spread the original document
@@ -3874,7 +3856,6 @@ class List {
         data: bankWithImageUrls
       });
     } catch (error) {
-      console.log("Error retrieving Bank:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -3907,7 +3888,6 @@ class List {
         data: bankWithImageUrls
       });
     } catch (error) {
-      console.log("Error retrieving Bank:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -6229,7 +6209,6 @@ class List {
       });
 
     } catch (error) {
-      console.log(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -6790,7 +6769,6 @@ class List {
         },
       });
     } catch (error) {
-      console.log("Error fetching signal details:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -7235,6 +7213,37 @@ async getBasketGraphData(req, res) {
   console.error("Error fetching basket data:", error);
   return res.status(500).json({ status: false, message: 'Server error', data: [] });
 }
+}
+
+
+
+async BasketSubscriptionCount(req, res) {
+  try {
+      const { basketid } = req.body; // assuming basketid is passed in the request
+      const basketObjectId = new mongoose.Types.ObjectId(basketid);
+
+      const result = await BasketSubscription_Modal.aggregate([
+          {
+              $match: { basket_id: basketObjectId } // Filter by basket_id
+          },
+          {
+              $count: "subscription_count" // Count number of purchases
+          }
+      ]);
+
+      const subscriptionCount = result.length > 0 ? result[0].subscription_count : 0;
+
+      res.status(200).json({
+          status: true,
+          message: "Subscription count retrieved successfully.",
+          subscription_count: subscriptionCount
+      });
+  } catch (error) {
+      res.status(500).json({
+          status: false,
+          message: "An error occurred while retrieving the subscription count."
+      });
+  }
 }
 
   

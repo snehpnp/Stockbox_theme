@@ -424,7 +424,6 @@ const DeleteTokenAliceToken = async (req, res) => {
     if (result.length > 0) {
         const idsToDelete = result.map(item => item._id);
         await Stock_Modal.deleteMany({ _id: { $in: result[0].idsToDelete } });
-        console.log(`${result.length} expired tokens deleted.`);
         res.json({ 
             status: true, 
             message: `${result[0].idsToDelete.length} expired tokens deleted.` 
@@ -1215,7 +1214,6 @@ async function handleExpiredToken(client, order, error) {
     // order.status = -1;
     // await order.save();
 
-    console.log(`Notifying client ${client._id} about expired token.`);
 }
 
 // Fetch order for Alice Blue broker
@@ -1391,7 +1389,6 @@ async function processPendingOrders(req, res) {
         });
 
         if (!orders.length) {
-            console.log("No pending orders to process.");
             return res.json({ 
                 status: true, 
                 message: "No pending orders to process.",
@@ -1405,7 +1402,6 @@ async function processPendingOrders(req, res) {
                 const client = await Clients_Modal.findById(order.clientid);
 
                 if (!client || client.tradingstatus === 0) {
-                    console.log(`Skipping order ${order.orderid}: Client not found or not logged in.`);
                     summary.skipped += 1;
                     return; // Skip this order
                 }
@@ -1435,7 +1431,6 @@ async function processPendingOrders(req, res) {
                         response = await fetchDhanOrder(client, order);
                         break;
                     default:
-                        console.log(`Skipping order ${order.orderid}: Unsupported broker ID.`);
                         summary.skipped += 1;
                         return; // Skip this order
                 }
@@ -1446,7 +1441,6 @@ async function processPendingOrders(req, res) {
                 await order.save();
 
                 summary.processed += 1;
-                console.log(`Order ${order.orderid} updated successfully.`);
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     // Handle expired token
@@ -1497,7 +1491,6 @@ async function processPendingOrdersBasket(req, res) {
         });
 
         if (!orders.length) {
-            console.log("No pending orders to process.");
             return res.json({ 
                 status: true, 
                 message: "No pending orders to process.",
@@ -1511,7 +1504,6 @@ async function processPendingOrdersBasket(req, res) {
                 const client = await Clients_Modal.findById(order.clientid);
 
                 if (!client || client.tradingstatus === 0) {
-                    console.log(`Skipping order ${order.orderid}: Client not found or not logged in.`);
                     summary.skipped += 1;
                     return; // Skip this order
                 }
@@ -1541,7 +1533,6 @@ async function processPendingOrdersBasket(req, res) {
                         response = await fetchDhanOrder(client, order);
                         break;
                     default:
-                        console.log(`Skipping order ${order.orderid}: Unsupported broker ID.`);
                         summary.skipped += 1;
                         return; // Skip this order
                 }
@@ -1552,7 +1543,6 @@ async function processPendingOrdersBasket(req, res) {
                 await order.save();
 
                 summary.processed += 1;
-                console.log(`Order ${order.orderid} updated successfully.`);
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     // Handle expired token
@@ -1775,7 +1765,6 @@ async function addBasketVolatilityData(req, res) {
             const beta = await getBetaByCoCode(co_code);
 
             if (beta === null) {
-                console.log(`Beta not found for co_code: ${co_code}`);
                 continue; // Skip if beta is not available
             }
             // Calculate total stock value
