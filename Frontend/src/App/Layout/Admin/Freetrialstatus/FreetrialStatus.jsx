@@ -123,7 +123,7 @@ const FreetrialStatus = () => {
       name: 'Updated At',
       selector: (row) => fDateTime(row.updatedAt),
       sortable: true,
-      width: '200px',
+      width: '331px',
     },
   ];
 

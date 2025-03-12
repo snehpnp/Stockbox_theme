@@ -366,7 +366,7 @@ const Viewbasketdetail = () => {
             >
               {({ values }) => (
                 <div>
-                  <h4>Basket Details</h4>
+                  {/* <h4>Basket Details</h4> */}
                   <div className="row">
                     {fieldConfigurations?.map((field) =>
                       field.type !== "Stock" ? (
@@ -399,7 +399,7 @@ const Viewbasketdetail = () => {
                               )}
                               <Modal show={showModal} onHide={closeModal} centered>
                                 <Modal.Header closeButton>
-                                  <Modal.Title>Image</Modal.Title>
+                                  <Modal.Title style={{color:"black"}}>Image</Modal.Title>
                                 </Modal.Header>
                                 <Modal.Body>
                                   {values[field.name] ? (

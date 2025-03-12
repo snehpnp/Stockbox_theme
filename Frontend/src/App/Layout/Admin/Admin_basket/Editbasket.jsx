@@ -369,7 +369,7 @@ const Editbasket = () => {
       <DynamicForm
         fields={fields}
         formik={formik}
-        page_title="Edit Basket"
+        // page_title="Edit Basket"
         btn_name="Edit Basket"
         btn_name1="Cancel"
         sumit_btn={true}

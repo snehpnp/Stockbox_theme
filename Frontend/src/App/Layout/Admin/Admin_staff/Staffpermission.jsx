@@ -1614,7 +1614,7 @@ const Staffpermission = () => {
         >
             <DynamicForm
                 fields={fields}
-                page_title="Edit Permission"
+                // page_title="Edit Permission"
                 btn_name="Edit Permission"
                 btn_name1="Cancel"
                 sumit_btn={true}
