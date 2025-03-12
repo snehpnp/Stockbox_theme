@@ -154,7 +154,7 @@ const Addbroadcast = () => {
             <DynamicForm
                 fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
                 formik={formik}
-                page_title="Add Broadcast"
+                // page_title="Add Broadcast"
                 btn_name="Add Broadcast"
                 btn_name1="Cancel"
                 sumit_btn={true}

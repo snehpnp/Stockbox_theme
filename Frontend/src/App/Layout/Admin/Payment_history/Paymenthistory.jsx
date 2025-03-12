@@ -108,6 +108,8 @@ const History = () => {
         try {
             const data = { page: currentPage, fromDate: startDate, toDate: endDate, search: searchInput }
             const response = await getPayementhistorywithfilter(data, token);
+            console.log("getPayementhistorywithfilter",response);
+
             if (response.status) {
                 let filteredData = response.data;
 
@@ -161,6 +163,12 @@ const History = () => {
         {
             name: 'Phone',
             selector: row => row.clientPhoneNo,
+            sortable: true,
+            width: '200px',
+        },
+        {
+            name: 'State',
+            selector: row => row.state,
             sortable: true,
             width: '200px',
         },
