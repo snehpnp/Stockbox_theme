@@ -6703,6 +6703,8 @@ class List {
       let profitCount = 0;
       let lossCount = 0;
       let avgreturnpermonth = 0;
+      let totalDaysOfAllSignals = 0; // ✅ Declare outside the loop
+
   
       const [firstSignal, lastSignal] = await Promise.all([
         Signal_Modal.findOne(query).sort({ created_at: 1 }),
@@ -6748,12 +6750,41 @@ class List {
             lossCount++;
           }
         }
+
+
+
+ // ✅ Calculate total days for each signal (at least 1 day)
+ if (signal.created_at && signal.closedate) { // ✅ Ensure correct field name
+  const createdDate = new Date(signal.created_at);
+  const closeDate = new Date(signal.closedate); // ✅ Corrected field name
+
+  let signalDays = Math.ceil((closeDate - createdDate) / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+
+  if (isNaN(signalDays) || signalDays < 1) {
+    signalDays = 1; // ✅ Ensure at least 1 day is counted
+  }
+
+  totalDaysOfAllSignals += signalDays; // ✅ Accumulate instead of resetting
+}
+
+
+
       });
   
       const accuracy = (profitCount / count) * 100;
       const avgreturnpertrade = (totalProfit - totalLoss) / count;
       avgreturnpermonth = monthsBetween > 0 ? (totalProfit - totalLoss) / monthsBetween : totalProfit - totalLoss;
   
+
+
+
+
+
+const avgDaysPerSignal = count > 0 
+  ? Math.round(totalDaysOfAllSignals / count) 
+  : 1;  
+
+
       return res.json({
         status: true,
         message: "Past performance data fetched successfully",
@@ -6766,6 +6797,7 @@ class List {
           accuracy,
           avgreturnpertrade,
           avgreturnpermonth,
+          avgDaysPerSignal,
         },
       });
     } catch (error) {
@@ -7137,8 +7169,12 @@ async getBasketGraphData(req, res) {
   }
 
   // Fetch data from Basketstock_Modal using basket_id
-  const basketData = await Basketghaphdata_Modal.find({ basket_id }).limit(limit).lean();
-
+  // const basketData = await Basketghaphdata_Modal.find({ basket_id }).limit(limit).lean();
+  const basketData = await Basketghaphdata_Modal.find({ basket_id })
+    .sort({ created_at: -1 }) // Sorting in DESC order by created_at
+    .limit(limit)
+    .lean();
+    basketData.reverse(); 
   // If no data found
   if (!basketData || basketData.length === 0) {
     return res.status(404).json({ status: false, message: 'No data found for this basket_id' });
@@ -7187,6 +7223,82 @@ async BasketSubscriptionCount(req, res) {
       });
   }
 }
+
+
+async  getLivePrices(req, res) {
+  try {
+    const { basket_id } = req.params;
+   
+
+    // 🔥 Step 1: Count how many stocks exist in the basket
+    const basketStocks = await Basketstock_Modal.find({ basket_id: basket_id, del: false });
+    console.log("basketStocks:", basketStocks);
+    const totalStocks = basketStocks.length;
+
+    if (totalStocks === 0) {
+      return res.json({
+        status: true,
+        message: "No stocks found in this basket.",
+        totalStocks: 0,
+        data: []
+      });
+    }
+
+    const tradeSymbols = basketStocks.map(stock => stock.tradesymbol);
+
+    // 🔥 Step 2: Get tokens for these stocks from Stock_Modal
+    const stockTokens = await Stock_Modal.find({ tradesymbol: { $in: tradeSymbols } }, { tradesymbol: 1, instrument_token: 1 });
+
+    // Create a mapping of tradesymbol -> token
+    const symbolToTokenMap = {};
+    stockTokens.forEach(stock => {
+      symbolToTokenMap[stock.tradesymbol] = stock.instrument_token;
+    });
+
+    // ✅ Get the list of tokens
+    const tokens = stockTokens.map(stock => stock.instrument_token);
+
+    if (tokens.length === 0) {
+      return res.json({
+        status: true,
+        message: "No tokens found for the given basket stocks.",
+        totalStocks: basketStocks.length,
+        data: []
+      });
+    }
+
+    // 🔥 Step 3: Fetch live prices only for the tokens in the basket
+    const livePrices = await Liveprice_Modal.find({ token: { $in: tokens } });
+
+    // ✅ Map live prices with stock details
+    const result = livePrices.map(priceData => {
+      const tradesymbol = Object.keys(symbolToTokenMap).find(symbol => symbolToTokenMap[symbol] === priceData.token);
+      return {
+        lp: priceData.lp,
+        curtime: priceData.curtime,
+        token: priceData.token,
+        tradesymbol: tradesymbol || "Unknown"
+      };
+    });
+
+    return res.json({
+      status: true,
+      message: "Live prices for basket stocks fetched successfully",
+      totalStocks: basketStocks.length,
+      data: result
+    });
+
+  } catch (error) {
+    console.error("❌ Error fetching live prices for basket stocks:", error.message);
+    return res.status(500).json({
+      status: false,
+      message: "Server error",
+      data: []
+    });
+  }
+}
+
+
 
   
 
