@@ -1233,6 +1233,8 @@ class List {
             startdate: 1,
             enddate: 1,
             validity: 1,
+            gstamount	: 1,
+            gst : 1,
             'basketDetails.title': 1,
             'basketDetails.description': 1,
             'basketDetails.mininvamount': 1
