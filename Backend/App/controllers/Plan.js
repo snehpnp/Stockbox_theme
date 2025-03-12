@@ -1148,6 +1148,7 @@ if (settings.gst > 0 && settings.gststatus==1) {
             clientName: '$clientDetails.FullName',
             clientEmail: '$clientDetails.Email',
             clientPhoneNo: '$clientDetails.PhoneNo',
+            state: '$clientDetails.state',
             planCategoryTitle: '$planCategoryDetails.title',
             serviceNames: { $map: { input: '$serviceDetails', as: 'service', in: '$$service.title' } } // Extract service titles
           }
@@ -1821,6 +1822,7 @@ for (let i = 0; i < length; i++) {
             clientName: '$clientDetails.FullName',
             clientEmail: '$clientDetails.Email',
             clientPhoneNo: '$clientDetails.PhoneNo',
+            state: '$clientDetails.state',
             planCategoryTitle: '$planCategoryDetails.title',
             serviceNames: { $map: { input: '$serviceDetails', as: 'service', in: '$$service.title' } } // Extract service titles
           }

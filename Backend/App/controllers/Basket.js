@@ -432,7 +432,7 @@ class Basket {
 
 
       if (publishstatus == 1) {
-        await addBasketVolatilityData(req, res);
+        await addBasketVolatilityData(req);
       }
 
       return res.json({
@@ -579,7 +579,7 @@ class Basket {
           // Execute the bulk insert
           const result = await Basketstock_Modal.bulkWrite(bulkOps);
           if (publishstatus == 1) {
-            await addBasketVolatilityData(req, res);
+            await addBasketVolatilityData(req);
           }
           return res.json({
               status: true,
@@ -788,7 +788,7 @@ class Basket {
       const result = await Basketstock_Modal.bulkWrite(bulkOps);
 
       if (publishstatus == 1) {
-        await addBasketVolatilityData(req, res);
+        await addBasketVolatilityData(req);
       }
 
 
@@ -940,7 +940,7 @@ class Basket {
       // Execute the bulk insert
       const result = await Basketstock_Modal.bulkWrite(bulkOps);
       if (publishstatus == 1) {
-        await addBasketVolatilityData(req, res);
+        await addBasketVolatilityData(req);
       }
       return res.json({
         status: true,

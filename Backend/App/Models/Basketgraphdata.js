@@ -23,6 +23,11 @@ const BasketgraphdataSchema = Schema({
         trim: true,
         default: 0
     },
+    stockname: {
+        type: String,
+        trim: true,
+        default: null
+    },
   
     
 },

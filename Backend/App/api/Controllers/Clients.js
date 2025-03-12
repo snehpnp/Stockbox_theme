@@ -390,7 +390,6 @@ class Clients {
       });
 
     } catch (error) {
-      console.log("Error in forgotPassword:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -463,7 +462,6 @@ class Clients {
       });
 
     } catch (error) {
-      console.log("Error in resetPassword:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -526,7 +524,6 @@ class Clients {
       });
 
     } catch (error) {
-      console.log("Error in changePassword:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -577,7 +574,6 @@ class Clients {
       });
 
     } catch (error) {
-      console.log("Error in updateProfile:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -610,7 +606,6 @@ class Clients {
           message: "Client not found",
         });
       }
-      console.log("Updated Client:", deletedClient);
 
       const titles = 'Important Update';
       const message = `You have successfully deleted your account.`;
@@ -632,7 +627,6 @@ class Clients {
         data: deletedClient,
       });
     } catch (error) {
-      console.log("Error deleting client:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -1451,7 +1445,6 @@ class Clients {
     try {
 
       const { id } = req.params; // Extract client_id from query parameters
-      console.log("Client ID:", id); // Log the client_id for debugging
 
       // Step 1: Fetch helpdesk entries for the specified client_id
       const result = await Helpdesk_Modal.find({ client_id: id });

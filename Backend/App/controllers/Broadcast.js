@@ -13,7 +13,6 @@ class BroadcastController {
         try {
 
             const { subject, message, service, type } = req.body;
-             console.log("req.body",req.body)
               if (!subject) {
                 return res.status(400).json({ status: false, message: "subject is required" });
               }

@@ -1097,7 +1097,6 @@ class Dashboard {
         },
       });
     } catch (error) {
-      console.log("Error fetching signal details:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -1392,7 +1391,6 @@ class Dashboard {
       const firstDayOfMonth = new Date(Date.UTC(selectedYear, selectedMonth, 1, 0, 0, 0));
       const firstDayOfNextMonth = new Date(Date.UTC(selectedYear, selectedMonth + 1, 1, 0, 0, 0));
   
-      console.log(`Filtering from: ${firstDayOfMonth.toISOString()} to ${firstDayOfNextMonth.toISOString()}`);
   
       // Define mapping for validity conversion
       const validityMapping = {
