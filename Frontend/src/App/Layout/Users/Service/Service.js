@@ -403,7 +403,7 @@ const Service = () => {
             <>
 
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5>🏷️ {selectedPlanDetails?.title}</h5>
+                <h5> {selectedPlanDetails?.title}</h5>
                 <span className="text-success fw-bold">
                   <IndianRupee  className="w-25"/>{" "}
                   {selectedPlanDetails?.price || "N/A"}
@@ -624,7 +624,7 @@ const Service = () => {
                     className="text-success fw-bold"
                     
                   >
-                    <IndianRupee className="w-25" />{" "}
+                    <IndianRupee  style={{width:'20%'}}/>{" "}
                     {(
                       (selectedPlanDetails?.price - (discountedPrice || 0)) +
                       ((selectedPlanDetails?.price - (discountedPrice || 0)) * gstdata) / 100

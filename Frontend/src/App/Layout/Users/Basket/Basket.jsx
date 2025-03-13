@@ -167,11 +167,11 @@ function Basket() {
                             <span className="badge bg-dark rounded-pill">{item?.mininvamount}</span>
                           </li>
                           <li className="list-group-item d-flex justify-content-between align-items-center">
-                            CAGR
+                          Since Launch
                             <span className="badge bg-success rounded-pill">{item?.cagr}</span>
                           </li>
                           <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
-                            Validity
+                          Volatility
                             <span className="badge bg-danger rounded-pill">{item?.validity}</span>
                           </li>
 
@@ -184,6 +184,7 @@ function Basket() {
                               <Link to="/user/payment" state={{ item }} className="btn btn-primary w-100">
                                 Subscribe <del>{item?.full_price}</del> {item?.basket_price}
                               </Link>
+                              
                             ) : item?.isSubscribed === true && item?.isActive === false ? (
                               <Link to="/user/rebalancestock" state={{ item }} className="btn btn-primary w-100">
                                 View Rebalance
