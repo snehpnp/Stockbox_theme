@@ -1985,16 +1985,22 @@ async function addBasketVolatilityData(req, res) {
         }
 
       
-        return res.json({
-            status: true,
-            message: "Portfolio Volatility inserted successfully",
-            data: basketVolatilityData
-        });
+        if (res) {
+            return res.json({ status: true, message: "Portfolio Volatility inserted successfully", data: basketVolatilityData });
+        }
+
+        return { success: true, data: basketVolatilityData };
 
     } catch (error) {
-        return res.json({ status: false, message: "Server error", data: [] });
+
+        if (res) {
+            return res.status(500).json({ status: false, message: "Server error", error: error.message });
+        }
+
+        return { success: false, error: error.message };
     }
 }
+
 
 
 async function getBetaByCoCode(co_code) {

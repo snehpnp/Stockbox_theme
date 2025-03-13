@@ -6706,8 +6706,9 @@ class List {
       let lossCount = 0;
       let avgreturnpermonth = 0;
       let totalDaysOfAllSignals = 0; // ✅ Declare outside the loop
-
-  
+      let totalpercentagecount = 0;
+      let signalper = 0;
+      let totalpercentagecountavarage = 0;
       const [firstSignal, lastSignal] = await Promise.all([
         Signal_Modal.findOne(query).sort({ created_at: 1 }),
         Signal_Modal.findOne(query).sort({ created_at: -1 }),
@@ -6767,11 +6768,29 @@ class List {
   }
 
   totalDaysOfAllSignals += signalDays; // ✅ Accumulate instead of resetting
+
+
+
+if(signal.calltype=="BUY")
+{
+ signalper = (signal.closeprice - signal.price) / signal.price * 100;
+ 
+}
+else{
+  signalper = (signal.price - signal.closeprice) / signal.price * 100;
+
+}
+totalpercentagecount = signalper + totalpercentagecount;
+
 }
 
 
 
+
+
       });
+
+      totalpercentagecountavarage = totalpercentagecount / count;
   
       const accuracy = (profitCount / count) * 100;
       const avgreturnpertrade = (totalProfit - totalLoss) / count;
@@ -6800,6 +6819,7 @@ const avgDaysPerSignal = count > 0
           avgreturnpertrade,
           avgreturnpermonth,
           avgDaysPerSignal,
+          totalpercentagecountavarage,
         },
       });
     } catch (error) {
