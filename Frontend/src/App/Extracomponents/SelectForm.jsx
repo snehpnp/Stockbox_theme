@@ -6,7 +6,6 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import DynamicForm from '../FormicForm';
 import { Addstockbasketform } from '../../../Services/Admin';
-import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 
 const SelectForm = () => {
@@ -131,33 +130,15 @@ const SelectForm = () => {
       console.log(response);
 
       if (response.status) {
-        Swal.fire({
-          title: "Create Successful!",
-          text: response.message,
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("Success",response.message)
         setTimeout(() => {
           navigate("/admin/basket");
         }, 1500);
       } else {
-        Swal.fire({
-          title: "Error",
-          text: response.message,
-          icon: "error",
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("error",response.message)
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred. Please try again later.",
-        icon: "error",
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert("error","An unexpected error occurred. Please try again later.")
     }
   };
 

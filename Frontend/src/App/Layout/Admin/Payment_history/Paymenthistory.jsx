@@ -4,7 +4,6 @@ import { getPayementhistory, getPayementhistorywithfilter } from '../../../Servi
 // import Table from '../../../components/Table';
 import Table from '../../../Extracomponents/Table1';
 import { SquarePen, Trash2, PanelBottomOpen, Eye, RefreshCcw, IndianRupee, ArrowDownToLine } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
@@ -75,6 +74,7 @@ const History = () => {
                         Name: item.clientName || "-",
                         Email: item.clientEmail || "-",
                         Phone: item.clientPhoneNo || "-",
+                        State: item.state || "-",
                         Title: item?.planCategoryTitle || '-',
                         ClientSegment: item?.serviceNames.map(statusItem => statusItem || 'N/A')
                             .join(', ') || 'N/A',
@@ -108,8 +108,6 @@ const History = () => {
         try {
             const data = { page: currentPage, fromDate: startDate, toDate: endDate, search: searchInput }
             const response = await getPayementhistorywithfilter(data, token);
-            console.log("getPayementhistorywithfilter",response);
-
             if (response.status) {
                 let filteredData = response.data;
 
@@ -168,7 +166,7 @@ const History = () => {
         },
         {
             name: 'State',
-            selector: row => row.state,
+            selector: row => row.state?row.state:"-",
             sortable: true,
             width: '200px',
         },

@@ -95,18 +95,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
           getdemoclient();
         }
       } else {
-        Swal.fire(
-          "Error",
-          "Failed to update the notification status.",
-          "error"
-        );
+        showCustomAlert("error","Failed to update the notification status.")
       }
     } catch (error) {
-      Swal.fire(
-        "Error",
-        "There was an error processing your request.",
-        "error"
-      );
+      showCustomAlert("error","There was an error processing your request.")
     }
   };
 
@@ -202,13 +194,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       !statusinfo.apikey ||
       !statusinfo.secretkey
     ) {
-      Swal.fire({
-        title: "Warning!",
-        text: "Please fill in all fields",
-        icon: "warning",
-        confirmButtonText: "OK",
-        timer: 2000,
-      });
+      showCustomAlert("warning","Please fill in all fields")
       return;
     }
 
@@ -251,22 +237,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
           };
           const response = await UpdateLogin_status(data, token);
           if (response?.status) {
-            Swal.fire({
-              icon: "success",
-              title: "Successful!",
-              text: "Status Log Out Successful",
-              timer: 1500,
-              timerProgressBar: true,
-            });
+            showCustomAlert("Success","Status Log Out Successful")
           }
         } catch (error) {
-          Swal.fire({
-            icon: "error",
-            title: "Update Failed",
-            text: "There was an error logging out",
-            timer: 1500,
-            timerProgressBar: true,
-          });
+          showCustomAlert("error","There was an error logging out")
         }
       }
     });

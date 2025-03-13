@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Table from '../../../Extracomponents/Table';
-import Swal from 'sweetalert2';
 import { CompanyDetailbyadmin } from '../../../Services/Superadmin/Admin';
 import { fDateTime, fDateMonth, fDate } from '../../../../Utils/Date_formate';
 

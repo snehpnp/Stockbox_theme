@@ -17,6 +17,7 @@ import { Tooltip } from "antd";
 import { fDate } from "../../../../Utils/Date_formate";
 import { GetAllThemesNameApi } from '../../../Services/Themes/Theme'
 import Loader from "../../../../Utils/Loader";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 const Company = () => {
   const token = localStorage.getItem("token");
@@ -81,29 +82,14 @@ const Company = () => {
       if (result.isConfirmed) {
         const response = await deleteCompany(_id, token);
         if (response.status) {
-          Swal.fire({
-            title: "Deleted!",
-            text: "The Client has been successfully deleted.",
-            icon: "success",
-            confirmButtonText: "OK",
-          });
+          showCustomAlert("Success","The Client has been successfully deleted.")
           getAdminclient();
         }
       } else {
-        Swal.fire({
-          title: "Cancelled",
-          text: "The Client deletion was cancelled.",
-          icon: "info",
-          confirmButtonText: "OK",
-        });
+        showCustomAlert("info","The Client deletion was cancelled.")
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error deleting the Client.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error","There was an error deleting the Client.")
     }
   };
 
@@ -125,23 +111,14 @@ const Company = () => {
       try {
         const response = await UpdateCompanyStatus(data, token);
         if (response.status) {
-          Swal.fire({
-            title: "Saved!",
-            icon: "success",
-            timer: 1000,
-            timerProgressBar: true,
-          });
+          showCustomAlert("Success","The Client status has been successfully updated.")
           setTimeout(() => {
             Swal.close();
           }, 1000);
         }
         getAdminclient();
       } catch (error) {
-        Swal.fire(
-          "Error",
-          "There was an error processing your request.",
-          "error"
-        );
+        showCustomAlert("error","There was an error processing your request.")        
       }
     } else if (result.dismiss === Swal.DismissReason.cancel) {
       event.target.checked = !originalChecked;
@@ -158,23 +135,14 @@ const Company = () => {
     try {
       const response = await UpdateThemeApi(data);
       if (response.status) {
-        Swal.fire({
-          title: "Theme Updated!",
-          icon: "success",
-          timer: 1000,
-          timerProgressBar: true,
-        });
+        showCustomAlert("Success","The Client theme has been successfully updated.")
         setTimeout(() => {
           Swal.close();
         }, 1000);
       }
       getAdminclient();
     } catch (error) {
-      Swal.fire(
-        "Error",
-        "There was an error processing your request.",
-        "error"
-      );
+      showCustomAlert("error","There was an error processing your request.")
     }
   }
 

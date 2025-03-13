@@ -426,6 +426,18 @@ const Client = () => {
       width: "350px",
     },
     {
+      name: "Phone No",
+      selector: (row) => row.PhoneNo,
+      sortable: true,
+      width: "200px",
+    },
+    {
+      name: "State",
+      selector: (row) => row.state ? row.state : "-",
+      sortable: true,
+      width: "200px",
+    },
+    {
       name: "Plan Status",
       cell: (row) => {
         const hasActive = row?.plansStatus?.some(
@@ -482,11 +494,6 @@ const Client = () => {
       width: "200px",
     },
 
-    {
-      name: "Phone No",
-      selector: (row) => row.PhoneNo,
-      sortable: true,
-    },
 
     {
       name: "Created By",

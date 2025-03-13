@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
-import Swal from 'sweetalert2';
 import DynamicForm from '../../../Extracomponents/FormicForm';
 import { useNavigate } from 'react-router-dom';
 import { SendBroadCast, GetService } from '../../../Services/Admin/Admin';
