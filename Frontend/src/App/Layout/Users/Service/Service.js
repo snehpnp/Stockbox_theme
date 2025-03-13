@@ -328,7 +328,7 @@ const Service = () => {
                                       .join(" + ")
                                     : "N/A"}
                                 </span>
-                                <h5 className="mb-0">{item?.title}</h5>
+                                <h5 style={{fontSize:'18px', fontWeight:'600'}} className="mb-0">{item?.title}</h5>
                               </div>
                             </div>
                             <hr />
@@ -394,8 +394,8 @@ const Service = () => {
 
       <Modal show={showModal} onHide={handleCloseModal} centered size="xxl">
         <Modal.Header closeButton>
-          <Modal.Title className="text-center w-100">
-            🌟 Plan Details
+          <Modal.Title className="text-center w-100 heading-color modal-title h4">
+            Plan Details
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -405,14 +405,14 @@ const Service = () => {
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h5>🏷️ {selectedPlanDetails?.title}</h5>
                 <span className="text-success fw-bold">
-                  <IndianRupee />{" "}
+                  <IndianRupee  className="w-25"/>{" "}
                   {selectedPlanDetails?.price || "N/A"}
                 </span>
               </div>
 
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <span>
-                  🕒 <b>Validity:</b>
+                   <b>Validity:</b>
                 </span>
                 <span>{selectedPlanDetails?.validity || "N/A"}</span>
               </div>
@@ -597,34 +597,34 @@ const Service = () => {
               <hr />
               <div>
                 <div className="d-flex justify-content-between align-items-center mb-2">
-                  <b>💵 Original Price:</b>
+                  <b> Original Price:</b>
                   <span className="text-primary fw-bold">
-                    <IndianRupee /> {selectedPlanDetails?.price}
+                    <IndianRupee className="w-25" /> {selectedPlanDetails?.price}
                   </span>
                 </div>
                 <div className="d-flex justify-content-between align-items-center mb-2">
-                  <b>💰 GST :</b>
+                  <b> GST :</b>
                   <span className="text-primary fw-bold">
-                    <IndianRupee /> {gstdata}％
+                    <IndianRupee className="w-25" /> {gstdata}％
                   </span>
                 </div>
 
                 {appliedCoupon && (
                   <div className="d-flex justify-content-between align-items-center text-danger mb-2">
-                    <b>🎟️ Coupon Discount:</b>
+                    <b> Coupon Discount:</b>
                     <span className="fw-bold">
-                      - <IndianRupee /> {appliedCoupon?.value}
+                      - <IndianRupee className="w-25" /> {appliedCoupon?.value}
                     </span>
                   </div>
                 )}
 
                 <div className="d-flex justify-content-between align-items-center mt-3 py-2 border-top">
-                  <b>💰 Total Price:</b>
+                  <b> Total Price:</b>
                   <span
                     className="text-success fw-bold"
-                    style={{ fontSize: "1.2rem" }}
+                    
                   >
-                    <IndianRupee />{" "}
+                    <IndianRupee className="w-25" />{" "}
                     {(
                       (selectedPlanDetails?.price - (discountedPrice || 0)) +
                       ((selectedPlanDetails?.price - (discountedPrice || 0)) * gstdata) / 100
