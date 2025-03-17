@@ -8,6 +8,7 @@ import { GetUserData } from "../../../Services/UserService/User";
 import { UpdateBroker } from "../../../Services/UserService/User";
 import BrokersData from "../../../../Utils/BrokersData";
 import { base_url } from "../../../../Utils/config";
+import { Eye } from "lucide-react";
 
 const Demat = () => {
 
@@ -243,7 +244,7 @@ const Demat = () => {
 
             {brokers.length > 0 ? brokers?.map((broker) => (
               <>
-              <div className="col-md-3 col-sm-6 mb-3" key={broker?.id}>
+              {/* <div className="col-md-3 col-sm-6 mb-5" key={broker?.id}>
                 <div className="card radius-5" onClick={() => setUserDetail(broker?.id)}>
                   <div className="card-body p-2 text-center cursor-pointer" onClick={() => handleShowModal(broker?.name)}>
                     <div className="p-4 border radius-5">
@@ -252,19 +253,22 @@ const Demat = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
-{/* <div className="col-md-3 col-sm-6 mb-3">
+<div className="col-md-3 col-sm-6 mb-5">
 <div className="card-wrap">
   <div className="card-header one">
   <img className="img-fluid" src={broker?.img} alt={broker?.name} />
   </div>
   <div className="card-content">
-  <h5 className="mb-0 mt-5">{broker?.name}</h5>
-    <button className="card-btn one" onClick={() => handleShowModal(broker?.name)}>code</button>
+  <h5 className="mb-3 mt-4">{broker?.name}</h5>
+    <button className="btn btn-primary" onClick={() => handleShowModal(broker?.name)}>
+
+    <i className="fa fa-eye"></i>
+      View</button>
   </div>
 </div>
-</div> */}
+</div>
 </>
             )) : <div className="text-center mt-5">
               <img
@@ -278,55 +282,7 @@ const Demat = () => {
             )}
           </div>
          
-         <div className="row">
-        <div className="col-md-3 col-sm-6 mb-3">
-  <div className="card-wrap">
-    <div className="card-header one">
-      <i className="fas fa-code" />
-    </div>
-    <div className="card-content">
-      <h1 className="card-title">Title</h1>
-      <button className="card-btn one">code</button>
-    </div>
-  </div>
-  </div>
-  
-  <div className="col-md-3 col-sm-6 mb-3">
-  <div className="card-wrap">
-    <div className="card-header two">
-      <i className="fab fa-css3-alt" />
-    </div>
-    <div className="card-content">
-      <h1 className="card-title">Title</h1>
-      <button className="card-btn two">css3</button>
-    </div>
-  </div>
-  </div>
-  <div className="col-md-3 col-sm-6 mb-3">
-  <div className="card-wrap">
-    <div className="card-header three">
-      <i className="fab fa-html5" />
-    </div>
-    <div className="card-content">
-      <h1 className="card-title">Title</h1>
-      <button className="card-btn three">html5</button>
-    </div>
-  </div>
-  </div>
-  <div className="col-md-3 col-sm-6 mb-3">
-  <div className="card-wrap">
-    <div className="card-header four">
-      <i className="fab fa-js-square" />
-    </div>
-    <div className="card-content">
-      <h1 className="card-title">Title</h1>
-      <button className="card-btn four">js</button>
-    </div>
-  </div>
-  </div>
-
-
-         </div>
+       
 
           
         </div>

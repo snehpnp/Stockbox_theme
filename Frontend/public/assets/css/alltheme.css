@@ -1490,15 +1490,6 @@ button:hover {
 
 :root{
   --color-text: #616161;
-  --color-text-btn: #ffffff;
-  --card1-gradient-color1: #f12711;
-  --card1-gradient-color2: #f5af19;
-  --card2-gradient-color1: #7F00FF;
-  --card2-gradient-color2: #E100FF;
-  --card3-gradient-color1: #3f2b96;
-  --card3-gradient-color2: #a8c0ff;
-  --card4-gradient-color1: #11998e;
-  --card4-gradient-color2: #38ef7d;
 }
 
 .card-wrap{
@@ -1512,9 +1503,10 @@ button:hover {
               rgba(0, 0, 0, 0.23) 0px 6px 6px;
   cursor: pointer;
   transition: all .2s ease-in-out;
+  padding-bottom: 25px;
 }
 .card-wrap:hover{
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 .card-header{
   height: 200px;
@@ -1523,13 +1515,15 @@ button:hover {
   border-radius:100% 0% 100% 0% / 0% 50% 50% 100%;
   display: grid;
   place-items: center;
+  border-radius: 0px 0px 120px 120px !important;
 
 }
-
-.card-header i{
-  color: #fff;
-  font-size: 72px;
+.card-header img{
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
 }
+
 .card-content{
   display: flex;
   flex-direction: column;
@@ -1549,37 +1543,4 @@ button:hover {
   text-align: center;
   font-size: 12px;
   margin-bottom: 20px;
-}
-.card-btn{
-  border: none;
-  border-radius: 100px;
-  padding: 5px 30px;
-  color: #fff;
-  margin-bottom: 15px;
-  text-transform: uppercase;
-}
-.card-header.one{
-  background: linear-gradient(to bottom left, var(--card1-gradient-color1), var(--card1-gradient-color2));
-}
-.card-header.two{
-  background: linear-gradient(to bottom left, var(--card2-gradient-color1), var(--card2-gradient-color2));
-}
-.card-header.three{
-  background: linear-gradient(to bottom left, var(--card3-gradient-color1), var(--card3-gradient-color2));
-}
-.card-header.four{
-  background: linear-gradient(to bottom left, var(--card4-gradient-color1), var(--card4-gradient-color2));
-}
-
-.card-btn.one{
-  background: linear-gradient(to left, var(--card1-gradient-color1), var(--card1-gradient-color2));
-}
-.card-btn.two{
-  background: linear-gradient(to left, var(--card2-gradient-color1), var(--card2-gradient-color2));
-}
-.card-btn.three{
-  background: linear-gradient(to left, var(--card3-gradient-color1), var(--card3-gradient-color2));
-}
-.card-btn.four{
-  background: linear-gradient(to left, var(--card4-gradient-color1), var(--card4-gradient-color2));
 }
