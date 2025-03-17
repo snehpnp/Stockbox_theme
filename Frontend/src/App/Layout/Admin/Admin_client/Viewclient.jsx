@@ -358,25 +358,33 @@ const Viewclientdetail = () => {
             <div className="card-body">
               <div className="p-4 border radius-15">
                 <div className="row justify-content-center align-items-center">
-                  {client.map(({ id, FullName, Email, PhoneNo,state }) => (
-                    <div key={id} className="row">
-                      <div className="col-md-3 d-flex align-items-center">
-                        <strong>Full Name</strong>
-                        <p className="my-0 ms-3">{FullName}</p>
+                {client.map(({ id, FullName, Email, PhoneNo, state }) => (
+                    <div key={id} className="container">
+                      <div className="row">
+                        <div className="col-md-4 d-flex align-items-center">
+                          <strong>Full Name :</strong>
+                          <p className="my-0 ms-3">{FullName}</p>
+                        </div>
+                        <div className="col-md-4 d-flex align-items-center">
+                          <strong>Email :</strong>
+                          <p className="my-0 ms-3">{Email}</p>
+                        </div>
+                        <div className="col-md-4 d-flex align-items-center">
+                          <strong>Phone No :</strong>
+                          <p className="my-0 ms-3">{PhoneNo}</p>
+                        </div>
                       </div>
-                      <div className="col-md-3 d-flex align-items-center">
-                        <strong>Email</strong>
-                        <p className="my-0 ms-4">{Email}</p>
+
+                      <div className="row mt-2">
+                        <div className="col-md-4 d-flex align-items-center">
+                          <strong>State :</strong>
+                          <p className="my-0 ms-3">{state}</p>
+                        </div>
                       </div>
-                      <div className="col-md-3 d-flex align-items-center">
-                        <strong>Phone No</strong>
-                        <p className="my-0 ms-4">{PhoneNo}</p>
-                      </div>
-                      <div className="col-md-3 d-flex align-items-center">
-                        <strong>State</strong>
-                        <p className="my-0 ms-4">{state}</p>
-                      </div>
+
                     </div>
+
+
                   ))}
                 </div>
               </div>

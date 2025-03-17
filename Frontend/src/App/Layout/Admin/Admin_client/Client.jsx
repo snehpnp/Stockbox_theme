@@ -915,7 +915,7 @@ const Client = () => {
                                           <div className="d-flex justify-content-between">
                                             <strong>Price:</strong>
                                             <span>
-                                              <IndianRupee /> {item.price}
+                                            <IndianRupee style={{ fontSize: "18px", width: "18px", height: "18px", marginRight: "3px" }} /> {item.price}
                                             </span>
                                           </div>
                                           <div className="d-flex justify-content-between">
@@ -1041,7 +1041,7 @@ const Client = () => {
                                       <div className="d-flex justify-content-between">
                                         <strong>Price:</strong>
                                         <span>
-                                          <IndianRupee /> {item.basket_price}
+                                        <IndianRupee style={{ fontSize: "18px", width: "18px", height: "18px", marginRight: "3px" }} /> {item.basket_price}
                                         </span>
                                       </div>
                                       <div className="d-flex justify-content-between">
@@ -1053,7 +1053,7 @@ const Client = () => {
                                           Minimum Investment Amount:
                                         </strong>
                                         <span>
-                                          <IndianRupee /> {item?.mininvamount}
+                                        <IndianRupee style={{ fontSize: "18px", width: "18px", height: "18px", marginRight: "3px" }} /> {item?.mininvamount}
                                         </span>
                                       </div>
                                     </div>

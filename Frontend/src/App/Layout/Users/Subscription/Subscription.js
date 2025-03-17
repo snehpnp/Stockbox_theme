@@ -167,16 +167,17 @@ const Subscription = () => {
                     </tr>
                     <tr>
                       <td>
-                        <strong>Discount Price:</strong>
-                      </td>
-                      <td>₹{accordion?.discount || "--"}</td>
-                    </tr>
-                    <tr>
-                      <td>
                         <strong>Plan Price:</strong>
                       </td>
                       <td>₹{accordion?.plan_price || "--"}</td>
                     </tr>
+                    <tr>
+                      <td>
+                        <strong>Discount Price:</strong>
+                      </td>
+                      <td>₹{accordion?.discount || "--"}</td>
+                    </tr>
+                    
                     <tr>
                       <td>
                         <strong>Purchase Price:</strong>
