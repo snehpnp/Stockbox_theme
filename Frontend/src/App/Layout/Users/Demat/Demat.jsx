@@ -240,7 +240,7 @@ const Demat = () => {
 
       <Content Page_title="Supported Broker" button_status={false} backbutton_status={false}>
         <div className="page-content d-block">
-          <div className="row row-cols-1 row-cols-lg-2 row-cols-xl-4 justify-content-center align-items-center">
+          <div className="demate-data row row-cols-1 row-cols-lg-2 row-cols-xl-4 justify-content-center align-items-center">
 
             {brokers.length > 0 ? brokers?.map((broker) => (
               <>

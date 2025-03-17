@@ -182,9 +182,7 @@ function Basket() {
                           Volatility
                             <span className="badge bg-danger rounded-pill">{item?.validity}</span>
                           </li>
-                          <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100 mb-1">
-                            View Details
-                          </Link>
+                          
 
                           {
                             item?.isSubscribed || item?.isActive ? (
@@ -202,7 +200,9 @@ function Basket() {
                               </Link>
                             ) : ""
                           }
-
+                          <Link to="/user/basketdetail" state={{ item }} className="btn btn-secondary w-100 mt-2">
+                            View Details
+                          </Link>
 
                         </ul>
                       </div>

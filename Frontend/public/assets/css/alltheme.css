@@ -1492,7 +1492,7 @@ button:hover {
   --color-text: #616161;
 }
 
-.card-wrap{
+.demate-data .card-wrap{
 
   background: #fff;
   border-radius: 20px;
@@ -1505,10 +1505,10 @@ button:hover {
   transition: all .2s ease-in-out;
   padding-bottom: 25px;
 }
-.card-wrap:hover{
+.demate-data .card-wrap:hover{
   transform: scale(1.05);
 }
-.card-header{
+.demate-data .card-header{
   height: 200px;
   width: 100%;
   background: red;
@@ -1518,20 +1518,20 @@ button:hover {
   border-radius: 0px 0px 120px 120px !important;
 
 }
-.card-header img{
+.demate-data .card-header img{
   width: 100px;
   height: 100px;
   border-radius: 50%;
 }
 
-.card-content{
+.demate-data .card-content{
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 60%;
   margin: 0 auto;
 }
-.card-title{
+.demate-data .card-title{
   text-align: center;
   text-transform: uppercase;
   font-size: 16px;
@@ -1539,7 +1539,7 @@ button:hover {
   margin-bottom: 20px;
   
 }
-.card-text{
+.demate-data .card-text{
   text-align: center;
   font-size: 12px;
   margin-bottom: 20px;
