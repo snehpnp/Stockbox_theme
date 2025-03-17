@@ -87,10 +87,13 @@ const UserSignup = () => {
 
     switch (name) {
       case "email":
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        if (value.trim() === "") {
+          errorMsg = "Please enter email";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
           errorMsg = "Invalid email format";
         }
         break;
+
       case "phone":
         if (!/^\d{10}$/.test(value)) {
           errorMsg = "Phone number must be 10 digits";
@@ -131,6 +134,15 @@ const UserSignup = () => {
     validateField("phone", phone);
     validateField("password", password);
     validateField("state", state);
+
+    if (isReferralEnabled && !referralCode.trim()) {
+      setErrors((prevErrors) => ({
+          ...prevErrors,
+          referralCode: "Referral code is required",
+      }));
+      showCustomAlert("error", "Please enter referral code before submitting");
+      return;
+  }
 
     // Check if there are any errors
     if (Object.values(errors).some((err) => err)) {
@@ -208,14 +220,14 @@ const UserSignup = () => {
 
   return (
     <div className="main-login" style={{ backgroundImage: `url(${BgImg})` }}>
-      <div className="row align-items-center h-100">
+      <div className="row align-items-center h-100" style={{ overflowY: "auto" }}>
         <div className="col-lg-12 mx-auto">
           <div className="bg-login">
             <div className="section-authentication-signin d-flex align-items-center justify-content-center my-5 my-lg-0">
               <div className="container-fluid ">
                 <div className="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
                   <div className="col mx-auto">
-                    <div className="card mb-0">
+                    <div className="card mb-0" >
                       <div className="card-body">
                         <div className="p-4">
                           <div className="mb-5 text-center">
@@ -231,7 +243,7 @@ const UserSignup = () => {
                               { label: "Email", name: "email", type: "text" },
                               { label: "Phone", name: "phone", type: "text" },
                               { label: "Password", name: "password", type: "password" },
-                              { label: "State", name: "state", type: "select" }, // ✅ State added inside map
+                              { label: "State", name: "state", type: "select" },
                             ].map((field) => (
                               <div className="col-12 mb-3" key={field.name}>
                                 <label className="form-label">{field.label}</label>

@@ -12,6 +12,7 @@ function Basket() {
 
   const [activeTab, setActiveTab] = useState("allbasket");
   const [basketdata, setBasketdata] = useState([])
+
   const [purchasedata, setPurchasedata] = useState([])
 
   const [isLoading, setIsLoading] = useState(true)
@@ -137,8 +138,15 @@ function Basket() {
                   <div className="col-md-12 col-lg-4 mb-3" key={item?.id}>
                     <div className="card radius-10 overflow-hidden">
                       <div className="card-body">
-                        <h5>{item?.title} ({item?.themename})</h5>
+                        <div className="d-flex justify-content-between align-items-center">
+                          {/* {item?.image && (
+                            <img src={item?.image} alt="Item" className="me-2" style={{ width: "40px", height: "40px", borderRadius: "5px" }} />
+                          )} */}
+                          <h5 className="mb-0">{item?.title} ({item?.themename})</h5>
+                          {item?.isSubscribed && <span className="badge bg-success">Subscribed</span>}
+                        </div>
                       </div>
+
                       <div className="progress-wrapper">
                         <div className="progress" style={{ height: 7 }}>
                           <div
@@ -174,6 +182,9 @@ function Basket() {
                           Volatility
                             <span className="badge bg-danger rounded-pill">{item?.validity}</span>
                           </li>
+                          <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100 mb-1">
+                            View Details
+                          </Link>
 
                           {
                             item?.isSubscribed || item?.isActive ? (

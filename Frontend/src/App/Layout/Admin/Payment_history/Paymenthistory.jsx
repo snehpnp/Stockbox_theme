@@ -4,7 +4,6 @@ import { getPayementhistory, getPayementhistorywithfilter } from '../../../Servi
 // import Table from '../../../components/Table';
 import Table from '../../../Extracomponents/Table1';
 import { SquarePen, Trash2, PanelBottomOpen, Eye, RefreshCcw, IndianRupee, ArrowDownToLine } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
@@ -75,6 +74,7 @@ const History = () => {
                         Name: item.clientName || "-",
                         Email: item.clientEmail || "-",
                         Phone: item.clientPhoneNo || "-",
+                        State: item.state || "-",
                         Title: item?.planCategoryTitle || '-',
                         ClientSegment: item?.serviceNames.map(statusItem => statusItem || 'N/A')
                             .join(', ') || 'N/A',
@@ -161,6 +161,12 @@ const History = () => {
         {
             name: 'Phone',
             selector: row => row.clientPhoneNo,
+            sortable: true,
+            width: '200px',
+        },
+        {
+            name: 'State',
+            selector: row => row.state?row.state:"-",
             sortable: true,
             width: '200px',
         },

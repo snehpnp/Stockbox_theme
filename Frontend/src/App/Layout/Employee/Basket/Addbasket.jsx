@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { Addbasketplan } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';

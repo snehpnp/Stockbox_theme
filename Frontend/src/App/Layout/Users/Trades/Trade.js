@@ -31,6 +31,7 @@ function Trade() {
   const [viewModel, setViewModel] = useState(false);
   const [exitModel, setExitModel] = useState(false);
   const [service, setService] = useState([]);
+  
   const [tradeData, setTradeData] = useState({ live: [], close: [] });
   const [description, setDescription] = useState("");
   const [brokerstatus, setBrokerstatus] = useState([])
@@ -237,6 +238,7 @@ function Trade() {
         search: "",
       };
       const response = await GetSignalClient(data, token);
+      
       if (response.status) {
         setTradeData((prev) => ({ ...prev, live: response.data }));
         setTotalPages(response.pagination?.totalPages || 1);
@@ -409,6 +411,8 @@ function Trade() {
                 <div className="d-sm-flex justify-content-between tradehead mb-3">
                   <h3>{item.tradesymbol || "Trade Symbol"}</h3>
                   {/* <span>{item?.stock}</span> */}
+                  {selectedTab !== "live" && (
+                    <span><b>Entry Type</b>: {item?.calltype} {item?.entrytype}</span>)}
                 </div>
                 <div className="trade-details row justify-content-center">
                   {[
@@ -416,7 +420,7 @@ function Trade() {
                     ...(selectedTab === "close"
                       ? [{ label: "Exit Price", value: item?.closeprice || "--" }]
                       : []),
-                    { label: "Call Type", value: `${item?.calltype}  ${item?.entrytype}` },
+                      ...(selectedTab === "live" ? [{ label: "Entry Type", value: `${item?.calltype} ${item?.entrytype}` }] : []),
                     { label: "Stoploss", value: item?.stoploss || "--" },
                     { label: "Target1", value: item?.tag1 || "--" },
                     { label: "Target2", value: item?.tag2 || "--" },
@@ -444,16 +448,28 @@ function Trade() {
 
                 {selectedTab === "close" ? (
                   <button
-                    className="btn btn-primary w-100 my-1"
+                    className="btn w-100 my-1"
+                    style={{
+                      backgroundColor:
+                        item?.purchased === false || new Date(item?.created_at) > new Date()
+                          ? "#ccc"
+                          : "#0d6efd",
+                      color: "black",
+                      border: "1px solid black",
+                    }}
                     disabled={
-                      item?.purchased === false ||
-                      new Date(item?.created_at) > new Date()
+                      item?.purchased === false || new Date(item?.created_at) > new Date()
                     }
-                    onClick={() => { UpdateExitdata(item); setCalltypedata(item) }}
+                    onClick={() => {
+                      UpdateExitdata(item);
+                      setCalltypedata(item);
+                    }}
                   >
-                    {item?.purchased === false || new Date(item?.created_at) > new Date() ? "Trade Closed" : "EXIT"}
-
+                    {item?.purchased === false || new Date(item?.created_at) > new Date()
+                      ? "Trade Closed"
+                      : "EXIT"}
                   </button>
+
                 ) : (
                   <button
                     className="btn w-100 my-1"
@@ -482,14 +498,16 @@ function Trade() {
                 <button
                   className="btn w-100 my-1"
                   style={{
-                    backgroundColor: item?.report ? "green" : "white",
+                    backgroundColor: item?.report ? "green" : "#ccc",
                     color: item?.report ? "white" : "black",
                     border: "1px solid black",
                   }}
                   onClick={() => handleDownload(item)}
+                  disabled={!item?.report} // Button disabled if report is not available
                 >
                   View Analysis
                 </button>
+
 
 
                 {item?.purchased && (

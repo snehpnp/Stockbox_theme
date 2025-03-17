@@ -184,7 +184,20 @@ class Clients {
       });
 
 
+      // const apiUrl = "http://smsjust.com/sms/user/urlsms.php";
+      // const params = {
+      //   username: "Esign",         // API Key provided by the SMS gateway
+      //   pass: "Esign@2024",             // Recipient's phone number
+      //   senderid: "OTPPNP", // Message content
+      //   message: `One Time Password is ${otpmobile} This is usable once and expire in 10 minutes. Please do not share this with anyone. Infotech`,        // Optional: Sender ID (if supported)
+      //   dest_mobileno:result.PhoneNo,
+      //   msgtype:"TXT",
+      //   response:"Y",
+      //   dlttempid:"1507166333401681654"
+      // };
 
+      // const response = await axios.get(apiUrl, { params });
+      // console.log(response.data); 
 
 
       return res.json({
@@ -390,7 +403,6 @@ class Clients {
       });
 
     } catch (error) {
-      console.log("Error in forgotPassword:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -463,7 +475,6 @@ class Clients {
       });
 
     } catch (error) {
-      console.log("Error in resetPassword:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -526,7 +537,6 @@ class Clients {
       });
 
     } catch (error) {
-      console.log("Error in changePassword:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -577,7 +587,6 @@ class Clients {
       });
 
     } catch (error) {
-      console.log("Error in updateProfile:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -610,7 +619,6 @@ class Clients {
           message: "Client not found",
         });
       }
-      console.log("Updated Client:", deletedClient);
 
       const titles = 'Important Update';
       const message = `You have successfully deleted your account.`;
@@ -632,7 +640,6 @@ class Clients {
         data: deletedClient,
       });
     } catch (error) {
-      console.log("Error deleting client:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -646,13 +653,12 @@ class Clients {
       const { otp, email } = req.body;
 
       if (!otp) {
-        return res.json({
+        return res.status(400).json({
           status: false,
           message: "Please enter otp",
         });
       }
 
-      
       // Find the user by reset token and check if the token is valid
       const client = await Clients_Modal.findOne({
         Email: email
@@ -660,7 +666,7 @@ class Clients {
 
 
       if (!client) {
-        return res.json({
+        return res.status(400).json({
           status: false,
           message: "Something went wrong",
         });
@@ -668,6 +674,9 @@ class Clients {
 
       client.ActiveStatus = 1;
       await client.save();
+
+
+
 
       const titles = 'Important Update';
       const message = `${client.FullName} New Account Signup successfully.`;
@@ -1149,28 +1158,28 @@ class Clients {
 
       // Validate input
       if (!clientId) {
-        return res.json({ status: false, message: 'Invalid client ID' });
+        return res.status(400).json({ status: false, message: 'Invalid client ID' });
       }
       if (amount <= 0) {
-        return res.json({ status: false, message: 'Enter Invalid Amount' });
+        return res.status(400).json({ status: false, message: 'Enter Invalid Amount' });
       }
 
       // Fetch the client record
       const client = await Clients_Modal.findOne({ _id: clientId, del: 0, ActiveStatus: 1 });
 
       if (!client) {
-        return res.json({ status: false, message: 'Client not found or inactive.' });
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
       }
 
       // Check if the requested amount is below the minimum withdrawal limit
       const minimumWithdrawal = 500;
       if (amount < minimumWithdrawal) {
-        return res.json({ status: false, message: `Minimum withdrawal amount is ${minimumWithdrawal}.` });
+        return res.status(400).json({ status: false, message: `Minimum withdrawal amount is ${minimumWithdrawal}.` });
       }
 
       // Check if the client has enough wamount
       if (client.wamount < amount) {
-        return res.json({ status: false, message: 'Insufficient funds in wallet.' });
+        return res.status(400).json({ status: false, message: 'Insufficient funds in wallet.' });
       }
 
       // Deduct the amount from client's wamount
@@ -1451,7 +1460,6 @@ class Clients {
     try {
 
       const { id } = req.params; // Extract client_id from query parameters
-      console.log("Client ID:", id); // Log the client_id for debugging
 
       // Step 1: Fetch helpdesk entries for the specified client_id
       const result = await Helpdesk_Modal.find({ client_id: id });

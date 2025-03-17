@@ -24,14 +24,26 @@ const Service = () => {
   const applyButtonRef = useRef(null);
 
   const [selectedPlan, setSelectedPlan] = useState("all");
+
   const [category, setCategory] = useState([]);
   const [plan, setPlan] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedPlanDetails, setSelectedPlanDetails] = useState(null);
+
+
+
   const [appliedCoupon, setAppliedCoupon] = useState(null);
+
   const [manualCoupon, setManualCoupon] = useState("");
+
+
   const [coupondata, setCouponData] = useState("");
+
+
   const [discountedPrice, setDiscountedPrice] = useState(0);
+
+
+
   const [coupons, setCoupon] = useState([]);
   const [getkey, setGetkey] = useState([]);
   const [company, setCompany] = useState([]);
@@ -50,6 +62,10 @@ const Service = () => {
     getCoupon();
     getkeybydata();
   }, []);
+
+  // useEffect(()=>{
+  //   selectedPlanDetails
+  // },[selectedPlanDetails])
 
 
 
@@ -80,9 +96,9 @@ const Service = () => {
         const originalPrice = selectedPlanDetails?.price || 0;
         const discount = coupondata?.value || 0;
         const discountedPrice = originalPrice - discount;
-        setDiscountedPrice(originalPrice - discount);
+        setDiscountedPrice(originalPrice - discountedPrice);
         setAppliedCoupon(coupondata);
-        setDiscountedPrice(discountedPrice);
+        setDiscountedPrice(coupondata?.value);
       } else {
         ShowCustomAlert("error", response?.message || "Failed to apply coupon. Please try again.")
       }
@@ -97,7 +113,6 @@ const Service = () => {
     setManualCoupon("");
     setAppliedCoupon(null);
     setDiscountedPrice(selectedPlanDetails?.price || "N/A");
-    setAppliedCoupon(null);
   };
 
 
@@ -224,6 +239,8 @@ const Service = () => {
     setShowModal(false);
     setSelectedPlanDetails(null);
     setDiscountedPrice(0);
+    setManualCoupon("")
+    setAppliedCoupon(null)
   };
 
 
@@ -262,6 +279,24 @@ const Service = () => {
       <div className="">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <div className="row w-100">
+
+            <div className="col-md-6">
+              <label htmlFor="sortSelect" className="mb-1">
+                Segment
+              </label>
+              <select
+                id="sortSelect"
+                className="form-select"
+                onChange={(e) => setSortCriteria(e.target.value)}
+                value={sortCriteria}
+              >
+                <option value="">All Segment</option>
+                <option value="Cash">Cash</option>
+                <option value="Future">Future</option>
+                <option value="Option">Option</option>
+              </select>
+            </div>
+
             <div className="col-md-6">
               <label htmlFor="planSelect" className="mb-1">
                 Plans For You
@@ -284,22 +319,6 @@ const Service = () => {
                   ))}
                 </select>
               </div>
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="sortSelect" className="mb-1">
-                Segment
-              </label>
-              <select
-                id="sortSelect"
-                className="form-select"
-                onChange={(e) => setSortCriteria(e.target.value)}
-                value={sortCriteria}
-              >
-                <option value="">Select Segment</option>
-                <option value="Cash">Cash</option>
-                <option value="Future">Future</option>
-                <option value="Option">Option</option>
-              </select>
             </div>
           </div>
         </div>
@@ -394,9 +413,10 @@ const Service = () => {
 
       <Modal show={showModal} onHide={handleCloseModal} centered size="xxl">
         <Modal.Header closeButton>
-          <Modal.Title className="text-center w-100 heading-color modal-title h4">
-            Plan Details
+          <Modal.Title className="text-center w-100">
+            🌟 Plan Details
           </Modal.Title>
+
         </Modal.Header>
         <Modal.Body>
           {selectedPlanDetails && (
@@ -582,9 +602,10 @@ const Service = () => {
                           <div>
                             <button
                               onClick={() => handleCouponSelect(coupon)}
-                              className="btn btn-secondary"
+                              className={`btn ${manualCoupon === coupon.code ? "btn-success" : "btn-secondary"}`}
+                              disabled={manualCoupon === coupon.code} // Already selected coupon ko disable kar diya
                             >
-                              Select
+                              {manualCoupon === coupon.code ? "Selected" : "Select"}
                             </button>
                           </div>
                         </li>
@@ -624,11 +645,19 @@ const Service = () => {
                     className="text-success fw-bold"
                     
                   >
-                    <IndianRupee  style={{width:'20%'}}/>{" "}
+                    <IndianRupee />{" "}
                     {(
-                      (selectedPlanDetails?.price - (discountedPrice || 0)) +
-                      ((selectedPlanDetails?.price - (discountedPrice || 0)) * gstdata) / 100
+                      (selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0)) +
+                      ((selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0)) * gstdata) / 100
                     ).toFixed(2)}
+
+
+
+                    {/* if want to less totel price - discount price use this logic */}
+                    {/* {(
+                      (selectedPlanDetails?.price * (1 + gstdata / 100)) -
+                      (appliedCoupon ? discountedPrice || 0 : 0)  // Coupon hatne pe discount 0
+                    ).toFixed(2)} */}
                   </span>
                 </div>
 
