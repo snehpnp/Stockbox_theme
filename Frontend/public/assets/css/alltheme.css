@@ -1468,8 +1468,8 @@ span.alert-count {
   right: -10px !important;
   width: 17px;
   height: 17px;
-  padding: 2px 3px !important;
-  line-height: 13px !important;
+  padding: 2px 4px !important;
+  line-height: 16px !important;
   letter-spacing: -1px;
   font-size: 9px !important;
 }

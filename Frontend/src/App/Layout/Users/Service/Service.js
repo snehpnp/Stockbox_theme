@@ -413,7 +413,7 @@ const Service = () => {
 
       <Modal show={showModal} onHide={handleCloseModal} centered size="xxl">
         <Modal.Header closeButton>
-          <Modal.Title className="text-center w-100">
+          <Modal.Title className="text-center w-100 heading-color modal-title h4 ">
             🌟 Plan Details
           </Modal.Title>
 
@@ -423,7 +423,7 @@ const Service = () => {
             <>
 
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5> {selectedPlanDetails?.title}</h5>
+                <h5> {selectedPlanDetails?.title} Plan</h5>
                 <span className="text-success fw-bold">
                   <IndianRupee  className="w-25"/>{" "}
                   {selectedPlanDetails?.price || "N/A"}
@@ -432,7 +432,7 @@ const Service = () => {
 
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <span>
-                   <b>Validity:</b>
+                   Validity:
                 </span>
                 <span>{selectedPlanDetails?.validity || "N/A"}</span>
               </div>
@@ -645,7 +645,7 @@ const Service = () => {
                     className="text-success fw-bold"
                     
                   >
-                    <IndianRupee />{" "}
+                    <IndianRupee style={{width:'20%'}} />{" "}
                     {(
                       (selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0)) +
                       ((selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0)) * gstdata) / 100
