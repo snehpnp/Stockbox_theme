@@ -6,6 +6,8 @@ const { Readable } = require('stream');
 const upload = require('../Utils/multerHelper'); 
 const multer = require('multer');
 
+const puppeteer = require('puppeteer');
+const fs = require('fs');
 
 
 const Basket_Modal = db.Basket;
