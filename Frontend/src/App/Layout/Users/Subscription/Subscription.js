@@ -15,7 +15,6 @@ const Subscription = () => {
 
 
   const [planData, setPlanData] = useState([]);
-  console.log("planData", planData);
 
   const [basketData, setBasketData] = useState([]);
   const [activeTab, setActiveTab] = useState("plan");
