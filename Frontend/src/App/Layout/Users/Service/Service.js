@@ -56,6 +56,7 @@ const Service = () => {
   const [discription, setDiscription] = useState("");
 
   const [gstStatus, setGstStatus] = useState()
+  const [onlinePaymentStatus, setOnlinePaymentStatus] = useState()
 
 
   useEffect(() => {
@@ -144,13 +145,14 @@ const Service = () => {
   const getkeybydata = async () => {
     try {
       const response = await basicsettinglist();
-      // console.log("getkeybydata", response.data[0].gststatus);
+      // console.log("Online paymentstatus", response.data[0].paymentstatus);
 
       if (response.status) {
         setGetkey(response?.data[0]?.razorpay_key);
         setCompany(response?.data[0]?.from_name);
         setGstdata(response?.data[0]?.gst);
-        setGstStatus(response.data[0].gststatus)
+        setGstStatus(response?.data[0].gststatus)
+        setOnlinePaymentStatus(response?.data[0].paymentstatus)
       }
     } catch (error) {
       console.error("Error fetching coupons:", error);
@@ -686,10 +688,12 @@ const Service = () => {
                 <button
                   className="btn btn-success w-100"
                   onClick={() => AddSubscribeplan(selectedPlanDetails)}
+                  disabled={onlinePaymentStatus === 0} 
                 >
                   ✅ Confirm & Subscribe
                 </button>
               </div>
+
             </>
           )}
         </Modal.Body>

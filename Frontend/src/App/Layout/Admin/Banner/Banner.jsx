@@ -29,6 +29,9 @@ const Banner = () => {
   const fileInputRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
 
+  const [selectedOption, setSelectedOption] = useState("");
+
+
 
 
   //state for loading
@@ -322,41 +325,100 @@ const Banner = () => {
                   title={<>Add Banner</>}
                   body={
                     <>
-                      <div className="">
-                        <div className="col-md-12">
-                          <label htmlFor="imageUpload">Upload Image</label>
-                          <span className="text-danger">*</span>
+                      <div className="col-md-12">
+                        <label htmlFor="imageUpload">Upload Image</label>
+                        <span className="text-danger">*</span>
+                        <input
+                          ref={fileInputRef}
+                          className="form-control mb-2"
+                          type="file"
+                          accept="image/*"
+                          id="imageUpload"
+                          onChange={(e) =>
+                            setTitle({
+                              ...title,
+                              image: e.target.files[0],
+                            })
+                          }
+                        />
+                      </div>
+
+                      <div className="col-md-12">
+                        <label>Choose Option</label>
+                        <div className="form-check">
                           <input
-                            ref={fileInputRef}
-                            className="form-control mb-3"
-                            type="file"
-                            accept="image/*"
-                            id="imageUpload"
-                            onChange={(e) =>
-                              setTitle({
-                                ...title,
-                                image: e.target.files[0],
-                              })
-                            }
+                            type="radio"
+                            className="form-check-input"
+                            id="radioHyperlink"
+                            name="bannerOption"
+                            value="hyperlink"
+                            checked={selectedOption === "hyperlink"}
+                            onChange={() => setSelectedOption("hyperlink")}
                           />
+                          <label className="form-check-label" htmlFor="radioHyperlink">
+                            Add Hyperlink
+                          </label>
                         </div>
-                        <div className="col-md-12">
+                        <div className="form-check">
+                          <input
+                            type="radio"
+                            className="form-check-input"
+                            id="radioType"
+                            name="bannerOption"
+                            value="type"
+                            checked={selectedOption === "type"}
+                            onChange={() => setSelectedOption("type")}
+                          />
+                          <label className="form-check-label" htmlFor="radioType">
+                            Add Type
+                          </label>
+                        </div>
+                      </div>
+
+                      {selectedOption === "hyperlink" && (
+                        <div className="col-md-12 mt-2">
                           <label htmlFor="hyperlink">HyperLink</label>
                           <input
                             className="form-control mb-2"
                             type="text"
                             id="hyperlink"
                             placeholder="Enter link"
-                            value={title.hyperlink}
+                            value={title.hyperlink || ""}
                             onChange={(e) =>
                               setTitle({
                                 ...title,
                                 hyperlink: e.target.value,
+                                type: "",
                               })
                             }
                           />
                         </div>
-                      </div>
+                      )}
+
+
+                      {selectedOption === "type" && (
+                        <div className="col-md-12 mt-2">
+                          <label htmlFor="type">Type</label>
+                          <select
+                            className="form-control mb-2"
+                            id="type"
+                            value={title.type || ""}
+                            onChange={(e) =>
+                              setTitle({
+                                ...title,
+                                type: e.target.value,
+                                hyperlink: "",
+                              })
+                            }
+                          >
+                            <option value="">Select Type</option>
+                            <option value="1">Service</option>
+                            <option value="2">Trades</option>
+                            <option value="3">Basket</option>
+                            <option value="4">Coupon</option>
+                          </select>
+                        </div>
+                      )}
                     </>
                   }
                   footer={
