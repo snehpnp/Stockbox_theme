@@ -60,6 +60,8 @@ const Subscription = () => {
   const fetchBasketMySubscription = async () => {
     try {
       const res = await getMyBasketSubscription(id, token);
+      console.log("getMyBasketSubscription", res.data);
+
       if (res?.status) {
         setBasketData(res?.data);
       } else {
@@ -177,7 +179,7 @@ const Subscription = () => {
                       <td>
                         <strong>Discount Price:</strong>
                       </td>
-                      <td>₹{accordion?.discount || " 0"}</td>
+                      <td>₹ {accordion?.discount || " 0"}</td>
                     </tr>
                     <tr>
                       <td>
@@ -286,12 +288,22 @@ const Subscription = () => {
                     </tr>
                     <tr>
                       <td><strong>Price:</strong></td>
-                      <td>₹{accordion?.plan_price || "--"}</td>
+                      <td>₹ {accordion?.plan_price || "--"}</td>
                     </tr>
+                    <tr>
+                      <td><strong>GST:</strong></td>
+                      <td>
+                        {(accordion?.gst && accordion?.total > (accordion?.plan_price || 0))
+                          ? `${accordion.gst} %`
+                          : "0 %"}
+                      </td>
+                    </tr>
+
+
                     <tr>
                       <td><strong>Purchase Price:</strong></td>
                       <td>
-                        ₹{accordion?.total || "--"}{" "}
+                        ₹ {accordion?.total || "--"}{" "}
                         {accordion?.total > (accordion?.plan_price || 0) ? `(${accordion?.gst}% Tax included)` : ""}
                       </td>
                     </tr>
@@ -302,7 +314,7 @@ const Subscription = () => {
                     </tr>
                     <tr>
                       <td><strong>Minimum Investment:</strong></td>
-                      <td>₹{accordion?.basketDetails?.mininvamount || "--"}</td>
+                      <td>₹ {accordion?.basketDetails?.mininvamount || "--"}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -473,7 +485,7 @@ const Subscription = () => {
                       <td>
                         <strong>Plan Price:</strong>
                       </td>
-                      <td>₹{selectedPlan?.plan_price || "--"}</td>
+                      <td>₹ {selectedPlan?.plan_price || "--"}</td>
                     </tr>
                     <tr>
                       <td>
