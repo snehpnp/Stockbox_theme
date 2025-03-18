@@ -10,7 +10,9 @@ const Refer_Modal = db.Refer;
 const BasicSetting_Modal = db.BasicSetting;
 const Addtocart_Modal = db.Addtocart;
 const Mailtemplate_Modal = db.Mailtemplate;
-
+const puppeteer = require('puppeteer');
+const path = require('path');
+const fs = require('fs');
 
 
 const Adminnotification_Modal = db.Adminnotification;

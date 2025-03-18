@@ -1,6 +1,6 @@
 const router = require("express").Router()
 
-const {AddBulkStockCron,DeleteTokenAliceToken,TradingStatusOff,PlanExpire,downloadKotakNeotoken,CheckExpireSignalCash,calculateCAGRForBaskets,processPendingOrders,downloadZerodhatoken,downloadAndExtractUpstox,addBasketgraphdata,addBasketVolatilityData,getCurrentPrices,processPendingOrdersBasket,calculateCAGRForBasketsClient,updateAllStockPrices} = require('../Controllers/Cron')
+const {AddBulkStockCron,DeleteTokenAliceToken,TradingStatusOff,PlanExpire,downloadKotakNeotoken,CheckExpireSignalCash,calculateCAGRForBaskets,processPendingOrders,downloadZerodhatoken,downloadAndExtractUpstox,addBasketgraphdata,addBasketVolatilityData,getCurrentPrices,processPendingOrdersBasket,calculateCAGRForBasketsClient,updateAllStockPrices,updateStockPricesFromSheet} = require('../Controllers/Cron')
 
 
 
@@ -28,6 +28,7 @@ router.get('/cron/addbasketvolatilitydata', addBasketVolatilityData);
 
 router.get('/cron/getcurrentprice/:tradesymbol', getCurrentPrices);
 router.get('/cron/updateallstockprices', updateAllStockPrices);
+router.get('/cron/updatestockpricesfromsheet', updateStockPricesFromSheet);
 
 
 
