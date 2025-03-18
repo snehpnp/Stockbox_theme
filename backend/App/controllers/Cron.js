@@ -2068,7 +2068,7 @@ async function getCurrentPrices(req, res) {
         });
 
     } catch (error) {
-        console.error("Error fetching data:", error);
+        // console.error("Error fetching data:", error);
         return res.status(500).json({
             status: false,
             message: "Internal Server Error",
@@ -2099,7 +2099,7 @@ async function updateAllStockPrices(req, res) {
             const stocksym = await Stock_Modal.findOne({ symbol: SYMBOL,segment:"C" });
 
             if (!stocksym) {
-                console.log(`❌ No matching token found for SYMBOL: ${SYMBOL}`);
+                // console.log(`❌ No matching token found for SYMBOL: ${SYMBOL}`);
                 continue; // Skip if no matching stock
             }
 
@@ -2117,7 +2117,7 @@ async function updateAllStockPrices(req, res) {
                     { token },
                     { $set: { lp: price, curtime, updatedAt: new Date() } }
                 );
-                console.log(`🔄 Updated token ${token}: ${price}`);
+                // console.log(`🔄 Updated token ${token}: ${price}`);
             } else {
                 // ➕ Insert new stock price record
                 await Liveprice_Modal.create({
@@ -2127,18 +2127,110 @@ async function updateAllStockPrices(req, res) {
                     curtime,
                     ft: "1234566"
                 });
-                console.log(`✅ Inserted new token ${token}: ${price} :${curtime}`);
+                // console.log(`✅ Inserted new token ${token}: ${price} :${curtime}`);
             }
         }
 
-        console.log("✅ Stock prices updated successfully!");
+        // console.log("✅ Stock prices updated successfully!");
         return res.json({ status: true, message: "Stock data updated successfully" });
 
     } catch (error) {
-        console.error("❌ Error updating stock prices:", error.message);
+        // console.error("❌ Error updating stock prices:", error.message);
         return res.status(500).json({ status: false, message: "Internal Server Error", data: null });
     }
 }
 
 
-  module.exports = { AddBulkStockCron,DeleteTokenAliceToken,TradingStatusOff,CheckExpireSignalCash,CheckExpireSignalFutureOption,PlanExpire,downloadKotakNeotoken,calculateCAGRForBaskets,processPendingOrders,downloadZerodhatoken,downloadAndExtractUpstox,addBasketgraphdata,addBasketVolatilityData,getCurrentPrices,processPendingOrdersBasket,calculateCAGRForBasketsClient,updateAllStockPrices };
+
+async function updateStockPricesFromSheet(req, res) {
+    try {
+        // 🔥 Fetch CSV from Google Sheets
+        const csvResponse = await axios.get(
+            'https://docs.google.com/spreadsheets/d/1wwSMDmZuxrDXJsmxSIELk1O01F0x1-0LEpY03iY1tWU/export?format=csv'
+        );
+
+        const csvData = csvResponse.data;
+
+        // 🔄 Parse CSV using PapaParse
+        const result = Papa.parse(csvData, {
+            header: true,
+            skipEmptyLines: true,
+        });
+
+        let stocks = result.data.map(row => ({
+            symbol: row.SYMBOL.replace(/^NSE:/, ''), // 🔥 Remove "NSE:"
+            price: parseFloat(row.CPrice)
+        })).filter(stock => stock.symbol && !isNaN(stock.price));
+
+        // ✅ Replace special SYMBOL names
+        stocks = stocks.map(stock => {
+            switch (stock.symbol) {
+                case "NIFTY_BANK":
+                    stock.symbol = "BANKNIFTY";
+                    break;
+                case "NIFTY_50":
+                    stock.symbol = "NIFTY";
+                    break;
+                case "NIFTY_FIN_SERVICE":
+                    stock.symbol = "FINNIFTY";
+                    break;
+            }
+            return stock;
+        });
+
+        if (stocks.length === 0) {
+            return res.status(400).json({ status: false, message: "No valid stock data found" });
+        }
+
+        const curtime = new Date().getHours().toString().padStart(2, '0') +
+            new Date().getMinutes().toString().padStart(2, '0');
+
+        // 🔄 Process each stock
+        for (const stock of stocks) {
+            const { symbol, price } = stock;
+
+            // ✅ Find matching stock in `Stock_Modal`
+            const stockRecord = await Stock_Modal.findOne({ symbol, segment: "C" });
+
+            if (!stockRecord) {
+                // console.log(`❌ No matching token found for SYMBOL: ${symbol}`);
+                continue;
+            }
+
+            const token = stockRecord.instrument_token;
+
+            // ✅ Check if token exists in `Liveprice_Modal`
+            const existingStock = await Liveprice_Modal.findOne({ token });
+
+            if (existingStock) {
+                // 🔄 Update existing stock price
+                await Liveprice_Modal.updateOne(
+                    { token },
+                    { $set: { lp: price, curtime, updatedAt: new Date() } }
+                );
+                // console.log(`🔄 Updated token ${token}: ${price}`);
+            } else {
+                // ➕ Insert new stock price record
+                await Liveprice_Modal.create({
+                    token,
+                    lp: price,
+                    exc: "NSE",
+                    curtime,
+                    ft: "1234566"
+                });
+                // console.log(`✅ Inserted new token ${token}: ${price}`);
+            }
+        }
+
+        // console.log("✅ Stock prices updated successfully!");
+        return res.json({ status: true, message: "Stock data updated successfully" });
+
+    } catch (error) {
+        // console.error("❌ Error updating stock prices:", error.message);
+        return res.status(500).json({ status: false, message: "Internal Server Error" });
+    }
+}
+
+
+
+  module.exports = { AddBulkStockCron,DeleteTokenAliceToken,TradingStatusOff,CheckExpireSignalCash,CheckExpireSignalFutureOption,PlanExpire,downloadKotakNeotoken,calculateCAGRForBaskets,processPendingOrders,downloadZerodhatoken,downloadAndExtractUpstox,addBasketgraphdata,addBasketVolatilityData,getCurrentPrices,processPendingOrdersBasket,calculateCAGRForBasketsClient,updateAllStockPrices,updateStockPricesFromSheet };
