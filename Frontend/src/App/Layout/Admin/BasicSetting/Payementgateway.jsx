@@ -140,6 +140,8 @@ const Payementgateway = () => {
         try {
             const data = { gst: addgst };
             const response = await UpdateGST(data, token);
+            console.log("UpdateGstdata",response);
+            
             if (response?.status) {
                 showCustomAlert("Success", 'GST updated successfully.');
                 getApidetail();

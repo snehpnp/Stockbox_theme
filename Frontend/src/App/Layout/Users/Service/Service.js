@@ -55,6 +55,7 @@ const Service = () => {
 
   const [discription, setDiscription] = useState("");
 
+  const [gstStatus, setGstStatus] = useState()
 
 
   useEffect(() => {
@@ -143,10 +144,13 @@ const Service = () => {
   const getkeybydata = async () => {
     try {
       const response = await basicsettinglist();
+      // console.log("getkeybydata", response.data[0].gststatus);
+
       if (response.status) {
         setGetkey(response?.data[0]?.razorpay_key);
         setCompany(response?.data[0]?.from_name);
         setGstdata(response?.data[0]?.gst);
+        setGstStatus(response.data[0].gststatus)
       }
     } catch (error) {
       console.error("Error fetching coupons:", error);
@@ -623,12 +627,16 @@ const Service = () => {
                     <IndianRupee /> {selectedPlanDetails?.price}
                   </span>
                 </div>
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <b>💰 GST :</b>
-                  <span className="text-primary fw-bold">
-                    <IndianRupee /> {gstdata}％
-                  </span>
-                </div>
+                {gstStatus == 1 && (
+
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <b>💰 GST :</b>
+                    <span className="text-primary fw-bold">
+                      <IndianRupee /> {gstdata}％
+                    </span>
+                  </div>
+                )}
+
 
                 {appliedCoupon && (
                   <div className="d-flex justify-content-between align-items-center text-danger mb-2">
@@ -648,11 +656,18 @@ const Service = () => {
                     <IndianRupee />{" "}
 
                     {/* if you want to less base price - discount then use this logic */}
+                    {gstStatus === 1 && (
+                      (
+                        (selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0)) +
+                        ((selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0)) * gstdata) / 100
+                      ).toFixed(2)
+                    )}
 
-                    {(
-                      (selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0)) +
-                      ((selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0)) * gstdata) / 100
-                    ).toFixed(2)}
+                    {gstStatus === 0 && (
+                      (selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0))
+                    )}
+
+
 
 
 

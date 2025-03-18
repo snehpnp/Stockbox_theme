@@ -15,6 +15,8 @@ const Subscription = () => {
 
 
   const [planData, setPlanData] = useState([]);
+  console.log("planData", planData);
+
   const [basketData, setBasketData] = useState([]);
   const [activeTab, setActiveTab] = useState("plan");
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -169,24 +171,44 @@ const Subscription = () => {
                       <td>
                         <strong>Plan Price:</strong>
                       </td>
-                      <td>₹{accordion?.plan_price || "--"}</td>
+                      <td>₹ {accordion?.plan_price || "--"}</td>
                     </tr>
                     <tr>
                       <td>
                         <strong>Discount Price:</strong>
                       </td>
-                      <td>₹{accordion?.discount || "--"}</td>
+                      <td>₹{accordion?.discount || " 0"}</td>
                     </tr>
-                    
+                    <tr>
+                      <td>
+                        <strong>Gst:</strong>
+                      </td>
+                      <td>₹ {accordion?.gstamount || "0"}</td>
+                    </tr>
                     <tr>
                       <td>
                         <strong>Purchase Price:</strong>
                       </td>
                       <td>
-                        ₹{accordion?.total}
-                        <small className="text-muted"> {accordion?.gst ? `(${accordion?.gst}% Tax included)` : ""}</small>
+                        ₹ {accordion?.total}
+                        {accordion.gstamount > 0 && (
+                          <small className="text-muted">
+                            {accordion?.gst ? ` (${accordion?.gst}% Tax included)` : ""}
+                          </small>
+                        )}
                       </td>
                     </tr>
+
+
+
+                    {/* <tr>
+                      <td>
+                        <strong>Purchase Price:</strong>
+                      </td>
+                      <td>
+                      ₹{(((accordion?.plan_price-accordion?.discount) / 100) * (accordion?.gst)) + (accordion?.plan_price)} ({accordion?.gst}% Tax included)
+                      </td>
+                    </tr> */}
                   </tbody>
                 </table>
               </div>
@@ -268,8 +290,12 @@ const Subscription = () => {
                     </tr>
                     <tr>
                       <td><strong>Purchase Price:</strong></td>
-                      <td>₹{accordion?.total || "--"} {accordion?.gst ? `(${accordion?.gst}% Tax included)` : ""}</td>
+                      <td>
+                        ₹{accordion?.total || "--"}{" "}
+                        {accordion?.total > (accordion?.plan_price || 0) ? `(${accordion?.gst}% Tax included)` : ""}
+                      </td>
                     </tr>
+
                     <tr>
                       <td><strong>Expired On:</strong></td>
                       <td>{fDateTime(accordion?.enddate) || "--"}</td>

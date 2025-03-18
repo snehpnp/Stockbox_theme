@@ -25,6 +25,7 @@ const Payments = () => {
     const [bankdetail, setBankdetail] = useState([]);
     const [qrdata, setQrdata] = useState([]);
 
+    const [gstStatus, setGstStatus] = useState()
     useEffect(() => {
         getkeybydata()
         getQRimage()
@@ -61,10 +62,13 @@ const Payments = () => {
     const getkeybydata = async () => {
         try {
             const response = await basicsettinglist();
+            console.log("gstStatus", response.data[0].gststatus);
+
             if (response.status) {
                 setGetkey(response?.data[0]?.razorpay_key);
                 setCompany(response?.data[0]?.from_name);
                 setGstdata(response?.data[0]?.gst);
+                setGstStatus(response.data[0].gststatus);
             }
         } catch (error) {
             console.error("Error fetching coupons:", error);
@@ -162,36 +166,51 @@ const Payments = () => {
                                     <h6 className="card-title mb-0"><strong>{item?.title}</strong></h6>
                                     <h6 className="card-title mb-0"><strong>₹  {item?.basket_price}</strong></h6>
                                 </div>
-                                <div className="d-md-flex justify-content-between">
-                                    <h6 className="card-title mb-0"><strong>GST ({gstdata}%)</strong></h6>
-                                    <h6 className="card-title mb-0"><strong>₹ {(((item?.basket_price) * gstdata) / 100).toFixed(2)}</strong></h6>
-                                </div>
-                                <div className="d-md-flex justify-content-between">
-                                    <h6 className="card-title mb-0"><strong>Total</strong></h6>
-                                    <h6 className="card-title mb-0">
-                                        <strong>
-                                            ₹ {(
-                                                (item?.basket_price) +
-                                                ((item?.basket_price) * gstdata) / 100
-                                            ).toFixed(2)}
-                                        </strong>
-                                    </h6>
-                                </div>
+                                {gstStatus === 1 ? (
+                                    <>
+                                        <div className="d-md-flex justify-content-between">
+                                            <h6 className="card-title mb-0"><strong>GST ({gstdata || 0}%)</strong></h6>
+                                            <h6 className="card-title mb-0">
+                                                <strong>₹ {(((item?.basket_price || 0) * (gstdata || 0)) / 100).toFixed(2)}</strong>
+                                            </h6>
+                                        </div>
+                                        <div className="d-md-flex justify-content-between">
+                                            <h6 className="card-title mb-0"><strong>Total</strong></h6>
+                                            <h6 className="card-title mb-0">
+                                                <strong>
+                                                    ₹ {(
+                                                        (item?.basket_price || 0) +
+                                                        ((item?.basket_price || 0) * (gstdata || 0)) / 100
+                                                    ).toFixed(2)}
+                                                </strong>
+                                            </h6>
+                                        </div>
+                                        <button className="btn btn-primary w-100" onClick={() => AddbasketSubscribeplan(item)}>
+                                            Subscribe Now
+                                            <span className="text-decoration-line-through btn btn-primary ">
+                                                ₹ {((item?.full_price || 0) + ((item?.full_price || 0) * (gstdata || 0)) / 100).toFixed(2)}
+                                            </span>
+                                            ₹ {((item?.basket_price || 0) + ((item?.basket_price || 0) * (gstdata || 0)) / 100).toFixed(2)}
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="d-md-flex justify-content-between">
+                                            <h6 className="card-title mb-0"><strong>Total</strong></h6>
+                                            <h6 className="card-title mb-0">
+                                                <strong>₹ {(item?.basket_price || 0).toFixed(2)}</strong>
+                                            </h6>
+                                        </div>
+                                        <button className="btn btn-primary w-100" onClick={() => AddbasketSubscribeplan(item)}>
+                                            Subscribe Now
+                                            <span className="text-decoration-line-through btn btn-primary ">
+                                                ₹ {(item?.full_price || 0).toFixed(2)}
+                                            </span>
+                                            ₹ {(item?.basket_price || 0).toFixed(2)}
+                                        </button>
+                                    </>
+                                )}
 
-
-
-                                <button className="btn btn-primary w-100" onClick={() => AddbasketSubscribeplan(item)}>
-                                    Subscribe Now
-                                    <span className="text-decoration-line-through btn btn-primary ">
-                                        ₹ {(
-                                            item?.full_price + (item?.full_price * gstdata) / 100
-                                        ).toFixed(2)}
-                                    </span>
-
-                                    ₹  {(
-                                        item?.basket_price + (item?.basket_price * gstdata) / 100
-                                    ).toFixed(2)}
-                                </button>
 
                             </div>
                         </div>
