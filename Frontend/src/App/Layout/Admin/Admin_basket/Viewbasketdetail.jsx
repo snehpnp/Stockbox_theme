@@ -303,7 +303,7 @@ const Viewbasketdetail = () => {
 
 
   const updateStock = async (stock) => {
-    navigate("/admin/editstock/" + stock._id, { state: { stock } })
+    navigate("/admin/editstock",  { state: { stock } })
   }
 
 
