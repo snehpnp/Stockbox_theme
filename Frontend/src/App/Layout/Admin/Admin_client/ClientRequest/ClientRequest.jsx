@@ -228,22 +228,28 @@ const ClientRequest = () => {
                                 </div>
                             </div> */}
                         </div>
-
                         {isLoading ? (
                             <Loader />
                         ) : (
                             <>
-                                <div className="table-responsive">
-                                    <Table
-                                        columns={columns}
-                                        data={clients}
-                                        totalRows={totalRows}
-                                        currentPage={currentPage}
-                                        onPageChange={handlePageChange}
-                                    />
-                                </div>
+                                {clients.length > 0 ? (
+                                    <div className="table-responsive">
+                                        <Table
+                                            columns={columns}
+                                            data={clients}
+                                            totalRows={totalRows}
+                                            currentPage={currentPage}
+                                            onPageChange={handlePageChange}
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="text-center mt-5">
+                                        <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                                    </div>
+                                )}
                             </>
                         )}
+
                     </div>
                 </div>
             </div>

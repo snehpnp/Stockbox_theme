@@ -30,7 +30,7 @@ const Condition = () => {
     });
 
 
-    const gettemplatelist = async () => {
+    const gettemplatelist = async () => {        
         try {
             const response = await getconsitionlist(token);
             if (response.status) {
@@ -128,7 +128,7 @@ const Condition = () => {
                 <div className="row">
                     {isLoading ? (
                         <Loader />
-                    ) : (
+                    ) : clients.length > 0 ? (
                         <>
 
                             {clients.map((client, index) => (
@@ -173,6 +173,10 @@ const Condition = () => {
                                 </div>
                             ))}
                         </>
+                    ) : (
+                        <div className="text-center mt-5">
+                            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                        </div>
                     )}
                 </div>
             </div>

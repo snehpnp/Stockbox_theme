@@ -26,6 +26,7 @@ const Payments = () => {
     const [qrdata, setQrdata] = useState([]);
 
     const [gstStatus, setGstStatus] = useState()
+    const [onlinePaymentStatus, setOnlinePaymentStatus] = useState()
     useEffect(() => {
         getkeybydata()
         getQRimage()
@@ -62,13 +63,15 @@ const Payments = () => {
     const getkeybydata = async () => {
         try {
             const response = await basicsettinglist();
-            console.log("gstStatus", response.data[0].gststatus);
+            // console.log("gstStatus", response.data[0].gststatus);
 
             if (response.status) {
                 setGetkey(response?.data[0]?.razorpay_key);
                 setCompany(response?.data[0]?.from_name);
                 setGstdata(response?.data[0]?.gst);
                 setGstStatus(response.data[0].gststatus);
+                setOnlinePaymentStatus(response?.data[0].paymentstatus)
+
             }
         } catch (error) {
             console.error("Error fetching coupons:", error);
@@ -185,7 +188,7 @@ const Payments = () => {
                                                 </strong>
                                             </h6>
                                         </div>
-                                        <button className="btn btn-primary w-100" onClick={() => AddbasketSubscribeplan(item)}>
+                                        <button className="btn btn-primary w-100" disabled={onlinePaymentStatus === 0}   onClick={() => AddbasketSubscribeplan(item)}>
                                             Subscribe Now
                                             <span className="text-decoration-line-through btn btn-primary ">
                                                 ₹ {((item?.full_price || 0) + ((item?.full_price || 0) * (gstdata || 0)) / 100).toFixed(2)}
@@ -201,7 +204,7 @@ const Payments = () => {
                                                 <strong>₹ {(item?.basket_price || 0).toFixed(2)}</strong>
                                             </h6>
                                         </div>
-                                        <button className="btn btn-primary w-100" onClick={() => AddbasketSubscribeplan(item)}>
+                                        <button className="btn btn-primary w-100" disabled={onlinePaymentStatus === 0}  onClick={() => AddbasketSubscribeplan(item)}>
                                             Subscribe Now
                                             <span className="text-decoration-line-through btn btn-primary ">
                                                 ₹ {(item?.full_price || 0).toFixed(2)}

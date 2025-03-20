@@ -129,7 +129,7 @@ function Basket() {
         </li>
       </ul>
       {activeTab === "allbasket" && (
-        isLoading ? <Loader /> :
+        isLoading ? <Loader /> :basketdata && basketdata.length > 0 ? (
           <>
             <div className="row">
 
@@ -212,11 +212,17 @@ function Basket() {
 
             </div>
           </>
+        ):(
+          <div className="text-center mt-5">
+          <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+        </div>
+        )
 
       )}
 
       {activeTab === "subscribedbasket" && (
-        isLoading ? <Loader /> : <div className="row">
+        isLoading ? <Loader /> : purchasedata && purchasedata.length > 0 ? (
+        <div className="row">
           {purchasedata?.map((item) => {
             return (
               <>
@@ -273,6 +279,11 @@ function Basket() {
           })}
 
         </div>
+        ):(
+          <div className="text-center mt-5">
+          <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+        </div>
+        )
       )}
 
     </Content>

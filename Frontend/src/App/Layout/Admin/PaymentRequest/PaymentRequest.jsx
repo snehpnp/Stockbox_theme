@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import { IndianRupee } from 'lucide-react';
 import { GetUserData } from '../../../Services/UserService/User';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+import Loader from "../../../../Utils/Loader";
+
 
 
 const PaymentRequest = () => {
@@ -18,6 +20,9 @@ const PaymentRequest = () => {
     const [searchInput, setSearchInput] = useState("");
     const [activeTab, setActiveTab] = useState('Pending');
     const [selectedValues, setSelectedValues] = useState({});
+
+    const [isLoading, setIsLoading] = useState(true)
+
 
 
 
@@ -34,6 +39,7 @@ const PaymentRequest = () => {
         } catch (error) {
             console.log("Error fetching services:", error);
         }
+        setIsLoading(false)
     };
 
 
@@ -184,7 +190,7 @@ const PaymentRequest = () => {
                     [rowId]: selectedValue,
                 }));
             } catch (error) {
-                showCustomAlert('error','There was a problem updating the status.')
+                showCustomAlert('error', 'There was a problem updating the status.')
             }
         } else {
             window.location.reload()
@@ -203,13 +209,23 @@ const PaymentRequest = () => {
 
 
     const renderTable = (status) => {
+        const filteredData = filterDataByStatus(status); 
         return (
             <div className="table-responsive">
                 <h5>{activeTab} Transactions</h5>
-                <Table columns={columns} data={filterDataByStatus(status)} />
+                {filteredData.length === 0 ? (
+                    
+                    <div className="text-center mt-5">
+                        <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                    </div>
+                ) : (
+                   
+                    <Table columns={columns} data={filteredData} />
+                )}
             </div>
         );
     };
+
 
 
 
@@ -296,17 +312,23 @@ const PaymentRequest = () => {
                                             </a>
                                         </li>
                                     </ul>
-                                    <div className="tab-content">
-                                        <div id="navpills-1" className={`tab-pane ${activeTab === 'Pending' ? 'active' : ''}`}>
-                                            {renderTable(0)}
+                                    {isLoading ? (
+                                        <div className="text-center my-4">
+                                            <Loader />
                                         </div>
-                                        <div id="navpills-2" className={`tab-pane ${activeTab === 'Complete' ? 'active' : ''}`}>
-                                            {renderTable(1)}
+                                    ) : (
+                                        <div className="tab-content">
+                                            <div id="navpills-1" className={`tab-pane ${activeTab === 'Pending' ? 'active' : ''}`}>
+                                                {renderTable(0)}
+                                            </div>
+                                            <div id="navpills-2" className={`tab-pane ${activeTab === 'Complete' ? 'active' : ''}`}>
+                                                {renderTable(1)}
+                                            </div>
+                                            <div id="navpills-3" className={`tab-pane ${activeTab === 'Reject' ? 'active' : ''}`}>
+                                                {renderTable(2)}
+                                            </div>
                                         </div>
-                                        <div id="navpills-3" className={`tab-pane ${activeTab === 'Reject' ? 'active' : ''}`}>
-                                            {renderTable(2)}
-                                        </div>
-                                    </div>
+                                    )}
                                 </div>
                             </div>
                         </div>

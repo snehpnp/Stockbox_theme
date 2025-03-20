@@ -5,6 +5,7 @@ import { getReferAndEarnlist } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table1';
 import { SquarePen, Trash2, PanelBottomOpen, Eye, RefreshCcw, IndianRupee, ArrowDownToLine } from 'lucide-react';
 import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
+import Loader from "../../../../Utils/Loader";
 
 
 
@@ -29,6 +30,9 @@ const ReferAndEarnlist = () => {
     const token = localStorage.getItem('token');
     const userid = localStorage.getItem('id');
 
+    const [isLoading, setIsLoading] = useState(true)
+
+
 
     const getlist = async () => {
         try {
@@ -44,6 +48,7 @@ const ReferAndEarnlist = () => {
         } catch (error) {
             console.log("Error fetching services:", error);
         }
+        setIsLoading(false)
     };
 
 
@@ -148,15 +153,25 @@ const ReferAndEarnlist = () => {
                             <div>
                             </div>
                         </div>
-                        <div className="table-responsive">
-                            <Table
-                                columns={columns}
-                                data={clients}
-                                totalRows={totalRows}
-                                currentPage={currentPage}
-                                onPageChange={handlePageChange}
-                            />
-                        </div>
+                        {isLoading ? (
+                            <div className="text-center my-4">
+                                <Loader />
+                            </div>
+                        ) : clients.length > 0 ? (
+                            <div className="table-responsive">
+                                <Table
+                                    columns={columns}
+                                    data={clients}
+                                    totalRows={totalRows}
+                                    currentPage={currentPage}
+                                    onPageChange={handlePageChange}
+                                />
+                            </div>
+                        ) : (
+                            <div className="text-center mt-5">
+                                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

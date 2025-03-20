@@ -257,19 +257,28 @@ const Perform = () => {
 
     const renderTable1 = () => {
         const activeService = servicedata.find(service => service._id === activeTab);
+    
         return (
             <div className="table-responsive">
                 <h5>{activeService ? `Performance for ${activeService.title}` : 'Performance'}</h5>
-                <Table columns={columns1}
-                    data={closesignal}
-                    totalRows={totalRows}
-                    currentPage={currentPage}
-                    onPageChange={handlePageChange}
-                />
+    
+                {closesignal.length > 0 ? (
+                    <Table 
+                        columns={columns1}
+                        data={closesignal}
+                        totalRows={totalRows}
+                        currentPage={currentPage}
+                        onPageChange={handlePageChange}
+                    />
+                ) : (
+                    <div className="text-center mt-5">
+                        <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                    </div>
+                )}
             </div>
         );
     };
-
+    
 
 
 
@@ -305,7 +314,7 @@ const Perform = () => {
 
                 {isLoading ? (
                     <Loader />
-                ) : (
+                ) : servicedata.length > 0 ? (
                     <>
 
                         <div className='card'>
@@ -419,6 +428,10 @@ const Perform = () => {
                         </div>
 
                     </>
+                ) : (
+                    <div className="text-center mt-5">
+                        <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                    </div>
                 )}
 
 

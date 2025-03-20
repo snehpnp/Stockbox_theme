@@ -31,7 +31,7 @@ function Trade() {
   const [viewModel, setViewModel] = useState(false);
   const [exitModel, setExitModel] = useState(false);
   const [service, setService] = useState([]);
-  
+
   const [tradeData, setTradeData] = useState({ live: [], close: [] });
   const [description, setDescription] = useState("");
   const [brokerstatus, setBrokerstatus] = useState([])
@@ -238,7 +238,7 @@ function Trade() {
         search: "",
       };
       const response = await GetSignalClient(data, token);
-      
+
       if (response.status) {
         setTradeData((prev) => ({ ...prev, live: response.data }));
         setTotalPages(response.pagination?.totalPages || 1);
@@ -420,7 +420,7 @@ function Trade() {
                     ...(selectedTab === "close"
                       ? [{ label: "Exit Price", value: item?.closeprice || "--" }]
                       : []),
-                      ...(selectedTab === "live" ? [{ label: "Entry Type", value: `${item?.calltype} ${item?.entrytype}` }] : []),
+                    ...(selectedTab === "live" ? [{ label: "Entry Type", value: `${item?.calltype} ${item?.entrytype}` }] : []),
                     { label: "Stoploss", value: item?.stoploss || "--" },
                     { label: "Target1", value: item?.tag1 || "--" },
                     { label: "Target2", value: item?.tag2 || "--" },
@@ -555,6 +555,7 @@ function Trade() {
               onChange={(e) => setSelectedService(e.target.value)}
             >
               {service.map((item) => (
+                
 
                 <option key={item._id} value={item._id}>
                   {item?.title}
@@ -596,8 +597,18 @@ function Trade() {
         </ul>
 
         <div className="tab-content">
-          {isLoading ? <Loader /> : tradeData[selectedTab]?.map(renderTradeCard)}
+          {isLoading ? (
+            <Loader />
+          ) : tradeData[selectedTab] && tradeData[selectedTab].length > 0 ? (
+            tradeData[selectedTab].map(renderTradeCard)
+          ) : (
+            // ✅ No Records Found - If no trade data available
+            <div className="text-center mt-5">
+              <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+            </div>
+          )}
         </div>
+
         <div className="pagination-controls d-flex justify-content-between mt-3">
           <button
             className="btn btn-secondary"

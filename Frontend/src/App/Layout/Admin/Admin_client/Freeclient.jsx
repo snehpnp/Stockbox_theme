@@ -518,19 +518,21 @@ const Freeclient = () => {
                                 <div>
                                     {isLoading ? (
                                         <Loader />
+                                    ) : clients.length > 0 ? (
+                                        <Table
+                                            columns={columns}
+                                            data={clients}
+                                            totalRows={totalRows}
+                                            currentPage={currentPage}
+                                            onPageChange={handlePageChange}
+                                        />
                                     ) : (
-                                        <>
-
-                                            <Table
-                                                columns={columns}
-                                                data={clients}
-                                                totalRows={totalRows}
-                                                currentPage={currentPage}
-                                                onPageChange={handlePageChange}
-                                            />
-                                        </>
+                                        <div className="text-center mt-5">
+                                            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                                        </div>
                                     )}
                                 </div>
+
                             </div>
                         </div>
                     </div>

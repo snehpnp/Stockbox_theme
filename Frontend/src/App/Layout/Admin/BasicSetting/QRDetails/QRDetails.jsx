@@ -9,6 +9,7 @@ import { Tooltip } from 'antd';
 import { AddQRdetaildata, getQrdetails, UpdateQrcodelist, DeleteQRCode, changeQRstatuscode } from '../../../../Services/Admin/Admin';
 import ReusableModal from '../../../../components/Models/ReusableModal';
 import showCustomAlert from '../../../../Extracomponents/CustomAlert/CustomAlert';
+import Loader from '../../../../../Utils/Loader';
 
 
 const QRDetails = () => {
@@ -20,6 +21,9 @@ const QRDetails = () => {
     const [serviceid, setServiceid] = useState({});
     const [searchInput, setSearchInput] = useState("");
     const [showModal, setShowModal] = useState(false);
+
+    //state for loading
+    const [isLoading, setIsLoading] = useState(true)
 
 
 
@@ -58,6 +62,7 @@ const QRDetails = () => {
         } catch (error) {
             console.log("Error fetching services:", error);
         }
+        setIsLoading(false)
     };
 
     useEffect(() => {
@@ -424,16 +429,24 @@ const QRDetails = () => {
 
                             </div>
                         </div>
-                        <div className="table-responsive">
-                            <Table
-                                columns={columns}
-                                data={clients}
-                                pagination
-                                striped
-                                highlightOnHover
-                                dense
-                            />
-                        </div>
+                        {isLoading ? (
+                            <Loader />
+                        ) : clients.length > 0 ? (
+                            <div className="table-responsive">
+                                <Table
+                                    columns={columns}
+                                    data={clients}
+                                    pagination
+                                    striped
+                                    highlightOnHover
+                                    dense
+                                />
+                            </div>
+                        ) : (
+                            <div className="text-center mt-5">
+                                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

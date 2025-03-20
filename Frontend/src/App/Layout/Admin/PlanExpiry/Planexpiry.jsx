@@ -89,7 +89,7 @@ const Planexpiry = () => {
                 enddate: endDate,
                 search: searchInput,
             };
-            const response = await getclientPlanexpiry(data ,token);
+            const response = await getclientPlanexpiry(data, token);
             if (response.status) {
                 if (response.data?.length > 0) {
                     const csvArr = response.data?.map((item) => ({
@@ -266,7 +266,7 @@ const Planexpiry = () => {
 
                     {isLoading ? (
                         <Loader />
-                    ) : (
+                    ) : clients.length > 0 ? (
                         <>
                             <Table
                                 columns={columns}
@@ -276,6 +276,10 @@ const Planexpiry = () => {
                                 onPageChange={handlePageChange}
                             />
                         </>
+                    ) : (
+                        <div className="text-center mt-5">
+                            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                        </div>
                     )}
 
                 </div>

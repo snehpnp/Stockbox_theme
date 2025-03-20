@@ -36,7 +36,7 @@ const Help = () => {
         } catch (error) {
             console.log("error", error);
         }
-        setTimeout(()=>{
+        setTimeout(() => {
             setIsLoading(false)
         })
     }
@@ -88,47 +88,49 @@ const Help = () => {
                                     </div>
 
                                     {isLoading ? (
-                                        <Loader/>
-                                    ):(
+                                        <Loader />
+                                    ) : (
                                         <>
-                                        <div className="container ">
-                                        <div className="row">
-                                            <div className="col ">
-                                                {clients.length > 0 ? (
-                                                    clients.map((item) => (
-                                                        <div key={item.id} className="card radius-15 mb-3">
-                                                            <div className="card-body   position-relative">
-                                                                <div className="p-2  radius-15">
-                                                                    <div className="float-end text-muted">
-                                                                        {fDateTime(item.created_at)}
+                                            <div className="container ">
+                                                <div className="row">
+                                                    <div className="col ">
+                                                        {clients.length > 0 ? (
+                                                            clients.map((item) => (
+                                                                <div key={item.id} className="card radius-15 mb-3">
+                                                                    <div className="card-body   position-relative">
+                                                                        <div className="p-2  radius-15">
+                                                                            <div className="float-end text-muted">
+                                                                                {fDateTime(item.created_at)}
+                                                                            </div>
+                                                                            <h4 className="card-title">{item.clientDetails?.FullName}</h4>
+                                                                            <hr />
+                                                                            <p>
+                                                                                <strong>Email:</strong> {item.clientDetails?.Email}
+                                                                            </p>
+                                                                            <p>
+                                                                                <strong>Subject:</strong> {item?.subject}
+                                                                            </p>
+                                                                            <p>
+                                                                                <strong>Phone No:</strong> {item.clientDetails?.PhoneNo}
+                                                                            </p>
+                                                                            <p>
+                                                                                <strong>Description:</strong> {item?.message}
+                                                                            </p>
+                                                                        </div>
                                                                     </div>
-                                                                    <h4 className="card-title">{item.clientDetails?.FullName}</h4>
-                                                                    <hr />
-                                                                    <p>
-                                                                        <strong>Email:</strong> {item.clientDetails?.Email}
-                                                                    </p>
-                                                                    <p>
-                                                                        <strong>Subject:</strong> {item?.subject}
-                                                                    </p>
-                                                                    <p>
-                                                                        <strong>Phone No:</strong> {item.clientDetails?.PhoneNo}
-                                                                    </p>
-                                                                    <p>
-                                                                        <strong>Description:</strong> {item?.message}
-                                                                    </p>
                                                                 </div>
+                                                            ))
+                                                        ) : (
+                                                            <div className="text-center mt-5">
+                                                                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
                                                             </div>
-                                                        </div>
-                                                    ))
-                                                ) : (
-                                                    <p>No Help Message Available</p>
-                                                )}
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
                                         </>
                                     )}
-                                    
+
                                 </div>
                             </div>
                         </div>

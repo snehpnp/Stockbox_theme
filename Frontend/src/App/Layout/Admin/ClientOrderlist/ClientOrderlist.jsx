@@ -10,6 +10,7 @@ import { Tooltip } from 'antd';
 import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
 import { exportToCSV } from '../../../../Utils/ExportData';
 import ReusableModal from '../../../components/Models/ReusableModal';
+import Loader from '../../../../Utils/Loader';
 
 
 
@@ -38,6 +39,9 @@ const ClientOrderlist = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRows, setTotalRows] = useState(0);
+
+    //state for loading
+    const [isLoading, setIsLoading] = useState(true)
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -110,6 +114,7 @@ const ClientOrderlist = () => {
         } catch (error) {
             console.log("Error fetching services:", error);
         }
+        setIsLoading(false)
     };
 
 
@@ -355,7 +360,9 @@ const ClientOrderlist = () => {
                                 </div>
                             </div>
                         </div>
-
+                        {isLoading ? (
+                            <Loader />
+                        ) :clients.length > 0 ? (
                         <div className="table-responsive">
                             <Table1
                                 columns={columns}
@@ -365,6 +372,11 @@ const ClientOrderlist = () => {
                                 onPageChange={handlePageChange}
                             />
                         </div>
+                        ):(
+                            <div className="text-center mt-5">
+                        <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                    </div>
+                        )}
                     </div>
                 </div>
             </div>

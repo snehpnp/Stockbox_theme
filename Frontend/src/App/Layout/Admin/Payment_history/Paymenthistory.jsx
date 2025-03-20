@@ -8,6 +8,8 @@ import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
 import { exportToCSV } from '../../../../Utils/ExportData';
+import Loader from "../../../../Utils/Loader";
+
 
 
 
@@ -27,6 +29,9 @@ const History = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRows, setTotalRows] = useState(0);
+
+    const [isLoading, setIsLoading] = useState(true)
+
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -117,6 +122,7 @@ const History = () => {
         } catch (error) {
             console.log("Error fetching services:", error);
         }
+        setIsLoading(false)
     };
 
 
@@ -166,7 +172,7 @@ const History = () => {
         },
         {
             name: 'State',
-            selector: row => row.state?row.state:"-",
+            selector: row => row.state ? row.state : "-",
             sortable: true,
             width: '200px',
         },
@@ -409,15 +415,23 @@ const History = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="table-responsive">
-                            <Table
-                                columns={columns}
-                                data={clients}
-                                totalRows={totalRows}
-                                currentPage={currentPage}
-                                onPageChange={handlePageChange}
-                            />
-                        </div>
+                        {isLoading ? (
+                            <Loader />
+                        ) : clients.length > 0 ? (
+                            <div className="table-responsive">
+                                <Table
+                                    columns={columns}
+                                    data={clients}
+                                    totalRows={totalRows}
+                                    currentPage={currentPage}
+                                    onPageChange={handlePageChange}
+                                />
+                            </div>
+                        ) : (
+                            <div className="text-center mt-5">
+                                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

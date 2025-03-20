@@ -317,10 +317,9 @@ const Plan = () => {
                                     </div>
                                 </div>
                             ) : (
-                                <div>
-                                    <h5>No Plans Available</h5>
-                                    <div className="text-muted">Please select a category to view details.</div>
-                                </div>
+                                <div className="text-center mt-5">
+                                        <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                                    </div>
                             )}
                         </div>
                     </div>

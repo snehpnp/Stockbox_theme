@@ -261,9 +261,9 @@ const News = () => {
                                             </div>
                                         ))
                                     ) : (
-                                        <div className="text-center py-5">
-                                            <p>No records found</p>
-                                        </div>
+                                        <div className="text-center mt-5">
+                                        <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                                    </div>
                                     )}
                                 </>
                             )}

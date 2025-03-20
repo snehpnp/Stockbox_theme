@@ -29,6 +29,7 @@ import { Tooltip } from "antd";
 import { image_baseurl } from "../../../../Utils/config";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import Loader from "../../../../Utils/Loader";
 
 const Closesignal = () => {
   const [activeTab, setActiveTab] = useState("table");
@@ -44,6 +45,9 @@ const Closesignal = () => {
     id: "",
     description: "",
   });
+
+  const [isLoading, setIsLoading] = useState(true)
+
 
   const location = useLocation();
   const clientStatus = location?.state?.clientStatus;
@@ -242,6 +246,7 @@ const Closesignal = () => {
     } catch (error) {
       console.log("error", error);
     }
+    setIsLoading(false)
   };
 
   const fetchAdminServices = async () => {
@@ -645,15 +650,26 @@ const Closesignal = () => {
               </div>
 
               {/* Tab Content */}
-              {activeTab === "table" && (
-                <Table
-                  columns={columns}
-                  data={clients}
-                  totalRows={totalRows}
-                  currentPage={currentPage}
-                  onPageChange={handlePageChange}
-                />
+              {isLoading ? (
+                <Loader />
+              ) : clients.length > 0 ? (
+                <>
+                  {activeTab === "table" && (
+                    <Table
+                      columns={columns}
+                      data={clients}
+                      totalRows={totalRows}
+                      currentPage={currentPage}
+                      onPageChange={handlePageChange}
+                    />
+                  )}
+                </>
+              ) : (
+                <div className="text-center mt-5">
+                  <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                </div>
               )}
+
 
               {activeTab === "card" && (
                 <div className="row">
