@@ -6,6 +6,8 @@ const { Readable } = require('stream');
 const upload = require('../Utils/multerHelper'); 
 const multer = require('multer');
 
+const puppeteer = require('puppeteer');
+const fs = require('fs');
 
 
 const Basket_Modal = db.Basket;
@@ -432,7 +434,7 @@ class Basket {
 
 
       if (publishstatus == 1) {
-        await addBasketVolatilityData(req, res);
+        await addBasketVolatilityData(req);
       }
 
       return res.json({
@@ -579,7 +581,7 @@ class Basket {
           // Execute the bulk insert
           const result = await Basketstock_Modal.bulkWrite(bulkOps);
           if (publishstatus == 1) {
-            await addBasketVolatilityData(req, res);
+            await addBasketVolatilityData(req);
           }
           return res.json({
               status: true,
@@ -788,7 +790,7 @@ class Basket {
       const result = await Basketstock_Modal.bulkWrite(bulkOps);
 
       if (publishstatus == 1) {
-        await addBasketVolatilityData(req, res);
+        await addBasketVolatilityData(req);
       }
 
 
@@ -940,7 +942,7 @@ class Basket {
       // Execute the bulk insert
       const result = await Basketstock_Modal.bulkWrite(bulkOps);
       if (publishstatus == 1) {
-        await addBasketVolatilityData(req, res);
+        await addBasketVolatilityData(req);
       }
       return res.json({
         status: true,
