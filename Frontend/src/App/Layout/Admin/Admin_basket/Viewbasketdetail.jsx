@@ -298,7 +298,7 @@ const Viewbasketdetail = () => {
       }
     } catch (error) {
       console.log("error");
-    }
+    } 
   };
 
 

@@ -289,7 +289,7 @@ const Client = () => {
     try {
       const response = await BasketAllList(token);
       if (response.status) {
-        setBasketlist(response.data);
+        setBasketlist(response.data); 
       }
     } catch (error) {
       console.log("error");

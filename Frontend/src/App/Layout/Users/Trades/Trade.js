@@ -601,7 +601,7 @@ function Trade() {
         <div className="pagination-controls d-flex justify-content-between mt-3">
           <button
             className="btn btn-secondary"
-            onClick={() => handlePageChange("prev")}
+            onClick={() => handlePageChange("prev")} 
             disabled={page === 1}
           >
             Previous
