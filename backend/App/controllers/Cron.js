@@ -1797,6 +1797,14 @@ async function addBasketgraphdata(req, res) {
         for (const stock of stocks) {
             const { basket_id, price, quantity, tradesymbol, name, type } = stock;
 
+            const basket = await Basket_Modal.findById(basket_id);
+            if (!basket) {
+              return res.status(400).json({
+                status: false,
+                message: "Basket not found.",
+              });
+            }
+
             // Fetch current price and prev_close
             const { price: currentPrice, prev_close, co_code  } = await getCurrentPrice(name);
            
@@ -1826,6 +1834,17 @@ for (const [basket_id, stockTypeSet] of Object.entries(basketStockTypes)) {
 
     let profitLossPercentageapi = 0; // Initialize per basket
     let symbolgraph = "";
+
+    if(basket.stockname) {
+
+        symbolgraph = "NMIDCAP150"; 
+        const { price: currentPrice, prev_close } = await getCurrentPrice('NMIDCAP150');
+        profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+
+    }
+    else {
+
+    
     if (typesArray.includes("Small Cap") && typesArray.includes("Mid Cap") && typesArray.includes("Large Cap")) {
         symbolgraph = "NFT500MULT"; 
         const { price: currentPrice, prev_close } = await getCurrentPrice('NFT500MULT');
@@ -1857,6 +1876,8 @@ for (const [basket_id, stockTypeSet] of Object.entries(basketStockTypes)) {
         profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
    
     }
+
+}
 
     // ✅ Store API-based profit loss percentage per basket_id
     profitLossPercentageMapApi[basket_id] = profitLossPercentageapi;

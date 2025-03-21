@@ -13,6 +13,7 @@ const Mailtemplate_Modal = db.Mailtemplate;
 const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs');
+const { sendEmail } = require('../Utils/emailService');
 
 
 const Adminnotification_Modal = db.Adminnotification;
@@ -816,22 +817,43 @@ if (settings.gst > 0 && settings.gststatus==1) {
         const templatePath = path.join(__dirname, '../../template', 'invoice.html');
         let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
-        htmlContent = htmlContent
-          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
-          .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
-          .replace(/{{payment_type}}/g, payment_type)
-          .replace(/{{clientname}}/g, client.FullName)
-          .replace(/{{email}}/g, client.Email)
-          .replace(/{{PhoneNo}}/g, client.PhoneNo)
-          .replace(/{{validity}}/g, savedSubscription.validity)
-          .replace(/{{plan_end}}/g, formatDate(savedSubscription.plan_end))
-          .replace(/{{plan_price}}/g, savedSubscription.plan_price)
-          .replace(/{{total}}/g, savedSubscription.total)
-          .replace(/{{discount}}/g, savedSubscription.discount)
-          .replace(/{{orderid}}/g, savedSubscription.orderid)
-          .replace(/{{planname}}/g, plan.category.title)
-          .replace(/{{plantype}}/g, "Plan")
-          .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
+        let sgst = 0, cgst = 0, igst = 0;
+
+        if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() ==="") {
+            sgst = totalgst / 2;
+            cgst = totalgst / 2;
+        } else {
+            igst = totalgst;
+        }
+        const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+        
+                htmlContent = htmlContent
+                  .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+                  .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
+                  .replace(/{{payment_type}}/g, payment_type)
+                  .replace(/{{clientname}}/g, client.FullName)
+                  .replace(/{{email}}/g, client.Email)
+                  .replace(/{{PhoneNo}}/g, client.PhoneNo)
+                  .replace(/{{validity}}/g, savedSubscription.validity)
+                  .replace(/{{plan_end}}/g, formatDate(savedSubscription.plan_end))
+                  .replace(/{{plan_price}}/g, savedSubscription.plan_price)
+                  .replace(/{{total}}/g, savedSubscription.total)
+                  .replace(/{{discount}}/g, savedSubscription.discount)
+                  .replace(/{{orderid}}/g, savedSubscription.orderid)
+                  .replace(/{{planname}}/g, plan.category.title)
+                  .replace(/{{plantype}}/g, "Plan")
+                  .replace(/{{company_email}}/g, settings.email_address)
+                  .replace(/{{company_phone}}/g, settings.contact_number)
+                  .replace(/{{company_address}}/g, settings.address)
+                  .replace(/{{company_website_title}}/g, settings.website_title)
+                  .replace(/{{gstamount}}/g, totalgst)
+                  .replace(/{{state}}/g, client.state)
+                  .replace(/{{gst}}/g, settings.gst)
+                  .replace(/{{sgst}}/g, sgst.toFixed(2))
+                  .replace(/{{cgst}}/g, cgst.toFixed(2))
+                  .replace(/{{igst}}/g, igst.toFixed(2))
+                  .replace(/{{logo}}/g, logo)
+                  .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
 
         const browser = await puppeteer.launch({

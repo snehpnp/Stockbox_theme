@@ -256,6 +256,11 @@ const BasicSettingSchema = new Schema({
         enum: [1, 0],
         default: 0
     },
+    simage: {
+        type: String,
+        trim: true,
+        default: null
+    },
 
 }, {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
