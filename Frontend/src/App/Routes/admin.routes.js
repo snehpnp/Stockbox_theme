@@ -106,7 +106,7 @@ export default function App() {
       <Route path="/basket/basketstockpublish" element={<BasketStockPublish />} />
       <Route path="/basket-purchase-history/:id" element={<BasketPurchaseHistory />} />
       <Route path="/purchasebaskethistory" element={<AllBasketHistory />} />
-      <Route path="/editstock/:id" element={<EditStock />} />
+      <Route path="/editstock" element={<EditStock />} />
 
       <Route path="/stock" element={<Stock />} />
 
