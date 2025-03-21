@@ -1187,11 +1187,24 @@ class Basket {
         ];
       }
 
-      // Query to fetch paginated active baskets with optional search filter
-      const baskets = await Basket_Modal.find(matchConditions)
-        .sort({ created_at: -1 })  // Sort by creation date in descending order
-        .skip((pageNumber - 1) * pageSize)  // Skip documents for pagination
-        .limit(pageSize);  // Limit the number of documents
+      let baskets = await Basket_Modal.find(matchConditions)
+      .sort({ created_at: -1 })
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize)
+      .lean();
+    
+    baskets = await Promise.all(
+      baskets.map(async (basket) => {
+        const stockCount = await Basketstock_Modal.countDocuments({
+          basket_id: basket._id,
+          status: 0
+        });
+        return {
+          ...basket,
+          stockstatus: stockCount > 0 ? 0 : 1
+        };
+      })
+    );
 
       // Count total active baskets (filtered by search, if applicable)
       const totalBaskets = await Basket_Modal.countDocuments(matchConditions);
