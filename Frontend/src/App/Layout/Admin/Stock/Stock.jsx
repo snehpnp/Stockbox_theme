@@ -5,7 +5,6 @@ import Table from '../../../Extracomponents/Table';
 import { SquarePen, Trash2, PanelBottomOpen } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { useRef } from 'react';
-import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 const Stock = () => {
@@ -73,16 +72,32 @@ const Stock = () => {
             const response = await Updatestock(data, token);
 
             if (response && response.status) {
-                showCustomAlert("Success", "Service updated successfully.")
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Service updated successfully.',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 2000,
+                });
 
                 setUpdatetitle({ title: "", id: "", symbol: "" });
                 getstock();
                 setModel(false);
             } else {
-                showCustomAlert("error", "There was an error updating the service.")
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'There was an error updating the service.',
+                    icon: 'error',
+                    confirmButtonText: 'Try Again',
+                });
             }
         } catch (error) {
-            showCustomAlert("error", "There was an error updating the service.")
+            Swal.fire({
+                title: 'Error!',
+                text: 'There was an error updating the service.',
+                icon: 'error',
+                confirmButtonText: 'Try Again',
+            });
         }
     };
 
@@ -96,7 +111,13 @@ const Stock = () => {
             const data = { title: title.title, add_by: userid, symbol: title.symbol };
             const response = await AddstockbyAdmin(data, token);
             if (response && response.status) {
-                showCustomAlert("Success", "Service added successfully.")
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Service added successfully.',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 2000,
+                });
 
                 setTitle({ title: "", add_by: "", symbol: "" });
                 getstock();
@@ -107,10 +128,20 @@ const Stock = () => {
                     bootstrapModal.hide();
                 }
             } else {
-                showCustomAlert("error", "There was an error adding the service.")
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'There was an error adding the service.',
+                    icon: 'error',
+                    confirmButtonText: 'Try Again',
+                });
             }
         } catch (error) {
-            showCustomAlert("error", "There was an error adding the service.")
+            Swal.fire({
+                title: 'Error!',
+                text: 'There was an error adding the service.',
+                icon: 'error',
+                confirmButtonText: 'Try Again',
+            });
         }
     };
 
@@ -133,14 +164,23 @@ const Stock = () => {
             try {
                 const response = await Stockstatus(data, token);
                 if (response.status) {
-                    showCustomAlert("Success", "Status updated successfully.")
+                    Swal.fire({
+                        title: "Saved!",
+                        icon: "success",
+                        timer: 1000,
+                        timerProgressBar: true,
+                    });
                     setTimeout(() => {
                         Swal.close();
                     }, 1000);
                 }
                 getstock();
             } catch (error) {
-                showCustomAlert("error", "There was an error processing your request.")
+                Swal.fire(
+                    "Error",
+                    "There was an error processing your request.",
+                    "error"
+                );
             }
         } else if (result.dismiss === Swal.DismissReason.cancel) {
             getstock();
@@ -170,15 +210,32 @@ const Stock = () => {
             if (result.isConfirmed) {
                 const response = await DeleteStock(_id, token);
                 if (response.status) {
-                    showCustomAlert("Success", "The staff has been successfully deleted.")
+                    Swal.fire({
+                        title: 'Deleted!',
+                        text: 'The staff has been successfully deleted.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                    });
                     getstock();
 
                 }
             } else {
-                showCustomAlert("info", "The staff deletion was cancelled.")
+
+                Swal.fire({
+                    title: 'Cancelled',
+                    text: 'The staff deletion was cancelled.',
+                    icon: 'info',
+                    confirmButtonText: 'OK',
+                });
             }
         } catch (error) {
-            showCustomAlert("error", "There was an error deleting the staff.")
+            Swal.fire({
+                title: 'Error!',
+                text: 'There was an error deleting the staff.',
+                icon: 'error',
+                confirmButtonText: 'Try Again',
+            });
+
         }
     };
 
@@ -296,7 +353,13 @@ const Stock = () => {
                 const response = await Setstockinbulk(data, token);
 
                 if (response.status) {
-                    showCustomAlert("Success","File uploaded successfully.")
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'File uploaded successfully.',
+                        confirmButtonText: 'OK',
+                        timer: 2000,
+                    });
 
                     setSelectedFile("");
                     if (fileInputRef.current) {
@@ -305,13 +368,32 @@ const Stock = () => {
 
                     getstock();
                 } else {
-                    showCustomAlert("error","Failed to upload file. Please try again.")                   
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Failed to upload file. Please try again.',
+                        confirmButtonText: 'OK',
+                        timer: 2000,
+                    });
                 }
             } catch (error) {
-                showCustomAlert("error","An error occurred during file upload.")                        
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Unexpected Error!',
+                    text: 'An error occurred during file upload.',
+                    confirmButtonText: 'OK',
+                    timer: 2000,
+                });
             }
         } else {
-            showCustomAlert("warning","Please choose a file to upload.")           
+            Swal.fire({
+                icon: 'warning',
+                title: 'No File Selected!',
+                text: 'Please choose a file to upload.',
+                confirmButtonText: 'OK',
+                timer: 2000,
+            });
         }
     };
     return (

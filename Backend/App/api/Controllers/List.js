@@ -419,7 +419,7 @@ class List {
         },
       ];
       const result = await Plancategory_Modal.aggregate(pipeline);
-  
+
       return res.json({
         status: true,
         message: "Data retrieved successfully",
@@ -429,7 +429,7 @@ class List {
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
-  
+
 
   async getallPlan(req, res) {
     try {
@@ -713,15 +713,15 @@ class List {
 
 
 
-      let total = plan.price-discount; // Use let for reassignable variables
+      let total = plan.price - discount; // Use let for reassignable variables
       let totalgst = 0;
-      
-      if (settings.gst > 0 && settings.gststatus==1) {
+
+      if (settings.gst > 0 && settings.gststatus == 1) {
         totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
         total = total + totalgst;
       }
 
-     
+
       ////////////////// 17/10/2024 ////////////////////////
       // Create a new plan subscription record
       const newSubscription = new PlanSubscription_Modal({
@@ -731,7 +731,7 @@ class List {
         plan_price: plan.price,
         discount: discount,
         coupon: coupon_code,
-        gstamount:totalgst,
+        gstamount: totalgst,
         gst: settings.gst,
         plan_start: start,
         plan_end: end,
@@ -1039,10 +1039,10 @@ class List {
 
 
 
-      let total = basket.basket_price-discount; // Use let for reassignable variables
+      let total = basket.basket_price - discount; // Use let for reassignable variables
       let totalgst = 0;
-      
-      if (settings.gst > 0 && settings.gststatus==1) {
+
+      if (settings.gst > 0 && settings.gststatus == 1) {
         totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
         total = total + totalgst;
       }
@@ -1055,7 +1055,7 @@ class List {
         total: total,
         plan_price: basket.basket_price,
         discount: discount,
-        gstamount:totalgst,
+        gstamount: totalgst,
         gst: settings.gst,
         coupon: coupon,
         startdate: start,
@@ -1233,6 +1233,8 @@ class List {
             startdate: 1,
             enddate: 1,
             validity: 1,
+            gstamount	: 1,
+            gst : 1,
             'basketDetails.title': 1,
             'basketDetails.description': 1,
             'basketDetails.mininvamount': 1
@@ -1542,8 +1544,8 @@ class List {
       const settings = await BasicSetting_Modal.findOne();
       let total = finalPrice; // Use let for reassignable variables
       let totalgst = 0;
-      
-      if (settings.gst > 0 && settings.gststatus==1) {
+
+      if (settings.gst > 0 && settings.gststatus == 1) {
         totalgst = (finalPrice * settings.gst) / 100; // Use settings.gst instead of gst
         total = finalPrice + totalgst;
       }
@@ -1554,7 +1556,7 @@ class List {
         message: 'Coupon applied successfully',
         originalPrice: purchaseValue,
         discount,
-        finalPrice:total,
+        finalPrice: total,
         totalgst,
       });
     } catch (error) {
@@ -1634,8 +1636,8 @@ class List {
       const settings = await BasicSetting_Modal.findOne();
       let total = finalPrice; // Use let for reassignable variables
       let totalgst = 0;
-      
-      if (settings.gst > 0 && settings.gststatus==1) {
+
+      if (settings.gst > 0 && settings.gststatus == 1) {
         totalgst = (finalPrice * settings.gst) / 100; // Use settings.gst instead of gst
         total = finalPrice + totalgst;
       }
@@ -1646,7 +1648,7 @@ class List {
         message: 'Coupon applied successfully',
         originalPrice: purchaseValue,
         discount,
-        finalPrice:total,
+        finalPrice: total,
         totalgst,
 
       });
@@ -2224,9 +2226,9 @@ class List {
 
       // Update each basket's image path
       baskets.forEach(basket => {
-          if (basket.image) {
-              basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
-          }
+        if (basket.image) {
+          basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
+        }
       });
 
 
@@ -2430,9 +2432,9 @@ class List {
       const baseUrl = `https://${req.headers.host}`;
 
       result.forEach(basket => {
-          if (basket.image) {
-              basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
-          }
+        if (basket.image) {
+          basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
+        }
       });
 
       res.status(200).json({
@@ -3341,12 +3343,12 @@ class List {
 
 
 
-   const result = await BasicSetting_Modal.findOne()
-  .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst gststatus')
-  .exec();
+      const result = await BasicSetting_Modal.findOne()
+        .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst gststatus')
+        .exec();
 
-   if (result) {  
-          result.logo = `${baseUrl}/uploads/basicsetting/${result.logo}`;
+      if (result) {
+        result.logo = `${baseUrl}/uploads/basicsetting/${result.logo}`;
         result.refer_image = `${baseUrl}/uploads/basicsetting/${result.refer_image}`;
         result.offer_image = `${baseUrl}/uploads/basicsetting/${result.offer_image}`;
       }
@@ -3813,7 +3815,7 @@ class List {
         .skip((page - 1) * limit)  // Pagination
         .limit(parseInt(limit));   // Limit the number of records
 
-        const totalcount = await Notification_Modal.countDocuments(queryConditions);
+      const totalcount = await Notification_Modal.countDocuments(queryConditions);
 
       // Return the response with notifications
       return res.json({
@@ -4308,14 +4310,14 @@ class List {
               const authToken = client.authtoken;
               const apikey = client.apikey;
 
-            
+
               let config = {
                 method: 'get',
                 url: 'https://api.kite.trade/user/margins',
                 headers: {
-                    'Authorization': 'token ' + apikey + ':' + authToken
+                  'Authorization': 'token ' + apikey + ':' + authToken
                 },
-            };
+              };
 
 
               const response = await axios(config);
@@ -4378,14 +4380,14 @@ class List {
               const authToken = client.authtoken;
               const apikey = client.apikey;
 
-            
+
               let config = {
                 method: 'post',
                 url: 'https://api-hft.upstox.com/v2/user/get-funds-and-margin',
                 headers: {
-                     Authorization: `Bearer ${authToken}`,
+                  Authorization: `Bearer ${authToken}`,
                 },
-            };
+              };
 
 
               const response = await axios(config);
@@ -4449,7 +4451,7 @@ class List {
               const authToken = client.authtoken;
               const apikey = client.apikey;
 
-            
+
               const config = {
                 method: 'get',
                 url: 'https://api.dhan.co/fundlimit',
@@ -4458,7 +4460,7 @@ class List {
                   'access-token': authtoken
                 }
               };
-          
+
 
 
               const response = await axios(config);
@@ -4685,7 +4687,7 @@ class List {
             });
 
           }
-         else if (brokerid == 5) {
+          else if (brokerid == 5) {
             respo = await zerodhaorderplace({
               id: clientid,
               basket_id: basket_id,
@@ -4699,7 +4701,7 @@ class List {
               howmanytimebuy: ids
             });
           }
-          else   if (brokerid == 6) {
+          else if (brokerid == 6) {
             respo = await upstoxorderplace({
               id: clientid,
               basket_id: basket_id,
@@ -4713,7 +4715,7 @@ class List {
               howmanytimebuy: ids
             });
           }
-          else   if (brokerid == 7) {
+          else if (brokerid == 7) {
             respo = await dhanorderplace({
               id: clientid,
               basket_id: basket_id,
@@ -4921,28 +4923,28 @@ class List {
       const skip = (parseInt(page) - 1) * parseInt(limit); // Calculate how many items to skip
       const limitValue = parseInt(limit); // Items per page
 
-    
+
       const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: service_id }).exec();
 
       if (!existingPlan) {
         // Fetch last 5 signal IDs for the given service_id
-        const lastFiveSignals = await Signal_Modal.find({ service: service_id,close_status: false })
-            .sort({ created_at: -1 })
-            .limit(5)
-            .lean();
-        
+        const lastFiveSignals = await Signal_Modal.find({ service: service_id, close_status: false })
+          .sort({ created_at: -1 })
+          .limit(5)
+          .lean();
+
         return res.json({
-            status: true,
-            message: "Returning last 5 signals due to no existing plan",
-            data: lastFiveSignals,
-            pagination: {
-              total: lastFiveSignals.length,
-              page: 1,
-              limit: 5,
-              totalPages: 1
+          status: true,
+          message: "Returning last 5 signals due to no existing plan",
+          data: lastFiveSignals,
+          pagination: {
+            total: lastFiveSignals.length,
+            page: 1,
+            limit: 5,
+            totalPages: 1
           }
         });
-    }
+      }
 
 
       const subscriptions = await PlanSubscription_Modal.find({ client_id });
@@ -4955,22 +4957,22 @@ class List {
       }
 
       const planIds = subscriptions
-      .map(sub => sub.plan_category_id)
-      .filter(id => id != null); // Filters out null and undefined
-  
+        .map(sub => sub.plan_category_id)
+        .filter(id => id != null); // Filters out null and undefined
+
 
 
       const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
 
       const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
 
-     
+
 
 
       const uniquePlanIds = [
         ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
       ].map(id => new ObjectId(id));
-      
+
 
       const query = {
         service: service_id,
@@ -4982,19 +4984,19 @@ class List {
       };
 
 
-    //   const query = {
-    //     service: service_id,
-    //     close_status: false,
-    //     $or: uniquePlanIds.map((planId, index) => {
-    //         return {
-    //             planid: { $regex: `(^|,)${planId}($|,)` }
-    //             created_at: { $lte: planEnds[index] } // Compare created_at with the plan_end date of each subscription
-    //         };
-    //     })
-    // };
+      //   const query = {
+      //     service: service_id,
+      //     close_status: false,
+      //     $or: uniquePlanIds.map((planId, index) => {
+      //         return {
+      //             planid: { $regex: `(^|,)${planId}($|,)` }
+      //             created_at: { $lte: planEnds[index] } // Compare created_at with the plan_end date of each subscription
+      //         };
+      //     })
+      // };
 
 
-    //console.log("Final Query:", JSON.stringify(query, null, 2));
+      //console.log("Final Query:", JSON.stringify(query, null, 2));
       const protocol = req.protocol; // Will be 'http' or 'https'
 
       const baseUrl = `https://${req.headers.host}`; // Construct the base URL
@@ -5016,7 +5018,7 @@ class List {
         .skip(skip)
         .limit(limitValue)
         .lean();
-    
+
 
 
       const totalSignals = await Signal_Modal.countDocuments(query);
@@ -5055,24 +5057,24 @@ class List {
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
-  
+
   async NotificationWithPlan(req, res) {
     try {
       const { id } = req.params;
       const { page = 1 } = req.query; // Default values for page and limit
       const limit = 10;
       const today = new Date();
-  
+
       // Fetch the client's creation date
       const client = await Clients_Modal.findById(id).select('createdAt');
       if (!client) {
         return res.status(404).json({ status: false, message: "Client not found" });
       }
       const clientCreatedAt = client.createdAt;
-  
+
       // Fetch subscriptions
       const subscriptions = await PlanSubscription_Modal.find({ client_id: id });
-  
+
       // Initialize status variables
       const hasActiveSubscriptions = subscriptions.some(
         sub => new Date(sub.plan_start) <= today && new Date(sub.plan_end) >= today
@@ -5081,26 +5083,26 @@ class List {
         sub => new Date(sub.plan_end) < today
       );
       const noSubscriptions = subscriptions.length === 0;
-  
+
       // Fetch active and expired plans for broadcast notifications
       const activePlans = await Planmanage.find({
         clientid: id,
         startdate: { $lte: today },
         enddate: { $gte: today }
       }).distinct('serviceid');
-  
+
       const expiredPlans = await Planmanage.find({
         clientid: id,
         enddate: { $lt: today }
       }).distinct('serviceid');
-  
+
       // Construct query conditions
       const queryConditions = {
         createdAt: { $gte: clientCreatedAt }, // Notifications created after client creation date
         $or: [
           // Notifications specific to the client
           { clientid: id },
-  
+
           // Global notifications
           {
             clientid: null,
@@ -5108,47 +5110,47 @@ class List {
               // Global notifications for 'close signal' and 'open signal'
               ...(subscriptions.length > 0
                 ? [{
-                    type: { $in: ['close signal', 'open signal'] },
-                    $or: subscriptions.map((sub) => ({
-                      segmentid: { $regex: `(^|,)${sub.plan_category_id}($|,)` }, // Match plan_id in segmentid
-                      createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
-                    }))
-                  }]
+                  type: { $in: ['close signal', 'open signal'] },
+                  $or: subscriptions.map((sub) => ({
+                    segmentid: { $regex: `(^|,)${sub.plan_category_id}($|,)` }, // Match plan_id in segmentid
+                    createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
+                  }))
+                }]
                 : []),
-                
+
               // Include all other types of notifications (e.g., add coupon, blogs, news, etc.)
               { type: { $nin: ['close signal', 'open signal', 'add broadcast'] } }
             ]
           },
-  
+
           // Broadcast notifications based on client type
           {
             clienttype: { $in: ['active', 'expired', 'nonsubscribe', 'all'] },
             $or: [
               // For active clients with active subscriptions
               ...(hasActiveSubscriptions ? [{ clienttype: 'active', segmentid: { $in: activePlans } }] : []),
-  
+
               // For expired clients with expired subscriptions
               ...(hasExpiredSubscriptions ? [{ clienttype: 'expired', segmentid: { $in: expiredPlans } }] : []),
-  
+
               // For clients with no subscriptions
               ...(noSubscriptions ? [{ clienttype: 'nonsubscribe' }] : []),
-  
+
               // For all clients
               { clienttype: 'all' }
             ]
           }
         ]
       };
-  
+
       // Fetch notifications based on constructed query
       const result = await Notification_Modal.find(queryConditions)
         .sort({ createdAt: -1 })
         .skip((page - 1) * limit) // Pagination
         .limit(parseInt(limit)); // Limit the number of records
-  
+
       const totalcount = await Notification_Modal.countDocuments(queryConditions);
-  
+
       // Return the response with notifications
       return res.json({
         status: true,
@@ -5165,31 +5167,31 @@ class List {
       return res.status(500).json({ status: false, message: "Server error", data: [] });
     }
   }
-  
+
 
   async getCompanyAndBseData(req, res) {
     try {
       // Fetch data from CompanyMaster API
       const companyResponse = await axios.get('http://stockboxapis.cmots.com/api/CompanyMaster');
       const companyData = companyResponse.data.data;  // Accessing the 'data' field which is an array
-  
+
       // Get the search query from the request (if any)
       const searchQuery = req.query.search || '';
-  
+
       // Filter companyData by CompanyName if searchQuery is provided
       const filteredCompanyData = companyData.filter(company =>
         company.CompanyName.toLowerCase().includes(searchQuery.toLowerCase())
       );
-  
+
       // Fetch data from BseNseDelayedData API
       const bseResponse = await axios.get('http://stockboxapis.cmots.com/api/BseNseDelayedData/NSE');
       const bseData = bseResponse.data.data;
-  
+
       // Combine data by matching BSECode from companyData and co_code from bseData
       const combinedData = filteredCompanyData.map(company => {
         // Find the matching BSE data using co_code from companyData and co_code from bseData
         const bseMatch = bseData.find(bse => bse.co_code === company.co_code);
-  
+
         if (bseMatch) {
           return {
             co_code: company.co_code,
@@ -5216,18 +5218,18 @@ class List {
           };
         }
       }).filter(Boolean);  // Remove undefined results if no match was found
-  
-  
+
+
       return res.json({
         status: true,
         data: combinedData
       });
-  
+
     } catch (error) {
       return res.status(500).json({ status: false, message: "Server error", data: error });
     }
   }
-  
+
 
   async addPlanSubscriptionAddToCart(req, res) {
     try {
@@ -5235,7 +5237,7 @@ class List {
 
       // Validate input
       if (!plan_ids || !Array.isArray(plan_ids) || plan_ids.length === 0 || !client_id) {
-          return res.status(400).json({ status: false, message: 'Missing required fields' });
+        return res.status(400).json({ status: false, message: 'Missing required fields' });
       }
 
 
@@ -5250,247 +5252,247 @@ class List {
 
 
       for (const plan_id of plan_ids) {
-      // Fetch the plan and populate the category
-      const plan = await Plan_Modal.findById(plan_id)
-        .populate('category')
-        .exec();
+        // Fetch the plan and populate the category
+        const plan = await Plan_Modal.findById(plan_id)
+          .populate('category')
+          .exec();
 
-      if (!plan) {
-        return res.status(404).json({ status: false, message: 'Plan not found' });
-      }
-    
-
-
-      const activePlan = await PlanSubscription_Modal.findOne({
-        plan_category_id: plan.category._id,
-        client_id: client_id,
-        plan_end: { $gte: new Date() } // Ensure the plan is not expired
-      }).sort({ plan_end: -1 }); // Sort by end date to get the most recent one
-      
-      // If there is an active plan, set the new plan's start date to the end date of the existing active plan
-      
-
-
-      // Map plan validity to months
-      const validityMapping = {
-        '1 month': 1,
-        '2 months': 2,
-        '3 months': 3,
-        '6 months': 6,
-        '9 months': 9,
-        '1 year': 12,
-        '2 years': 24,
-        '3 years': 36,
-        '4 years': 48,
-        '5 years': 60
-      };
-
-      const monthsToAdd = validityMapping[plan.validity];
-      if (monthsToAdd === undefined) {
-        return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
-      }
-
-      let start = new Date();  // Use let instead of const to allow reassigning
-
-      if (activePlan) {
-        start = new Date(activePlan.plan_end); // Start the new plan right after the previous one ends
-      }
-      const end = new Date(start);
-      end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
-      end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
-
-
-      const planservice = plan.category?.service;
-      const planservices = planservice ? planservice.split(',') : [];
-      for (const serviceId of planservices) {
-        const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: serviceId }).exec();
-
-        if (existingPlan) {
-
-          if (new Date(existingPlan.enddate) < end) {
-            existingPlan.enddate = end;
-            await existingPlan.save();
-          }
+        if (!plan) {
+          return res.status(404).json({ status: false, message: 'Plan not found' });
         }
-        else
-        {
-          const newPlanManage = new Planmanage({
-            clientid: client_id,
-            serviceid: serviceId,
-            startdate: start,
-            enddate: end,
-          });
+
+
+
+        const activePlan = await PlanSubscription_Modal.findOne({
+          plan_category_id: plan.category._id,
+          client_id: client_id,
+          plan_end: { $gte: new Date() } // Ensure the plan is not expired
+        }).sort({ plan_end: -1 }); // Sort by end date to get the most recent one
+
+        // If there is an active plan, set the new plan's start date to the end date of the existing active plan
+
+
+
+        // Map plan validity to months
+        const validityMapping = {
+          '1 month': 1,
+          '2 months': 2,
+          '3 months': 3,
+          '6 months': 6,
+          '9 months': 9,
+          '1 year': 12,
+          '2 years': 24,
+          '3 years': 36,
+          '4 years': 48,
+          '5 years': 60
+        };
+
+        const monthsToAdd = validityMapping[plan.validity];
+        if (monthsToAdd === undefined) {
+          return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+        }
+
+        let start = new Date();  // Use let instead of const to allow reassigning
+
+        if (activePlan) {
+          start = new Date(activePlan.plan_end); // Start the new plan right after the previous one ends
+        }
+        const end = new Date(start);
+        end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+        end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+
+
+        const planservice = plan.category?.service;
+        const planservices = planservice ? planservice.split(',') : [];
+        for (const serviceId of planservices) {
+          const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: serviceId }).exec();
+
+          if (existingPlan) {
+
+            if (new Date(existingPlan.enddate) < end) {
+              existingPlan.enddate = end;
+              await existingPlan.save();
+            }
+          }
+          else {
+            const newPlanManage = new Planmanage({
+              clientid: client_id,
+              serviceid: serviceId,
+              startdate: start,
+              enddate: end,
+            });
             await newPlanManage.save();
+          }
         }
-      }
-     /*
-      const planservice = plan.category?.service;
-      const planservices = planservice ? planservice.split(',') : [];
-      for (const serviceId of planservices) {
-        const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: serviceId }).exec();
+        /*
+         const planservice = plan.category?.service;
+         const planservices = planservice ? planservice.split(',') : [];
+         for (const serviceId of planservices) {
+           const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: serviceId }).exec();
+   
+           if (existingPlan) {
+             // If the plan exists and the end date is still valid, extend it
+             if (existingPlan.enddate && existingPlan.enddate > new Date()) {
+               existingPlan.enddate.setMonth(existingPlan.enddate.getMonth() + monthsToAdd);
+             } else {
+               existingPlan.enddate = end;  // Set new end date if it has expired
+               existingPlan.startdate = start;
+             }
+   
+   
+             try {
+               const savedPlan = await Planmanage.updateOne(
+                 { _id: existingPlan._id },  // Filter: find the document by its ID
+                 {
+                   $set: {
+                     enddate: existingPlan.enddate,  // Set the new end date
+                     startdate: existingPlan.startdate // Set the new start date
+                   }
+                 }  // Update fields
+               );
+               //  const savedPlan = await existingPlan.save();  
+               console.log("Plan updated successfully:", savedPlan);
+             } catch (error) {
+               // console.error("Error saving updated plan:", error);
+             }
+           } else {
+   
+             ////////////////// 17/10/2024 ////////////////////////
+   
+             const today = new Date(); // Aaj ki date
+             const existingPlans = await Planmanage.find({
+               clientid: client_id,
+               serviceid: serviceId,
+               enddate: { $gt: today } // End date must be greater than today's date
+             })
+               .sort({ enddate: -1 }) // Sort by `enddate` in descending order
+               .limit(1) // Get the top result
+               .exec();
+   
+             if (existingPlans.length > 0) {
+               const existingEndDate = existingPlans[0].enddate; // Get the enddate of the existing plan
+               const newEndDate = end; // Assuming `end` is your new plan's end date
+   
+               // Check if the new end date is greater than the existing end date
+               if (newEndDate > existingEndDate) {
+   
+                 const differenceInTime = newEndDate.getTime() - existingEndDate.getTime(); // Difference in milliseconds
+                 const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24)); // Convert milliseconds to days
+   
+                 let differenceInMonths;
+   
+                 // Logic to determine the number of months
+                 if (differenceInDays < 15) {
+                   differenceInMonths = 0; // Less than a month
+                 } else {
+                   // Calculate the difference in months
+                   differenceInMonths = differenceInDays / 30; // Convert days to months
+                 }
+   
+                 // Round the months based on your requirement
+                 if (differenceInMonths % 1 >= 0.5) {
+                   monthsToAdd = Math.ceil(differenceInMonths); // Round up to the nearest whole number
+                 } else {
+                   monthsToAdd = Math.floor(differenceInMonths); // Round down to the nearest whole number
+                 }
+   
+               }
+               else {
+                 monthsToAdd = 0;
+               }
+             }
+   
+             ////////////////// 17/10/2024 ////////////////////////
+   
+             const newPlanManage = new Planmanage({
+               clientid: client_id,
+               serviceid: serviceId,
+               startdate: start,
+               enddate: end,
+             });
+   
+             try {
+               await newPlanManage.save();  // Save the new plan
+               console.log(`Added new record for service ID: ${serviceId}`);
+             } catch (error) {
+               // console.error("Error saving new plan:", error);
+             }
+           }
+   
+         }
+         */
 
-        if (existingPlan) {
-          // If the plan exists and the end date is still valid, extend it
-          if (existingPlan.enddate && existingPlan.enddate > new Date()) {
-            existingPlan.enddate.setMonth(existingPlan.enddate.getMonth() + monthsToAdd);
-          } else {
-            existingPlan.enddate = end;  // Set new end date if it has expired
-            existingPlan.startdate = start;
-          }
+        ////////////////// 17/10/2024 ////////////////////////
+        const currentDate = new Date();
+        const targetMonth = `${String(currentDate.getMonth() + 1).padStart(2, '0')}${currentDate.getFullYear()}`;
+
+        let license = await License_Modal.findOne({ month: targetMonth }).exec();
 
 
-          try {
-            const savedPlan = await Planmanage.updateOne(
-              { _id: existingPlan._id },  // Filter: find the document by its ID
-              {
-                $set: {
-                  enddate: existingPlan.enddate,  // Set the new end date
-                  startdate: existingPlan.startdate // Set the new start date
-                }
-              }  // Update fields
-            );
-            //  const savedPlan = await existingPlan.save();  
-            console.log("Plan updated successfully:", savedPlan);
-          } catch (error) {
-            // console.error("Error saving updated plan:", error);
-          }
+        if (license) {
+          license.noofclient += monthsToAdd;
+          console.log('Month found, updating noofclient.', monthsToAdd);
         } else {
-
-          ////////////////// 17/10/2024 ////////////////////////
-
-          const today = new Date(); // Aaj ki date
-          const existingPlans = await Planmanage.find({
-            clientid: client_id,
-            serviceid: serviceId,
-            enddate: { $gt: today } // End date must be greater than today's date
-          })
-            .sort({ enddate: -1 }) // Sort by `enddate` in descending order
-            .limit(1) // Get the top result
-            .exec();
-
-          if (existingPlans.length > 0) {
-            const existingEndDate = existingPlans[0].enddate; // Get the enddate of the existing plan
-            const newEndDate = end; // Assuming `end` is your new plan's end date
-
-            // Check if the new end date is greater than the existing end date
-            if (newEndDate > existingEndDate) {
-
-              const differenceInTime = newEndDate.getTime() - existingEndDate.getTime(); // Difference in milliseconds
-              const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24)); // Convert milliseconds to days
-
-              let differenceInMonths;
-
-              // Logic to determine the number of months
-              if (differenceInDays < 15) {
-                differenceInMonths = 0; // Less than a month
-              } else {
-                // Calculate the difference in months
-                differenceInMonths = differenceInDays / 30; // Convert days to months
-              }
-
-              // Round the months based on your requirement
-              if (differenceInMonths % 1 >= 0.5) {
-                monthsToAdd = Math.ceil(differenceInMonths); // Round up to the nearest whole number
-              } else {
-                monthsToAdd = Math.floor(differenceInMonths); // Round down to the nearest whole number
-              }
-
-            }
-            else {
-              monthsToAdd = 0;
-            }
-          }
-
-          ////////////////// 17/10/2024 ////////////////////////
-
-          const newPlanManage = new Planmanage({
-            clientid: client_id,
-            serviceid: serviceId,
-            startdate: start,
-            enddate: end,
+          license = new License_Modal({
+            month: targetMonth,
+            noofclient: monthsToAdd
           });
-
-          try {
-            await newPlanManage.save();  // Save the new plan
-            console.log(`Added new record for service ID: ${serviceId}`);
-          } catch (error) {
-            // console.error("Error saving new plan:", error);
-          }
+          console.log('Month not found, inserting new record.');
         }
 
-      }
-      */
-
-      ////////////////// 17/10/2024 ////////////////////////
-      const currentDate = new Date();
-      const targetMonth = `${String(currentDate.getMonth() + 1).padStart(2, '0')}${currentDate.getFullYear()}`;
-
-      let license = await License_Modal.findOne({ month: targetMonth }).exec();
+        try {
+          await license.save();
+          console.log('License updated successfully.');
+        } catch (error) {
+          // console.error('Error updating license:', error);
+        }
 
 
-      if (license) {
-        license.noofclient += monthsToAdd;
-      } else {
-        license = new License_Modal({
-          month: targetMonth,
-          noofclient: monthsToAdd
+        const numberOfPlans = plan_ids.length;
+        const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
+
+        ////////////////// 17/10/2024 ////////////////////////
+
+        let total = plan.price - discountPerPlan; // Use let for reassignable variables
+        let totalgst = 0;
+
+        if (settings.gst > 0 && settings.gststatus == 1) {
+          totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
+          total = total + totalgst;
+        }
+
+
+        // Create a new plan subscription record
+        const newSubscription = new PlanSubscription_Modal({
+          plan_id,
+          plan_category_id: plan.category._id,
+          client_id,
+          total: total,
+          plan_price: plan.price,
+          discount: discountPerPlan,
+          gstamount: totalgst,
+          gst: settings.gst,
+          coupon: coupon_code,
+          plan_start: start,
+          plan_end: end,
+          validity: plan.validity,
+          orderid: orderid,
+          ordernumber: `INV-${orderNumber}`,
+          ordernumber: `INV-${orderNumber}.pdf`,
         });
-        console.log('Month not found, inserting new record.');
-      }
 
-      try {
-        await license.save();
-        console.log('License updated successfully.');
-      } catch (error) {
-        // console.error('Error updating license:', error);
+        // Save the subscription
+        const savedSubscription = await newSubscription.save();
+
       }
 
 
-      const numberOfPlans = plan_ids.length;
-      const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
 
-      ////////////////// 17/10/2024 ////////////////////////
+      const updatedItems = await Addtocart_Modal.updateMany(
+        { client_id: client_id, status: false, basket_id: null }, // Find all matching items
+        { $set: { status: true } } // Update status to true
+      );
 
-      let total = plan.price-discountPerPlan; // Use let for reassignable variables
-      let totalgst = 0;
-      
-      if (settings.gst > 0 && settings.gststatus==1) {
-        totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
-        total = total + totalgst;
-      }
-
-
-      // Create a new plan subscription record
-      const newSubscription = new PlanSubscription_Modal({
-        plan_id,
-        plan_category_id: plan.category._id,
-        client_id,
-        total: total,
-        plan_price: plan.price,
-        discount: discountPerPlan,
-        gstamount:totalgst,
-        gst: settings.gst,
-        coupon: coupon_code,
-        plan_start: start,
-        plan_end: end,
-        validity: plan.validity,
-        orderid: orderid,
-        ordernumber:`INV-${orderNumber}`,
-        ordernumber:`INV-${orderNumber}.pdf`,
-      });
-
-      // Save the subscription
-      const savedSubscription = await newSubscription.save();
-
-    }
-
-
-
-    const updatedItems = await Addtocart_Modal.updateMany(
-      { client_id: client_id, status: false, basket_id: null }, // Find all matching items
-      { $set: { status: true } } // Update status to true
-  );
-  
 
       if (coupon_code) {
         const resultc = await Coupon_Modal.findOne({
@@ -5634,29 +5636,29 @@ class List {
             .populate('category')
             .exec();
 
-            const validityMapping = {
-              '1 month': 1,
-              '2 months': 2,
-              '3 months': 3,
-              '6 months': 6,
-              '9 months': 9,
-              '1 year': 12,
-              '2 years': 24,
-              '3 years': 36,
-              '4 years': 48,
-              '5 years': 60
-            };
-      
-            const monthsToAdd = validityMapping[plan.validity];
-            if (monthsToAdd === undefined) {
-              return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
-            }
-      
-            const start = new Date();
-            const end = new Date(start);
-            end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
-            end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
-      
+          const validityMapping = {
+            '1 month': 1,
+            '2 months': 2,
+            '3 months': 3,
+            '6 months': 6,
+            '9 months': 9,
+            '1 year': 12,
+            '2 years': 24,
+            '3 years': 36,
+            '4 years': 48,
+            '5 years': 60
+          };
+
+          const monthsToAdd = validityMapping[plan.validity];
+          if (monthsToAdd === undefined) {
+            return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+          }
+
+          const start = new Date();
+          const end = new Date(start);
+          end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+          end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+
 
 
 
@@ -5671,7 +5673,7 @@ class List {
         }
 
 
-        const todays = new Date(); 
+        const todays = new Date();
 
         htmlContent = htmlContent
           .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
@@ -5711,7 +5713,7 @@ class List {
 
         await browser.close();
 
-   
+
 
         if (settings.invoicestatus == 1) {
         const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
@@ -5767,17 +5769,17 @@ class List {
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
-  
-  
+
+
   async PurchasedBasketList(req, res) {
     try {
       const { clientid } = req.body; // assuming clientid is passed in the request
-  
+
       // Convert clientid to ObjectId
       const clientObjectId = new mongoose.Types.ObjectId(clientid);
-  
+
       const currentDate = new Date();
-  
+
       const result = await Basket_Modal.aggregate([
         {
           $lookup: {
@@ -5911,7 +5913,7 @@ class List {
             rationale: 1,
             methodology: 1,
             isActive: 1,
-            isSubscribed:1,
+            isSubscribed: 1,
             startdate: '$latestSubscription.startdate',
             enddate: '$latestSubscription.enddate',
             stock_details: {
@@ -5924,7 +5926,7 @@ class List {
           },
         },
       ]);
-  
+
 
 
       const protocol = req.protocol; // 'http' or 'https'
@@ -5932,9 +5934,9 @@ class List {
 
       // Update each basket's image path
       result.forEach(basket => {
-          if (basket.image) {
-              basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
-          }
+        if (basket.image) {
+          basket.image = `${baseUrl}/uploads/basket/${basket.image}`;
+        }
       });
 
 
@@ -5951,7 +5953,7 @@ class List {
       });
     }
   }
-  
+
   async addBasketSubscriptionAddToCart(req, res) {
     try {
       const { basket_ids, client_id, price, discount, orderid, coupon } = req.body;
@@ -5980,82 +5982,82 @@ class List {
 
       for (const basket_id of basket_ids) {
 
-      const basket = await Basket_Modal.findOne({
-        _id: basket_id,
-        del: false
-      });
+        const basket = await Basket_Modal.findOne({
+          _id: basket_id,
+          del: false
+        });
 
 
-      // Map plan validity to months
-      const validityMapping = {
-        '1 month': 1,
-        '2 months': 2,
-        '3 months': 3,
-        '6 months': 6,
-        '9 months': 9,
-        '1 year': 12,
-        '2 years': 24,
-        '3 years': 36,
-        '4 years': 48,
-        '5 years': 60,
-      };
+        // Map plan validity to months
+        const validityMapping = {
+          '1 month': 1,
+          '2 months': 2,
+          '3 months': 3,
+          '6 months': 6,
+          '9 months': 9,
+          '1 year': 12,
+          '2 years': 24,
+          '3 years': 36,
+          '4 years': 48,
+          '5 years': 60,
+        };
 
-      const monthsToAdd = validityMapping[basket.validity];
-      if (monthsToAdd === undefined) {
-        return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+        const monthsToAdd = validityMapping[basket.validity];
+        if (monthsToAdd === undefined) {
+          return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+        }
+
+        const start = new Date();
+        const end = new Date(start);
+        end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+        end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+
+        const numberOfPlans = basket_ids.length;
+        const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
+
+
+
+        let total = basket.basket_price - discountPerPlan; // Use let for reassignable variables
+        let totalgst = 0;
+
+        if (settings.gst > 0 && settings.gststatus == 1) {
+          totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
+          total = total + totalgst;
+        }
+
+
+        // Create a new subscription
+        const newSubscription = new BasketSubscription_Modal({
+          basket_id,
+          client_id,
+          total: total,
+          plan_price: basket.basket_price,
+          discount: discountPerPlan,
+          gstamount: totalgst,
+          gst: settings.gst,
+          coupon: coupon,
+          startdate: start,
+          enddate: end,
+          validity: basket.validity,
+          orderid: orderid,
+          ordernumber: `INV-${orderNumber}`,
+          invoice: `INV-${orderNumber}.pdf`,
+        });
+
+        // Save to the database
+        const savedSubscription = await newSubscription.save();
       }
 
-      const start = new Date();
-      const end = new Date(start);
-      end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
-      end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
 
-      const numberOfPlans = basket_ids.length;
-      const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
+      const updatedItems = await Addtocart_Modal.updateMany(
+        { client_id: client_id, status: false, plan_id: null }, // Find all matching items
+        { $set: { status: true } } // Update status to true
+      );
 
-
-
-      let total = basket.basket_price-discountPerPlan; // Use let for reassignable variables
-      let totalgst = 0;
-      
-      if (settings.gst > 0 && settings.gststatus==1) {
-        totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
-        total = total + totalgst;
-      }
-
-
-      // Create a new subscription
-      const newSubscription = new BasketSubscription_Modal({
-        basket_id,
-        client_id,
-        total: total,
-        plan_price: basket.basket_price,
-        discount: discountPerPlan,
-        gstamount:totalgst,
-        gst: settings.gst,
-        coupon: coupon,
-        startdate: start,
-        enddate: end,
-        validity: basket.validity,
-        orderid: orderid,
-        ordernumber : `INV-${orderNumber}`,
-        invoice : `INV-${orderNumber}.pdf`,
-      });
-
-      // Save to the database
-      const savedSubscription = await newSubscription.save();
-    }
-
-
-    const updatedItems = await Addtocart_Modal.updateMany(
-      { client_id: client_id, status: false, plan_id: null }, // Find all matching items
-      { $set: { status: true } } // Update status to true
-  );
-  
 
       // if (settings.invoicestatus == 1) {
 
-     
+
 
         let payment_type;
         if (orderid) {
@@ -6077,8 +6079,8 @@ class List {
             _id: basket_id,
             del: false
           });
-    
-    
+
+
           // Map plan validity to months
           const validityMapping = {
             '1 month': 1,
@@ -6092,19 +6094,19 @@ class List {
             '4 years': 48,
             '5 years': 60,
           };
-    
+
           const monthsToAdd = validityMapping[basket.validity];
           if (monthsToAdd === undefined) {
             return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
           }
-    
+
           const start = new Date();
           const end = new Date(start);
           end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
           end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
-    
 
-        planDetailsHtml += `
+
+          planDetailsHtml += `
             <tr>
               <td>${basket.title}</td>
               <td>${basket.validity}</td>
@@ -6115,7 +6117,7 @@ class List {
         }
 
 
-        const todays = new Date(); 
+        const todays = new Date();
 
         htmlContent = htmlContent
           .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
@@ -6217,49 +6219,49 @@ class List {
   async AddToCartPlan(req, res) {
     try {
       const { plan_id, client_id } = req.body;
-  
+
       // Validate input
       if (!plan_id || !client_id) {
-        return res.status(400).json({ 
-          status: false, 
-          message: 'Missing required fields: plan_id and client_id are required.' 
+        return res.status(400).json({
+          status: false,
+          message: 'Missing required fields: plan_id and client_id are required.'
         });
       }
-  
+
       // Check if plan exists in the database (optional step)
       const plan = await Plan_Modal.findById(plan_id);
       if (!plan) {
-        return res.status(404).json({ 
-          status: false, 
-          message: 'Plan not found.' 
+        return res.status(404).json({
+          status: false,
+          message: 'Plan not found.'
         });
       }
-  
+
       // Check if client exists in the database (optional step)
       const client = await Clients_Modal.findById(client_id);
       if (!client) {
-        return res.status(404).json({ 
-          status: false, 
-          message: 'Client not found.' 
+        return res.status(404).json({
+          status: false,
+          message: 'Client not found.'
         });
       }
-  
+
       // Create the new subscription object for the cart
       const newSubscription = new Addtocart_Modal({
         plan_id,
         client_id,
       });
-  
+
       // Save the subscription
       const savedSubscription = await newSubscription.save();
-  
+
       // Return a success response with the saved subscription details
       return res.status(201).json({
         status: true,
         message: 'Plan added to cart successfully.',
         data: savedSubscription,
       });
-      
+
     } catch (error) {
       console.error('Error adding plan to cart:', error);
       return res.status(500).json({
@@ -6269,53 +6271,53 @@ class List {
       });
     }
   }
-  
+
   async AddToCartBasket(req, res) {
     try {
       const { basket_id, client_id } = req.body;
-  
+
       // Validate input
       if (!basket_id || !client_id) {
-        return res.status(400).json({ 
-          status: false, 
-          message: 'Missing required fields: basket_id and client_id are required.' 
+        return res.status(400).json({
+          status: false,
+          message: 'Missing required fields: basket_id and client_id are required.'
         });
       }
-  
+
       // Check if plan exists in the database (optional step)
       const plan = await Basket_Modal.findById(basket_id);
       if (!plan) {
-        return res.status(404).json({ 
-          status: false, 
-          message: 'Plan not found.' 
+        return res.status(404).json({
+          status: false,
+          message: 'Plan not found.'
         });
       }
-  
+
       // Check if client exists in the database (optional step)
       const client = await Clients_Modal.findById(client_id);
       if (!client) {
-        return res.status(404).json({ 
-          status: false, 
-          message: 'Client not found.' 
+        return res.status(404).json({
+          status: false,
+          message: 'Client not found.'
         });
       }
-  
+
       // Create the new subscription object for the cart
       const newSubscription = new Addtocart_Modal({
         basket_id,
         client_id,
       });
-  
+
       // Save the subscription
       const savedSubscription = await newSubscription.save();
-  
+
       // Return a success response with the saved subscription details
       return res.status(201).json({
         status: true,
         message: 'Basket added to cart successfully.',
         data: savedSubscription,
       });
-      
+
     } catch (error) {
       console.error('Error adding Basket to cart:', error);
       return res.status(500).json({
@@ -6329,46 +6331,46 @@ class List {
   async PlanCartList(req, res) {
     try {
       const { client_id } = req.params; // Assuming client_id is passed in URL parameters
-  
+
       // Validate input
       if (!client_id) {
         return res.status(400).json({
           status: false,
           message: 'Client ID is required.',
-          data:[],
+          data: [],
         });
       }
-  
+
       // Fetch cart items where client_id matches and status is false
       const cartItems = await Addtocart_Modal.find({
         client_id: client_id,
         status: false,
         basket_id: null, // Check for both null and empty string
       }).populate('plan_id', 'price validity')  // Populate plan details
-       .populate({
-        path: 'plan_id', // The path to the plan
-        populate: {
-          path: 'category', // The field in Plan model that references the Plancategory
-          select: 'title' // Select only the 'title' from Plancategory
-        }
-      });
-  
+        .populate({
+          path: 'plan_id', // The path to the plan
+          populate: {
+            path: 'category', // The field in Plan model that references the Plancategory
+            select: 'title' // Select only the 'title' from Plancategory
+          }
+        });
+
       // Check if cart is empty
       if (!cartItems.length) {
         return res.status(404).json({
           status: false,
           message: 'No items found in the cart for this client.',
-          data:[],
+          data: [],
         });
       }
-  
+
       // Return success response with cart items
       return res.status(200).json({
         status: true,
         message: 'Cart items retrieved successfully.',
         data: cartItems,
       });
-  
+
     } catch (error) {
       console.error('Error retrieving cart items:', error);
       return res.status(500).json({
@@ -6378,43 +6380,43 @@ class List {
       });
     }
   }
-  
+
   async BasketCartList(req, res) {
     try {
       const { client_id } = req.params; // Assuming client_id is passed in URL parameters
-     
+
       // Validate input
       if (!client_id) {
         return res.status(400).json({
           status: false,
           message: 'Client ID is required.',
-          data:[],
+          data: [],
         });
       }
-  
+
       // Fetch cart items where client_id matches and status is false
       const cartItems = await Addtocart_Modal.find({
         client_id: client_id,
         status: false,
         plan_id: null, // Check for both null and empty string
-      }).populate('basket_id','title	themename	full_price	basket_price	validity');
-  
+      }).populate('basket_id', 'title	themename	full_price	basket_price	validity');
+
       // Check if cart is empty
       if (!cartItems.length) {
         return res.status(404).json({
           status: false,
           message: 'No items found in the cart for this client.',
-          data:[],
+          data: [],
         });
       }
-  
+
       // Return success response with cart items
       return res.status(200).json({
         status: true,
         message: 'Cart items retrieved successfully.',
         data: cartItems,
       });
-  
+
     } catch (error) {
       console.error('Error retrieving cart items:', error);
       return res.status(500).json({
@@ -6424,11 +6426,11 @@ class List {
       });
     }
   }
-  
+
   async DeleteCartItem(req, res) {
     try {
       const { id, client_id } = req.body; // Assuming cart_id is passed in request body
-  
+
       // Validate input
       if (!id || !client_id) {
         return res.status(400).json({
@@ -6436,13 +6438,13 @@ class List {
           message: "Cart ID and Client ID are required.",
         });
       }
-  
+
       // Find and delete the cart item
       const deletedItem = await Addtocart_Modal.findOneAndDelete({
         _id: id,
         client_id: client_id,
       });
-  
+
       // If no item is found, return an error
       if (!deletedItem) {
         return res.status(404).json({
@@ -6450,13 +6452,13 @@ class List {
           message: "Cart item not found.",
         });
       }
-  
+
       // Return success response
       return res.status(200).json({
         status: true,
         message: "Cart item deleted successfully.",
       });
-  
+
     } catch (error) {
       console.error("Error deleting cart item:", error);
       return res.status(500).json({
@@ -6476,7 +6478,7 @@ class List {
       const skip = (parseInt(page) - 1) * parseInt(limit); // Calculate how many items to skip
       const limitValue = parseInt(limit); // Items per page
 
-    
+
       const subscriptions = await PlanSubscription_Modal.find({ client_id });
       if (subscriptions.length === 0) {
         return res.json({
@@ -6487,44 +6489,44 @@ class List {
       }
 
       const planIds = subscriptions
-    .map(sub => sub.plan_category_id)
-    .filter(id => id != null); // Filters out null and undefined
+        .map(sub => sub.plan_category_id)
+        .filter(id => id != null); // Filters out null and undefined
 
-    
+
       const planStarts = subscriptions.map(sub => new Date(sub.plan_start));
       const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
 
       const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
 
-    
+
       // const uniquePlanIds = [
       //   ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
       // ].map(id => new ObjectId(id));
-      
+
 
       const query = {
         service: service_id,
         close_status: true,
         $or: planIds.map((planId, index) => ({
           planid: planId.toString(), // Matching the planid with regex
-          created_at: { $lte: planEnds[index] },  
+          created_at: { $lte: planEnds[index] },
           closedate: { $gte: planStarts[index] }      // Checking if created_at is <= to planEnds
         }))
       };
 
-    //   const query = {
-    //     service: service_id,
-    //     close_status: false,
-    //     $or: uniquePlanIds.map((planId, index) => {
-    //         return {
-    //             planid: { $regex: `(^|,)${planId}($|,)` }
-    //             created_at: { $lte: planEnds[index] } // Compare created_at with the plan_end date of each subscription
-    //         };
-    //     })
-    // };
+      //   const query = {
+      //     service: service_id,
+      //     close_status: false,
+      //     $or: uniquePlanIds.map((planId, index) => {
+      //         return {
+      //             planid: { $regex: `(^|,)${planId}($|,)` }
+      //             created_at: { $lte: planEnds[index] } // Compare created_at with the plan_end date of each subscription
+      //         };
+      //     })
+      // };
 
 
-    //console.log("Final Query:", JSON.stringify(query, null, 2));
+      //console.log("Final Query:", JSON.stringify(query, null, 2));
       const protocol = req.protocol; // Will be 'http' or 'https'
 
       const baseUrl = `https://${req.headers.host}`; // Construct the base URL
@@ -6546,7 +6548,7 @@ class List {
         .skip(skip)
         .limit(limitValue)
         .lean();
-    
+
 
 
       const totalSignals = await Signal_Modal.countDocuments(query);
@@ -6558,7 +6560,7 @@ class List {
           signalid: signal._id
         }).lean();
 
-       
+
         return {
           ...signal,
           report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null, // Append full report URL
@@ -6587,14 +6589,14 @@ class List {
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
-  
 
-  
+
+
   async getStockrating(req, res) {
     try {
 
       const { symbol } = req.params;
-      const result = await Stockrating_Modal.find({ del: false, symbol:symbol });
+      const result = await Stockrating_Modal.find({ del: false, symbol: symbol });
 
 
       if (result.length === 0) {
@@ -6604,7 +6606,7 @@ class List {
           data: [],
         });
       }
-  
+
 
       return res.json({
         status: true,
@@ -6621,26 +6623,26 @@ class List {
   async SignalLatest(req, res) {
     try {
       const { service_id, client_id } = req.body;
-  
+
       // Ensure service_id is provided
       if (!service_id) {
         return res.json({ status: false, message: "Service ID is required", data: [] });
       }
-  
+
       // Query to fetch the last 5 signals
       const query = {
         service: service_id, // Match the service_id
         close_status: false  // Ensure signals are active (not closed)
       };
-  
+
       const signals = await Signal_Modal.find(query)
         .sort({ created_at: -1 }) // Sort by created_at in descending order
         .limit(5) // Fetch only the last 5 signals
         .lean();
-  
+
       const protocol = req.protocol;
       const baseUrl = `https://${req.headers.host}`;
-  
+
       // Enhance the signals with additional info
       const signalsWithReportUrls = await Promise.all(
         signals.map(async (signal) => {
@@ -6649,7 +6651,7 @@ class List {
             clientid: client_id,
             signalid: signal._id
           }).lean();
-  
+
           return {
             ...signal,
             report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null, // Full report URL
@@ -6658,7 +6660,7 @@ class List {
           };
         })
       );
-  
+
       return res.json({
         status: true,
         message: "Last 5 signals retrieved successfully",
@@ -6681,63 +6683,64 @@ class List {
         closeprice: { $ne: 0 },
         service: new mongoose.Types.ObjectId(id),
       };
-  
+
       // Agar callduration available ho, to usko filter me add karein
       if (callDurationValue !== null) {
         query.callduration = callDurationValue;
       }
-  
+
       // Signals fetch karein
       const signals = await Signal_Modal.find(query);
       const count = signals.length;
-  
+
       if (count === 0) {
         return res.status(404).json({
           status: false,
           message: "No signals found",
         });
       }
-  
+
       let totalProfit = 0;
       let totalLoss = 0;
       let profitCount = 0;
       let lossCount = 0;
       let avgreturnpermonth = 0;
       let totalDaysOfAllSignals = 0; // ✅ Declare outside the loop
-
-  
+      let totalpercentagecount = 0;
+      let signalper = 0;
+      let totalpercentagecountavarage = 0;
       const [firstSignal, lastSignal] = await Promise.all([
         Signal_Modal.findOne(query).sort({ created_at: 1 }),
         Signal_Modal.findOne(query).sort({ created_at: -1 }),
       ]);
-  
+
       if (!firstSignal || !lastSignal) {
         return res.status(404).json({
           status: false,
           message: "No signals found",
         });
       }
-  
+
       const firstCreatedAt = firstSignal.created_at;
       const lastCreatedAt = lastSignal.created_at;
-  
+
       const startYear = firstCreatedAt.getFullYear();
       const startMonth = firstCreatedAt.getMonth();
       const endYear = lastCreatedAt.getFullYear();
       const endMonth = lastCreatedAt.getMonth();
-  
+
       const yearDifference = endYear - startYear;
       const monthDifference = endMonth - startMonth;
       const monthsBetween = yearDifference * 12 + monthDifference;
-  
+
       signals.forEach((signal) => {
         const entryPrice = parseFloat(signal.price);
         const exitPrice = parseFloat(signal.closeprice);
         const callType = signal.calltype;
-  
+
         if (!isNaN(entryPrice) && !isNaN(exitPrice)) {
           let profitOrLoss = callType === "BUY" ? exitPrice - entryPrice : entryPrice - exitPrice;
-  
+
           if (profitOrLoss >= 0) {
             totalProfit += ["66dfede64a88602fbbca9b72", "66dfeef84a88602fbbca9b79"].includes(id)
               ? profitOrLoss * signal.lotsize
@@ -6765,11 +6768,29 @@ class List {
   }
 
   totalDaysOfAllSignals += signalDays; // ✅ Accumulate instead of resetting
+
+
+
+if(signal.calltype=="BUY")
+{
+ signalper = (signal.closeprice - signal.price) / signal.price * 100;
+ 
+}
+else{
+  signalper = (signal.price - signal.closeprice) / signal.price * 100;
+
+}
+totalpercentagecount = signalper + totalpercentagecount;
+
 }
 
 
 
+
+
       });
+
+      totalpercentagecountavarage = totalpercentagecount / count;
   
       const accuracy = (profitCount / count) * 100;
       const avgreturnpertrade = (totalProfit - totalLoss) / count;
@@ -6798,6 +6819,7 @@ const avgDaysPerSignal = count > 0
           avgreturnpertrade,
           avgreturnpermonth,
           avgDaysPerSignal,
+          totalpercentagecountavarage,
         },
       });
     } catch (error) {
@@ -6808,28 +6830,28 @@ const avgDaysPerSignal = count > 0
       });
     }
   }
-  
+
 
   async CloseSignalwithtype(req, res) {
     try {
       const { service_id, search, page = 1, callduration } = req.body;
-  
+
       const limit = 15;
       const skip = (parseInt(page) - 1) * parseInt(limit);
       const limitValue = parseInt(limit);
-  
+
       // Base query
       const query = {
         service: service_id,
         close_status: true,
         closeprice: { $ne: 0 }
       };
-  
+
       // Agar callduration exist karta hai to query me add karein
       if (callduration) {
         query.callduration = callduration;
       }
-  
+
       // Agar search filter exist karta hai to query me add karein
       if (search && search.trim() !== '') {
         query.$or = [
@@ -6839,24 +6861,24 @@ const avgDaysPerSignal = count > 0
           { closeprice: { $regex: search, $options: 'i' } }
         ];
       }
-  
+
       // Fetch signals and sort by createdAt in descending order
       const signals = await Signal_Modal.find(query)
         .sort({ created_at: -1 })
         .skip(skip)
         .limit(limitValue)
         .lean();
-  
+
       const protocol = req.protocol; // 'http' or 'https'
       const baseUrl = `https://${req.headers.host}`; // Base URL for constructing report path
-  
+
       const signalsWithReportUrls = signals.map(signal => ({
         ...signal,
         report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null
       }));
-  
+
       const totalSignals = await Signal_Modal.countDocuments(query);
-  
+
       return res.json({
         status: true,
         message: "Signals retrieved successfully",
@@ -6873,57 +6895,125 @@ const avgDaysPerSignal = count > 0
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
-  
+
   async updatePerformanceStatus(req, res) {
     try {
-        const { client_id, performance_status } = req.body;
-        // Validate required fields
-        if (!client_id ) {
-            return res.status(400).json({ message: "Client ID are required." });
-        }
-
-        // Find client by ID
-        const client = await Clients_Modal.findById(client_id);
-        if (!client) {
-            return res.status(404).json({ message: "Client not found." });
-        }
-
-        // Update performance status (0 or 1)
-        client.performance_status = performance_status;
-        await client.save();
-
-        return res.status(200).json({ message: "Performance status updated successfully.", data: client });
-
-    } catch (error) {
-        return res.status(500).json({ message: "Something went wrong.", error: error.message });
-    }
-}
-
-
-
-
-async checkClientToken(req, res) {
-  try {
-      const { client_id, token } = req.body;
+      const { client_id, performance_status } = req.body;
       // Validate required fields
-      if (!client_id ) {
-          return res.status(400).json({ message: "Client ID are required." });
+      if (!client_id) {
+        return res.status(400).json({ message: "Client ID are required." });
       }
 
       // Find client by ID
       const client = await Clients_Modal.findById(client_id);
       if (!client) {
-          return res.status(404).json({ message: "Client not found." });
+        return res.status(404).json({ message: "Client not found." });
       }
-    if(client.login_token == token){
-     return res.status(200).json({ status: true, });
-     }
-    else
-     {
-     return res.status(200).json({ status: false, });
-     }
 
-  } catch (error) {
+      // Update performance status (0 or 1)
+      client.performance_status = performance_status;
+      await client.save();
+
+      return res.status(200).json({ message: "Performance status updated successfully.", data: client });
+
+    } catch (error) {
+      return res.status(500).json({ message: "Something went wrong.", error: error.message });
+    }
+  }
+
+  async LatestSignalsWithoutActivePlan(req, res) {
+    try {
+      const { client_id } = req.body;
+      const limit = 10;
+
+      // Fetch all subscriptions
+      const subscriptions = await PlanSubscription_Modal.find({ client_id });
+
+      // Extract active plan IDs and their end dates
+      const activePlanIds = subscriptions
+        .filter(sub => sub.status === "active" && new Date(sub.plan_end) >= new Date())
+        .map(sub => sub.plan_category_id)
+        .filter(id => id != null);
+
+      // Convert plan IDs to strings for comparison
+      const activePlanIdStrings = activePlanIds.map(id => id.toString());
+
+      // Fetch all non-active plan signals based on client_id only
+      const exclusionQuery = {
+        close_status: false,
+        planid: { $nin: activePlanIdStrings, $ne: null, $exists: true }
+      };
+
+      const latestSignals = await Signal_Modal.find(exclusionQuery)
+        .sort({ created_at: -1 })
+        .lean();
+
+      const protocol = req.protocol;
+      const baseUrl = `${protocol}://${req.headers.host}`;
+
+      // Attach report URLs and purchase details, limiting to 2 signals per plan
+      let signalsWithDetails = [];
+      const planSignalCount = {}; // Track how many signals per plan
+
+      for (const signal of latestSignals) {
+        const planId = signal.planid ? signal.planid.toString() : "noPlan";
+        if (!planSignalCount[planId]) {
+          planSignalCount[planId] = 0;
+        }
+
+        if (planSignalCount[planId] < 2) {
+          const order = await Order_Modal.findOne({
+            clientid: client_id,
+            signalid: signal._id
+          }).lean();
+
+          signalsWithDetails.push({
+            ...signal,
+            report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
+            purchased: order ? true : false,
+            order_quantity: order ? order.quantity : 0
+          });
+
+          planSignalCount[planId]++;
+        }
+
+        if (signalsWithDetails.length >= limit) break; // Stop after 10 signals total
+      }
+
+      return res.json({
+        status: true,
+        message: "Latest 10 signals retrieved successfully, limiting 2 signals per plan.",
+        data: signalsWithDetails,
+
+      });
+    } catch (error) {
+      console.error("Error fetching signals:", error);
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
+
+
+  async checkClientToken(req, res) {
+    try {
+      const { client_id, token } = req.body;
+      // Validate required fields
+      if (!client_id) {
+        return res.status(400).json({ message: "Client ID are required." });
+      }
+
+      // Find client by ID
+      const client = await Clients_Modal.findById(client_id);
+      if (!client) {
+        return res.status(404).json({ message: "Client not found." });
+      }
+      if (client.login_token == token) {
+        return res.status(200).json({ status: true, });
+      }
+      else {
+        return res.status(200).json({ status: false, });
+      }
+
+    } catch (error) {
       return res.status(500).json({ message: "Something went wrong.", error: error.message });
   }
 }
@@ -6986,16 +7076,6 @@ async LatestSignalsWithoutActivePlan(req, res) {
 
       if (signalsWithDetails.length >= limit) break; // Stop after 10 signals total
     }
-
-    return res.json({
-      status: true,
-      message: "Latest 10 signals retrieved successfully, limiting 2 signals per plan.",
-      data: signalsWithDetails,
-   
-    });
-  } catch (error) {
-    console.error("Error fetching signals:", error);
-    return res.json({ status: false, message: "Server error", data: [] });
   }
 }
 */
@@ -7317,14 +7397,6 @@ function formatDate(date) {
   return `${day}/${month}/${year}`;
 
 }
-
-
-
- 
-
-
-
-
 
 
 module.exports = new List();

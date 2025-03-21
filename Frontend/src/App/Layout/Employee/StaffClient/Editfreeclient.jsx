@@ -1,6 +1,7 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
+import Swal from 'sweetalert2';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { UpdateClient } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';

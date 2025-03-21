@@ -1,9 +1,9 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
+import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Updatecompanydata } from '../../../Services/Superadmin/Admin';
-import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 
@@ -56,15 +56,33 @@ const Update = () => {
         try {
             const response = await Updatecompanydata(req, token);
             if (response.status) {
-                showCustomAlert("Success",response.message)
+                Swal.fire({
+                    title: "Update Successful!",
+                    text: response.message,
+                    icon: "success",
+                    timer: 1500,
+                    timerProgressBar: true,
+                });
                 setTimeout(() => {
                     navigate("/admin/company");
                 }, 1500);
             } else {
-                showCustomAlert("error",response.message)
+                Swal.fire({
+                    title: "Error",
+                    text: response.message,
+                    icon: "error",
+                    timer: 1500,
+                    timerProgressBar: true,
+                });
             }
         } catch (error) {
-            showCustomAlert("error","An unexpected error occurred. Please try again later.")
+            Swal.fire({
+                title: "Error",
+                text: "An unexpected error occurred. Please try again later.",
+                icon: "error",
+                timer: 1500,
+                timerProgressBar: true,
+            });
         }
     };
 

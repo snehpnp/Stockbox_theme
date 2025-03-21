@@ -290,7 +290,7 @@ const Service = () => {
                 onChange={(e) => setSortCriteria(e.target.value)}
                 value={sortCriteria}
               >
-                <option value="">All Segment</option>
+                <option value="">Select Segment</option>
                 <option value="Cash">Cash</option>
                 <option value="Future">Future</option>
                 <option value="Option">Option</option>
@@ -416,7 +416,6 @@ const Service = () => {
           <Modal.Title className="text-center w-100 heading-color modal-title h4 ">
             🌟 Plan Details
           </Modal.Title>
-
         </Modal.Header>
         <Modal.Body>
           {selectedPlanDetails && (

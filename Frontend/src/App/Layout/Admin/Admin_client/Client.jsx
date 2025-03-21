@@ -289,7 +289,7 @@ const Client = () => {
     try {
       const response = await BasketAllList(token);
       if (response.status) {
-        setBasketlist(response.data);
+        setBasketlist(response.data); 
       }
     } catch (error) {
       console.log("error");
@@ -430,6 +430,12 @@ const Client = () => {
       width: "350px",
     },
     {
+<<<<<<<<< Temporary merge branch 1
+      name: "State",
+      selector: (row) => row?.state || "-",
+      sortable: true,
+      width: "300px",
+=========
       name: "Phone No",
       selector: (row) => row.PhoneNo,
       sortable: true,
@@ -440,6 +446,7 @@ const Client = () => {
       selector: (row) => row.state ? row.state : "-",
       sortable: true,
       width: "200px",
+>>>>>>>>> Temporary merge branch 2
     },
     {
       name: "Plan Status",
@@ -498,6 +505,11 @@ const Client = () => {
       width: "200px",
     },
 
+    {
+      name: "Phone No",
+      selector: (row) => row.PhoneNo,
+      sortable: true,
+    },
 
     {
       name: "Created By",

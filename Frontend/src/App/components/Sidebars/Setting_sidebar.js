@@ -5,7 +5,6 @@ import { SketchPicker } from "react-color";
 import { AddThemeApi } from "../../Services/Themes/Theme";
 
 import Swal from "sweetalert2";
-import showCustomAlert from "../../Extracomponents/CustomAlert/CustomAlert";
 export default function Setting_sidebar() {
   const [isGradient, setIsGradient] = useState({
     sidebar: false,
@@ -199,13 +198,13 @@ export default function Setting_sidebar() {
 
           // Check if response status is successful
           if (response.status) {
-            showCustomAlert("Success","Theme Created Successfully")
+            Swal.fire({ title: "Theme Created Successfully", icon: "success" });
           } else {
-            showCustomAlert("error","Theme Creation Failed")
+            Swal.fire({ title: "Theme Creation Failed", icon: "error" });
           }
         } catch (error) {
           // Handle any errors during the API request
-          showCustomAlert("error","Theme Creation Failed")
+          Swal.fire({ title: "Theme Creation Failed", icon: "error" });
         }
       },
       allowOutsideClick: () => !Swal.isLoading(),

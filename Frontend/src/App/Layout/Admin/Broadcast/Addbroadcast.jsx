@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
+import Swal from 'sweetalert2';
 import DynamicForm from '../../../Extracomponents/FormicForm';
 import { useNavigate } from 'react-router-dom';
 import { SendBroadCast, GetService } from '../../../Services/Admin/Admin';
@@ -153,7 +154,7 @@ const Addbroadcast = () => {
             <DynamicForm
                 fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
                 formik={formik}
-                // page_title="Add Broadcast"
+                page_title="Add Broadcast"
                 btn_name="Add Broadcast"
                 btn_name1="Cancel"
                 sumit_btn={true}

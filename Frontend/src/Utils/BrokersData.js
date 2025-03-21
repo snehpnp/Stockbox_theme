@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import ReusableModal from "../App/components/Models/ReusableModal";
 import { UpdateBroker } from "../App/Services/UserService/User";
+import Swal from "sweetalert2";
 import { base_url } from "./config";
 import { brokerContentMap } from "./BrokerApiInfo";
-import showCustomAlert from "../App/Extracomponents/CustomAlert/CustomAlert";
 
 function BrokersData({ data, closeModal, type }) {
 
@@ -202,7 +202,12 @@ function BrokersData({ data, closeModal, type }) {
       if (loginData.status) {
         window.location.href = loginData.url;
       } else {
-        showCustomAlert("error","Oops")
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: loginData.message,
+          timer: 2000,
+        });
       }
     } catch (error) {
       console.error("Error during broker login", error);

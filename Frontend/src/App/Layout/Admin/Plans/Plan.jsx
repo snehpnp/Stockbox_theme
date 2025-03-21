@@ -16,8 +16,6 @@ const Plan = () => {
     const [clients, setClients] = useState([]);
     const [category, setCategory] = useState([]);
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-    console.log("selectedCategoryId",selectedCategoryId);
-    
     const token = localStorage.getItem('token');
 
     const [isLoading, setIsLoading] = useState(true)

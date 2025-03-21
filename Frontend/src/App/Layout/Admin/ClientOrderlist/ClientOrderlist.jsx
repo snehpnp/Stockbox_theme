@@ -190,7 +190,7 @@ const ClientOrderlist = () => {
         },
         {
             name: 'Broker',
-            selector: row => row?.borkerid == 1 ? "Angel One" : row?.borkerid == 2 ? "Alice Blue" : row?.borkerid == 3 ? "Kotak Neo" : row?.borkerid == 4 ? "Market Hub" : "",
+            selector: row => row?.borkerid == 1 ? "Angel One" : row?.borkerid == 2 ? "Alice Blue" : row?.borkerid == 3 ? "Kotak Neo" : row?.borkerid == 4 ? "Market Hub" : row?.borkerid == 5 ? "Zerodha" : row?.borkerid == 6 ? "Upstox" : row?.borkerid == 7 ? "Dhan" : "",
             sortable: true,
             width: '200px',
         },

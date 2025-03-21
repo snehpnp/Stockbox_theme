@@ -72,7 +72,7 @@ const Planexpirymonth = () => {
                     </Tooltip>
                 </div>
             ),
-            width: "338px",
+            width: "165px",
         },
     ];
 

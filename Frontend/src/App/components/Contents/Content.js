@@ -64,7 +64,10 @@ const Content = ({
 
                 >
                   <i
-                    className={`fa-solid ${backbutton_title === "Back" ? "fa-arrow-left" : "fa-arrow-left"}`}
+                    className={`fa-solid ${backbutton_title === "Back"
+                      ? "fa-arrow-left"
+                      : "fa-arrow-left"
+                      }`}
                   ></i>{" "}
                   {backbutton_title}
                 </button>

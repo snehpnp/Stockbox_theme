@@ -7,8 +7,8 @@ import { MoveLeft, Plus, Eye, EyeOff } from "lucide-react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import DropdownMultiselect from "react-multiselect-dropdown-bootstrap";
+import Swal from "sweetalert2";
 import JoditEditor from 'jodit-react';
-import showCustomAlert from "./CustomAlert/CustomAlert";
 
 
 const DynamicForm = ({
@@ -449,7 +449,13 @@ const DynamicForm = ({
                                         formik.setFieldValue(field.name, file);
                                       } else {
                                         //   alert("Please select a valid image file (JPEG, PNG, GIF).");
-                                        showCustomAlert("alert","Please select a valid image file (JPEG, PNG, GIF)")
+                                        Swal.fire({
+                                          title: "warning",
+                                          text: "Please select a valid image file (JPEG, PNG, GIF)",
+                                          icon: "alert",
+                                          timer: 1500,
+                                          timerProgressBar: true,
+                                        });
                                         e.target.value = "";
                                       }
                                     }

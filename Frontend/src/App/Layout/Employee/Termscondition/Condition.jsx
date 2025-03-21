@@ -4,7 +4,6 @@ import { getconsitionlist, Addtermscondition, UpdateCondition, changeconditionst
 import Table from '../../../components/Table';
 import { SquarePen, Trash2, PanelBottomOpen } from 'lucide-react';
 import Swal from 'sweetalert2';
-import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Condition = () => {
 
@@ -63,16 +62,32 @@ const Condition = () => {
             const response = await UpdateCondition(data, token);
 
             if (response && response.status) {
-                showCustomAlert("Success","Service updated successfully.")                        
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Service updated successfully.',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 2000,
+                });
 
                 setUpdatetitle({ title: "", id: "", description: "" });
                 gettermslist();
                 setModel(false);
             } else {
-                showCustomAlert("error","There was an error updating the service.")                      
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'There was an error updating the service.',
+                    icon: 'error',
+                    confirmButtonText: 'Try Again',
+                });
             }
         } catch (error) {
-            showCustomAlert("error","There was an error updating the service.")         
+            Swal.fire({
+                title: 'Error!',
+                text: 'There was an error updating the service.',
+                icon: 'error',
+                confirmButtonText: 'Try Again',
+            });
         }
     };
 
@@ -86,7 +101,14 @@ const Condition = () => {
             const data = { title: title.title, add_by: userid, description: title.description };
             const response = await Addtermscondition(data, token);
             if (response && response.status) {
-                showCustomAlert("Success","Service added successfully.")
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Service added successfully.',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    timer: 2000,
+                });
+
                 setTitle({ title: "", add_by: "", description: "" });
                 gettermslist();
 
@@ -96,10 +118,20 @@ const Condition = () => {
                     bootstrapModal.hide();
                 }
             } else {
-                showCustomAlert("error","There was an error adding the service.")               
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'There was an error adding the service.',
+                    icon: 'error',
+                    confirmButtonText: 'Try Again',
+                });
             }
         } catch (error) {
-            showCustomAlert("error","There was an error adding the service.")          
+            Swal.fire({
+                title: 'Error!',
+                text: 'There was an error adding the service.',
+                icon: 'error',
+                confirmButtonText: 'Try Again',
+            });
         }
     };
 
@@ -122,14 +154,23 @@ const Condition = () => {
             try {
                 const response = await changeconditionstatus(data, token);
                 if (response.status) {
-                    showCustomAlert("Success","Saved!")                                         
+                    Swal.fire({
+                        title: "Saved!",
+                        icon: "success",
+                        timer: 1000,
+                        timerProgressBar: true,
+                    });
                     setTimeout(() => {
                         Swal.close();
                     }, 1000);
                 }
                 gettermslist();
             } catch (error) {
-                showCustomAlert("error","There was an error processing your request.")               
+                Swal.fire(
+                    "Error",
+                    "There was an error processing your request.",
+                    "error"
+                );
             }
         } else if (result.dismiss === Swal.DismissReason.cancel) {
             gettermslist();
@@ -157,15 +198,32 @@ const Condition = () => {
             if (result.isConfirmed) {
                 const response = await Deleteservices(_id, token);
                 if (response.status) {
-                    showCustomAlert("Success","Deleted!")                  
+                    Swal.fire({
+                        title: 'Deleted!',
+                        text: 'The staff has been successfully deleted.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                    });
                     gettermslist();
 
                 }
             } else {
-                showCustomAlert("info","The staff deletion was cancelled.")
+
+                Swal.fire({
+                    title: 'Cancelled',
+                    text: 'The staff deletion was cancelled.',
+                    icon: 'info',
+                    confirmButtonText: 'OK',
+                });
             }
         } catch (error) {
-            showCustomAlert("error","There was an error deleting the staff.")           
+            Swal.fire({
+                title: 'Error!',
+                text: 'There was an error deleting the staff.',
+                icon: 'error',
+                confirmButtonText: 'Try Again',
+            });
+
         }
     };
 

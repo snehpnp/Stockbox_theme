@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import Swal from 'sweetalert2';
 import { ForgetPasswordApi } from '../../Services/Admin/Admin';
 import showCustomAlert from '../../Extracomponents/CustomAlert/CustomAlert';
 

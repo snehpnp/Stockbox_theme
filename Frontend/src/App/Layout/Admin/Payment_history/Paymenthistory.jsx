@@ -4,6 +4,7 @@ import { getPayementhistory, getPayementhistorywithfilter } from '../../../Servi
 // import Table from '../../../components/Table';
 import Table from '../../../Extracomponents/Table1';
 import { SquarePen, Trash2, PanelBottomOpen, Eye, RefreshCcw, IndianRupee, ArrowDownToLine } from 'lucide-react';
+import Swal from 'sweetalert2';
 import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
@@ -17,6 +18,8 @@ const History = () => {
 
     const navigate = useNavigate();
     const [clients, setClients] = useState([]);
+    console.log("clients", clients);
+
     const [model, setModel] = useState(false);
     const [serviceid, setServiceid] = useState({});
     const [searchInput, setSearchInput] = useState("");
@@ -74,7 +77,6 @@ const History = () => {
                         Name: item.clientName || "-",
                         Email: item.clientEmail || "-",
                         Phone: item.clientPhoneNo || "-",
-                        State: item.state || "-",
                         Title: item?.planCategoryTitle || '-',
                         ClientSegment: item?.serviceNames.map(statusItem => statusItem || 'N/A')
                             .join(', ') || 'N/A',
@@ -108,6 +110,8 @@ const History = () => {
         try {
             const data = { page: currentPage, fromDate: startDate, toDate: endDate, search: searchInput }
             const response = await getPayementhistorywithfilter(data, token);
+            console.log("getPayementhistorywithfilter", response);
+
             if (response.status) {
                 let filteredData = response.data;
 
@@ -161,12 +165,6 @@ const History = () => {
         {
             name: 'Phone',
             selector: row => row.clientPhoneNo,
-            sortable: true,
-            width: '200px',
-        },
-        {
-            name: 'State',
-            selector: row => row.state?row.state:"-",
             sortable: true,
             width: '200px',
         },
@@ -265,9 +263,11 @@ const History = () => {
             name: 'Invoice',
             cell: row => (
                 <>
+                    {console.log("row mai kya data pass ho rha hai", row)}
+
 
                     <div className='d-flex '>
-                        {row.invoice ?
+                        {row?.invoice ?
                             <Link className="btn px-2" onClick={() => handleDownload(row)}>
                                 <Tooltip placement="top" overlay="Download">
                                     <ArrowDownToLine />

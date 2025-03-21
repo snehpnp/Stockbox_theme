@@ -33,7 +33,6 @@ async GetAccessToken(req, res) {
       return res.status(404).json({ status: false, message: "Client not found" });
     }
 
-    // Check trading status
     if (client.tradingstatus === "1") {
       return res.json({ status: true, message: "Broker login successfully" });
     }
@@ -121,7 +120,6 @@ async placeOrder(req, res) {
       return res.status(404).json({ status: false, message: "Client not found" });
     }
   
-    // Validate trading status
     if (client.tradingstatus == 0) {
       return res.status(400).json({
         status: false,

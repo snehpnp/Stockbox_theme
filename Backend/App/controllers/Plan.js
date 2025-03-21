@@ -10,7 +10,9 @@ const Refer_Modal = db.Refer;
 const BasicSetting_Modal = db.BasicSetting;
 const Addtocart_Modal = db.Addtocart;
 const Mailtemplate_Modal = db.Mailtemplate;
-
+const puppeteer = require('puppeteer');
+const path = require('path');
+const fs = require('fs');
 
 
 const Adminnotification_Modal = db.Adminnotification;
@@ -1144,6 +1146,7 @@ if (settings.gst > 0 && settings.gststatus==1) {
             validity:1,
             planDetails: 1,
             gstamount: 1,
+            invoice: 1,
             gst: 1,
             clientName: '$clientDetails.FullName',
             clientEmail: '$clientDetails.Email',

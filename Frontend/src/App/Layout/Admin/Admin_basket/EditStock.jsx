@@ -213,7 +213,7 @@ const EditStock = () => {
             const emptyType = Object.values(formValues).filter(
                 (stock) => stock.type === ""
             );
-
+ 
             if (emptyType.length > 0) {
                 showCustomAlert("error", "Please select type.");
                 return;

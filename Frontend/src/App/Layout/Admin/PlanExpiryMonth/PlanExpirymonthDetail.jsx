@@ -134,7 +134,7 @@ const PlanExpirymonthDetail = () => {
             name: 'Total Month',
             selector: row => row?.totalMonths,
             sortable: true,
-            width: '323px',
+            width: '200px',
         },
 
 

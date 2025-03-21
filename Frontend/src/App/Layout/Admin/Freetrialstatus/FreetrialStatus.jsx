@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { addfreeClient, basicsettinglist, getfreetrialstatus } from '../../../Services/Admin/Admin';
+import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
 import Table from '../../../Extracomponents/Table';
 import { fDateTime } from '../../../../Utils/Date_formate';
@@ -122,7 +123,7 @@ const FreetrialStatus = () => {
       name: 'Updated At',
       selector: (row) => fDateTime(row.updatedAt),
       sortable: true,
-      width: '331px',
+      width: '200px',
     },
   ];
 

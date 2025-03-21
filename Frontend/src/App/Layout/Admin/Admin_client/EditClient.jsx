@@ -149,7 +149,7 @@ const EditClient = () => {
       type: "text",
       star: true,
       label_size: 6,
-      col_size: 3,
+      col_size: 4,
       disable: false,
       star: true
 
@@ -168,7 +168,7 @@ const EditClient = () => {
       type: "text",
       star: true,
       label_size: 12,
-      col_size: 3,
+      col_size: 4,
       disable: false,
       star: true
 
@@ -178,7 +178,7 @@ const EditClient = () => {
       label: "Phone Number",
       type: "text3",
       label_size: 12,
-      col_size: 3,
+      col_size: 4,
       disable: false,
       star: true
     },
@@ -215,7 +215,7 @@ const EditClient = () => {
     >
       <DynamicForm
         fields={fields}
-        // page_title="Update Client"
+        page_title="Update Client"
         btn_name="Update Client"
         btn_name1="Cancel"
         formik={formik}

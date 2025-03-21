@@ -234,7 +234,7 @@ const ClientRequest = () => {
                         ) : (
                             <>
                                 <div className="table-responsive">
-                                    <Table
+                                    <Table 
                                         columns={columns}
                                         data={clients}
                                         totalRows={totalRows}

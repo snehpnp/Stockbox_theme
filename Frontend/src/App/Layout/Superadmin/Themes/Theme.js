@@ -5,7 +5,6 @@ import Contnet from "../../../components/Contents/Content";
 import { GetAllThemesApi, GetThemeByIdApi, DeleteThemeApi } from "../../../Services/Themes/Theme";
 import Swal from "sweetalert2";
 import Loader from "../../../../Utils/Loader";
-import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 function Theme() {
@@ -33,12 +32,16 @@ function Theme() {
       if (result.isConfirmed) {
         DeleteThemeApi(id)
           .then((response) => {
-            showCustomAlert("Success","Your theme has been deleted.")
+            Swal.fire("Deleted!",
+              "Your theme has been deleted.",
+              "success");
             GetAllThemes();
           })
           .catch((error) => {
             console.error(error);
-            showCustomAlert("error","There was an error deleting the theme.")
+            Swal.fire("Error!",
+              "There was an error deleting the theme.",
+              "error");
           });
       }
     });

@@ -9,6 +9,7 @@ const ThemeModal = db.ThemeModal;
 class BasicSetting {
   async AddBasicSetting(req, res) {
     try {
+
       // Handle the image uploads
       upload("basicsetting").fields([
         { name: "favicon", maxCount: 1 },
@@ -63,23 +64,24 @@ class BasicSetting {
         const favicon = req.files["favicon"]
           ? req.files["favicon"][0].filename
           : existingSetting
-          ? existingSetting.favicon
-          : null;
+            ? existingSetting.favicon
+            : null;
         const logo = req.files["logo"]
           ? req.files["logo"][0].filename
           : existingSetting
-          ? existingSetting.logo
-          : null;
+            ? existingSetting.logo
+            : null;
         const refer_image = req.files["refer_image"]
           ? req.files["refer_image"][0].filename
           : existingSetting
-          ? existingSetting.refer_image
-          : null;
-          const offer_image = req.files["offer_image"]
+            ? existingSetting.refer_image
+            : null;
+        const offer_image = req.files["offer_image"]
           ? req.files["offer_image"][0].filename
           : existingSetting
-          ? existingSetting.offer_image
-          : null;
+            ? existingSetting.offer_image
+            : null;
+
 
 
         // Define the update payload
@@ -332,7 +334,7 @@ class BasicSetting {
 
   async UpdateThemeCompany(req, res) {
     try {
-      const { theme_id } = req.body;
+      const { theme_id, ThemeData } = req.body;
 
       if (!theme_id) {
         return res.status(400).json({
@@ -340,7 +342,6 @@ class BasicSetting {
           message: "Please provide a theme ID",
         });
       }
-
 
       // Find the company record (assuming there is only one company)
       let getCompany = await BasicSetting_Modal.findOne(); // Use findOne to get a single document
@@ -357,6 +358,26 @@ class BasicSetting {
 
       // Save the updated record
       await getCompany.save();
+
+      if (ThemeData) {
+        const existingTheme = await ThemeModal.findOne({ _id: theme_id });
+
+        const UpdateTheme = await ThemeModal.updateOne(
+          { _id: theme_id },
+          ThemeData,
+          { upsert: true }
+        );
+        console.log("UpdateTheme", UpdateTheme);
+        if (existingTheme) {
+          const message = "Theme Update";
+          const newactivity = new Activitylogs_Modal({
+            olddays: existingTheme,
+            newdays: ThemeData,
+            message,
+          });
+          await newactivity.save();
+        }
+      }
 
       return res.status(200).json({
         status: true,

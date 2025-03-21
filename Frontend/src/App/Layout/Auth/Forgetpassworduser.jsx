@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import Swal from 'sweetalert2';
 import { ForgetPasswordApi } from '../../Services/Admin/Admin';
 import showCustomAlert from '../../Extracomponents/CustomAlert/CustomAlert';
 
@@ -27,7 +28,12 @@ const Forgetpassworduser = () => {
 
             }
         } catch (error) {
-            showCustomAlert("error","There was an error sending the password reset email.")                    
+            Swal.fire({
+                title: 'Error!',
+                text: 'There was an error sending the password reset email.',
+                icon: 'error',
+                confirmButtonText: 'Try Again',
+            });
         }
     };
 
