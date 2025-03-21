@@ -71,14 +71,14 @@ const Plan = () => {
             if (result.isConfirmed) {
                 const response = await Deleteplan(_id, token);
                 if (response.status) {
-                    showCustomAlert('Success','The plan has been successfully deleted.')
+                    showCustomAlert('Success', 'The plan has been successfully deleted.')
                     getAdminclient();
                 }
             } else {
-                showCustomAlert('info','The plan deletion was cancelled.')
+                showCustomAlert('info', 'The plan deletion was cancelled.')
             }
         } catch (error) {
-            showCustomAlert('error','There was an error deleting the plan.')
+            showCustomAlert('error', 'There was an error deleting the plan.')
         }
     };
 
@@ -89,7 +89,7 @@ const Plan = () => {
         const user_active_status = originalChecked ? "active" : "inactive";
         const data = { id: id, status: user_active_status };
 
-        const result = await showCustomAlert('confirm','Do you want Changes The Pakage Status?')
+        const result = await showCustomAlert('confirm', 'Do you want Changes The Pakage Status?')
 
         if (result.isConfirmed) {
             try {
@@ -167,7 +167,7 @@ const Plan = () => {
             {isLoading ? (
                 <Loader />
 
-            ) : (
+            ) : filteredClients.length > 0 ? (
 
                 <div className="tab-content">
                     <div className="tab-pane fade active show">
@@ -322,6 +322,10 @@ const Plan = () => {
                             )}
                         </div>
                     </div>
+                </div>
+            ) : (
+                <div className="text-center mt-5">
+                    <img src="/assets/images/norecordfound.png" alt="No Records Found" />
                 </div>
             )}
 

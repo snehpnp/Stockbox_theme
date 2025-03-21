@@ -6,6 +6,7 @@ import Table from '../../../Extracomponents/Table';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import ExportToExcel from '../../../../Utils/ExportCSV';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+import Loader from '../../../../Utils/Loader';
 
 
 const FreetrialStatus = () => {
@@ -19,6 +20,9 @@ const FreetrialStatus = () => {
   });
   const [initialFreeTrial, setInitialFreeTrial] = useState('1');
   const [disableUpdate, setDisableUpdate] = useState(true);
+
+  //state for loading
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getApidetail();
@@ -43,6 +47,7 @@ const FreetrialStatus = () => {
   const getstatusdetail = async () => {
     try {
       const response = await basicsettinglist(token);
+      
       if (response?.status && response?.data) {
         const defaultTrial = response.data.length > 0 ? response.data[0].freetrial : '1';
         setAddStatus((prevState) => ({ ...prevState, freetrial: defaultTrial }));
@@ -67,6 +72,8 @@ const FreetrialStatus = () => {
     } catch (error) {
       console.log('Error fetching free trial status:', error);
     }
+    setIsLoading(false)
+
   };
 
   const UpdateClientstatus = async () => {
@@ -179,16 +186,26 @@ const FreetrialStatus = () => {
                 fileName="All Users"
               />
             </div>
-            <div className="table-responsive  d-flex justify-content-center">
-              <Table
-                columns={columns}
-                data={data}
-                pagination
-                striped
-                highlightOnHover
-                dense
-              />
-            </div>
+
+
+            {isLoading ? (
+              <Loader />
+            ) : data.length > 0 ? (
+              <div className="table-responsive  d-flex justify-content-center">
+                <Table
+                  columns={columns}
+                  data={data}
+                  pagination
+                  striped
+                  highlightOnHover
+                  dense
+                />
+              </div>
+            ) : (
+              <div className="text-center mt-5">
+                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+              </div>
+            )}
           </div>
         </div>
       </div>

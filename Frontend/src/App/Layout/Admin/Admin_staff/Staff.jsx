@@ -11,6 +11,7 @@ import { fDate, fDateTime } from '../../../../Utils/Date_formate';
 import io from 'socket.io-client';
 import { soket_url } from '../../../../Utils/config';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+import Loader from '../../../../Utils/Loader';
 
 const Staff = () => {
 
@@ -25,6 +26,9 @@ const Staff = () => {
     const [searchInput, setSearchInput] = useState("");
     const [allsearchInput, setAllSearchInput] = useState([]);
 
+    //state for loading
+    const [isLoading, setIsLoading] = useState(true);
+
     const token = localStorage.getItem('token');
 
 
@@ -38,6 +42,8 @@ const Staff = () => {
         } catch (error) {
             console.log("error");
         }
+        setIsLoading(false)
+
     }
 
 
@@ -360,11 +366,17 @@ const Staff = () => {
                                     </div>
                                 </div>
 
-
-                                <Table
-                                    columns={columns}
-                                    data={clients}
-                                />
+                                {isLoading ? (
+                                    <Loader />
+                                ) : clients.length > 0 ? (
+                                    <Table
+                                        columns={columns}
+                                        data={clients}
+                                    />) : (
+                                    <div className="text-center mt-5">
+                                        <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

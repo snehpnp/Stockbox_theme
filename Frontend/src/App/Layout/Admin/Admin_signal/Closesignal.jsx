@@ -29,6 +29,7 @@ import { Tooltip } from "antd";
 import { image_baseurl } from "../../../../Utils/config";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import Loader from "../../../../Utils/Loader";
 
 const Closesignal = () => {
   const [activeTab, setActiveTab] = useState("table");
@@ -75,6 +76,9 @@ const Closesignal = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+
+  const [isLoading, setIsLoading] = useState(true)
+
 
   const options = clients.map((item) => ({
     value: item.stock,
@@ -231,6 +235,7 @@ const Closesignal = () => {
       };
 
       const response = await GetSignallistWithFilter(data, token);
+      
       if (response && response.status) {
         let filterdata = response.data.filter(
           (item) => item.close_status === true
@@ -242,6 +247,8 @@ const Closesignal = () => {
     } catch (error) {
       console.log("error", error);
     }
+    setIsLoading(false)
+
   };
 
   const fetchAdminServices = async () => {
@@ -644,15 +651,21 @@ const Closesignal = () => {
                 </div>
               </div>
 
-              {/* Tab Content */}
-              {activeTab === "table" && (
-                <Table
-                  columns={columns}
-                  data={clients}
-                  totalRows={totalRows}
-                  currentPage={currentPage}
-                  onPageChange={handlePageChange}
-                />
+              {isLoading ? <Loader /> : clients.length > 0 ?(
+
+                activeTab === "table" && (
+                  <Table
+                    columns={columns}
+                    data={clients}
+                    totalRows={totalRows}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
+                  />
+                )
+              ):(
+                <div className="text-center mt-5">
+                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+              </div>
               )}
 
               {activeTab === "card" && (

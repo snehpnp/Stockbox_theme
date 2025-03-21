@@ -9,6 +9,7 @@ import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
 import { exportToCSV } from '../../../../Utils/ExportData';
+import Loader from '../../../../Utils/Loader';
 
 
 
@@ -18,8 +19,6 @@ const History = () => {
 
     const navigate = useNavigate();
     const [clients, setClients] = useState([]);
-    console.log("clients", clients);
-
     const [model, setModel] = useState(false);
     const [serviceid, setServiceid] = useState({});
     const [searchInput, setSearchInput] = useState("");
@@ -30,6 +29,9 @@ const History = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRows, setTotalRows] = useState(0);
+
+    const [isLoading, setIsLoading] = useState(true)
+
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -110,7 +112,6 @@ const History = () => {
         try {
             const data = { page: currentPage, fromDate: startDate, toDate: endDate, search: searchInput }
             const response = await getPayementhistorywithfilter(data, token);
-            console.log("getPayementhistorywithfilter", response);
 
             if (response.status) {
                 let filteredData = response.data;
@@ -121,6 +122,7 @@ const History = () => {
         } catch (error) {
             console.log("Error fetching services:", error);
         }
+        setIsLoading(false)
     };
 
 
@@ -263,7 +265,6 @@ const History = () => {
             name: 'Invoice',
             cell: row => (
                 <>
-                    {console.log("row mai kya data pass ho rha hai", row)}
 
 
                     <div className='d-flex '>
@@ -409,6 +410,7 @@ const History = () => {
                                 </div>
                             </div>
                         </div>
+                        {isLoading ? <Loader/>: clients.length >0 ? (
                         <div className="table-responsive">
                             <Table
                                 columns={columns}
@@ -418,6 +420,11 @@ const History = () => {
                                 onPageChange={handlePageChange}
                             />
                         </div>
+                        ):(
+                            <div className="text-center mt-5">
+                            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                          </div>
+                        )}
                     </div>
                 </div>
             </div>

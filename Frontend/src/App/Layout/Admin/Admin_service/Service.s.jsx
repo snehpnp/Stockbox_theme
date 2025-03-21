@@ -10,6 +10,7 @@ import {
 import Table from "../../../Extracomponents/Table";
 import { SquarePen, Trash2, PanelBottomOpen } from "lucide-react";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import Loader from "../../../../Utils/Loader";
 
 
 
@@ -27,6 +28,9 @@ const Service = () => {
     title: "",
     add_by: "",
   });
+
+  //state for loading
+  const [isLoading, setIsLoading] = useState(true);
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
@@ -46,6 +50,7 @@ const Service = () => {
     } catch (error) {
       console.log("Error fetching services:", error);
     }
+    setIsLoading(false)
   };
 
   useEffect(() => {
@@ -327,16 +332,24 @@ const Service = () => {
                 )}
               </div>
             </div>
-            <div className="table-responsive ">
-              <Table
-                columns={columns}
-                data={clients}
-                pagination
-                striped
-                highlightOnHover
-                dense
-              />
-            </div>
+            {isLoading ? (
+              <Loader />
+            ) : clients.length > 0 ? (
+              <div className="table-responsive ">
+                <Table
+                  columns={columns}
+                  data={clients}
+                  pagination
+                  striped
+                  highlightOnHover
+                  dense
+                />
+              </div>
+            ) : (
+              <div className="text-center mt-5">
+                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+              </div>
+            )}
           </div>
         </div>
       </div>

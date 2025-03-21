@@ -896,39 +896,64 @@ const Signal = () => {
                             </div>
 
 
-                            {viewMode === "table" ?
+                            {viewMode === "table" ? (
                                 isLoading ? (
                                     <Loader />
+                                ) : clients.length > 0 ? (
+                                    <Table
+                                        columns={columns}
+                                        data={clients}
+                                        totalRows={totalRows}
+                                        currentPage={currentPage}
+                                        onPageChange={handlePageChange}
+                                    />
                                 ) : (
-                                    <>
-                                        <Table
-                                            columns={columns}
-                                            data={clients}
-                                            totalRows={totalRows}
-                                            currentPage={currentPage}
-                                            onPageChange={handlePageChange}
-                                        />
-                                    </>
-
-                                ) : (
-                                    <div className="row mt-3">
-                                        {clients.map((client, index) => (
-                                            <div className="col-md-12" key={index}>
-                                                <div className="card radius-10 mb-3 border">
-                                                    <div className="card-body">
-                                                        <p className='mb-1'><b>Date: {fDateTimeH(client?.created_at)}</b></p>
-                                                        <p className='mb-2'><b>Segment: {client?.segment == "C" ? "CASH" : client?.segment == "O" ? "OPTION" : "FUTURE"}</b></p>
-                                                        <p className='mb-1'> {client?.calltype} {client?.stock}  {client?.expirydate && `${client.expirydate}`} {client?.optiontype && `${client.optiontype}`} {client?.calltype} {client?.entrytype} {client?.price}  Target  {client?.tag1}{client?.tag2 && `/${client.tag2}`}
-                                                            {client?.tag3 && `/${client.tag3}`}  {client?.stoploss && `SL ${client.stoploss}`}
-
-                                                        </p>
-
-                                                    </div>
+                                    <div className="text-center mt-5">
+                                        <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                                    </div>
+                                )
+                            ) : isLoading ? (
+                                <Loader />
+                            ) : clients.length > 0 ? (
+                                <div className="row mt-3">
+                                    {clients.map((client, index) => (
+                                        <div className="col-md-12" key={index}>
+                                            <div className="card radius-10 mb-3 border">
+                                                <div className="card-body">
+                                                    <p className="mb-1">
+                                                        <b>Date: {fDateTimeH(client?.created_at)}</b>
+                                                    </p>
+                                                    <p className="mb-2">
+                                                        <b>
+                                                            Segment:{" "}
+                                                            {client?.segment === "C"
+                                                                ? "CASH"
+                                                                : client?.segment === "O"
+                                                                    ? "OPTION"
+                                                                    : "FUTURE"}
+                                                        </b>
+                                                    </p>
+                                                    <p className="mb-1">
+                                                        {client?.calltype} {client?.stock}{" "}
+                                                        {client?.expirydate && `${client.expirydate}`}{" "}
+                                                        {client?.optiontype && `${client.optiontype}`}{" "}
+                                                        {client?.calltype} {client?.entrytype} {client?.price} Target{" "}
+                                                        {client?.tag1}
+                                                        {client?.tag2 && `/${client.tag2}`}
+                                                        {client?.tag3 && `/${client.tag3}`}{" "}
+                                                        {client?.stoploss && `SL ${client.stoploss}`}
+                                                    </p>
                                                 </div>
                                             </div>
-                                        ))}
-                                    </div>
-                                )}
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center mt-5">
+                                    <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                                </div>
+                            )}
+
                         </div>
                     </div>
                 </div>

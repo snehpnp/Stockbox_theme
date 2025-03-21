@@ -231,7 +231,7 @@ const ClientRequest = () => {
 
                         {isLoading ? (
                             <Loader />
-                        ) : (
+                        ) : clients?.length > 0 ?(
                             <>
                                 <div className="table-responsive">
                                     <Table 
@@ -243,6 +243,10 @@ const ClientRequest = () => {
                                     />
                                 </div>
                             </>
+                        ):(
+                            <div className="text-center mt-5">
+                                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                            </div>
                         )}
                     </div>
                 </div>

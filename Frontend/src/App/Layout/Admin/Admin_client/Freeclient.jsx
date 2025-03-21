@@ -85,7 +85,7 @@ const Freeclient = () => {
     const getdemoclient = async () => {
         try {
             const data = { page: currentPage, search: searchInput, freestatus: clientStatus || "" }
-            const response = await FreeClientListWithFilter(data, token);
+            const response = await FreeClientListWithFilter(data, token);          
             if (response.status) {
                 setTotalRows(response.pagination.total)
                 setClients(response.data);
@@ -518,7 +518,7 @@ const Freeclient = () => {
                                 <div>
                                     {isLoading ? (
                                         <Loader />
-                                    ) : (
+                                    ) : clients?.length > 0 ? (
                                         <>
 
                                             <Table
@@ -529,6 +529,10 @@ const Freeclient = () => {
                                                 onPageChange={handlePageChange}
                                             />
                                         </>
+                                    ) : (
+                                        <div className="text-center mt-5">
+                                            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                                        </div>
                                     )}
                                 </div>
                             </div>

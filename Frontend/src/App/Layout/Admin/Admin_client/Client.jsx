@@ -263,6 +263,7 @@ const Client = () => {
       if (response.status) {
         setClients(response.data);
         setTotalRows(response.pagination.total);
+        setIsLoading(false)
       }
     } catch (error) {
       console.error("Error fetching clients:", error);
@@ -289,7 +290,7 @@ const Client = () => {
     try {
       const response = await BasketAllList(token);
       if (response.status) {
-        setBasketlist(response.data); 
+        setBasketlist(response.data);
       }
     } catch (error) {
       console.log("error");
@@ -735,7 +736,9 @@ const Client = () => {
                 </div>
               </div>
 
-              {clients ? (
+              {isLoading ? (
+                <Loader />
+              ) : clients.length > 0 ? (
                 <Table
                   columns={columns}
                   data={clients}
@@ -744,8 +747,11 @@ const Client = () => {
                   onPageChange={handlePageChange}
                 />
               ) : (
-                <Loader />
+                <div className="text-center mt-5">
+                  <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                </div>
               )}
+
             </div>
           </div>
         </div>
