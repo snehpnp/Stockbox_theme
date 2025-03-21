@@ -8,6 +8,7 @@ import { image_baseurl } from '../../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDateTime } from '../../../../../Utils/Date_formate';
 import showCustomAlert from '../../../../Extracomponents/CustomAlert/CustomAlert';
+import Loader from '../../../../../Utils/Loader';
 
 
 const Bankdetail = () => {
@@ -21,6 +22,9 @@ const Bankdetail = () => {
     const [datewise, setDatewise] = useState("")
 
     const token = localStorage.getItem('token');
+
+    const [isLoading, setIsLoading] = useState(true)
+
 
 
 
@@ -43,6 +47,7 @@ const Bankdetail = () => {
         } catch (error) {
             console.log("error");
         }
+        setIsLoading(false)
     }
 
 
@@ -264,10 +269,18 @@ const Bankdetail = () => {
                                 </div>
                             </div>
 
-                            <Table
-                                columns={columns}
-                                data={clients}
-                            />
+                            {isLoading ? (
+                                <Loader />
+                            ) : clients.length > 0 ? (
+                                <Table
+                                    columns={columns}
+                                    data={clients}
+                                />
+                            ) : (
+                                <div className="text-center mt-5">
+                                    <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

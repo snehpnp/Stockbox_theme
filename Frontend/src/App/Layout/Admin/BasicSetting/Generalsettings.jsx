@@ -71,6 +71,8 @@ const Generalsettings = () => {
                                 favicon: null,
                                 logo: null,
                                 offer_image: null,
+                                simage: null,
+                                address: null
 
                             }}
                             onSubmit={async (values, { resetForm }) => {
@@ -82,6 +84,8 @@ const Generalsettings = () => {
                                     favicon: values.favicon,
                                     logo: values.logo,
                                     offer_image: values.offer_image,
+                                    simage: values.simage,
+                                    address: values.address,
                                     id: user_id,
 
                                 };
@@ -91,7 +95,7 @@ const Generalsettings = () => {
                                     if (response.status) {
                                         showCustomAlert("Success", response.message)
                                         setIsModified(false);
-                                        document.querySelectorAll('input[name="offer_image"], input[name="logo"], input[name="favicon"]').forEach(input => {
+                                        document.querySelectorAll('input[name="offer_image"], input[name="logo"], input[name="favicon",input[name="simage"]').forEach(input => {
                                             input.value = "";
                                         });
 
@@ -240,6 +244,50 @@ const Generalsettings = () => {
                                                 </div>
 
                                             </div>
+
+                                            <div className="row mb-3 align-items-center">
+                                                <label htmlFor="simage" className="col-sm-3 col-form-label">
+                                                    <b>Signature Image</b>
+                                                </label>
+                                                <div className="col-sm-8">
+                                                    <input
+                                                        name="simage"
+                                                        type="file"
+                                                        accept="image/*"
+                                                        className="form-control"
+                                                        onChange={(event) => setFieldValue("simage", event.currentTarget.files[0])}
+
+                                                    />
+                                                </div>
+                                                <div className="col-sm-1">
+                                                    {clients[0].simage && (
+                                                        <div className="file-preview">
+                                                            <img src={`${image_baseurl}uploads/basicsetting/${clients[0].simage}`} alt="simage Preview" className="image-preview" />
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                            </div>
+
+                                            <div className="row mb-3 align-items-center">
+                                                <label htmlFor="address" className="col-sm-3 col-form-label">
+                                                    <b> Address</b>
+                                                </label>
+                                                <div className="col-sm-9">
+                                                    <div className="input-group">
+                                                        <span className="input-group-text">
+                                                            <i className="bx bx-home" />
+                                                        </span>
+                                                        <Field
+                                                            name="address"
+                                                            as="textarea"  
+                                                            className="form-control"
+                                                            placeholder="Address"                                                           
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
 
                                             <div className="row">
                                                 <label className="col-sm-3 col-form-label" />

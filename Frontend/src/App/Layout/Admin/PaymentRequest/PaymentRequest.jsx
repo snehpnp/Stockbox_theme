@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { IndianRupee } from 'lucide-react';
 import { GetUserData } from '../../../Services/UserService/User';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+import Loader from '../../../../Utils/Loader';
 
 
 const PaymentRequest = () => {
@@ -19,11 +20,15 @@ const PaymentRequest = () => {
     const [activeTab, setActiveTab] = useState('Pending');
     const [selectedValues, setSelectedValues] = useState({});
 
+    const [isLoading, setIsLoading] = useState(true)
+
+
 
 
     const getpaymentrequest = async () => {
         try {
             const response = await PaymentRequestlist(token);
+
             if (response.status) {
                 const filterdata = response.data.filter((item) =>
                     searchInput === "" ||
@@ -34,6 +39,7 @@ const PaymentRequest = () => {
         } catch (error) {
             console.log("Error fetching services:", error);
         }
+        setIsLoading(false)
     };
 
 
@@ -184,7 +190,7 @@ const PaymentRequest = () => {
                     [rowId]: selectedValue,
                 }));
             } catch (error) {
-                showCustomAlert('error','There was a problem updating the status.')
+                showCustomAlert('error', 'There was a problem updating the status.')
             }
         } else {
             window.location.reload()
@@ -203,13 +209,25 @@ const PaymentRequest = () => {
 
 
     const renderTable = (status) => {
+        const filteredData = filterDataByStatus(status);
+    
         return (
             <div className="table-responsive">
                 <h5>{activeTab} Transactions</h5>
-                <Table columns={columns} data={filterDataByStatus(status)} />
+    
+                {isLoading ? (
+                    <Loader/>
+                ) : filteredData.length > 0 ? (
+                    <Table columns={columns} data={filteredData} />
+                ) : (
+                    <div className="text-center mt-5">
+                        <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                    </div>
+                )}
             </div>
         );
     };
+    
 
 
 
@@ -247,27 +265,14 @@ const PaymentRequest = () => {
 
 
 
-                        {/* <div className="card-header flex-wrap border-0">
-                                        <h4 className="card-title">Payment Request</h4>
-                                    </div> */}
+                       
 
 
                         <div className="tab-content" id="myTabContent3">
                             <div className="tab-pane fade show active" id="NavPills">
                                 <div className="card-body pt-0">
                                     <div className="d-lg-flex align-items-center mb-4 gap-3">
-                                        {/* <div className="position-relative">
-                                            <input
-                                                type="text"
-                                                className="form-control ps-5 radius-10"
-                                                placeholder="Search Payment Request"
-                                                defaultValue=""
-                                            />
-                                            <span className="position-absolute top-50 product-show translate-middle-y">
-                                                <i className="bx bx-search" />
-                                            </span>
-                                        </div> */}
-
+                                       
                                     </div>
 
                                     <ul className="nav nav-pills border-bottom nav-pills1 mb-4 light justify-content-center" id="pills-tab" role="tablist">

@@ -211,62 +211,60 @@ const News = () => {
                         <div className="container py-2">
                             {isLoading ? (
                                 <Loader />
-                            ) : (
-                                <>
-                                    {clients.length > 0 ? (
-                                        clients.map((client, index) => (
-                                            <div className="row g-0" key={index}>
-                                                <div className="col-sm ">
-                                                    <div className={`card ${client.borderClass || 'radius-15'} d-flex justify-content-center align-items-center`}>
-                                                        <div className="card-body" style={{ width: "100%" }}>
-                                                            <div className="d-flex justify-content-between align-items-start">
-                                                                <h5 className="card-title text-muted mb-0">{client.title}</h5 >
-                                                                <div>
-                                                                    <Tooltip placement="top" overlay="Update">
-                                                                        <SquarePen
-                                                                            onClick={() => navigate("/admin/updatenews", { state: { client } })}
-                                                                        />
-                                                                    </Tooltip>
-                                                                    <Tooltip placement="top" overlay="Delete">
-                                                                        <Trash2 onClick={() => DeleteService(client._id)} />
-                                                                    </Tooltip>
-                                                                </div>
-                                                            </div>
-                                                            <hr />
-                                                            <div className="row">
-                                                                {/* Image on the left side */}
-                                                                <div className="col-md-2" style={{ borderRight: "1px solid #D0D0D0", textAlign: "center" }}>
-                                                                    <img
-                                                                        src={`${image_baseurl}uploads/news/${client.image}`}
-                                                                        alt={client.image}
-                                                                        className="img-fluid"
-                                                                        width="65%"
-                                                                        height="auto"
-                                                                    />
-                                                                </div>
-                                                                <div className="col-md-10 ps-4">
-                                                                    <h5>Description:</h5>
-                                                                    <div
-                                                                        className="form-control"
-                                                                        style={{ width: "100%" }}
-                                                                        dangerouslySetInnerHTML={{ __html: client.description || "" }}
-                                                                        readOnly
-                                                                    />
-                                                                    <div className="float-end text-muted small">{fDateTime(client.created_at)}</div>
-                                                                </div>
-                                                            </div>
+                            ) : clients.length > 0 ? (
+                                clients.map((client, index) => (
+                                    <div className="row g-0" key={index}>
+                                        <div className="col-sm ">
+                                            <div className={`card ${client.borderClass || 'radius-15'} d-flex justify-content-center align-items-center`}>
+                                                <div className="card-body" style={{ width: "100%" }}>
+                                                    <div className="d-flex justify-content-between align-items-start">
+                                                        <h5 className="card-title text-muted mb-0">{client.title}</h5 >
+                                                        <div>
+                                                            <Tooltip placement="top" overlay="Update">
+                                                                <SquarePen
+                                                                    onClick={() => navigate("/admin/updatenews", { state: { client } })}
+                                                                />
+                                                            </Tooltip>
+                                                            <Tooltip placement="top" overlay="Delete">
+                                                                <Trash2 onClick={() => DeleteService(client._id)} />
+                                                            </Tooltip>
+                                                        </div>
+                                                    </div>
+                                                    <hr />
+                                                    <div className="row">
+                                                        {/* Image on the left side */}
+                                                        <div className="col-md-2" style={{ borderRight: "1px solid #D0D0D0", textAlign: "center" }}>
+                                                            <img
+                                                                src={`${image_baseurl}uploads/news/${client.image}`}
+                                                                alt={client.image}
+                                                                className="img-fluid"
+                                                                width="65%"
+                                                                height="auto"
+                                                            />
+                                                        </div>
+                                                        <div className="col-md-10 ps-4">
+                                                            <h5>Description:</h5>
+                                                            <div
+                                                                className="form-control"
+                                                                style={{ width: "100%" }}
+                                                                dangerouslySetInnerHTML={{ __html: client.description || "" }}
+                                                                readOnly
+                                                            />
+                                                            <div className="float-end text-muted small">{fDateTime(client.created_at)}</div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        ))
-                                    ) : (
-                                        <div className="text-center py-5">
-                                            <p>No records found</p>
                                         </div>
-                                    )}
-                                </>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center mt-5">
+                                    <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                                </div>
                             )}
+
+
 
 
                         </div>

@@ -5,6 +5,7 @@ import { getReferAndEarnlist } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table1';
 import { SquarePen, Trash2, PanelBottomOpen, Eye, RefreshCcw, IndianRupee, ArrowDownToLine } from 'lucide-react';
 import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
+import Loader from '../../../../Utils/Loader';
 
 
 
@@ -21,6 +22,9 @@ const ReferAndEarnlist = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRows, setTotalRows] = useState(0);
+
+    const [isLoading, setIsLoading] = useState(true)
+
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -44,6 +48,7 @@ const ReferAndEarnlist = () => {
         } catch (error) {
             console.log("Error fetching services:", error);
         }
+        setIsLoading(false)
     };
 
 
@@ -148,15 +153,23 @@ const ReferAndEarnlist = () => {
                             <div>
                             </div>
                         </div>
-                        <div className="table-responsive">
-                            <Table
-                                columns={columns}
-                                data={clients}
-                                totalRows={totalRows}
-                                currentPage={currentPage}
-                                onPageChange={handlePageChange}
-                            />
-                        </div>
+                        {isLoading ? (
+                            <Loader />
+                        ) : clients.length > 0 ? (
+                            <div className="table-responsive">
+                                <Table
+                                    columns={columns}
+                                    data={clients}
+                                    totalRows={totalRows}
+                                    currentPage={currentPage}
+                                    onPageChange={handlePageChange}
+                                />
+                            </div>
+                        ) : (
+                            <div className="text-center mt-5">
+                                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
