@@ -896,6 +896,8 @@ if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase(
     igst = totalgst;
 }
 const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+
 
 
         htmlContent = htmlContent
@@ -924,6 +926,7 @@ const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`
           .replace(/{{cgst}}/g, cgst.toFixed(2))
           .replace(/{{igst}}/g, igst.toFixed(2))
           .replace(/{{logo}}/g, logo)
+          .replace(/{{simage}}/g, simage)
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
 
@@ -1114,7 +1117,19 @@ const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`
         const templatePath = path.join(__dirname, '../../../template', 'invoice.html');
         let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
-        
+        let sgst = 0, cgst = 0, igst = 0;
+
+        if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() === "") {
+            sgst = totalgst / 2;
+            cgst = totalgst / 2;
+        } else {
+            igst = totalgst;
+        }
+
+        const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+        const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+  
+  
 
         htmlContent = htmlContent
           .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
@@ -1131,6 +1146,18 @@ const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`
           .replace(/{{orderid}}/g, savedSubscription.orderid)
           .replace(/{{planname}}/g, basket.title)
           .replace(/{{plantype}}/g, "Basket")
+          .replace(/{{company_email}}/g, settings.email_address)
+          .replace(/{{company_phone}}/g, settings.contact_number)
+          .replace(/{{company_address}}/g, settings.address)
+          .replace(/{{company_website_title}}/g, settings.website_title)
+          .replace(/{{gstamount}}/g, totalgst)
+          .replace(/{{state}}/g, client.state)
+          .replace(/{{gst}}/g, settings.gst)
+          .replace(/{{sgst}}/g, sgst.toFixed(2))
+          .replace(/{{cgst}}/g, cgst.toFixed(2))
+          .replace(/{{igst}}/g, igst.toFixed(2))
+          .replace(/{{logo}}/g, logo)
+          .replace(/{{simage}}/g, simage)
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.startdate));
 
 
@@ -5729,6 +5756,8 @@ const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`
 
         const todays = new Date(); 
         const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+        const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+
 
         htmlContent = htmlContent
           .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
@@ -5744,6 +5773,7 @@ const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`
           .replace(/{{company_website_title}}/g, settings.website_title)
           .replace(/{{state}}/g, client.state)
           .replace(/{{logo}}/g, logo)
+          .replace(/{{simage}}/g, simage)
           .replace(/{{total}}/g, price)
           .replace(/{{plantype}}/g, "Plan")
           .replace(/{{discount}}/g, discount);
@@ -6133,7 +6163,7 @@ const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`
         let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
         let planDetailsHtml = '';
-
+        let sno = 1;
         for (const basket_id of basket_ids) {
 
           const basket = await Basket_Modal.findOne({
@@ -6167,14 +6197,36 @@ const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`
           end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
     
 
-        planDetailsHtml += `
-            <tr>
-              <td>${basket.title}</td>
-              <td>${basket.validity}</td>
-              <td>${basket.basket_price}</td>
-              <td>${formatDate(start)}</td>
-              <td>${formatDate(end)}</td>
-            </tr>`;
+          let sgst = 0, cgst = 0, igst = 0;
+
+          if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() ==="") {
+              sgst = totalgst / 2;
+              cgst = totalgst / 2;
+          } else {
+              igst = totalgst;
+          }
+
+
+          const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+          const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+    
+          planDetailsHtml += `
+          <tr>
+              <td style="border: 1px solid black; padding: 10px; text-align: center;height: 100px;">${sno}</td>
+              <td style="border: 1px solid black; padding: 10px; text-align: center;">${basket.title}</td>
+              <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
+              <td style="border: 1px solid black; padding: 10px; text-align: center;">${basket.basket_price}</td>
+              <td style="border: 1px solid black; padding: 10px; text-align: center;">${discountPerPlan}</td>
+              <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst}</td>
+              <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst}</td>
+              <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst}</td>
+              <td style="border: 1px solid black; padding: 10px; text-align: center;">${total}</td>
+           </tr>`;
+
+           sno++;
+          
+
+       
         }
 
 
@@ -6190,6 +6242,13 @@ const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`
           .replace(/{{total}}/g, price)
           .replace(/{{discount}}/g, discount)
           .replace(/{{plan_details}}/g, planDetailsHtml)
+          .replace(/{{company_email}}/g, settings.email_address)
+          .replace(/{{company_phone}}/g, settings.contact_number)
+          .replace(/{{company_address}}/g, settings.address)
+          .replace(/{{company_website_title}}/g, settings.website_title)
+          .replace(/{{state}}/g, client.state)
+          .replace(/{{logo}}/g, logo)
+          .replace(/{{simage}}/g, simage)
           .replace(/{{plantype}}/g, "Basket");
 
 

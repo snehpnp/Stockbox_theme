@@ -826,6 +826,8 @@ if (settings.gst > 0 && settings.gststatus==1) {
             igst = totalgst;
         }
         const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+        const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+
         
                 htmlContent = htmlContent
                   .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
@@ -853,6 +855,7 @@ if (settings.gst > 0 && settings.gststatus==1) {
                   .replace(/{{cgst}}/g, cgst.toFixed(2))
                   .replace(/{{igst}}/g, igst.toFixed(2))
                   .replace(/{{logo}}/g, logo)
+                  .replace(/{{simage}}/g, simage)
                   .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
 
@@ -1620,20 +1623,42 @@ for (let i = 0; i < length; i++) {
 
 
 
-          planDetailsHtml += `
-            <tr>
-              <td>${plan.category.title}</td>
-              <td>${plan.validity}</td>
-              <td>${plan.price}</td>
-              <td>${formatDate(start)}</td>
-              <td>${formatDate(end)}</td>
-            </tr>`;
-        }
+      
+            let sgst = 0, cgst = 0, igst = 0;
 
+            if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() === "") {
+                sgst = totalgst / 2;
+                cgst = totalgst / 2;
+            } else {
+                igst = totalgst;
+            }
+
+
+            planDetailsHtml += `
+            <tr>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.category.title}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.price}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">0</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">${total}</td>
+             </tr>`;
+ 
+         
+          }
+          
 
         const todays = new Date(); 
 
-        htmlContent = htmlContent
+        const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+        const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+
+
+
+          htmlContent = htmlContent
           .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
           .replace(/{{created_at}}/g, formatDate(todays))
           .replace(/{{payment_type}}/g, payment_type)
@@ -1641,9 +1666,18 @@ for (let i = 0; i < length; i++) {
           .replace(/{{email}}/g, client.Email)
           .replace(/{{PhoneNo}}/g, client.PhoneNo)
           .replace(/{{plan_details}}/g, planDetailsHtml)
+          .replace(/{{company_email}}/g, settings.email_address)
+          .replace(/{{company_phone}}/g, settings.contact_number)
+          .replace(/{{company_address}}/g, settings.address)
+          .replace(/{{company_website_title}}/g, settings.website_title)
+          .replace(/{{state}}/g, client.state)
+          .replace(/{{logo}}/g, logo)
+          .replace(/{{simage}}/g, simage)
           .replace(/{{total}}/g, price)
           .replace(/{{plantype}}/g, "Plan")
           .replace(/{{discount}}/g, 0);
+
+
 
 
         const browser = await puppeteer.launch({

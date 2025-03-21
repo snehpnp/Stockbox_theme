@@ -20,6 +20,7 @@ const BasicSetting_Modal = db.BasicSetting;
 const Mailtemplate_Modal = db.Mailtemplate;
 
 const { addBasketVolatilityData } = require("./Cron"); 
+const Basketghaphdata_Modal = require("../Models/Basketgraphdata");
 
 
 class Basket {
@@ -1536,11 +1537,23 @@ class Basket {
     try {
       const { id } = req.params;
       const basketstocks = await Basketstock_Modal.find({ del: false, basket_id: id });
+      const basket = await Basket_Modal.findOne({ del: false, _id: id });
+
+    // Check karein agar basket exist nahi karta
+    if (!basket) {
+      return res.json({
+        status: false,
+        message: "Basket not found",
+        data: [],
+      });
+    }
+
 
       return res.json({
         status: true,
         message: "Basketstocks fetched successfully",
-        data: basketstocks
+        data: basketstocks,
+        stockname: basket.stockname
       });
 
     } catch (error) {
@@ -1653,6 +1666,20 @@ class Basket {
         const templatePath = path.join(__dirname, '../../template', 'invoice.html');
         let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
+
+        let sgst = 0, cgst = 0, igst = 0;
+
+        if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() ==="") {
+            sgst = totalgst / 2;
+            cgst = totalgst / 2;
+        } else {
+            igst = totalgst;
+        }
+        const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+        const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+
+
+
         htmlContent = htmlContent
           .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
           .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
@@ -1668,6 +1695,18 @@ class Basket {
           .replace(/{{orderid}}/g, savedSubscription.orderid)
           .replace(/{{planname}}/g, basket.title)
           .replace(/{{plantype}}/g, "Basket")
+          .replace(/{{company_email}}/g, settings.email_address)
+          .replace(/{{company_phone}}/g, settings.contact_number)
+          .replace(/{{company_address}}/g, settings.address)
+          .replace(/{{company_website_title}}/g, settings.website_title)
+          .replace(/{{gstamount}}/g, totalgst)
+          .replace(/{{state}}/g, client.state)
+          .replace(/{{gst}}/g, settings.gst)
+          .replace(/{{sgst}}/g, sgst.toFixed(2))
+          .replace(/{{cgst}}/g, cgst.toFixed(2))
+          .replace(/{{igst}}/g, igst.toFixed(2))
+          .replace(/{{logo}}/g, logo)
+          .replace(/{{simage}}/g, simage)
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.startdate));
 
 
@@ -1861,6 +1900,19 @@ class Basket {
       const templatePath = path.join(__dirname, '../../template', 'invoice.html');
       let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
+      let sgst = 0, cgst = 0, igst = 0;
+
+      if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() ==="") {
+          sgst = totalgst / 2;
+          cgst = totalgst / 2;
+      } else {
+          igst = totalgst;
+      }
+      const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+      const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+
+
+
       htmlContent = htmlContent
         .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
         .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
@@ -1876,6 +1928,18 @@ class Basket {
         .replace(/{{orderid}}/g, savedSubscription.orderid)
         .replace(/{{planname}}/g, basket.title)
         .replace(/{{plantype}}/g, "Basket")
+        .replace(/{{company_email}}/g, settings.email_address)
+        .replace(/{{company_phone}}/g, settings.contact_number)
+        .replace(/{{company_address}}/g, settings.address)
+        .replace(/{{company_website_title}}/g, settings.website_title)
+        .replace(/{{gstamount}}/g, totalgst)
+        .replace(/{{state}}/g, client.state)
+        .replace(/{{gst}}/g, settings.gst)
+        .replace(/{{sgst}}/g, sgst.toFixed(2))
+        .replace(/{{cgst}}/g, cgst.toFixed(2))
+        .replace(/{{igst}}/g, igst.toFixed(2))
+        .replace(/{{logo}}/g, logo)
+        .replace(/{{simage}}/g, simage)
         .replace(/{{plan_start}}/g, formatDate(savedSubscription.startdate));
 
 
