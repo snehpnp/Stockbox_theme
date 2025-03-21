@@ -609,7 +609,7 @@ class Basket {
 
   async UpdateStockInBasketForm(req, res) {
     try {
-      const { basket_id, stocks, version, publishstatus, comments } = req.body; // Include version in request body
+      const { basket_id, stocks, version, publishstatus, comments, stockname } = req.body; // Include version in request body
 
       // Validate basket existence
       const basket = await Basket_Modal.findById(basket_id);

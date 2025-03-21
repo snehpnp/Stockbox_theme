@@ -1837,8 +1837,8 @@ for (const [basket_id, stockTypeSet] of Object.entries(basketStockTypes)) {
 
     if(basket.stockname) {
 
-        symbolgraph = "NMIDCAP150"; 
-        const { price: currentPrice, prev_close } = await getCurrentPrice('NMIDCAP150');
+        symbolgraph = basket.stockname; 
+        const { price: currentPrice, prev_close } = await getCurrentPrice(basket.stockname);
         profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
 
     }
