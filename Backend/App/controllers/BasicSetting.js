@@ -15,7 +15,8 @@ class BasicSetting {
         { name: "favicon", maxCount: 1 },
         { name: "logo", maxCount: 1 },
         { name: "refer_image", maxCount: 1 },
-        { name: "offer_image", maxCount: 1 }
+        { name: "offer_image", maxCount: 1 },
+        { name: "simage", maxCount: 1 }
       ])(req, res, async (err) => {
         if (err) {
           return res.status(500).json({
@@ -79,9 +80,13 @@ class BasicSetting {
         const offer_image = req.files["offer_image"]
           ? req.files["offer_image"][0].filename
           : existingSetting
-            ? existingSetting.offer_image
-            : null;
-
+          ? existingSetting.offer_image
+          : null;
+          const simage = req.files["simage"]
+          ? req.files["simage"][0].filename
+          : existingSetting
+          ? existingSetting.simage
+          : null;
 
 
         // Define the update payload
@@ -120,6 +125,7 @@ class BasicSetting {
           offer_image,
           gst,
           gststatus,
+          simage,
         };
 
         const options = {

@@ -75,7 +75,9 @@ const showCustomAlert = (type, message, navigate, redirectTo, onConfirm) => {
         timer: 2000,
         timerProgressBar: true,
         didClose: () => {
-          if (navigate && redirectTo) {
+          if (redirectTo === "back") {
+            window.history.back();
+          } else if (navigate && redirectTo) {
             navigate(redirectTo);
           }
         },

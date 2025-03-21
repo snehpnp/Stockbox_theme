@@ -13,6 +13,7 @@ const Mailtemplate_Modal = db.Mailtemplate;
 const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs');
+const { sendEmail } = require('../Utils/emailService');
 
 
 const Adminnotification_Modal = db.Adminnotification;
@@ -816,22 +817,46 @@ if (settings.gst > 0 && settings.gststatus==1) {
         const templatePath = path.join(__dirname, '../../template', 'invoice.html');
         let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
-        htmlContent = htmlContent
-          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
-          .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
-          .replace(/{{payment_type}}/g, payment_type)
-          .replace(/{{clientname}}/g, client.FullName)
-          .replace(/{{email}}/g, client.Email)
-          .replace(/{{PhoneNo}}/g, client.PhoneNo)
-          .replace(/{{validity}}/g, savedSubscription.validity)
-          .replace(/{{plan_end}}/g, formatDate(savedSubscription.plan_end))
-          .replace(/{{plan_price}}/g, savedSubscription.plan_price)
-          .replace(/{{total}}/g, savedSubscription.total)
-          .replace(/{{discount}}/g, savedSubscription.discount)
-          .replace(/{{orderid}}/g, savedSubscription.orderid)
-          .replace(/{{planname}}/g, plan.category.title)
-          .replace(/{{plantype}}/g, "Plan")
-          .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
+        let sgst = 0, cgst = 0, igst = 0;
+
+        if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() ==="") {
+            sgst = totalgst / 2;
+            cgst = totalgst / 2;
+        } else {
+            igst = totalgst;
+        }
+        const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+        const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+
+        
+                htmlContent = htmlContent
+                  .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+                  .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
+                  .replace(/{{payment_type}}/g, payment_type)
+                  .replace(/{{clientname}}/g, client.FullName)
+                  .replace(/{{email}}/g, client.Email)
+                  .replace(/{{PhoneNo}}/g, client.PhoneNo)
+                  .replace(/{{validity}}/g, savedSubscription.validity)
+                  .replace(/{{plan_end}}/g, formatDate(savedSubscription.plan_end))
+                  .replace(/{{plan_price}}/g, savedSubscription.plan_price)
+                  .replace(/{{total}}/g, savedSubscription.total)
+                  .replace(/{{discount}}/g, savedSubscription.discount)
+                  .replace(/{{orderid}}/g, savedSubscription.orderid)
+                  .replace(/{{planname}}/g, plan.category.title)
+                  .replace(/{{plantype}}/g, "Plan")
+                  .replace(/{{company_email}}/g, settings.email_address)
+                  .replace(/{{company_phone}}/g, settings.contact_number)
+                  .replace(/{{company_address}}/g, settings.address)
+                  .replace(/{{company_website_title}}/g, settings.website_title)
+                  .replace(/{{gstamount}}/g, totalgst)
+                  .replace(/{{state}}/g, client.state)
+                  .replace(/{{gst}}/g, settings.gst)
+                  .replace(/{{sgst}}/g, sgst.toFixed(2))
+                  .replace(/{{cgst}}/g, cgst.toFixed(2))
+                  .replace(/{{igst}}/g, igst.toFixed(2))
+                  .replace(/{{logo}}/g, logo)
+                  .replace(/{{simage}}/g, simage)
+                  .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
 
         const browser = await puppeteer.launch({
@@ -1598,20 +1623,42 @@ for (let i = 0; i < length; i++) {
 
 
 
-          planDetailsHtml += `
-            <tr>
-              <td>${plan.category.title}</td>
-              <td>${plan.validity}</td>
-              <td>${plan.price}</td>
-              <td>${formatDate(start)}</td>
-              <td>${formatDate(end)}</td>
-            </tr>`;
-        }
+      
+            let sgst = 0, cgst = 0, igst = 0;
 
+            if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() === "") {
+                sgst = totalgst / 2;
+                cgst = totalgst / 2;
+            } else {
+                igst = totalgst;
+            }
+
+
+            planDetailsHtml += `
+            <tr>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.category.title}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.price}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">0</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">${total}</td>
+             </tr>`;
+ 
+         
+          }
+          
 
         const todays = new Date(); 
 
-        htmlContent = htmlContent
+        const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+        const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+
+
+
+          htmlContent = htmlContent
           .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
           .replace(/{{created_at}}/g, formatDate(todays))
           .replace(/{{payment_type}}/g, payment_type)
@@ -1619,9 +1666,18 @@ for (let i = 0; i < length; i++) {
           .replace(/{{email}}/g, client.Email)
           .replace(/{{PhoneNo}}/g, client.PhoneNo)
           .replace(/{{plan_details}}/g, planDetailsHtml)
+          .replace(/{{company_email}}/g, settings.email_address)
+          .replace(/{{company_phone}}/g, settings.contact_number)
+          .replace(/{{company_address}}/g, settings.address)
+          .replace(/{{company_website_title}}/g, settings.website_title)
+          .replace(/{{state}}/g, client.state)
+          .replace(/{{logo}}/g, logo)
+          .replace(/{{simage}}/g, simage)
           .replace(/{{total}}/g, price)
           .replace(/{{plantype}}/g, "Plan")
           .replace(/{{discount}}/g, 0);
+
+
 
 
         const browser = await puppeteer.launch({
