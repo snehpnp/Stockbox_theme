@@ -1511,7 +1511,7 @@ button:hover {
 .demate-data .card-header{
   height: 200px;
   width: 100%;
-  background: red;
+  /* background: red; */
   border-radius:100% 0% 100% 0% / 0% 50% 50% 100%;
   display: grid;
   place-items: center;
@@ -1543,4 +1543,8 @@ button:hover {
   text-align: center;
   font-size: 12px;
   margin-bottom: 20px;
+}
+span.price-current svg {
+  width: 18px;
+  height: 18px;
 }

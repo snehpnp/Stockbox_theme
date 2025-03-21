@@ -152,22 +152,22 @@ const Payments = () => {
                 <div className="row justify-content-center mt-4">
                     <div className="col-md-6">
                         <div className="card">
-                            <div className="card-header"><HandCoins className="me-2 btn-primary p-1 rounded" />your total saving is off ₹ {Number(item?.full_price) - Number(item?.basket_price)}</div>
+                            <div className="card-header"><HandCoins className="me-2 btn-primary p-1 rounded" />Your total saving is off ₹ {Number(item?.full_price) - Number(item?.basket_price)}</div>
                             <div className="card-body">
-                                <div className="d-md-flex justify-content-between">
-                                    <h6 className="card-title mb-0"><strong>validity</strong></h6>
+                                <div className="d-md-flex justify-content-between py-2">
+                                    <h6 className="card-title mb-0"><strong>Validity</strong></h6>
                                     <h6 className="card-title mb-0"><strong>{item?.validity} Month</strong></h6>
                                 </div>
-                                <div className="d-md-flex justify-content-between">
+                                {/* <div className="d-md-flex justify-content-between">
                                     <h6 className="card-title mb-0"><strong>{item?.title}</strong></h6>
                                     <h6 className="card-title mb-0"><strong>₹  {item?.basket_price}</strong></h6>
-                                </div>
-                                <div className="d-md-flex justify-content-between">
+                                </div> */}
+                                <div className="d-md-flex justify-content-between py-2">
                                     <h6 className="card-title mb-0"><strong>GST ({gstdata}%)</strong></h6>
                                     <h6 className="card-title mb-0"><strong>₹ {(((item?.basket_price) * gstdata) / 100).toFixed(2)}</strong></h6>
                                 </div>
-                                <div className="d-md-flex justify-content-between">
-                                    <h6 className="card-title mb-0"><strong>Total</strong></h6>
+                                <div className="d-md-flex justify-content-between py-2 pb-3">
+                                    <h6 className="card-title mb-0"><strong>Grand Total</strong></h6>
                                     <h6 className="card-title mb-0">
                                         <strong>
                                             ₹ {(

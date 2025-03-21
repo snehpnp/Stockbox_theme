@@ -414,7 +414,7 @@ const Service = () => {
       <Modal show={showModal} onHide={handleCloseModal} centered size="xxl">
         <Modal.Header closeButton>
           <Modal.Title className="text-center w-100 heading-color modal-title h4 ">
-            🌟 Plan Details
+             Plan Details
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>

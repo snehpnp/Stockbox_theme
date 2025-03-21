@@ -49,7 +49,7 @@ const BasketDetail = () => {
     >
       <div className="row border-bottom pb-3">
         <div className="col-md-8">
-          <h5>{item?.title}</h5>
+          <h5><b>{item?.title}</b></h5>
           <ul className="list-group list-group-flush list shadow-none">
             <li className="list-group-item d-flex justify-content-between align-items-center">
            Launch Date
@@ -106,7 +106,7 @@ const BasketDetail = () => {
           <Doughnut data={chartData} />
         </div>
 
-        <div className="row px-4">
+        <div className="row px-4 pt-4">
           <div className="col-md-12">
             <h6>
               <b>Description</b>
