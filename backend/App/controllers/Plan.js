@@ -1592,35 +1592,7 @@ for (let i = 0; i < length; i++) {
 
 
         let planDetailsHtml = '';
-        for (const plan_id of plan_ids) {
-          const plan = await Plan_Modal.findById(plan_id)
-            .populate('category')
-            .exec();
-
-            const validityMapping = {
-              '1 month': 1,
-              '2 months': 2,
-              '3 months': 3,
-              '6 months': 6,
-              '9 months': 9,
-              '1 year': 12,
-              '2 years': 24,
-              '3 years': 36,
-              '4 years': 48,
-              '5 years': 60
-            };
-      
-            const monthsToAdd = validityMapping[plan.validity];
-            if (monthsToAdd === undefined) {
-              return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
-            }
-      
-            const start = new Date();
-            const end = new Date(start);
-            end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
-            end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
-      
-
+       
 
 
       
@@ -1648,7 +1620,7 @@ for (let i = 0; i < length; i++) {
              </tr>`;
  
          
-          }
+       
           
 
         const todays = new Date(); 
@@ -1673,7 +1645,7 @@ for (let i = 0; i < length; i++) {
           .replace(/{{state}}/g, client.state)
           .replace(/{{logo}}/g, logo)
           .replace(/{{simage}}/g, simage)
-          .replace(/{{total}}/g, price)
+          .replace(/{{total}}/g, total)
           .replace(/{{plantype}}/g, "Plan")
           .replace(/{{discount}}/g, 0);
 
