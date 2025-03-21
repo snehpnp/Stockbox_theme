@@ -885,6 +885,19 @@ class List {
         const templatePath = path.join(__dirname, '../../../template', 'invoice.html');
         let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
+
+
+        let sgst = 0, cgst = 0, igst = 0;
+
+if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() ==="") {
+    sgst = totalgst / 2;
+    cgst = totalgst / 2;
+} else {
+    igst = totalgst;
+}
+const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+
+
         htmlContent = htmlContent
           .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
           .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
@@ -900,6 +913,17 @@ class List {
           .replace(/{{orderid}}/g, savedSubscription.orderid)
           .replace(/{{planname}}/g, plan.category.title)
           .replace(/{{plantype}}/g, "Plan")
+          .replace(/{{company_email}}/g, settings.email_address)
+          .replace(/{{company_phone}}/g, settings.contact_number)
+          .replace(/{{company_address}}/g, settings.address)
+          .replace(/{{company_website_title}}/g, settings.website_title)
+          .replace(/{{gstamount}}/g, totalgst)
+          .replace(/{{state}}/g, client.state)
+          .replace(/{{gst}}/g, settings.gst)
+          .replace(/{{sgst}}/g, sgst.toFixed(2))
+          .replace(/{{cgst}}/g, cgst.toFixed(2))
+          .replace(/{{igst}}/g, igst.toFixed(2))
+          .replace(/{{logo}}/g, logo)
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
 
@@ -1089,6 +1113,8 @@ class List {
 
         const templatePath = path.join(__dirname, '../../../template', 'invoice.html');
         let htmlContent = fs.readFileSync(templatePath, 'utf8');
+
+        
 
         htmlContent = htmlContent
           .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
@@ -5631,49 +5657,78 @@ class List {
 
 
         let planDetailsHtml = '';
+        let sno = 1;
         for (const plan_id of plan_ids) {
           const plan = await Plan_Modal.findById(plan_id)
             .populate('category')
             .exec();
 
-          const validityMapping = {
-            '1 month': 1,
-            '2 months': 2,
-            '3 months': 3,
-            '6 months': 6,
-            '9 months': 9,
-            '1 year': 12,
-            '2 years': 24,
-            '3 years': 36,
-            '4 years': 48,
-            '5 years': 60
-          };
+            const validityMapping = {
+              '1 month': 1,
+              '2 months': 2,
+              '3 months': 3,
+              '6 months': 6,
+              '9 months': 9,
+              '1 year': 12,
+              '2 years': 24,
+              '3 years': 36,
+              '4 years': 48,
+              '5 years': 60
+            };
+      
+            const monthsToAdd = validityMapping[plan.validity];
+            if (monthsToAdd === undefined) {
+              return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+            }
+      
+            const start = new Date();
+            const end = new Date(start);
+            end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+            end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+      
+            const numberOfPlans = plan_ids.length;
+            const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
+      
+            ////////////////// 17/10/2024 ////////////////////////
+      
+            let total = plan.price-discountPerPlan; // Use let for reassignable variables
+            let totalgst = 0;
+            
+            if (settings.gst > 0 && settings.gststatus==1) {
+              totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
+              total = total + totalgst;
+            }
 
-          const monthsToAdd = validityMapping[plan.validity];
-          if (monthsToAdd === undefined) {
-            return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
-          }
+            let sgst = 0, cgst = 0, igst = 0;
 
-          const start = new Date();
-          const end = new Date(start);
-          end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
-          end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
-
+            if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() === "") {
+                sgst = totalgst / 2;
+                cgst = totalgst / 2;
+            } else {
+                igst = totalgst;
+            }
 
 
 
           planDetailsHtml += `
-            <tr>
-              <td>${plan.category.title}</td>
-              <td>${plan.validity}</td>
-              <td>${plan.price}</td>
-              <td>${formatDate(start)}</td>
-              <td>${formatDate(end)}</td>
+           <tr>
+               <td style="border: 1px solid black; padding: 10px; text-align: center;height: 100px;">${sno}</td>
+               <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.category.title}</td>
+               <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
+               <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.price}</td>
+               <td style="border: 1px solid black; padding: 10px; text-align: center;">${discountPerPlan}</td>
+               <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst}</td>
+               <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst}</td>
+               <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst}</td>
+               <td style="border: 1px solid black; padding: 10px; text-align: center;">${total}</td>
             </tr>`;
+
+            sno++;
         }
 
 
-        const todays = new Date();
+        const todays = new Date(); 
+        const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
 
         htmlContent = htmlContent
           .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
@@ -5683,6 +5738,12 @@ class List {
           .replace(/{{email}}/g, client.Email)
           .replace(/{{PhoneNo}}/g, client.PhoneNo)
           .replace(/{{plan_details}}/g, planDetailsHtml)
+          .replace(/{{company_email}}/g, settings.email_address)
+          .replace(/{{company_phone}}/g, settings.contact_number)
+          .replace(/{{company_address}}/g, settings.address)
+          .replace(/{{company_website_title}}/g, settings.website_title)
+          .replace(/{{state}}/g, client.state)
+          .replace(/{{logo}}/g, logo)
           .replace(/{{total}}/g, price)
           .replace(/{{plantype}}/g, "Plan")
           .replace(/{{discount}}/g, discount);

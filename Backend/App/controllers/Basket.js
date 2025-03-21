@@ -254,7 +254,7 @@ class Basket {
 
   async AddStockInBasketForm(req, res) {
     try {
-      const { basket_id, stocks, publishstatus, comments} = req.body; // Get basket_id and stocks from the request body
+      const { basket_id, stocks, publishstatus, comments, stockname } = req.body; // Get basket_id and stocks from the request body
 
       // Validate basket existence
       const basket = await Basket_Modal.findById(basket_id);
@@ -434,6 +434,13 @@ class Basket {
 
 
       if (publishstatus == 1) {
+
+        const updatedBasket = await Basket_Modal.findByIdAndUpdate(
+          basket_id, 
+          { stockname: stockname }, 
+          { new: true }  // Ye ensure karega ki updated document return ho
+      );
+      
         await addBasketVolatilityData(req);
       }
 
@@ -602,7 +609,7 @@ class Basket {
 
   async UpdateStockInBasketForm(req, res) {
     try {
-      const { basket_id, stocks, version, publishstatus, comments } = req.body; // Include version in request body
+      const { basket_id, stocks, version, publishstatus, comments, stockname } = req.body; // Include version in request body
 
       // Validate basket existence
       const basket = await Basket_Modal.findById(basket_id);
@@ -790,6 +797,12 @@ class Basket {
       const result = await Basketstock_Modal.bulkWrite(bulkOps);
 
       if (publishstatus == 1) {
+        const updatedBasket = await Basket_Modal.findByIdAndUpdate(
+          basket_id, 
+          { stockname: stockname }, 
+          { new: true }  // Ye ensure karega ki updated document return ho
+      );
+
         await addBasketVolatilityData(req);
       }
 
