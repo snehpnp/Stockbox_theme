@@ -352,7 +352,7 @@ const Service = () => {
                             </div>
                             <hr />
                             <div className="d-flex align-items-center justify-content-between">
-                              <div>
+                              <div className="my-1" style={{ fontSize: "14px" }}>
                                 <b>Plan:</b> {plan?.name || `Plan ${index + 1}`}
                               </div>
                               <div className="price">
@@ -362,13 +362,13 @@ const Service = () => {
                               </div>
                             </div>
                             <ul className="features">
-                              <li>
+                              <li className="my-1" style={{ fontSize: "14px" }}>
                                 <b>Validity</b>: {plan?.validity}
                               </li>
-                              <li>
+                              <li className="my-1" style={{ fontSize: "14px" }}>
                                 <b>Description</b>:
                                 <textarea
-                                  className="form-control"
+                                  className="form-control mt-2"
                                   value={stripHtmlTags(plan?.description || "")}
                                   readOnly
                                 />
@@ -424,7 +424,7 @@ const Service = () => {
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h5> {selectedPlanDetails?.title} Plan</h5>
                 <span className="text-success fw-bold">
-                  <IndianRupee  className="w-25"/>{" "}
+                  <IndianRupee  style={{width:'15%;'}}/>{" "}
                   {selectedPlanDetails?.price || "N/A"}
                 </span>
               </div>
@@ -619,13 +619,13 @@ const Service = () => {
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <b> Original Price:</b>
                   <span className="text-primary fw-bold">
-                    <IndianRupee className="w-25" /> {selectedPlanDetails?.price}
+                    <IndianRupee style={{width:'15%;'}} /> {selectedPlanDetails?.price}
                   </span>
                 </div>
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <b> GST :</b>
                   <span className="text-primary fw-bold">
-                    <IndianRupee className="w-25" /> {gstdata}％
+                    <IndianRupee style={{width:'15%;'}}/> {gstdata}％
                   </span>
                 </div>
 
@@ -633,7 +633,7 @@ const Service = () => {
                   <div className="d-flex justify-content-between align-items-center text-danger mb-2">
                     <b> Coupon Discount:</b>
                     <span className="fw-bold">
-                      - <IndianRupee className="w-25" /> {appliedCoupon?.value}
+                      - <IndianRupee style={{width:'15%;'}}/> {appliedCoupon?.value}
                     </span>
                   </div>
                 )}
@@ -644,7 +644,7 @@ const Service = () => {
                     className="text-success fw-bold"
                     
                   >
-                    <IndianRupee style={{width:'20%'}} />{" "}
+                    <IndianRupee style={{width:'15%;'}} />{" "}
                     {(
                       (selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0)) +
                       ((selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0)) * gstdata) / 100
