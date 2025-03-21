@@ -333,9 +333,14 @@ const Service = () => {
                     ? item?.plans?.map((plan, index) => (
                       <div className="col col-lg-6" key={`${item?._id}-${index}`}>
                         <div className="card card1 mb-4">
+                        <div className="sidebar text-center p-2" style={{borderRadius:'8px 8px 0 0'}}>
+                                <img src="https://www.pnpuniverse.com/images/logo/pnp.png" className="w-100"  alt="stock" />
+                                </div>
                           <div className="card-body">
+                         
                             <div className="d-flex align-items-center">
                               <div className="text-left">
+                              
                                 <span className="price-original">
                                   {Array.isArray(item?.services) && item?.services?.length > 0
                                     ? item.services
@@ -347,6 +352,7 @@ const Service = () => {
                                       .join(" + ")
                                     : "N/A"}
                                 </span>
+                              
                                 <h5 style={{fontSize:'18px', fontWeight:'600'}} className="mb-0">{item?.title}</h5>
                               </div>
                             </div>
