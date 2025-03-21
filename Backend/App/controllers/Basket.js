@@ -432,15 +432,13 @@ class Basket {
 
       // Execute the bulk insert
       const result = await Basketstock_Modal.bulkWrite(bulkOps);
-
+      const updatedBasket = await Basket_Modal.findByIdAndUpdate(
+        basket_id, 
+        { stockname: stockname }, 
+        { new: true }  // Ye ensure karega ki updated document return ho
+    );
 
       if (publishstatus == 1) {
-
-        const updatedBasket = await Basket_Modal.findByIdAndUpdate(
-          basket_id, 
-          { stockname: stockname }, 
-          { new: true }  // Ye ensure karega ki updated document return ho
-      );
       
         await addBasketVolatilityData(req);
       }
@@ -796,14 +794,13 @@ class Basket {
 
       // Execute the bulk upsert
       const result = await Basketstock_Modal.bulkWrite(bulkOps);
-
+      const updatedBasket = await Basket_Modal.findByIdAndUpdate(
+        basket_id, 
+        { stockname: stockname }, 
+        { new: true }  // Ye ensure karega ki updated document return ho
+    );
       if (publishstatus == 1) {
-        const updatedBasket = await Basket_Modal.findByIdAndUpdate(
-          basket_id, 
-          { stockname: stockname }, 
-          { new: true }  // Ye ensure karega ki updated document return ho
-      );
-
+      
         await addBasketVolatilityData(req);
       }
 
