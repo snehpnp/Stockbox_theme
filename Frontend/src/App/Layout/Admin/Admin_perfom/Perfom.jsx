@@ -257,18 +257,33 @@ const Perform = () => {
 
     const renderTable1 = () => {
         const activeService = servicedata.find(service => service._id === activeTab);
-        return (
+    
+        if (isLoading) {
+            return (
+                <div className="text-center mt-5">
+                    <Loader />
+                </div>
+            );
+        }
+    
+        return closesignal.length > 0 ? (
             <div className="table-responsive">
                 <h5>{activeService ? `Performance for ${activeService.title}` : 'Performance'}</h5>
-                <Table columns={columns1}
+                <Table
+                    columns={columns1}
                     data={closesignal}
                     totalRows={totalRows}
                     currentPage={currentPage}
                     onPageChange={handlePageChange}
                 />
             </div>
+        ) : (
+            <div className="text-center mt-5">
+                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+            </div>
         );
     };
+    
 
 
 
@@ -303,10 +318,7 @@ const Perform = () => {
                 </div>
                 <hr />
 
-                {isLoading ? (
-                    <Loader />
-                ) : (
-                    <>
+               
 
                         <div className='card'>
                             <div className='card-body'>
@@ -417,9 +429,6 @@ const Perform = () => {
                                 </div>
                             </div>
                         </div>
-
-                    </>
-                )}
 
 
                 <ReusableModal

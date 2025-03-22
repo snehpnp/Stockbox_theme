@@ -36,9 +36,8 @@ const Help = () => {
         } catch (error) {
             console.log("error", error);
         }
-        setTimeout(()=>{
-            setIsLoading(false)
-        })
+        setIsLoading(false)
+
     }
 
 
@@ -121,7 +120,9 @@ const Help = () => {
                                                         </div>
                                                     ))
                                                 ) : (
-                                                    <p>No Help Message Available</p>
+                                                    <div className="text-center mt-5">
+                                                            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                                                        </div>
                                                 )}
                                             </div>
                                         </div>
