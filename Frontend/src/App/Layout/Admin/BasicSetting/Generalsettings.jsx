@@ -72,7 +72,7 @@ const Generalsettings = () => {
                                 logo: null,
                                 offer_image: null,
                                 simage: null,
-                                address: null
+                                address: clients[0].address
 
                             }}
                             onSubmit={async (values, { resetForm }) => {
@@ -93,7 +93,7 @@ const Generalsettings = () => {
                                 try {
                                     const response = await Updatebasicsettings(req, token);
                                     if (response.status) {
-                                        showCustomAlert("Success", response.message)
+                                        showCustomAlert("Success", response?.message)
                                         setIsModified(false);
                                         document.querySelectorAll('input[name="offer_image"], input[name="logo"], input[name="favicon",input[name="simage"]').forEach(input => {
                                             input.value = "";
@@ -101,7 +101,7 @@ const Generalsettings = () => {
 
 
                                     } else {
-                                        showCustomAlert("error", response.message)
+                                        showCustomAlert("error", response?.message)
                                     }
                                 } catch (error) {
                                     showCustomAlert("error", "An unexpected error occurred. Please try again later.")
@@ -280,9 +280,9 @@ const Generalsettings = () => {
                                                         </span>
                                                         <Field
                                                             name="address"
-                                                            as="textarea"  
+                                                            as="textarea"
                                                             className="form-control"
-                                                            placeholder="Address"                                                           
+                                                            placeholder="Address"
                                                         />
                                                     </div>
                                                 </div>
