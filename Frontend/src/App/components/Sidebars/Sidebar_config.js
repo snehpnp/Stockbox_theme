@@ -342,18 +342,25 @@ const User = [
     children: [],
   },
   {
-    name: "PrivacyPolicy",
-    label: "Privacy Policy",
-    icon: "Wrench",
-    link: "/user/privacy-policy",
-    children: [],
-  },
-  {
-    name: "TermsConditions",
-    label: "Terms & Conditions",
-    icon: "Wrench",
-    link: "/user/terms-conditions",
-    children: [],
+    label: "Our Policy",
+    icon: "Handshake",
+    children: [
+      {
+        name: "PrivacyPolicy",
+        label: "Privacy Policy",
+        icon: "Wrench",
+        link: "/user/privacy-policy",
+
+      },
+      {
+        name: "TermsConditions",
+        label: "Terms & Conditions",
+        icon: "Handshake",
+        link: "/user/terms-conditions",
+      },
+
+    ],
+    name: "Our Policy",
   },
   {
     name: "HelpDesk",

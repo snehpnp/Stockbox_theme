@@ -41,7 +41,8 @@ import {
   FileQuestion,
   CircleUserRound,
   Bell,
-  Puzzle
+  Puzzle,
+  Handshake
 } from "lucide-react";
 
 import { Link, useLocation } from "react-router-dom";
@@ -330,7 +331,8 @@ const IconComponent = ({ icon }) => {
     FileQuestion,
     CircleUserRound,
     Bell,
-    Puzzle
+    Puzzle,
+    Handshake
 
   };
 

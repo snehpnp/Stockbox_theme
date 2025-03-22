@@ -290,7 +290,7 @@ const Service = () => {
                 onChange={(e) => setSortCriteria(e.target.value)}
                 value={sortCriteria}
               >
-                <option value="">Select Segment</option>
+                <option value="">All</option>
                 <option value="Cash">Cash</option>
                 <option value="Future">Future</option>
                 <option value="Option">Option</option>
