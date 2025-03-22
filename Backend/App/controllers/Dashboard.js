@@ -1473,7 +1473,225 @@ class Dashboard {
     }
   }
   
-  
+  async getMonthlyProfitLoss(req, res) {
+    try {
+        const { id } = req.params;
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth() + 1; // Get current month (1-12)
+
+        // Define time ranges in ASC order
+        const timeRanges = {
+            "1_month": Array.from({ length: 1 }, (_, i) => `${currentYear}-${currentMonth - i}`),
+            "3_months": Array.from({ length: 3 }, (_, i) => `${currentYear}-${currentMonth - i}`),
+            "6_months": Array.from({ length: 6 }, (_, i) => `${currentYear}-${currentMonth - i}`),
+            "12_months": Array.from({ length: 12 }, (_, i) => `${currentYear}-${currentMonth - i}`)
+        };
+
+        const results = {};
+
+        for (const [key, months] of Object.entries(timeRanges)) {
+            const signals = await Signal_Modal.find({
+                del: 0,
+                close_status: true,
+                service: new mongoose.Types.ObjectId(id),
+                created_at: { 
+                    $gte: new Date(currentYear, currentMonth - months.length, 1),
+                    $lte: now
+                }
+            }).sort({ created_at: 1 }); // Sort in ASC order (Jan -> Feb -> Mar...)
+
+            let monthlyData = {};
+            let totalNetProfit = 0;
+            let monthCount = 0;
+
+            signals.forEach(signal => {
+                const entryPrice = parseFloat(signal.price);
+                const exitPrice = parseFloat(signal.closeprice);
+                const callType = signal.calltype;
+                const monthKey = `${signal.created_at.getFullYear()}-${signal.created_at.getMonth() + 1}`;
+
+                if (!isNaN(entryPrice) && !isNaN(exitPrice) && months.includes(monthKey)) {
+                    let profitOrLoss = (callType === "BUY") ? (exitPrice - entryPrice) : (entryPrice - exitPrice);
+                    if (id === "66dfede64a88602fbbca9b72" || id === "66dfeef84a88602fbbca9b79") {
+                        profitOrLoss *= signal.lotsize;
+                    }
+
+                    if (!monthlyData[monthKey]) {
+                        monthlyData[monthKey] = { totalProfit: 0, totalLoss: 0, netProfit: 0 };
+                        monthCount++; // Count unique months
+                    }
+
+                    if (profitOrLoss >= 0) {
+                        monthlyData[monthKey].totalProfit += profitOrLoss;
+                    } else {
+                        monthlyData[monthKey].totalLoss += Math.abs(profitOrLoss);
+                    }
+
+                    monthlyData[monthKey].netProfit = monthlyData[monthKey].totalProfit - monthlyData[monthKey].totalLoss;
+                }
+            });
+
+            // Calculate overall net profit and average monthly profit
+            totalNetProfit = Object.values(monthlyData).reduce((sum, month) => sum + month.netProfit, 0);
+            const avgMonthlyProfit = monthCount > 0 ? totalNetProfit / monthCount : 0;
+
+            results[key] = {
+                months: Object.fromEntries(Object.entries(monthlyData).sort()), // Sort months ASC
+                totalNetProfit,
+                avgMonthlyProfit
+            };
+        }
+
+        return res.json({
+            status: true,
+            message: "Monthly profit/loss data fetched successfully",
+            data: results
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            message: "Server error",
+            error: error.message
+        });
+    }
+}
+
+async getDailyProfitLoss(req, res) {
+  try {
+      const { id } = req.params;
+      const { month, year } = req.query;
+
+      // Ensure month and year are provided and valid
+      if (!month || !year || isNaN(month) || isNaN(year)) {
+          return res.status(400).json({ status: false, message: "Valid month and year are required!" });
+      }
+
+      const parsedMonth = parseInt(month, 10); // Convert string to integer
+      const parsedYear = parseInt(year, 10);
+
+      // Validate month range (1-12)
+      if (parsedMonth < 1 || parsedMonth > 12) {
+          return res.status(400).json({ status: false, message: "Invalid month value!" });
+      }
+
+      // Corrected date logic (months are 0-based in JavaScript)
+      const startDate = new Date(parsedYear, parsedMonth - 1, 1, 0, 0, 0); // First day of the month
+      const endDate = new Date(parsedYear, parsedMonth, 0, 23, 59, 59); // Last day of the month
+
+      const signals = await Signal_Modal.find({
+          del: 0,
+          close_status: true,
+          service: new mongoose.Types.ObjectId(id),
+          created_at: { $gte: startDate, $lte: endDate }
+      }).sort({ created_at: 1 });
+
+      if (!signals.length) {
+          return res.json({
+              status: true,
+              message: `No data found for ${month}-${year}`,
+              data: {}
+          });
+      }
+
+      let dailyData = {};
+      let signalList = [];
+      let totalSignals = signals.length;
+      let profitableCalls = 0;
+      let lossCalls = 0;
+      let totalProfit = 0;
+      let totalLoss = 0;
+      const protocol = req.protocol; // Will be 'http' or 'https'
+      const baseUrl = `https://${req.headers.host}`; // Construct the base URL
+      signals.forEach((signal, index) => {
+          const entryPrice = parseFloat(signal.price);
+          const exitPrice = parseFloat(signal.closeprice);
+          const callType = signal.calltype;
+          const entryDate = new Date(signal.created_at);
+          const exitDate = new Date(signal.closed_at || signal.created_at); // Use created_at if closed_at is null
+          const dayKey = `${entryDate.getDate()}-${entryDate.getMonth() + 1}-${entryDate.getFullYear()}`;
+          let profitOrLoss = 0;
+          let gainLossPercentage = 0;
+
+          if (!isNaN(entryPrice) && !isNaN(exitPrice)) {
+              profitOrLoss = (callType === "BUY") ? (exitPrice - entryPrice) : (entryPrice - exitPrice);
+              gainLossPercentage = ((profitOrLoss / entryPrice) * 100).toFixed(2);
+
+              if (id === "66dfede64a88602fbbca9b72" || id === "66dfeef84a88602fbbca9b79") {
+                  profitOrLoss *= signal.lotsize;
+              }
+
+              if (!dailyData[dayKey]) {
+                  dailyData[dayKey] = { totalProfit: 0, totalLoss: 0, netProfit: 0 };
+              }
+
+              if (profitOrLoss >= 0) {
+                  dailyData[dayKey].totalProfit += profitOrLoss;
+                  profitableCalls++;
+              } else {
+                  dailyData[dayKey].totalLoss += Math.abs(profitOrLoss);
+                  lossCalls++;
+              }
+
+              dailyData[dayKey].netProfit = dailyData[dayKey].totalProfit - dailyData[dayKey].totalLoss;
+              totalProfit += profitOrLoss >= 0 ? profitOrLoss : 0;
+              totalLoss += profitOrLoss < 0 ? Math.abs(profitOrLoss) : 0;
+
+              signalList.push({
+                  sno: index + 1,
+                  stockName: signal.tradesymbol,
+                  entryType: callType,
+                  entryDate: entryDate.toISOString().split("T")[0],
+                  entryPrice: entryPrice,
+                  exitDate: exitDate.toISOString().split("T")[0],
+                  exitPrice: exitPrice,
+                  netGainLossPercent: `${gainLossPercentage}%`,
+                  description: signal.description,
+                  report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null, // Append full report URL
+
+              });
+          }
+      });
+
+
+   // Sorting dailyData by date in ASC order
+   const sortedDailyData = Object.keys(dailyData)
+   .map(dateStr => {
+       const [day, month, year] = dateStr.split("-").map(Number);
+       return { dateStr, dateObj: new Date(year, month - 1, day) };
+   })
+   .sort((a, b) => a.dateObj - b.dateObj) // सही क्रम में Sort करें
+   .reduce((acc, item) => {
+       acc[item.dateStr] = dailyData[item.dateStr];
+       return acc;
+   }, {});
+
+
+      return res.json({
+          status: true,
+          message: `Daily profit/loss and signal details for ${month}-${year}`,
+          data: {
+              totalSignals,
+              profitableCalls,
+              lossCalls,
+              totalProfit,
+              totalLoss,
+              netProfit: totalProfit - totalLoss,
+              dailyData: sortedDailyData, // Sort by date (ASC)
+              signalList
+          }
+      });
+
+  } catch (error) {
+      return res.status(500).json({
+          status: false,
+          message: "Server error",
+          error: error.message
+      });
+  }
+}
+
 
 
 }

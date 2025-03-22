@@ -290,7 +290,7 @@ const Service = () => {
                 onChange={(e) => setSortCriteria(e.target.value)}
                 value={sortCriteria}
               >
-                <option value="">Select Segment</option>
+                <option value="">All</option>
                 <option value="Cash">Cash</option>
                 <option value="Future">Future</option>
                 <option value="Option">Option</option>
@@ -352,7 +352,7 @@ const Service = () => {
                           <hr />
                           <div className="d-flex align-items-center justify-content-between">
                             <div>
-                              <b>Plan:</b> {plan?.name || `Plan ${index + 1}`}
+                              <b>Price:</b>
                             </div>
                             <div className="price">
                               <span className="price-current">

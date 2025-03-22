@@ -41,7 +41,9 @@ import {
   FileQuestion,
   CircleUserRound,
   Bell,
-  Puzzle
+  Puzzle,
+  Handshake,
+  ClipboardX
 } from "lucide-react";
 
 import { Link, useLocation } from "react-router-dom";
@@ -238,7 +240,7 @@ const Sidebar = () => {
                             <IconComponent icon={tab.icon} />
                           </div>
                         </Tooltip>
-                        {!isCollapsed ? <span>{tab?.name}</span> : ""}
+                        {!isCollapsed ? <span>{tab?.label}</span> : ""}
                       </Link>
                       {tab?.children?.length > 0 &&
                         (openTab === tab?.name ? (
@@ -330,7 +332,9 @@ const IconComponent = ({ icon }) => {
     FileQuestion,
     CircleUserRound,
     Bell,
-    Puzzle
+    Puzzle,
+    Handshake,
+    ClipboardX
 
   };
 

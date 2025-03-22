@@ -56,6 +56,30 @@ export async function getTermsCondition(token) {
     }
 }
 
+
+// desclaimer
+
+export async function Disclaimerdata(token) {
+    try {
+        const res = await axios.get(
+            `${Config.base_url}api/list/content/66ebc51cf6b4908639cc487a`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        return res?.data;
+    } catch (err) {
+        console.log("Error fetching Terms Condition data:", err);
+        throw err;
+    }
+}
+
+
+
+
 export async function getFaq(token) {
     try {
         const res = await axios.get(`${Config.base_url}api/list/faq`, {

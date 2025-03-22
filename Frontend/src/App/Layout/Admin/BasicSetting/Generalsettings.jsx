@@ -74,7 +74,7 @@ const Generalsettings = () => {
                                 logo: null,
                                 offer_image: null,
                                 simage: null,
-                                address: null
+                                address: clients[0].email_address
 
                             }}
                             onSubmit={async (values, { resetForm }) => {
@@ -100,7 +100,6 @@ const Generalsettings = () => {
                                         document.querySelectorAll('input[name="offer_image"], input[name="logo"], input[name="favicon",input[name="simage"]').forEach(input => {
                                             input.value = "";
                                         });
-
 
                                     } else {
                                         showCustomAlert("error", response.message)
@@ -282,9 +281,9 @@ const Generalsettings = () => {
                                                         </span>
                                                         <Field
                                                             name="address"
-                                                            as="textarea"  
+                                                            as="textarea"
                                                             className="form-control"
-                                                            placeholder="Address"                                                           
+                                                            placeholder="Address"
                                                         />
                                                     </div>
                                                 </div>
