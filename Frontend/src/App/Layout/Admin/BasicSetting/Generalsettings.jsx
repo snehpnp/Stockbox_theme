@@ -20,6 +20,8 @@ const Generalsettings = () => {
     const getsettinglist = async () => {
         try {
             const response = await basicsettinglist(token);
+            console.log("data kya aa rha hai",response);
+            
             if (response.status) {
                 setClients(response.data);
             }
