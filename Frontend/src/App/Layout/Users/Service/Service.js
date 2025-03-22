@@ -324,91 +324,87 @@ const Service = () => {
         </div>
         {isLoading ? (
           <Loader />
-        ) : (
+        ) : getFilteredPlans?.length > 0 ? (
           <div className="pricing-container price1 mt-4">
-            {getFilteredPlans?.length > 0 ? (
-              <div className="row row-cols-1 row-cols-md-1 row-cols-lg-3 row-cols-xl-3">
-                {getFilteredPlans?.map((item) =>
-                  item?.plans?.length > 0
-                    ? item?.plans?.map((plan, index) => (
-                      <div className="col col-lg-6" key={`${item?._id}-${index}`}>
-                        <div className="card card1 mb-4">
-                          <div className="card-body">
-                            <div className="d-flex align-items-center">
-                              <div className="text-left">
-                                <span className="price-original">
-                                  {Array.isArray(item?.services) && item?.services?.length > 0
-                                    ? item.services
-                                      .map((service) =>
-                                        typeof service.title === "string"
-                                          ? service.title.split(/(?=[A-Z])/).join(" + ")
-                                          : "N/A"
-                                      )
-                                      .join(" + ")
-                                    : "N/A"}
-                                </span>
-                                <h5 className="mb-0">{item?.title}</h5>
-                              </div>
+            <div className="row row-cols-1 row-cols-md-1 row-cols-lg-3 row-cols-xl-3">
+              {getFilteredPlans?.map((item) =>
+                item?.plans?.length > 0 ? (
+                  item?.plans?.map((plan, index) => (
+                    <div className="col col-lg-6" key={`${item?._id}-${index}`}>
+                      <div className="card card1 mb-4">
+                        <div className="card-body">
+                          <div className="d-flex align-items-center">
+                            <div className="text-left">
+                              <span className="price-original">
+                                {Array.isArray(item?.services) && item?.services?.length > 0
+                                  ? item.services
+                                    .map((service) =>
+                                      typeof service.title === "string"
+                                        ? service.title.split(/(?=[A-Z])/).join(" + ")
+                                        : "N/A"
+                                    )
+                                    .join(" + ")
+                                  : "N/A"}
+                              </span>
+                              <h5 className="mb-0">{item?.title}</h5>
                             </div>
-                            <hr />
-                            <div className="d-flex align-items-center justify-content-between">
-                              <div>
-                                <b>Plan:</b> {plan?.name || `Plan ${index + 1}`}
-                              </div>
-                              <div className="price">
-                                <span className="price-current">
-                                  <IndianRupee /> {plan?.price}
-                                </span>
-                              </div>
+                          </div>
+                          <hr />
+                          <div className="d-flex align-items-center justify-content-between">
+                            <div>
+                              <b>Plan:</b> {plan?.name || `Plan ${index + 1}`}
                             </div>
-                            <ul className="features">
-                              <li>
-                                <b>Validity</b>: {plan?.validity}
-                              </li>
-                              <li>
-                                <b>Description</b>:
-                                <textarea
-                                  className="form-control"
-                                  value={stripHtmlTags(plan?.description || "")}
-                                  readOnly
-                                />
-                              </li>
-                            </ul>
-                            <div className="d-block d-sm-flex align-items-center justify-content-between mt-3">
-                              <button
-                                className="btn btn-secondary rounded-1 mt-2 mt-sm-0 me-2 me-sm-0"
-                                onClick={() => {
-                                  setViewModel(true);
-                                  setDiscription(plan?.description);
-                                }}
-                              >
-                                Know More
-                              </button>
+                            <div className="price">
+                              <span className="price-current">
+                                <IndianRupee /> {plan?.price}
+                              </span>
+                            </div>
+                          </div>
+                          <ul className="features">
+                            <li>
+                              <b>Validity</b>: {plan?.validity}
+                            </li>
+                            <li>
+                              <b>Description</b>:
+                              <textarea
+                                className="form-control"
+                                value={stripHtmlTags(plan?.description || "")}
+                                readOnly
+                              />
+                            </li>
+                          </ul>
+                          <div className="d-block d-sm-flex align-items-center justify-content-between mt-3">
+                            <button
+                              className="btn btn-secondary rounded-1 mt-2 mt-sm-0 me-2 me-sm-0"
+                              onClick={() => {
+                                setViewModel(true);
+                                setDiscription(plan?.description);
+                              }}
+                            >
+                              Know More
+                            </button>
 
-                              <button
-                                className="btn btn-primary rounded-1 mt-2 mt-sm-0"
-                                onClick={() => handleShowModal(plan)}
-                              >
-                                Subscribe Now
-                              </button>
-                            </div>
+                            <button
+                              className="btn btn-primary rounded-1 mt-2 mt-sm-0"
+                              onClick={() => handleShowModal(plan)}
+                            >
+                              Subscribe Now
+                            </button>
                           </div>
                         </div>
                       </div>
-                    ))
-                    : null
-                )}
-              </div>
-            ) : (
-              <div className="text-center mt-4">
-                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
-              </div>
-            )}
-
-
+                    </div>
+                  ))
+                ) : null
+              )}
+            </div>
           </div>
-
+        ) : (
+          <div className="text-center mt-4">
+            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+          </div>
         )}
+
       </div>
 
       <Modal show={showModal} onHide={handleCloseModal} centered size="xxl">

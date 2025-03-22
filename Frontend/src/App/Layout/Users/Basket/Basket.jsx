@@ -129,151 +129,145 @@ function Basket() {
         </li>
       </ul>
       {activeTab === "allbasket" && (
-        isLoading ? <Loader /> :
-          <>
-            <div className="row">
-
-              {basketdata?.map((item) => {
-                return (
-                  <div className="col-md-12 col-lg-4 mb-3" key={item?.id}>
-                    <div className="card radius-10 overflow-hidden">
-                      <div className="card-body">
-                        <div className="d-flex justify-content-between align-items-center">
-                          {/* {item?.image && (
-                            <img src={item?.image} alt="Item" className="me-2" style={{ width: "40px", height: "40px", borderRadius: "5px" }} />
-                          )} */}
-                          <h5 className="mb-0">{item?.title} ({item?.themename})</h5>
-                          {item?.isSubscribed && <span className="badge bg-success">Subscribed</span>}
-                        </div>
-                      </div>
-
-                      <div className="progress-wrapper">
-                        <div className="progress" style={{ height: 7 }}>
-                          <div
-                            className="progress-bar"
-                            role="progressbar"
-                            style={{ width: "75%" }}
-                          />
-                        </div>
-                      </div>
-                      <div className="card-body">
-                        <ul className="list-group list-group-flush list shadow-none">
-                          <li className="list-group-item d-flex justify-content-between align-items-center">
-                            <textarea
-                              className="form-control"
-                              value={stripHtmlTags(
-                                item?.description || ""
-                              )}
-                              readOnly
-                            />
-                            {/* <p className="basket-short-description">
-                          {stripHtmlTags(item?.description)}
-                        </p> */}
-                          </li>
-                          <li className="list-group-item d-flex justify-content-between align-items-center">
-                            Minimum Investment
-                            <span className="badge bg-dark rounded-pill">{item?.mininvamount}</span>
-                          </li>
-                          <li className="list-group-item d-flex justify-content-between align-items-center">
-                            CAGR
-                            <span className="badge bg-success rounded-pill">{item?.cagr}</span>
-                          </li>
-                          <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
-                            Validity
-                            <span className="badge bg-danger rounded-pill">{item?.validity}</span>
-                          </li>
-                          <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100 mb-1">
-                            View Details
-                          </Link>
-
-                          {
-                            item?.isSubscribed || item?.isActive ? (
-                              <Link to="/user/basketstocklist" state={{ item }} className="btn btn-primary w-100">
-                                View Stock Detail
-                              </Link>
-                            ) : item?.isSubscribed === false && item?.isActive === false ? (
-                              <Link to="/user/payment" state={{ item }} className="btn btn-primary w-100">
-                                Subscribe <del>{item?.full_price}</del> {item?.basket_price}
-                              </Link>
-                            ) : item?.isSubscribed === true && item?.isActive === false ? (
-                              <Link to="/user/rebalancestock" state={{ item }} className="btn btn-primary w-100">
-                                View Rebalance
-                              </Link>
-                            ) : ""
-                          }
-
-
-                        </ul>
-                      </div>
+        isLoading ? (
+          <Loader />
+        ) : basketdata?.length > 0 ? (
+          <div className="row">
+            {basketdata?.map((item) => (
+              <div className="col-md-12 col-lg-4 mb-3" key={item?.id}>
+                <div className="card radius-10 overflow-hidden">
+                  <div className="card-body">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <h5 className="mb-0">
+                        {item?.title} ({item?.themename})
+                      </h5>
+                      {item?.isSubscribed && (
+                        <span className="badge bg-success">Subscribed</span>
+                      )}
                     </div>
                   </div>
-                );
-              })}
 
-            </div>
-          </>
-
-      )}
-
-      {activeTab === "subscribedbasket" && (
-        isLoading ? <Loader /> : <div className="row">
-          {purchasedata?.map((item) => {
-            return (
-              <>
-                <div className="col-md-12 col-lg-4 mb-3" key={item?.id}>
-                  <div className="card radius-10 overflow-hidden">
-                    <div className="card-body">
-                      <h5>{item?.title} ({item?.themename})</h5>
+                  <div className="progress-wrapper">
+                    <div className="progress" style={{ height: 7 }}>
+                      <div
+                        className="progress-bar"
+                        role="progressbar"
+                        style={{ width: "75%" }}
+                      />
                     </div>
-                    <div className="progress-wrapper">
-                      <div className="progress" style={{ height: 7 }}>
-                        <div
-                          className="progress-bar"
-                          role="progressbar"
-                          style={{ width: "75%" }}
+                  </div>
+
+                  <div className="card-body">
+                    <ul className="list-group list-group-flush list shadow-none">
+                      <li className="list-group-item d-flex justify-content-between align-items-center">
+                        <textarea
+                          className="form-control"
+                          value={stripHtmlTags(item?.description || "")}
+                          readOnly
                         />
-                      </div>
-                    </div>
-                    <div className="card-body">
-                      <ul className="list-group list-group-flush list shadow-none">
-                        <li className="list-group-item d-flex justify-content-between align-items-center">
-                          <textarea
-                            className="form-control"
-                            value={stripHtmlTags(
-                              item?.description || ""
-                            )}
-                            readOnly
-                          />
-                          {/* <p className="basket-short-description">
-                          {stripHtmlTags(item?.description)}
-                        </p> */}
-                        </li>
-                        <li className="list-group-item d-flex justify-content-between align-items-center">
-                          Minimum Investment
-                          <span className="badge bg-dark rounded-pill">{item?.mininvamount}</span>
-                        </li>
-                        <li className="list-group-item d-flex justify-content-between align-items-center">
-                          CAGR
-                          <span className="badge bg-success rounded-pill">{item?.cagr}</span>
-                        </li>
-                        <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
-                          Validity
-                          <span className="badge bg-danger rounded-pill">{item?.validity}</span>
-                        </li>
-                        <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100">
-                          View Details
+                      </li>
+                      <li className="list-group-item d-flex justify-content-between align-items-center">
+                        Minimum Investment
+                        <span className="badge bg-dark rounded-pill">{item?.mininvamount}</span>
+                      </li>
+                      <li className="list-group-item d-flex justify-content-between align-items-center">
+                        CAGR
+                        <span className="badge bg-success rounded-pill">{item?.cagr}</span>
+                      </li>
+                      <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
+                        Validity
+                        <span className="badge bg-danger rounded-pill">{item?.validity}</span>
+                      </li>
+                      <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100 mb-1">
+                        View Details
+                      </Link>
+
+                      {item?.isSubscribed || item?.isActive ? (
+                        <Link to="/user/basketstocklist" state={{ item }} className="btn btn-primary w-100">
+                          View Stock Detail
                         </Link>
-                      </ul>
-                    </div>
+                      ) : item?.isSubscribed === false && item?.isActive === false ? (
+                        <Link to="/user/payment" state={{ item }} className="btn btn-primary w-100">
+                          Subscribe <del>{item?.full_price}</del> {item?.basket_price}
+                        </Link>
+                      ) : item?.isSubscribed === true && item?.isActive === false ? (
+                        <Link to="/user/rebalancestock" state={{ item }} className="btn btn-primary w-100">
+                          View Rebalance
+                        </Link>
+                      ) : null}
+                    </ul>
                   </div>
                 </div>
-
-              </>
-            )
-          })}
-
-        </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center mt-4">
+            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+          </div>
+        )
       )}
+
+
+      {activeTab === "subscribedbasket" && (
+        isLoading ? (
+          <Loader />
+        ) : purchasedata?.length > 0 ? (
+          <div className="row">
+            {purchasedata?.map((item) => (
+              <div className="col-md-12 col-lg-4 mb-3" key={item?.id}>
+                <div className="card radius-10 overflow-hidden">
+                  <div className="card-body">
+                    <h5>{item?.title} ({item?.themename})</h5>
+                  </div>
+
+                  <div className="progress-wrapper">
+                    <div className="progress" style={{ height: 7 }}>
+                      <div
+                        className="progress-bar"
+                        role="progressbar"
+                        style={{ width: "75%" }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="card-body">
+                    <ul className="list-group list-group-flush list shadow-none">
+                      <li className="list-group-item d-flex justify-content-between align-items-center">
+                        <textarea
+                          className="form-control"
+                          value={stripHtmlTags(item?.description || "")}
+                          readOnly
+                        />
+                      </li>
+                      <li className="list-group-item d-flex justify-content-between align-items-center">
+                        Minimum Investment
+                        <span className="badge bg-dark rounded-pill">{item?.mininvamount}</span>
+                      </li>
+                      <li className="list-group-item d-flex justify-content-between align-items-center">
+                        CAGR
+                        <span className="badge bg-success rounded-pill">{item?.cagr}</span>
+                      </li>
+                      <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
+                        Validity
+                        <span className="badge bg-danger rounded-pill">{item?.validity}</span>
+                      </li>
+                      <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100">
+                        View Details
+                      </Link>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center mt-4">
+            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+          </div>
+        )
+      )}
+
 
     </Content>
   )
