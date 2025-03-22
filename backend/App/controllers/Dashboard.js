@@ -1602,7 +1602,8 @@ async getDailyProfitLoss(req, res) {
       let lossCalls = 0;
       let totalProfit = 0;
       let totalLoss = 0;
-
+      const protocol = req.protocol; // Will be 'http' or 'https'
+      const baseUrl = `https://${req.headers.host}`; // Construct the base URL
       signals.forEach((signal, index) => {
           const entryPrice = parseFloat(signal.price);
           const exitPrice = parseFloat(signal.closeprice);
@@ -1645,7 +1646,10 @@ async getDailyProfitLoss(req, res) {
                   entryPrice: entryPrice,
                   exitDate: exitDate.toISOString().split("T")[0],
                   exitPrice: exitPrice,
-                  netGainLossPercent: `${gainLossPercentage}%`
+                  netGainLossPercent: `${gainLossPercentage}%`,
+                  description: signal.description,
+                  report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null, // Append full report URL
+
               });
           }
       });
