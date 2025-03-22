@@ -56,6 +56,8 @@ class BasicSetting {
           invoicestatus,
           gst,
           gststatus,
+          gstin,
+          state,
 
         } = req.body;
 
@@ -125,6 +127,8 @@ class BasicSetting {
           gst,
           gststatus,
           simage,
+          gstin,
+          state,
         };
 
         const options = {
