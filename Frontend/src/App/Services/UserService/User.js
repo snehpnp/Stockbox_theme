@@ -1008,3 +1008,69 @@ export async function GetNsePriceData(token) {
 }
 
 
+
+export async function getpastperformaceCashdata(data, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/getmonthlyprofitloss/${data.id}`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        console.log("Error fetching plan data:", err);
+        throw err;
+    }
+}
+
+
+
+export async function getpastperformaceFuturedata(data, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/getmonthlyprofitloss/${data.id}`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        console.log("Error fetching plan data:", err);
+        throw err;
+    }
+}
+
+
+export async function getpastperformaceOptiondata(data, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/getmonthlyprofitloss/${data.id}`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        console.log("Error fetching plan data:", err);
+        throw err;
+    }
+}
+
+
+
+export async function getpastperformacebymonth(data, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/getdailyprofitloss/${data.id}`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        console.log("Error fetching plan data:", err);
+        throw err;
+    }
+}
+
