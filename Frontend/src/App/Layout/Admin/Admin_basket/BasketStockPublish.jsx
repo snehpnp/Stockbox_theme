@@ -106,12 +106,17 @@ const BasketStockPublish = () => {
   };
 
 
- 
+
 
   const rebalancePubliceStock = async (row) => {
     if (!row) return
     navigate("/admin/editstock", { state: { row } });
   };
+
+
+  const rebalancePubliceStockadd = async (row) => {
+    navigate("/admin/addstock/" + row._id, { state: { state: "publish" } });
+  }
 
 
 
@@ -252,11 +257,23 @@ const BasketStockPublish = () => {
       name: "Actions",
       cell: (row) => (
         <div className="w-100">
-          {row.rebalancestatus === false ?
-            <Tooltip title="Rebalance">
-
-              <RotateCcw onClick={() => rebalancePubliceStock(row)} />
-            </Tooltip> : ""}
+          {row.rebalancestatus === false ? (
+            row?.stockstatus == 0 ? (
+              <Tooltip title="Rebalance">
+                <RotateCcw
+                  onClick={() => rebalancePubliceStock(row)}
+                  style={{ marginRight: "5px" }}
+                />
+              </Tooltip>
+            ) : (
+              <Tooltip title="Rebalance">
+                <RotateCcw
+                  onClick={() => rebalancePubliceStockadd(row)}
+                  style={{ marginRight: "5px" }}
+                />
+              </Tooltip>
+            )
+          ) : null}
           <Tooltip title="view">
             <Eye onClick={() => viewdetailpage(row)} />
           </Tooltip>
@@ -349,10 +366,10 @@ const BasketStockPublish = () => {
                 onPageChange={handlePageChange}
               />
             </>
-          ):(
+          ) : (
             <div className="text-center mt-5">
-                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
-              </div>
+              <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+            </div>
           )}
 
         </div>
