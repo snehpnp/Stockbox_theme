@@ -3,7 +3,7 @@ import Table from "../../../Extracomponents/Table";
 import { Bar, Doughnut } from "react-chartjs-2";
 import { Link } from "react-router-dom";
 import "chart.js/auto";
-import { getpastperformaceCashdata } from "../../../Services/UserService/User";
+import { getpastperformaceCashdata, getpastperformacebymonth } from "../../../Services/UserService/User";
 import Content from "../../../components/Contents/Content";
 
 
@@ -11,12 +11,11 @@ const Cash = () => {
 
   const token = localStorage.getItem("token");
 
-  // const [cashpastdata, setCashPastdata] = useState([]);
-  // const [monthaverg, setMonthaverg] = useState({});
+
   const [cashPastData, setCashPastdata] = useState(new Array(12).fill(0));
   const [monthaverg, setMonthaverg] = useState({});
 
-  console.log("monthaverg", monthaverg)
+
 
   useEffect(() => {
     getCashpastdata()

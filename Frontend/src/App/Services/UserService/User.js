@@ -1056,3 +1056,21 @@ export async function getpastperformaceOptiondata(data, token) {
         throw err;
     }
 }
+
+
+
+export async function getpastperformacebymonth(data, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/getdailyprofitloss/${data.id}`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        console.log("Error fetching plan data:", err);
+        throw err;
+    }
+}
+
