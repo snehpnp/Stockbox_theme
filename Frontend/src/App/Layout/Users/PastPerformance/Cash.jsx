@@ -15,10 +15,31 @@ const Cash = () => {
   const [cashPastData, setCashPastdata] = useState(new Array(12).fill(0));
   const [monthaverg, setMonthaverg] = useState({});
 
+  const [month, setMonth] = useState("01");
+  const [year, setYear] = useState("2025");
+  const [chartData1, setChartData1] = useState(null);
+  const [doughnutData1, setDoughnutData1] = useState(null);
+
+
+  const months = [
+    { name: "Jan", value: "01" },
+    { name: "Feb", value: "02" },
+    { name: "Mar", value: "03" },
+    { name: "Apr", value: "04" },
+    { name: "May", value: "05" },
+    { name: "Jun", value: "06" },
+    { name: "Jul", value: "07" },
+    { name: "Aug", value: "08" },
+    { name: "Sep", value: "09" },
+    { name: "Oct", value: "10" },
+    { name: "Nov", value: "11" },
+    { name: "Dec", value: "12" },
+  ];
 
 
   useEffect(() => {
     getCashpastdata()
+    // getCashpastmonthdata()
   }, [])
 
 
@@ -55,6 +76,42 @@ const Cash = () => {
       console.error("Error fetching Cash data:", error);
     }
   };
+
+
+  const getPastPerformanceData = async () => {
+    try {
+      const data = { id: "66d2c3bebf7e6dc53ed07626", month, year };
+      const response = await getpastperformacebymonth(data, token);
+
+      if (response?.status) {
+        setChartData1(response?.data?.chartData);
+        setDoughnutData1(response?.data?.doughnutData);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    getPastPerformanceData();
+  }, [month, year]);
+
+
+  const changeMonth = (direction) => {
+    let currentIndex = months.findIndex((m) => m.value === month);
+    if (direction === "prev") {
+      currentIndex = currentIndex > 0 ? currentIndex - 1 : 11;
+    } else {
+      currentIndex = currentIndex < 11 ? currentIndex + 1 : 0;
+    }
+    setMonth(months[currentIndex].value);
+    if (currentIndex === 11 && direction === "next") {
+      setYear((prevYear) => (parseInt(prevYear) + 1).toString());
+    } else if (currentIndex === 0 && direction === "prev") {
+      setYear((prevYear) => (parseInt(prevYear) - 1).toString());
+    }
+  };
+
 
 
   const chartData = {
@@ -179,47 +236,52 @@ const Cash = () => {
           </div>
         </div>
 
-        <div className="row mt-2 mb-2">
-          <div className="col-md-12">
-            <div class="alert alert-primary" role="alert">
-              <div class="d-md-flex justify-content-between align-items-center">
-                <div>  Momentum (Dec 2024) PERFORMANCE
+        <div className="container">
+          <div className="row mt-2 mb-2">
+            <div className="col-md-12">
+              <div className="alert alert-primary" role="alert">
+                <div className="d-md-flex justify-content-between align-items-center">
+                  <div>Momentum ({months.find((m) => m.value === month)?.name} {year}) PERFORMANCE</div>
+                  <div className="mt-md-0 mt-3">
+                    <button className="btn btn-primary me-2" onClick={() => changeMonth("prev")}>
+                      <i className="bx bx-left-arrow-alt"></i> {months[(months.findIndex((m) => m.value === month) - 1 + 12) % 12]?.name} {year}
+                    </button>
+                    <button className="btn btn-primary">
+                      {months.find((m) => m.value === month)?.name} {year} <i className="bx bx-right-arrow-alt"></i>
+                    </button>
+                    <button className="btn btn-primary ms-2" onClick={() => changeMonth("next")}>
+                      {months[(months.findIndex((m) => m.value === month) + 1) % 12]?.name} {year} <i className="bx bx-right-arrow-alt"></i>
+                    </button>
+                  </div>
                 </div>
-                <div className=",t-md-0 mt-3"> <button className="btn btn-primary me-2 "><i class='bx bx-left-arrow-alt'></i>Nov 2024</button>
-                  <button className="btn btn-primary  ">Dec 2024<i class='bx bx-right-arrow-alt' ></i></button></div>
+              </div>
+            </div>
+          </div>
 
+          <div className="row">
+            <div className="col-md-4">
+              <div className="card radius-10 overflow-hidden w-100">
+                <div className="card-body">
+                  <p>Momentum</p>
+                  <h4 className="mb-0">{months.find((m) => m.value === month)?.name} {year}</h4>
+                  <hr />
+                  <p>Profit - Loss Summary</p>
+                  <div className="mt-5">
+                    {doughnutData ? <Doughnut data={doughnutData} /> : <p>Loading...</p>}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-md-4">
-            <div className="card radius-10 overflow-hidden w-100">
-              <div className="card-body">
-                <p>Momentum</p>
-                <h4 className="mb-0">Dec 2024</h4>
-                <hr />
-                <p>Profit - Loss Summary</p>
-                <div className="mt-5">
-                  <Doughnut data={doughnutData} />
+            <div className="col-md-8">
+              <div className="card radius-10 overflow-hidden w-100 h-100">
+                <div className="card-body">
+                  {chartData ? <Bar data={chartData} /> : <p>Loading...</p>}
                 </div>
               </div>
             </div>
           </div>
-          <div className="col-md-8">
-            <div className="card radius-10 overflow-hidden w-100 h-100">
-              <div className="card-body">
-                <Bar
-                  className=""
-                  data={{
-                    ...chartData,
-                    datasets: [chartData.datasets[0]], // Cash dataset
-                  }}
-                />
-              </div>
-            </div>
-          </div>
         </div>
+
         <div className="my-4">
           <div className="d-md-flex gap-3">
             <div className="card-body card">
