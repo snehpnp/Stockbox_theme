@@ -362,7 +362,7 @@ const User = [
         name: "Disclaimer",
         label: "Disclaimer",
         icon: "ClipboardX",
-        link: "/user/terms-conditions",
+        link: "/user/disclaimer",
       },
 
     ],

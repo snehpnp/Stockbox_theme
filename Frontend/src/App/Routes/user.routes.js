@@ -33,10 +33,12 @@ import BasketResponse from "../Layout/Users/BasketResponse/BasketResponse";
 import Wallet from "../Layout/Users/Wallet/Wallet";
 import Payments from "../Layout/Users/Basket/Payments";
 import RebalanceStock from "../Layout/Users/Basket/RebalanceStock";
+import Disclaimer from "../Layout/Users/Discliamer/Disclaimer";
 
 export default function App() {
   return (
     <Routes>
+
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/basket" element={<Basket />} />
       <Route path="/trades" element={<Trades />} />
@@ -69,6 +71,7 @@ export default function App() {
       <Route path="/rebalancestock/:id" element={<RebalanceStock />} />
       <Route path="/wallet" element={<Wallet />} />
       <Route path="/payment" element={<Payments />} />
+      <Route path="/disclaimer" element={<Disclaimer />} />
     </Routes>
   );
 }
