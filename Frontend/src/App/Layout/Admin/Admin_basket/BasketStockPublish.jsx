@@ -201,7 +201,7 @@ const BasketStockPublish = () => {
           WebkitBoxOrient: 'vertical',
           maxWidth: '200px',
           textAlign: 'left',
-          whiteSpace: 'normal', // Ensure multi-line text
+          whiteSpace: 'normal', 
         }}>
           {stripHtml(row.description)}
         </div>
