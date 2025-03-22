@@ -352,7 +352,7 @@ const Service = () => {
                           <hr />
                           <div className="d-flex align-items-center justify-content-between">
                             <div>
-                              <b>Plan:</b> {plan?.name || `Plan ${index + 1}`}
+                              <b>Price:</b>
                             </div>
                             <div className="price">
                               <span className="price-current">

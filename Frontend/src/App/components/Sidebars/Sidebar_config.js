@@ -358,6 +358,12 @@ const User = [
         icon: "Handshake",
         link: "/user/terms-conditions",
       },
+      {
+        name: "Disclaimer",
+        label: "Disclaimer",
+        icon: "ClipboardX",
+        link: "/user/terms-conditions",
+      },
 
     ],
     name: "Our Policy",

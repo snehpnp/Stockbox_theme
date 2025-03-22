@@ -25,6 +25,8 @@ const Payments = () => {
     const [bankdetail, setBankdetail] = useState([]);
     const [qrdata, setQrdata] = useState([]);
 
+    console.log("bankdetail", bankdetail)
+
     useEffect(() => {
         getkeybydata()
         getQRimage()
@@ -231,6 +233,7 @@ const Payments = () => {
                                                 <li className="list-group-item d-flex justify-content-between"> <b>Account Name:</b> {item?.name} </li>
                                                 <li className="list-group-item d-flex justify-content-between">  <b>Account Number:</b> {item?.accountno}</li>
                                                 <li className="list-group-item d-flex justify-content-between">  <b>IFSC Code:</b> {item?.ifsc}</li>
+                                                <li className="list-group-item d-flex justify-content-between">  <b>Branch Name :</b> {item?.branch}</li>
 
                                             </ul>
 
