@@ -29,16 +29,14 @@ const Message = () => {
 
     const getservice = async () => {
         try {
-            const response = await GetService(token);
+            const response = await GetService(token);          
             if (response.status) {
                 setServicedata(response?.data);
             }
         } catch (error) {
             console.log("Error fetching services:", error);
         }
-        setTimeout(() => {
-            setIsLoading(false)
-        })
+        setIsLoading(false)        
     };
 
 
@@ -52,6 +50,7 @@ const Message = () => {
         } catch (error) {
             console.log("Error fetching broadcast messages:", error);
         }
+        setIsLoading(false)
     };
 
     const DeleteMessage = async (_id) => {
@@ -108,66 +107,72 @@ const Message = () => {
 
                                 <div className="page-content">
                                     <div className="container py-2">
-                                        {chatMessages.map((item, index) => {
-                                            const serviceIds = item.service?.split(',');
+                                        {chatMessages.length > 0 ? (
+                                            chatMessages.map((item, index) => {
+                                                const serviceIds = item.service?.split(',');
 
-                                            const matchedServices = serviceIds?.map(serviceId =>
-                                                (Array.isArray(servicedata) ? servicedata : []).find(service => service?._id === serviceId)
-                                            ).filter(Boolean);
+                                                const matchedServices = serviceIds?.map(serviceId =>
+                                                    (Array.isArray(servicedata) ? servicedata : []).find(service => service?._id === serviceId)
+                                                ).filter(Boolean);
 
-                                            return (
-                                                <div className="row" key={index}>
-                                                    <div className="col py-2">
-                                                        <div className="card" style={{ borderRadius: "10px" }}>
-                                                            <div className="card-body">
-                                                                <div className="float-end text-muted">
-                                                                    <Tooltip placement="top" overlay="Update">
-                                                                        <SquarePen
-                                                                            onClick={() => navigate("/admin/updatebroadcast", { state: { item } })}
+                                                return (
+                                                    <div className="row" key={index}>
+                                                        <div className="col py-2">
+                                                            <div className="card" style={{ borderRadius: "10px" }}>
+                                                                <div className="card-body">
+                                                                    <div className="float-end text-muted">
+                                                                        <Tooltip placement="top" overlay="Update">
+                                                                            <SquarePen
+                                                                                onClick={() => navigate("/admin/updatebroadcast", { state: { item } })}
+                                                                            />
+                                                                        </Tooltip>
+                                                                        <Tooltip placement="top" overlay="Delete">
+                                                                            <Trash2 onClick={() => DeleteMessage(item._id)} />
+                                                                        </Tooltip>
+                                                                    </div>
+                                                                    <h4 className="card-title text-muted">
+                                                                        <span>
+                                                                            {matchedServices.length > 0 ? (
+                                                                                matchedServices.map((service, idx) => (
+                                                                                    <span key={idx}>
+                                                                                        {service.segment === "C" && <span>CASH </span>}
+                                                                                        {service.segment === "O" && <span>OPTION </span>}
+                                                                                        {service.segment === "F" && <span>FUTURE </span>}
+                                                                                    </span>
+                                                                                ))
+
+                                                                            ) : ""}
+                                                                        </span>({item.type})
+                                                                    </h4>
+                                                                    <hr />
+                                                                    <p><strong>Subject:</strong> {item.subject}</p>
+                                                                    <p className="card-text">
+                                                                        <strong>Message:</strong>
+                                                                        <span
+                                                                            dangerouslySetInnerHTML={{
+                                                                                __html: item.message.replace(
+                                                                                    /<img /g,
+                                                                                    '<img style="width: 300px; height: 150px; object-fit: cover;" '
+                                                                                )
+                                                                            }}
+                                                                            style={{ display: 'block', marginTop: '0.5rem' }}
                                                                         />
-                                                                    </Tooltip>
-                                                                    <Tooltip placement="top" overlay="Delete">
-                                                                        <Trash2 onClick={() => DeleteMessage(item._id)} />
-                                                                    </Tooltip>
+                                                                    </p>
+
+                                                                    <p><strong>Created At:</strong> {fDateTime(item.created_at)}</p>
+                                                                    <p><strong>Updated At:</strong> {fDateTime(item.updated_at)}</p>
                                                                 </div>
-                                                                <h4 className="card-title text-muted">
-                                                                    <span>
-                                                                        {matchedServices.length > 0 ? (
-                                                                            matchedServices.map((service, idx) => (
-                                                                                <span key={idx}>
-                                                                                    {service.segment === "C" && <span>CASH </span>}
-                                                                                    {service.segment === "O" && <span>OPTION </span>}
-                                                                                    {service.segment === "F" && <span>FUTURE </span>}
-                                                                                </span>
-                                                                            ))
-
-                                                                        ) : ""}
-                                                                    </span>({item.type})
-                                                                </h4>
-                                                                <hr />
-                                                                <p><strong>Subject:</strong> {item.subject}</p>
-                                                                {/* <p><strong>Type:</strong> {item.type}</p> */}
-                                                                <p className="card-text">
-                                                                    <strong>Message:</strong>
-                                                                    <span
-                                                                        dangerouslySetInnerHTML={{
-                                                                            __html: item.message.replace(
-                                                                                /<img /g,
-                                                                                '<img style="width: 300px; height: 150px; object-fit: cover;" '
-                                                                            )
-                                                                        }}
-                                                                        style={{ display: 'block', marginTop: '0.5rem' }}
-                                                                    />
-                                                                </p>
-
-                                                                <p><strong>Created At:</strong> {fDateTime(item.created_at)}</p>
-                                                                <p><strong>Updated At:</strong> {fDateTime(item.updated_at)}</p>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            );
-                                        })}
+                                                );
+                                            })
+                                        ) : (
+                                            <div className="text-center mt-5">
+                                                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                                            </div>
+                                        )}
+
 
 
                                     </div>

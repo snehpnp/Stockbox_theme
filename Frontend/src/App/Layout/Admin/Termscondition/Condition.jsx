@@ -42,9 +42,7 @@ const Condition = () => {
         } catch (error) {
             console.log("Error fetching services:", error);
         }
-        setTimeout(() => {
-            setIsLoading(false)
-        })
+        setIsLoading(false)
     };
 
     useEffect(() => {
@@ -128,7 +126,7 @@ const Condition = () => {
                 <div className="row">
                     {isLoading ? (
                         <Loader />
-                    ) : (
+                    ) : clients.length > 0 ? (
                         <>
 
                             {clients.map((client, index) => (
@@ -173,6 +171,10 @@ const Condition = () => {
                                 </div>
                             ))}
                         </>
+                    ) : (
+                        <div className="text-center mt-5">
+                            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                        </div>
                     )}
                 </div>
             </div>
