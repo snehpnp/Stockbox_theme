@@ -118,16 +118,6 @@ const BasketSchema = new Schema({
         trim: true,
         default: null
     },
-    gstin: {
-        type: String,
-        trim: true,
-        default: null
-    },
-    state: {
-        type: String,
-        trim: true,
-        default: null
-    },
     del: {
         type: Boolean,
         default: false // Indicates whether the Basket is marked as deleted

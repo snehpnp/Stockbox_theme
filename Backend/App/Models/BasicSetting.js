@@ -261,6 +261,16 @@ const BasicSettingSchema = new Schema({
         trim: true,
         default: null
     },
+    gstin: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    state: {
+        type: String,
+        trim: true,
+        default: null
+    },
 
 }, {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
