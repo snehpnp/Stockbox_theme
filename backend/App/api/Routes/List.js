@@ -1,6 +1,6 @@
 const router = require("express").Router()
 
-const {Blogslist,Newslist,Bannerlist,Plancategorysist,getPlansByPlancategoryId,addPlanSubscription,myPlan,Couponlist,Signallist,applyCoupon,showSignalsToClients,Servicelist,Faqlist,detailContent,showSignalsToClientsClose,BasketList,pastPerformance,addBasketSubscription,getallPlan,addFreeTrail,BroadcastList,myFreetrial,basicSetting,pastPerformances,myService,CloseSignal,showSignalsToClientsCloses,Notification,Bank,Qrcode,BlogslistwithPagination,NewslistwithPagination,Refer,BasketLists,BasketstockList,myBasketPlan,placeOrder,exitPlaceOrder,checkBasketSell,BasketListss,BasketstockLists,getLivePrice,MyPorfolio,BasketstockListBalance,getBasketVersionOrder,Logout,addRequest,SignalClientWithPlan,NotificationWithPlan,getCompanyAndBseData,addPlanSubscriptionAddToCart,PurchasedBasketList,addBasketSubscriptionAddToCart,AddToCartPlan,AddToCartBasket,PlanCartList,BasketCartList,DeleteCartItem,SignalClientWithPlanClose,getStockrating,SignalLatest,pastPerformancewithtype,CloseSignalwithtype,updatePerformanceStatus,checkClientToken,applyCouponwithplan,LatestSignalsWithoutActivePlan,getBasketGraphData,BasketSubscriptionCount,getLivePrices} = require('../Controllers/List')
+const {Blogslist,Newslist,Bannerlist,Plancategorysist,getPlansByPlancategoryId,addPlanSubscription,myPlan,Couponlist,Signallist,applyCoupon,showSignalsToClients,Servicelist,Faqlist,detailContent,showSignalsToClientsClose,BasketList,pastPerformance,addBasketSubscription,getallPlan,addFreeTrail,BroadcastList,myFreetrial,basicSetting,pastPerformances,myService,CloseSignal,showSignalsToClientsCloses,Notification,Bank,Qrcode,BlogslistwithPagination,NewslistwithPagination,Refer,BasketLists,BasketstockList,myBasketPlan,placeOrder,exitPlaceOrder,checkBasketSell,BasketListss,BasketstockLists,getLivePrice,MyPorfolio,BasketstockListBalance,getBasketVersionOrder,Logout,addRequest,SignalClientWithPlan,NotificationWithPlan,getCompanyAndBseData,addPlanSubscriptionAddToCart,PurchasedBasketList,addBasketSubscriptionAddToCart,AddToCartPlan,AddToCartBasket,PlanCartList,BasketCartList,DeleteCartItem,SignalClientWithPlanClose,getStockrating,SignalLatest,pastPerformancewithtype,CloseSignalwithtype,updatePerformanceStatus,checkClientToken,applyCouponwithplan,LatestSignalsWithoutActivePlan,getBasketGraphData,BasketSubscriptionCount,getLivePrices,getLivePriceCash} = require('../Controllers/List')
 
 
 router.get('/api/list/blogs',Blogslist);
@@ -96,5 +96,6 @@ router.post('/api/list/getbasketgraphdata', getBasketGraphData);
 router.post('/api/list/basketsubscriptioncount', BasketSubscriptionCount);
 
 router.get('/api/getliveprices/:basket_id', getLivePrices);
+router.get('/api/getlivepricecash', getLivePriceCash);
 
 module.exports = router;

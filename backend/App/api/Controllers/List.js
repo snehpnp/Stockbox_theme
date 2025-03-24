@@ -7459,7 +7459,78 @@ async  getLivePrices(req, res) {
     });
   }
 }
+async getLivePriceCash(req, res) {
+  try {
+    const livePrices = await Signal_Modal.aggregate([
+      // Filter signals with close_status false and segment "C"
+      {
+        $match: {
+          close_status: false,
+          segment: "C"
+        }
+      },
+      // Join with stocks collection to get stock details based on tradesymbol
+      {
+        $lookup: {
+          from: 'stocks',
+          localField: 'tradesymbol',
+          foreignField: 'tradesymbol',
+          as: 'stockDetails'
+        }
+      },
+      {
+        $unwind: {
+          path: '$stockDetails',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      // Join with stockliveprices collection using the token from stocks details
+      {
+        $lookup: {
+          from: 'stockliveprices',
+          localField: 'stockDetails.instrument_token',
+          foreignField: 'token',
+          as: 'liveData'
+        }
+      },
+      {
+        $unwind: {
+          path: '$liveData',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      // Project the necessary fields including the live price (assumed as 'lp')
+      {
+        $project: {
+          tradesymbol: 1,
+          price: '$liveData.lp',
+          curtime: '$liveData.curtime'
+        }
+      },
+      // Group by tradesymbol to return unique tradesymbol records only
+      {
+        $group: {
+          _id: "$tradesymbol",
+          tradesymbol: { $first: "$tradesymbol" },
+          price: { $first: "$price" },
+          curtime: { $first: "$curtime" }
+        }
+      }
+    ]);
 
+    return res.json({
+      status: true,
+      message: "Live prices fetched successfully",
+      data: livePrices
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "Server error",
+      data: []
+    });
+  }
+}
 
 
   
