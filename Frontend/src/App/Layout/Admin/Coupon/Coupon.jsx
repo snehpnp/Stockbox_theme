@@ -425,10 +425,10 @@ const Coupon = () => {
                             data={clients}
                         />
                     </>
-                ):(
+                ) : (
                     <div className="text-center mt-5">
-                    <img src="/assets/images/norecordfound.png" alt="No Records Found" />
-                </div>
+                        <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                    </div>
                 )}
                 {/* // ReusableModal usage */}
                 <ReusableModal
@@ -474,7 +474,7 @@ const Coupon = () => {
                             </button>
                         </>
                     }
-                />;
+                />
 
 
             </div>

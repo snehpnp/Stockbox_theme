@@ -64,6 +64,8 @@ const Viewclientdetail = () => {
     fetchAdminServices();
   }, []);
 
+
+
   const getCategoryTitle = async (categoryId) => {
     try {
       const response = await getcategoryplan(token);
@@ -76,6 +78,9 @@ const Viewclientdetail = () => {
     }
     return "-";
   };
+
+
+
 
   const getPlanDetail = async () => {
     try {
@@ -99,6 +104,9 @@ const Viewclientdetail = () => {
     }
   };
 
+
+
+
   const getClientDetail = async () => {
     try {
       const response = await clientdetailbyid(id, token);
@@ -110,6 +118,8 @@ const Viewclientdetail = () => {
       console.error("Error fetching client details:", error);
     }
   };
+
+
 
   const getclientservice = async () => {
     try {
@@ -123,6 +133,10 @@ const Viewclientdetail = () => {
     }
   };
 
+
+
+
+
   const fetchAdminServices = async () => {
     try {
       const response = await GetService(token);
@@ -133,6 +147,8 @@ const Viewclientdetail = () => {
       console.log("Error fetching services:", error);
     }
   };
+
+
 
   const getAllSignal = async () => {
     try {
@@ -157,6 +173,9 @@ const Viewclientdetail = () => {
     }
   };
 
+
+
+
   const getexportfile = async () => {
     try {
       const data = { client_id: id };
@@ -180,6 +199,9 @@ const Viewclientdetail = () => {
     }
   };
 
+
+
+  
   const fetchStockList = async () => {
     try {
       const response = await GetStockDetail(token);

@@ -1061,7 +1061,7 @@ export async function getpastperformaceOptiondata(data, token) {
 
 export async function getpastperformacebymonth(data, token) {
     try {
-        const res = await axios.get(`${Config.base_url}dashboard/getmonthlyprofitloss/${data.id}?month=${data.month}&year=${data.year}`, {
+        const res = await axios.get(`${Config.base_url}dashboard/getdailyprofitloss/${data.id}?month=${data.month}&year=${data.year}`, {
             headers: {
                 Authorization: `${token}`,
             },
