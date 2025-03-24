@@ -7,6 +7,9 @@ const Planmanage = db.Planmanage;
 const Order_Modal = db.Order;
 const Plancategory_Modal = db.Plancategory;
 const PlanSubscription_Modal = db.PlanSubscription;
+const Signalsdata_Modal = db.Signalsdata;
+const Signalstock_Modal = db.Signalstock;
+
 
 mongoose  = require('mongoose');
 const Clients_Modal = db.Clients;
@@ -2064,6 +2067,149 @@ const finalResult = result.map(item => ({
       status: false,
       message: "Server error",
       data: []
+    });
+  }
+}
+
+async AddSignals(req, res) {
+  try {
+    // File upload for report using multer
+    await new Promise((resolve, reject) => {
+      upload('report').fields([{ name: 'report', maxCount: 1 }])(req, res, (err) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve();
+      });
+    });
+
+    // Destructure required fields from req.body, including stocks array
+    const { stock, strategy_name, callduration, description, planid, profitlosstype, stocks } = req.body;
+    // Validate required fields (including stocks array)
+    console.log("req.body",req.body);
+
+    if (!planid) {
+      return res.status(400).json({ status: false, message: 'Missing required fields' });
+    }
+    if (!stocks || !Array.isArray(stocks) || stocks.length === 0) {
+      return res.status(400).json({ status: false, message: 'Stocks data missing or invalid' });
+    }
+    // Allowed MIME types check for report file
+    const allowedMimeTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
+
+
+    const reportFile = req.files['report'] ? req.files['report'][0] : null;
+    console.log("bbbb");
+
+    if (reportFile) {
+      const fileMimeType = reportFile.mimetype;
+      if (!allowedMimeTypes.includes(fileMimeType)) {
+        return res.status(400).json({
+          status: false,
+          message: "Invalid file type. Only PDF and Word files are allowed.",
+        });
+      }
+    }
+    const report = reportFile ? reportFile.filename : null;
+    console.log("ccccc");
+
+    // Split planid into an array of plan IDs
+    const planIds = planid.split(',');
+   
+
+    // Create signal entries for each plan id using Signalsdata_Modal
+    const signalEntries = planIds.map(id => {
+      return new Signalsdata_Modal({
+        stock: stock,
+        strategy_name: strategy_name,
+        service: "67e12758a0a2be895da19550", // Hardcoded service value
+        callduration: callduration,
+        description: description,
+        planid: id,
+        profitlosstype: profitlosstype,
+        report: report,
+      });
+    });
+    // Insert all signal entries at once
+    const insertedSignals = await Signalsdata_Modal.insertMany(signalEntries);
+
+    // Prepare bulk operations for inserting stock information linked to signals
+    const bulkOps = [];
+    // For each inserted signal, loop through the stocks array
+    for (const signal of insertedSignals) {
+      for (const st of stocks) {
+        // Destructure stock object values (ensure these keys are sent in req.body.stocks)
+        const { segment, expirydate, calltype, price, optiontype, lot } = st;
+        bulkOps.push({
+          insertOne: {
+            document: {
+              signal_id: signal._id,
+              segment: segment,
+              expirydate: expirydate,
+              calltype: calltype,
+              price: price,
+              optiontype: optiontype,
+              lot: lot,
+            },
+          },
+        });
+      }
+    }
+
+    // Bulk insert stock entries if any operations exist
+    if (bulkOps.length > 0) {
+      await Signalstock_Modal.bulkWrite(bulkOps);
+    }
+
+    // Fetch clients for notification based on plan subscription criteria
+    const today = new Date();
+    const clients = await Clients_Modal.find({
+      del: 0,
+      ActiveStatus: 1,
+      devicetoken: { $exists: true, $ne: null },
+      _id: {
+        $in: await PlanSubscription_Modal.find({
+          client_id: { $ne: null },
+          plan_category_id: { $in: planIds },
+          plan_end: { $gte: today },
+          del: false,
+        }).distinct('client_id'),
+      },
+    }).select('devicetoken');
+
+    const tokens = clients.map(client => client.devicetoken);
+    if (tokens.length > 0) {
+      const notificationTitle = 'Important Update';
+      // Yahan "stock" variable ka istemal hua hai, jo req.body.stock se aata hai.
+      const notificationBody = `New STRATEGY:- ${strategy_name}, Symbol ${stock} OPEN`;
+      const resultn = new Notification_Modal({
+        segmentid: planid,
+        type: 'open signal',
+        title: notificationTitle,
+        message: notificationBody,
+      });
+      await resultn.save();
+
+      try {
+        await sendFCMNotification(notificationTitle, notificationBody, tokens, "open signal");
+      } catch (error) {
+        // Handle notification error if needed
+      }
+    }
+
+    return res.json({
+      status: true,
+      message: "Signal added successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "Server error",
+      error: error.message,
     });
   }
 }

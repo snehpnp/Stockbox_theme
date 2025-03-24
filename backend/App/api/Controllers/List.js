@@ -2196,8 +2196,9 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
   async Servicelist(req, res) {
     try {
 
-      const service = await Service_Modal.find({ del: false, status: true });
-
+      const service = await Service_Modal.find({ del: false, status: true })
+      .sort({ created_at: 1 }) 
+      .limit(3);
 
       return res.status(200).json({
         status: true,
@@ -5285,7 +5286,8 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
     }
   }
   
-
+//// old   /////
+/*
   async addPlanSubscriptionAddToCart(req, res) {
     try {
       const { plan_ids, client_id, price, discount, orderid, coupon_code } = req.body;
@@ -5307,6 +5309,475 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
 
 
       for (const plan_id of plan_ids) {
+      const plan = await Plan_Modal.findById(plan_id)
+        .populate('category')
+        .exec();
+
+      if (!plan) {
+        return res.status(404).json({ status: false, message: 'Plan not found' });
+      }
+    
+
+
+      const activePlan = await PlanSubscription_Modal.findOne({
+        plan_category_id: plan.category._id,
+        client_id: client_id,
+        plan_end: { $gte: new Date() } // Ensure the plan is not expired
+      }).sort({ plan_end: -1 }); // Sort by end date to get the most recent one
+      
+      
+
+
+      const validityMapping = {
+        '1 month': 1,
+        '2 months': 2,
+        '3 months': 3,
+        '6 months': 6,
+        '9 months': 9,
+        '1 year': 12,
+        '2 years': 24,
+        '3 years': 36,
+        '4 years': 48,
+        '5 years': 60
+      };
+
+      const monthsToAdd = validityMapping[plan.validity];
+      if (monthsToAdd === undefined) {
+        return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+      }
+
+      let start = new Date();  // Use let instead of const to allow reassigning
+
+      if (activePlan) {
+        start = new Date(activePlan.plan_end); // Start the new plan right after the previous one ends
+      }
+      const end = new Date(start);
+      end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+      end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+
+
+      const planservice = plan.category?.service;
+      const planservices = planservice ? planservice.split(',') : [];
+      for (const serviceId of planservices) {
+        const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: serviceId }).exec();
+
+        if (existingPlan) {
+
+          if (new Date(existingPlan.enddate) < end) {
+            existingPlan.enddate = end;
+            await existingPlan.save();
+          }
+        }
+        else
+        {
+          const newPlanManage = new Planmanage({
+            clientid: client_id,
+            serviceid: serviceId,
+            startdate: start,
+            enddate: end,
+          });
+            await newPlanManage.save();
+        }
+      }
+  
+      const currentDate = new Date();
+      const targetMonth = `${String(currentDate.getMonth() + 1).padStart(2, '0')}${currentDate.getFullYear()}`;
+
+      let license = await License_Modal.findOne({ month: targetMonth }).exec();
+
+
+      if (license) {
+        license.noofclient += monthsToAdd;
+      } else {
+        license = new License_Modal({
+          month: targetMonth,
+          noofclient: monthsToAdd
+        });
+        console.log('Month not found, inserting new record.');
+      }
+
+      try {
+        await license.save();
+        console.log('License updated successfully.');
+      } catch (error) {
+      }
+
+
+      const numberOfPlans = plan_ids.length;
+      const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
+
+
+      let total = plan.price-discountPerPlan; // Use let for reassignable variables
+      let totalgst = 0;
+      
+      if (settings.gst > 0 && settings.gststatus==1) {
+        totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
+        total = total + totalgst;
+      }
+
+
+      const newSubscription = new PlanSubscription_Modal({
+        plan_id,
+        plan_category_id: plan.category._id,
+        client_id,
+        total: total,
+        plan_price: plan.price,
+        discount: discountPerPlan,
+        gstamount:totalgst,
+        gst: settings.gst,
+        coupon: coupon_code,
+        plan_start: start,
+        plan_end: end,
+        validity: plan.validity,
+        orderid: orderid,
+        ordernumber:`INV-${orderNumber}`,
+        invoice:`INV-${orderNumber}.pdf`,
+      });
+
+      const savedSubscription = await newSubscription.save();
+
+    }
+
+
+
+    const updatedItems = await Addtocart_Modal.updateMany(
+      { client_id: client_id, status: false, basket_id: null }, // Find all matching items
+      { $set: { status: true } } // Update status to true
+  );
+  
+
+      if (coupon_code) {
+        const resultc = await Coupon_Modal.findOne({
+          del: false,
+          status: true,
+          code: coupon_code
+        });
+
+
+        if (resultc) {
+
+          if (resultc.limitation > 0) {
+            const updatedResult = await Coupon_Modal.findByIdAndUpdate(
+              resultc._id,
+              { $inc: { limitation: -1 } }, // Decrease limitation by 1
+              { new: true } // Return the updated document
+            );
+          }
+
+        }
+      }
+
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+
+      if (!client) {
+        return console.log('Client not found or inactive.');
+      }
+
+
+      if (client.freetrial == 0) {
+        client.freetrial = 1;
+        await client.save();
+      }
+
+
+      const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
+
+      if (client.refer_status && client.token) {
+        if (refertokens.length > 0) {
+        }
+        else {
+
+          const senderamount = (price * settings.sender_earn) / 100;
+          const receiveramount = (price * settings.receiver_earn) / 100;
+
+          const results = new Refer_Modal({
+            token: client.token,
+            user_id: client._id,
+            senderearn: settings.sender_earn,
+            receiverearn: settings.receiver_earn,
+            senderamount: senderamount,
+            receiveramount: receiveramount,
+            status: 1
+          })
+          await results.save();
+
+          client.wamount += receiveramount;
+          await client.save();
+          const sender = await Clients_Modal.findOne({ refer_token: client.token, del: 0, ActiveStatus: 1 });
+
+          if (sender) {
+            sender.wamount += senderamount;
+            await sender.save();
+          } else {
+          }
+
+        }
+
+      }
+
+      if (refertokens.length > 0) {
+        for (const refertoken of refertokens) {
+          const senderamount = (price * refertoken.senderearn) / 100;
+          const receiveramount = (price * refertoken.receiverearn) / 100;
+
+          refertoken.senderamount = senderamount;
+          refertoken.receiveramount = receiveramount;
+          refertoken.status = 1;
+
+          await refertoken.save();
+
+          client.wamount += receiveramount;
+          await client.save();
+
+          const sender = await Clients_Modal.findOne({ refer_token: refertoken.token, del: 0, ActiveStatus: 1 });
+
+          if (sender) {
+            sender.wamount += senderamount;
+            await sender.save();
+          } else {
+          }
+        }
+      } else {
+        console.log('No referral tokens found.');
+      }
+
+      const adminnotificationTitle = "Important Update";
+      const adminnotificationBody = `Congratulations! ${client.FullName} successfully purchased the Plan`;
+      const resultnm = new Adminnotification_Modal({
+        clientid: client._id,
+        segmentid: "",
+        type: 'plan purchase',
+        title: adminnotificationTitle,
+        message: adminnotificationBody
+      });
+
+
+      await resultnm.save();
+
+   
+
+        let payment_type;
+        if (orderid) {
+          payment_type = "Online";
+        }
+        else {
+          payment_type = "Offline";
+
+        }
+
+        const templatePath = path.join(__dirname, '../../../template', 'invoicenew.html');
+        let htmlContent = fs.readFileSync(templatePath, 'utf8');
+
+
+
+        let planDetailsHtml = '';
+        let sno = 1;
+        for (const plan_id of plan_ids) {
+          const plan = await Plan_Modal.findById(plan_id)
+            .populate('category')
+            .exec();
+
+            const validityMapping = {
+              '1 month': 1,
+              '2 months': 2,
+              '3 months': 3,
+              '6 months': 6,
+              '9 months': 9,
+              '1 year': 12,
+              '2 years': 24,
+              '3 years': 36,
+              '4 years': 48,
+              '5 years': 60
+            };
+      
+            const monthsToAdd = validityMapping[plan.validity];
+            if (monthsToAdd === undefined) {
+              return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+            }
+      
+            const start = new Date();
+            const end = new Date(start);
+            end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+            end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+      
+            const numberOfPlans = plan_ids.length;
+            const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
+      
+            ////////////////// 17/10/2024 ////////////////////////
+      
+            let total = plan.price-discountPerPlan; // Use let for reassignable variables
+            let totalgst = 0;
+            
+            if (settings.gst > 0 && settings.gststatus==1) {
+              totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
+              total = total + totalgst;
+            }
+
+            let sgst = 0, cgst = 0, igst = 0;
+
+            if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() === "") {
+                sgst = totalgst / 2;
+                cgst = totalgst / 2;
+            } else {
+                igst = totalgst;
+            }
+
+
+
+          planDetailsHtml += `
+           <tr>
+               <td style="border: 1px solid black; padding: 10px; text-align: center;height: 100px;">${sno}</td>
+               <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.category.title}</td>
+               <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
+               <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.price}</td>
+               <td style="border: 1px solid black; padding: 10px; text-align: center;">${discountPerPlan}</td>
+               <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst}</td>
+               <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst}</td>
+               <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst}</td>
+               <td style="border: 1px solid black; padding: 10px; text-align: center;">${total}</td>
+            </tr>`;
+
+            sno++;
+        }
+
+
+        const todays = new Date(); 
+        const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+        const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+
+
+        htmlContent = htmlContent
+          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+          .replace(/{{created_at}}/g, formatDate(todays))
+          .replace(/{{payment_type}}/g, payment_type)
+          .replace(/{{clientname}}/g, client.FullName)
+          .replace(/{{email}}/g, client.Email)
+          .replace(/{{PhoneNo}}/g, client.PhoneNo)
+          .replace(/{{plan_details}}/g, planDetailsHtml)
+          .replace(/{{company_email}}/g, settings.email_address)
+          .replace(/{{company_phone}}/g, settings.contact_number)
+          .replace(/{{company_address}}/g, settings.address)
+          .replace(/{{company_website_title}}/g, settings.website_title)
+          .replace(/{{gstin}}/g, settings.gstin)
+          .replace(/{{state}}/g, client.state)
+          .replace(/{{logo}}/g, logo)
+          .replace(/{{simage}}/g, simage)
+          .replace(/{{total}}/g, price)
+          .replace(/{{plantype}}/g, "Plan")
+          .replace(/{{discount}}/g, discount);
+
+
+        const browser = await puppeteer.launch({
+          args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+        const page = await browser.newPage();
+        await page.setContent(htmlContent);
+
+        // Define the path to save the PDF
+        const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+
+        // Generate PDF and save to the specified path
+        await page.pdf({
+          path: pdfPath,
+          format: 'A4',
+          printBackground: true,
+          margin: {
+            top: '20mm',
+            right: '10mm',
+            bottom: '50mm',
+            left: '10mm',
+          },
+        });
+
+        await browser.close();
+
+   
+
+        if (settings.invoicestatus == 1) {
+        const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
+        if (!mailtemplate || !mailtemplate.mail_body) {
+          throw new Error('Mail template not found');
+        }
+
+        const templatePaths = path.join(__dirname, '../../../template', 'mailtemplate.html');
+
+        fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
+          if (err) {
+            return;
+          }
+
+          let finalMailBody = mailtemplate.mail_body
+            .replace('{clientName}', `${client.FullName}`);
+
+          const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+
+          // Replace placeholders with actual values
+          const finalHtml = htmlTemplate
+            .replace(/{{company_name}}/g, settings.website_title)
+            .replace(/{{body}}/g, finalMailBody)
+            .replace(/{{logo}}/g, logo);
+
+          const mailOptions = {
+            to: client.Email,
+            from: `${settings.from_name} <${settings.from_mail}>`,
+            subject: `${mailtemplate.mail_subject}`,
+            html: finalHtml,
+            attachments: [
+              {
+                filename: `INV-${orderNumber}.pdf`, // PDF file name
+                path: pdfPath, // Path to the PDF file
+              }
+            ]
+          };
+
+          await sendEmail(mailOptions);
+        });
+
+      }
+      return res.status(201).json({
+        status: true,
+        message: 'Subscription added successfully',
+      });
+
+    } catch (error) {
+      return res.status(500).json({ status: false, message: 'Server error', data: [] });
+    }
+  }
+*/
+  /// end old ///////////////////
+  async addPlanSubscriptionAddToCart(req, res) {
+    try {
+      const { plan_ids, client_id, price, discount, orderid, coupon_code } = req.body;
+
+      // Validate input
+      if (!plan_ids || !Array.isArray(plan_ids) || plan_ids.length === 0 || !client_id) {
+          return res.status(400).json({ status: false, message: 'Missing required fields' });
+      }
+
+
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+
+      if (!client) {
+        return console.log('Client not found or inactive.');
+      }
+
+      const length = 6;
+      const digits = '0123456789';
+      let orderNumbers = '';
+      let orderNumber = '';
+
+      for (let i = 0; i < length; i++) {
+        orderNumbers += digits.charAt(Math.floor(Math.random() * digits.length));
+      }
+      const settings = await BasicSetting_Modal.findOne();
+
+     let sno=0;
+      for (const plan_id of plan_ids) {
+       sno++;
+      orderNumber = `${orderNumbers}-${sno}`;
       // Fetch the plan and populate the category
       const plan = await Plan_Modal.findById(plan_id)
         .populate('category')
@@ -5539,6 +6010,155 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
       // Save the subscription
       const savedSubscription = await newSubscription.save();
 
+
+      
+
+
+///////////24/03/2025 /////////////////////
+
+
+let payment_type;
+if (orderid) {
+  payment_type = "Online";
+}
+else {
+  payment_type = "Offline";
+
+}
+
+const templatePath = path.join(__dirname, '../../../template', 'invoicenew.html');
+let htmlContent = fs.readFileSync(templatePath, 'utf8');
+
+
+
+let planDetailsHtml = '';
+
+let sgst = 0, cgst = 0, igst = 0;
+
+if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() === "") {
+    sgst = totalgst / 2;
+    cgst = totalgst / 2;
+} else {
+    igst = totalgst;
+}
+
+
+
+planDetailsHtml += `
+<tr>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;height: 100px;">1</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.category.title}</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.price}</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${discountPerPlan}</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst}</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst}</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst}</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${total}</td>
+</tr>`;
+
+
+
+
+const todays = new Date(); 
+const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+
+
+htmlContent = htmlContent
+.replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+.replace(/{{created_at}}/g, formatDate(todays))
+.replace(/{{payment_type}}/g, payment_type)
+.replace(/{{clientname}}/g, client.FullName)
+.replace(/{{email}}/g, client.Email)
+.replace(/{{PhoneNo}}/g, client.PhoneNo)
+.replace(/{{plan_details}}/g, planDetailsHtml)
+.replace(/{{company_email}}/g, settings.email_address)
+.replace(/{{company_phone}}/g, settings.contact_number)
+.replace(/{{company_address}}/g, settings.address)
+.replace(/{{company_website_title}}/g, settings.website_title)
+.replace(/{{gstin}}/g, settings.gstin)
+.replace(/{{state}}/g, client.state)
+.replace(/{{logo}}/g, logo)
+.replace(/{{simage}}/g, simage)
+.replace(/{{total}}/g, price)
+.replace(/{{plantype}}/g, "Plan")
+.replace(/{{discount}}/g, discount);
+
+
+const browser = await puppeteer.launch({
+args: ['--no-sandbox', '--disable-setuid-sandbox']
+});
+const page = await browser.newPage();
+await page.setContent(htmlContent);
+
+// Define the path to save the PDF
+const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+
+// Generate PDF and save to the specified path
+await page.pdf({
+path: pdfPath,
+format: 'A4',
+printBackground: true,
+margin: {
+top: '20mm',
+right: '10mm',
+bottom: '50mm',
+left: '10mm',
+},
+});
+
+await browser.close();
+
+
+
+if (settings.invoicestatus == 1) {
+const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
+if (!mailtemplate || !mailtemplate.mail_body) {
+throw new Error('Mail template not found');
+}
+
+const templatePaths = path.join(__dirname, '../../../template', 'mailtemplate.html');
+
+fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
+if (err) {
+// console.error('Error reading HTML template:', err);
+return;
+}
+
+let finalMailBody = mailtemplate.mail_body
+.replace('{clientName}', `${client.FullName}`);
+
+const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+
+// Replace placeholders with actual values
+const finalHtml = htmlTemplate
+.replace(/{{company_name}}/g, settings.website_title)
+.replace(/{{body}}/g, finalMailBody)
+.replace(/{{logo}}/g, logo);
+
+const mailOptions = {
+to: client.Email,
+from: `${settings.from_name} <${settings.from_mail}>`,
+subject: `${mailtemplate.mail_subject}`,
+html: finalHtml,
+attachments: [
+  {
+    filename: `INV-${orderNumber}.pdf`, // PDF file name
+    path: pdfPath, // Path to the PDF file
+  }
+]
+};
+
+// Send email
+await sendEmail(mailOptions);
+});
+
+}
+
+
+
     }
 
 
@@ -5569,13 +6189,6 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
           }
 
         }
-      }
-
-      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
-
-
-      if (!client) {
-        return console.log('Client not found or inactive.');
       }
 
 
@@ -5669,7 +6282,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
       // }
 
       // if (settings.invoicestatus == 1) {
-      
+      /*     24/03/2025 
 
         let payment_type;
         if (orderid) {
@@ -5718,7 +6331,6 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
             const numberOfPlans = plan_ids.length;
             const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
       
-            ////////////////// 17/10/2024 ////////////////////////
       
             let total = plan.price-discountPerPlan; // Use let for reassignable variables
             let totalgst = 0;
@@ -5852,6 +6464,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
         });
 
       }
+      */
       // Return success response
       return res.status(201).json({
         status: true,
@@ -6047,6 +6660,309 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
       });
     }
   }
+
+
+  /////// old ///////
+  /* async addBasketSubscriptionAddToCart(req, res) {
+        try {
+          const { basket_ids, client_id, price, discount, orderid, coupon } = req.body;
+    
+          if (!basket_ids || !Array.isArray(basket_ids) || basket_ids.length === 0 || !client_id) {
+            return res.status(400).json({ status: false, message: 'Missing required fields' });
+          }
+    
+          const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+    
+          if (!client) {
+            return console.log('Client not found or inactive.');
+          }
+    
+          const settings = await BasicSetting_Modal.findOne();
+    
+    
+          const length = 6;
+          const digits = '0123456789';
+          let orderNumber = '';
+    
+          for (let i = 0; i < length; i++) {
+            orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
+          }
+    
+          for (const basket_id of basket_ids) {
+    
+          const basket = await Basket_Modal.findOne({
+            _id: basket_id,
+            del: false
+          });
+    
+    
+          const validityMapping = {
+            '1 month': 1,
+            '2 months': 2,
+            '3 months': 3,
+            '6 months': 6,
+            '9 months': 9,
+            '1 year': 12,
+            '2 years': 24,
+            '3 years': 36,
+            '4 years': 48,
+            '5 years': 60,
+          };
+    
+          const monthsToAdd = validityMapping[basket.validity];
+          if (monthsToAdd === undefined) {
+            return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+          }
+    
+          const start = new Date();
+          const end = new Date(start);
+          end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+          end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+    
+          const numberOfPlans = basket_ids.length;
+          const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
+    
+    
+    
+          let total = basket.basket_price-discountPerPlan; // Use let for reassignable variables
+          let totalgst = 0;
+          
+          if (settings.gst > 0 && settings.gststatus==1) {
+            totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
+            total = total + totalgst;
+          }
+    
+    
+          const newSubscription = new BasketSubscription_Modal({
+            basket_id,
+            client_id,
+            total: total,
+            plan_price: basket.basket_price,
+            discount: discountPerPlan,
+            gstamount:totalgst,
+            gst: settings.gst,
+            coupon: coupon,
+            startdate: start,
+            enddate: end,
+            validity: basket.validity,
+            orderid: orderid,
+            ordernumber : `INV-${orderNumber}`,
+            invoice : `INV-${orderNumber}.pdf`,
+          });
+    
+          const savedSubscription = await newSubscription.save();
+        }
+    
+    
+        const updatedItems = await Addtocart_Modal.updateMany(
+          { client_id: client_id, status: false, plan_id: null }, // Find all matching items
+          { $set: { status: true } } // Update status to true
+      );
+      
+    
+    
+         
+    
+            let payment_type;
+            if (orderid) {
+              payment_type = "Online";
+            }
+            else {
+              payment_type = "Offline";
+    
+            }
+    
+            const templatePath = path.join(__dirname, '../../../template', 'invoicenew.html');
+            let htmlContent = fs.readFileSync(templatePath, 'utf8');
+    
+            let planDetailsHtml = '';
+            let sno = 1;
+           let ttl= 0;
+    
+            for (const basket_id of basket_ids) {
+    
+              const basket = await Basket_Modal.findOne({
+                _id: basket_id,
+                del: false
+              });
+        
+    
+              const validityMapping = {
+                '1 month': 1,
+                '2 months': 2,
+                '3 months': 3,
+                '6 months': 6,
+                '9 months': 9,
+                '1 year': 12,
+                '2 years': 24,
+                '3 years': 36,
+                '4 years': 48,
+                '5 years': 60,
+              };
+        
+              const monthsToAdd = validityMapping[basket.validity];
+              if (monthsToAdd === undefined) {
+                return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+              }
+        
+              const start = new Date();
+              const end = new Date(start);
+              end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+              end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+        
+    
+              const numberOfPlans = basket_ids.length;
+              const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
+        
+        
+        
+              let total = basket.basket_price-discountPerPlan; // Use let for reassignable variables
+              let totalgst = 0;
+              
+              if (settings.gst > 0 && settings.gststatus==1) {
+                totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
+                total = total + totalgst;
+              }
+        
+    
+              let sgst = 0, cgst = 0, igst = 0;
+    
+              if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() ==="") {
+                  sgst = totalgst / 2;
+                  cgst = totalgst / 2;
+              } else {
+                  igst = totalgst;
+              }
+    
+    
+              planDetailsHtml += `
+              <tr>
+                  <td style="border: 1px solid black; padding: 10px; text-align: center;height: 100px;">${sno}</td>
+                  <td style="border: 1px solid black; padding: 10px; text-align: center;">${basket.title}</td>
+                  <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
+                  <td style="border: 1px solid black; padding: 10px; text-align: center;">${basket.basket_price}</td>
+                  <td style="border: 1px solid black; padding: 10px; text-align: center;">${discountPerPlan}</td>
+                  <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst}</td>
+                  <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst}</td>
+                  <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst}</td>
+                  <td style="border: 1px solid black; padding: 10px; text-align: center;">${total}</td>
+               </tr>`;
+    
+               sno++;
+              
+               ttl = total + ttl;
+           
+            }
+    
+    
+            const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+            const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+      
+            const todays = new Date(); 
+    
+            htmlContent = htmlContent
+              .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+              .replace(/{{created_at}}/g, formatDate(todays))
+              .replace(/{{payment_type}}/g, payment_type)
+              .replace(/{{clientname}}/g, client.FullName)
+              .replace(/{{email}}/g, client.Email)
+              .replace(/{{PhoneNo}}/g, client.PhoneNo)
+              .replace(/{{total}}/g, ttl)
+              .replace(/{{discount}}/g, discount)
+              .replace(/{{plan_details}}/g, planDetailsHtml)
+              .replace(/{{company_email}}/g, settings.email_address)
+              .replace(/{{company_phone}}/g, settings.contact_number)
+              .replace(/{{company_address}}/g, settings.address)
+              .replace(/{{company_website_title}}/g, settings.website_title)
+              .replace(/{{gstin}}/g, settings.gstin)
+              .replace(/{{state}}/g, client.state)
+              .replace(/{{logo}}/g, logo)
+              .replace(/{{simage}}/g, simage)
+              .replace(/{{plantype}}/g, "Basket");
+    
+    
+            const browser = await puppeteer.launch({
+              args: ['--no-sandbox', '--disable-setuid-sandbox']
+            });
+            const page = await browser.newPage();
+            await page.setContent(htmlContent);
+    
+            const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+            const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+    
+            await page.pdf({
+              path: pdfPath,
+              format: 'A4',
+              printBackground: true,
+              margin: {
+                top: '20mm',
+                right: '10mm',
+                bottom: '50mm',
+                left: '10mm',
+              },
+            });
+    
+            await browser.close();
+    
+    
+            if (settings.invoicestatus == 1) {
+    
+            const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
+            if (!mailtemplate || !mailtemplate.mail_body) {
+              throw new Error('Mail template not found');
+            }
+    
+    
+    
+            const templatePaths = path.join(__dirname, '../../../template', 'mailtemplate.html');
+    
+            fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
+              if (err) {
+                return;
+              }
+    
+              let finalMailBody = mailtemplate.mail_body
+                .replace('{clientName}', `${client.FullName}`);
+    
+              const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+    
+              const finalHtml = htmlTemplate
+                .replace(/{{company_name}}/g, settings.website_title)
+                .replace(/{{body}}/g, finalMailBody)
+                .replace(/{{logo}}/g, logo);
+    
+              const mailOptions = {
+                to: client.Email,
+                from: `${settings.from_name} <${settings.from_mail}>`,
+                subject: `${mailtemplate.mail_subject}`,
+                html: finalHtml,
+                attachments: [
+                  {
+                    filename: `INV-${orderNumber}.pdf`, // PDF file name
+                    path: pdfPath, // Path to the PDF file
+                  }
+                ]
+              };
+    
+              // Send email
+              await sendEmail(mailOptions);
+            });
+    
+          }
+          return res.status(201).json({
+            status: true,
+            message: 'Subscription added successfully',
+          });
+    
+        } catch (error) {
+          return res.status(500).json({ status: false, message: 'Server error', data: [] });
+        }
+      }
+    
+      */
+
+
+      /////end old ///////////////
   
     async addBasketSubscriptionAddToCart(req, res) {
       try {
@@ -6068,14 +6984,20 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
   
         const length = 6;
         const digits = '0123456789';
+        let orderNumbers = '';
         let orderNumber = '';
   
         for (let i = 0; i < length; i++) {
-          orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
+          orderNumbers += digits.charAt(Math.floor(Math.random() * digits.length));
         }
   
-        for (const basket_id of basket_ids) {
+       let sno=0;
+       
   
+        for (const basket_id of basket_ids) {
+          sno++;
+          orderNumber = `${orderNumbers}-${sno}`;
+
         const basket = await Basket_Modal.findOne({
           _id: basket_id,
           del: false
@@ -6140,6 +7062,154 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
   
         // Save to the database
         const savedSubscription = await newSubscription.save();
+
+        let payment_type;
+        if (orderid) {
+          payment_type = "Online";
+        }
+        else {
+          payment_type = "Offline";
+
+        }
+
+        const templatePath = path.join(__dirname, '../../../template', 'invoicenew.html');
+        let htmlContent = fs.readFileSync(templatePath, 'utf8');
+
+        let planDetailsHtml = '';
+       let ttl= 0;
+
+       let sgst = 0, cgst = 0, igst = 0;
+  
+       if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() ==="") {
+           sgst = totalgst / 2;
+           cgst = totalgst / 2;
+       } else {
+           igst = totalgst;
+       }
+
+
+       planDetailsHtml += `
+       <tr>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;height: 100px;">${sno}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${basket.title}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${basket.basket_price}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${discountPerPlan}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${total}</td>
+        </tr>`;
+
+        sno++;
+       
+        ttl = total + ttl;
+    
+  
+
+
+     const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+     const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+
+     const todays = new Date(); 
+
+     htmlContent = htmlContent
+       .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+       .replace(/{{created_at}}/g, formatDate(todays))
+       .replace(/{{payment_type}}/g, payment_type)
+       .replace(/{{clientname}}/g, client.FullName)
+       .replace(/{{email}}/g, client.Email)
+       .replace(/{{PhoneNo}}/g, client.PhoneNo)
+       .replace(/{{total}}/g, ttl)
+       .replace(/{{discount}}/g, discount)
+       .replace(/{{plan_details}}/g, planDetailsHtml)
+       .replace(/{{company_email}}/g, settings.email_address)
+       .replace(/{{company_phone}}/g, settings.contact_number)
+       .replace(/{{company_address}}/g, settings.address)
+       .replace(/{{company_website_title}}/g, settings.website_title)
+       .replace(/{{gstin}}/g, settings.gstin)
+       .replace(/{{state}}/g, client.state)
+       .replace(/{{logo}}/g, logo)
+       .replace(/{{simage}}/g, simage)
+       .replace(/{{plantype}}/g, "Basket");
+
+
+     const browser = await puppeteer.launch({
+       args: ['--no-sandbox', '--disable-setuid-sandbox']
+     });
+     const page = await browser.newPage();
+     await page.setContent(htmlContent);
+
+     // Define the path to save the PDF
+     const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+     const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+
+     // Generate PDF and save to the specified path
+     await page.pdf({
+       path: pdfPath,
+       format: 'A4',
+       printBackground: true,
+       margin: {
+         top: '20mm',
+         right: '10mm',
+         bottom: '50mm',
+         left: '10mm',
+       },
+     });
+
+     await browser.close();
+
+
+     if (settings.invoicestatus == 1) {
+
+     const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
+     if (!mailtemplate || !mailtemplate.mail_body) {
+       throw new Error('Mail template not found');
+     }
+
+
+
+     const templatePaths = path.join(__dirname, '../../../template', 'mailtemplate.html');
+
+     fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
+       if (err) {
+         // console.error('Error reading HTML template:', err);
+         return;
+       }
+
+       let finalMailBody = mailtemplate.mail_body
+         .replace('{clientName}', `${client.FullName}`);
+
+       const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+
+       // Replace placeholders with actual values
+       const finalHtml = htmlTemplate
+         .replace(/{{company_name}}/g, settings.website_title)
+         .replace(/{{body}}/g, finalMailBody)
+         .replace(/{{logo}}/g, logo);
+
+       const mailOptions = {
+         to: client.Email,
+         from: `${settings.from_name} <${settings.from_mail}>`,
+         subject: `${mailtemplate.mail_subject}`,
+         html: finalHtml,
+         attachments: [
+           {
+             filename: `INV-${orderNumber}.pdf`, // PDF file name
+             path: pdfPath, // Path to the PDF file
+           }
+         ]
+       };
+
+       // Send email
+       await sendEmail(mailOptions);
+     });
+
+   }
+
+
+
+        
       }
   
   
@@ -6149,202 +7219,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
     );
     
   
-        // if (settings.invoicestatus == 1) {
-  
-       
-  
-          let payment_type;
-          if (orderid) {
-            payment_type = "Online";
-          }
-          else {
-            payment_type = "Offline";
-  
-          }
-  
-          const templatePath = path.join(__dirname, '../../../template', 'invoicenew.html');
-          let htmlContent = fs.readFileSync(templatePath, 'utf8');
-  
-          let planDetailsHtml = '';
-          let sno = 1;
-         let ttl= 0;
-  
-          for (const basket_id of basket_ids) {
-  
-            const basket = await Basket_Modal.findOne({
-              _id: basket_id,
-              del: false
-            });
-      
-  
-            // Map plan validity to months
-            const validityMapping = {
-              '1 month': 1,
-              '2 months': 2,
-              '3 months': 3,
-              '6 months': 6,
-              '9 months': 9,
-              '1 year': 12,
-              '2 years': 24,
-              '3 years': 36,
-              '4 years': 48,
-              '5 years': 60,
-            };
-      
-            const monthsToAdd = validityMapping[basket.validity];
-            if (monthsToAdd === undefined) {
-              return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
-            }
-      
-            const start = new Date();
-            const end = new Date(start);
-            end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
-            end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
-      
-  
-            const numberOfPlans = basket_ids.length;
-            const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
-      
-      
-      
-            let total = basket.basket_price-discountPerPlan; // Use let for reassignable variables
-            let totalgst = 0;
-            
-            if (settings.gst > 0 && settings.gststatus==1) {
-              totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
-              total = total + totalgst;
-            }
-      
-  
-            let sgst = 0, cgst = 0, igst = 0;
-  
-            if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() ==="") {
-                sgst = totalgst / 2;
-                cgst = totalgst / 2;
-            } else {
-                igst = totalgst;
-            }
-  
-  
-            planDetailsHtml += `
-            <tr>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;height: 100px;">${sno}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">${basket.title}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">${basket.basket_price}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">${discountPerPlan}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">${total}</td>
-             </tr>`;
-  
-             sno++;
-            
-             ttl = total + ttl;
-         
-          }
-  
-  
-          const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
-          const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
-    
-          const todays = new Date(); 
-  
-          htmlContent = htmlContent
-            .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
-            .replace(/{{created_at}}/g, formatDate(todays))
-            .replace(/{{payment_type}}/g, payment_type)
-            .replace(/{{clientname}}/g, client.FullName)
-            .replace(/{{email}}/g, client.Email)
-            .replace(/{{PhoneNo}}/g, client.PhoneNo)
-            .replace(/{{total}}/g, ttl)
-            .replace(/{{discount}}/g, discount)
-            .replace(/{{plan_details}}/g, planDetailsHtml)
-            .replace(/{{company_email}}/g, settings.email_address)
-            .replace(/{{company_phone}}/g, settings.contact_number)
-            .replace(/{{company_address}}/g, settings.address)
-            .replace(/{{company_website_title}}/g, settings.website_title)
-            .replace(/{{gstin}}/g, settings.gstin)
-            .replace(/{{state}}/g, client.state)
-            .replace(/{{logo}}/g, logo)
-            .replace(/{{simage}}/g, simage)
-            .replace(/{{plantype}}/g, "Basket");
-  
-  
-          const browser = await puppeteer.launch({
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-          });
-          const page = await browser.newPage();
-          await page.setContent(htmlContent);
-  
-          // Define the path to save the PDF
-          const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
-          const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
-  
-          // Generate PDF and save to the specified path
-          await page.pdf({
-            path: pdfPath,
-            format: 'A4',
-            printBackground: true,
-            margin: {
-              top: '20mm',
-              right: '10mm',
-              bottom: '50mm',
-              left: '10mm',
-            },
-          });
-  
-          await browser.close();
-  
-  
-          if (settings.invoicestatus == 1) {
-  
-          const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
-          if (!mailtemplate || !mailtemplate.mail_body) {
-            throw new Error('Mail template not found');
-          }
-  
-  
-  
-          const templatePaths = path.join(__dirname, '../../../template', 'mailtemplate.html');
-  
-          fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
-            if (err) {
-              // console.error('Error reading HTML template:', err);
-              return;
-            }
-  
-            let finalMailBody = mailtemplate.mail_body
-              .replace('{clientName}', `${client.FullName}`);
-  
-            const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
-  
-            // Replace placeholders with actual values
-            const finalHtml = htmlTemplate
-              .replace(/{{company_name}}/g, settings.website_title)
-              .replace(/{{body}}/g, finalMailBody)
-              .replace(/{{logo}}/g, logo);
-  
-            const mailOptions = {
-              to: client.Email,
-              from: `${settings.from_name} <${settings.from_mail}>`,
-              subject: `${mailtemplate.mail_subject}`,
-              html: finalHtml,
-              attachments: [
-                {
-                  filename: `INV-${orderNumber}.pdf`, // PDF file name
-                  path: pdfPath, // Path to the PDF file
-                }
-              ]
-            };
-  
-            // Send email
-            await sendEmail(mailOptions);
-          });
-  
-        }
-        // Respond with the created subscription
+     
         return res.status(201).json({
           status: true,
           message: 'Subscription added successfully',
@@ -7458,8 +8333,7 @@ async  getLivePrices(req, res) {
       data: []
     });
   }
-}
-async getLivePriceCash(req, res) {
+}async getLivePriceCash(req, res) {
   try {
     const livePrices = await Signal_Modal.aggregate([
       // Filter signals with close_status false and segment "C"
@@ -7469,7 +8343,7 @@ async getLivePriceCash(req, res) {
           segment: "C"
         }
       },
-      // Join with stocks collection to get stock details based on tradesymbol
+      // Lookup stock details from stocks collection based on tradesymbol
       {
         $lookup: {
           from: 'stocks',
@@ -7484,7 +8358,7 @@ async getLivePriceCash(req, res) {
           preserveNullAndEmptyArrays: true
         }
       },
-      // Join with stockliveprices collection using the token from stocks details
+      // Lookup live price from stockliveprices collection using the token from stocks details
       {
         $lookup: {
           from: 'stockliveprices',
@@ -7499,19 +8373,23 @@ async getLivePriceCash(req, res) {
           preserveNullAndEmptyArrays: true
         }
       },
-      // Project the necessary fields including the live price (assumed as 'lp')
+      // Project the necessary fields including tradesymbol, live price, curtime, symbol and token
       {
         $project: {
           tradesymbol: 1,
           price: '$liveData.lp',
-          curtime: '$liveData.curtime'
+          curtime: '$liveData.curtime',
+          symbol: '$stockDetails.symbol',
+          token: '$stockDetails.instrument_token'
         }
       },
-      // Group by tradesymbol to return unique tradesymbol records only
+      // Group by tradesymbol to return unique records only
       {
         $group: {
           _id: "$tradesymbol",
           tradesymbol: { $first: "$tradesymbol" },
+          symbol: { $first: "$symbol" },
+          token: { $first: "$token" },
           price: { $first: "$price" },
           curtime: { $first: "$curtime" }
         }
