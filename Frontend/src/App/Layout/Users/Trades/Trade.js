@@ -18,6 +18,9 @@ import { image_baseurl } from "../../../../Utils/config";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
+
+
+
 function Trade() {
 
 
