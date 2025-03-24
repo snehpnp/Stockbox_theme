@@ -48,7 +48,7 @@ const PastPerformance = () => {
 
   const getFuturepastdata = async () => {
     try {
-      const response = await getpastperformaceFuturedata({ id: "66bc8b0c3fb6f1724c02bfec" }, token);
+      const response = await getpastperformaceFuturedata({ id: "66dfede64a88602fbbca9b72" }, token);
       if (response?.status) {
         const { months, avgMonthlyProfit } = response.data["6_months"];
         setFuturePastdata(Object.values(months).map(m => m.netProfit));

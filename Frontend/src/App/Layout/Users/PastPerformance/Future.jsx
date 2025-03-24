@@ -19,8 +19,8 @@ const Cash = () => {
   const [cashPastData, setCashPastdata] = useState(new Array(12).fill(0));
   const [monthaverg, setMonthaverg] = useState({});
 
-  const [month, setMonth] = useState("");
-  const [year, setYear] = useState("");
+  const [month, setMonth] = useState("01");
+  const [year, setYear] = useState("2025");
   const [chartData1, setChartData1] = useState(null);
   const [doughnutData1, setDoughnutData1] = useState(null);
   const [dailydata, setDailydata] = useState([])
@@ -51,7 +51,7 @@ const Cash = () => {
   const getCashpastdata = async () => {
     try {
       const response = await getpastperformaceCashdata(
-        { id: "66bc8b0c3fb6f1724c02bfec" },
+        { id: "66dfede64a88602fbbca9b72" },
         token
       );
 
@@ -87,7 +87,7 @@ const Cash = () => {
 
   const getPastPerformanceData = async () => {
     try {
-      const data = { id: "66bc8b0c3fb6f1724c02bfec", month, year };
+      const data = { id: "66dfede64a88602fbbca9b72", month, year };
       const response = await getpastperformacebymonth(data, token);
 
       if (response?.status) {
@@ -95,27 +95,11 @@ const Cash = () => {
         const dailyData = response?.data?.dailyData || {};
 
         const labels = Object.keys(dailyData);
-        const profitData = labels.map((date) => dailyData[date].totalProfit || 0);
-        const lossData = labels.map((date) => dailyData[date].totalLoss || 0);
         const netProfitData = labels.map((date) => dailyData[date].netProfit || 0);
 
         const formattedChartData = {
           labels,
           datasets: [
-            {
-              label: "Total Profit",
-              data: profitData,
-              backgroundColor: "rgba(75, 192, 75, 0.6)",
-              borderColor: "green",
-              borderWidth: 1,
-            },
-            {
-              label: "Total Loss",
-              data: lossData,
-              backgroundColor: "rgba(255, 99, 132, 0.6)",
-              borderColor: "red",
-              borderWidth: 1,
-            },
             {
               label: "Net Profit",
               data: netProfitData,
@@ -521,7 +505,7 @@ const Cash = () => {
                   aria-controls="flush-collapseOne"
                 >
                   <div className="d-flex justify-content-between align-items-center w-100">
-                    <h5 className="m-0">Future ({months.find((m) => m.value === month)?.name} {year}) RECOMMENDATIONS</h5>
+                    <h5 className="m-0">Option ({months.find((m) => m.value === month)?.name} {year}) RECOMMENDATIONS</h5>
                   </div>
                 </button>
               </h2>

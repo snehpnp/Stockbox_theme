@@ -178,13 +178,13 @@ function Basket() {
                         Validity
                         <span className="badge bg-danger rounded-pill">{item?.validity}</span>
                       </li>
-                      <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100 mb-1">
+                      {/* <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100 mb-1">
                         View Details
-                      </Link>
+                      </Link> */}
 
                       {item?.isSubscribed || item?.isActive ? (
-                        <Link to="/user/basketstocklist" state={{ item }} className="btn btn-primary w-100">
-                          View Stock Detail
+                        <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100">
+                          View Details
                         </Link>
                       ) : item?.isSubscribed === false && item?.isActive === false ? (
                         <Link to="/user/payment" state={{ item }} className="btn btn-primary w-100">
