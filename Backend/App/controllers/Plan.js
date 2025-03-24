@@ -819,7 +819,7 @@ if (settings.gst > 0 && settings.gststatus==1) {
 
         let sgst = 0, cgst = 0, igst = 0;
 
-        if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() ==="") {
+        if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() ==="") {
             sgst = totalgst / 2;
             cgst = totalgst / 2;
         } else {
@@ -848,6 +848,7 @@ if (settings.gst > 0 && settings.gststatus==1) {
                   .replace(/{{company_phone}}/g, settings.contact_number)
                   .replace(/{{company_address}}/g, settings.address)
                   .replace(/{{company_website_title}}/g, settings.website_title)
+                  .replace(/{{gstin}}/g, settings.gstin)
                   .replace(/{{gstamount}}/g, totalgst)
                   .replace(/{{state}}/g, client.state)
                   .replace(/{{gst}}/g, settings.gst)
@@ -1478,7 +1479,7 @@ for (let i = 0; i < length; i++) {
         plan_end: end,
         validity: plan.validity,
         ordernumber:`INV-${orderNumber}`,
-        ordernumber:`INV-${orderNumber}.pdf`,
+        invoice:`INV-${orderNumber}.pdf`,
       });
   
       // Save the subscription
@@ -1598,7 +1599,7 @@ for (let i = 0; i < length; i++) {
       
             let sgst = 0, cgst = 0, igst = 0;
 
-            if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() === "") {
+            if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() === "") {
                 sgst = totalgst / 2;
                 cgst = totalgst / 2;
             } else {
@@ -1642,6 +1643,7 @@ for (let i = 0; i < length; i++) {
           .replace(/{{company_phone}}/g, settings.contact_number)
           .replace(/{{company_address}}/g, settings.address)
           .replace(/{{company_website_title}}/g, settings.website_title)
+          .replace(/{{gstin}}/g, settings.gstin)
           .replace(/{{state}}/g, client.state)
           .replace(/{{logo}}/g, logo)
           .replace(/{{simage}}/g, simage)
