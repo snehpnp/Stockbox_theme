@@ -923,8 +923,8 @@ const Client = () => {
                                         <div className="accordion-body">
                                           <div className="d-flex justify-content-between">
                                             <strong>Price:</strong>
-                                            <span>
-                                              <IndianRupee /> {item.price}
+                                            <span style={{ display: "flex", alignItems: "center" }}>
+                                              <IndianRupee style={{ width: "15px", height: "15px" }} /> {item.price}
                                             </span>
                                           </div>
                                           <div className="d-flex justify-content-between">
@@ -1049,8 +1049,8 @@ const Client = () => {
                                     <div className="accordion-body">
                                       <div className="d-flex justify-content-between">
                                         <strong>Price:</strong>
-                                        <span>
-                                          <IndianRupee /> {item.basket_price}
+                                        <span style={{ display: "flex", alignItems: "center" }}>
+                                          <IndianRupee style={{ width: "15px", height: "15px" }} /> {item.basket_price}
                                         </span>
                                       </div>
                                       <div className="d-flex justify-content-between">
@@ -1061,8 +1061,8 @@ const Client = () => {
                                         <strong>
                                           Minimum Investment Amount:
                                         </strong>
-                                        <span>
-                                          <IndianRupee /> {item?.mininvamount}
+                                        <span style={{ display: "flex", alignItems: "center" }}>
+                                          <IndianRupee style={{ width: "15px", height: "15px" }} /> {item?.mininvamount}
                                         </span>
                                       </div>
                                     </div>

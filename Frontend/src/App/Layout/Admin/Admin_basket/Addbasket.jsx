@@ -99,7 +99,7 @@ const AddBasket = () => {
       frequency: values.frequency,
       validity: values.validity,
       next_rebalance_date: values.next_rebalance_date,
-      cagr: values.cagr,
+      // cagr: values.cagr,
       full_price: values.full_price || 0,
       type: values.type,
       image: values.image,
@@ -136,7 +136,7 @@ const AddBasket = () => {
       frequency: "",
       validity: "",
       next_rebalance_date: "",
-      cagr: "",
+      // cagr: "",
       full_price: "",
       type: "",
       image: "",
@@ -233,15 +233,15 @@ const AddBasket = () => {
       ],
       star: true
     },
-    {
-      name: "cagr",
-      label: "CAGR",
-      type: "number",
-      label_size: 12,
-      col_size: 6,
-      disable: false,
-      star: true
-    },
+    // {
+    //   name: "cagr",
+    //   label: "CAGR",
+    //   type: "number",
+    //   label_size: 12,
+    //   col_size: 6,
+    //   disable: false,
+    //   star: true
+    // },
     {
       name: "next_rebalance_date",
       label: "Rebalance Date",

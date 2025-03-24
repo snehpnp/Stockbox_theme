@@ -9,7 +9,7 @@ const ThemeModal = db.ThemeModal;
 class BasicSetting {
   async AddBasicSetting(req, res) {
     try {
-
+  
       // Handle the image uploads
       upload("basicsetting").fields([
         { name: "favicon", maxCount: 1 },
@@ -61,6 +61,8 @@ class BasicSetting {
           state,
 
         } = req.body;
+
+        console.log("req.body",req.body)
 
         const existingSetting = await BasicSetting_Modal.findOne({});
 

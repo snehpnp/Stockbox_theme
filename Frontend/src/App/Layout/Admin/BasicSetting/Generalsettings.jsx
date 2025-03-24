@@ -14,12 +14,47 @@ const Generalsettings = () => {
     const navigate = useNavigate();
 
     const [clients, setClients] = useState(null);
+    console.log("clients clients clients",clients);
+
     const [isModified, setIsModified] = useState(false);
     const [istoggle, setToggle] = useState([])
+
+    const indianStates = [
+        { name: "Andhra Pradesh" },
+        { name: "Arunachal Pradesh" },
+        { name: "Assam" },
+        { name: "Bihar" },
+        { name: "Chhattisgarh" },
+        { name: "Goa" },
+        { name: "Gujarat" },
+        { name: "Haryana" },
+        { name: "Himachal Pradesh" },
+        { name: "Jharkhand" },
+        { name: "Karnataka" },
+        { name: "Kerala" },
+        { name: "Madhya Pradesh" },
+        { name: "Maharashtra" },
+        { name: "Manipur" },
+        { name: "Meghalaya" },
+        { name: "Mizoram" },
+        { name: "Nagaland" },
+        { name: "Odisha" },
+        { name: "Punjab" },
+        { name: "Rajasthan" },
+        { name: "Sikkim" },
+        { name: "Tamil Nadu" },
+        { name: "Telangana" },
+        { name: "Tripura" },
+        { name: "Uttar Pradesh" },
+        { name: "Uttarakhand" },
+        { name: "West Bengal" }
+    ];
 
     const getsettinglist = async () => {
         try {
             const response = await basicsettinglist(token);
+            console.log("data kya aa rha hai",response);
+            
             if (response.status) {
                 setClients(response.data);
             }
@@ -60,7 +95,7 @@ const Generalsettings = () => {
                 <div className="col-lg-12 mx-auto">
                     <div className="card radius-15">
 
-                        <Formik
+                    <Formik
                             enableReinitialize={true}
                             initialValues={{
                                 id: user_id,
@@ -72,7 +107,8 @@ const Generalsettings = () => {
                                 logo: null,
                                 offer_image: null,
                                 simage: null,
-                                address: clients[0].email_address
+                                gstin: clients[0].gstin || '',
+                                state: clients[0].state || '',
 
                             }}
                             onSubmit={async (values, { resetForm }) => {
@@ -85,19 +121,23 @@ const Generalsettings = () => {
                                     logo: values.logo,
                                     offer_image: values.offer_image,
                                     simage: values.simage,
-                                    address: values.address,
+                                    gstin: values.gstin,
+                                    state: values.state,
                                     id: user_id,
 
                                 };
 
                                 try {
                                     const response = await Updatebasicsettings(req, token);
+                                    console.log("Updatebasicsettings",response);
+                                    
                                     if (response.status) {
                                         showCustomAlert("Success", response.message)
                                         setIsModified(false);
-                                        document.querySelectorAll('input[name="offer_image"], input[name="logo"], input[name="favicon",input[name="simage"]').forEach(input => {
+                                        document.querySelectorAll('input[name="offer_image"], input[name="logo"], input[name="favicon"],input[name="simage"]').forEach(input => {
                                             input.value = "";
                                         });
+
 
                                     } else {
                                         showCustomAlert("error", response.message)
@@ -287,6 +327,45 @@ const Generalsettings = () => {
                                                 </div>
                                             </div>
 
+                                            <div className="row mb-3 align-items-center">
+                                                <label htmlFor="gstin" className="col-sm-3 col-form-label">
+                                                    <b> GSTIN</b>
+                                                </label>
+                                                <div className="col-sm-9">
+                                                    <div className="input-group">
+                                                        <span className="input-group-text">
+                                                            <i className="bx bx-calculator" />
+                                                        </span>
+                                                        <Field
+                                                            name="gstin"
+                                                            type="number"
+                                                            className="form-control"
+                                                            placeholder="GSTIN"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="row mb-3 align-items-center">
+                                                <label htmlFor="state" className="col-sm-3 col-form-label">
+                                                    <b>State</b>
+                                                </label>
+                                                <div className="col-sm-9">
+                                                    <div className="input-group">
+                                                        <span className="input-group-text">
+                                                            <i className="bx bx-globe" />
+                                                        </span>
+                                                        <Field as="select" name="state" className="form-control">
+                                                            <option value="">Select State</option>
+                                                            {indianStates.map((state, index) => (
+                                                                <option key={index} value={state.name}>
+                                                                    {state.name}
+                                                                </option>
+                                                            ))}
+                                                        </Field>
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                             <div className="row">
                                                 <label className="col-sm-3 col-form-label" />

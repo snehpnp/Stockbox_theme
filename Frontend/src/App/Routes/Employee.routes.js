@@ -41,6 +41,8 @@ import Editfreeclient from '../Layout/Employee/StaffClient/Editfreeclient';
 import AddClient from '../Layout/Employee/StaffClient/Addclient';
 import AddStock from '../Layout/Employee/Basket/AddStock';
 import Dashbord from '../Layout/Admin/Admin_dashboard/Dashboard';
+import Planexpirymonth from '../Layout/Admin/PlanExpiryMonth/Planexpirymonth';
+import PlanExpirymonthDetail from '../Layout/Employee/PlanExpiryMonth/PlanExpirymonthDetail';
 
 
 
@@ -115,7 +117,7 @@ export default function Employee() {
 			{permission.includes("Subscriptionhistory") ? <Route path="/basket-purchase-history/:id" element={<BasketPurchaseHistory />} /> : ""}
 			{permission.includes("allbaskethistory") ? <Route path="/purchasebaskethistory" element={<AllBasketHistory />} /> : ""}
 			{permission.includes("addstock") ? <Route path="/addstock/:id" element={<AddStock />} /> : ""}
-			{permission.includes("editstock") ? <Route path="/editstock/:id" element={<EditStock />} /> : ""}
+			{permission.includes("editstock") ? <Route path="/editstock" element={<EditStock />} /> : ""}
 
 
 			{permission.includes("viewblogs") ? <Route path="/blogs" element={<Blogs />} /> : ""}
@@ -140,6 +142,8 @@ export default function Employee() {
 
 			{permission.includes("paymenthistory") ? <Route path="/paymenthistory" element={<History />} /> : ""}
 			{permission.includes("planexpiry") ? <Route path="/planexpiry" element={<Planexpiry />} /> : ""}
+			<Route path="/planexpirymonth" element={<Planexpirymonth />} />
+			<Route path="/planExpirymonthDetail" element={<PlanExpirymonthDetail/>} />
 			<Route path="/paymentrequest" element={<PaymentRequest />} />
 			{permission.includes("perform") ? <Route path="/perform" element={<Perform />} /> : ""}
 

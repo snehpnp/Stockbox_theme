@@ -28,9 +28,10 @@ const Signal = () => {
         report: "",
         id: "",
         description: ""
-
-
     });
+
+    console.log("updatetitle",updatetitle);
+    
 
 
     const location = useLocation();
@@ -421,11 +422,23 @@ const Signal = () => {
             };
 
             if (index === 1) {
+                if (
+                    !closedata.targetprice1?.trim() &&
+                    !closedata.targetprice2?.trim() &&
+                    !closedata.targetprice3?.trim()
+                ) {
+                    showValidationError('Please Filled the Input');
+                    return;
+                }
                 if (closedata.calltype === "BUY") {
                     const target1 = parseFloat(closedata.targetprice1) || null;
                     const target2 = parseFloat(closedata.targetprice2) || null;
                     const target3 = parseFloat(closedata.targetprice3) || null;
 
+                    if (target1 && target1 < parseFloat(closedata?.price)) {
+                        showValidationError('Target 1 must be Greater Than Entry Price');
+                        return;
+                    }
                     if (target2 && !target1) {
                         showValidationError('Target 1 must be provided if Target 2 is entered.');
                         return;
@@ -456,10 +469,14 @@ const Signal = () => {
                     }
                 } else if (closedata.calltype === "SELL") {
 
-
                     const target1 = parseFloat(closedata.targetprice1) || null;
                     const target2 = parseFloat(closedata.targetprice2) || null;
                     const target3 = parseFloat(closedata.targetprice3) || null;
+
+                    if (target1 && target1 > parseFloat(closedata?.price)) {
+                        showValidationError('Target 1 must be Less Than Entry Price');
+                        return;
+                    }
 
                     if (target2 && !target1) {
                         showValidationError('Target 1 must be provided if Target 2 is Entered.');
@@ -492,6 +509,29 @@ const Signal = () => {
                 }
 
             }
+
+            if (index === 2) {
+                if (!closedata?.slprice || closedata?.slprice == 0) {
+                    showValidationError('Please Fill in The SL Price');
+                    return;
+                }
+
+                if (closedata?.calltype === "BUY") {
+                    if (parseFloat(closedata?.slprice) > parseFloat(closedata?.price)) {
+                        showValidationError('SL price  must be Less Than Entry Price');
+                        return;
+                    }
+
+                } else if (closedata?.calltype === "SELL") {
+                    if (parseFloat(closedata?.slprice) < parseFloat(closedata?.price)) {
+                        showValidationError('SL price  must be More Than Entry Price');
+                        return;
+                    }
+                }
+
+            }
+
+
             if (index === 4) {
                 if (!closedata.close_description) {
                     showValidationError('Please Fill in The Description');
@@ -523,7 +563,7 @@ const Signal = () => {
                 targetprice1: index === 0 ? closedata.tag1 : index === 1 ? closedata.targetprice1 : "",
                 targetprice2: index === 0 ? closedata.tag2 : index === 1 ? closedata.targetprice2 : "",
                 targetprice3: index === 0 ? closedata.tag3 : index === 1 ? closedata.targetprice3 : "",
-                slprice: index === 2 ? closedata.slprice : closedata.stoploss,
+                slprice: index === 2 ? closedata.slprice : "",
                 exitprice: index === 3 ? closedata.exitprice : ""
             };
 
@@ -546,6 +586,7 @@ const Signal = () => {
 
         }
     };
+
 
 
 

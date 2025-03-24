@@ -6,6 +6,7 @@ import { loadScript } from "../../../../Utils/Razorpayment";
 import { AddBasketsubscription, getQRcodedata, getBankdetaildata } from "../../../Services/UserService/User";
 import { basicsettinglist } from "../../../Services/Admin/Admin";
 import { image_baseurl } from "../../../../Utils/config";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 const Payments = () => {
 
@@ -14,6 +15,9 @@ const Payments = () => {
 
 
     const [activeTab, setActiveTab] = useState("online");
+
+    const [gstStatus, setGstStatus] = useState()
+    const [onlinePaymentStatus, setOnlinePaymentStatus] = useState()
 
     const { state } = useLocation()
     const item = state?.item
@@ -67,6 +71,9 @@ const Payments = () => {
                 setGetkey(response?.data[0]?.razorpay_key);
                 setCompany(response?.data[0]?.from_name);
                 setGstdata(response?.data[0]?.gst);
+                setGstStatus(response.data[0].gststatus)
+                setOnlinePaymentStatus(response.data[0].paymentstatus)
+
             }
         } catch (error) {
             console.error("Error fetching coupons:", error);
@@ -164,11 +171,13 @@ const Payments = () => {
                                     <h6 className="card-title mb-0"><strong>{item?.title}</strong></h6>
                                     <h6 className="card-title mb-0"><strong>₹  {item?.basket_price}</strong></h6>
                                 </div>
-                                <div className="d-md-flex justify-content-between">
-                                    <h6 className="card-title mb-0"><strong>GST ({gstdata}%)</strong></h6>
-                                    <h6 className="card-title mb-0"><strong>₹ {(((item?.basket_price) * gstdata) / 100).toFixed(2)}</strong></h6>
-                                </div>
-                                <div className="d-md-flex justify-content-between">
+                                {gstStatus == 1 && (
+                                    <div className="d-md-flex justify-content-between">
+                                        <h6 className="card-title mb-0"><strong>GST ({gstdata}%)</strong></h6>
+                                        <h6 className="card-title mb-0"><strong>₹ {(((item?.basket_price) * gstdata) / 100).toFixed(2)}</strong></h6>
+                                    </div>
+                                )}
+                                {/* <div className="d-md-flex justify-content-between">
                                     <h6 className="card-title mb-0"><strong>Total</strong></h6>
                                     <h6 className="card-title mb-0">
                                         <strong>
@@ -178,75 +187,146 @@ const Payments = () => {
                                             ).toFixed(2)}
                                         </strong>
                                     </h6>
-                                </div>
+                                </div> */}
+                                {gstStatus === 1 && (
+                                    <div className="d-md-flex justify-content-between">
+                                        <h6 className="card-title mb-0"><strong>Total</strong></h6>
+                                        <h6 className="card-title mb-0">
+                                            <strong>
+                                                ₹ {(
+                                                    (((item?.basket_price) / 100) * 18) + item?.basket_price
+                                                ).toFixed(2)
+                                                }
+                                            </strong>
+                                        </h6>
+                                    </div>
+                                )}
+
+                                {gstStatus === 0 && (
+                                    <div className="d-md-flex justify-content-between">
+                                        <h6 className="card-title mb-0"><strong>Total</strong></h6>
+                                        <h6 className="card-title mb-0">
+                                            <strong>
+                                                ₹ {(item?.basket_price)}
+                                            </strong>
+                                        </h6>
+                                    </div>
+                                )}
 
 
+                                {/* {gstStatus === 1 && (
+                                    <button
+                                        className={`btn btn-success w-100 ${onlinePaymentStatus === 0 ? "disabled-btn" : ""}`}
+                                        disabled={onlinePaymentStatus === 0}  // ✅ Button disable karega jab onlinePaymentStatus == 0 ho
+                                        onClick={() => {
+                                            if (onlinePaymentStatus !== 0) {
+                                                AddbasketSubscribeplan(item);
+                                            }
+                                        }}
+                                    >
+                                        Subscribe Now
+                                        <span className="text-decoration-line-through text-light small mx-2">
+                                            ₹ {item?.full_price}
+                                        </span>
+                                        ₹ {(item?.basket_price + (((item?.basket_price) / 100) * 18)).toFixed(2)}
+                                    </button>
+                                )}
 
-                                <button className="btn btn-primary w-100" onClick={() => AddbasketSubscribeplan(item)}>
+                                {gstStatus === 0 && (
+                                    <button
+                                        className={`btn btn-success w-100 ${onlinePaymentStatus === 0 ? "disabled-btn" : ""}`}
+                                        disabled={onlinePaymentStatus === 0}  // ✅ Button disable karega jab onlinePaymentStatus == 0 ho
+                                        onClick={() => {
+                                            if (onlinePaymentStatus !== 0) {
+                                                AddbasketSubscribeplan(item);
+                                            }
+                                        }}
+                                    >
+                                        Subscribe Now
+                                        <span className="text-decoration-line-through text-light small mx-2">
+                                            ₹ {item?.full_price}
+                                        </span>
+                                        ₹ {item?.basket_price }
+                                    </button>
+                                )} */}
+
+                                <button
+                                    className={`btn btn-success w-100 ${onlinePaymentStatus === 0 ? "disabled-btn" : ""}`}
+                                    style={onlinePaymentStatus === 0 ? { pointerEvents: "auto", opacity: 0.6 } : {}}
+                                    onClick={() => {
+                                        if (onlinePaymentStatus === 0) {
+                                            showCustomAlert("error", "Online Payment is currently disabled. Please try again later.");
+                                            return;
+                                        }
+                                        AddbasketSubscribeplan(item);
+                                    }}
+                                >
                                     Subscribe Now
-                                    <span className="text-decoration-line-through btn btn-primary ">
-                                        ₹ {(
-                                            item?.full_price + (item?.full_price * gstdata) / 100
-                                        ).toFixed(2)}
+                                    <span className="text-decoration-line-through text-light small mx-2">
+                                        ₹ {item?.full_price}
                                     </span>
-
-                                    ₹  {(
-                                        item?.basket_price + (item?.basket_price * gstdata) / 100
+                                    ₹ {(gstStatus === 1
+                                        ? (item?.basket_price + (item?.basket_price * 18) / 100)
+                                        : item?.basket_price
                                     ).toFixed(2)}
                                 </button>
 
+
                             </div>
                         </div>
                     </div>
                 </div>
-            )}
+            )
+            }
 
-            {activeTab === "offline" && (
-                <div className="row justify-content-center">
-                    <div className="col-md-6">
-                        <div className="card">
-                            <div className="card-body text-center">
-                                {qrdata.length > 0 &&
-                                    qrdata.map((item, index) => {
+            {
+                activeTab === "offline" && (
+                    <div className="row justify-content-center">
+                        <div className="col-md-6">
+                            <div className="card">
+                                <div className="card-body text-center">
+                                    {qrdata.length > 0 &&
+                                        qrdata.map((item, index) => {
+                                            return (
+                                                <div key={index} className="text-center">
+                                                    <h5 className="card-title btn-primary py-2">Scan to Pay</h5>
+                                                    <img
+                                                        src={item?.image}
+                                                        alt="QR Code"
+                                                        title="QR Code"
+                                                        className="img-fluid mb-3"
+                                                        style={{ width: 200, height: 200 }}
+                                                    />
+                                                </div>
+                                            );
+                                        })}
+
+
+
+
+                                    {bankdetail?.map((item) => {
                                         return (
-                                            <div key={index} className="text-center">
-                                                <h5 className="card-title btn-primary py-2">Scan to Pay</h5>
-                                                <img
-                                                    src={item?.image}
-                                                    alt="QR Code"
-                                                    title="QR Code"
-                                                    className="img-fluid mb-3"
-                                                    style={{ width: 200, height: 200 }}
-                                                />
-                                            </div>
-                                        );
+                                            <>
+                                                <h5 className="btn-primary py-2">Bank Details:</h5>
+                                                <ul className="ps-0">
+                                                    <li className="list-group-item d-flex justify-content-between"> <b>Account Name:</b> {item?.name} </li>
+                                                    <li className="list-group-item d-flex justify-content-between">  <b>Account Number:</b> {item?.accountno}</li>
+                                                    <li className="list-group-item d-flex justify-content-between">  <b>IFSC Code:</b> {item?.ifsc}</li>
+                                                    <li className="list-group-item d-flex justify-content-between">  <b>Branch Name :</b> {item?.branch}</li>
+
+                                                </ul>
+
+
+                                            </>
+                                        )
                                     })}
-
-
-
-
-                                {bankdetail?.map((item) => {
-                                    return (
-                                        <>
-                                            <h5 className="btn-primary py-2">Bank Details:</h5>
-                                            <ul className="ps-0">
-                                                <li className="list-group-item d-flex justify-content-between"> <b>Account Name:</b> {item?.name} </li>
-                                                <li className="list-group-item d-flex justify-content-between">  <b>Account Number:</b> {item?.accountno}</li>
-                                                <li className="list-group-item d-flex justify-content-between">  <b>IFSC Code:</b> {item?.ifsc}</li>
-                                                <li className="list-group-item d-flex justify-content-between">  <b>Branch Name :</b> {item?.branch}</li>
-
-                                            </ul>
-
-
-                                        </>
-                                    )
-                                })}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </Content>
+                )
+            }
+        </Content >
     );
 };
 

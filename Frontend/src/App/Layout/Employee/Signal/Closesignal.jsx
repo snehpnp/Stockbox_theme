@@ -482,7 +482,7 @@ const Closesignal = () => {
                                     onClick={() => {
                                         setModel1(true);
                                         setServiceid(row);
-                                        setUpdatetitle({ report: row.report, id: row._id });
+                                        setUpdatetitle({ report: row.report, id: row._id, description: row.description });
                                     }}
                                 />
                             </Tooltip>
@@ -993,13 +993,15 @@ const Closesignal = () => {
                         <div className="row">
                             <div className="col-md-12">
                                 <label htmlFor="description">Description</label>
-                                <input
+                                <textarea
                                     className="form-control mb-2"
-                                    type="text"
                                     placeholder="Enter Description Title"
                                     value={updatetitle.description}
                                     onChange={(e) => updateServiceTitle({ description: e.target.value })}
-                                />
+                                    rows={2}
+                                >
+
+                                </textarea>
                             </div>
                         </div>
                     </form>

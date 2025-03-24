@@ -1869,6 +1869,11 @@ export async function Updatebasicsettings(data, token) {
     formData.append('favicon', data.favicon);
     formData.append('logo', data.logo);
     formData.append('offer_image', data.offer_image);
+    formData.append('simage', data.simage);
+    formData.append('gstin', data.gstin);
+    formData.append('state', data.state);
+
+
 
 
     try {

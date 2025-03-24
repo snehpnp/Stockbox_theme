@@ -219,6 +219,12 @@ const Basket = () => {
       sortable: true,
       width: "180px",
     },
+    {
+      name: "Created date",
+      selector: row => fDate(row.created_at),
+      sortable: true,
+      width: '250px',
+    },
     permission.includes("publishstock") ||
       permission.includes("addstock") ||
       permission.includes("basketdetail") ||
@@ -303,7 +309,7 @@ const Basket = () => {
           </nav>
         </div>
       </div>
-      
+
       <div className="card">
         <div className="card-body">
           <div className="d-sm-flex align-items-center mb-4 gap-3">

@@ -53,7 +53,7 @@ const Editbasket = () => {
         frequency: data?.frequency || "",
         validity: data?.validity ? data?.validity : "",
         next_rebalance_date: data?.next_rebalance_date ? data?.next_rebalance_date : "",
-        cagr: data?.cagr,
+        // cagr: data?.cagr,
         full_price: data?.full_price,
         type: data?.type,
         image: data?.image,
@@ -88,7 +88,7 @@ const Editbasket = () => {
       errors.mininvamount = "Please Enter Minimum Investment Amount";
     }
     if (!values.frequency) {
-      errors.frequency = "Please Enter Frequency";
+      errors.frequency = "Please Enter Rebalance Frequency";
     }
 
     if (!values.validity) {
@@ -102,9 +102,9 @@ const Editbasket = () => {
     if (values.description === "<p><br></p>") {
       errors.description = "Please Enter Description";
     }
-    if (!values.cagr) {
-      errors.cagr = "Please Enter CAGR";
-    }
+    // if (!values.cagr) {
+    //   errors.cagr = "Please Enter CAGR";
+    // }
     if (!values.type) {
       errors.type = "Please Enter type";
     }
@@ -136,7 +136,7 @@ const Editbasket = () => {
       frequency: values.frequency,
       validity: values.validity,
       next_rebalance_date: values.next_rebalance_date,
-      cagr: values.cagr,
+      // cagr: values.cagr,
       full_price: values.full_price || 0,
       type: values.type,
       image: values.image,
@@ -176,7 +176,7 @@ const Editbasket = () => {
       frequency: "",
       validity: "",
       next_rebalance_date: "",
-      cagr: "",
+      // cagr: "",
       full_price: "",
       type: "",
       image: "",
@@ -241,7 +241,7 @@ const Editbasket = () => {
     },
     {
       name: "frequency",
-      label: "Frequency",
+      label: "Rebalance Frequency",
       type: "select",
       label_size: 12,
       col_size: 6,
@@ -270,15 +270,15 @@ const Editbasket = () => {
       ],
       star: true
     },
-    {
-      name: "cagr",
-      label: "CAGR",
-      type: "number",
-      label_size: 12,
-      col_size: 6,
-      disable: false,
-      star: true
-    },
+    // {
+    //   name: "cagr",
+    //   label: "CAGR",
+    //   type: "number",
+    //   label_size: 12,
+    //   col_size: 6,
+    //   disable: false,
+    //   star: true
+    // },
     {
       name: "next_rebalance_date",
       label: "Rebalance Date",
@@ -366,7 +366,6 @@ const Editbasket = () => {
       <DynamicForm
         fields={fields}
         formik={formik}
-        page_title="Edit Basket"
         btn_name="Edit Basket"
         btn_name1="Cancel"
         sumit_btn={true}

@@ -104,7 +104,6 @@ const Updateblogs = () => {
             <DynamicForm
                 fields={fields}
                 formik={formik}
-                page_title="Update Blog"
                 btn_name="Update Blog"
                 btn_name1="Cancel"
                 sumit_btn={true}
