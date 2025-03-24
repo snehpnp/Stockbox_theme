@@ -889,7 +889,7 @@ class List {
 
         let sgst = 0, cgst = 0, igst = 0;
 
-if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() ==="") {
+if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() ==="") {
     sgst = totalgst / 2;
     cgst = totalgst / 2;
 } else {
@@ -919,6 +919,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
           .replace(/{{company_phone}}/g, settings.contact_number)
           .replace(/{{company_address}}/g, settings.address)
           .replace(/{{company_website_title}}/g, settings.website_title)
+          .replace(/{{gstin}}/g, settings.gstin)
           .replace(/{{gstamount}}/g, totalgst)
           .replace(/{{state}}/g, client.state)
           .replace(/{{gst}}/g, settings.gst)
@@ -1119,7 +1120,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
 
         let sgst = 0, cgst = 0, igst = 0;
 
-        if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() === "") {
+        if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() === "") {
             sgst = totalgst / 2;
             cgst = totalgst / 2;
         } else {
@@ -1150,6 +1151,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
           .replace(/{{company_phone}}/g, settings.contact_number)
           .replace(/{{company_address}}/g, settings.address)
           .replace(/{{company_website_title}}/g, settings.website_title)
+          .replace(/{{gstin}}/g, settings.gstin)
           .replace(/{{gstamount}}/g, totalgst)
           .replace(/{{state}}/g, client.state)
           .replace(/{{gst}}/g, settings.gst)
@@ -1398,6 +1400,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
             orderid: { $first: '$orderid' },
             gstamount: { $first: '$gstamount' },
             gst: { $first: '$gst' },
+            invoice: { $first: '$invoice' },
             planDetails: { $first: '$planDetails' }, // First instance of planDetails
             categoryDetails: { $first: '$categoryDetails' }, // First instance of categoryDetails
             serviceNames: { $push: '$serviceDetails.title' }
@@ -1423,12 +1426,13 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
             orderid: 1,
             gstamount: 1,
             gst: 1,
+            invoice: 1,
             created_at: 1, // Plan end date
             planDetails: 1, // Details from the plans collection
             categoryDetails: 1, // Details from the plan categories collection
             serviceNames: 1, // All service titles
             categoryDetails: {
-              title: 1 // Include only the title from the category details
+            title: 1 // Include only the title from the category details
             },
           }
         }
@@ -5531,7 +5535,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
         validity: plan.validity,
         orderid: orderid,
         ordernumber:`INV-${orderNumber}`,
-        ordernumber:`INV-${orderNumber}.pdf`,
+        invoice:`INV-${orderNumber}.pdf`,
       });
 
       // Save the subscription
@@ -5728,7 +5732,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
 
             let sgst = 0, cgst = 0, igst = 0;
 
-            if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() === "") {
+            if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() === "") {
                 sgst = totalgst / 2;
                 cgst = totalgst / 2;
             } else {
@@ -5771,6 +5775,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
           .replace(/{{company_phone}}/g, settings.contact_number)
           .replace(/{{company_address}}/g, settings.address)
           .replace(/{{company_website_title}}/g, settings.website_title)
+          .replace(/{{gstin}}/g, settings.gstin)
           .replace(/{{state}}/g, client.state)
           .replace(/{{logo}}/g, logo)
           .replace(/{{simage}}/g, simage)
@@ -6215,7 +6220,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
   
             let sgst = 0, cgst = 0, igst = 0;
   
-            if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() ==="") {
+            if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() ==="") {
                 sgst = totalgst / 2;
                 cgst = totalgst / 2;
             } else {
@@ -6262,6 +6267,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
             .replace(/{{company_phone}}/g, settings.contact_number)
             .replace(/{{company_address}}/g, settings.address)
             .replace(/{{company_website_title}}/g, settings.website_title)
+            .replace(/{{gstin}}/g, settings.gstin)
             .replace(/{{state}}/g, client.state)
             .replace(/{{logo}}/g, logo)
             .replace(/{{simage}}/g, simage)
