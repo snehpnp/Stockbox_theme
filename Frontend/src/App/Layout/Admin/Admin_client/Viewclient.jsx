@@ -19,11 +19,11 @@ import {
   fDateTimeH,
   fDateTimeSuffix,
 } from "../../../../Utils/Date_formate";
-import { RefreshCcw, IndianRupee } from "lucide-react";
+import { RefreshCcw, IndianRupee, ArrowDownToLine } from "lucide-react";
 import { exportToCSV } from "../../../../Utils/ExportData";
 import Select from "react-select";
 import Content from "../../../components/Contents/Content";
-
+import { image_baseurl } from "../../../../Utils/config";
 
 const Viewclientdetail = () => {
 
@@ -246,6 +246,20 @@ const Viewclientdetail = () => {
     getAllSignal();
   }, [filters, searchInput, searchstock, currentPage]);
 
+
+
+  const handleDownload = (row) => {
+    const url = `${image_baseurl}uploads/invoice/${row.invoice}`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+
   const columns = [
     {
       name: "S.No",
@@ -294,6 +308,25 @@ const Viewclientdetail = () => {
       name: "Expiry Date",
       selector: (row) => (row?.plan_end ? fDateTimeH(row?.plan_end) : ""),
       width: "260px",
+    },
+    {
+      name: 'Invoice',
+      cell: row => (
+        <>
+
+          <div className='d-flex '>
+            {row.invoice ?
+              <Link className="btn px-2" onClick={() => handleDownload(row)}>
+                <Tooltip placement="top" overlay="Download">
+                  <ArrowDownToLine />
+                </Tooltip>
+              </Link> : "-"}
+          </div>
+
+        </>
+      ),
+      sortable: true,
+      width: '200px',
     },
   ];
 
