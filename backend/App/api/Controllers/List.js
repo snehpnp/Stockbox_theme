@@ -1400,7 +1400,6 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
             orderid: { $first: '$orderid' },
             gstamount: { $first: '$gstamount' },
             gst: { $first: '$gst' },
-            invoice: { $first: '$invoice' },
             planDetails: { $first: '$planDetails' }, // First instance of planDetails
             categoryDetails: { $first: '$categoryDetails' }, // First instance of categoryDetails
             serviceNames: { $push: '$serviceDetails.title' }
@@ -1426,7 +1425,6 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
             orderid: 1,
             gstamount: 1,
             gst: 1,
-            invoice: 1,
             created_at: 1, // Plan end date
             planDetails: 1, // Details from the plans collection
             categoryDetails: 1, // Details from the plan categories collection
