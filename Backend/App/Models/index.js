@@ -54,7 +54,8 @@ module.exports = {
     Stockrating :require("./Stockrating"),
     Addtocart :require("./Addtocart"),
     Basketgraphdata :require("./Basketgraphdata"),
-
+    Signalsdata :require("./Signalsdata"),
+    Signalstock :require("./Signalstock"),
 
     open_position:open_position,
     open_position_excute:open_position_excute,
