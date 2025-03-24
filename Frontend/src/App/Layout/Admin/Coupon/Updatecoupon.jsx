@@ -309,7 +309,6 @@ const Updatecoupon = () => {
     >
       <DynamicForm
         fields={fields.filter((field) => !field.showWhen || field.showWhen(formik.values))}
-        page_title="Update Coupon Code"
         btn_name="Update Coupon"
         btn_name1="Cancel"
         formik={formik}

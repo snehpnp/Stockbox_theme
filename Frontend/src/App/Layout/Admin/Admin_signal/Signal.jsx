@@ -28,9 +28,10 @@ const Signal = () => {
         report: "",
         id: "",
         description: ""
-
-
     });
+
+    console.log("updatetitle",updatetitle);
+    
 
 
     const location = useLocation();

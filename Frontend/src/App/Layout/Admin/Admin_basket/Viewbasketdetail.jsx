@@ -366,7 +366,7 @@ const Viewbasketdetail = () => {
             >
               {({ values }) => (
                 <div>
-                  <h4>Basket Details</h4>
+                  {/* <h4>Basket Details</h4> */}
                   <div className="row">
                     {fieldConfigurations?.map((field) =>
                       field.type !== "Stock" ? (

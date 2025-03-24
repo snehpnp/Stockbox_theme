@@ -581,57 +581,27 @@ const Coupon = () => {
                     </>}
                     body={
                         <>
-                            <ul>
-                                <li>
-                                    <div className="row justify-content-between">
-                                        <div className="col-md-6">
-                                            <b>Name : {viewpage?.name}</b>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div className="row justify-content-between">
-                                        <div className="col-md-6">
-                                            <b>Code : {viewpage?.code}</b>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div className="row justify-content-between">
-                                        <div className="col-md-6">
-                                            <b>Min Purchase Value : {viewpage?.minpurchasevalue}</b>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div className="row justify-content-between">
-                                        <div className="col-md-6">
-                                            <b>Max Discount Value : {viewpage?.mincouponvalue}</b>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div className="row justify-content-between">
-                                        <div className="col-md-6">
-                                            {viewpage?.startdate ? (
-                                                <b>Start Date: {fDateTime(viewpage.startdate)}</b>
-                                            ) : (
-                                                <b>Start Date: Not available</b>
-                                            )}
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div className="row justify-content-between">
-                                        <div className="col-md-6">
-                                            {viewpage?.enddate ? (
-                                                <b>End Date: {fDateTime(viewpage.enddate)}</b>
-                                            ) : (
-                                                <b>End Date: Not available</b>
-                                            )}
-                                        </div>
-                                    </div>
-                                </li>
+                            <ul className="list-group">
+                                <div>
+                                    <strong>Name:</strong> <span>{viewpage?.name || "N/A"}</span>
+                                </div>
+                                <div>
+                                    <strong>Code:</strong> <span>{viewpage?.code || "N/A"}</span>
+                                </div>
+                                <div>
+                                    <strong>Min Purchase Value:</strong> <span>{viewpage?.minpurchasevalue || "N/A"}</span>
+                                </div>
+                                <div >
+                                    <strong>Max Discount Value:</strong> <span>{viewpage?.mincouponvalue || "N/A"}</span>
+                                </div>
+                                <div>
+                                    <strong>Start Date:</strong>
+                                    <span>{viewpage?.startdate ? fDateTime(viewpage.startdate) : "Not available"}</span>
+                                </div>
+                                <div>
+                                    <strong>End Date:</strong>
+                                    <span>{viewpage?.enddate ? fDateTime(viewpage.enddate) : "Not available"}</span>
+                                </div>
                             </ul>
                         </>
                     }

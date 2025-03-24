@@ -87,7 +87,7 @@ const Editbasket = () => {
       errors.mininvamount = "Please Enter Minimum Investment Amount";
     }
     if (!values.frequency) {
-      errors.frequency = "Please Enter Frequency";
+      errors.frequency = "Please Enter Rebalance Frequency";
     }
 
     if (!values.validity) {
@@ -369,7 +369,6 @@ const Editbasket = () => {
       <DynamicForm
         fields={fields}
         formik={formik}
-        page_title="Edit Basket"
         btn_name="Edit Basket"
         btn_name1="Cancel"
         sumit_btn={true}

@@ -24,13 +24,13 @@ const Addblogs = () => {
         let errors = {};
 
         if (!values.title) {
-            errors.title = "Please enter title";
+            errors.title = "Please enter Title";
         }
         if (!values.description) {
-            errors.description = "Please enter description";
+            errors.description = "Please enter Description";
         }
         if (!values.image) {
-            errors.image = "Please enter image";
+            errors.image = "Please enter Image";
         }
 
 
@@ -80,6 +80,7 @@ const Addblogs = () => {
             label_size: 12,
             col_size: 6,
             disable: false,
+            star: true
         },
         {
             name: "image",
@@ -88,6 +89,7 @@ const Addblogs = () => {
             label_size: 12,
             col_size: 6,
             disable: false,
+            star: true
         },
         {
             name: "description",
@@ -96,6 +98,7 @@ const Addblogs = () => {
             label_size: 12,
             col_size: 12,
             disable: false,
+            star: true
         },
     ];
 

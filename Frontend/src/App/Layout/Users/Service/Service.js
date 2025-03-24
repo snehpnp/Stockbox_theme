@@ -14,6 +14,7 @@ import { basicsettinglist } from "../../../Services/Admin/Admin";
 import Loader from "../../../../Utils/Loader";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import ShowCustomAlert from "../../../../App/Extracomponents/CustomAlert/CustomAlert"
+import showCustomAlert from "../../../../App/Extracomponents/CustomAlert/CustomAlert";
 
 
 const Service = () => {
@@ -29,6 +30,12 @@ const Service = () => {
   const [plan, setPlan] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedPlanDetails, setSelectedPlanDetails] = useState(null);
+
+  console.log("selectedPlanDetails", selectedPlanDetails);
+
+  const [gstStatus, setGstStatus] = useState()
+  const [onlinePaymentStatus, setOnlinePaymentStatus] = useState()
+
 
 
 
@@ -143,10 +150,13 @@ const Service = () => {
   const getkeybydata = async () => {
     try {
       const response = await basicsettinglist();
+      console.log("getkeybydata", response.data[0].gststatus);
       if (response.status) {
         setGetkey(response?.data[0]?.razorpay_key);
         setCompany(response?.data[0]?.from_name);
         setGstdata(response?.data[0]?.gst);
+        setGstStatus(response.data[0].gststatus)
+        setOnlinePaymentStatus(response.data[0].paymentstatus)
       }
     } catch (error) {
       console.error("Error fetching coupons:", error);
@@ -409,7 +419,7 @@ const Service = () => {
 
       <Modal show={showModal} onHide={handleCloseModal} centered size="xxl">
         <Modal.Header closeButton>
-          <Modal.Title className="text-center w-100">
+          <Modal.Title style={{ color: "black" }} className="text-center w-100">
             🌟 Plan Details
           </Modal.Title>
         </Modal.Header>
@@ -418,9 +428,9 @@ const Service = () => {
             <>
 
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5>🏷️ {selectedPlanDetails?.title}</h5>
+                <h5>🏷️ <b>Price</b></h5>
                 <span className="text-success fw-bold">
-                  <IndianRupee />{" "}
+                  <IndianRupee style={{ height: "15px", width: "15px" }} />
                   {selectedPlanDetails?.price || "N/A"}
                 </span>
               </div>
@@ -618,12 +628,15 @@ const Service = () => {
                     <IndianRupee /> {selectedPlanDetails?.price}
                   </span>
                 </div>
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <b>💰 GST :</b>
-                  <span className="text-primary fw-bold">
-                    <IndianRupee /> {gstdata}％
-                  </span>
-                </div>
+                {gstStatus == 1 && (
+
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <b>💰 GST :</b>
+                    <span className="text-primary fw-bold">
+                      <IndianRupee /> {gstdata}％
+                    </span>
+                  </div>
+                )}
 
                 {appliedCoupon && (
                   <div className="d-flex justify-content-between align-items-center text-danger mb-2">
@@ -645,9 +658,11 @@ const Service = () => {
                     {/* if you want to less base price - discount then use this logic */}
 
                     {(
-                      (selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0)) +
-                      ((selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0)) * gstdata) / 100
+                      selectedPlanDetails?.price -
+                      (appliedCoupon ? discountedPrice || 0 : 0) +
+                      (gstStatus === 1 ? ((selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0)) * gstdata) / 100 : 0)
                     ).toFixed(2)}
+
 
 
 
@@ -662,14 +677,23 @@ const Service = () => {
 
               </div>
 
+            
               <div className="mt-4">
                 <button
-                  className="btn btn-success w-100"
-                  onClick={() => AddSubscribeplan(selectedPlanDetails)}
+                  className={`btn btn-success w-100 ${onlinePaymentStatus === 0 ? "disabled-btn" : ""}`}
+                  style={onlinePaymentStatus === 0 ? { pointerEvents: "auto", opacity: 0.6 } : {}}
+                  onClick={() => {
+                    if (onlinePaymentStatus === 0) {
+                      showCustomAlert("error", "Online Payment is currently disabled. Please try again later.");
+                      return;
+                    }
+                    AddSubscribeplan(selectedPlanDetails);
+                  }}
                 >
                   ✅ Confirm & Subscribe
                 </button>
               </div>
+
             </>
           )}
         </Modal.Body>

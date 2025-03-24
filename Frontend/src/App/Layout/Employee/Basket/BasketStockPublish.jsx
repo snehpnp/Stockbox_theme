@@ -4,21 +4,14 @@ import { Eye, RefreshCcw, Trash2, RotateCcw, IndianRupee, X, Plus, History } fro
 import { Tooltip } from 'antd';
 // import Table from "../../../components/Table";
 import Table from '../../../Extracomponents/Table1';
-import { BasketAllActiveList, BasketAllActiveListbyfilter, changestatusrebalance, deletebasket, Basketstatusofdetail, getstaffperuser } from "../../../Services/Admin/Admin";
+
+import { BasketAllActiveList, BasketAllActiveListbyfilter, changestatusrebalance, deletebasket, Basketstatusofdetail } from "../../../Services/Admin/Admin";
 import { fDate } from "../../../../Utils/Date_formate";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
-
-
 const BasketStockPublish = () => {
 
-
-  useEffect(() => {
-    getpermissioninfo()
-  }, [])
-
-  const userid = localStorage.getItem('id');
 
   const navigate = useNavigate();
   const [clients, setClients] = useState([]);
@@ -26,11 +19,11 @@ const BasketStockPublish = () => {
 
 
   const [searchInput, setSearchInput] = useState("");
-  const [permission, setPermission] = useState([]);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
 
-  //state for loading
+
   const [isLoading, setIsLoading] = useState(true)
 
 
@@ -41,28 +34,10 @@ const BasketStockPublish = () => {
 
 
 
-  const getpermissioninfo = async () => {
-    try {
-      const response = await getstaffperuser(userid, token);
-
-
-      if (response.status) {
-        setPermission(response.data.permissions);
-      }
-    } catch (error) {
-      console.log("error", error);
-    }
-  }
-
-
-
-  // Fetch basket list
   const getbasketlist = async () => {
     try {
       const data = { page: currentPage, search: searchInput || "" }
       const response = await BasketAllActiveListbyfilter(data, token);
-
-
       if (response.status) {
         setTotalRows(response.pagination.total);
         setClients(response.data);
@@ -72,7 +47,6 @@ const BasketStockPublish = () => {
 
     }
     setIsLoading(false)
-
   };
 
 
@@ -86,7 +60,7 @@ const BasketStockPublish = () => {
 
   const handleSwitchChange = async (event, id) => {
     const originalChecked = event.target.checked;
-    const user_active_status = originalChecked
+    const user_active_status = originalChecked;
     const data = { id: id, status: user_active_status };
 
     const result = await showCustomAlert("confirm", "Do you want to save the changes?");
@@ -112,6 +86,7 @@ const BasketStockPublish = () => {
     const originalChecked = event.target.checked;
     const user_active_status = originalChecked
     const data = { id: id, status: user_active_status };
+
     const result = await showCustomAlert("confirm", "Do you want to save the changes?");
 
     if (result) {
@@ -134,6 +109,12 @@ const BasketStockPublish = () => {
 
 
   const rebalancePubliceStock = async (row) => {
+    if (!row) return
+    navigate("/employee/editstock", { state: { row } });
+  };
+
+
+  const rebalancePubliceStockadd = async (row) => {
     navigate("/employee/addstock/" + row._id, { state: { state: "publish" } });
   }
 
@@ -165,11 +146,16 @@ const BasketStockPublish = () => {
   };
 
 
+
+
   function stripHtml(html) {
     const div = document.createElement("div");
     div.innerHTML = html;
     return div.textContent || div.innerText || "";
   }
+
+
+
 
   // Columns for DataTable
   const columns = [
@@ -215,7 +201,7 @@ const BasketStockPublish = () => {
           WebkitBoxOrient: 'vertical',
           maxWidth: '200px',
           textAlign: 'left',
-          whiteSpace: 'normal', // Ensure multi-line text
+          whiteSpace: 'normal', 
         }}>
           {stripHtml(row.description)}
         </div>
@@ -229,7 +215,7 @@ const BasketStockPublish = () => {
       sortable: true,
 
     },
-    permission.includes("basketActivestatus") && {
+    {
       name: 'Active Status',
       selector: row => (
         <div className="form-check form-switch form-check-info">
@@ -247,9 +233,9 @@ const BasketStockPublish = () => {
         </div>
       ),
       sortable: true,
-      width: '165px',
+      width: '180px',
     },
-    permission.includes("Rebalancestatus") && {
+    {
       name: 'Rebalancing',
       selector: row => (
 
@@ -269,27 +255,34 @@ const BasketStockPublish = () => {
 
       ),
       sortable: true,
+      width: '180px',
 
     },
-    permission.includes("Rebalancebutton") ||
-      permission.includes("basketdetail") ||
-      permission.includes("Subscriptionhistory") ?
-      {
-        name: "Actions",
-        cell: (row) => (
-          <div className="w-100">
-            {permission.includes("Rebalancebutton") && (
-              row.rebalancestatus === false ? (
-                <Tooltip title="Rebalance">
-                  <RotateCcw onClick={() => rebalancePubliceStock(row)} />
-                </Tooltip>
-              ) : null
-            )}
-            {permission.includes("basketdetail") &&
-              <Tooltip title="view">
-                <Eye onClick={() => viewdetailpage(row)} className='ms-2' />
-              </Tooltip>}
-            {/* <Tooltip title="Edit">
+    {
+      name: "Actions",
+      cell: (row) => (
+        <div className="w-100">
+          {row.rebalancestatus === false ? (
+            row?.stockstatus == 0 ? (
+              <Tooltip title="Rebalance">
+                <RotateCcw
+                  onClick={() => rebalancePubliceStock(row)}
+                  style={{ marginRight: "5px" }}
+                />
+              </Tooltip>
+            ) : (
+              <Tooltip title="Rebalance">
+                <RotateCcw
+                  onClick={() => rebalancePubliceStockadd(row)}
+                  style={{ marginRight: "5px" }}
+                />
+              </Tooltip>
+            )
+          ) : null}
+          <Tooltip title="view">
+            <Eye onClick={() => viewdetailpage(row)} />
+          </Tooltip>
+          {/* <Tooltip title="Edit">
             <Link
               to={`editbasket/${row._id}`}
               className="btn px-2"
@@ -297,25 +290,24 @@ const BasketStockPublish = () => {
               <SquarePen />
             </Link>
           </Tooltip> */}
-            {permission.includes("Subscriptionhistory") &&
-              <Tooltip title="History ">
-                <Link
-                  to={`/employee/basket-purchase-history/${row._id}`}
-                  className="btn px-2"
-                >
-                  <History />
-                </Link>
-              </Tooltip>}
-            {/* <button
+          <Tooltip title="History ">
+            <Link
+              to={`/employee/basket-purchase-history/${row._id}`}
+              className="btn px-2"
+            >
+              <History />
+            </Link>
+          </Tooltip>
+          {/* <button
             className="btn px-2"
             onClick={() => Deletebasket(row._id)}
           >
             <Trash2 />
           </button> */}
-          </div>
-        ),
-        width: '150px',
-      } : "",
+        </div>
+      ),
+      width: '150px',
+    },
   ];
 
 
@@ -338,7 +330,7 @@ const BasketStockPublish = () => {
           </nav>
         </div>
       </div>
-
+      <hr />
       <div className="card">
         <div className="card-body">
           <div className="d-lg-flex align-items-center mb-4 gap-3">
@@ -369,7 +361,7 @@ const BasketStockPublish = () => {
           </div>
           {isLoading ? (
             <Loader />
-          ) : (
+          ) : clients.length > 0 ? (
             <>
               <Table
                 columns={columns}
@@ -379,7 +371,12 @@ const BasketStockPublish = () => {
                 onPageChange={handlePageChange}
               />
             </>
+          ) : (
+            <div className="text-center mt-5">
+              <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+            </div>
           )}
+
         </div>
       </div>
     </div>

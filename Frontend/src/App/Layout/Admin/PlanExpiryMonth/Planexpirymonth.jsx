@@ -8,7 +8,7 @@ import Content from '../../../components/Contents/Content';
 import { Eye } from "lucide-react";
 
 
-const Planexpirymonth = () => {
+const Planexpirymonth = () => { 
 
     const token = localStorage?.getItem('token');
     const [data, setData] = useState([]);
