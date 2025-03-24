@@ -19,11 +19,11 @@ import {
   fDateTimeH,
   fDateTimeSuffix,
 } from "../../../../Utils/Date_formate";
-import { RefreshCcw, IndianRupee } from "lucide-react";
+import { RefreshCcw, IndianRupee, ArrowDownToLine } from "lucide-react";
 import { exportToCSV } from "../../../../Utils/ExportData";
 import Select from "react-select";
 import Content from "../../../components/Contents/Content";
-
+import { image_baseurl } from "../../../../Utils/config";
 
 const Viewclientdetail = () => {
 
@@ -64,6 +64,8 @@ const Viewclientdetail = () => {
     fetchAdminServices();
   }, []);
 
+
+
   const getCategoryTitle = async (categoryId) => {
     try {
       const response = await getcategoryplan(token);
@@ -76,6 +78,9 @@ const Viewclientdetail = () => {
     }
     return "-";
   };
+
+
+
 
   const getPlanDetail = async () => {
     try {
@@ -99,6 +104,9 @@ const Viewclientdetail = () => {
     }
   };
 
+
+
+
   const getClientDetail = async () => {
     try {
       const response = await clientdetailbyid(id, token);
@@ -110,6 +118,8 @@ const Viewclientdetail = () => {
       console.error("Error fetching client details:", error);
     }
   };
+
+
 
   const getclientservice = async () => {
     try {
@@ -123,6 +133,10 @@ const Viewclientdetail = () => {
     }
   };
 
+
+
+
+
   const fetchAdminServices = async () => {
     try {
       const response = await GetService(token);
@@ -133,6 +147,8 @@ const Viewclientdetail = () => {
       console.log("Error fetching services:", error);
     }
   };
+
+
 
   const getAllSignal = async () => {
     try {
@@ -157,6 +173,9 @@ const Viewclientdetail = () => {
     }
   };
 
+
+
+
   const getexportfile = async () => {
     try {
       const data = { client_id: id };
@@ -179,6 +198,9 @@ const Viewclientdetail = () => {
       console.log("Error:", error);
     }
   };
+
+
+
 
   const fetchStockList = async () => {
     try {
@@ -223,6 +245,20 @@ const Viewclientdetail = () => {
   useEffect(() => {
     getAllSignal();
   }, [filters, searchInput, searchstock, currentPage]);
+
+
+
+  const handleDownload = (row) => {
+    const url = `${image_baseurl}uploads/invoice/${row.invoice}`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
 
   const columns = [
     {
@@ -272,6 +308,25 @@ const Viewclientdetail = () => {
       name: "Expiry Date",
       selector: (row) => (row?.plan_end ? fDateTimeH(row?.plan_end) : ""),
       width: "260px",
+    },
+    {
+      name: 'Invoice',
+      cell: row => (
+        <>
+
+          <div className='d-flex '>
+            {row.invoice ?
+              <Link className="btn px-2" onClick={() => handleDownload(row)}>
+                <Tooltip placement="top" overlay="Download">
+                  <ArrowDownToLine />
+                </Tooltip>
+              </Link> : "-"}
+          </div>
+
+        </>
+      ),
+      sortable: true,
+      width: '200px',
     },
   ];
 
@@ -325,7 +380,7 @@ const Viewclientdetail = () => {
       name: "Exit Price",
       selector: (row) =>
         <>
-          <IndianRupee />  {row.closeprice ? row.closeprice : "-"}
+          <IndianRupee /> {row.closeprice ? row.closeprice : "-"}
         </>,
       sortable: true,
       width: "150px",
@@ -358,7 +413,7 @@ const Viewclientdetail = () => {
             <div className="card-body">
               <div className="p-4 border radius-15">
                 <div className="row justify-content-center align-items-center">
-                  {client.map(({ id, FullName, Email, PhoneNo,state }) => (
+                  {client.map(({ id, FullName, Email, PhoneNo, state }) => (
                     <div key={id} className="row">
                       <div className="col-md-2 d-flex align-items-center">
                         <strong>Full Name</strong>
@@ -366,7 +421,7 @@ const Viewclientdetail = () => {
                       </div>
                       <div className="col-md-4 d-flex align-items-center">
                         <strong>Email</strong>
-                        <p className="my-0 ms-4">{Email}</p>
+                        <p className="my-0 ms-3">{Email}</p>
                       </div>
                       <div className="col-md-3 d-flex align-items-center">
                         <strong>Phone No</strong>

@@ -18,6 +18,9 @@ import { image_baseurl } from "../../../../Utils/config";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
+
+
+
 function Trade() {
 
 
@@ -31,7 +34,7 @@ function Trade() {
   const [viewModel, setViewModel] = useState(false);
   const [exitModel, setExitModel] = useState(false);
   const [service, setService] = useState([]);
-  
+
   const [tradeData, setTradeData] = useState({ live: [], close: [] });
   const [description, setDescription] = useState("");
   const [brokerstatus, setBrokerstatus] = useState([])
@@ -238,7 +241,7 @@ function Trade() {
         search: "",
       };
       const response = await GetSignalClient(data, token);
-      
+
       if (response.status) {
         setTradeData((prev) => ({ ...prev, live: response.data }));
         setTotalPages(response.pagination?.totalPages || 1);
@@ -420,7 +423,7 @@ function Trade() {
                     ...(selectedTab === "close"
                       ? [{ label: "Exit Price", value: item?.closeprice || "--" }]
                       : []),
-                      ...(selectedTab === "live" ? [{ label: "Entry Type", value: `${item?.calltype} ${item?.entrytype}` }] : []),
+                    ...(selectedTab === "live" ? [{ label: "Entry Type", value: `${item?.calltype} ${item?.entrytype}` }] : []),
                     { label: "Stoploss", value: item?.stoploss || "--" },
                     { label: "Target1", value: item?.tag1 || "--" },
                     { label: "Target2", value: item?.tag2 || "--" },
@@ -601,7 +604,7 @@ function Trade() {
         <div className="pagination-controls d-flex justify-content-between mt-3">
           <button
             className="btn btn-secondary"
-            onClick={() => handlePageChange("prev")} 
+            onClick={() => handlePageChange("prev")}
             disabled={page === 1}
           >
             Previous

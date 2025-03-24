@@ -864,101 +864,102 @@ class List {
       }
 
       // if (settings.invoicestatus == 1) {
-        const length = 6;
-        const digits = '0123456789';
-        let orderNumber = '';
+      const length = 6;
+      const digits = '0123456789';
+      let orderNumber = '';
 
-        for (let i = 0; i < length; i++) {
-          orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
-        }
-
-
-        let payment_type;
-        if (orderid) {
-          payment_type = "Online";
-        }
-        else {
-          payment_type = "Offline";
-
-        }
-
-        const templatePath = path.join(__dirname, '../../../template', 'invoice.html');
-        let htmlContent = fs.readFileSync(templatePath, 'utf8');
+      for (let i = 0; i < length; i++) {
+        orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
+      }
 
 
+      let payment_type;
+      if (orderid) {
+        payment_type = "Online";
+      }
+      else {
+        payment_type = "Offline";
 
-        let sgst = 0, cgst = 0, igst = 0;
+      }
 
-if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() ==="") {
-    sgst = totalgst / 2;
-    cgst = totalgst / 2;
-} else {
-    igst = totalgst;
-}
-const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
-const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+      const templatePath = path.join(__dirname, '../../../template', 'invoice.html');
+      let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
 
 
-        htmlContent = htmlContent
-          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
-          .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
-          .replace(/{{payment_type}}/g, payment_type)
-          .replace(/{{clientname}}/g, client.FullName)
-          .replace(/{{email}}/g, client.Email)
-          .replace(/{{PhoneNo}}/g, client.PhoneNo)
-          .replace(/{{validity}}/g, savedSubscription.validity)
-          .replace(/{{plan_end}}/g, formatDate(savedSubscription.plan_end))
-          .replace(/{{plan_price}}/g, savedSubscription.plan_price)
-          .replace(/{{total}}/g, savedSubscription.total)
-          .replace(/{{discount}}/g, savedSubscription.discount)
-          .replace(/{{orderid}}/g, savedSubscription.orderid)
-          .replace(/{{planname}}/g, plan.category.title)
-          .replace(/{{plantype}}/g, "Plan")
-          .replace(/{{company_email}}/g, settings.email_address)
-          .replace(/{{company_phone}}/g, settings.contact_number)
-          .replace(/{{company_address}}/g, settings.address)
-          .replace(/{{company_website_title}}/g, settings.website_title)
-          .replace(/{{gstamount}}/g, totalgst)
-          .replace(/{{state}}/g, client.state)
-          .replace(/{{gst}}/g, settings.gst)
-          .replace(/{{sgst}}/g, sgst.toFixed(2))
-          .replace(/{{cgst}}/g, cgst.toFixed(2))
-          .replace(/{{igst}}/g, igst.toFixed(2))
-          .replace(/{{logo}}/g, logo)
-          .replace(/{{simage}}/g, simage)
-          .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
+      let sgst = 0, cgst = 0, igst = 0;
+
+      if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() === "") {
+        sgst = totalgst / 2;
+        cgst = totalgst / 2;
+      } else {
+        igst = totalgst;
+      }
+      const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+      const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
 
 
-        const browser = await puppeteer.launch({
-          args: ['--no-sandbox', '--disable-setuid-sandbox']
-        });
-        const page = await browser.newPage();
-        await page.setContent(htmlContent);
 
-        // Define the path to save the PDF
-        const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
-        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+      htmlContent = htmlContent
+        .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+        .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
+        .replace(/{{payment_type}}/g, payment_type)
+        .replace(/{{clientname}}/g, client.FullName)
+        .replace(/{{email}}/g, client.Email)
+        .replace(/{{PhoneNo}}/g, client.PhoneNo)
+        .replace(/{{validity}}/g, savedSubscription.validity)
+        .replace(/{{plan_end}}/g, formatDate(savedSubscription.plan_end))
+        .replace(/{{plan_price}}/g, savedSubscription.plan_price)
+        .replace(/{{total}}/g, savedSubscription.total)
+        .replace(/{{discount}}/g, savedSubscription.discount)
+        .replace(/{{orderid}}/g, savedSubscription.orderid)
+        .replace(/{{planname}}/g, plan.category.title)
+        .replace(/{{plantype}}/g, "Plan")
+        .replace(/{{company_email}}/g, settings.email_address)
+        .replace(/{{company_phone}}/g, settings.contact_number)
+        .replace(/{{company_address}}/g, settings.address)
+        .replace(/{{company_website_title}}/g, settings.website_title)
+        .replace(/{{gstin}}/g, settings.gstin)
+        .replace(/{{gstamount}}/g, totalgst)
+        .replace(/{{state}}/g, client.state)
+        .replace(/{{gst}}/g, settings.gst)
+        .replace(/{{sgst}}/g, sgst.toFixed(2))
+        .replace(/{{cgst}}/g, cgst.toFixed(2))
+        .replace(/{{igst}}/g, igst.toFixed(2))
+        .replace(/{{logo}}/g, logo)
+        .replace(/{{simage}}/g, simage)
+        .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
-        // Generate PDF and save to the specified path
-        await page.pdf({
-          path: pdfPath,
-          format: 'A4',
-          printBackground: true,
-          margin: {
-            top: '20mm',
-            right: '10mm',
-            bottom: '50mm',
-            left: '10mm',
-          },
-        });
 
-        await browser.close();
+      const browser = await puppeteer.launch({
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      });
+      const page = await browser.newPage();
+      await page.setContent(htmlContent);
 
-        savedSubscription.ordernumber = `INV-${orderNumber}`;
-        savedSubscription.invoice = `INV-${orderNumber}.pdf`;
-        const updatedSubscription = await savedSubscription.save();
-        if (settings.invoicestatus == 1) {
+      // Define the path to save the PDF
+      const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+      const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+
+      // Generate PDF and save to the specified path
+      await page.pdf({
+        path: pdfPath,
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '20mm',
+          right: '10mm',
+          bottom: '50mm',
+          left: '10mm',
+        },
+      });
+
+      await browser.close();
+
+      savedSubscription.ordernumber = `INV-${orderNumber}`;
+      savedSubscription.invoice = `INV-${orderNumber}.pdf`;
+      const updatedSubscription = await savedSubscription.save();
+      if (settings.invoicestatus == 1) {
 
         const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
         if (!mailtemplate || !mailtemplate.mail_body) {
@@ -1096,101 +1097,102 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
 
       // if (settings.invoicestatus == 1) {
 
-        const length = 6;
-        const digits = '0123456789';
-        let orderNumber = '';
+      const length = 6;
+      const digits = '0123456789';
+      let orderNumber = '';
 
-        for (let i = 0; i < length; i++) {
-          orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
-        }
-
-
-        let payment_type;
-        if (orderid) {
-          payment_type = "Online";
-        }
-        else {
-          payment_type = "Offline";
-
-        }
-
-        const templatePath = path.join(__dirname, '../../../template', 'invoice.html');
-        let htmlContent = fs.readFileSync(templatePath, 'utf8');
-
-        let sgst = 0, cgst = 0, igst = 0;
-
-        if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() === "") {
-            sgst = totalgst / 2;
-            cgst = totalgst / 2;
-        } else {
-            igst = totalgst;
-        }
-
-        const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
-        const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
-  
-  
-
-        htmlContent = htmlContent
-          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
-          .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
-          .replace(/{{payment_type}}/g, payment_type)
-          .replace(/{{clientname}}/g, client.FullName)
-          .replace(/{{email}}/g, client.Email)
-          .replace(/{{PhoneNo}}/g, client.PhoneNo)
-          .replace(/{{validity}}/g, savedSubscription.validity)
-          .replace(/{{plan_end}}/g, formatDate(savedSubscription.enddate))
-          .replace(/{{plan_price}}/g, savedSubscription.plan_price)
-          .replace(/{{total}}/g, savedSubscription.total)
-          .replace(/{{discount}}/g, savedSubscription.discount)
-          .replace(/{{orderid}}/g, savedSubscription.orderid)
-          .replace(/{{planname}}/g, basket.title)
-          .replace(/{{plantype}}/g, "Basket")
-          .replace(/{{company_email}}/g, settings.email_address)
-          .replace(/{{company_phone}}/g, settings.contact_number)
-          .replace(/{{company_address}}/g, settings.address)
-          .replace(/{{company_website_title}}/g, settings.website_title)
-          .replace(/{{gstamount}}/g, totalgst)
-          .replace(/{{state}}/g, client.state)
-          .replace(/{{gst}}/g, settings.gst)
-          .replace(/{{sgst}}/g, sgst.toFixed(2))
-          .replace(/{{cgst}}/g, cgst.toFixed(2))
-          .replace(/{{igst}}/g, igst.toFixed(2))
-          .replace(/{{logo}}/g, logo)
-          .replace(/{{simage}}/g, simage)
-          .replace(/{{plan_start}}/g, formatDate(savedSubscription.startdate));
+      for (let i = 0; i < length; i++) {
+        orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
+      }
 
 
-        const browser = await puppeteer.launch({
-          args: ['--no-sandbox', '--disable-setuid-sandbox']
-        });
-        const page = await browser.newPage();
-        await page.setContent(htmlContent);
+      let payment_type;
+      if (orderid) {
+        payment_type = "Online";
+      }
+      else {
+        payment_type = "Offline";
 
-        // Define the path to save the PDF
-        const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
-        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+      }
 
-        // Generate PDF and save to the specified path
-        await page.pdf({
-          path: pdfPath,
-          format: 'A4',
-          printBackground: true,
-          margin: {
-            top: '20mm',
-            right: '10mm',
-            bottom: '50mm',
-            left: '10mm',
-          },
-        });
+      const templatePath = path.join(__dirname, '../../../template', 'invoice.html');
+      let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
-        await browser.close();
+      let sgst = 0, cgst = 0, igst = 0;
 
-        savedSubscription.ordernumber = `INV-${orderNumber}`;
-        savedSubscription.invoice = `INV-${orderNumber}.pdf`;
-        const updatedSubscription = await savedSubscription.save();
+      if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() === "") {
+        sgst = totalgst / 2;
+        cgst = totalgst / 2;
+      } else {
+        igst = totalgst;
+      }
 
-        if (settings.invoicestatus == 1) {
+      const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+      const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+
+
+
+      htmlContent = htmlContent
+        .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+        .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
+        .replace(/{{payment_type}}/g, payment_type)
+        .replace(/{{clientname}}/g, client.FullName)
+        .replace(/{{email}}/g, client.Email)
+        .replace(/{{PhoneNo}}/g, client.PhoneNo)
+        .replace(/{{validity}}/g, savedSubscription.validity)
+        .replace(/{{plan_end}}/g, formatDate(savedSubscription.enddate))
+        .replace(/{{plan_price}}/g, savedSubscription.plan_price)
+        .replace(/{{total}}/g, savedSubscription.total)
+        .replace(/{{discount}}/g, savedSubscription.discount)
+        .replace(/{{orderid}}/g, savedSubscription.orderid)
+        .replace(/{{planname}}/g, basket.title)
+        .replace(/{{plantype}}/g, "Basket")
+        .replace(/{{company_email}}/g, settings.email_address)
+        .replace(/{{company_phone}}/g, settings.contact_number)
+        .replace(/{{company_address}}/g, settings.address)
+        .replace(/{{company_website_title}}/g, settings.website_title)
+        .replace(/{{gstin}}/g, settings.gstin)
+        .replace(/{{gstamount}}/g, totalgst)
+        .replace(/{{state}}/g, client.state)
+        .replace(/{{gst}}/g, settings.gst)
+        .replace(/{{sgst}}/g, sgst.toFixed(2))
+        .replace(/{{cgst}}/g, cgst.toFixed(2))
+        .replace(/{{igst}}/g, igst.toFixed(2))
+        .replace(/{{logo}}/g, logo)
+        .replace(/{{simage}}/g, simage)
+        .replace(/{{plan_start}}/g, formatDate(savedSubscription.startdate));
+
+
+      const browser = await puppeteer.launch({
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      });
+      const page = await browser.newPage();
+      await page.setContent(htmlContent);
+
+      // Define the path to save the PDF
+      const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+      const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+
+      // Generate PDF and save to the specified path
+      await page.pdf({
+        path: pdfPath,
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '20mm',
+          right: '10mm',
+          bottom: '50mm',
+          left: '10mm',
+        },
+      });
+
+      await browser.close();
+
+      savedSubscription.ordernumber = `INV-${orderNumber}`;
+      savedSubscription.invoice = `INV-${orderNumber}.pdf`;
+      const updatedSubscription = await savedSubscription.save();
+
+      if (settings.invoicestatus == 1) {
 
         const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
         if (!mailtemplate || !mailtemplate.mail_body) {
@@ -1286,8 +1288,8 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
             startdate: 1,
             enddate: 1,
             validity: 1,
-            gstamount	: 1,
-            gst : 1,
+            gstamount: 1,
+            gst: 1,
             'basketDetails.title': 1,
             'basketDetails.description': 1,
             'basketDetails.mininvamount': 1
@@ -2459,7 +2461,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
             type: 1,
             themename: 1,
             image: 1,
-            url:1,
+            url: 1,
             short_description: 1,
             rationale: 1,
             methodology: 1,
@@ -5484,7 +5486,6 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
 
         if (license) {
           license.noofclient += monthsToAdd;
-          console.log('Month found, updating noofclient.', monthsToAdd);
         } else {
           license = new License_Modal({
             month: targetMonth,
@@ -5531,7 +5532,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
           validity: plan.validity,
           orderid: orderid,
           ordernumber: `INV-${orderNumber}`,
-          ordernumber: `INV-${orderNumber}.pdf`,
+          invoice: `INV-${orderNumber}.pdf`,
         });
 
         // Save the subscription
@@ -5667,77 +5668,77 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
       // }
 
       // if (settings.invoicestatus == 1) {
-      
 
-        let payment_type;
-        if (orderid) {
-          payment_type = "Online";
+
+      let payment_type;
+      if (orderid) {
+        payment_type = "Online";
+      }
+      else {
+        payment_type = "Offline";
+
+      }
+
+      const templatePath = path.join(__dirname, '../../../template', 'invoicenew.html');
+      let htmlContent = fs.readFileSync(templatePath, 'utf8');
+
+
+
+      let planDetailsHtml = '';
+      let sno = 1;
+      for (const plan_id of plan_ids) {
+        const plan = await Plan_Modal.findById(plan_id)
+          .populate('category')
+          .exec();
+
+        const validityMapping = {
+          '1 month': 1,
+          '2 months': 2,
+          '3 months': 3,
+          '6 months': 6,
+          '9 months': 9,
+          '1 year': 12,
+          '2 years': 24,
+          '3 years': 36,
+          '4 years': 48,
+          '5 years': 60
+        };
+
+        const monthsToAdd = validityMapping[plan.validity];
+        if (monthsToAdd === undefined) {
+          return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
         }
-        else {
-          payment_type = "Offline";
 
+        const start = new Date();
+        const end = new Date(start);
+        end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+        end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+
+        const numberOfPlans = plan_ids.length;
+        const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
+
+        ////////////////// 17/10/2024 ////////////////////////
+
+        let total = plan.price - discountPerPlan; // Use let for reassignable variables
+        let totalgst = 0;
+
+        if (settings.gst > 0 && settings.gststatus == 1) {
+          totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
+          total = total + totalgst;
         }
 
-        const templatePath = path.join(__dirname, '../../../template', 'invoicenew.html');
-        let htmlContent = fs.readFileSync(templatePath, 'utf8');
+        let sgst = 0, cgst = 0, igst = 0;
+
+        if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() === "") {
+          sgst = totalgst / 2;
+          cgst = totalgst / 2;
+        } else {
+          igst = totalgst;
+        }
 
 
 
-        let planDetailsHtml = '';
-        let sno = 1;
-        for (const plan_id of plan_ids) {
-          const plan = await Plan_Modal.findById(plan_id)
-            .populate('category')
-            .exec();
-
-            const validityMapping = {
-              '1 month': 1,
-              '2 months': 2,
-              '3 months': 3,
-              '6 months': 6,
-              '9 months': 9,
-              '1 year': 12,
-              '2 years': 24,
-              '3 years': 36,
-              '4 years': 48,
-              '5 years': 60
-            };
-      
-            const monthsToAdd = validityMapping[plan.validity];
-            if (monthsToAdd === undefined) {
-              return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
-            }
-      
-            const start = new Date();
-            const end = new Date(start);
-            end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
-            end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
-      
-            const numberOfPlans = plan_ids.length;
-            const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
-      
-            ////////////////// 17/10/2024 ////////////////////////
-      
-            let total = plan.price-discountPerPlan; // Use let for reassignable variables
-            let totalgst = 0;
-            
-            if (settings.gst > 0 && settings.gststatus==1) {
-              totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
-              total = total + totalgst;
-            }
-
-            let sgst = 0, cgst = 0, igst = 0;
-
-            if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() === "") {
-                sgst = totalgst / 2;
-                cgst = totalgst / 2;
-            } else {
-                igst = totalgst;
-            }
-
-
-
-          planDetailsHtml += `
+        planDetailsHtml += `
            <tr>
                <td style="border: 1px solid black; padding: 10px; text-align: center;height: 100px;">${sno}</td>
                <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.category.title}</td>
@@ -5750,63 +5751,64 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
                <td style="border: 1px solid black; padding: 10px; text-align: center;">${total}</td>
             </tr>`;
 
-            sno++;
-        }
+        sno++;
+      }
 
 
-        const todays = new Date(); 
-        const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
-        const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+      const todays = new Date();
+      const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+      const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
 
 
-        htmlContent = htmlContent
-          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
-          .replace(/{{created_at}}/g, formatDate(todays))
-          .replace(/{{payment_type}}/g, payment_type)
-          .replace(/{{clientname}}/g, client.FullName)
-          .replace(/{{email}}/g, client.Email)
-          .replace(/{{PhoneNo}}/g, client.PhoneNo)
-          .replace(/{{plan_details}}/g, planDetailsHtml)
-          .replace(/{{company_email}}/g, settings.email_address)
-          .replace(/{{company_phone}}/g, settings.contact_number)
-          .replace(/{{company_address}}/g, settings.address)
-          .replace(/{{company_website_title}}/g, settings.website_title)
-          .replace(/{{state}}/g, client.state)
-          .replace(/{{logo}}/g, logo)
-          .replace(/{{simage}}/g, simage)
-          .replace(/{{total}}/g, price)
-          .replace(/{{plantype}}/g, "Plan")
-          .replace(/{{discount}}/g, discount);
+      htmlContent = htmlContent
+        .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+        .replace(/{{created_at}}/g, formatDate(todays))
+        .replace(/{{payment_type}}/g, payment_type)
+        .replace(/{{clientname}}/g, client.FullName)
+        .replace(/{{email}}/g, client.Email)
+        .replace(/{{PhoneNo}}/g, client.PhoneNo)
+        .replace(/{{plan_details}}/g, planDetailsHtml)
+        .replace(/{{company_email}}/g, settings.email_address)
+        .replace(/{{company_phone}}/g, settings.contact_number)
+        .replace(/{{company_address}}/g, settings.address)
+        .replace(/{{company_website_title}}/g, settings.website_title)
+        .replace(/{{gstin}}/g, settings.gstin)
+        .replace(/{{state}}/g, client.state)
+        .replace(/{{logo}}/g, logo)
+        .replace(/{{simage}}/g, simage)
+        .replace(/{{total}}/g, price)
+        .replace(/{{plantype}}/g, "Plan")
+        .replace(/{{discount}}/g, discount);
 
 
-        const browser = await puppeteer.launch({
-          args: ['--no-sandbox', '--disable-setuid-sandbox']
-        });
-        const page = await browser.newPage();
-        await page.setContent(htmlContent);
+      const browser = await puppeteer.launch({
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      });
+      const page = await browser.newPage();
+      await page.setContent(htmlContent);
 
-        // Define the path to save the PDF
-        const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
-        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+      // Define the path to save the PDF
+      const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+      const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
 
-        // Generate PDF and save to the specified path
-        await page.pdf({
-          path: pdfPath,
-          format: 'A4',
-          printBackground: true,
-          margin: {
-            top: '20mm',
-            right: '10mm',
-            bottom: '50mm',
-            left: '10mm',
-          },
-        });
+      // Generate PDF and save to the specified path
+      await page.pdf({
+        path: pdfPath,
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '20mm',
+          right: '10mm',
+          bottom: '50mm',
+          left: '10mm',
+        },
+      });
 
-        await browser.close();
+      await browser.close();
 
 
 
-        if (settings.invoicestatus == 1) {
+      if (settings.invoicestatus == 1) {
         const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
         if (!mailtemplate || !mailtemplate.mail_body) {
           throw new Error('Mail template not found');
@@ -6044,41 +6046,41 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
       });
     }
   }
-  
-    async addBasketSubscriptionAddToCart(req, res) {
-      try {
-        const { basket_ids, client_id, price, discount, orderid, coupon } = req.body;
-  
-        // Validate input
-        if (!basket_ids || !Array.isArray(basket_ids) || basket_ids.length === 0 || !client_id) {
-          return res.status(400).json({ status: false, message: 'Missing required fields' });
-        }
-  
-        const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
-  
-        if (!client) {
-          return console.log('Client not found or inactive.');
-        }
-  
-        const settings = await BasicSetting_Modal.findOne();
-  
-  
-        const length = 6;
-        const digits = '0123456789';
-        let orderNumber = '';
-  
-        for (let i = 0; i < length; i++) {
-          orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
-        }
-  
-        for (const basket_id of basket_ids) {
-  
+
+  async addBasketSubscriptionAddToCart(req, res) {
+    try {
+      const { basket_ids, client_id, price, discount, orderid, coupon } = req.body;
+
+      // Validate input
+      if (!basket_ids || !Array.isArray(basket_ids) || basket_ids.length === 0 || !client_id) {
+        return res.status(400).json({ status: false, message: 'Missing required fields' });
+      }
+
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return console.log('Client not found or inactive.');
+      }
+
+      const settings = await BasicSetting_Modal.findOne();
+
+
+      const length = 6;
+      const digits = '0123456789';
+      let orderNumber = '';
+
+      for (let i = 0; i < length; i++) {
+        orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
+      }
+
+      for (const basket_id of basket_ids) {
+
         const basket = await Basket_Modal.findOne({
           _id: basket_id,
           del: false
         });
-  
-  
+
+
         // Map plan validity to months
         const validityMapping = {
           '1 month': 1,
@@ -6092,31 +6094,31 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
           '4 years': 48,
           '5 years': 60,
         };
-  
+
         const monthsToAdd = validityMapping[basket.validity];
         if (monthsToAdd === undefined) {
           return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
         }
-  
+
         const start = new Date();
         const end = new Date(start);
         end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
         end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
-  
+
         const numberOfPlans = basket_ids.length;
         const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
-  
-  
-  
-        let total = basket.basket_price-discountPerPlan; // Use let for reassignable variables
+
+
+
+        let total = basket.basket_price - discountPerPlan; // Use let for reassignable variables
         let totalgst = 0;
-        
-        if (settings.gst > 0 && settings.gststatus==1) {
+
+        if (settings.gst > 0 && settings.gststatus == 1) {
           totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
           total = total + totalgst;
         }
-  
-  
+
+
         // Create a new subscription
         const newSubscription = new BasketSubscription_Modal({
           basket_id,
@@ -6124,106 +6126,106 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
           total: total,
           plan_price: basket.basket_price,
           discount: discountPerPlan,
-          gstamount:totalgst,
+          gstamount: totalgst,
           gst: settings.gst,
           coupon: coupon,
           startdate: start,
           enddate: end,
           validity: basket.validity,
           orderid: orderid,
-          ordernumber : `INV-${orderNumber}`,
-          invoice : `INV-${orderNumber}.pdf`,
+          ordernumber: `INV-${orderNumber}`,
+          invoice: `INV-${orderNumber}.pdf`,
         });
-  
+
         // Save to the database
         const savedSubscription = await newSubscription.save();
       }
-  
-  
+
+
       const updatedItems = await Addtocart_Modal.updateMany(
         { client_id: client_id, status: false, plan_id: null }, // Find all matching items
         { $set: { status: true } } // Update status to true
-    );
-    
-  
-        // if (settings.invoicestatus == 1) {
-  
-       
-  
-          let payment_type;
-          if (orderid) {
-            payment_type = "Online";
-          }
-          else {
-            payment_type = "Offline";
-  
-          }
-  
-          const templatePath = path.join(__dirname, '../../../template', 'invoicenew.html');
-          let htmlContent = fs.readFileSync(templatePath, 'utf8');
-  
-          let planDetailsHtml = '';
-          let sno = 1;
-         let ttl= 0;
-  
-          for (const basket_id of basket_ids) {
-  
-            const basket = await Basket_Modal.findOne({
-              _id: basket_id,
-              del: false
-            });
-      
-  
-            // Map plan validity to months
-            const validityMapping = {
-              '1 month': 1,
-              '2 months': 2,
-              '3 months': 3,
-              '6 months': 6,
-              '9 months': 9,
-              '1 year': 12,
-              '2 years': 24,
-              '3 years': 36,
-              '4 years': 48,
-              '5 years': 60,
-            };
-      
-            const monthsToAdd = validityMapping[basket.validity];
-            if (monthsToAdd === undefined) {
-              return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
-            }
-      
-            const start = new Date();
-            const end = new Date(start);
-            end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
-            end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
-      
-  
-            const numberOfPlans = basket_ids.length;
-            const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
-      
-      
-      
-            let total = basket.basket_price-discountPerPlan; // Use let for reassignable variables
-            let totalgst = 0;
-            
-            if (settings.gst > 0 && settings.gststatus==1) {
-              totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
-              total = total + totalgst;
-            }
-      
-  
-            let sgst = 0, cgst = 0, igst = 0;
-  
-            if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() ==="") {
-                sgst = totalgst / 2;
-                cgst = totalgst / 2;
-            } else {
-                igst = totalgst;
-            }
-  
-  
-            planDetailsHtml += `
+      );
+
+
+      // if (settings.invoicestatus == 1) {
+
+
+
+      let payment_type;
+      if (orderid) {
+        payment_type = "Online";
+      }
+      else {
+        payment_type = "Offline";
+
+      }
+
+      const templatePath = path.join(__dirname, '../../../template', 'invoicenew.html');
+      let htmlContent = fs.readFileSync(templatePath, 'utf8');
+
+      let planDetailsHtml = '';
+      let sno = 1;
+      let ttl = 0;
+
+      for (const basket_id of basket_ids) {
+
+        const basket = await Basket_Modal.findOne({
+          _id: basket_id,
+          del: false
+        });
+
+
+        // Map plan validity to months
+        const validityMapping = {
+          '1 month': 1,
+          '2 months': 2,
+          '3 months': 3,
+          '6 months': 6,
+          '9 months': 9,
+          '1 year': 12,
+          '2 years': 24,
+          '3 years': 36,
+          '4 years': 48,
+          '5 years': 60,
+        };
+
+        const monthsToAdd = validityMapping[basket.validity];
+        if (monthsToAdd === undefined) {
+          return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+        }
+
+        const start = new Date();
+        const end = new Date(start);
+        end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+        end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+
+
+        const numberOfPlans = basket_ids.length;
+        const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
+
+
+
+        let total = basket.basket_price - discountPerPlan; // Use let for reassignable variables
+        let totalgst = 0;
+
+        if (settings.gst > 0 && settings.gststatus == 1) {
+          totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
+          total = total + totalgst;
+        }
+
+
+        let sgst = 0, cgst = 0, igst = 0;
+
+        if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() === "") {
+          sgst = totalgst / 2;
+          cgst = totalgst / 2;
+        } else {
+          igst = totalgst;
+        }
+
+
+        planDetailsHtml += `
             <tr>
                 <td style="border: 1px solid black; padding: 10px; text-align: center;height: 100px;">${sno}</td>
                 <td style="border: 1px solid black; padding: 10px; text-align: center;">${basket.title}</td>
@@ -6235,122 +6237,123 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
                 <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst}</td>
                 <td style="border: 1px solid black; padding: 10px; text-align: center;">${total}</td>
              </tr>`;
-  
-             sno++;
-            
-             ttl = total + ttl;
-         
-          }
-  
-  
-          const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
-          const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
-    
-          const todays = new Date(); 
-  
-          htmlContent = htmlContent
-            .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
-            .replace(/{{created_at}}/g, formatDate(todays))
-            .replace(/{{payment_type}}/g, payment_type)
-            .replace(/{{clientname}}/g, client.FullName)
-            .replace(/{{email}}/g, client.Email)
-            .replace(/{{PhoneNo}}/g, client.PhoneNo)
-            .replace(/{{total}}/g, ttl)
-            .replace(/{{discount}}/g, discount)
-            .replace(/{{plan_details}}/g, planDetailsHtml)
-            .replace(/{{company_email}}/g, settings.email_address)
-            .replace(/{{company_phone}}/g, settings.contact_number)
-            .replace(/{{company_address}}/g, settings.address)
-            .replace(/{{company_website_title}}/g, settings.website_title)
-            .replace(/{{state}}/g, client.state)
-            .replace(/{{logo}}/g, logo)
-            .replace(/{{simage}}/g, simage)
-            .replace(/{{plantype}}/g, "Basket");
-  
-  
-          const browser = await puppeteer.launch({
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-          });
-          const page = await browser.newPage();
-          await page.setContent(htmlContent);
-  
-          // Define the path to save the PDF
-          const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
-          const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
-  
-          // Generate PDF and save to the specified path
-          await page.pdf({
-            path: pdfPath,
-            format: 'A4',
-            printBackground: true,
-            margin: {
-              top: '20mm',
-              right: '10mm',
-              bottom: '50mm',
-              left: '10mm',
-            },
-          });
-  
-          await browser.close();
-  
-  
-          if (settings.invoicestatus == 1) {
-  
-          const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
-          if (!mailtemplate || !mailtemplate.mail_body) {
-            throw new Error('Mail template not found');
-          }
-  
-  
-  
-          const templatePaths = path.join(__dirname, '../../../template', 'mailtemplate.html');
-  
-          fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
-            if (err) {
-              // console.error('Error reading HTML template:', err);
-              return;
-            }
-  
-            let finalMailBody = mailtemplate.mail_body
-              .replace('{clientName}', `${client.FullName}`);
-  
-            const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
-  
-            // Replace placeholders with actual values
-            const finalHtml = htmlTemplate
-              .replace(/{{company_name}}/g, settings.website_title)
-              .replace(/{{body}}/g, finalMailBody)
-              .replace(/{{logo}}/g, logo);
-  
-            const mailOptions = {
-              to: client.Email,
-              from: `${settings.from_name} <${settings.from_mail}>`,
-              subject: `${mailtemplate.mail_subject}`,
-              html: finalHtml,
-              attachments: [
-                {
-                  filename: `INV-${orderNumber}.pdf`, // PDF file name
-                  path: pdfPath, // Path to the PDF file
-                }
-              ]
-            };
-  
-            // Send email
-            await sendEmail(mailOptions);
-          });
-  
-        }
-        // Respond with the created subscription
-        return res.status(201).json({
-          status: true,
-          message: 'Subscription added successfully',
-        });
-  
-      } catch (error) {
-        return res.status(500).json({ status: false, message: 'Server error', data: [] });
+
+        sno++;
+
+        ttl = total + ttl;
+
       }
+
+
+      const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+      const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+
+      const todays = new Date();
+
+      htmlContent = htmlContent
+        .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+        .replace(/{{created_at}}/g, formatDate(todays))
+        .replace(/{{payment_type}}/g, payment_type)
+        .replace(/{{clientname}}/g, client.FullName)
+        .replace(/{{email}}/g, client.Email)
+        .replace(/{{PhoneNo}}/g, client.PhoneNo)
+        .replace(/{{total}}/g, ttl)
+        .replace(/{{discount}}/g, discount)
+        .replace(/{{plan_details}}/g, planDetailsHtml)
+        .replace(/{{company_email}}/g, settings.email_address)
+        .replace(/{{company_phone}}/g, settings.contact_number)
+        .replace(/{{company_address}}/g, settings.address)
+        .replace(/{{company_website_title}}/g, settings.website_title)
+        .replace(/{{gstin}}/g, settings.gstin)
+        .replace(/{{state}}/g, client.state)
+        .replace(/{{logo}}/g, logo)
+        .replace(/{{simage}}/g, simage)
+        .replace(/{{plantype}}/g, "Basket");
+
+
+      const browser = await puppeteer.launch({
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      });
+      const page = await browser.newPage();
+      await page.setContent(htmlContent);
+
+      // Define the path to save the PDF
+      const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+      const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+
+      // Generate PDF and save to the specified path
+      await page.pdf({
+        path: pdfPath,
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '20mm',
+          right: '10mm',
+          bottom: '50mm',
+          left: '10mm',
+        },
+      });
+
+      await browser.close();
+
+
+      if (settings.invoicestatus == 1) {
+
+        const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
+        if (!mailtemplate || !mailtemplate.mail_body) {
+          throw new Error('Mail template not found');
+        }
+
+
+
+        const templatePaths = path.join(__dirname, '../../../template', 'mailtemplate.html');
+
+        fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
+          if (err) {
+            // console.error('Error reading HTML template:', err);
+            return;
+          }
+
+          let finalMailBody = mailtemplate.mail_body
+            .replace('{clientName}', `${client.FullName}`);
+
+          const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+
+          // Replace placeholders with actual values
+          const finalHtml = htmlTemplate
+            .replace(/{{company_name}}/g, settings.website_title)
+            .replace(/{{body}}/g, finalMailBody)
+            .replace(/{{logo}}/g, logo);
+
+          const mailOptions = {
+            to: client.Email,
+            from: `${settings.from_name} <${settings.from_mail}>`,
+            subject: `${mailtemplate.mail_subject}`,
+            html: finalHtml,
+            attachments: [
+              {
+                filename: `INV-${orderNumber}.pdf`, // PDF file name
+                path: pdfPath, // Path to the PDF file
+              }
+            ]
+          };
+
+          // Send email
+          await sendEmail(mailOptions);
+        });
+
+      }
+      // Respond with the created subscription
+      return res.status(201).json({
+        status: true,
+        message: 'Subscription added successfully',
+      });
+
+    } catch (error) {
+      return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
-  
+  }
+
 
   async AddToCartPlan(req, res) {
     try {
@@ -6892,33 +6895,32 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
 
 
 
- // ✅ Calculate total days for each signal (at least 1 day)
- if (signal.created_at && signal.closedate) { // ✅ Ensure correct field name
-  const createdDate = new Date(signal.created_at);
-  const closeDate = new Date(signal.closedate); // ✅ Corrected field name
+        // ✅ Calculate total days for each signal (at least 1 day)
+        if (signal.created_at && signal.closedate) { // ✅ Ensure correct field name
+          const createdDate = new Date(signal.created_at);
+          const closeDate = new Date(signal.closedate); // ✅ Corrected field name
 
-  let signalDays = Math.ceil((closeDate - createdDate) / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+          let signalDays = Math.ceil((closeDate - createdDate) / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
 
-  if (isNaN(signalDays) || signalDays < 1) {
-    signalDays = 1; // ✅ Ensure at least 1 day is counted
-  }
+          if (isNaN(signalDays) || signalDays < 1) {
+            signalDays = 1; // ✅ Ensure at least 1 day is counted
+          }
 
-  totalDaysOfAllSignals += signalDays; // ✅ Accumulate instead of resetting
+          totalDaysOfAllSignals += signalDays; // ✅ Accumulate instead of resetting
 
 
 
-if(signal.calltype=="BUY")
-{
- signalper = (signal.closeprice - signal.price) / signal.price * 100;
- 
-}
-else{
-  signalper = (signal.price - signal.closeprice) / signal.price * 100;
+          if (signal.calltype == "BUY") {
+            signalper = (signal.closeprice - signal.price) / signal.price * 100;
 
-}
-totalpercentagecount = signalper + totalpercentagecount;
+          }
+          else {
+            signalper = (signal.price - signal.closeprice) / signal.price * 100;
 
-}
+          }
+          totalpercentagecount = signalper + totalpercentagecount;
+
+        }
 
 
 
@@ -6927,19 +6929,19 @@ totalpercentagecount = signalper + totalpercentagecount;
       });
 
       totalpercentagecountavarage = totalpercentagecount / count;
-  
+
       const accuracy = (profitCount / count) * 100;
       const avgreturnpertrade = (totalProfit - totalLoss) / count;
       avgreturnpermonth = monthsBetween > 0 ? (totalProfit - totalLoss) / monthsBetween : totalProfit - totalLoss;
-  
 
 
 
 
 
-const avgDaysPerSignal = count > 0 
-  ? Math.round(totalDaysOfAllSignals / count) 
-  : 1;  
+
+      const avgDaysPerSignal = count > 0
+        ? Math.round(totalDaysOfAllSignals / count)
+        : 1;
 
 
       return res.json({
@@ -7057,76 +7059,7 @@ const avgDaysPerSignal = count > 0
     }
   }
 
-  async LatestSignalsWithoutActivePlan(req, res) {
-    try {
-      const { client_id } = req.body;
-      const limit = 10;
 
-      // Fetch all subscriptions
-      const subscriptions = await PlanSubscription_Modal.find({ client_id });
-
-      // Extract active plan IDs and their end dates
-      const activePlanIds = subscriptions
-        .filter(sub => sub.status === "active" && new Date(sub.plan_end) >= new Date())
-        .map(sub => sub.plan_category_id)
-        .filter(id => id != null);
-
-      // Convert plan IDs to strings for comparison
-      const activePlanIdStrings = activePlanIds.map(id => id.toString());
-
-      // Fetch all non-active plan signals based on client_id only
-      const exclusionQuery = {
-        close_status: false,
-        planid: { $nin: activePlanIdStrings, $ne: null, $exists: true }
-      };
-
-      const latestSignals = await Signal_Modal.find(exclusionQuery)
-        .sort({ created_at: -1 })
-        .lean();
-
-      const protocol = req.protocol;
-      const baseUrl = `${protocol}://${req.headers.host}`;
-
-      // Attach report URLs and purchase details, limiting to 2 signals per plan
-      let signalsWithDetails = [];
-      const planSignalCount = {}; // Track how many signals per plan
-
-      for (const signal of latestSignals) {
-        const planId = signal.planid ? signal.planid.toString() : "noPlan";
-        if (!planSignalCount[planId]) {
-          planSignalCount[planId] = 0;
-        }
-
-        if (planSignalCount[planId] < 2) {
-          const order = await Order_Modal.findOne({
-            clientid: client_id,
-            signalid: signal._id
-          }).lean();
-
-          signalsWithDetails.push({
-            ...signal,
-            report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
-            purchased: order ? true : false,
-            order_quantity: order ? order.quantity : 0
-          });
-
-          planSignalCount[planId]++;
-        }
-
-        if (signalsWithDetails.length >= limit) break; // Stop after 10 signals total
-      }
-
-      return res.json({
-        status: true,
-        message: "Latest 10 signals retrieved successfully, limiting 2 signals per plan.",
-        data: signalsWithDetails,
-
-      });
-    } catch (error) {
-      console.error("Error fetching signals:", error);
-      return res.json({ status: false, message: "Server error", data: [] });
-    }
-  }
 
 
   async checkClientToken(req, res) {
@@ -7151,372 +7084,456 @@ const avgDaysPerSignal = count > 0
 
     } catch (error) {
       return res.status(500).json({ message: "Something went wrong.", error: error.message });
-  }
-}
-/*
-async LatestSignalsWithoutActivePlan(req, res) {
-  try {
-    const { client_id } = req.body;
-    const limit = 10;
-
-    // Fetch all subscriptions
-    const subscriptions = await PlanSubscription_Modal.find({ client_id });
-
-    // Extract active plan IDs and their end dates
-    const activePlanIds = subscriptions
-      .filter(sub => sub.status === "active" && new Date(sub.plan_end) >= new Date())
-      .map(sub => sub.plan_category_id)
-      .filter(id => id != null);
-
-    // Convert plan IDs to strings for comparison
-    const activePlanIdStrings = activePlanIds.map(id => id.toString());
-
-    // Fetch all non-active plan signals based on client_id only
-    const exclusionQuery = {
-      close_status: false,
-      planid: { $nin: [...activePlanIdStrings, null, ""] }
-    };
-
-    const latestSignals = await Signal_Modal.find(exclusionQuery)
-      .sort({ created_at: -1 })
-      .lean();
-
-    const protocol = req.protocol;
-    const baseUrl = `${protocol}://${req.headers.host}`;
-
-    // Attach report URLs and purchase details, limiting to 2 signals per plan
-    let signalsWithDetails = [];
-    const planSignalCount = {}; // Track how many signals per plan
-
-    for (const signal of latestSignals) {
-      const planId = signal.planid ? signal.planid.toString() : "noPlan";
-      if (!planSignalCount[planId]) {
-        planSignalCount[planId] = 0;
-      }
-
-      if (planSignalCount[planId] < 2) {
-        const order = await Order_Modal.findOne({
-          clientid: client_id,
-          signalid: signal._id
-        }).lean();
-
-        signalsWithDetails.push({
-          ...signal,
-          report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
-          purchased: order ? true : false,
-          order_quantity: order ? order.quantity : 0
-        });
-
-        planSignalCount[planId]++;
-      }
-
-      if (signalsWithDetails.length >= limit) break; // Stop after 10 signals total
     }
   }
-}
-*/
-/*
-async LatestSignalsWithoutActivePlan(req, res) {
-  try {
-    const { client_id } = req.body;
-    // const limit = 10;
-
-    // Step 1: Fetch all subscriptions for the client
-    const subscriptions = await PlanSubscription_Modal.find({ client_id });
-
-    // Step 2: Extract active plan IDs
-    const activePlanIds = subscriptions
-      .filter(sub => sub.status === "active" && new Date(sub.plan_end) >= new Date())
-      .map(sub => sub.plan_category_id)
-      .filter(id => id != null)
-      .map(id => id.toString());
-
-    // Step 3: Exclude signals from active plans
-    const exclusionQuery = {
-      close_status: false,
-      planid: { $nin: [...activePlanIds, null, ""] }
-    };
-
-    // Step 4: Fetch signals, sorted by creation date
-    const latestSignals = await Signal_Modal.find(exclusionQuery)
-      .sort({ created_at: -1 })
-      .lean();
-
-    // Step 5: Group by callduration and limit to 2 per callduration
-    const protocol = req.protocol;
-    const baseUrl = `${protocol}://${req.headers.host}`;
-
-    let signalsWithDetails = [];
-    const callDurationCount = {}; // Track how many signals per callduration
-
-    for (const signal of latestSignals) {
-      const callduration = signal.callduration ? signal.callduration.toString() : "noDuration";
-
-      // Initialize count for this callduration
-      if (!callDurationCount[callduration]) {
-        callDurationCount[callduration] = 0;
+  /*
+  async LatestSignalsWithoutActivePlan(req, res) {
+    try {
+      const { client_id } = req.body;
+      const limit = 10;
+  
+      // Fetch all subscriptions
+      const subscriptions = await PlanSubscription_Modal.find({ client_id });
+  
+      // Extract active plan IDs and their end dates
+      const activePlanIds = subscriptions
+        .filter(sub => sub.status === "active" && new Date(sub.plan_end) >= new Date())
+        .map(sub => sub.plan_category_id)
+        .filter(id => id != null);
+  
+      // Convert plan IDs to strings for comparison
+      const activePlanIdStrings = activePlanIds.map(id => id.toString());
+  
+      // Fetch all non-active plan signals based on client_id only
+      const exclusionQuery = {
+        close_status: false,
+        planid: { $nin: [...activePlanIdStrings, null, ""] }
+      };
+  
+      const latestSignals = await Signal_Modal.find(exclusionQuery)
+        .sort({ created_at: -1 })
+        .lean();
+  
+      const protocol = req.protocol;
+      const baseUrl = `${protocol}://${req.headers.host}`;
+  
+      // Attach report URLs and purchase details, limiting to 2 signals per plan
+      let signalsWithDetails = [];
+      const planSignalCount = {}; // Track how many signals per plan
+  
+      for (const signal of latestSignals) {
+        const planId = signal.planid ? signal.planid.toString() : "noPlan";
+        if (!planSignalCount[planId]) {
+          planSignalCount[planId] = 0;
+        }
+  
+        if (planSignalCount[planId] < 2) {
+          const order = await Order_Modal.findOne({
+            clientid: client_id,
+            signalid: signal._id
+          }).lean();
+  
+          signalsWithDetails.push({
+            ...signal,
+            report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
+            purchased: order ? true : false,
+            order_quantity: order ? order.quantity : 0
+          });
+  
+          planSignalCount[planId]++;
+        }
+  
+        if (signalsWithDetails.length >= limit) break; // Stop after 10 signals total
       }
-
-      // Add up to 2 signals per callduration
-      if (callDurationCount[callduration] < 2) {
-        // Check if the signal was purchased
-        const order = await Order_Modal.findOne({
-          clientid: client_id,
-          signalid: signal._id
-        }).lean();
-
-        signalsWithDetails.push({
-          ...signal,
-          report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
-          purchased: !!order,
-          order_quantity: order ? order.quantity : 0
-        });
-
-        callDurationCount[callduration]++;
-      }
-
-      // Stop after reaching the overall limit
-      // if (signalsWithDetails.length >= limit) break;
+  
+      return res.json({
+        status: true,
+        message: "Latest 10 signals retrieved successfully, limiting 2 signals per plan.",
+        data: signalsWithDetails,
+     
+      });
+    } catch (error) {
+      console.error("Error fetching signals:", error);
+      return res.json({ status: false, message: "Server error", data: [] });
     }
-
-    // Step 6: Return processed signals
-    return res.json({
-      status: true,
-      message: "Latest signals fetched successfully, showing 2 signals per callduration.",
-      data: signalsWithDetails
-    });
-  } catch (error) {
-    console.error("Error fetching signals:", error);
-    return res.json({ status: false, message: "Server error", data: [] });
   }
-}
-*/
-async LatestSignalsWithoutActivePlan(req, res) {
-  try {
-    const { client_id } = req.body;
-    const limit = 10;
+  */
+  /*
+  async LatestSignalsWithoutActivePlan(req, res) {
+    try {
+      const { client_id } = req.body;
+      // const limit = 10;
+  
+      // Step 1: Fetch all subscriptions for the client
+      const subscriptions = await PlanSubscription_Modal.find({ client_id });
+  
+      // Step 2: Extract active plan IDs
+      const activePlanIds = subscriptions
+        .filter(sub => sub.status === "active" && new Date(sub.plan_end) >= new Date())
+        .map(sub => sub.plan_category_id)
+        .filter(id => id != null)
+        .map(id => id.toString());
+  
+      // Step 3: Exclude signals from active plans
+      const exclusionQuery = {
+        close_status: false,
+        planid: { $nin: [...activePlanIds, null, ""] }
+      };
+  
+      // Step 4: Fetch signals, sorted by creation date
+      const latestSignals = await Signal_Modal.find(exclusionQuery)
+        .sort({ created_at: -1 })
+        .lean();
+  
+      // Step 5: Group by callduration and limit to 2 per callduration
+      const protocol = req.protocol;
+      const baseUrl = `${protocol}://${req.headers.host}`;
+  
+      let signalsWithDetails = [];
+      const callDurationCount = {}; // Track how many signals per callduration
+  
+      for (const signal of latestSignals) {
+        const callduration = signal.callduration ? signal.callduration.toString() : "noDuration";
+  
+        // Initialize count for this callduration
+        if (!callDurationCount[callduration]) {
+          callDurationCount[callduration] = 0;
+        }
+  
+        // Add up to 2 signals per callduration
+        if (callDurationCount[callduration] < 2) {
+          // Check if the signal was purchased
+          const order = await Order_Modal.findOne({
+            clientid: client_id,
+            signalid: signal._id
+          }).lean();
+  
+          signalsWithDetails.push({
+            ...signal,
+            report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
+            purchased: !!order,
+            order_quantity: order ? order.quantity : 0
+          });
+  
+          callDurationCount[callduration]++;
+        }
+  
+        // Stop after reaching the overall limit
+        // if (signalsWithDetails.length >= limit) break;
+      }
+  
+      // Step 6: Return processed signals
+      return res.json({
+        status: true,
+        message: "Latest signals fetched successfully, showing 2 signals per callduration.",
+        data: signalsWithDetails
+      });
+    } catch (error) {
+      console.error("Error fetching signals:", error);
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
+  */
+  async LatestSignalsWithoutActivePlan(req, res) {
+    try {
+      const { client_id } = req.body;
+      const limit = 10;
 
-    // Step 1: Fetch all subscriptions for the client
-    const subscriptions = await PlanSubscription_Modal.find({ client_id });
+      // Step 1: Fetch all subscriptions for the client
+      const subscriptions = await PlanSubscription_Modal.find({ client_id });
 
-    // Step 2: Extract active plan IDs
-    const activePlanIds = subscriptions
-      .filter(sub => sub.status === "active" && new Date(sub.plan_end) >= new Date())
-      .map(sub => sub.plan_category_id)
-      .filter(id => id != null)
-      .map(id => id.toString());
+      // Step 2: Extract active plan IDs
+      const activePlanIds = subscriptions
+        .filter(sub => sub.status === "active" && new Date(sub.plan_end) >= new Date())
+        .map(sub => sub.plan_category_id)
+        .filter(id => id != null)
+        .map(id => id.toString());
 
-    // Step 3: Exclude signals from active plans
-    const exclusionQuery = {
-      close_status: false,
-      planid: { $nin: [...activePlanIds, null, ""] }
-    };
+      // Step 3: Exclude signals from active plans
+      const exclusionQuery = {
+        close_status: false,
+        planid: { $nin: [...activePlanIds, null, ""] }
+      };
 
-    // Step 4: Fetch all relevant signals
-    const latestSignals = await Signal_Modal.find(exclusionQuery)
-      .sort({ created_at: -1 })
-      .lean();
+      // Step 4: Fetch all relevant signals
+      const latestSignals = await Signal_Modal.find(exclusionQuery)
+        .sort({ created_at: -1 })
+        .lean();
 
-    // Step 5: Define the priority order for call durations
-    const priorityOrder = [
-      "Multi Bagger",
-      "Long Term",
-      "Short Term",
-      "Swing",
-      "BTST",
-      "Intraday"
-    ];
+      // Step 5: Define the priority order for call durations
+      const priorityOrder = [
+        "Multi Bagger",
+        "Long Term",
+        "Short Term",
+        "Swing",
+        "BTST",
+        "Intraday"
+      ];
 
-    // Step 6: Sort signals according to the priority and limit 2 per type
-    const protocol = req.protocol;
-    const baseUrl = `${protocol}://${req.headers.host}`;
+      // Step 6: Sort signals according to the priority and limit 2 per type
+      const protocol = req.protocol;
+      const baseUrl = `${protocol}://${req.headers.host}`;
 
-    let signalsWithDetails = [];
-    const callDurationCount = {}; // Track how many signals per call duration
+      let signalsWithDetails = [];
+      const callDurationCount = {}; // Track how many signals per call duration
 
-    for (const type of priorityOrder) {
-      const filteredSignals = latestSignals.filter(
-        (signal) => signal.callduration === type
-      );
+      for (const type of priorityOrder) {
+        const filteredSignals = latestSignals.filter(
+          (signal) => signal.callduration === type
+        );
 
-      for (let i = 0; i < Math.min(2, filteredSignals.length); i++) {
-        const signal = filteredSignals[i];
+        for (let i = 0; i < Math.min(2, filteredSignals.length); i++) {
+          const signal = filteredSignals[i];
 
-        // Check if the signal was purchased
-        const order = await Order_Modal.findOne({
-          clientid: client_id,
-          signalid: signal._id
-        }).lean();
+          // Check if the signal was purchased
+          const order = await Order_Modal.findOne({
+            clientid: client_id,
+            signalid: signal._id
+          }).lean();
 
-        signalsWithDetails.push({
-          ...signal,
-          report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
-          purchased: !!order,
-          order_quantity: order ? order.quantity : 0
-        });
+          signalsWithDetails.push({
+            ...signal,
+            report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
+            purchased: !!order,
+            order_quantity: order ? order.quantity : 0
+          });
+
+          if (signalsWithDetails.length >= limit) break;
+        }
 
         if (signalsWithDetails.length >= limit) break;
       }
 
-      if (signalsWithDetails.length >= limit) break;
+      // Step 7: Return processed signals
+      return res.json({
+        status: true,
+        message: "Latest signals fetched successfully with 2 signals per call duration in priority order.",
+        data: signalsWithDetails
+      });
+    } catch (error) {
+      console.error("Error fetching signals:", error);
+      return res.json({ status: false, message: "Server error", data: [] });
     }
-
-    // Step 7: Return processed signals
-    return res.json({
-      status: true,
-      message: "Latest signals fetched successfully with 2 signals per call duration in priority order.",
-      data: signalsWithDetails
-    });
-  } catch (error) {
-    console.error("Error fetching signals:", error);
-    return res.json({ status: false, message: "Server error", data: [] });
-  }
-}
-
-
-
-async getBasketGraphData(req, res) { 
-  try {
-  const { basket_id,limit } = req.body;
-
-  // Check if basket_id is provided
-  if (!basket_id) {
-    return res.status(400).json({ status: false, message: 'basket_id is required' });
   }
 
-  // Fetch data from Basketstock_Modal using basket_id
-  // const basketData = await Basketghaphdata_Modal.find({ basket_id }).limit(limit).lean();
-  const basketData = await Basketghaphdata_Modal.find({ basket_id })
-    .sort({ created_at: -1 }) // Sorting in DESC order by created_at
-    .limit(limit)
-    .lean();
-    basketData.reverse(); 
-  // If no data found
-  if (!basketData || basketData.length === 0) {
-    return res.status(404).json({ status: false, message: 'No data found for this basket_id' });
+
+
+  async getBasketGraphData(req, res) {
+    try {
+      const { basket_id, limit } = req.body;
+
+      // Check if basket_id is provided
+      if (!basket_id) {
+        return res.status(400).json({ status: false, message: 'basket_id is required' });
+      }
+
+      // Fetch data from Basketstock_Modal using basket_id
+      // const basketData = await Basketghaphdata_Modal.find({ basket_id }).limit(limit).lean();
+      const basketData = await Basketghaphdata_Modal.find({ basket_id })
+        .sort({ created_at: -1 }) // Sorting in DESC order by created_at
+        .limit(limit)
+        .lean();
+      basketData.reverse();
+      // If no data found
+      if (!basketData || basketData.length === 0) {
+        return res.status(404).json({ status: false, message: 'No data found for this basket_id' });
+      }
+
+      // Send response with data
+      return res.status(200).json({
+        status: true,
+        message: 'Basket data fetched successfully',
+        data: basketData
+      });
+
+    } catch (error) {
+      console.error("Error fetching basket data:", error);
+      return res.status(500).json({ status: false, message: 'Server error', data: [] });
+    }
   }
 
-  // Send response with data
-  return res.status(200).json({
-    status: true,
-    message: 'Basket data fetched successfully',
-    data: basketData
-  });
-
-} catch (error) {
-  console.error("Error fetching basket data:", error);
-  return res.status(500).json({ status: false, message: 'Server error', data: [] });
-}
-}
 
 
-
-async BasketSubscriptionCount(req, res) {
-  try {
+  async BasketSubscriptionCount(req, res) {
+    try {
       const { basketid } = req.body; // assuming basketid is passed in the request
       const basketObjectId = new mongoose.Types.ObjectId(basketid);
 
       const result = await BasketSubscription_Modal.aggregate([
-          {
-              $match: { basket_id: basketObjectId } // Filter by basket_id
-          },
-          {
-              $count: "subscription_count" // Count number of purchases
-          }
+        {
+          $match: { basket_id: basketObjectId } // Filter by basket_id
+        },
+        {
+          $count: "subscription_count" // Count number of purchases
+        }
       ]);
 
       const subscriptionCount = result.length > 0 ? result[0].subscription_count : 0;
 
       res.status(200).json({
-          status: true,
-          message: "Subscription count retrieved successfully.",
-          subscription_count: subscriptionCount
+        status: true,
+        message: "Subscription count retrieved successfully.",
+        subscription_count: subscriptionCount
       });
-  } catch (error) {
+    } catch (error) {
       res.status(500).json({
-          status: false,
-          message: "An error occurred while retrieving the subscription count."
-      });
-  }
-}
-
-
-async  getLivePrices(req, res) {
-  try {
-    const { basket_id } = req.params;
-   
-
-    // 🔥 Step 1: Count how many stocks exist in the basket
-    const basketStocks = await Basketstock_Modal.find({ basket_id: basket_id, del: false });
-    console.log("basketStocks:", basketStocks);
-    const totalStocks = basketStocks.length;
-
-    if (totalStocks === 0) {
-      return res.json({
-        status: true,
-        message: "No stocks found in this basket.",
-        totalStocks: 0,
-        data: []
+        status: false,
+        message: "An error occurred while retrieving the subscription count."
       });
     }
+  }
 
-    const tradeSymbols = basketStocks.map(stock => stock.tradesymbol);
 
-    // 🔥 Step 2: Get tokens for these stocks from Stock_Modal
-    const stockTokens = await Stock_Modal.find({ tradesymbol: { $in: tradeSymbols } }, { tradesymbol: 1, instrument_token: 1 });
+  async getLivePrices(req, res) {
+    try {
+      const { basket_id } = req.params;
 
-    // Create a mapping of tradesymbol -> token
-    const symbolToTokenMap = {};
-    stockTokens.forEach(stock => {
-      symbolToTokenMap[stock.tradesymbol] = stock.instrument_token;
-    });
 
-    // ✅ Get the list of tokens
-    const tokens = stockTokens.map(stock => stock.instrument_token);
+      // 🔥 Step 1: Count how many stocks exist in the basket
+      const basketStocks = await Basketstock_Modal.find({ basket_id: basket_id, del: false });
+      console.log("basketStocks:", basketStocks);
+      const totalStocks = basketStocks.length;
 
-    if (tokens.length === 0) {
+      if (totalStocks === 0) {
+        return res.json({
+          status: true,
+          message: "No stocks found in this basket.",
+          totalStocks: 0,
+          data: []
+        });
+      }
+
+      const tradeSymbols = basketStocks.map(stock => stock.tradesymbol);
+
+      // 🔥 Step 2: Get tokens for these stocks from Stock_Modal
+      const stockTokens = await Stock_Modal.find({ tradesymbol: { $in: tradeSymbols } }, { tradesymbol: 1, instrument_token: 1 });
+
+      // Create a mapping of tradesymbol -> token
+      const symbolToTokenMap = {};
+      stockTokens.forEach(stock => {
+        symbolToTokenMap[stock.tradesymbol] = stock.instrument_token;
+      });
+
+      // ✅ Get the list of tokens
+      const tokens = stockTokens.map(stock => stock.instrument_token);
+
+      if (tokens.length === 0) {
+        return res.json({
+          status: true,
+          message: "No tokens found for the given basket stocks.",
+          totalStocks: basketStocks.length,
+          data: []
+        });
+      }
+
+      // 🔥 Step 3: Fetch live prices only for the tokens in the basket
+      const livePrices = await Liveprice_Modal.find({ token: { $in: tokens } });
+
+      // ✅ Map live prices with stock details
+      const result = livePrices.map(priceData => {
+        const tradesymbol = Object.keys(symbolToTokenMap).find(symbol => symbolToTokenMap[symbol] === priceData.token);
+        return {
+          lp: priceData.lp,
+          curtime: priceData.curtime,
+          token: priceData.token,
+          tradesymbol: tradesymbol || "Unknown"
+        };
+      });
+
       return res.json({
         status: true,
-        message: "No tokens found for the given basket stocks.",
+        message: "Live prices for basket stocks fetched successfully",
         totalStocks: basketStocks.length,
+        data: result
+      });
+
+    } catch (error) {
+      console.error("❌ Error fetching live prices for basket stocks:", error.message);
+      return res.status(500).json({
+        status: false,
+        message: "Server error",
         data: []
       });
     }
+  } async getLivePriceCash(req, res) {
+    try {
+      const livePrices = await Signal_Modal.aggregate([
+        // Filter signals with close_status false and segment "C"
+        {
+          $match: {
+            close_status: false,
+            segment: "C"
+          }
+        },
+        // Lookup stock details from stocks collection based on tradesymbol
+        {
+          $lookup: {
+            from: 'stocks',
+            localField: 'tradesymbol',
+            foreignField: 'tradesymbol',
+            as: 'stockDetails'
+          }
+        },
+        {
+          $unwind: {
+            path: '$stockDetails',
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        // Lookup live price from stockliveprices collection using the token from stocks details
+        {
+          $lookup: {
+            from: 'stockliveprices',
+            localField: 'stockDetails.instrument_token',
+            foreignField: 'token',
+            as: 'liveData'
+          }
+        },
+        {
+          $unwind: {
+            path: '$liveData',
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        // Project the necessary fields including tradesymbol, live price, curtime, symbol and token
+        {
+          $project: {
+            tradesymbol: 1,
+            price: '$liveData.lp',
+            curtime: '$liveData.curtime',
+            symbol: '$stockDetails.symbol',
+            token: '$stockDetails.instrument_token'
+          }
+        },
+        // Group by tradesymbol to return unique records only
+        {
+          $group: {
+            _id: "$tradesymbol",
+            tradesymbol: { $first: "$tradesymbol" },
+            symbol: { $first: "$symbol" },
+            token: { $first: "$token" },
+            price: { $first: "$price" },
+            curtime: { $first: "$curtime" }
+          }
+        }
+      ]);
 
-    // 🔥 Step 3: Fetch live prices only for the tokens in the basket
-    const livePrices = await Liveprice_Modal.find({ token: { $in: tokens } });
-
-    // ✅ Map live prices with stock details
-    const result = livePrices.map(priceData => {
-      const tradesymbol = Object.keys(symbolToTokenMap).find(symbol => symbolToTokenMap[symbol] === priceData.token);
-      return {
-        lp: priceData.lp,
-        curtime: priceData.curtime,
-        token: priceData.token,
-        tradesymbol: tradesymbol || "Unknown"
-      };
-    });
-
-    return res.json({
-      status: true,
-      message: "Live prices for basket stocks fetched successfully",
-      totalStocks: basketStocks.length,
-      data: result
-    });
-
-  } catch (error) {
-    console.error("❌ Error fetching live prices for basket stocks:", error.message);
-    return res.status(500).json({
-      status: false,
-      message: "Server error",
-      data: []
-    });
+      return res.json({
+        status: true,
+        message: "Live prices fetched successfully",
+        data: livePrices
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: false,
+        message: "Server error",
+        data: []
+      });
+    }
   }
-}
 
 
 
-  
 
 }
 
@@ -7533,6 +7550,14 @@ function formatDate(date) {
   return `${day}/${month}/${year}`;
 
 }
+
+
+
+
+
+
+
+
 
 
 module.exports = new List();

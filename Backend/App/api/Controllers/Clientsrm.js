@@ -874,7 +874,7 @@ class Clients {
       const datetime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}${ampm}`;
 
       // PDF generation section
-      const templatePath = path.join(__dirname, '../../../template', 'kyc-agreement-template-rm.html');
+      const templatePath = path.join(__dirname, '../../../template', 'kyc-agreement-template.html');
       let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
       // Replace placeholders with actual values

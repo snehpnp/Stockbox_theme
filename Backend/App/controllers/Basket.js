@@ -1679,7 +1679,7 @@ class Basket {
 
         let sgst = 0, cgst = 0, igst = 0;
 
-        if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() ==="") {
+        if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() ==="") {
             sgst = totalgst / 2;
             cgst = totalgst / 2;
         } else {
@@ -1709,6 +1709,7 @@ class Basket {
           .replace(/{{company_phone}}/g, settings.contact_number)
           .replace(/{{company_address}}/g, settings.address)
           .replace(/{{company_website_title}}/g, settings.website_title)
+          .replace(/{{gstin}}/g, settings.gstin)
           .replace(/{{gstamount}}/g, totalgst)
           .replace(/{{state}}/g, client.state)
           .replace(/{{gst}}/g, settings.gst)
@@ -1912,7 +1913,7 @@ class Basket {
 
       let sgst = 0, cgst = 0, igst = 0;
 
-      if (client.state.toLowerCase() === "madhya pradesh" || client.state.toLowerCase() ==="") {
+      if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() ==="") {
           sgst = totalgst / 2;
           cgst = totalgst / 2;
       } else {
@@ -1942,6 +1943,7 @@ class Basket {
         .replace(/{{company_phone}}/g, settings.contact_number)
         .replace(/{{company_address}}/g, settings.address)
         .replace(/{{company_website_title}}/g, settings.website_title)
+        .replace(/{{gstin}}/g, settings.gstin)
         .replace(/{{gstamount}}/g, totalgst)
         .replace(/{{state}}/g, client.state)
         .replace(/{{gst}}/g, settings.gst)

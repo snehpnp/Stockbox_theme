@@ -24,6 +24,7 @@
     "puppeteer": "^23.4.1",
     "querystring": "^0.2.1",
     "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "ws": "^8.18.0",
     "xlsx": "^0.18.5"
   }

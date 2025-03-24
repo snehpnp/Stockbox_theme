@@ -27,12 +27,17 @@ const PastPerformance = () => {
     getOptionpastdata();
   }, []);
 
+  const formatMonth = (key) => {
+    const [year, month] = key.split("-");
+    return new Date(year, month - 1).toLocaleString("en-US", { month: "long" });
+  };
+
   const getCashpastdata = async () => {
     try {
       const response = await getpastperformaceCashdata({ id: "66d2c3bebf7e6dc53ed07626" }, token);
       if (response?.status) {
         const { months, avgMonthlyProfit } = response.data["6_months"];
-        setMonths(Object.keys(months));
+        setMonths(Object.keys(months).map(formatMonth)); // Format months
         setCashPastdata(Object.values(months).map(m => m.netProfit));
         setCashAvgProfit(avgMonthlyProfit);
       }
@@ -41,12 +46,9 @@ const PastPerformance = () => {
     }
   };
 
-
-
-
   const getFuturepastdata = async () => {
     try {
-      const response = await getpastperformaceFuturedata({ id: "66bc8b0c3fb6f1724c02bfec" }, token);
+      const response = await getpastperformaceFuturedata({ id: "66dfede64a88602fbbca9b72" }, token);
       if (response?.status) {
         const { months, avgMonthlyProfit } = response.data["6_months"];
         setFuturePastdata(Object.values(months).map(m => m.netProfit));
@@ -56,9 +58,6 @@ const PastPerformance = () => {
       console.error("Error fetching Future data:", error);
     }
   };
-
-
-
 
   const getOptionpastdata = async () => {
     try {
@@ -74,7 +73,7 @@ const PastPerformance = () => {
   };
 
 
-  
+
 
   const chartData = {
     labels: months,
