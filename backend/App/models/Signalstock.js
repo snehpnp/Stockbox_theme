@@ -19,20 +19,8 @@ const signalstockModel = Schema({
         trim: true,
         default: null
     },
-    service: {
-        type: String,
-        required: true,
-        default: null
-    },
     calltype: {
         type: String,
-        required: true,
-        trim: true,
-        default: null
-    },
-    callduration: {
-        type: String,
-        required: true,
         trim: true,
         default: null
     },

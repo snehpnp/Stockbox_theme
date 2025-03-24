@@ -2070,41 +2070,51 @@ const finalResult = result.map(item => ({
     });
   }
 }
-
 async AddSignals(req, res) {
   try {
-    // File upload for report using multer
+    // Optional file upload for report using multer
     await new Promise((resolve, reject) => {
       upload('report').fields([{ name: 'report', maxCount: 1 }])(req, res, (err) => {
         if (err) {
-          return reject(err);
+          console.error("Multer error (optional):", err);
+          // Agar report optional hai, to error ko ignore kar sakte hain:
+          return resolve();
         }
         resolve();
       });
     });
 
+    console.log("Endpoint reached after file upload middleware");
+
     // Destructure required fields from req.body, including stocks array
     const { stock, strategy_name, callduration, description, planid, profitlosstype, stocks } = req.body;
-    // Validate required fields (including stocks array)
-    console.log("req.body",req.body);
 
+    // Validate required fields (planid and stocks)
     if (!planid) {
-      return res.status(400).json({ status: false, message: 'Missing required fields' });
+      return res.status(400).json({ status: false, message: 'Missing required fields: planid' });
     }
-    if (!stocks || !Array.isArray(stocks) || stocks.length === 0) {
+
+    // Agar stocks ek JSON string hai, then parse it into an array
+    let stocksArray;
+    try {
+      stocksArray = typeof stocks === 'string' ? JSON.parse(stocks) : stocks;
+    } catch (err) {
+      return res.status(400).json({ status: false, message: 'Invalid JSON in stocks field' });
+    }
+
+    if (!stocksArray || !Array.isArray(stocksArray) || stocksArray.length === 0) {
       return res.status(400).json({ status: false, message: 'Stocks data missing or invalid' });
     }
-    // Allowed MIME types check for report file
+
+    // Allowed MIME types check for report file (if present)
     const allowedMimeTypes = [
       'application/pdf',
       'application/msword',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     ];
 
-
-    const reportFile = req.files['report'] ? req.files['report'][0] : null;
-    console.log("bbbb");
-
+    const reportFile = req.files && req.files['report'] ? req.files['report'][0] : null;
+    let report = null;
     if (reportFile) {
       const fileMimeType = reportFile.mimetype;
       if (!allowedMimeTypes.includes(fileMimeType)) {
@@ -2113,13 +2123,13 @@ async AddSignals(req, res) {
           message: "Invalid file type. Only PDF and Word files are allowed.",
         });
       }
+      report = reportFile.filename;
     }
-    const report = reportFile ? reportFile.filename : null;
-    console.log("ccccc");
+
+    console.log("Proceeding with signal creation");
 
     // Split planid into an array of plan IDs
     const planIds = planid.split(',');
-   
 
     // Create signal entries for each plan id using Signalsdata_Modal
     const signalEntries = planIds.map(id => {
@@ -2141,8 +2151,8 @@ async AddSignals(req, res) {
     const bulkOps = [];
     // For each inserted signal, loop through the stocks array
     for (const signal of insertedSignals) {
-      for (const st of stocks) {
-        // Destructure stock object values (ensure these keys are sent in req.body.stocks)
+      for (const st of stocksArray) {
+        // Destructure stock object values
         const { segment, expirydate, calltype, price, optiontype, lot } = st;
         bulkOps.push({
           insertOne: {
@@ -2165,7 +2175,7 @@ async AddSignals(req, res) {
       await Signalstock_Modal.bulkWrite(bulkOps);
     }
 
-    // Fetch clients for notification based on plan subscription criteria
+    // Notification logic (example)
     const today = new Date();
     const clients = await Clients_Modal.find({
       del: 0,
@@ -2184,7 +2194,6 @@ async AddSignals(req, res) {
     const tokens = clients.map(client => client.devicetoken);
     if (tokens.length > 0) {
       const notificationTitle = 'Important Update';
-      // Yahan "stock" variable ka istemal hua hai, jo req.body.stock se aata hai.
       const notificationBody = `New STRATEGY:- ${strategy_name}, Symbol ${stock} OPEN`;
       const resultn = new Notification_Modal({
         segmentid: planid,
@@ -2197,7 +2206,7 @@ async AddSignals(req, res) {
       try {
         await sendFCMNotification(notificationTitle, notificationBody, tokens, "open signal");
       } catch (error) {
-        // Handle notification error if needed
+        console.error("FCM notification error:", error);
       }
     }
 
@@ -2206,6 +2215,7 @@ async AddSignals(req, res) {
       message: "Signal added successfully",
     });
   } catch (error) {
+    console.error("AddSignals error:", error);
     return res.status(500).json({
       status: false,
       message: "Server error",
@@ -2213,6 +2223,7 @@ async AddSignals(req, res) {
     });
   }
 }
+
 
 
 
