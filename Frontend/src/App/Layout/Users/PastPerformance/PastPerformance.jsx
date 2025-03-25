@@ -27,17 +27,21 @@ const PastPerformance = () => {
     getOptionpastdata();
   }, []);
 
+
+
   const formatMonth = (key) => {
     const [year, month] = key.split("-");
     return new Date(year, month - 1).toLocaleString("en-US", { month: "long" });
   };
+
+
 
   const getCashpastdata = async () => {
     try {
       const response = await getpastperformaceCashdata({ id: "66d2c3bebf7e6dc53ed07626" }, token);
       if (response?.status) {
         const { months, avgMonthlyProfit } = response.data["6_months"];
-        setMonths(Object.keys(months).map(formatMonth)); // Format months
+        setMonths(Object.keys(months).map(formatMonth)); 
         setCashPastdata(Object.values(months).map(m => m.netProfit));
         setCashAvgProfit(avgMonthlyProfit);
       }
@@ -45,6 +49,10 @@ const PastPerformance = () => {
       console.error("Error fetching Cash data:", error);
     }
   };
+
+
+
+
 
   const getFuturepastdata = async () => {
     try {
@@ -58,6 +66,9 @@ const PastPerformance = () => {
       console.error("Error fetching Future data:", error);
     }
   };
+
+
+
 
   const getOptionpastdata = async () => {
     try {
@@ -96,7 +107,11 @@ const PastPerformance = () => {
     ],
   };
 
+
+
+
   return (
+    
     <div>
       <Content Page_title="Past Performance" button_status={false}>
         <div className="page-content">
