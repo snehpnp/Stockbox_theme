@@ -80,6 +80,11 @@ const Admin = [
         icon: "ScatterChart", link: "/admin/closesignal",
         name: "CloseSignal"
       },
+      {
+        label: "Signal Strategy",
+        icon: "Activity", link: "/admin/signalstrategy",
+        name: "SignalStrategy"
+      },
     ],
     name: "Signal",
   },
