@@ -190,7 +190,7 @@ const AllBasketHistory = () => {
         {
             name: 'GST',
             selector: row => row?.total || "-",
-            cell: row => <div>{row?.total} <span style={{ fontSize: "12px" }}>({row?.gst}% Gst Included)</span></div>,
+            cell: row => <div>{(row?.total).toFixed(2)} <span style={{ fontSize: "12px" }}>({row?.gst}% Gst Included)</span></div>,
             sortable: true,
             width: '250px',
         },
@@ -204,7 +204,7 @@ const AllBasketHistory = () => {
 
         {
             name: 'Total',
-            selector: row => <div> <IndianRupee />{row.total}</div>,
+            selector: row => <div> <IndianRupee />{(row.total).toFixed(2)}</div>,
             sortable: true,
             width: '200px',
         },
@@ -271,6 +271,7 @@ const AllBasketHistory = () => {
                         </nav>
                     </div>
                 </div>
+                <hr />
                 
                 <div className="card">
                     <div className="card-body">

@@ -15,7 +15,6 @@ const Generalsettings = () => {
 
     const [clients, setClients] = useState(null);
 
-
     const [isModified, setIsModified] = useState(false);
     const [istoggle, setToggle] = useState([])
 
@@ -53,8 +52,7 @@ const Generalsettings = () => {
     const getsettinglist = async () => {
         try {
             const response = await basicsettinglist(token);
-
-
+            
             if (response.status) {
                 setClients(response.data);
             }
@@ -129,8 +127,7 @@ const Generalsettings = () => {
 
                                 try {
                                     const response = await Updatebasicsettings(req, token);
-
-
+                                    
                                     if (response.status) {
                                         showCustomAlert("Success", response.message)
                                         setIsModified(false);

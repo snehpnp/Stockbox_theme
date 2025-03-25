@@ -216,7 +216,7 @@ const Payments = () => {
                                         <strong>
                                             ₹ {(
                                                 gstStatus === 1
-                                                    ? item?.basket_price + (item?.basket_price * 18) / 100
+                                                    ? item?.basket_price + (item?.basket_price * gstdata) / 100
                                                     : item?.basket_price
                                             ).toFixed(2)}
                                         </strong>
@@ -232,7 +232,7 @@ const Payments = () => {
                                         ₹ {item?.full_price}
                                     </span>
                                     ₹ {(gstStatus === 1
-                                        ? (item?.basket_price + (item?.basket_price * 18) / 100)
+                                        ? (item?.basket_price + (item?.basket_price * gstdata) / 100)
                                         : item?.basket_price
                                     ).toFixed(2)}
                                 </button>

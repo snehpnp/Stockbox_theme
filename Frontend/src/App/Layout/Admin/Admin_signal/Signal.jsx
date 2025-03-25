@@ -33,7 +33,6 @@ const Signal = () => {
 
 
 
-
     const location = useLocation();
     const clientStatus = location?.state?.clientStatus;
 
@@ -633,7 +632,7 @@ const Signal = () => {
         },
         {
             name: 'Suggested Quantity/Lot',
-            selector: row => row.lot,
+            selector: row => row.lot ? row.lot : "-",
             sortable: true,
             width: '250px',
         },
