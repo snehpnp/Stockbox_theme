@@ -15,6 +15,7 @@ import Loader from "../../../../Utils/Loader";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import ShowCustomAlert from "../../../../App/Extracomponents/CustomAlert/CustomAlert"
 import showCustomAlert from "../../../../App/Extracomponents/CustomAlert/CustomAlert";
+import { useNavigate  } from "react-router-dom";
 
 
 const Service = () => {
@@ -24,6 +25,8 @@ const Service = () => {
   const userid = localStorage.getItem("id");
   const applyButtonRef = useRef(null);
 
+  const navigate = useNavigate();
+
   const [selectedPlan, setSelectedPlan] = useState("all");
 
   const [category, setCategory] = useState([]);
@@ -31,12 +34,13 @@ const Service = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedPlanDetails, setSelectedPlanDetails] = useState(null);
 
-  console.log("selectedPlanDetails", selectedPlanDetails);
+ 
 
   const [gstStatus, setGstStatus] = useState()
   const [onlinePaymentStatus, setOnlinePaymentStatus] = useState()
+  const [offlinePaymentStatus, setOfflinePaymentStatus] = useState()
 
-
+  console.log("offlinePaymentStatus kya aa rha hai", offlinePaymentStatus);
 
 
   const [appliedCoupon, setAppliedCoupon] = useState(null);
@@ -150,13 +154,14 @@ const Service = () => {
   const getkeybydata = async () => {
     try {
       const response = await basicsettinglist();
-      console.log("getkeybydata", response.data[0].gststatus);
+      console.log("officepaymenystatus", response.data[0].officepaymenystatus);
       if (response.status) {
         setGetkey(response?.data[0]?.razorpay_key);
         setCompany(response?.data[0]?.from_name);
         setGstdata(response?.data[0]?.gst);
         setGstStatus(response.data[0].gststatus)
         setOnlinePaymentStatus(response.data[0].paymentstatus)
+        setOfflinePaymentStatus(response.data[0].officepaymenystatus)
       }
     } catch (error) {
       console.error("Error fetching coupons:", error);
@@ -677,21 +682,27 @@ const Service = () => {
 
               </div>
 
-            
               <div className="mt-4">
-                <button
-                  className={`btn btn-success w-100 ${onlinePaymentStatus === 0 ? "disabled-btn" : ""}`}
-                  style={onlinePaymentStatus === 0 ? { pointerEvents: "auto", opacity: 0.6 } : {}}
-                  onClick={() => {
-                    if (onlinePaymentStatus === 0) {
-                      showCustomAlert("error", "Online Payment is currently disabled. Please try again later.");
-                      return;
+                {onlinePaymentStatus !== 0 && (
+                  <button
+                    className="btn btn-success w-100"
+                    onClick={() => AddSubscribeplan(selectedPlanDetails)}
+                  >
+                    ✅ Confirm & Subscribe
+                  </button>
+                )}
+              </div>
+              <div className="mt-4">
+                {offlinePaymentStatus !== 0 && (
+                  <button
+                    className="btn btn-success w-100"
+                    onClick={() => 
+                      navigate("/user/payment", { state: { key: "servicePageOfflinePayment" } })
                     }
-                    AddSubscribeplan(selectedPlanDetails);
-                  }}
-                >
-                  ✅ Confirm & Subscribe
-                </button>
+                  >
+                    ✅ Pay Offline
+                  </button>
+                )}
               </div>
 
             </>
