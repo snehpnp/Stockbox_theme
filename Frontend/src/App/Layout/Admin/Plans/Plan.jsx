@@ -16,7 +16,6 @@ const Plan = () => {
 
     const [clients, setClients] = useState([]);
     const [category, setCategory] = useState([]);
-    console.log("category", category);
 
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
     const token = localStorage.getItem('token');
@@ -60,7 +59,6 @@ const Plan = () => {
     const getAdminclient = async () => {
         try {
             const response = await getplanlist(token);
-            console.log("getAdminclient", response);
 
             if (response.status) {
                 setClients(response.data);

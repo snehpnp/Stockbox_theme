@@ -30,7 +30,6 @@ const Signal = () => {
         description: ""
     });
 
-    console.log("updatetitle", updatetitle);
 
 
 

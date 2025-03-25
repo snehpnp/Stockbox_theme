@@ -37,7 +37,6 @@ const Signal = () => {
         description: ""
     });
 
-    console.log("updatetitle", updatetitle);
 
     const location = useLocation();
     const clientStatus = location?.state?.clientStatus;

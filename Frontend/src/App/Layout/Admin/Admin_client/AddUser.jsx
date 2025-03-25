@@ -102,7 +102,6 @@ const AddUser = () => {
       state: values.state
     };
 
-    console.log("req",req);
 
     
 

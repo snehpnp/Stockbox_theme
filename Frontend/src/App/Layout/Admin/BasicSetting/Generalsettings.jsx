@@ -14,7 +14,6 @@ const Generalsettings = () => {
     const navigate = useNavigate();
 
     const [clients, setClients] = useState(null);
-    console.log("clients clients clients",clients);
 
     const [isModified, setIsModified] = useState(false);
     const [istoggle, setToggle] = useState([])
@@ -53,7 +52,6 @@ const Generalsettings = () => {
     const getsettinglist = async () => {
         try {
             const response = await basicsettinglist(token);
-            console.log("data kya aa rha hai",response);
             
             if (response.status) {
                 setClients(response.data);
@@ -129,7 +127,6 @@ const Generalsettings = () => {
 
                                 try {
                                     const response = await Updatebasicsettings(req, token);
-                                    console.log("Updatebasicsettings",response);
                                     
                                     if (response.status) {
                                         showCustomAlert("Success", response.message)
