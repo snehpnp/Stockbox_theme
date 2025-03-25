@@ -147,8 +147,8 @@ const SignalStrategy = () => {
             { label: 'Cash', value: 'C' },
             { label: 'Future', value: 'F' },
             { label: 'Option', value: 'O' },
-            { label: 'Option Strategy', value: 'O' },
-            { label: 'Option', value: 'O' },
+            { label: 'Option Strategy', value: 'OS' },
+            { label: 'Future Strategy', value: 'FS' },
           ],
           label_size: 12,
           col_size: 6,
@@ -352,6 +352,26 @@ const SignalStrategy = () => {
                 </div>
               ) : null}
 
+<div>
+    <table className="table table-bordered">
+        <thead>
+            <tr>
+            <th>Stock</th>
+            <th>Lot Size</th>
+            <th>Trade Symbol</th>
+            </tr>
+        </thead>
+        <tbody>
+            {stockList.map((item, index) => (
+            <tr key={index}>
+                <td>{item.stock}</td>
+                <td>{item.lotsize}</td>
+                <td>{item.tradesymbol}</td>
+            </tr>
+            ))}
+        </tbody>
+        </table>
+</div>
             </div>
           </div>
         }
