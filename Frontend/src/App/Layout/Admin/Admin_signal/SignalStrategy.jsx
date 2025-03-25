@@ -132,41 +132,9 @@ const SignalStrategy = () => {
 
 
     onSubmit: async (values) => {
-      setLoading(!loading)
-      const req = {
-        // add_by: user_id,
-        // tradesymbol: expirydate[0]?.stock?.tradesymbol || "",
-        // lotsize: expirydate[0]?.stock?.lotsize || "",
-        // stock: values.stock,
-        // price: values.price,
-        // tag1: values.tag1,
-        // tag2: values.tag2,
-        // tag3: values.tag3,
-        // stoploss: values.stoploss,
-        // description: values.description,
-        // report: values.report,
-        // calltype: values.calltype,
-        // callduration: values.callduration,
-        // expirydate: values.expiry,
-        // segment: values.segment,
-        // optiontype: values.optiontype,
-        // strikeprice: values.strikeprice,
-        // entrytype: values.entrytype,
-        // lot: values.lot,
-      };
+      
 
-      try {
-        const response = await AddSignalByAdmin(req, token);
-        if (response.status) {
-          showCustomAlert("Success", response.message, navigate, '/admin/signal')
-        } else {
-          showCustomAlert("error", response.message)
-          setLoading(false)
-        }
-      } catch (error) {
-        setLoading(false)
-        showCustomAlert("error", 'An unexpected error occurred. Please try again later.')
-      }
+      
     }
   });
 
@@ -308,29 +276,7 @@ const SignalStrategy = () => {
         },
         
         
-        {
-          name: 'tag1',
-          label: 'Target-1',
-          type: 'number',
-          label_size: 6,
-          col_size: 3,
-          star: true
-        },
-        {
-          name: 'tag2',
-          label: 'Target-2',
-          type: 'number',
-          label_size: 12,
-          col_size: 3,
-    
-        },
-        {
-          name: 'tag3',
-          label: 'Target-3',
-          type: 'number',
-          label_size: 12,
-          col_size: 3,
-        },
+        
         {
           name: 'stoploss',
           label: 'Stoploss',
@@ -339,21 +285,7 @@ const SignalStrategy = () => {
           col_size: 3,
           star: true,
         },
-        {
-          name: 'report',
-          label: 'Report',
-          type: 'file2',
-          label_size: 12,
-          col_size: 6,
-        },
-        {
-          name: 'description',
-          label: 'Description',
-          type: 'text5',
-          label_size: 12,
-          col_size: 6,
-          star: true
-        },
+      
       ];
     
 
