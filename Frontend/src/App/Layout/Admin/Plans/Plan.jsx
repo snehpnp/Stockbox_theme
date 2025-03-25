@@ -9,17 +9,23 @@ import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 
+
 const Plan = () => {
 
 
 
     const [clients, setClients] = useState([]);
     const [category, setCategory] = useState([]);
+    console.log("category", category);
+
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
     const token = localStorage.getItem('token');
 
     const [isLoading, setIsLoading] = useState(true)
     const [showViewModal, setShowViewModal] = useState(false);
+
+    const [visibleCount, setVisibleCount] = useState(10);
+    const [expanded, setExpanded] = useState(false);
 
 
 
@@ -54,6 +60,8 @@ const Plan = () => {
     const getAdminclient = async () => {
         try {
             const response = await getplanlist(token);
+            console.log("getAdminclient", response);
+
             if (response.status) {
                 setClients(response.data);
             }
@@ -123,21 +131,32 @@ const Plan = () => {
         if (!input) return '';
         return input.replace(/<\/?[^>]+(>|$)/g, '');
     }
-    console.log("filteredClients",filteredClients);
-    
 
 
 
+
+    // Show all categories with animation
+    const loadAll = () => {
+        setExpanded(true);
+        setVisibleCount(category.length);
+    };
+
+    // Show only first 10 categories with animation
+    const showLess = () => {
+        setExpanded(false);
+        setTimeout(() => setVisibleCount(10), 300); // Animation ke baad count update karega
+    };
 
     return (
         <Content Page_title="Package" route="/admin/addplan"
             button_status={true} button_title="Add Package">
 
 
-            <ul className="nav nav-pills  mb-1" role="tablist">
+            <ul className="nav nav-pills mb-1 d-flex align-items-center" role="tablist">
+                {/* "All" Tab */}
                 <li className="nav-item" role="presentation">
                     <a
-                        className={`nav-link ${selectedCategoryId === 'all' ? 'active' : 'No data'}`}
+                        className={`nav-link ${selectedCategoryId === 'all' ? 'active' : ''}`}
                         onClick={() => setSelectedCategoryId('all')}
                         role="tab"
                         aria-selected={selectedCategoryId === 'all'}
@@ -148,10 +167,12 @@ const Plan = () => {
                         </div>
                     </a>
                 </li>
-                {category.map((cat) => (
+
+                {/* Category Tabs */}
+                {category.slice(0, visibleCount).map((cat) => (
                     <li className="nav-item" role="presentation" key={cat._id}>
                         <a
-                            className={`nav-link ${cat._id === selectedCategoryId ? 'active' : 'No Data'}`}
+                            className={`nav-link ${cat._id === selectedCategoryId ? 'active' : ''}`}
                             onClick={() => setSelectedCategoryId(cat._id)}
                             role="tab"
                             aria-selected={cat._id === selectedCategoryId}
@@ -163,7 +184,20 @@ const Plan = () => {
                         </a>
                     </li>
                 ))}
+
+                {/* Load More/Less Button */}
+                {category.length > 10 && (
+                    <li className="nav-item d-flex align-items-center gap-1">
+                        {visibleCount < category.length && (
+                            <button className="nav-link p-0" onClick={loadAll}>🔽</button>  // Show all categories
+                        )}
+                        {visibleCount > 10 && (
+                            <button className="nav-link p-0" onClick={showLess}>🔼</button>  // Show only 10 categories
+                        )}
+                    </li>
+                )}
             </ul>
+
             <hr />
 
             {isLoading ? (

@@ -399,7 +399,7 @@ const Viewbasketdetail = () => {
                               )}
                               <Modal show={showModal} onHide={closeModal} centered>
                                 <Modal.Header closeButton>
-                                  <Modal.Title>Image</Modal.Title>
+                                  <Modal.Title style={{color:"black"}}>Image</Modal.Title>
                                 </Modal.Header>
                                 <Modal.Body>
                                   {values[field.name] ? (

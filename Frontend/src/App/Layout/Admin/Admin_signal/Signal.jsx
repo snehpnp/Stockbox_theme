@@ -30,8 +30,8 @@ const Signal = () => {
         description: ""
     });
 
-    console.log("updatetitle",updatetitle);
-    
+    console.log("updatetitle", updatetitle);
+
 
 
     const location = useLocation();
@@ -633,7 +633,7 @@ const Signal = () => {
         },
         {
             name: 'Suggested Quantity/Lot',
-            selector: row => row.lot,
+            selector: row => row.lot ? row.lot : "-",
             sortable: true,
             width: '250px',
         },
