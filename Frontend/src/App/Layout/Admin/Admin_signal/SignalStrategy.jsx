@@ -306,6 +306,8 @@ const SignalStrategy = () => {
           col_size: 6,
           star: false
         },
+        
+        
         {
           name: 'tag1',
           label: 'Target-1',
