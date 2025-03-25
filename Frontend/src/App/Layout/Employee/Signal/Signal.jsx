@@ -37,8 +37,8 @@ const Signal = () => {
         description: ""
     });
 
-    console.log("updatetitle",updatetitle);
-    
+
+
     const location = useLocation();
     const clientStatus = location?.state?.clientStatus;
 
@@ -204,7 +204,7 @@ const Signal = () => {
                 openstatus: "true",
                 search: searchInput,
             };
-            const response = await GetSignallist(data,token);
+            const response = await GetSignallist(data, token);
             if (response.status) {
                 if (response.data?.length > 0) {
                     let filterdata = response.data.filter((item) => item.close_status === false);
@@ -224,47 +224,47 @@ const Signal = () => {
     }
 
     const getexportfile1 = async () => {
-            try {
-    
-                const data = {
-                    page: currentPage,
-                    from:
-                        clientStatus === "todayopensignal" ? formattedDate : filters.from ? filters.from : "",
-                    to:
-                        clientStatus === "todayopensignal" ? formattedDate : filters.to ? filters.to : "",
-                    service: filters.service,
-                    stock: searchstock,
-                    openstatus: "true",
-                    search: searchInput,
-                };
-                const response = await GetSignallist(data, token);
-                if (response.status) {
-                    if (response.data?.length > 0) {
-                        let filterdata = response.data.filter(
-                            (item) => item.close_status === false
-                        );
-                        const csvArr = filterdata.map((item) => {
-    
-                            const entryType = `${item?.calltype} ${item?.stock} ${item?.expirydate ? `Expiry: ${item.expirydate}` : ""} ${item?.optiontype ? `Option: ${item.optiontype}` : ""} Entry Type: ${item?.entrytype} Price: ${item?.price} Target: ${item?.tag1} ${item?.tag2 ? `/${item.tag2}` : ""} ${item?.tag3 ? `/${item.tag3}` : ""} Stop Loss: ${item?.stoploss}`;
-    
-                            return {
-                                OpenSignal: `${fDateTimeH(item?.created_at)}  Segment: ${item.segment === "C"
-                                    ? "CASH"
-                                    : item.segment === "O"
-                                        ? "OPTION"
-                                        : item.segment === "F"
-                                            ? "FUTURE"
-                                            : ""
-                                    }   Entry Type: ${entryType}`
-                            };
-                        });
-                        exportToCSV1(csvArr, "Open Signal");
-                    }
+        try {
+
+            const data = {
+                page: currentPage,
+                from:
+                    clientStatus === "todayopensignal" ? formattedDate : filters.from ? filters.from : "",
+                to:
+                    clientStatus === "todayopensignal" ? formattedDate : filters.to ? filters.to : "",
+                service: filters.service,
+                stock: searchstock,
+                openstatus: "true",
+                search: searchInput,
+            };
+            const response = await GetSignallist(data, token);
+            if (response.status) {
+                if (response.data?.length > 0) {
+                    let filterdata = response.data.filter(
+                        (item) => item.close_status === false
+                    );
+                    const csvArr = filterdata.map((item) => {
+
+                        const entryType = `${item?.calltype} ${item?.stock} ${item?.expirydate ? `Expiry: ${item.expirydate}` : ""} ${item?.optiontype ? `Option: ${item.optiontype}` : ""} Entry Type: ${item?.entrytype} Price: ${item?.price} Target: ${item?.tag1} ${item?.tag2 ? `/${item.tag2}` : ""} ${item?.tag3 ? `/${item.tag3}` : ""} Stop Loss: ${item?.stoploss}`;
+
+                        return {
+                            OpenSignal: `${fDateTimeH(item?.created_at)}  Segment: ${item.segment === "C"
+                                ? "CASH"
+                                : item.segment === "O"
+                                    ? "OPTION"
+                                    : item.segment === "F"
+                                        ? "FUTURE"
+                                        : ""
+                                }   Entry Type: ${entryType}`
+                        };
+                    });
+                    exportToCSV1(csvArr, "Open Signal");
                 }
-            } catch (error) {
-                console.log("Error:", error);
             }
-        };
+        } catch (error) {
+            console.log("Error:", error);
+        }
+    };
 
 
 
@@ -995,7 +995,7 @@ const Signal = () => {
                                         <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
                                     </button>
                                 </div> */}
-                                 <div className="ms-0 ms-md-2 mt-2 mt-md-0">
+                                <div className="ms-0 ms-md-2 mt-2 mt-md-0">
                                     {viewMode === "table" ? (
                                         <button
                                             type="button"
@@ -1113,51 +1113,51 @@ const Signal = () => {
 
 
             <ReusableModal
-    show={model}
-    onClose={() => setModel(false)}
-    title={`Close Signal ${closedata?.tradesymbol ?? ''}`}
-    size='lg'
-    body={
-        <>
-            <div className='card mb-2'>
-                <div className='d-flex justify-content-between align-items-center card-body'>
-                    {['Fully Closed', 'Partially Closed', 'SL Hit', 'Closed Signal', "Avoid Signal"].map((tab, index) => (
-                        <label key={index} className='labelfont'>
-                            <input
-                                type="radio"
-                                name="tab"
-                                checked={checkedIndex === index}
-                                onChange={() => handleTabChange(index)}
-                            />
-                            <span className='ps-2 fs-14'>{tab}</span>
-                        </label>
-                    ))}
-                </div>
-            </div>
-            <div className='card'>
-                {checkedIndex === 0 && (
-                    <form className='card-body'>
-                        <p>
-                            {closedata.tag1 && (
-                                <>
-                                    <label className='fs-14'><b>Target 1 :</b></label>
-                                    <input
-                                        type="number"
-                                        className='form-control'
-                                        style={{ width: "50%" }}
-                                        disabled
-                                        value={closedata.targetprice1 || closedata.tag1}
-                                        onChange={(e) =>
-                                            setClosedata({
-                                                ...closedata,
-                                                targetprice1: e.target.value,
-                                            })
-                                        }
-                                    />
-                                </>
-                            )}
-                        </p>
-                        <p>
+                show={model}
+                onClose={() => setModel(false)}
+                title={`Close Signal ${closedata?.tradesymbol ?? ''}`}
+                size='lg'
+                body={
+                    <>
+                        <div className='card mb-2'>
+                            <div className='d-flex justify-content-between align-items-center card-body'>
+                                {['Fully Closed', 'Partially Closed', 'SL Hit', 'Closed Signal', "Avoid Signal"].map((tab, index) => (
+                                    <label key={index} className='labelfont'>
+                                        <input
+                                            type="radio"
+                                            name="tab"
+                                            checked={checkedIndex === index}
+                                            onChange={() => handleTabChange(index)}
+                                        />
+                                        <span className='ps-2 fs-14'>{tab}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+                        <div className='card'>
+                            {checkedIndex === 0 && (
+                                <form className='card-body'>
+                                    <p>
+                                        {closedata.tag1 && (
+                                            <>
+                                                <label className='fs-14'><b>Target 1 :</b></label>
+                                                <input
+                                                    type="number"
+                                                    className='form-control'
+                                                    style={{ width: "50%" }}
+                                                    disabled
+                                                    value={closedata.targetprice1 || closedata.tag1}
+                                                    onChange={(e) =>
+                                                        setClosedata({
+                                                            ...closedata,
+                                                            targetprice1: e.target.value,
+                                                        })
+                                                    }
+                                                />
+                                            </>
+                                        )}
+                                    </p>
+                                    <p>
                                         {closedata.tag2 &&
                                             <>
                                                 <label className='fs-14'><b> Target 2 :</b></label>
@@ -1177,246 +1177,246 @@ const Signal = () => {
                                         }
 
                                     </p>
-                        <p>
-                            {closedata.tag3 && (
-                                <>
-                                    <label className='fs-14'><b>Target 3 :</b></label>
-                                    <input
-                                        type="number"
-                                        style={{ width: "50%" }}
-                                        className='form-control'
-                                        disabled
-                                        value={closedata.targetprice3 || closedata.tag3}
-                                        onChange={(e) =>
-                                            setClosedata({
-                                                ...closedata,
-                                                targetprice3: e.target.value,
-                                            })
-                                        }
-                                    />
-                                </>
+                                    <p>
+                                        {closedata.tag3 && (
+                                            <>
+                                                <label className='fs-14'><b>Target 3 :</b></label>
+                                                <input
+                                                    type="number"
+                                                    style={{ width: "50%" }}
+                                                    className='form-control'
+                                                    disabled
+                                                    value={closedata.targetprice3 || closedata.tag3}
+                                                    onChange={(e) =>
+                                                        setClosedata({
+                                                            ...closedata,
+                                                            targetprice3: e.target.value,
+                                                        })
+                                                    }
+                                                />
+                                            </>
+                                        )}
+                                    </p>
+                                    <button type="submit" className='btn btn-primary mt-2' onClick={(e) => closeSignalperUser(0, e)}>Submit</button>
+                                </form>
                             )}
-                        </p>
-                        <button type="submit" className='btn btn-primary mt-2' onClick={(e) => closeSignalperUser(0, e)}>Submit</button>
-                    </form>
-                )}
-                {checkedIndex === 1 && (
-                    <form className='card-body' onSubmit={(e) => closeSignalperUser(1, e)}>
-                        <div className="col-md-12">
-                            <div className="form-check mb-2">
-                                <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    id="target1"
-                                    checked={checkedTargets.target1 || !!closedata.targetprice1}
-                                    onChange={(e) => handleCheckboxChange(e, 'target1')}
-                                />
-                                <label className="form-check-label fs-14" htmlFor="target1">
-                                    <b>Target 1</b>
-                                </label>
-                            </div>
-                            {(checkedTargets.target1 || !!closedata.targetprice1) && (
-                                <div className="form-check mb-2">
-                                    <input
-                                        className="form-control"
-                                        style={{ width: "50%" }}
-                                        type="number"
-                                        id="targethit1"
-                                        value={closedata.targetprice1 || ""}
-                                        onChange={(e) => handleChange(e, 'targetprice1')}
-                                    />
-                                </div>
+                            {checkedIndex === 1 && (
+                                <form className='card-body' onSubmit={(e) => closeSignalperUser(1, e)}>
+                                    <div className="col-md-12">
+                                        <div className="form-check mb-2">
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                id="target1"
+                                                checked={checkedTargets.target1 || !!closedata.targetprice1}
+                                                onChange={(e) => handleCheckboxChange(e, 'target1')}
+                                            />
+                                            <label className="form-check-label fs-14" htmlFor="target1">
+                                                <b>Target 1</b>
+                                            </label>
+                                        </div>
+                                        {(checkedTargets.target1 || !!closedata.targetprice1) && (
+                                            <div className="form-check mb-2">
+                                                <input
+                                                    className="form-control"
+                                                    style={{ width: "50%" }}
+                                                    type="number"
+                                                    id="targethit1"
+                                                    value={closedata.targetprice1 || ""}
+                                                    onChange={(e) => handleChange(e, 'targetprice1')}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="col-md-12">
+                                        <div className="form-check mb-2">
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                id="target2"
+                                                checked={checkedTargets.target2 || !!closedata.targetprice2}
+                                                onChange={(e) => handleCheckboxChange(e, 'target2')}
+                                            />
+                                            <label className="form-check-label fs-14" htmlFor="target2">
+                                                <b>Target 2</b>
+                                            </label>
+                                        </div>
+                                        {(checkedTargets.target2 || !!closedata.targetprice2) && (
+                                            <div className="form-check mb-2">
+                                                <input
+                                                    className="form-control"
+                                                    type="number"
+                                                    style={{ width: "50%" }}
+                                                    id="targethit2"
+                                                    value={closedata.targetprice2 || ""}
+                                                    onChange={(e) => handleChange(e, 'targetprice2')}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="col-md-12">
+                                        <div className="form-check mb-2">
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                id="target3"
+                                                checked={checkedTargets.target3 || !!closedata.targetprice3}
+                                                onChange={(e) => handleCheckboxChange(e, 'target3')}
+                                            />
+                                            <label className="form-check-label fs-14" htmlFor="target3">
+                                                <b>Target 3</b>
+                                            </label>
+                                        </div>
+                                        {(checkedTargets.target3 || !!closedata.targetprice3) && (
+                                            <div className="form-check mb-2">
+                                                <input
+                                                    className="form-control"
+                                                    type="number"
+                                                    style={{ width: "50%" }}
+                                                    id="targethit3"
+                                                    value={closedata.targetprice3 || ""}
+                                                    onChange={(e) => handleChange(e, 'targetprice3')}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="col-md-12">
+                                        <div className="form-check mb-2">
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                id="close_status"
+                                                checked={closedata.closestatus === true}
+                                                onChange={(e) =>
+                                                    setClosedata({
+                                                        ...closedata,
+                                                        closestatus: e.target.checked,
+                                                    })
+                                                }
+                                            />
+                                            <label className="form-check-label fs-14" htmlFor="close_status">
+                                                <b>Close</b>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-12">
+                                        <label className='mb-1 fs-14'><b>Remark</b></label>
+                                        <textarea
+                                            className="form-control"
+                                            id="close_description"
+                                            placeholder="Remark ..."
+                                            rows={2}
+                                            value={closedata.close_description}
+                                            onChange={(e) =>
+                                                setClosedata({
+                                                    ...closedata,
+                                                    close_description: e.target.value,
+                                                })
+                                            }
+                                        />
+                                    </div>
+                                    <button type="submit" className='btn btn-primary mt-2'>Submit</button>
+                                </form>
+                            )}
+                            {checkedIndex === 2 && (
+                                <form className='card-body'>
+                                    <div className="col-md-12">
+                                        <p>
+                                            <label className='fs-14'><b>Stoploss: </b></label>
+                                            <input
+                                                type="number"
+                                                className='form-control'
+                                                style={{ width: "50%" }}
+                                                defaultValue={closedata.slprice}
+                                                onChange={(e) =>
+                                                    setClosedata({
+                                                        ...closedata,
+                                                        slprice: e.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </p>
+                                    </div>
+                                    <div className="col-md-12">
+                                        <label className='mb-1 fs-14'><b>Remark</b></label>
+                                        <textarea
+                                            className="form-control"
+                                            id="input11"
+                                            placeholder="Remark ..."
+                                            rows={2}
+                                            value={closedata.close_description}
+                                            onChange={(e) =>
+                                                setClosedata({
+                                                    ...closedata,
+                                                    close_description: e.target.value,
+                                                })
+                                            }
+                                        />
+                                    </div>
+                                    <button type="submit" className='btn btn-primary mt-2' onClick={(e) => closeSignalperUser(2, e)}>Submit</button>
+                                </form>
+                            )}
+                            {checkedIndex === 3 && (
+                                <form className='card-body'>
+                                    <div className="col-md-12 mb-2">
+                                        <label className='fs-14'><b>Exit price</b></label>
+                                        <input
+                                            type="number"
+                                            className='form-control'
+                                            style={{ width: "50%" }}
+                                            value={closedata.exitprice}
+                                            onChange={(e) =>
+                                                setClosedata({
+                                                    ...closedata,
+                                                    exitprice: e.target.value,
+                                                })
+                                            }
+                                        />
+                                    </div>
+                                    <div className="col-md-12">
+                                        <label className='mb-1 fs-14'><b>Remark</b></label>
+                                        <textarea
+                                            className="form-control"
+                                            id="input11"
+                                            placeholder="Remark ..."
+                                            rows={2}
+                                            value={closedata.close_description}
+                                            onChange={(e) =>
+                                                setClosedata({
+                                                    ...closedata,
+                                                    close_description: e.target.value,
+                                                })
+                                            }
+                                        />
+                                    </div>
+                                    <button type="submit" className='btn btn-primary mt-2' onClick={(e) => closeSignalperUser(3, e)}>Submit</button>
+                                </form>
+                            )}
+                            {checkedIndex === 4 && (
+                                <form className='card-body'>
+                                    <div className="col-md-12">
+                                        <label className='mb-1 fs-14'><b>Remark</b></label>
+                                        <textarea
+                                            className="form-control"
+                                            id="input11"
+                                            placeholder="Remark ..."
+                                            rows={2}
+                                            value={closedata.close_description}
+                                            onChange={(e) =>
+                                                setClosedata({
+                                                    ...closedata,
+                                                    close_description: e.target.value,
+                                                })
+                                            }
+                                        />
+                                    </div>
+                                    <button type="submit" className='btn btn-primary mt-2' onClick={(e) => closeSignalperUser(4, e)}>Submit</button>
+                                </form>
                             )}
                         </div>
-                        <div className="col-md-12">
-                            <div className="form-check mb-2">
-                                <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    id="target2"
-                                    checked={checkedTargets.target2 || !!closedata.targetprice2}
-                                    onChange={(e) => handleCheckboxChange(e, 'target2')}
-                                />
-                                <label className="form-check-label fs-14" htmlFor="target2">
-                                    <b>Target 2</b>
-                                </label>
-                            </div>
-                            {(checkedTargets.target2 || !!closedata.targetprice2) && (
-                                <div className="form-check mb-2">
-                                    <input
-                                        className="form-control"
-                                        type="number"
-                                        style={{ width: "50%" }}
-                                        id="targethit2"
-                                        value={closedata.targetprice2 || ""}
-                                        onChange={(e) => handleChange(e, 'targetprice2')}
-                                    />
-                                </div>
-                            )}
-                        </div>
-                        <div className="col-md-12">
-                            <div className="form-check mb-2">
-                                <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    id="target3"
-                                    checked={checkedTargets.target3 || !!closedata.targetprice3}
-                                    onChange={(e) => handleCheckboxChange(e, 'target3')}
-                                />
-                                <label className="form-check-label fs-14" htmlFor="target3">
-                                    <b>Target 3</b>
-                                </label>
-                            </div>
-                            {(checkedTargets.target3 || !!closedata.targetprice3) && (
-                                <div className="form-check mb-2">
-                                    <input
-                                        className="form-control"
-                                        type="number"
-                                        style={{ width: "50%" }}
-                                        id="targethit3"
-                                        value={closedata.targetprice3 || ""}
-                                        onChange={(e) => handleChange(e, 'targetprice3')}
-                                    />
-                                </div>
-                            )}
-                        </div>
-                        <div className="col-md-12">
-                            <div className="form-check mb-2">
-                                <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    id="close_status"
-                                    checked={closedata.closestatus === true}
-                                    onChange={(e) =>
-                                        setClosedata({
-                                            ...closedata,
-                                            closestatus: e.target.checked,
-                                        })
-                                    }
-                                />
-                                <label className="form-check-label fs-14" htmlFor="close_status">
-                                    <b>Close</b>
-                                </label>
-                            </div>
-                        </div>
-                        <div className="col-md-12">
-                            <label className='mb-1 fs-14'><b>Remark</b></label>
-                            <textarea
-                                className="form-control"
-                                id="close_description"
-                                placeholder="Remark ..."
-                                rows={2}
-                                value={closedata.close_description}
-                                onChange={(e) =>
-                                    setClosedata({
-                                        ...closedata,
-                                        close_description: e.target.value,
-                                    })
-                                }
-                            />
-                        </div>
-                        <button type="submit" className='btn btn-primary mt-2'>Submit</button>
-                    </form>
-                )}
-                {checkedIndex === 2 && (
-                    <form className='card-body'>
-                        <div className="col-md-12">
-                            <p>
-                                <label className='fs-14'><b>Stoploss: </b></label>
-                                <input
-                                    type="number"
-                                    className='form-control'
-                                    style={{ width: "50%" }}
-                                    defaultValue={closedata.slprice}
-                                    onChange={(e) =>
-                                        setClosedata({
-                                            ...closedata,
-                                            slprice: e.target.value,
-                                        })
-                                    }
-                                />
-                            </p>
-                        </div>
-                        <div className="col-md-12">
-                            <label className='mb-1 fs-14'><b>Remark</b></label>
-                            <textarea
-                                className="form-control"
-                                id="input11"
-                                placeholder="Remark ..."
-                                rows={2}
-                                value={closedata.close_description}
-                                onChange={(e) =>
-                                    setClosedata({
-                                        ...closedata,
-                                        close_description: e.target.value,
-                                    })
-                                }
-                            />
-                        </div>
-                        <button type="submit" className='btn btn-primary mt-2' onClick={(e) => closeSignalperUser(2, e)}>Submit</button>
-                    </form>
-                )}
-                {checkedIndex === 3 && (
-                    <form className='card-body'>
-                        <div className="col-md-12 mb-2">
-                            <label className='fs-14'><b>Exit price</b></label>
-                            <input
-                                type="number"
-                                className='form-control'
-                                style={{ width: "50%" }}
-                                value={closedata.exitprice}
-                                onChange={(e) =>
-                                    setClosedata({
-                                        ...closedata,
-                                        exitprice: e.target.value,
-                                    })
-                                }
-                            />
-                        </div>
-                        <div className="col-md-12">
-                            <label className='mb-1 fs-14'><b>Remark</b></label>
-                            <textarea
-                                className="form-control"
-                                id="input11"
-                                placeholder="Remark ..."
-                                rows={2}
-                                value={closedata.close_description}
-                                onChange={(e) =>
-                                    setClosedata({
-                                        ...closedata,
-                                        close_description: e.target.value,
-                                    })
-                                }
-                            />
-                        </div>
-                        <button type="submit" className='btn btn-primary mt-2' onClick={(e) => closeSignalperUser(3, e)}>Submit</button>
-                    </form>
-                )}
-                {checkedIndex === 4 && (
-                    <form className='card-body'>
-                        <div className="col-md-12">
-                            <label className='mb-1 fs-14'><b>Remark</b></label>
-                            <textarea
-                                className="form-control"
-                                id="input11"
-                                placeholder="Remark ..."
-                                rows={2}
-                                value={closedata.close_description}
-                                onChange={(e) =>
-                                    setClosedata({
-                                        ...closedata,
-                                        close_description: e.target.value,
-                                    })
-                                }
-                            />
-                        </div>
-                        <button type="submit" className='btn btn-primary mt-2' onClick={(e) => closeSignalperUser(4, e)}>Submit</button>
-                    </form>
-                )}
-            </div>
-        </>
-    }
-/>
+                    </>
+                }
+            />
 
 
             {/* {model1 && (

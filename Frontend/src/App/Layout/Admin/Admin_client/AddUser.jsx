@@ -102,10 +102,6 @@ const AddUser = () => {
       state: values.state
     };
 
-    console.log("req",req);
-
-    
-
 
     try {
       const response = await AddClient(req, token);
@@ -197,14 +193,14 @@ const AddUser = () => {
       label: "Select State",
       type: 'select',
       options: indianStates?.map((item) => ({
-          label: item.name, 
-          value: item.name,
+        label: item.name,
+        value: item.name,
       })),
       label_size: 12,
       col_size: 6,
       disable: false,
       star: true
-  }
+    }
   ];
 
 

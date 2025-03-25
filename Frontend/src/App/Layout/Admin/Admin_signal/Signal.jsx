@@ -30,8 +30,8 @@ const Signal = () => {
         description: ""
     });
 
-    console.log("updatetitle",updatetitle);
-    
+
+
 
 
     const location = useLocation();

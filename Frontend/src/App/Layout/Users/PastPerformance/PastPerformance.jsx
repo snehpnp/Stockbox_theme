@@ -41,7 +41,7 @@ const PastPerformance = () => {
       const response = await getpastperformaceCashdata({ id: "66d2c3bebf7e6dc53ed07626" }, token);
       if (response?.status) {
         const { months, avgMonthlyProfit } = response.data["6_months"];
-        setMonths(Object.keys(months).map(formatMonth)); 
+        setMonths(Object.keys(months).map(formatMonth));
         setCashPastdata(Object.values(months).map(m => m.netProfit));
         setCashAvgProfit(avgMonthlyProfit);
       }
@@ -111,7 +111,7 @@ const PastPerformance = () => {
 
 
   return (
-    
+
     <div>
       <Content Page_title="Past Performance" button_status={false}>
         <div className="page-content">

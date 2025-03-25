@@ -16,7 +16,7 @@ const Payments = () => {
     const location = useLocation();
 
     const key = location?.state?.key;
-    console.log("key mai kya aa rha hai", key);
+
 
     const { state } = useLocation()
     const item = state?.item
@@ -37,7 +37,7 @@ const Payments = () => {
     const [bankdetail, setBankdetail] = useState([]);
     const [qrdata, setQrdata] = useState([]);
 
-    console.log("bankdetail", bankdetail)
+
 
     useEffect(() => {
         getkeybydata()

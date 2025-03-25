@@ -25,7 +25,7 @@ const Coupon = () => {
     const [datewise, setDatewise] = useState("")
 
     const [service, setService] = useState([])
-    // console.log("Service",service);
+
 
     //state for Loading
     const [isLoading, setIsLoading] = useState(true)
@@ -42,7 +42,7 @@ const Coupon = () => {
     const getcoupon = async () => {
         try {
             const response = await getcouponlist(token);
-            // console.log("getcouponlist", response);
+
 
             if (response.status) {
                 const filterdata = response.data.filter((item) =>

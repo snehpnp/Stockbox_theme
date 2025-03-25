@@ -138,7 +138,7 @@ const UserSignup = () => {
       return;
     }
 
-    console.log("formData", formData)
+
 
     // return
 
@@ -150,8 +150,6 @@ const UserSignup = () => {
       state: state,
       token: referralCode,
     });
-
-    console.log("API Response:", ResData);
 
 
     if (ResData.status) {

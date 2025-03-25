@@ -88,7 +88,7 @@ const PlanExpirymonthDetail = () => {
             const response = await GetPlanexpiryCount(data, token);
             if (response.status) {
                 let filteredData = response.data;
-                console.log(filteredData)
+
                 setTotalRows(response.totalRecords)
                 setClients(filteredData);
             }

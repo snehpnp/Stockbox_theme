@@ -47,8 +47,6 @@ function Basket() {
   const getkeybydata = async () => {
     try {
       const response = await basicsettinglist();
-      // console.log("response.data[0]",response.data[0].officepaymenystatus);
-
       if (response.status) {
         setOnlinePaymentStatus(response.data[0].paymentstatus)
         setOfflinePaymentStatus(response.data[0].officepaymenystatus)

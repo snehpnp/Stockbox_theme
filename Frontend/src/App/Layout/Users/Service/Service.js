@@ -15,7 +15,7 @@ import Loader from "../../../../Utils/Loader";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import ShowCustomAlert from "../../../../App/Extracomponents/CustomAlert/CustomAlert"
 import showCustomAlert from "../../../../App/Extracomponents/CustomAlert/CustomAlert";
-import { useNavigate  } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 const Service = () => {
@@ -34,13 +34,12 @@ const Service = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedPlanDetails, setSelectedPlanDetails] = useState(null);
 
- 
+
 
   const [gstStatus, setGstStatus] = useState()
   const [onlinePaymentStatus, setOnlinePaymentStatus] = useState()
   const [offlinePaymentStatus, setOfflinePaymentStatus] = useState()
 
-  console.log("offlinePaymentStatus kya aa rha hai", offlinePaymentStatus);
 
 
   const [appliedCoupon, setAppliedCoupon] = useState(null);
@@ -154,7 +153,7 @@ const Service = () => {
   const getkeybydata = async () => {
     try {
       const response = await basicsettinglist();
-      console.log("officepaymenystatus", response.data[0].officepaymenystatus);
+
       if (response.status) {
         setGetkey(response?.data[0]?.razorpay_key);
         setCompany(response?.data[0]?.from_name);
@@ -696,7 +695,7 @@ const Service = () => {
                 {offlinePaymentStatus !== 0 && (
                   <button
                     className="btn btn-success w-100"
-                    onClick={() => 
+                    onClick={() =>
                       navigate("/user/payment", { state: { key: "servicePageOfflinePayment" } })
                     }
                   >
