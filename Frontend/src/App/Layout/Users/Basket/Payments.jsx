@@ -13,14 +13,20 @@ const Payments = () => {
     const token = localStorage.getItem("token");
     const userid = localStorage.getItem("id");
 
+    const location = useLocation();
+
+    const key = location?.state?.key;
+    console.log("key mai kya aa rha hai", key);
+
+    const { state } = useLocation()
+    const item = state?.item
 
     const [activeTab, setActiveTab] = useState("online");
 
     const [gstStatus, setGstStatus] = useState()
     const [onlinePaymentStatus, setOnlinePaymentStatus] = useState()
 
-    const { state } = useLocation()
-    const item = state?.item
+   
 
 
     const [getkey, setGetkey] = useState([]);
@@ -36,6 +42,12 @@ const Payments = () => {
         getQRimage()
         getbankdata()
     }, [])
+
+    useEffect(() => {
+        if (location.state?.key) {
+          setActiveTab("offline"); // Agar key exist karti hai to tab ko 'offline' set karo
+        }
+      }, [location.state?.key]);
 
 
     const getQRimage = async () => {
@@ -128,6 +140,12 @@ const Payments = () => {
         }
     };
 
+    useEffect(() => {
+        if (onlinePaymentStatus === 0 && activeTab === "online") {
+            setActiveTab("offline"); // Agar onlinePaymentStatus 0 hai to active tab "offline" ho jayega
+        }
+    }, [onlinePaymentStatus, activeTab]);
+
 
     return (
         <Content
@@ -139,14 +157,19 @@ const Payments = () => {
             backForword={true}
         >
             <ul className="nav nav-pills mb-3 justify-content-center border-bottom">
-                <li className="nav-item">
-                    <button
-                        className={`nav-link ${activeTab === "online" ? "active btn-primary" : ""}`}
-                        onClick={() => setActiveTab("online")}
-                    >
-                        Pay Online
-                    </button>
-                </li>
+                {/* Agar key exist NAHI karti toh Online Payment tab dikhega */}
+                {!key && onlinePaymentStatus === 1 && (
+                    <li className="nav-item">
+                        <button
+                            className={`nav-link ${activeTab === "online" ? "active btn-primary" : ""}`}
+                            onClick={() => setActiveTab("online")}
+                        >
+                            Pay Online
+                        </button>
+                    </li>
+                )}
+
+                {/* Offline Payment Tab - Hamesha dikhna chahiye */}
                 <li className="nav-item">
                     <button
                         className={`nav-link ${activeTab === "offline" ? "active btn-primary" : ""}`}
@@ -157,19 +180,22 @@ const Payments = () => {
                 </li>
             </ul>
 
-            {activeTab === "online" && (
+            {!key && activeTab === "online" && onlinePaymentStatus === 1 && (
                 <div className="row justify-content-center mt-4">
                     <div className="col-md-6">
                         <div className="card">
-                            <div className="card-header"><HandCoins className="me-2 btn-primary p-1 rounded" />your total saving is off ₹ {Number(item?.full_price) - Number(item?.basket_price)}</div>
+                            <div className="card-header">
+                                <HandCoins className="me-2 btn-primary p-1 rounded" />
+                                your total saving is off ₹ {Number(item?.full_price) - Number(item?.basket_price)}
+                            </div>
                             <div className="card-body">
                                 <div className="d-md-flex justify-content-between">
-                                    <h6 className="card-title mb-0"><strong>validity</strong></h6>
+                                    <h6 className="card-title mb-0"><strong>Validity</strong></h6>
                                     <h6 className="card-title mb-0"><strong>{item?.validity} Month</strong></h6>
                                 </div>
                                 <div className="d-md-flex justify-content-between">
                                     <h6 className="card-title mb-0"><strong>{item?.title}</strong></h6>
-                                    <h6 className="card-title mb-0"><strong>₹  {item?.basket_price}</strong></h6>
+                                    <h6 className="card-title mb-0"><strong>₹ {item?.basket_price}</strong></h6>
                                 </div>
                                 {gstStatus == 1 && (
                                     <div className="d-md-flex justify-content-between">
@@ -177,89 +203,22 @@ const Payments = () => {
                                         <h6 className="card-title mb-0"><strong>₹ {(((item?.basket_price) * gstdata) / 100).toFixed(2)}</strong></h6>
                                     </div>
                                 )}
-                                {/* <div className="d-md-flex justify-content-between">
+                                <div className="d-md-flex justify-content-between">
                                     <h6 className="card-title mb-0"><strong>Total</strong></h6>
                                     <h6 className="card-title mb-0">
                                         <strong>
                                             ₹ {(
-                                                (item?.basket_price) +
-                                                ((item?.basket_price) * gstdata) / 100
+                                                gstStatus === 1
+                                                    ? item?.basket_price + (item?.basket_price * 18) / 100
+                                                    : item?.basket_price
                                             ).toFixed(2)}
                                         </strong>
                                     </h6>
-                                </div> */}
-                                {gstStatus === 1 && (
-                                    <div className="d-md-flex justify-content-between">
-                                        <h6 className="card-title mb-0"><strong>Total</strong></h6>
-                                        <h6 className="card-title mb-0">
-                                            <strong>
-                                                ₹ {(
-                                                    (((item?.basket_price) / 100) * 18) + item?.basket_price
-                                                ).toFixed(2)
-                                                }
-                                            </strong>
-                                        </h6>
-                                    </div>
-                                )}
-
-                                {gstStatus === 0 && (
-                                    <div className="d-md-flex justify-content-between">
-                                        <h6 className="card-title mb-0"><strong>Total</strong></h6>
-                                        <h6 className="card-title mb-0">
-                                            <strong>
-                                                ₹ {(item?.basket_price)}
-                                            </strong>
-                                        </h6>
-                                    </div>
-                                )}
-
-
-                                {/* {gstStatus === 1 && (
-                                    <button
-                                        className={`btn btn-success w-100 ${onlinePaymentStatus === 0 ? "disabled-btn" : ""}`}
-                                        disabled={onlinePaymentStatus === 0}  // ✅ Button disable karega jab onlinePaymentStatus == 0 ho
-                                        onClick={() => {
-                                            if (onlinePaymentStatus !== 0) {
-                                                AddbasketSubscribeplan(item);
-                                            }
-                                        }}
-                                    >
-                                        Subscribe Now
-                                        <span className="text-decoration-line-through text-light small mx-2">
-                                            ₹ {item?.full_price}
-                                        </span>
-                                        ₹ {(item?.basket_price + (((item?.basket_price) / 100) * 18)).toFixed(2)}
-                                    </button>
-                                )}
-
-                                {gstStatus === 0 && (
-                                    <button
-                                        className={`btn btn-success w-100 ${onlinePaymentStatus === 0 ? "disabled-btn" : ""}`}
-                                        disabled={onlinePaymentStatus === 0}  // ✅ Button disable karega jab onlinePaymentStatus == 0 ho
-                                        onClick={() => {
-                                            if (onlinePaymentStatus !== 0) {
-                                                AddbasketSubscribeplan(item);
-                                            }
-                                        }}
-                                    >
-                                        Subscribe Now
-                                        <span className="text-decoration-line-through text-light small mx-2">
-                                            ₹ {item?.full_price}
-                                        </span>
-                                        ₹ {item?.basket_price }
-                                    </button>
-                                )} */}
+                                </div>
 
                                 <button
-                                    className={`btn btn-success w-100 ${onlinePaymentStatus === 0 ? "disabled-btn" : ""}`}
-                                    style={onlinePaymentStatus === 0 ? { pointerEvents: "auto", opacity: 0.6 } : {}}
-                                    onClick={() => {
-                                        if (onlinePaymentStatus === 0) {
-                                            showCustomAlert("error", "Online Payment is currently disabled. Please try again later.");
-                                            return;
-                                        }
-                                        AddbasketSubscribeplan(item);
-                                    }}
+                                    className="btn btn-success w-100"
+                                    onClick={() => AddbasketSubscribeplan(item)}
                                 >
                                     Subscribe Now
                                     <span className="text-decoration-line-through text-light small mx-2">
@@ -270,14 +229,12 @@ const Payments = () => {
                                         : item?.basket_price
                                     ).toFixed(2)}
                                 </button>
-
-
                             </div>
                         </div>
                     </div>
                 </div>
-            )
-            }
+            )}
+
 
             {
                 activeTab === "offline" && (
