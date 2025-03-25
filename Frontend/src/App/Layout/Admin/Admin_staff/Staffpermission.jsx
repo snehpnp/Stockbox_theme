@@ -350,25 +350,21 @@ const Staffpermission = () => {
 
 
 
-    
 
 
 
 
 
-     useEffect(() => {
+
+    useEffect(() => {
         const permissions = ["addclient", "viewclient", "viewdetail", "editclient", "clientchangestatus", "assignPackage"];
 
         if (formik.values.userPermissions) {
-
-            // ✅ Sabhi permissions enable kar do agar "Select All" check hai
             permissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
-
-            // ✅ Agar "userPermissions" manually uncheck karega, to sabhi permissions false ho jayein
             const anyPermissionChecked = permissions.some(permission => formik.values[permission]);
 
-            if (! anyPermissionChecked) {
+            if (!anyPermissionChecked) {
 
                 permissions.forEach(permission => formik.setFieldValue(permission, false));
             }
@@ -382,12 +378,11 @@ const Staffpermission = () => {
 
 
     useEffect(() => {
-        // ✅ "viewclient" ko true karna jab koi bhi permission check ho
-        const anyPermissionChecked = 
-            formik.values.addclient || 
-            formik.values.editclient || 
-            formik.values.clientchangestatus || 
-            formik.values.assignPackage || 
+        const anyPermissionChecked =
+            formik.values.addclient ||
+            formik.values.editclient ||
+            formik.values.clientchangestatus ||
+            formik.values.assignPackage ||
             formik.values.Ownclient ||
             formik.values.viewdetail;
 
@@ -395,44 +390,42 @@ const Staffpermission = () => {
             formik.setFieldValue('viewclient', true);
         }
 
-        // ✅ "Select All" (userPermissions) ko sahi check karna
-        const allPermissionsChecked = 
-            formik.values.addclient && 
-            formik.values.editclient && 
-            formik.values.viewdetail && 
-            formik.values.clientchangestatus && 
-            formik.values.assignPackage; // ← Yahan `=== true` ki zaroorat nahi
+        const allPermissionsChecked =
+            formik.values.addclient &&
+            formik.values.editclient &&
+            formik.values.viewdetail &&
+            formik.values.clientchangestatus &&
+            formik.values.assignPackage;
 
         formik.setFieldValue('userPermissions', allPermissionsChecked);
     }, [
-        formik.values.addclient, 
-        formik.values.editclient, 
-        formik.values.clientchangestatus, 
-        formik.values.assignPackage, 
+        formik.values.addclient,
+        formik.values.editclient,
+        formik.values.clientchangestatus,
+        formik.values.assignPackage,
         formik.values.Ownclient,
         formik.values.viewdetail
     ]);
-    
 
-    
+
+
     useEffect(() => {
         const signalPermissions = ["signalstatus", "viewsignal", "signaldetail", "addsignal", "editsignal"];
-    
+
         if (formik.values.Signalpermission) {
-            // ✅ "Select All" check hone par sabhi signal permissions true ho jayein
             signalPermissions.forEach(permission => formik.setFieldValue(permission, true));
-            formik.setFieldValue("ownsignal", false); // ✅ ownsignal ko manually false kar diya
+            formik.setFieldValue("ownsignal", false);
         } else {
-            // ✅ Agar "Signalpermission" manually false kare to sabhi permissions uncheck ho jayein
             const anySignalChecked = signalPermissions.some(permission => formik.values[permission]);
-    
+
             if (!anySignalChecked) {
                 signalPermissions.forEach(permission => formik.setFieldValue(permission, false));
             }
         }
     }, [formik.values.Signalpermission]);
-    
-    // ✅ "viewsignal" ko automatically true karna agar koi bhi permission enable ho
+
+
+
     useEffect(() => {
         const anySignalChecked =
             formik.values.signalstatus ||
@@ -440,18 +433,18 @@ const Staffpermission = () => {
             formik.values.signaldetail ||
             formik.values.addsignal ||
             formik.values.editsignal;
-    
+
         if (anySignalChecked) {
             formik.setFieldValue("viewsignal", true);
         }
-    
-        // ✅ "Select All" (Signalpermission) ko check/uncheck karna
+
+
         const allSignalPermissionsChecked =
             formik.values.signalstatus &&
             formik.values.signaldetail &&
             formik.values.addsignal &&
             formik.values.editsignal;
-    
+
         formik.setFieldValue("Signalpermission", allSignalPermissionsChecked);
     }, [
         formik.values.signalstatus,
@@ -460,90 +453,88 @@ const Staffpermission = () => {
         formik.values.addsignal,
         formik.values.editsignal,
     ]);
-    
+
 
     useEffect(() => {
         const categoryPermissions = ["categorystatus", "viewcategory", "addcategory", "editcategory"];
-    
+
         if (formik.values.categorypermission) {
-            // ✅ "Select All" check hone par sabhi category permissions true ho jayein
             categoryPermissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
-            // ✅ Agar "categorypermission" manually false kare to sabhi permissions uncheck ho jayein
             const anyCategoryChecked = categoryPermissions.some(permission => formik.values[permission]);
-    
+
             if (!anyCategoryChecked) {
                 categoryPermissions.forEach(permission => formik.setFieldValue(permission, false));
             }
         }
     }, [formik.values.categorypermission]);
-    
-    // ✅ "viewcategory" ko automatically true karna agar koi bhi permission enable ho
+
+
+
     useEffect(() => {
         const anyCategoryChecked =
             formik.values.categorystatus ||
             formik.values.addcategory ||
             formik.values.editcategory;
-    
+
         if (anyCategoryChecked) {
             formik.setFieldValue("viewcategory", true);
         }
-    
-        // ✅ "Select All" (categorypermission) ko check/uncheck karna
+
+
+
         const allCategoryPermissionsChecked =
             formik.values.categorystatus &&
             formik.values.addcategory &&
             formik.values.editcategory;
-    
+
         formik.setFieldValue("categorypermission", allCategoryPermissionsChecked);
     }, [
         formik.values.categorystatus,
         formik.values.addcategory,
         formik.values.editcategory,
     ]);
-    
+
 
 
     useEffect(() => {
         const planPermissions = ["addplan", "editplan", "viewplan", "planstatus"];
-    
+
         if (formik.values.planpermission) {
-            // ✅ "Select All" check hone par sabhi plan permissions true ho jayein
             planPermissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
-            // ✅ Agar "planpermission" manually false kare to sabhi permissions uncheck ho jayein
             const anyPlanChecked = planPermissions.some(permission => formik.values[permission]);
-    
+
             if (!anyPlanChecked) {
                 planPermissions.forEach(permission => formik.setFieldValue(permission, false));
             }
         }
     }, [formik.values.planpermission]);
-    
-    // ✅ "viewplan" ko automatically true karna agar koi bhi permission enable ho
+
+
     useEffect(() => {
         const anyPlanChecked =
             formik.values.addplan ||
             formik.values.editplan ||
             formik.values.planstatus;
-    
+
         if (anyPlanChecked) {
             formik.setFieldValue("viewplan", true);
         }
-    
-        // ✅ "Select All" (planpermission) ko check/uncheck karna
+
+
         const allPlanPermissionsChecked =
             formik.values.addplan &&
             formik.values.editplan &&
             formik.values.planstatus;
-    
+
         formik.setFieldValue("planpermission", allPlanPermissionsChecked);
     }, [
         formik.values.addplan,
         formik.values.editplan,
         formik.values.planstatus,
     ]);
-    
+
 
 
 
@@ -579,39 +570,39 @@ const Staffpermission = () => {
 
     useEffect(() => {
         const bannerPermissions = ["addbanner", "editbanner", "viewbanner", "deletebanner", "bannerstatus"];
-    
+
         if (formik.values.bannerpermission) {
-            // ✅ "Select All" check hone par sabhi banner permissions true ho jayein
+
             bannerPermissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
-            // ✅ Agar "bannerpermission" manually false kare to sabhi permissions uncheck ho jayein
+
             const anyBannerChecked = bannerPermissions.some(permission => formik.values[permission]);
-    
+
             if (!anyBannerChecked) {
                 bannerPermissions.forEach(permission => formik.setFieldValue(permission, false));
             }
         }
     }, [formik.values.bannerpermission]);
-    
-    // ✅ "viewbanner" ko automatically true karna agar koi bhi permission enable ho
+
+
     useEffect(() => {
         const anyBannerChecked =
             formik.values.addbanner ||
             formik.values.editbanner ||
             formik.values.bannerstatus ||
             formik.values.deletebanner;
-    
+
         if (anyBannerChecked) {
             formik.setFieldValue("viewbanner", true);
         }
-    
-        // ✅ "Select All" (bannerpermission) ko check/uncheck karna
+
+
         const allBannerPermissionsChecked =
             formik.values.addbanner &&
             formik.values.editbanner &&
             formik.values.bannerstatus &&
             formik.values.deletebanner;
-    
+
         formik.setFieldValue("bannerpermission", allBannerPermissionsChecked);
     }, [
         formik.values.addbanner,
@@ -619,7 +610,7 @@ const Staffpermission = () => {
         formik.values.bannerstatus,
         formik.values.deletebanner,
     ]);
-    
+
 
 
     useEffect(() => {
@@ -631,40 +622,39 @@ const Staffpermission = () => {
             "deletecoupon",
             "couponstatus"
         ];
-    
+
         if (formik.values.couponpermission) {
-            // ✅ "Select All" check hone par sabhi coupon permissions true ho jayein
+
             couponPermissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
-            // ✅ Agar "couponpermission" manually false kare to sabhi permissions uncheck ho jayein
             const anyCouponChecked = couponPermissions.some(permission => formik.values[permission]);
-    
+
             if (!anyCouponChecked) {
                 couponPermissions.forEach(permission => formik.setFieldValue(permission, false));
             }
         }
     }, [formik.values.couponpermission]);
-    
-    // ✅ "viewcoupon" ko automatically true karna agar koi bhi permission enable ho
+
+
     useEffect(() => {
         const anyCouponChecked =
             formik.values.addcoupon ||
             formik.values.editcoupon ||
             formik.values.coupondetail ||
             formik.values.deletecoupon;
-    
+
         if (anyCouponChecked) {
             formik.setFieldValue("viewcoupon", true);
         }
-    
-        // ✅ "Select All" (couponpermission) ko check/uncheck karna
+
+
         const allCouponPermissionsChecked =
             formik.values.addcoupon &&
             formik.values.editcoupon &&
             formik.values.coupondetail &&
             formik.values.deletecoupon &&
             formik.values.couponstatus;
-    
+
         formik.setFieldValue("couponpermission", allCouponPermissionsChecked);
     }, [
         formik.values.addcoupon,
@@ -673,7 +663,7 @@ const Staffpermission = () => {
         formik.values.deletecoupon,
         formik.values.couponstatus
     ]);
-    
+
 
 
 
@@ -686,21 +676,20 @@ const Staffpermission = () => {
             "deleteblogs",
             "blogsstatus"
         ];
-    
+
         if (formik.values.blogspermission) {
-            // ✅ "Select All" check hone par sabhi blog permissions true ho jayein
             blogPermissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
-            // ✅ Agar "blogspermission" manually false kare to sabhi permissions uncheck ho jayein
             const anyBlogChecked = blogPermissions.some(permission => formik.values[permission]);
-    
+
             if (!anyBlogChecked) {
                 blogPermissions.forEach(permission => formik.setFieldValue(permission, false));
             }
         }
     }, [formik.values.blogspermission]);
-    
-    // ✅ "viewblogs" ko automatically true karna agar koi bhi permission enable ho
+
+
+
     useEffect(() => {
         const anyBlogChecked =
             formik.values.addblogs ||
@@ -708,19 +697,18 @@ const Staffpermission = () => {
             formik.values.blogdetail ||
             formik.values.deleteblogs ||
             formik.values.blogsstatus;
-    
+
         if (anyBlogChecked) {
             formik.setFieldValue("viewblogs", true);
         }
-    
-        // ✅ "Select All" (blogspermission) ko check/uncheck karna
+
         const allBlogPermissionsChecked =
             formik.values.addblogs &&
             formik.values.editblogs &&
             formik.values.blogdetail &&
             formik.values.deleteblogs &&
             formik.values.blogsstatus;
-    
+
         formik.setFieldValue("blogspermission", allBlogPermissionsChecked);
     }, [
         formik.values.addblogs,
@@ -729,7 +717,7 @@ const Staffpermission = () => {
         formik.values.deleteblogs,
         formik.values.blogsstatus
     ]);
-    
+
 
 
     useEffect(() => {
@@ -740,39 +728,38 @@ const Staffpermission = () => {
             "deletefaq",
             "faqstatus"
         ];
-    
+
         if (formik.values.faqpermission) {
-            // ✅ "Select All" check hone par sabhi FAQ permissions true ho jayein
+
             faqPermissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
-            // ✅ Agar "faqpermission" manually false kare to sabhi permissions uncheck ho jayein
+
             const anyFaqChecked = faqPermissions.some(permission => formik.values[permission]);
-    
+
             if (!anyFaqChecked) {
                 faqPermissions.forEach(permission => formik.setFieldValue(permission, false));
             }
         }
     }, [formik.values.faqpermission]);
-    
-    // ✅ "viewfaq" ko automatically true karna agar koi bhi permission enable ho
+
+
     useEffect(() => {
         const anyFaqChecked =
             formik.values.addfaq ||
             formik.values.editfaq ||
             formik.values.faqstatus ||
             formik.values.deletefaq;
-    
+
         if (anyFaqChecked) {
             formik.setFieldValue("viewfaq", true);
         }
-    
-        // ✅ "Select All" (faqpermission) ko check/uncheck karna
+
         const allFaqPermissionsChecked =
             formik.values.addfaq &&
             formik.values.editfaq &&
             formik.values.faqstatus &&
             formik.values.deletefaq;
-    
+
         formik.setFieldValue("faqpermission", allFaqPermissionsChecked);
     }, [
         formik.values.addfaq,
@@ -780,7 +767,7 @@ const Staffpermission = () => {
         formik.values.faqstatus,
         formik.values.deletefaq
     ]);
-    
+
 
 
 
@@ -792,39 +779,37 @@ const Staffpermission = () => {
             "deletenews",
             "newsstatus"
         ];
-    
+
         if (formik.values.newspermission) {
-            // ✅ "Select All" check hone par saari permissions true ho jayein
             newsPermissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
-            // ✅ Agar "newspermission" manually false kare to saari permissions uncheck ho jayein
             const anyNewsChecked = newsPermissions.some(permission => formik.values[permission]);
-    
+
             if (!anyNewsChecked) {
                 newsPermissions.forEach(permission => formik.setFieldValue(permission, false));
             }
         }
     }, [formik.values.newspermission]);
-    
-    // ✅ "viewnews" ko automatically true karna agar koi bhi permission enable ho
+
+
     useEffect(() => {
         const anyNewsChecked =
             formik.values.addnews ||
             formik.values.editnews ||
             formik.values.newsstatus ||
             formik.values.deletenews;
-    
+
         if (anyNewsChecked) {
             formik.setFieldValue("viewnews", true);
         }
-    
-        // ✅ "Select All" (newspermission) ko check/uncheck karna
+
+
         const allNewsPermissionsChecked =
             formik.values.addnews &&
             formik.values.editnews &&
             formik.values.newsstatus &&
             formik.values.deletenews;
-    
+
         formik.setFieldValue("newspermission", allNewsPermissionsChecked);
     }, [
         formik.values.addnews,
@@ -832,7 +817,7 @@ const Staffpermission = () => {
         formik.values.newsstatus,
         formik.values.deletenews
     ]);
-    
+
 
 
     useEffect(() => {
@@ -866,39 +851,36 @@ const Staffpermission = () => {
 
     useEffect(() => {
         const permissions = ["paymenthistory", "planexpiry", "perform"];
-    
+
         if (formik.values.otherpermission) {
-            // ✅ Agar `otherpermission` check ho, toh saari permissions `true` ho jayengi
             permissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
-            // ✅ Agar manually `otherpermission` uncheck karega, to check karna padega ke koi bhi permission enabled hai ya nahi
+
             const anyChecked = permissions.some(permission => formik.values[permission]);
-    
+
             if (!anyChecked) {
                 permissions.forEach(permission => formik.setFieldValue(permission, false));
             }
         }
     }, [formik.values.otherpermission]);
-    
+
     useEffect(() => {
         const permissions = ["paymenthistory", "planexpiry", "perform"];
 
-        // ✅ "otherpermission" ko **auto-enable** karna jab koi bhi permission `true` ho
         const anyChecked = permissions.some(permission => formik.values[permission]);
-    
+
         if (anyChecked) {
             formik.setFieldValue("otherpermission", true);
         }
-    
-        // ✅ "Select All" logic: agar **sabhi permissions `true`** hain, to `otherpermission` bhi `true` hoga
+
         const allChecked = permissions.every(permission => formik.values[permission]);
         formik.setFieldValue("otherpermission", allChecked);
     }, [
-        formik.values.paymenthistory, 
-        formik.values.planexpiry, 
+        formik.values.paymenthistory,
+        formik.values.planexpiry,
         formik.values.perform
     ]);
-    
+
 
 
     useEffect(() => {
@@ -908,20 +890,20 @@ const Staffpermission = () => {
             "publishstock", "vewbasket", "basketdetail", "addstock",
             "editstock", "allbaskethistory"
         ];
-    
+
         if (formik.values.basketpermission) {
-            // ✅ Sabhi permissions ko `true` karna agar `basketpermission` enable ho
             permissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
-            // ✅ Agar koi bhi permission **manually uncheck** ho jaye, to baki ki permissions check karni hongi
             const anyChecked = permissions.some(permission => formik.values[permission]);
-    
+
             if (!anyChecked) {
                 permissions.forEach(permission => formik.setFieldValue(permission, false));
             }
         }
     }, [formik.values.basketpermission]);
-    
+
+
+
     useEffect(() => {
         const permissions = [
             "addbasket", "editbasket", "deletebasket", "basketActivestatus",
@@ -929,19 +911,18 @@ const Staffpermission = () => {
             "publishstock", "vewbasket", "basketdetail", "addstock",
             "editstock", "allbaskethistory"
         ];
-        // ✅ "vewbasket" ko **auto-enable** karna jab koi bhi permission check ho
+
         const anyChecked = [
             formik.values.addbasket, formik.values.editbasket, formik.values.deletebasket,
             formik.values.basketActivestatus, formik.values.Rebalancestatus, formik.values.Rebalancebutton,
             formik.values.Subscriptionhistory, formik.values.publishstock, formik.values.basketdetail,
             formik.values.addstock, formik.values.editstock, formik.values.allbaskethistory
         ].some(value => value);
-    
+
         if (anyChecked) {
             formik.setFieldValue("vewbasket", true);
         }
-    
-        // ✅ "Select All" logic: agar **sabhi permissions `true`** hain, to `basketpermission` bhi `true` hoga
+
         const allChecked = permissions.every(permission => formik.values[permission]);
         formik.setFieldValue("basketpermission", allChecked);
     }, [
@@ -950,7 +931,7 @@ const Staffpermission = () => {
         formik.values.Subscriptionhistory, formik.values.publishstock, formik.values.vewbasket,
         formik.values.basketdetail, formik.values.addstock, formik.values.editstock, formik.values.allbaskethistory
     ]);
-    
+
 
 
     const fields = [
