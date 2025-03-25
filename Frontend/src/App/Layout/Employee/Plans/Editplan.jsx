@@ -167,7 +167,6 @@ const Editplan = () => {
             <DynamicForm
                 fields={fields}
                 formik={formik}
-                page_title="Edit Plan"
                 btn_name="Edit Plan"
                 btn_name1="Cancel"
                 sumit_btn={true}

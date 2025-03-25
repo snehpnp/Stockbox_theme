@@ -206,7 +206,6 @@ const Addplan = () => {
             <DynamicForm
                 fields={fields}
                 formik={formik}
-                page_title="Add New Package"
                 btn_name="Add Package"
                 btn_name1="Cancel"
                 sumit_btn={true}

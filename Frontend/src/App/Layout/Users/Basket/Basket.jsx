@@ -3,6 +3,7 @@ import Content from "../../../components/Contents/Content";
 import { Doughnut } from "react-chartjs-2";
 import { Link, useNavigate } from 'react-router-dom';
 import { GetBasketService, BasketPurchaseList } from '../../../Services/UserService/User';
+import { basicsettinglist } from "../../../Services/Admin/Admin";
 import { loadScript } from '../../../../Utils/Razorpayment';
 import Loader from '../../../../Utils/Loader';
 
@@ -25,6 +26,9 @@ function Basket() {
 
   const navigate = useNavigate();
 
+  const [onlinePaymentStatus, setOnlinePaymentStatus] = useState()
+  const [offlinePaymentStatus, setOfflinePaymentStatus] = useState()
+
 
 
   useEffect(() => {
@@ -34,6 +38,25 @@ function Basket() {
       getbasketpurchasedata()
     }
   }, [activeTab, isLoading])
+
+  useEffect(() => {
+    getkeybydata()
+  }, [])
+
+
+  const getkeybydata = async () => {
+    try {
+      const response = await basicsettinglist();
+      // console.log("response.data[0]",response.data[0].officepaymenystatus);
+
+      if (response.status) {
+        setOnlinePaymentStatus(response.data[0].paymentstatus)
+        setOfflinePaymentStatus(response.data[0].officepaymenystatus)
+      }
+    } catch (error) {
+      console.error("Error fetching coupons:", error);
+    }
+  };
 
 
 
@@ -118,6 +141,7 @@ function Basket() {
             All Basket
           </button>
         </li>
+
         <li className="nav-item">
           <button
             className={`nav-link ${activeTab === "subscribedbasket" ? "active btn-primary" : ""
@@ -127,6 +151,7 @@ function Basket() {
             Subscribed Basket
           </button>
         </li>
+
       </ul>
       {activeTab === "allbasket" && (
         isLoading ? (
@@ -187,7 +212,15 @@ function Basket() {
                           View Details
                         </Link>
                       ) : item?.isSubscribed === false && item?.isActive === false ? (
-                        <Link to="/user/payment" state={{ item }} className="btn btn-primary w-100">
+                        <Link
+                          to={onlinePaymentStatus || offlinePaymentStatus ? "/user/payment" : "#"}
+                          state={{ item }}
+                          className="btn btn-primary w-100"
+                          style={{
+                            pointerEvents: onlinePaymentStatus || offlinePaymentStatus ? "auto" : "none",
+                            opacity: onlinePaymentStatus || offlinePaymentStatus ? "1" : "0.5",
+                          }}
+                        >
                           Subscribe <del>{item?.full_price}</del> {item?.basket_price}
                         </Link>
                       ) : item?.isSubscribed === true && item?.isActive === false ? (

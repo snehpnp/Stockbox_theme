@@ -90,7 +90,7 @@ const Plan = () => {
         const user_active_status = originalChecked ? "active" : "inactive";
         const data = { id: id, status: user_active_status };
 
-        const result = await showCustomAlert('confirm','Do you want Changes The Pakage Status?')
+        const result = await showCustomAlert('confirm', 'Do you want Changes The Pakage Status?')
 
         if (result.isConfirmed) {
             try {
@@ -291,8 +291,8 @@ const Plan = () => {
                                                                                                 <div className="col-md-3">
                                                                                                     <b>Description</b>
                                                                                                 </div>
-                                                                                                <div className="col-md-9">
-                                                                                                    {stripHtmlTags(client.description || '')}
+                                                                                                <div className="">
+                                                                                                    <textarea className='form-control ' value={stripHtmlTags(client?.description || '')} >{client?.description}</textarea>
                                                                                                 </div>
                                                                                             </div>
                                                                                         </li>

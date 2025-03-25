@@ -535,7 +535,7 @@ const Freeclient = () => {
 
                                 {isLoading ? (
                                     <Loader />
-                                ) : (
+                                ) : clients?.length > 0 ? (
                                     <>
 
                                         <Table
@@ -546,6 +546,10 @@ const Freeclient = () => {
                                             onPageChange={handlePageChange}
                                         />
                                     </>
+                                ) : (
+                                    <div className="text-center mt-5">
+                                        <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                                    </div>
                                 )}
                             </div>
                         </div>

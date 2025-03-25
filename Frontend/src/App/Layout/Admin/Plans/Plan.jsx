@@ -123,6 +123,8 @@ const Plan = () => {
         if (!input) return '';
         return input.replace(/<\/?[^>]+(>|$)/g, '');
     }
+    console.log("filteredClients",filteredClients);
+    
 
 
 

@@ -25,8 +25,10 @@ const Payments = () => {
 
     const [gstStatus, setGstStatus] = useState()
     const [onlinePaymentStatus, setOnlinePaymentStatus] = useState()
+    const [offlinePaymentStatus, setOfflinePaymentStatus] = useState()
 
-   
+
+
 
 
     const [getkey, setGetkey] = useState([]);
@@ -45,9 +47,9 @@ const Payments = () => {
 
     useEffect(() => {
         if (location.state?.key) {
-          setActiveTab("offline"); // Agar key exist karti hai to tab ko 'offline' set karo
+            setActiveTab("offline"); // Agar key exist karti hai to tab ko 'offline' set karo
         }
-      }, [location.state?.key]);
+    }, [location.state?.key]);
 
 
     const getQRimage = async () => {
@@ -79,12 +81,15 @@ const Payments = () => {
     const getkeybydata = async () => {
         try {
             const response = await basicsettinglist();
+            // console.log("response.data[0]",response.data[0].officepaymenystatus);
+
             if (response.status) {
                 setGetkey(response?.data[0]?.razorpay_key);
                 setCompany(response?.data[0]?.from_name);
                 setGstdata(response?.data[0]?.gst);
                 setGstStatus(response.data[0].gststatus)
                 setOnlinePaymentStatus(response.data[0].paymentstatus)
+                setOfflinePaymentStatus(response.data[0].officepaymenystatus)
 
             }
         } catch (error) {
@@ -170,14 +175,16 @@ const Payments = () => {
                 )}
 
                 {/* Offline Payment Tab - Hamesha dikhna chahiye */}
-                <li className="nav-item">
-                    <button
-                        className={`nav-link ${activeTab === "offline" ? "active btn-primary" : ""}`}
-                        onClick={() => setActiveTab("offline")}
-                    >
-                        Pay Offline
-                    </button>
-                </li>
+                {offlinePaymentStatus === 1 && (
+                    <li className="nav-item">
+                        <button
+                            className={`nav-link ${activeTab === "offline" ? "active btn-primary" : ""}`}
+                            onClick={() => setActiveTab("offline")}
+                        >
+                            Pay Offline
+                        </button>
+                    </li>
+                )}
             </ul>
 
             {!key && activeTab === "online" && onlinePaymentStatus === 1 && (
@@ -236,52 +243,51 @@ const Payments = () => {
             )}
 
 
-            {
-                activeTab === "offline" && (
-                    <div className="row justify-content-center">
-                        <div className="col-md-6">
-                            <div className="card">
-                                <div className="card-body text-center">
-                                    {qrdata.length > 0 &&
-                                        qrdata.map((item, index) => {
-                                            return (
-                                                <div key={index} className="text-center">
-                                                    <h5 className="card-title btn-primary py-2">Scan to Pay</h5>
-                                                    <img
-                                                        src={item?.image}
-                                                        alt="QR Code"
-                                                        title="QR Code"
-                                                        className="img-fluid mb-3"
-                                                        style={{ width: 200, height: 200 }}
-                                                    />
-                                                </div>
-                                            );
-                                        })}
-
-
-
-
-                                    {bankdetail?.map((item) => {
+            {offlinePaymentStatus === 1 && activeTab === "offline" && (
+                <div className="row justify-content-center">
+                    <div className="col-md-6">
+                        <div className="card">
+                            <div className="card-body text-center">
+                                {qrdata.length > 0 &&
+                                    qrdata.map((item, index) => {
                                         return (
-                                            <>
-                                                <h5 className="btn-primary py-2">Bank Details:</h5>
-                                                <ul className="ps-0">
-                                                    <li className="list-group-item d-flex justify-content-between"> <b>Account Name:</b> {item?.name} </li>
-                                                    <li className="list-group-item d-flex justify-content-between">  <b>Account Number:</b> {item?.accountno}</li>
-                                                    <li className="list-group-item d-flex justify-content-between">  <b>IFSC Code:</b> {item?.ifsc}</li>
-                                                    <li className="list-group-item d-flex justify-content-between">  <b>Branch Name :</b> {item?.branch}</li>
-
-                                                </ul>
-
-
-                                            </>
-                                        )
+                                            <div key={index} className="text-center">
+                                                <h5 className="card-title btn-primary py-2">Scan to Pay</h5>
+                                                <img
+                                                    src={item?.image}
+                                                    alt="QR Code"
+                                                    title="QR Code"
+                                                    className="img-fluid mb-3"
+                                                    style={{ width: 200, height: 200 }}
+                                                />
+                                            </div>
+                                        );
                                     })}
-                                </div>
+
+
+
+
+                                {bankdetail?.map((item) => {
+                                    return (
+                                        <>
+                                            <h5 className="btn-primary py-2">Bank Details:</h5>
+                                            <ul className="ps-0">
+                                                <li className="list-group-item d-flex justify-content-between"> <b>Account Name:</b> {item?.name} </li>
+                                                <li className="list-group-item d-flex justify-content-between">  <b>Account Number:</b> {item?.accountno}</li>
+                                                <li className="list-group-item d-flex justify-content-between">  <b>IFSC Code:</b> {item?.ifsc}</li>
+                                                <li className="list-group-item d-flex justify-content-between">  <b>Branch Name :</b> {item?.branch}</li>
+
+                                            </ul>
+
+
+                                        </>
+                                    )
+                                })}
                             </div>
                         </div>
                     </div>
-                )
+                </div>
+            )
             }
         </Content >
     );
