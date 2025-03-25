@@ -47,7 +47,7 @@ const Payments = () => {
 
     useEffect(() => {
         if (location.state?.key) {
-            setActiveTab("offline"); // Agar key exist karti hai to tab ko 'offline' set karo
+            setActiveTab("offline");
         }
     }, [location.state?.key]);
 
@@ -147,7 +147,7 @@ const Payments = () => {
 
     useEffect(() => {
         if (onlinePaymentStatus === 0 && activeTab === "online") {
-            setActiveTab("offline"); // Agar onlinePaymentStatus 0 hai to active tab "offline" ho jayega
+            setActiveTab("offline");
         }
     }, [onlinePaymentStatus, activeTab]);
 
@@ -162,7 +162,7 @@ const Payments = () => {
             backForword={true}
         >
             <ul className="nav nav-pills mb-3 justify-content-center border-bottom">
-                {/* Agar key exist NAHI karti toh Online Payment tab dikhega */}
+
                 {!key && onlinePaymentStatus === 1 && (
                     <li className="nav-item">
                         <button
@@ -174,7 +174,7 @@ const Payments = () => {
                     </li>
                 )}
 
-                {/* Offline Payment Tab - Hamesha dikhna chahiye */}
+
                 {offlinePaymentStatus === 1 && (
                     <li className="nav-item">
                         <button
