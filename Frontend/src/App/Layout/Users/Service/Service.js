@@ -424,7 +424,7 @@ const Service = () => {
       <Modal show={showModal} onHide={handleCloseModal} centered size="xxl">
         <Modal.Header closeButton>
           <Modal.Title className="text-center w-100 heading-color modal-title h4 ">
-             Plan Details
+            Plan Details
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -434,14 +434,14 @@ const Service = () => {
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h5> {selectedPlanDetails?.title} Plan</h5>
                 <span className="text-success fw-bold">
-                  <IndianRupee  style={{width:'15%;'}}/>{" "}
+                  <IndianRupee style={{ width: '15%;' }} />{" "}
                   {selectedPlanDetails?.price || "N/A"}
                 </span>
               </div>
 
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <span>
-                   Validity:
+                  Validity:
                 </span>
                 <span>{selectedPlanDetails?.validity || "N/A"}</span>
               </div>
@@ -451,7 +451,7 @@ const Service = () => {
                   <Accordion.Header>🎟️ Apply Coupon Code</Accordion.Header>
                   <Accordion.Body
                     style={{
-                      maxHeight: "400px",
+                      maxHeight: "210px",
                       overflowY: "auto",
                       scrollbarWidth: "thin",
                     }}
@@ -629,7 +629,7 @@ const Service = () => {
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <b> Original Price:</b>
                   <span className="text-primary fw-bold">
-                    <IndianRupee style={{width:'15%;'}} /> {selectedPlanDetails?.price}
+                    <IndianRupee style={{ width: '15%;' }} /> {selectedPlanDetails?.price}
                   </span>
                 </div>
                 {gstStatus == 1 && (
@@ -641,18 +641,12 @@ const Service = () => {
                     </span>
                   </div>
                 )}
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <b> GST :</b>
-                  <span className="text-primary fw-bold">
-                    <IndianRupee style={{width:'15%;'}}/> {gstdata}％
-                  </span>
-                </div>
 
                 {appliedCoupon && (
                   <div className="d-flex justify-content-between align-items-center text-danger mb-2">
                     <b> Coupon Discount:</b>
                     <span className="fw-bold">
-                      - <IndianRupee style={{width:'15%;'}}/> {appliedCoupon?.value}
+                      - <IndianRupee style={{ width: '15%;' }} /> {appliedCoupon?.value}
                     </span>
                   </div>
                 )}
@@ -661,9 +655,9 @@ const Service = () => {
                   <b> Total Price:</b>
                   <span
                     className="text-success fw-bold"
-                    
+
                   >
-                    <IndianRupee style={{width:'15%;'}} />{" "}
+                    <IndianRupee style={{ width: '15%;' }} />{" "}
                     {(
                       selectedPlanDetails?.price -
                       (appliedCoupon ? discountedPrice || 0 : 0) +
@@ -683,28 +677,30 @@ const Service = () => {
 
 
               </div>
-
-              <div className="mt-4">
-                {onlinePaymentStatus !== 0 && (
-                  <button
-                    className="btn btn-success w-100"
-                    onClick={() => AddSubscribeplan(selectedPlanDetails)}
-                  >
-                    ✅ Confirm & Subscribe
-                  </button>
-                )}
-              </div>
-              <div className="mt-4">
-                {offlinePaymentStatus !== 0 && (
-                  <button
-                    className="btn btn-success w-100"
-                    onClick={() =>
-                      navigate("/user/payment", { state: { key: "servicePageOfflinePayment" } })
-                    }
-                  >
-                    ✅ Pay Offline
-                  </button>
-                )}
+              <div className="d-flex justify-content-between">
+                <div className="mt-4">
+                  {onlinePaymentStatus !== 0 && (
+                    <button
+                      className="btn btn-success w-100"
+                      onClick={() => AddSubscribeplan(selectedPlanDetails)}
+                    >
+                      {/* ✅ Confirm & Subscribe */}
+                      ✅ Pay Online
+                    </button>
+                  )}
+                </div>
+                <div className="mt-4">
+                  {offlinePaymentStatus !== 0 && (
+                    <button
+                      className="btn btn-success w-100"
+                      onClick={() =>
+                        navigate("/user/payment", { state: { key: "servicePageOfflinePayment" } })
+                      }
+                    >
+                      ✅ Pay Offline
+                    </button>
+                  )}
+                </div>
               </div>
 
             </>
