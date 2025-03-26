@@ -82,6 +82,7 @@ import ClientOrderlist from "../Layout/Admin/ClientOrderlist/ClientOrderlist";
 import Changepass from "../Layout/Auth/Changepass";
 import ReferAndEarnlist from "../Layout/Admin/BasicSetting/ReferAndEarnlist";
 import PlanExpirymonthDetail from "../Layout/Admin/PlanExpiryMonth/PlanExpirymonthDetail";
+import SignalStrategy from "../Layout/Admin/Admin_signal/SignalStrategy";
 
 
 
@@ -143,6 +144,7 @@ export default function App() {
       <Route path="/addsignal" element={<AddSignal />} />
       <Route path="/signaldetaile/:id" element={<Signaldetail />} />
       <Route path="/closesignal" element={<Closesignal />} />
+      <Route path="/signalstrategy" element={<SignalStrategy />} />
 
 
       <Route path="/staff" element={<Staff />} />

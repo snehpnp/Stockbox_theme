@@ -423,8 +423,8 @@ const Service = () => {
 
       <Modal show={showModal} onHide={handleCloseModal} centered size="xxl">
         <Modal.Header closeButton>
-          <Modal.Title style={{ color: "black" }} className="text-center w-100">
-            🌟 Plan Details
+          <Modal.Title className="text-center w-100 heading-color modal-title h4 ">
+             Plan Details
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -432,16 +432,16 @@ const Service = () => {
             <>
 
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5>🏷️ <b>Price</b></h5>
+                <h5> {selectedPlanDetails?.title} Plan</h5>
                 <span className="text-success fw-bold">
-                  <IndianRupee style={{ height: "15px", width: "15px" }} />
+                  <IndianRupee  style={{width:'15%;'}}/>{" "}
                   {selectedPlanDetails?.price || "N/A"}
                 </span>
               </div>
 
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <span>
-                  🕒 <b>Validity:</b>
+                   Validity:
                 </span>
                 <span>{selectedPlanDetails?.validity || "N/A"}</span>
               </div>
@@ -627,9 +627,9 @@ const Service = () => {
               <hr />
               <div>
                 <div className="d-flex justify-content-between align-items-center mb-2">
-                  <b>💵 Original Price:</b>
+                  <b> Original Price:</b>
                   <span className="text-primary fw-bold">
-                    <IndianRupee /> {selectedPlanDetails?.price}
+                    <IndianRupee style={{width:'15%;'}} /> {selectedPlanDetails?.price}
                   </span>
                 </div>
                 {gstStatus == 1 && (
@@ -641,26 +641,29 @@ const Service = () => {
                     </span>
                   </div>
                 )}
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <b> GST :</b>
+                  <span className="text-primary fw-bold">
+                    <IndianRupee style={{width:'15%;'}}/> {gstdata}％
+                  </span>
+                </div>
 
                 {appliedCoupon && (
                   <div className="d-flex justify-content-between align-items-center text-danger mb-2">
-                    <b>🎟️ Coupon Discount:</b>
+                    <b> Coupon Discount:</b>
                     <span className="fw-bold">
-                      - <IndianRupee /> {appliedCoupon?.value}
+                      - <IndianRupee style={{width:'15%;'}}/> {appliedCoupon?.value}
                     </span>
                   </div>
                 )}
 
                 <div className="d-flex justify-content-between align-items-center mt-3 py-2 border-top">
-                  <b>💰 Total Price:</b>
+                  <b> Total Price:</b>
                   <span
                     className="text-success fw-bold"
-                    style={{ fontSize: "1.2rem" }}
+                    
                   >
-                    <IndianRupee />{" "}
-
-                    {/* if you want to less base price - discount then use this logic */}
-
+                    <IndianRupee style={{width:'15%;'}} />{" "}
                     {(
                       selectedPlanDetails?.price -
                       (appliedCoupon ? discountedPrice || 0 : 0) +

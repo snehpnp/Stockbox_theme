@@ -431,10 +431,22 @@ const Client = () => {
       width: "350px",
     },
     {
+
       name: "State",
       selector: (row) => row?.state || "-",
       sortable: true,
       width: "300px",
+
+      name: "Phone No",
+      selector: (row) => row.PhoneNo,
+      sortable: true,
+      width: "200px",
+    },
+    {
+      name: "State",
+      selector: (row) => row.state ? row.state : "-",
+      sortable: true,
+      width: "200px",
     },
     {
       name: "Plan Status",

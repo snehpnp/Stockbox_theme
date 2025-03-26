@@ -49,8 +49,36 @@ const BasketDetail = () => {
     >
       <div className="row border-bottom pb-3">
         <div className="col-md-8">
-          <h5>{item?.title}</h5>
+          <h5><b>{item?.title}</b></h5>
           <ul className="list-group list-group-flush list shadow-none">
+            <li className="list-group-item d-flex justify-content-between align-items-center">
+           Launch Date
+              <span className="badge bg-dark rounded-pill">{item?.mininvamount}</span>
+            </li>
+            <li className="list-group-item d-flex justify-content-between align-items-center">
+              Theme<span className="badge bg-success rounded-pill">{item?.cagr} %</span>
+            </li>
+            <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
+              Since Launch<span className="badge bg-danger rounded-pill">{item?.type}</span>
+            </li>
+            <li className="list-group-item d-flex justify-content-between align-items-center">
+              No. of stocks<span className="badge bg-warning rounded-pill">{item?.themename}</span>
+            </li>
+            <li className="list-group-item d-flex justify-content-between align-items-center">
+              Validity
+              <span className="badge bg-primary rounded-pill">
+                {item?.next_rebalance_date}</span>
+            </li>
+            <li className="list-group-item d-flex justify-content-between align-items-center">
+              Rebalance Frequency<span className="badge bg-success rounded-pill">{item?.frequency}</span>
+            </li>
+            <li className="list-group-item d-flex justify-content-between align-items-center">
+              Next Rebalance Date
+              <span className="badge bg-primary rounded-pill">
+                {item?.next_rebalance_date}</span>
+            </li>
+          </ul>
+          {/* <ul className="list-group list-group-flush list shadow-none">
             <li className="list-group-item d-flex justify-content-between align-items-center">
               Minimum Investment
               <span className="badge bg-dark rounded-pill">{item?.mininvamount}</span>
@@ -72,13 +100,13 @@ const BasketDetail = () => {
             <li className="list-group-item d-flex justify-content-between align-items-center">
               Rebalance Frequency<span className="badge bg-success rounded-pill">{item?.frequency}</span>
             </li>
-          </ul>
+          </ul> */}
         </div>
         <div className="col-md-4">
           <Doughnut data={chartData} />
         </div>
 
-        <div className="row px-4">
+        <div className="row px-4 pt-4">
           <div className="col-md-12">
             <h6>
               <b>Description</b>

@@ -1468,8 +1468,83 @@ span.alert-count {
   right: -10px !important;
   width: 17px;
   height: 17px;
-  padding: 2px 3px !important;
-  line-height: 13px !important;
+  padding: 2px 4px !important;
+  line-height: 16px !important;
   letter-spacing: -1px;
   font-size: 9px !important;
+}
+button {
+  transition: all 250ms !important;
+}
+button:hover {
+  transform: translateY(3px);
+  box-shadow: inset 0 1px 0 0 #f4f4f4,
+  0 1px 0 0 #efefef,
+  0 1px 0 0 #ececec,
+  0 2px 0 0 #e0e0e0,
+  0 2px 0 0 #dedede,
+  0 3px 0 0 #dcdcdc,
+  0 4px 0 0 #cacaca I !important
+  
+}
+
+:root{
+  --color-text: #616161;
+}
+
+.demate-data .card-wrap{
+
+  background: #fff;
+  border-radius: 20px;
+  border: 5px solid #fff;
+  overflow: hidden;
+  color: var(--color-text);
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px,
+              rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  cursor: pointer;
+  transition: all .2s ease-in-out;
+  padding-bottom: 25px;
+}
+.demate-data .card-wrap:hover{
+  transform: scale(1.05);
+}
+.demate-data .card-header{
+  height: 200px;
+  width: 100%;
+  /* background: red; */
+  border-radius:100% 0% 100% 0% / 0% 50% 50% 100%;
+  display: grid;
+  place-items: center;
+  border-radius: 0px 0px 120px 120px !important;
+
+}
+.demate-data .card-header img{
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.demate-data .card-content{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 60%;
+  margin: 0 auto;
+}
+.demate-data .card-title{
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 16px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  
+}
+.demate-data .card-text{
+  text-align: center;
+  font-size: 12px;
+  margin-bottom: 20px;
+}
+span.price-current svg {
+  width: 18px;
+  height: 18px;
 }
