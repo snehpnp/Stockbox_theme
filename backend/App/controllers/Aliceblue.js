@@ -13,6 +13,8 @@ const Stock_Modal = db.Stock;
 const Order_Modal = db.Order;
 const BasicSetting_Modal = db.BasicSetting;
 const Basketorder_Modal = db.Basketorder;
+const Signalsdata_Modal = db.Signalsdata;
+const Signalstock_Modal = db.Signalstock;
 
 class Aliceblue {
 
@@ -1239,6 +1241,381 @@ class Aliceblue {
         }
     }
 
+
+    async MultipleplaceOrder(req, res) {
+        try {
+            const { id, signalid, quantity } = req.body;
+    
+            // ✅ Client Check
+            const client = await Clients_Modal.findById(id);
+            if (!client) {
+                return res.status(404).json({ status: false, message: "Client not found" });
+            }
+    
+            if (client.tradingstatus == 0) {
+                return res.status(404).json({ status: false, message: "Client Broker Not Login, Please Login With Broker" });
+            }
+    
+            // ✅ Signal Check
+            const signal = await Signalsdata_Modal.findById(signalid);
+            if (!signal) {
+                return res.status(404).json({ status: false, message: "Signal not found" });
+            }
+    
+            // ✅ Multiple Stocks Fetch (Ascending Order)
+            const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
+            if (stocks.length === 0) {
+                return res.status(404).json({ status: false, message: "No stock found for this signal" });
+            }
+    
+            // ✅ Authorization Data
+            const authToken = client.authtoken;
+            const userId = client.alice_userid;
+    
+            // ✅ Order Requests Array
+            let ordersData = [];
+    
+            for (let stock of stocks) {
+                let optiontype, exchange, producttype;
+    
+                if (stock.segment === "C") {
+                    optiontype = "EQ";
+                    exchange = "NSE";
+                } else {
+                    optiontype = stock.segment === "F" ? "UT" : stock.optiontype;
+                    exchange = "NFO";
+                }
+    
+                producttype = signal.callduration === "Intraday" ? "MIS" : (stock.segment === "C" ? "CNC" : "NRML");
+    
+                let stockData;
+                if (stock.segment === "C") {
+                    stockData = await Stock_Modal.findOne({
+                        symbol: signal.stock,
+                        segment: stock.segment,
+                        //    option_type: optiontype 
+                    });
+                } else if (stock.segment === "F") {
+                    stockData = await Stock_Modal.findOne({
+                        symbol: signal.stock,
+                        segment: stock.segment,
+                        expiry: stock.expirydate,
+                        //    option_type: optiontype 
+                    });
+                } else {
+                    stockData = await Stock_Modal.findOne({
+                        symbol: signal.stock,
+                        segment: stock.segment,
+                        expiry: stock.expirydate,
+                        option_type: optiontype,
+                        strike: stock.strikeprice
+                    });
+                }
+    
+                if (!stockData) {
+                    return res.status(404).json({ status: false, message: `Stock not found for ${stock.tradesymbol}` });
+                }
+    
+                // ✅ Order Object
+                ordersData.push({
+                    "complexty": "regular",
+                    "discqty": "0",
+                    "exch": exchange,
+                    "pCode": producttype,
+                    "prctyp": "MKT",
+                    "price": stock.price,
+                    "qty": quantity,
+                    "ret": "DAY",
+                    "symbol_id": stockData.instrument_token,
+                    "trading_symbol": stockData.tradesymbol,
+                    "transtype": stock.calltype,
+                    "trigPrice": "00.00",
+                    "orderTag": "order1"
+                });
+            }
+    
+            let config = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: 'https://ant.aliceblueonline.com/rest/AliceBlueAPIService/api/placeOrder/executePlaceOrder',
+                headers: {
+                    'Authorization': 'Bearer ' + userId + ' ' + authToken,
+                    'Content-Type': 'application/json',
+                },
+                data: JSON.stringify(ordersData)
+            };
+    
+            axios(config)
+                .then(async (response) => {
+                    const responseData = response.data;
+    
+                    if (responseData[0].stat == 'Ok') {
+                        let orderRecords = [];
+                        for (let stock of stocks) {
+
+
+                            let stockData;
+                            if (stock.segment === "C") {
+                                stockData = await Stock_Modal.findOne({
+                                    symbol: signal.stock,
+                                    segment: stock.segment,
+                                    //    option_type: optiontype 
+                                });
+                            } else if (stock.segment === "F") {
+                                stockData = await Stock_Modal.findOne({
+                                    symbol: signal.stock,
+                                    segment: stock.segment,
+                                    expiry: stock.expirydate,
+                                    //    option_type: optiontype 
+                                });
+                            } else {
+                                stockData = await Stock_Modal.findOne({
+                                    symbol: signal.stock,
+                                    segment: stock.segment,
+                                    expiry: stock.expirydate,
+                                    option_type: optiontype,
+                                    strike: stock.strikeprice
+                                });
+                            }
+                
+
+                            orderRecords.push({
+                                clientid: client._id,
+                                signalid: signal._id,
+                                orderid: responseData[i].NOrdNo,
+                                ordertype: stock.calltype,
+                                borkerid: 2,
+                                quantity: quantity,
+                                ordertoken: stockData.instrument_token,
+                                exchange: stockData.exchange
+                            });
+                        }
+    
+                        await Order_Modal.insertMany(orderRecords);
+    
+                        return res.json({
+                            status: true,
+                            message: "Order Successfully Placed",
+                            data: responseData
+                        });
+                    } else {
+                        return res.status(500).json({
+                            status: false,
+                            message: responseData
+                        });
+                    }
+                })
+                .catch(async (error) => {
+                    const message = (JSON.stringify(error.response.data)).replace(/["',]/g, '');
+    
+                    let url;
+                    if (message == "") {
+                        url = `https://ant.aliceblueonline.com/?appcode=${client.apikey}`;
+                    }
+    
+                    return res.status(500).json({
+                        status: false,
+                        url: url,
+                        message: message
+                    });
+                });
+    
+        } catch (error) {
+            return res.status(500).json({
+                status: false,
+                message: error.response ? error.response.data : "An error occurred while placing the order"
+            });
+        }
+    }
+    
+    async MultipleExitplaceOrder(req, res) {
+        try {
+            const { id, signalid, quantity } = req.body;
+    
+            // ✅ Client Check
+            const client = await Clients_Modal.findById(id);
+            if (!client) {
+                return res.status(404).json({ status: false, message: "Client not found" });
+            }
+    
+            if (client.tradingstatus == 0) {
+                return res.status(404).json({ status: false, message: "Client Broker Not Login, Please Login With Broker" });
+            }
+    
+            // ✅ Signal Check
+            const signal = await Signalsdata_Modal.findById(signalid);
+            if (!signal) {
+                return res.status(404).json({ status: false, message: "Signal not found" });
+            }
+    
+            // ✅ Multiple Stocks Fetch (Ascending Order)
+            const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
+            if (stocks.length === 0) {
+                return res.status(404).json({ status: false, message: "No stock found for this signal" });
+            }
+    
+            // ✅ Authorization Data
+            const authToken = client.authtoken;
+            const userId = client.alice_userid;
+    
+            // ✅ Order Requests Array
+            let ordersData = [];
+            let totalQuantityAvailable = 0;
+    
+            for (let stock of stocks) {
+                let optiontype, exchange, producttype;
+    
+                if (signal.segment === "C") {
+                    optiontype = "EQ";
+                    exchange = "NSE";
+                } else {
+                    optiontype = signal.segment === "F" ? "UT" : stock.optiontype;
+                    exchange = "NFO";
+                }
+    
+                producttype = signal.callduration === "Intraday" ? "MIS" : (signal.segment === "C" ? "CNC" : "NRML");
+    
+                let stockData;
+                if (stock.segment === "C") {
+                    stockData = await Stock_Modal.findOne({
+                        symbol: signal.stock,
+                        segment: stock.segment,
+                        //    option_type: optiontype 
+                    });
+                } else if (stock.segment === "F") {
+                    stockData = await Stock_Modal.findOne({
+                        symbol: signal.stock,
+                        segment: stock.segment,
+                        expiry: stock.expirydate,
+                        //    option_type: optiontype 
+                    });
+                } else {
+                    stockData = await Stock_Modal.findOne({
+                        symbol: signal.stock,
+                        segment: stock.segment,
+                        expiry: stock.expirydate,
+                        option_type: optiontype,
+                        strike: stock.strikeprice
+                    });
+                }
+    
+                if (!stockData) {
+                    return res.status(404).json({ status: false, message: `Stock not found for ${stock.tradesymbol}` });
+                }
+    
+                // ✅ Get Holding & Position Data
+                let holdingData = { qty: 0 };
+                let positionData = { qty: 0 };
+                let totalValue = 0;
+    
+                try {
+                    positionData = await CheckPosition(userId, authToken, stock.segment, stockData.instrument_token, producttype, stock.calltype, stockData.tradesymbol);
+                } catch (error) {}
+    
+                if (stock.segment === "C") {
+                    try {
+                        holdingData = await CheckHolding(userId, authToken, stock.segment, stockData.instrument_token, producttype, stock.calltype);
+                    } catch (error) {}
+    
+                    totalValue = (Number(positionData.qty) || 0) + (Number(holdingData.qty) || 0);
+                } else {
+                    totalValue = Math.abs(positionData.qty);
+                }
+    
+                totalQuantityAvailable += totalValue;
+    
+                let calltypes = stock.calltype === 'BUY' ? "SELL" : "BUY";
+    
+                if (totalValue >= quantity) {
+                    // ✅ Order Object
+                    ordersData.push({
+                        "complexty": "regular",
+                        "discqty": "0",
+                        "exch": exchange,
+                        "pCode": producttype,
+                        "prctyp": "MKT",
+                        "price": stock.price,
+                        "qty": quantity,
+                        "ret": "DAY",
+                        "symbol_id": stockData.instrument_token,
+                        "trading_symbol": stockData.tradesymbol,
+                        "transtype": calltypes,
+                        "trigPrice": "00.00",
+                        "orderTag": "order1"
+                    });
+                }
+            }
+    
+            if (totalQuantityAvailable < quantity) {
+                return res.status(500).json({ status: false, message: "Sorry, the requested quantity is not available." });
+            }
+    
+            let config = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: 'https://ant.aliceblueonline.com/rest/AliceBlueAPIService/api/placeOrder/executePlaceOrder',
+                headers: {
+                    'Authorization': 'Bearer ' + userId + ' ' + authToken,
+                    'Content-Type': 'application/json',
+                },
+                data: JSON.stringify(ordersData)
+            };
+    
+            axios(config)
+                .then(async (response) => {
+                    const responseData = response.data;
+    
+                    if (responseData[0].stat == 'Ok') {
+                        let orderRecords = [];
+                        let i=0;
+                        for (let stock of stocks) {
+
+                            let calltypes = stock.calltype === 'BUY' ? "SELL" : "BUY";
+
+                            orderRecords.push({
+                                clientid: client._id,
+                                signalid: signal._id,
+                                orderid: responseData[i].NOrdNo,
+                                ordertype: calltypes,
+                                borkerid: 2,
+                                quantity: quantity,
+                            });
+                            $i++;
+                        }
+    
+                        await Order_Modal.insertMany(orderRecords);
+    
+                        // ✅ Update Existing Order
+                        const orderupdate = await Order_Modal.findOne({ clientid: id, signalid, borkerid: 2 });
+                        if (orderupdate) {
+                            orderupdate.tsstatus = 0;
+                            await orderupdate.save();
+                        }
+    
+                        return res.json({
+                            status: true,
+                            message: "Exit Order Successfully Placed",
+                            data: responseData
+                        });
+                    } else {
+                        return res.status(500).json({ status: false, message: responseData });
+                    }
+                })
+                .catch(async (error) => {
+                    const message = (JSON.stringify(error.response.data)).replace(/["',]/g, '');
+                    let url = message === "" ? `https://ant.aliceblueonline.com/?appcode=${client.apikey}` : null;
+    
+                    return res.status(500).json({ status: false, url: url, message: message });
+                });
+    
+        } catch (error) {
+            return res.status(500).json({
+                status: false,
+                message: error.response ? error.response.data : "An error occurred while placing the exit order"
+            });
+        }
+    }
+    
 
 
 }

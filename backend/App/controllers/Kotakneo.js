@@ -9,6 +9,8 @@ const Signal_Modal = db.Signal;
 const Stock_Modal = db.Stock;
 const Order_Modal = db.Order;
 const Basketorder_Modal = db.Basketorder;
+const Signalsdata_Modal = db.Signalsdata;
+const Signalstock_Modal = db.Signalstock;
 
 const qs = require("querystring");
 const jwt = require("jsonwebtoken");
@@ -1376,10 +1378,402 @@ class Kotakneo {
         }
     }
 
+async  MultipleplaceOrder(req, res) {
+    try {
+        const { id, signalid, quantity } = req.body;
 
+        // ✅ Client Check
+        const client = await Clients_Modal.findById(id);
+        if (!client) return res.status(404).json({ status: false, message: "Client not found" });
+
+        if (client.tradingstatus == 0) {
+            return res.status(400).json({ status: false, message: "Client Broker Not Login, Please Login With Broker" });
+        }
+
+        // ✅ Signal Check
+        const signal = await Signalsdata_Modal.findById(signalid);
+        if (!signal) return res.status(404).json({ status: false, message: "Signal not found" });
+
+        // ✅ Fetch Stocks
+        const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
+        if (stocks.length === 0) return res.status(404).json({ status: false, message: "No stock found for this signal" });
+
+        let ordersData = [];
+
+        for (let stock of stocks) {
+            let optiontype, exchange, producttype;
+            
+            // ✅ Determine Exchange & Option Type
+            if (stock.segment === "C") {
+                exchange = "NSE";
+                optiontype = "EQ";
+            } else {
+                exchange = "NFO";
+                optiontype = stock.optiontype || (stock.segment === "F" ? "UT" : "");
+            }
+
+            // ✅ Determine Product Type
+            producttype = signal.callduration === "Intraday" ? "MIS" : (stock.segment === "C" ? "CNC" : "NRML");
+
+            // ✅ Find Stock Data
+            let stockData;
+            if (stock.segment === "C") {
+                stockData = await Stock_Modal.findOne({
+                    symbol: signal.stock,
+                    segment: stock.segment,
+                    //    option_type: optiontype 
+                });
+            } else if (signal.segment === "F") {
+                stockData = await Stock_Modal.findOne({
+                    symbol: signal.stock,
+                    segment: stock.segment,
+                    expiry: stock.expirydate,
+                    //   option_type: optiontype 
+                });
+            } else {
+                stockData = await Stock_Modal.findOne({
+                    symbol: signal.stock,
+                    segment: stock.segment,
+                    expiry: stock.expirydate,
+                    option_type: optiontype,
+                    strike: stock.strikeprice
+                });
+            }
+
+            if (!stockData) {
+                return res.status(404).json({ status: false, message: `Stock not found for ${stock.tradesymbol}` });
+            }
+
+            // ✅ Get Instrument Token from CSV
+            let token = await getTokenFromCSV(stockData, stock.segment, optiontype);
+            if (!token) {
+                return res.status(404).json({ status: false, message: `Token not found for ${stock.tradesymbol}` });
+            }
+
+            let calltype = stock.calltype === "BUY" ? "B" : "S";
+
+            // ✅ Prepare Order Data
+            let data = JSON.stringify({
+                "am": "NO",
+                "dq": "0",
+                "es": exchange,
+                "mp": "0",
+                "pc": producttype,
+                "pf": "N",
+                "pr": stock.price,
+                "pt": "MKT",
+                "qt": quantity,
+                "rt": "DAY",
+                "tp": "0",
+                "ts": token,
+                "tt": calltype
+            });
+
+            const requestData = `jData=${data}`;
+            let url = `https://gw-napi.kotaksecurities.com/Orders/2.0/quick/order/rule/ms/place?sId=${client.hserverid}`;
+
+            let config = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: url,
+                headers: {
+                    'accept': 'application/json',
+                    'Sid': client.kotakneo_sid,
+                    'Auth': client.authtoken,
+                    'neo-fin-key': 'neotradeapi',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': 'Bearer ' + client.oneTimeToken
+                },
+                data: requestData
+            };
+
+            ordersData.push({ config, stockData });
+        }
+
+        // ✅ Execute All Orders
+        let responses = await Promise.all(ordersData.map(async ({ config, stockData }) => {
+            try {
+                let response = await axios.request(config);
+                if (response.data.stat === 'Ok') {
+                    return { 
+                        status: true, 
+                        data: response.data, 
+                        message: "Order Placed Successfully", 
+                        stock: stockData 
+                    };
+                } else {
+                    return { 
+                        status: false, 
+                        message: response.data.message || 'Unknown error in response', 
+                        stock: stockData 
+                    };
+                }
+            } catch (error) {
+                return { 
+                    status: false, 
+                    message: `Error placing order for ${stockData.tradesymbol}: ${error.message}` 
+                };
+            }
+        }));
+
+        // ✅ Insert Orders into Database
+        let successfulOrders = responses.filter(order => order.status === true);
+        if (successfulOrders.length > 0) {
+            let orderRecords = successfulOrders.map(order => ({
+                clientid: client._id,
+                signalid: signal._id,
+                orderid: order.data.nOrdNo,
+                ordertype: signal.calltype,
+                borkerid: 3,
+                quantity: quantity,
+                ordertoken: order.stock.instrument_token,
+                exchange: exchange
+            }));
+
+            await Order_Modal.insertMany(orderRecords);
+        }
+
+        return res.json({ status: true, responses });
+
+    } catch (error) {
+        return res.status(500).json({ status: false, message: error.response ? error.response.data : "An error occurred while placing the orders" });
+    }
+}
+
+async MultipleExitplaceOrder(req, res) {
+    try {
+        const { id, signalid, quantity } = req.body;
+
+        // ✅ Client Check
+        const client = await Clients_Modal.findById(id);
+        if (!client) return res.status(404).json({ status: false, message: "Client not found" });
+
+        if (client.tradingstatus == 0) {
+            return res.status(400).json({ status: false, message: "Client Broker Not Login, Please Login With Broker" });
+        }
+
+        // ✅ Signal Check
+        const signal = await Signalsdata_Modal.findById(signalid);
+        if (!signal) return res.status(404).json({ status: false, message: "Signal not found" });
+
+        // ✅ Fetch Stocks for the Signal
+        const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
+        if (stocks.length === 0) return res.status(404).json({ status: false, message: "No stock found for this signal" });
+
+        let ordersData = [];
+
+        for (let stock of stocks) {
+            let optiontype, exchange, producttype;
+
+            // ✅ Determine Exchange & Option Type
+            if (stock.segment === "C") {
+                exchange = "NSE";
+                optiontype = "EQ";
+            } else {
+                exchange = "NFO";
+                optiontype = stock.optiontype || (stock.segment === "F" ? "UT" : "");
+            }
+
+            // ✅ Determine Product Type
+            producttype = signal.callduration === "Intraday" ? "MIS" : (stock.segment === "C" ? "CNC" : "NRML");
+            let stockData;
+            if (stock.segment === "C") {
+                stockData = await Stock_Modal.findOne({
+                    symbol: signal.stock,
+                    segment: stock.segment,
+                    //    option_type: optiontype 
+                });
+            } else if (signal.segment === "F") {
+                stockData = await Stock_Modal.findOne({
+                    symbol: signal.stock,
+                    segment: stock.segment,
+                    expiry: stock.expirydate,
+                    //   option_type: optiontype 
+                });
+            } else {
+                stockData = await Stock_Modal.findOne({
+                    symbol: signal.stock,
+                    segment: stock.segment,
+                    expiry: stock.expirydate,
+                    option_type: optiontype,
+                    strike: stock.strikeprice
+                });
+            }
+
+            if (!stockData) {
+                return res.status(404).json({ status: false, message: `Stock not found for ${stock.tradesymbol}` });
+            }
+
+            // ✅ Get Position & Holding Data
+            let holdingData = { qty: 0 };
+            let positionData = { qty: 0 };
+            let totalValue = 0;
+
+            try {
+                positionData = await CheckPosition(client.apikey, stock.segment, stockData.instrument_token);
+            } catch (error) {
+                console.error(`Error fetching position data for ${stockData.tradesymbol}:`, error);
+            }
+
+            if (stock.segment === "C") {
+                try {
+                    holdingData = await CheckHolding(client.apikey, stock.segment, stockData.instrument_token);
+                } catch (error) {
+                    console.error(`Error fetching holding data for ${stockData.tradesymbol}:`, error);
+                }
+                totalValue = Math.abs(positionData.qty || 0) + (holdingData.qty || 0);
+            } else {
+                totalValue = Math.abs(positionData.qty || 0);
+            }
+
+            console.log(`Total available quantity for ${stockData.tradesymbol}:`, totalValue);
+
+            if (totalValue < quantity) {
+                console.warn(`Not enough quantity to exit for ${stockData.tradesymbol}`);
+                continue;
+            }
+
+            // ✅ Get Instrument Token from CSV
+            let token = await getTokenFromCSV(stockData, stock.segment, optiontype);
+            if (!token) {
+                console.warn(`Token not found for ${stockData.tradesymbol}, skipping order.`);
+                continue;
+            }
+
+            let calltype = signal.calltype === "BUY" ? "S" : "B";
+
+            // ✅ Prepare Order Data
+            let data = JSON.stringify({
+                "am": "NO",
+                "dq": "0",
+                "es": exchange,
+                "mp": "0",
+                "pc": producttype,
+                "pf": "N",
+                "pr": stock.price,
+                "pt": "MKT",
+                "qt": quantity,
+                "rt": "DAY",
+                "tp": "0",
+                "ts": token,
+                "tt": calltype
+            });
+
+            const requestData = `jData=${data}`;
+            let url = `https://gw-napi.kotaksecurities.com/Orders/2.0/quick/order/rule/ms/place?sId=${client.hserverid}`;
+
+            let config = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: url,
+                headers: {
+                    'accept': 'application/json',
+                    'Sid': client.kotakneo_sid,
+                    'Auth': client.authtoken,
+                    'neo-fin-key': 'neotradeapi',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': 'Bearer ' + client.oneTimeToken
+                },
+                data: requestData
+            };
+
+            ordersData.push({ config, stockData });
+        }
+
+        // ✅ Execute All Exit Orders
+        let responses = await Promise.all(ordersData.map(async ({ config, stockData }) => {
+            try {
+                let response = await axios.request(config);
+                if (response.data.stat === 'Ok') {
+                    return {
+                        status: true,
+                        data: response.data,
+                        message: "Exit Order Placed Successfully",
+                        stock: stock.tradesymbol
+                    };
+                } else {
+                    return {
+                        status: false,
+                        message: response.data.message || 'Unknown error in response',
+                        stock: stock.tradesymbol
+                    };
+                }
+            } catch (error) {
+                return {
+                    status: false,
+                    message: `Error placing exit order for ${stock.tradesymbol}: ${error.message}`
+                };
+            }
+        }));
+
+        // ✅ Insert Exit Orders into Database
+        let successfulOrders = responses.filter(order => order.status === true);
+        if (successfulOrders.length > 0) {
+            let exitOrderRecords = successfulOrders.map(order => ({
+                clientid: client._id,
+                signalid: signal._id,
+                orderid: order.data.nOrdNo,
+                ordertype: signal.calltype === "BUY" ? "SELL" : "BUY",
+                borkerid: 3,
+                quantity: quantity,
+                ordertoken: order.stock.instrument_token,
+                exchange: exchange
+            }));
+
+            await Order_Modal.insertMany(exitOrderRecords);
+        }
+
+        return res.json({ status: true, responses });
+
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            message: error.response ? error.response.data : "An error occurred while placing the exit orders"
+        });
+    }
+}
 
 
 }
+
+async function getTokenFromCSV(stock, segment, optiontype) {
+    try {
+        let filePath_token = (segment.toLowerCase() === 'o' || segment.toLowerCase() === 'f') 
+            ? '../../tokenkotakneo/KOTAK_NFO.csv' 
+            : '../../tokenkotakneo/KOTAK_NSE.csv';
+
+        const filePath = path.join(__dirname, filePath_token);
+        const data = await fs.promises.readFile(filePath, 'utf8');
+
+        const lines = data.split('\n');
+        let matchedLines;
+
+        if (segment.toLowerCase() === 'o') {
+            matchedLines = lines.filter(line =>
+                new RegExp(`.*(${stock.tradesymbol}).*.*(nse_fo).*.*(${optiontype}).*`, 'i').test(line)
+            );
+        } else if (segment.toLowerCase() === 'f') {
+            matchedLines = lines.filter(line =>
+                new RegExp(`.*(${stock.tradesymbol}).*.*(nse_fo).*`, 'i').test(line)
+            );
+        } else {
+            matchedLines = lines.filter(line =>
+                new RegExp(`.*(${stock.tradesymbol}).*.*(nse_cm).*`, 'i').test(line)
+            );
+        }
+
+        if (matchedLines.length > 0) {
+            const parts = matchedLines[0].split(',');
+            return parts[5]; // ✅ Extract the token from column 6 (index 5)
+        } else {
+            return null; // ❌ Token not found
+        }
+    } catch (error) {
+        console.error(`Error reading file: ${error}`);
+        return null;
+    }
+}
+
 
 async function CheckPosition(userId, segment, instrument_token) {
 

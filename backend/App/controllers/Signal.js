@@ -2070,24 +2070,22 @@ const finalResult = result.map(item => ({
     });
   }
 }
+
 async AddSignals(req, res) {
   try {
     // Optional file upload for report using multer
     await new Promise((resolve, reject) => {
       upload('report').fields([{ name: 'report', maxCount: 1 }])(req, res, (err) => {
-        if (err) {
-          console.error("Multer error (optional):", err);
-          // Agar report optional hai, to error ko ignore kar sakte hain:
-          return resolve();
-        }
-        resolve();
+          if (err) {
+            
+              return reject(err);
+          }
+
+          resolve();
       });
-    });
-
-    console.log("Endpoint reached after file upload middleware");
-
+  });
     // Destructure required fields from req.body, including stocks array
-    const { stock, strategy_name, callduration, description, planid, profitlosstype, stocks } = req.body;
+    const { stock, strategy_name, callduration, service, description, planid, profitlosstype, stocks } = req.body;
 
     // Validate required fields (planid and stocks)
     if (!planid) {
@@ -2096,37 +2094,35 @@ async AddSignals(req, res) {
 
     // Agar stocks ek JSON string hai, then parse it into an array
     let stocksArray;
-    try {
-      stocksArray = typeof stocks === 'string' ? JSON.parse(stocks) : stocks;
-    } catch (err) {
-      return res.status(400).json({ status: false, message: 'Invalid JSON in stocks field' });
-    }
 
+    try {
+      stocksArray = typeof stocks === "string" ? JSON.parse(stocks) : stocks;
+  } catch (err) {
+      return res.status(400).json({ status: false, message: "Invalid JSON in stocks field", error: err.message });
+  }
     if (!stocksArray || !Array.isArray(stocksArray) || stocksArray.length === 0) {
       return res.status(400).json({ status: false, message: 'Stocks data missing or invalid' });
     }
 
     // Allowed MIME types check for report file (if present)
-    const allowedMimeTypes = [
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    ];
+   
+    const allowedMimeTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
 
-    const reportFile = req.files && req.files['report'] ? req.files['report'][0] : null;
-    let report = null;
+    const reportFile = req.files['report'] ? req.files['report'][0] : null;
+    
     if (reportFile) {
-      const fileMimeType = reportFile.mimetype;
-      if (!allowedMimeTypes.includes(fileMimeType)) {
-        return res.status(400).json({
-          status: false,
-          message: "Invalid file type. Only PDF and Word files are allowed.",
-        });
-      }
-      report = reportFile.filename;
+        const fileMimeType = reportFile.mimetype; // Get the MIME type of the uploaded file
+        if (!allowedMimeTypes.includes(fileMimeType)) {
+            return res.status(400).json({
+                status: false,
+                message: "Invalid file type. Only PDF and Word files are allowed.",
+            });
+        }
     }
-
-    console.log("Proceeding with signal creation");
+    
+    // If validation passes, extract the filename
+    const report = reportFile ? reportFile.filename : null;
+    
 
     // Split planid into an array of plan IDs
     const planIds = planid.split(',');
@@ -2136,7 +2132,7 @@ async AddSignals(req, res) {
       return new Signalsdata_Modal({
         stock: stock,
         strategy_name: strategy_name,
-        service: "67e12758a0a2be895da19550", // Hardcoded service value
+        service: service, // Hardcoded service value
         callduration: callduration,
         description: description,
         planid: id,
@@ -2152,18 +2148,77 @@ async AddSignals(req, res) {
     // For each inserted signal, loop through the stocks array
     for (const signal of insertedSignals) {
       for (const st of stocksArray) {
-        // Destructure stock object values
-        const { segment, expirydate, calltype, price, optiontype, lot } = st;
+
+        const { segment, expirydate, calltype, price, optiontype, lot, strikeprice } = st;
+
+        var services;
+        var serviceName;
+// Set the service value based on the segment
+if (segment == "C") {
+  services = "66d2c3bebf7e6dc53ed07626";
+serviceName = "Cash";
+
+} else if (segment == "O") {
+  services = "66dfeef84a88602fbbca9b79";
+serviceName = "Option";
+} else {
+  services = "66dfede64a88602fbbca9b72";
+serviceName = "Future";
+}
+
+
+console.log("stock",stock);
+let stockss;
+let tradesymbols;
+
+if (segment === "C") {
+stockss = await Stock_Modal.findOne({ 
+    symbol: stock, 
+    segment: segment, 
+});
+} else if (segment === "F") {
+stockss = await Stock_Modal.findOne({ 
+    symbol: stock, 
+    segment: segment, 
+    expiry: expirydate, 
+});
+} else {
+stockss = await Stock_Modal.findOne({ 
+    symbol: stock, 
+    segment: segment, 
+    expiry: expirydate, 
+     option_type: optiontype, 
+    strike: strikeprice 
+});
+
+console.log("stocks.symbol",stockss.symbol);
+tradesymbols = `${stockss.symbol} ${stockss.expiry_str} ${stockss.strike} ${stockss.option_type}`;
+
+}
+
+
+if (!stocks) {
+return res.status(404).json({
+   status: false,
+   message: "Stock not found"
+});
+}
+
+
         bulkOps.push({
           insertOne: {
             document: {
               signal_id: signal._id,
-              segment: segment,
-              expirydate: expirydate,
               calltype: calltype,
               price: price,
+              expirydate: expirydate,
+              segment:segment,
               optiontype: optiontype,
-              lot: lot,
+              tradesymbol:stockss.tradesymbol,
+              tradesymbols:tradesymbols,
+              lotsize: stockss.lotsize,
+              lot:lot,
+              strikeprice:strikeprice,
             },
           },
         });
@@ -2224,7 +2279,118 @@ async AddSignals(req, res) {
   }
 }
 
+async getSignalsListWithFilte(req, res) {
+  try {
+    let { from, to, service, stock, closestatus, search, add_by, page = 1, limit = 10 } = req.body;
 
+    // ✅ Convert Page & Limit to Integers
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // ✅ Date Filtering
+    let query = { del: 0 };
+    if (from && to) {
+      let fromDate = new Date(from);
+      fromDate.setHours(0, 0, 0, 0);
+      let toDate = new Date(to);
+      toDate.setHours(23, 59, 59, 999);
+
+      // ✅ Check CloseStatus to Filter by Closedate or CreatedAt
+      if (closestatus == true) {
+        query.closedate = { $gte: fromDate, $lte: toDate };
+      } else {
+        query.created_at = { $gte: fromDate, $lte: toDate };
+      }
+    }
+
+    // ✅ Apply Other Filters
+    if (service) query.service = service;
+    if (stock) query.stock = stock;
+    if (closestatus) query.close_status = closestatus;
+    if (add_by) query.add_by = add_by;
+
+    // ✅ Search Filters (tradesymbol, calltype, price, planid)
+    if (search && search.trim() !== '') {
+      const matchingPlans = await Plancategory_Modal.find(
+        { title: { $regex: search, $options: 'i' } },
+        { _id: 1 }
+      );
+      const matchingPlanIds = matchingPlans.map(plan => plan._id.toString());
+
+      query.$or = [
+        { tradesymbol: { $regex: search, $options: 'i' } },
+        { calltype: { $regex: search, $options: 'i' } },
+        { price: { $regex: search, $options: 'i' } },
+        { closeprice: { $regex: search, $options: 'i' } },
+        { planid: { $in: matchingPlanIds } }
+      ];
+    }
+
+    // ✅ Sorting Logic
+    let sortCriteria = { created_at: -1 };
+    if (closestatus == true) {
+      sortCriteria = { closedate: -1 };
+    }
+
+    // ✅ Fetch Signals With Pagination
+    const signals = await Signalsdata_Modal.find(query)
+      .skip(skip)
+      .limit(limit)
+      .sort(sortCriteria)
+      .populate({ path: "stock", select: "title" })
+      .populate({ path: "service", select: "title" })
+      .lean();
+
+    // ✅ Extract Signal IDs for Bulk Stock Query
+    const signalIds = signals.map(signal => signal._id);
+
+    // ✅ Fetch Stock Data in Bulk
+    const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
+      .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price")
+      .lean();
+
+    // ✅ Map Stocks to Signals
+    const stockMap = {};
+    stockDetails.forEach(stock => {
+      if (!stockMap[stock.signal_id]) {
+        stockMap[stock.signal_id] = [];
+      }
+      stockMap[stock.signal_id].push(stock);
+    });
+
+    // ✅ Attach Stocks to Signals
+    const finalSignals = signals.map(signal => ({
+      ...signal,
+      stocks: stockMap[signal._id] || []
+    }));
+
+    // ✅ Total Records for Pagination
+    const totalCount = await Signalsdata_Modal.countDocuments(query);
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return res.json({
+      status: true,
+      message: "Signals fetched successfully",
+      data: {
+        signals: finalSignals,
+        pagination: {
+          totalRecords: totalCount,
+          totalPages,
+          currentPage: page
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error("Error fetching signals:", error);
+    return res.status(500).json({ 
+      status: false, 
+      message: "Server error", 
+      error: error.message 
+    });
+  }
+}
 
 
 
