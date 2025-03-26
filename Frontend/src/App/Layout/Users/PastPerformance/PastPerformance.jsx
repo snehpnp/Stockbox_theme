@@ -3,6 +3,7 @@ import { Bar } from "react-chartjs-2";
 import { Link } from "react-router-dom";
 import "chart.js/auto";
 import Content from "../../../components/Contents/Content";
+
 import { getpastperformaceCashdata, getpastperformaceFuturedata, getpastperformaceOptiondata } from "../../../Services/UserService/User";
 
 
