@@ -352,7 +352,7 @@ const SignalStrategy = () => {
                 </div>
               ) : null}
 
-<div>
+<div className='w-100'>
     <table className="table table-bordered">
         <thead>
             <tr>
