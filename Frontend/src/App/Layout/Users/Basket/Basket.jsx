@@ -181,7 +181,7 @@ function Basket() {
                   </div>
 
                   <div className="card-body">
-                    <ul className="list-group list-group-flush list shadow-none">
+                    <ul className="list-group list-group-flush list shadow p-3 ">
                       <li className="list-group-item d-flex justify-content-between align-items-center">
                         <textarea
                           className="form-control"
