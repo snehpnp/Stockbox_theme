@@ -1,294 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import Content from '../../../components/Contents/Content';
-import { useFormik } from 'formik';
-import DynamicForm from '../../../Extracomponents/FormicForm';
-import { useNavigate } from 'react-router-dom';
-
+import React, { useState } from "react";
+import Content from "../../../components/Contents/Content";
 
 const SignalStrategy = () => {
+  const [quantity, setQuantity] = useState(1);
 
-      const navigate = useNavigate();
-      const user_id = localStorage.getItem('id');
-      const token = localStorage.getItem('token');
-    
-    
-      const [loading, setLoading] = useState(false);
-      const [serviceList, setServiceList] = useState([]);
-      const [stockList, setStockList] = useState([]);
-      const [expirydate, setExpirydate] = useState([]);
-      const [strikePrice, setStrikePrice] = useState([]);
-      const [searchItem, setSearchItem] = useState("");
-      const [selectitem, setSelectitem] = useState("");
-      const [showDropdown, setShowDropdown] = useState(true);
-    
+  const incrementValue = () => {
+    setQuantity((prev) => prev + 1);
+  };
 
-  const formik = useFormik({
-    initialValues: {
-    //   add_by: user_id,
-      segment: '',
-      price: '',
-      stock: '',
-      tag1: '',
-      tag2: '',
-      tag3: '',
-      stoploss: '',
-      report: '',
-      description: '',
-      callduration: '',
-      calltype: '',
-      expiry: '',
-      optiontype: '',
-      strikeprice: '',
-      entrytype: '',
-      lot: '',
-      tradesymbol: expirydate[0]?.stock?.tradesymbol || "",
-      lotsize: expirydate[0]?.stock?.lotsize || ""
-
-    },
-    validate: (values) => {
-      const errors = {};
-      if (!values.segment) errors.segment = 'Please Select a Segment';
-      if (!values.stock) errors.stock = 'Please Select a Stock';
-      if (values.price <= 0) {
-        errors.price = 'Price Should Be Grater Than Zero'
-      }
-      if (!values.price) errors.price = 'Please Select a Price';
-      if (!values.tag1) errors.tag1 = 'Please Enter Target1';
-      if (values.calltype === "BUY") {
-
-
-        if (values.price && values.tag1 && values.price > values.tag1) {
-          errors.tag1 = "Please Enter Greater Than Entry Price";
-        }
-
-        if (values.tag2 && values.tag1 > values.tag2) {
-          errors.tag2 = "Please Enter Greater Than Target1";
-        }
-
-        if (values.tag3 && !values.tag2) {
-          errors.tag2 = "Please Enter Target2";
-        }
-
-
-        if (values.tag3 && values.tag2 && values.tag2 > values.tag3) {
-          errors.tag3 = "Please Enter Greater Than Target2";
-        }
-
-        if (values.stoploss && values.price < values.stoploss) {
-          errors.stoploss = "Please Enter Less Than Entry Price";
-        }
-
-      } else if (values.calltype === "SELL") {
-
-        if (values.price && values.tag1 && values.price < values.tag1) {
-          errors.tag1 = "Please Enter Less Than Entry Price";
-        }
-
-
-        if (values.tag2 && values.tag1 < values.tag2) {
-          errors.tag2 = "Please Enter Less Than Target1";
-        }
-        if (values.tag3 && !values.tag2) {
-          errors.tag2 = "Please Enter Target2";
-        }
-        if (values.tag3 && values.tag2 && values.tag2 < values.tag3) {
-          errors.tag3 = "Please Enter Less Than Target2";
-        }
-
-        if (values.stoploss && values.price > values.stoploss) {
-          errors.stoploss = "Please Enter Greater Than Entry Price";
-        }
-      }
-      if (!values.stoploss) errors.stoploss = 'Please Enter Stoploss';
-      if (!values.callduration) errors.callduration = 'Please Select Trade Duration';
-      if (!values.calltype) errors.calltype = 'Please select call type';
-      if (!values.description) errors.description = 'Please Enter Description';
-
-      if (values.segment === "O" && !values.optiontype) {
-        errors.optiontype = 'Please Enter Option Type';
-      }
-
-      if ((values.segment === "O" || values.segment === "F") && !values.expiry) {
-        errors.expiry = 'Please Enter Expiry Date';
-      }
-
-      if (values.segment === "O" && !values.strikeprice) {
-        errors.strikePrice = 'Please Select Strike Price';
-      }
-      if (!values.entrytype) {
-        errors.entrytype = 'Please Select Entry Type';
-      }
-
-      // if (!values.lot) {
-      //   errors.lot = 'Please Enter Lot';
-      // }
-      if (values.lot && values.lot <= 0) {
-        errors.lot = 'Please Enter Greater Than Zero';
-      }
-
-      return errors;
-    },
-
-
-
-    onSubmit: async (values) => {
-      
-
-      
-    }
-  });
-
-    const fields = [
-        {
-          name: 'segment',
-          label: 'Segment',
-          type: 'select2',
-          options: [
-            { label: 'Cash', value: 'C' },
-            { label: 'Future', value: 'F' },
-            { label: 'Option', value: 'O' },
-            { label: 'Option Strategy', value: 'OS' },
-            { label: 'Future Strategy', value: 'FS' },
-          ],
-          label_size: 12,
-          col_size: 6,
-          star: true
-        },
-    
-    
-        {
-          name: 'expiry',
-          label: 'Expiry Date',
-          type: 'select',
-          label_size: 12,
-          col_size: 6,
-          star: true,
-          options: expirydate.map((item) => ({
-            label: item.expiry,
-            value: item.expiry,
-          })),
-          showWhen: (values) => values.segment !== "C",
-        },
-        {
-          name: 'optiontype',
-          label: 'Option Type',
-          type: 'select',
-          options: [
-            { label: 'Put', value: 'PE' },
-            { label: 'Call', value: 'CE' },
-          ],
-          label_size: 12,
-          col_size: 6,
-          star: true,
-          showWhen: (values) => values.segment === "O",
-        },
-        {
-          name: 'calltype',
-          label: 'Call Type',
-          type: 'select',
-          options: [
-            { label: 'Buy', value: 'BUY' },
-            { label: 'Sell', value: 'SELL' },
-          ],
-          label_size: 12,
-          col_size: 6,
-          star: true
-        },
-        {
-          name: 'strikeprice',
-          label: 'Strike Price',
-          type: 'select',
-          label_size: 12,
-          col_size: 6,
-          star: true,
-          options: strikePrice.map((item) => ({
-            label: item.stock.strike,
-            value: item.stock.strike,
-          })),
-          showWhen: (values) => values.segment === "O"
-        },
-        {
-          name: 'price',
-          label: 'Entry Price',
-          type: 'number',
-          label_size: 12,
-          col_size: 6,
-          star: true
-        },
-    
-        {
-          name: 'callduration',
-          label: 'Trade Duration',
-          type: 'select',
-          options: (() => {
-            if (formik.values.segment === "C") {
-              return formik.values.calltype === "SELL" ? [
-                { label: 'Intraday', value: 'Intraday' }
-              ] : [
-                { label: 'Short Term (15-30 Days)', value: 'Short Term' },
-                { label: 'Medium Term (Above 3 Month)', value: 'Medium Term' },
-                { label: 'Long Term (Above 1 year)', value: 'Long Term' },
-                { label: 'Intraday', value: 'Intraday' }
-              ];
-            } else if (formik.values.segment === "F") {
-              return formik.values.calltype === "SELL" ? [
-                { label: 'Short Term', value: 'Short Term' },
-                { label: 'Intraday', value: 'Intraday' },
-                { label: 'Still Expiry Date', value: 'Still Expiry Date' }
-              ] : [
-                { label: 'Short Term', value: 'Short Term' },
-                { label: 'Intraday', value: 'Intraday' },
-                { label: 'Still Expiry Date', value: 'Still Expiry Date' }
-              ];
-            } else if (formik.values.segment === "O") {
-              return [
-                { label: 'Short Term', value: 'Short Term' },
-                { label: 'Intraday', value: 'Intraday' },
-                { label: 'Still Expiry Date', value: 'Still Expiry Date' }
-              ];
-            }
-            return [];
-          })(),
-          label_size: 12,
-          col_size: 6,
-          star: true
-        },
-        {
-          name: 'entrytype',
-          label: 'Entry Type',
-          type: 'select',
-          options: [
-            { label: 'At', value: 'At' },
-            { label: 'Above', value: 'Above' },
-            { label: 'Below', value: 'Below' },
-          ],
-          label_size: 12,
-          col_size: 6,
-          star: true
-        },
-        {
-          name: 'lot',
-          label: 'Suggested Quantity/Lot',
-          type: 'number',
-          label_size: 12,
-          col_size: 6,
-          star: false
-        },
-        
-        
-        
-        {
-          name: 'stoploss',
-          label: 'Stoploss',
-          type: 'number',
-          label_size: 12,
-          col_size: 3,
-          star: true,
-        },
-      
-      ];
-    
-
+  const decrementValue = () => {
+    setQuantity((prev) => (prev > 0 ? prev - 1 : 0));
+  };
 
   return (
     <Content
@@ -297,87 +19,363 @@ const SignalStrategy = () => {
       backbutton_status={true}
       backForword={true}
     >
-        <DynamicForm
-        fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
-        // page_title="Add Signal"
-        btn_name="Add Signal"
-        btn_name1="Cancel"
-        formik={formik}
-        sumit_btn={true}
-        btn_name1_route="/admin/signal"
-        btnstatus={loading}
-        additional_field1={
-          <div className="mb-3">
-            <div className="position-relative">
-              <label className="form-label">Select Stock</label>
-              <span className="text-danger">*</span>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Search stock"
-                name="stock"
-                onChange={(e) => setSearchItem(e.target.value)}
-                value={searchItem}
-                onClick={() => setShowDropdown(true)}
-                style={{ cursor: "pointer" }}
-              />
-
-              {/* {searchItem && stockList.length > 0 && showDropdown ? (
-                <div className="dropdown-list" style={dropdownStyles}>
-                  {stockList
-                    .filter((company) =>
-                      company._id.includes(searchItem.toUpperCase())
-                    )
-                    .map((company) => (
-                      <div
-                        key={company._id}
-                        onClick={() => {
-                          setSearchItem(company._id);
-                          formik.setFieldValue("stock", company._id);
-                          setShowDropdown(false);
-                        }}
-                        style={dropdownItemStyles}
-                      >
-                        {company._id}
+      <div className="card mb-0">
+        <form autoComplete="off">
+          <div className="card-body ">
+            <form autoComplete="off">
+              <div className="card-body ">
+                <div>
+                  <div className="row d-flex ">
+                    <div className="col-lg-6">
+                      <div className="input-block row mb-3">
+                        <label
+                          className="col-lg-7  col-form-label p-0 mx-3 "
+                          htmlFor="segment"
+                        >
+                          Segment<span className="text-danger">*</span>
+                        </label>
+                        <div className="col-lg-12">
+                          <select
+                            className="default-select wide form-control"
+                            aria-describedby="basic-addon1"
+                            id="segment"
+                            name="segment"
+                          >
+                            <option value="">Select Segment</option>
+                            <option value="C">Cash</option>
+                            <option value="F">Future</option>
+                            <option value="O">Option</option>
+                            <option value="O">Option Strategy</option>
+                            <option value="O">Future Strategy</option>
+                          </select>
+                        </div>
                       </div>
-                    ))
-                  }
-                </div>
-              ) : null} */}
+                    </div>
+                    <div className="col-lg-6">
+                      <div className="mb-3">
+                        <div className="position-relative">
+                          <label className="form-label">Select Stock</label>
+                          <span className="text-danger">*</span>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Search stock"
+                            name="stock"
+                            defaultValue=""
+                            style={{ cursor: "pointer" }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-6">
+                      <div className="input-block row mb-3">
+                        <label
+                          className="col-lg-7  col-form-label p-0 mx-3 "
+                          htmlFor="expiry"
+                        >
+                          Expiry Date<span className="text-danger">*</span>
+                        </label>
+                        <div className="col-lg-12">
+                          <select
+                            className="default-select wide form-control"
+                            aria-describedby="basic-addon1"
+                            id="expiry"
+                            name="expiry"
+                          >
+                            <option value="">Expiry Date</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-6">
+                      <div className="input-block row mb-3">
+                        <label
+                          className="col-lg-7  col-form-label p-0 mx-3 "
+                          htmlFor="calltype"
+                        >
+                          Call Type<span className="text-danger">*</span>
+                        </label>
+                        <div className="col-lg-12">
+                          <select
+                            className="default-select wide form-control"
+                            aria-describedby="basic-addon1"
+                            id="calltype"
+                            name="calltype"
+                          >
+                            <option value="">Call Type</option>
+                            <option value="BUY">Buy</option>
+                            <option value="SELL">Sell</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-6">
+                      <div className="row d-flex">
+                        <div className="col-lg-12 ">
+                          <div className="form-group input-block mb-3">
+                            <label htmlFor="price">
+                              Entry Price<span className="text-danger">*</span>
+                            </label>
+                            <input
+                              type="number"
+                              name="price"
+                              aria-describedby="basic-addon1"
+                              className="form-control"
+                              id="price"
+                              placeholder="Enter Entry Price"
+                              defaultValue=""
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-6">
+                      <div className="row d-flex">
+                        <div className="col-lg-12 ">
+                          <div className="form-group input-block mb-3">
+                            <label htmlFor="price">
+                              Plan<span className="text-danger">*</span>
+                            </label>
+                            <input
+                              type="number"
+                              name="price"
+                              aria-describedby="basic-addon1"
+                              className="form-control"
+                              id="price"
+                              placeholder="Enter Entry Price"
+                              defaultValue=""
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-6">
+                      <div className="input-block row mb-3">
+                        <label
+                          className="col-lg-7  col-form-label p-0 mx-3 "
+                          htmlFor="callduration"
+                        >
+                          Trade Duration<span className="text-danger">*</span>
+                        </label>
+                        <div className="col-lg-12">
+                          <select
+                            className="default-select wide form-control"
+                            aria-describedby="basic-addon1"
+                            id="callduration"
+                            name="callduration"
+                          >
+                            <option value="">Trade Duration</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-6">
+                      <div className="input-block row mb-3">
+                        <label
+                          className="col-lg-7  col-form-label p-0 mx-3 "
+                          htmlFor="entrytype"
+                        >
+                          Entry Type<span className="text-danger">*</span>
+                        </label>
+                        <div className="col-lg-12">
+                          <select
+                            className="default-select wide form-control"
+                            aria-describedby="basic-addon1"
+                            id="entrytype"
+                            name="entrytype"
+                          >
+                            <option value="">Entry Type</option>
+                            <option value="At">At</option>
+                            <option value="Above">Above</option>
+                            <option value="Below">Below</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
 
-              {formik.touched.stock &&
-                formik.errors.stock ? (
-                <div style={{ color: "red" }}>
-                  {formik.errors.stock}
-                </div>
-              ) : null}
+                    <div className="card mb-3">
+                      <div className="card-body">
+                      <div className="col-lg-12">
+                        <table className="table border-0 border-light signalstrategy-table">
+                          <thead>
+                            <tr>
+                              <td></td>
+                              <td>B/S</td>
+                              <td>Expiry</td>
+                              <td>Strike</td>
+                              <td>Type</td>
+                              <td>Lots</td>
+                              <td width={80}>Price</td>
+                              <td width={80}></td>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>
+                                {" "}
+                                <select className="form-select">
+                                  <option value="1">Cash</option>
+                                  <option value="2">Future</option>
+                                  <option value="3">Option</option>
+                                </select>
+                              </td>
+                              <td>
+                                <select className="form-select">
+                                  <option value="1">Buy</option>
+                                  <option value="2">Sell</option>
+                                </select>
+                              </td>
+                              <td>
+                                <select className="form-select">
+                                  <option value="1">One</option>
+                                  <option value="2">Two</option>
+                                  <option value="3">Three</option>
+                                </select>
+                              </td>
+                              <td>
+                                {" "}
+                                <div className="input-group d-flex">
+                                  <button
+                                    type="button"
+                                    className="button-minus btn"
+                                    onClick={decrementValue}
+                                  >
+                                    -
+                                  </button>
+                                  <input
+                                    type="number"
+                                    step="1"
+                                    value={quantity}
+                                    name="quantity"
+                                    className="quantity-field"
+                                    readOnly
+                                  />
+                                  <button
+                                    type="button"
+                                    className="button-plus btn"
+                                    onClick={incrementValue}
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                              </td>
+                              <td>
+                                <select className="form-select">
+                                  <option value="1">One</option>
+                                  <option value="2">Two</option>
+                                  <option value="3">Three</option>
+                                </select>
+                              </td>
+                              <td>
+                                <select className="form-select">
+                                  <option value="1">One</option>
+                                  <option value="2">Two</option>
+                                  <option value="3">Three</option>
+                                </select>
+                              </td>
+                              <td>
+                                <input className="form-control" type="number" />
+                              </td>
+                              <td>
+                                {" "}
+                                <i class="bx bx-trash"></i>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <div>
+                          <button className="btn btn-sm btn-secondary">Add More</button>
+                        </div>
+                      </div>
+                      </div>
+                    </div>
+                    
 
-<div className='w-100'>
-    <table className="table table-bordered">
-        <thead>
-            <tr>
-            <th>Stock</th>
-            <th>Lot Size</th>
-            <th>Trade Symbol</th>
-            </tr>
-        </thead>
-        <tbody>
-            {stockList.map((item, index) => (
-            <tr key={index}>
-                <td>{item.stock}</td>
-                <td>{item.lotsize}</td>
-                <td>{item.tradesymbol}</td>
-            </tr>
-            ))}
-        </tbody>
-        </table>
-</div>
-            </div>
+                    <div className="col-lg-4">
+                      <div className="row d-flex">
+                        <div className="col-lg-12 ">
+                          <div className="form-group input-block mb-3">
+                            <label htmlFor="stoploss">
+                            Maximum Loss<span className="text-danger">*</span>
+                            </label>
+                            <input
+                              type="number"
+                              name="stoploss"
+                              aria-describedby="basic-addon1"
+                              className="form-control"
+                              id="stoploss"
+                              placeholder="Maximum Loss"
+                              defaultValue=""
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-4">
+                      <div className="row d-flex">
+                        <div className="col-lg-12 ">
+                          <div className="form-group input-block mb-3">
+                            <label htmlFor="stoploss">
+                            Maximum Profit<span className="text-danger">*</span>
+                            </label>
+                            <input
+                              type="number"
+                              name="stoploss"
+                              aria-describedby="basic-addon1"
+                              className="form-control"
+                              id="stoploss"
+                              placeholder=" Maximum Profit"
+                              defaultValue=""
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-4">
+                      <div className="row d-flex">
+                        <div className="col-lg-12 ">
+                          <div className="form-group input-block mb-3">
+                            <label htmlFor="stoploss">
+                             Fix Target<span className="text-danger">*</span>
+                            </label>
+                            <input
+                              type="number"
+                              name="stoploss"
+                              aria-describedby="basic-addon1"
+                              className="form-control"
+                              id="stoploss"
+                              placeholder="Fix Target"
+                              defaultValue=""
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="add-customer-btns text-end mt-3 ">
+                      <a
+                        className="btn customer-btn-cancel btn btn-primary"
+                        href="#/admin/signal"
+                        data-discover="true"
+                      >
+                        Cancel
+                      </a>
+                      <button
+                        type="submit"
+                        className="btn customer-btn-save btn btn-primary m-2"
+                      >
+                        Add Signal
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
           </div>
-        }
-      />
-        </Content>
-  )
-}
+        </form>
+      </div>
+    </Content>
+  );
+};
 
-export default SignalStrategy
+export default SignalStrategy;
+
