@@ -54,15 +54,6 @@ const signalstockModel = Schema({
         trim: true,
         default: null
     },
-    add_by: {
-        type: String,
-        trim: true,
-        default: null
-    },
-    entrytype: {
-        type: String,
-        default: "0"
-    },
     lot: {
         type: String,
         default: "0"
