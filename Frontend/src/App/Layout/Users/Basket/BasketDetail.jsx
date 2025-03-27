@@ -50,7 +50,7 @@ const BasketDetail = () => {
       <div className="row border-bottom pb-3">
         <div className="col-md-8">
           <h5><b>{item?.title}</b></h5>
-          <ul className="list-group list-group-flush list shadow-none">
+          <ul className="list-group list-group-flush list shadow p-3 border border-success">
             <li className="list-group-item d-flex justify-content-between align-items-center">
            Launch Date
               <span className="badge bg-dark rounded-pill">{item?.mininvamount}</span>
@@ -105,7 +105,10 @@ const BasketDetail = () => {
         <div className="col-md-4">
           <Doughnut data={chartData} />
         </div>
-
+         <div className="col-md-12">  
+          <div className="row">
+            </div>
+          </div>
         <div className="row px-4 pt-4">
           <div className="col-md-12">
             <h6>
@@ -119,8 +122,8 @@ const BasketDetail = () => {
         </div>
       </div>
       <div className="row px-4 border-top pt-3 align-items-center">
-        <div className="col-md-2">
-          <ul className="nav nav-pills mb-3 justify-content-center flex-column ">
+        <div className="col-md-12">
+          <ul className="nav nav-pills mb-3 justify-content-center  ">
             <li className="nav-item">
               <button
                 className={`nav-link ${activeTab === "rational" ? "active btn-primary" : ""
@@ -141,7 +144,7 @@ const BasketDetail = () => {
               </button>
             </li>
           </ul></div>
-        <div className="col-md-10"> {activeTab === "rational" && (
+        <div > {activeTab === "rational" && (
           <div className="row">
             <div className="col-md-8">
               <div dangerouslySetInnerHTML={{ __html: item?.rationale }} />
