@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
 import { HandCoins } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { loadScript } from "../../../../Utils/Razorpayment";
 import { AddBasketsubscription, getQRcodedata, getBankdetaildata } from "../../../Services/UserService/User";
 import { basicsettinglist } from "../../../Services/Admin/Admin";
@@ -12,6 +12,9 @@ const Payments = () => {
 
     const token = localStorage.getItem("token");
     const userid = localStorage.getItem("id");
+
+    const navigate = useNavigate();
+
 
     const location = useLocation();
 
@@ -81,7 +84,7 @@ const Payments = () => {
     const getkeybydata = async () => {
         try {
             const response = await basicsettinglist();
-            // console.log("response.data[0]",response.data[0].officepaymenystatus);
+            // console.log("response.data[0]",response.data[0].razorpay_key);
 
             if (response.status) {
                 setGetkey(response?.data[0]?.razorpay_key);
@@ -121,11 +124,13 @@ const Payments = () => {
                         price: finalAmount,
                         discount: 0,
                         orderid: response1?.razorpay_order_id || "",
+                        coupon:"",
                     };
 
                     try {
                         const response2 = await AddBasketsubscription(data, token);
                         if (response2?.status) {
+                            navigate("/user/basket")
                             window.location.reload();
                         }
                     } catch (error) {
