@@ -168,6 +168,7 @@ const Viewclientdetail = () => {
       };
 
       const response = await GetClientSignaldetail(data, token);
+
       if (response.status) {
         if (response?.data?.length > 0 && response?.data) {
           setClients(response.data);
@@ -175,6 +176,8 @@ const Viewclientdetail = () => {
         } else {
           setClients([]);
         }
+      } else {
+        setClients([]);
       }
     } catch (error) {
       console.log("Error:", error);
