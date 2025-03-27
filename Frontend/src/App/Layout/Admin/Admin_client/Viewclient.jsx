@@ -47,7 +47,7 @@ const Viewclientdetail = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
 
-  console.log("totalRows", totalRows)
+
 
 
   const [filters, setFilters] = useState({
@@ -159,20 +159,25 @@ const Viewclientdetail = () => {
       const data = {
         page: currentPage,
         client_id: id,
-        from: filters.from,
-        to: filters.to,
-        service_id: filters.service,
-        stock: searchstock,
+        from: filters.from || "",
+        to: filters.to || "",
+        service_id: filters.service || "",
+        stock: searchstock || "",
         type: "",
-        search: searchInput,
+        search: searchInput || "",
       };
 
       const response = await GetClientSignaldetail(data, token);
+
       if (response.status) {
-        console.log("response", response)
-        setClients(response.data);
-        setTotalRows(response.pagination.total);
-  
+        if (response?.data?.length > 0 && response?.data) {
+          setClients(response.data);
+          setTotalRows(response.pagination.total);
+        } else {
+          setClients([]);
+        }
+      } else {
+        setClients([]);
       }
     } catch (error) {
       console.log("Error:", error);
@@ -245,7 +250,7 @@ const Viewclientdetail = () => {
     setSearchInput("");
     fetchAdminServices("");
     fetchStockList();
-    getAllSignal();
+
   };
 
   useEffect(() => {
@@ -547,11 +552,11 @@ const Viewclientdetail = () => {
                       <select
                         name="service"
                         className="form-control radius-10"
-                        value={filters.service}
+                        value={filters.service || ""}
                         onChange={handleFilterChange}
                       >
                         <option value="">Select Service</option>
-                        {serviceList.map((service) => (
+                        {serviceList?.map((service) => (
                           <option key={service._id} value={service._id}>
                             {service.title}
                           </option>

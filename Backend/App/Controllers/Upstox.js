@@ -24,7 +24,6 @@ class Upstox {
         try {
             var tokenCode = req.query.code;
             var email = req.query.state;
-
             if (tokenCode != undefined) {
 
                 const client = await Clients_Modal.findOne({ Email: email,ActiveStatus:1,del:0 });
@@ -35,6 +34,8 @@ class Upstox {
                         message: "Client not found"
                     });
                 }
+
+
                 var hosts = req.headers.host;
 
                 const requestData = new URLSearchParams();
