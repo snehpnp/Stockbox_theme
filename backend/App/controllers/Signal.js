@@ -2169,7 +2169,6 @@ serviceName = "Future";
 }
 
 
-console.log("stock",stock);
 let stockss;
 let tradesymbols;
 
