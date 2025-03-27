@@ -46,6 +46,10 @@ const Viewclientdetail = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
+
+  console.log("totalRows", totalRows)
+
+
   const [filters, setFilters] = useState({
     from: "",
     to: "",
@@ -167,7 +171,7 @@ const Viewclientdetail = () => {
       if (response.status) {
         console.log("response", response)
         setClients(response.data);
-        setTotalRows(response.pagination.total);
+        setTotalRows(response.pagination.totalPages);
 
       }
     } catch (error) {
@@ -579,11 +583,9 @@ const Viewclientdetail = () => {
                   <Table1
                     columns={columns1}
                     data={clients}
-                    pagination
-                    paginationServer
-                    paginationTotalRows={totalRows}
-                    onChangePage={handlePageChange}
-                    paginationDefaultPage={currentPage}
+                    totalRows={totalRows}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
                   />
                 </>
               )}
