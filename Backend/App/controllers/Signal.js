@@ -951,7 +951,7 @@ class Signal {
           data: []
         });
       }
-
+      const validServiceIds = plans.map(plan => plan.serviceid.toString());
 
       const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
 
@@ -975,7 +975,7 @@ class Signal {
 
 
       const query = {
-        service: { $in: service_ids }
+        service: { $in: validServiceIds }
       };
 
       if (client.deliverystatus === true) {
@@ -1106,6 +1106,7 @@ class Signal {
           data: []
         });
       }
+      const validServiceIds = plans.map(plan => plan.serviceid.toString());
 
       const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
 
@@ -1128,7 +1129,7 @@ class Signal {
 
 
       const query = {
-        service: { $in: service_ids },
+        service: { $in: validServiceIds },
       };
 
       // Check if deliverystatus is true
