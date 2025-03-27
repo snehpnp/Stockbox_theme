@@ -10,6 +10,7 @@ import BrokersData from "../../../../Utils/BrokersData";
 import { base_url } from "../../../../Utils/config";
 import { Eye } from "lucide-react";
 
+
 const Demat = () => {
 
 
@@ -94,6 +95,8 @@ const Demat = () => {
       console.log("error", error);
     }
   };
+
+
 
 
   const handleShowModal = (title) => {
