@@ -172,7 +172,7 @@ const Viewclientdetail = () => {
         console.log("response", response)
         setClients(response.data);
         setTotalRows(response.pagination.total);
-
+  
       }
     } catch (error) {
       console.log("Error:", error);
