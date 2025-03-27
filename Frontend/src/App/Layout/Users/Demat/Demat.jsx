@@ -228,7 +228,6 @@ const Demat = () => {
   const fieldTypes = brokerFieldsMap[userDetail || 1];
 
 
-
   const closeBrokerModal = () => {
     setViewModel(false);
   };
@@ -244,7 +243,7 @@ const Demat = () => {
 
             {brokers.length > 0 ? brokers?.map((broker) => (
               <>
-              {/* <div className="col-md-3 col-sm-6 mb-5" key={broker?.id}>
+                {/* <div className="col-md-3 col-sm-6 mb-5" key={broker?.id}>
                 <div className="card radius-5" onClick={() => setUserDetail(broker?.id)}>
                   <div className="card-body p-2 text-center cursor-pointer" onClick={() => handleShowModal(broker?.name)}>
                     <div className="p-4 border radius-5">
@@ -255,21 +254,23 @@ const Demat = () => {
                 </div>
               </div> */}
 
-<div className="col-md-3 col-sm-6 mb-5">
-<div className="card-wrap">
-  <div className="card-header one">
-  <img className="img-fluid" src={broker?.img} alt={broker?.name} />
-  </div>
-  <div className="card-content">
-  <h5 className="mb-3 mt-4">{broker?.name}</h5>
-    <button className="btn btn-primary" onClick={() => handleShowModal(broker?.name)}>
+                <div className="col-md-3 col-sm-6 mb-5">
+                  <div className="card-wrap">
+                    <div className="card-header one">
+                      <img className="img-fluid" src={broker?.img} alt={broker?.name} />
+                    </div>
+                    <div className="card-content">
+                      <h5 className="mb-3 mt-4">{broker?.name}</h5>
+                      <button className="btn btn-primary" onClick={() => { handleShowModal(broker?.name); setUserDetail(broker?.id) }}>
 
-    <i className="fa fa-eye"></i>
-      View</button>
-  </div>
-</div>
-</div>
-</>
+                        <i className="fa fa-eye"></i>
+                        View
+
+                      </button>
+                    </div>
+                  </div>
+                </div >
+              </>
             )) : <div className="text-center mt-5">
               <img
                 src="/assets/images/norecordfound.png"
@@ -281,16 +282,16 @@ const Demat = () => {
               <BrokersData closeModal={closeBrokerModal} type={userDetail} data={brokerData} />
             )}
           </div>
-         
-       
 
-          
+
+
+
         </div>
 
-      </Content>
+      </Content >
 
 
-    </div>
+    </div >
   );
 };
 
