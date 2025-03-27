@@ -1118,7 +1118,6 @@ class Angle {
         }
     }
 
-
     async MultipleplaceOrder(req, res) {
         try {
             const { id, signalid, quantity } = req.body;
@@ -1148,8 +1147,7 @@ class Angle {
             // ✅ Authorization Data
             const authToken = client.authtoken;
     
-            // ✅ Order Requests Array
-            let ordersData = [];
+            let orderRecords = [];
     
             for (let stock of stocks) {
                 let optiontype, exchange, producttype;
@@ -1169,14 +1167,14 @@ class Angle {
                     stockData = await Stock_Modal.findOne({
                         symbol: signal.stock,
                         segment: stock.segment,
-                        //    option_type: optiontype 
+                        //    option_type: optiontype
                     });
                 } else if (stock.segment === "F") {
                     stockData = await Stock_Modal.findOne({
                         symbol: signal.stock,
                         segment: stock.segment,
                         expiry: stock.expirydate,
-                        //    option_type: optiontype 
+                        //    option_type: optiontype
                     });
                 } else {
                     stockData = await Stock_Modal.findOne({
@@ -1189,11 +1187,11 @@ class Angle {
                 }
     
                 if (!stockData) {
-                    return res.status(404).json({ status: false, message: `Stock not found for ${stock.tradesymbol}` });
+                    return res.status(404).json({ status: false, message: `Stock not found for ${stockData.tradesymbol}` });
                 }
     
                 // ✅ Order Object
-                ordersData.push({
+                const orderData = {
                     "variety": "NORMAL",
                     "tradingsymbol": stockData.tradesymbol,
                     "symboltoken": stockData.instrument_token,
@@ -1206,95 +1204,58 @@ class Angle {
                     "squareoff": "0",
                     "stoploss": "0",
                     "quantity": quantity
-                });
-            }
+                };
     
-            let config = {
-                method: 'post',
-                url: 'https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/placeOrder',
-                headers: {
-                    'Authorization': `Bearer ${authToken}`,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-UserType': 'USER',
-                    'X-SourceID': 'WEB',
-                    'X-ClientLocalIP': 'CLIENT_LOCAL_IP', // Replace with actual IP
-                    'X-ClientPublicIP': 'CLIENT_PUBLIC_IP', // Replace with actual IP
-                    'X-MACAddress': 'MAC_ADDRESS', // Replace with actual MAC address
-                    'X-PrivateKey': client.apikey // Replace with actual API key
-                },
-                data: JSON.stringify(ordersData)
-            };
+                let config = {
+                    method: 'post',
+                    url: 'https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/placeOrder',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-UserType': 'USER',
+                        'X-SourceID': 'WEB',
+                        'X-ClientLocalIP': 'CLIENT_LOCAL_IP', // Replace with actual IP
+                        'X-ClientPublicIP': 'CLIENT_PUBLIC_IP', // Replace with actual IP
+                        'X-MACAddress': 'MAC_ADDRESS', // Replace with actual MAC address
+                        'X-PrivateKey': client.apikey // Replace with actual API key
+                    },
+                    data: JSON.stringify([orderData]) // Send order data as an array
+                };
     
-            axios(config)
-                .then(async (response) => {
-                    if (response.data.message == 'SUCCESS') {
-                        let orderRecords = [];
-                        for (let stock of stocks) {
-
-
-                            let stockData;
-                            if (stock.segment === "C") {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    //    option_type: optiontype 
-                                });
-                            } else if (stock.segment === "F") {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    expiry: stock.expirydate,
-                                    //    option_type: optiontype 
-                                });
-                            } else {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    expiry: stock.expirydate,
-                                    option_type: optiontype,
-                                    strike: stock.strikeprice
-                                });
-                            }
-                
-                            orderRecords.push({
-                                clientid: client._id,
-                                signalid: signal._id,
-                                orderid: response.data.data.orderid,
-                                uniqueorderid: response.data.data.uniqueorderid,
-                                ordertype: stock.calltype,
-                                borkerid: 1,
-                                quantity: quantity,
-                                ordertoken: stockData.instrument_token,
-                                exchange: stockData.exchange
-                            });
-                        }
+                // Make the API call and await the response for each stock
+                const response = await axios(config);
     
-                        await Order_Modal.insertMany(orderRecords);
+                if (response.data.message === 'SUCCESS') {
+                  
+                    // Insert individual order record for each stock
+                    orderRecords.push({
+                        clientid: client._id,
+                        signalid: signal._id,
+                        orderid: response.data.data.orderid,
+                        uniqueorderid: response.data.data.uniqueorderid,
+                        ordertype: stock.calltype,
+                        borkerid: 1,
+                        quantity: quantity,
+                        ordertoken: stockData.instrument_token,
+                        exchange: stockData.exchange
+                    });
     
-                        return res.json({
-                            status: true,
-                            message: "Order Placed Successfully",
-                            data: response.data
-                        });
-                    } else {
-                        let url;
-                        if (response.data.message == "Invalid Token") {
-                            url = `https://smartapi.angelone.in/publisher-login?api_key=${client.apikey}`;
-                        }
-                        return res.status(500).json({
-                            status: false,
-                            url: url,
-                            message: response.data.message
-                        });
-                    }
-                })
-                .catch(async (error) => {
+                    // Insert the order records into the database after processing the current stock
+                    await Order_Modal.insertMany(orderRecords);
+                } else {
                     return res.status(500).json({
                         status: false,
-                        message: error.response ? error.response.data : "An error occurred while placing the order"
+                        message: response.data.message
                     });
-                });
+                }
+            }
+    
+            return res.json({
+                status: true,
+                message: "Orders Placed Successfully",
+                data: orderRecords
+            });
     
         } catch (error) {
             return res.status(500).json({
@@ -1304,10 +1265,9 @@ class Angle {
         }
     }
     
-
     async MultipleExitplaceOrder(req, res) {
         try {
-            const { id, signalid, quantity, price } = req.body;
+            const { id, signalid, quantity } = req.body;
     
             // ✅ Client Check
             const client = await Clients_Modal.findById(id);
@@ -1334,7 +1294,7 @@ class Angle {
             // ✅ Authorization Data
             const authToken = client.authtoken;
     
-            let ordersData = [];
+            let orderRecords = [];
     
             for (let stock of stocks) {
                 let optiontype, exchange, producttype;
@@ -1348,19 +1308,20 @@ class Angle {
                 }
     
                 producttype = signal.callduration === "Intraday" ? "INTRADAY" : (stock.segment === "C" ? "DELIVERY" : "CARRYFORWARD");
+    
                 let stockData;
                 if (stock.segment === "C") {
                     stockData = await Stock_Modal.findOne({
                         symbol: signal.stock,
                         segment: stock.segment,
-                        //    option_type: optiontype 
+                        //    option_type: optiontype
                     });
                 } else if (stock.segment === "F") {
                     stockData = await Stock_Modal.findOne({
                         symbol: signal.stock,
                         segment: stock.segment,
                         expiry: stock.expirydate,
-                        //    option_type: optiontype 
+                        //    option_type: optiontype
                     });
                 } else {
                     stockData = await Stock_Modal.findOne({
@@ -1384,7 +1345,7 @@ class Angle {
                     positionData = await CheckPosition(client.apikey, authToken, stock.segment, stockData.instrument_token, producttype, stock.calltype, stockData.tradesymbol);
                 } catch (error) {}
     
-                if (stock.segment == "C") {
+                if (stock.segment === "C") {
                     try {
                         holdingData = await CheckHolding(client.apikey, authToken, stock.segment, stockData.instrument_token, producttype, stock.calltype);
                     } catch (error) {}
@@ -1397,7 +1358,7 @@ class Angle {
                 let calltypes = stock.calltype === 'BUY' ? "SELL" : "BUY";
     
                 if (totalValue >= quantity) {
-                    ordersData.push({
+                    const orderData = {
                         "variety": "NORMAL",
                         "tradingsymbol": stockData.tradesymbol,
                         "symboltoken": stockData.instrument_token,
@@ -1410,7 +1371,45 @@ class Angle {
                         "squareoff": "0",
                         "stoploss": "0",
                         "quantity": quantity
-                    });
+                    };
+    
+                    let config = {
+                        method: 'post',
+                        url: 'https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/placeOrder',
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-UserType': 'USER',
+                            'X-SourceID': 'WEB',
+                            'X-ClientLocalIP': 'CLIENT_LOCAL_IP',
+                            'X-ClientPublicIP': 'CLIENT_PUBLIC_IP',
+                            'X-MACAddress': 'MAC_ADDRESS',
+                            'X-PrivateKey': client.apikey
+                        },
+                        data: JSON.stringify([orderData])
+                    };
+    
+                    // Make the API call and await the response for each stock
+                    const response = await axios(config);
+    
+                    if (response.data.message === 'SUCCESS') {
+                      
+                        orderRecords.push({
+                            clientid: client._id,
+                            signalid: signal._id,
+                            orderid: response.data.data.orderid,
+                            uniqueorderid: response.data.data.uniqueorderid,
+                            ordertype: calltypes,
+                            borkerid: 1,
+                            quantity: quantity,
+                            ordertoken: stockData.instrument_token,
+                            exchange: stockData.exchange
+                        });
+    
+                        // Insert the order records into the database after processing the current stock
+                        await Order_Modal.insertMany(orderRecords);
+                    }
                 } else {
                     return res.status(500).json({
                         status: false,
@@ -1419,93 +1418,11 @@ class Angle {
                 }
             }
     
-            let config = {
-                method: 'post',
-                url: 'https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/placeOrder',
-                headers: {
-                    'Authorization': `Bearer ${authToken}`,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-UserType': 'USER',
-                    'X-SourceID': 'WEB',
-                    'X-ClientLocalIP': 'CLIENT_LOCAL_IP',
-                    'X-ClientPublicIP': 'CLIENT_PUBLIC_IP',
-                    'X-MACAddress': 'MAC_ADDRESS',
-                    'X-PrivateKey': client.apikey
-                },
-                data: JSON.stringify(ordersData)
-            };
-    
-            axios(config)
-                .then(async (response) => {
-                    if (response.data.message == 'SUCCESS') {
-                        let orderRecords = [];
-                        let i = 0;
-                        for (let stock of stocks) {
-                         let stockData;
-                            if (stock.segment === "C") {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    //    option_type: optiontype 
-                                });
-                            } else if (stock.segment === "F") {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    expiry: stock.expirydate,
-                                    //    option_type: optiontype 
-                                });
-                            } else {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    expiry: stock.expirydate,
-                                    option_type: optiontype,
-                                    strike: stock.strikeprice
-                                });
-                            }
-                            let calltypes = stock.calltype === 'BUY' ? "SELL" : "BUY";
-
-                            orderRecords.push({
-                                clientid: client._id,
-                                signalid: signal._id,
-                                orderid: response.data.data.orderid,
-                                uniqueorderid: response.data.data.uniqueorderid,
-                                ordertype: calltypes,
-                                borkerid: 1,
-                                quantity: quantity,
-                                ordertoken: stockData.instrument_token,
-                                exchange: stockData.exchange
-                            });
-                            i++;
-                        }
-    
-                        await Order_Modal.insertMany(orderRecords);
-    
-                        return res.json({
-                            status: true,
-                            message: "Exit Order Placed Successfully",
-                            data: response.data
-                        });
-                    } else {
-                        let url;
-                        if (response.data.message == "Invalid Token") {
-                            url = `https://smartapi.angelone.in/publisher-login?api_key=${client.apikey}`;
-                        }
-                        return res.status(500).json({
-                            status: false,
-                            url: url,
-                            message: response.data.message
-                        });
-                    }
-                })
-                .catch(async (error) => {
-                    return res.status(500).json({
-                        status: false,
-                        message: error.response ? error.response.data : "An error occurred while placing the order"
-                    });
-                });
+            return res.json({
+                status: true,
+                message: "Exit Order Placed Successfully",
+                data: orderRecords
+            });
     
         } catch (error) {
             return res.status(500).json({

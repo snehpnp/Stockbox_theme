@@ -1,7 +1,7 @@
 const router = require("express").Router()
 const { checkPermission } = require('../Middleware/permissionMiddleware'); // Path to your middleware
 
-const {AddService,getService,updateService,deleteService,detailService,statusChange,activeService} = require('../Controllers/Service')
+const {AddService,getService,updateService,deleteService,detailService,statusChange,activeService,getServiceStrategy} = require('../Controllers/Service')
 
 const PERMISSIONS = {
     ADD: 'addservice',
@@ -22,5 +22,6 @@ router.get('/service/detail/:id', detailService);
 router.post('/service/change-status', statusChange);
 router.get('/service/activeservice',   activeService);
 
+router.get('/service/liststratrgy', getServiceStrategy);
 
 module.exports = router;

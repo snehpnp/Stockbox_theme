@@ -56,10 +56,20 @@ const signalsdataModel = Schema({
         trim: true,
         default: null
     },
-    profitlosstype: {
+    maximum_loss: {
         type: String,
         trim: true,
-        default: null
+        default: 0
+    },
+    maximum_profit: {
+        type: String,
+        trim: true,
+        default: 0
+    },
+    required_margin: {
+        type: String,
+        trim: true,
+        default: 0
     },
     del: {
         type: Number,
