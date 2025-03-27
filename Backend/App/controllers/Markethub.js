@@ -1024,15 +1024,13 @@ data : data
     }
 }
 
-async MultipleplaceOrder(req, res) {
+async  MultipleplaceOrder(req, res) {
     try {
         const { id, signalid, quantity } = req.body;
 
         // ✅ Client Check
         const client = await Clients_Modal.findById(id);
-        if (!client) {
-            return res.status(404).json({ status: false, message: "Client not found" });
-        }
+        if (!client) return res.status(404).json({ status: false, message: "Client not found" });
 
         if (client.tradingstatus == 0) {
             return res.status(400).json({ status: false, message: "Client Broker Not Login, Please Login With Broker" });
@@ -1040,221 +1038,21 @@ async MultipleplaceOrder(req, res) {
 
         // ✅ Signal Check
         const signal = await Signalsdata_Modal.findById(signalid);
-        if (!signal) {
-            return res.status(404).json({ status: false, message: "Signal not found" });
-        }
+        if (!signal) return res.status(404).json({ status: false, message: "Signal not found" });
 
         // ✅ Fetch Stocks for the Given Signal
         const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
-        if (stocks.length === 0) {
-            return res.status(404).json({ status: false, message: "No stock found for this signal" });
-        }
+        if (stocks.length === 0) return res.status(404).json({ status: false, message: "No stock found for this signal" });
 
-        // ✅ Authorization Data
         const authToken = client.authtoken;
-
-        let ordersData = [];
+        let responses = [];
 
         for (let stock of stocks) {
-            let optiontype, exchange, producttype, tradingsymbol;
+            let exchange = stock.segment === "C" ? "NSE" : "NFO";
+            let optiontype = stock.segment === "C" ? "EQ" : (stock.segment === "F" ? "UT" : stock.optiontype);
+            let producttype = signal.callduration === "Intraday" ? "MIS" : (stock.segment === "C" ? "CNC" : "NRML");
 
-            if (stock.segment === "C") {
-                optiontype = "EQ";
-                exchange = "NSE";
-            } else {
-                optiontype = stock.segment === "F" ? "UT" : stock.optiontype;
-                exchange = "NFO";
-            }
-
-            producttype = signal.callduration === "Intraday" ? "MIS" : (stock.segment === "C" ? "CNC" : "NRML");
-
-            let stockData;
-            if (stock.segment === "C") {
-                stockData = await Stock_Modal.findOne({
-                    symbol: signal.stock,
-                    segment: stock.segment,
-                });
-            } else if (stock.segment === "F") {
-                stockData = await Stock_Modal.findOne({
-                    symbol: signal.stock,
-                    segment: stock.segment,
-                    expiry: stock.expirydate,
-                });
-            } else {
-                stockData = await Stock_Modal.findOne({
-                    symbol: signal.stock,
-                    segment: stock.segment,
-                    expiry: stock.expirydate,
-                    option_type: optiontype,
-                    strike: stock.strikeprice
-                });
-            }
-
-            if (!stockData) {
-                return res.status(404).json({ status: false, message: `Stock not found for ${stockData.tradesymbol}` });
-            }
-
-            // ✅ Set Final Trading Symbol
-            tradingsymbol = stock.segment.toLowerCase() === 'c' ? stockData.tradesymbol : stockData.tradesymbol;
-
-            // ✅ Order Data
-            ordersData.push({
-                variety: "NORMAL",
-                tradingsymbol: tradingsymbol,
-                symboltoken: stockData.instrument_token,
-                transactiontype: stock.calltype,
-                exchange: exchange,
-                ordertype: "MARKET",
-                producttype: producttype,
-                duration: "DAY",
-                price: stock.price,
-                quantity: parseInt(quantity),
-                triggerprice: "0",
-                disclosedquantity: "0",
-                ordersource: null,
-                naicCode: null,
-                remarks: "_",
-                Confirm: true,
-                AlgoId: "0",
-                AlgoType: "0",
-            });
-        }
-
-        // ✅ Order API Call
-        let config = {
-            method: 'post',
-            maxBodyLength: Infinity,
-            url: 'https://fund.markethubonline.com/middleware/api/v2/PlaceOrder',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
-            },
-            data: ordersData
-        };
-
-        axios(config)
-            .then(async (response) => {
-                if (response.data && response.data.user_order_number) {
-                    let orderRecords = [];
-
-                    for (let stock of stocks) {
-                       
-                       
-                       
-                        let stockData,exchange;
-                        if (stock.segment === "C") {
-                            stockData = await Stock_Modal.findOne({
-                                symbol: signal.stock,
-                                segment: stock.segment,
-                            });
-                        } else if (stock.segment === "F") {
-                            stockData = await Stock_Modal.findOne({
-                                symbol: signal.stock,
-                                segment: stock.segment,
-                                expiry: stock.expirydate,
-                            });
-                        } else {
-                            stockData = await Stock_Modal.findOne({
-                                symbol: signal.stock,
-                                segment: stock.segment,
-                                expiry: stock.expirydate,
-                                option_type: optiontype,
-                                strike: stock.strikeprice
-                            });
-                        }
-                        
-                if (stock.segment === "C") {
-                    exchange = "NSE";
-                } else {
-                    exchange = "NFO";
-                }
-
-                           orderRecords.push({
-                            clientid: client._id,
-                            signalid: signal._id,
-                            orderid: response.data.user_order_number,
-                            ordertype: stock.calltype,
-                            brokerid: 4,  // Market Hub broker ID
-                            quantity: quantity,
-                            ordertoken: stockData.instrument_token,
-                            exchange: exchange
-                        });
-                    }
-
-                    await Order_Modal.insertMany(orderRecords);
-
-                    return res.json({
-                        status: true,
-                        message: "Order Placed Successfully",
-                        data: response.data
-                    });
-                } else {
-                    return res.status(400).json({
-                        status: false,
-                        message: "Order placement failed",
-                        data: response.data
-                    });
-                }
-            })
-            .catch(async (error) => {
-                return res.status(500).json({
-                    status: false,
-                    message: error.response ? error.response.data : "An error occurred while placing the order"
-                });
-            });
-
-    } catch (error) {
-        return res.status(500).json({
-            status: false,
-            message: error.response ? error.response.data : "An error occurred while placing the order"
-        });
-    }
-}
-
-async MultipleExitplaceOrder(req, res) {
-    try {
-        const { id, signalid, quantity } = req.body;
-
-        // ✅ Client Check
-        const client = await Clients_Modal.findById(id);
-        if (!client) {
-            return res.status(404).json({ status: false, message: "Client not found" });
-        }
-
-        if (client.tradingstatus == 0) {
-            return res.status(400).json({ status: false, message: "Client Broker Not Login, Please Login With Broker" });
-        }
-
-        // ✅ Signal Check
-        const signal = await Signalsdata_Modal.findById(signalid);
-        if (!signal) {
-            return res.status(404).json({ status: false, message: "Signal not found" });
-        }
-
-        // ✅ Fetch Stocks for the Given Signal
-        const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
-        if (stocks.length === 0) {
-            return res.status(404).json({ status: false, message: "No stock found for this signal" });
-        }
-
-        // ✅ Authorization Data
-        const authToken = client.authtoken;
-        let ordersData = [];
-
-        for (let stock of stocks) {
-            let optiontype, exchange, producttype, tradingsymbol;
-
-            if (stock.segment === "C") {
-                optiontype = "EQ";
-                exchange = "NSE";
-            } else {
-                optiontype = stock.segment === "F" ? "UT" : stock.optiontype;
-                exchange = "NFO";
-            }
-
-            producttype = signal.callduration === "Intraday" ? "MIS" : (stock.segment === "C" ? "CNC" : "NRML");
-
-            // ✅ Stock Query
+            // ✅ Fetch Stock Data
             let stockData;
             if (stock.segment === "C") {
                 stockData = await Stock_Modal.findOne({ symbol: signal.stock, segment: stock.segment });
@@ -1265,129 +1063,184 @@ async MultipleExitplaceOrder(req, res) {
             }
 
             if (!stockData) {
-                return res.status(404).json({ status: false, message: `Stock not found for ${stock.tradesymbol}` });
+                responses.push({ status: false, message: `Stock not found for ${stockData.tradesymbol}` });
+                continue;
             }
 
-            let holdingData = { qty: 0 };
-            let positionData = { qty: 0 };
-            let totalValue = 0;
+            // ✅ Order Data
+            let orderData = JSON.stringify({
+                variety: "NORMAL",
+                tradingsymbol: stockData.tradesymbol,
+                symboltoken: stockData.instrument_token,
+                transactiontype: stock.calltype,
+                exchange: exchange,
+                ordertype: "MARKET",
+                producttype: producttype,
+                duration: "DAY",
+                price: stock.price,
+                quantity: parseInt(quantity),
+                triggerprice: "0",
+                disclosedquantity: "0",
+                remarks: "_",
+                Confirm: true,
+                AlgoId: "0",
+                AlgoType: "0",
+            });
 
+            // ✅ API Call
             try {
-                positionData = await CheckPosition(client.apikey, authToken, stock.segment, stockData.instrument_token, producttype, stock.calltype, stockData.tradesymbol);
-            } catch (error) {}
+                let config = {
+                    method: 'post',
+                    maxBodyLength: Infinity,
+                    url: 'https://fund.markethubonline.com/middleware/api/v2/PlaceOrder',
+                    headers: { 
+                      'Content-Type': 'application/json', 
+                      'Authorization': `Bearer ${client.authtoken}`
+                    },
+                    data: orderData
+                  };
+                
+                                      // Make the request
+                    const response = await axios.request(config);
 
+                if (response.data.user_order_number != undefined) {
+                    // ✅ Insert into Database
+                    await Order_Modal.create({
+                        clientid: client._id,
+                        signalid: signal._id,
+                        orderid: response.data.user_order_number,
+                        ordertype: stock.calltype,
+                        brokerid: 4, // Market Hub Broker
+                        quantity: quantity,
+                        ordertoken: stockData.instrument_token,
+                        exchange: exchange
+                    });
+
+                    responses.push({ status: true, message: `Order placed for ${stockData.tradesymbol}` });
+                } else {
+                    responses.push({ status: false, message: `Failed to place order for ${stockData.tradesymbol}` });
+                }
+            } catch (error) {
+                responses.push({ status: false, message: `Error placing order for ${stockData.tradesymbol}: ${error.message}` });
+            }
+        }
+
+        return res.json({ status: true, responses });
+
+    } catch (error) {
+        return res.status(500).json({ status: false, message: error.message || "An error occurred while placing orders" });
+    }
+}
+
+async MultipleExitplaceOrder(req, res) {
+    try {
+        const { id, signalid, quantity } = req.body;
+
+        // ✅ Client Check
+        const client = await Clients_Modal.findById(id);
+        if (!client) return res.status(404).json({ status: false, message: "Client not found" });
+
+        if (client.tradingstatus == 0) {
+            return res.status(400).json({ status: false, message: "Client Broker Not Login, Please Login With Broker" });
+        }
+
+        // ✅ Signal Check
+        const signal = await Signalsdata_Modal.findById(signalid);
+        if (!signal) return res.status(404).json({ status: false, message: "Signal not found" });
+
+        // ✅ Fetch Stocks for the Given Signal
+        const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
+        if (stocks.length === 0) return res.status(404).json({ status: false, message: "No stock found for this signal" });
+
+        const authToken = client.authtoken;
+        let responses = [];
+
+        for (let stock of stocks) {
+            let exchange = stock.segment === "C" ? "NSE" : "NFO";
+            let optiontype = stock.segment === "C" ? "EQ" : (stock.segment === "F" ? "UT" : stock.optiontype);
+            let producttype = signal.callduration === "Intraday" ? "MIS" : (stock.segment === "C" ? "CNC" : "NRML");
+
+            // ✅ Fetch Stock Data
+            let stockData;
             if (stock.segment === "C") {
-                try {
-                    holdingData = await CheckHolding(client.apikey, authToken, stock.segment, stockData.instrument_token, producttype, stock.calltype);
-                } catch (error) {}
-
-                totalValue = Math.abs(positionData.qty) + holdingData.qty;
+                stockData = await Stock_Modal.findOne({ symbol: signal.stock, segment: stock.segment });
+            } else if (stock.segment === "F") {
+                stockData = await Stock_Modal.findOne({ symbol: signal.stock, segment: stock.segment, expiry: stock.expirydate });
             } else {
-                totalValue = Math.abs(positionData.qty);
+                stockData = await Stock_Modal.findOne({ symbol: signal.stock, segment: stock.segment, expiry: stock.expirydate, option_type: optiontype, strike: stock.strikeprice });
+            }
+
+            if (!stockData) {
+                responses.push({ status: false, message: `Stock not found for ${stockData.tradesymbol}` });
+                continue;
             }
 
             let calltypes = stock.calltype === "BUY" ? "SELL" : "BUY";
 
-            if (totalValue >= quantity) {
-                // ✅ Prepare Exit Order Data
-                ordersData.push({
-                    variety: "NORMAL",
-                    tradingsymbol: stockData.tradesymbol,
-                    symboltoken: stockData.instrument_token,
-                    transactiontype: calltypes,
-                    exchange,
-                    ordertype: "MARKET",
-                    producttype,
-                    duration: "DAY",
-                    price:stock.price,
-                    quantity,
-                    triggerprice: "0",
-                    disclosedquantity: "0",
-                    ordersource: null,
-                    naicCode: null,
-                    remarks: "_",
-                    Confirm: true,
-                    AlgoId: "0",
-                    AlgoType: "0",
-                });
-            } else {
-                return res.status(500).json({ status: false, message: `Insufficient quantity for stock ${stock.tradesymbol}` });
+            // ✅ Prepare Exit Order Data
+            let orderData = JSON.stringify({
+                variety: "NORMAL",
+                tradingsymbol: stockData.tradesymbol,
+                symboltoken: stockData.instrument_token,
+                transactiontype: calltypes,
+                exchange: exchange,
+                ordertype: "MARKET",
+                producttype: producttype,
+                duration: "DAY",
+                price: stock.price,
+                quantity: parseInt(quantity),
+                triggerprice: "0",
+                disclosedquantity: "0",
+                remarks: "_",
+                Confirm: true,
+                AlgoId: "0",
+                AlgoType: "0",
+            });
+
+            // ✅ API Call
+            try {
+                let config = {
+                    method: 'post',
+                    maxBodyLength: Infinity,
+                    url: 'https://fund.markethubonline.com/middleware/api/v2/PlaceOrder',
+                    headers: { 
+                      'Content-Type': 'application/json', 
+                      'Authorization': `Bearer ${client.authtoken}`
+                    },
+                    data: orderData
+                  };
+                
+                                      // Make the request
+                    const response = await axios.request(config);
+
+                if (response.data.user_order_number != undefined) {
+                    // ✅ Insert into Database
+                    await Order_Modal.create({
+                        clientid: client._id,
+                        signalid: signal._id,
+                        orderid: response.data.user_order_number,
+                        ordertype: calltypes,
+                        brokerid: 4, // Market Hub Broker
+                        quantity: quantity,
+                        ordertoken: stockData.instrument_token,
+                        exchange: exchange
+                    });
+
+                    responses.push({ status: true, message: `Exit order placed for ${stockData.tradesymbol}` });
+                } else {
+                    responses.push({ status: false, message: `Failed to place exit order for ${stockData.tradesymbol}` });
+                }
+            } catch (error) {
+                responses.push({ status: false, message: `Error placing exit order for ${stockData.tradesymbol}: ${error.message}` });
             }
         }
 
-        // ✅ Order API Call (Market Hub)
-        const config = {
-            method: "post",
-            maxBodyLength: Infinity,
-            url: "https://fund.markethubonline.com/middleware/api/v2/PlaceOrder",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${client.authtoken}`
-            },
-            data: ordersData,
-        };
+        return res.json({ status: true, responses });
 
-        const response = await axios.request(config);
-        if (response.data.user_order_number) {
-            let orderRecords = [];
-
-            for (let stock of stocks) {
-                let stockData,exchange;
-                if (stock.segment === "C") {
-                    stockData = await Stock_Modal.findOne({
-                        symbol: signal.stock,
-                        segment: stock.segment,
-                    });
-                } else if (stock.segment === "F") {
-                    stockData = await Stock_Modal.findOne({
-                        symbol: signal.stock,
-                        segment: stock.segment,
-                        expiry: stock.expirydate,
-                    });
-                } else {
-                    stockData = await Stock_Modal.findOne({
-                        symbol: signal.stock,
-                        segment: stock.segment,
-                        expiry: stock.expirydate,
-                        option_type: optiontype,
-                        strike: stock.strikeprice
-                    });
-                }
-
-
-                if (stock.segment === "C") {
-                    exchange = "NSE";
-                } else {
-                    exchange = "NFO";
-                }
-
-
-                orderRecords.push({
-                    clientid: client._id,
-                    signalid: signal._id,
-                    orderid: response.data.user_order_number,
-                    ordertype: stock.calltype === "BUY" ? "SELL" : "BUY",
-                    brokerid: 4,
-                    quantity: quantity,
-                    ordertoken: stockData.instrument_token,
-                    exchange: exchange
-                });
-            }
-
-            await Order_Modal.insertMany(orderRecords);
-
-            // ✅ Update Existing Orders
-            await Order_Modal.updateMany({ clientid: id, signalid, brokerid: 4 }, { tsstatus: 0 });
-
-            return res.json({ status: true, message: "Exit Orders Placed Successfully", data: response.data });
-        } else {
-            return res.status(500).json({ status: false, message: response.data });
-        }
     } catch (error) {
-        return res.status(500).json({ status: false, message: error.response ? error.response.data : "An error occurred while placing the exit order" });
+        return res.status(500).json({ status: false, message: error.message || "An error occurred while placing exit orders" });
     }
 }
-
 
 
 }
