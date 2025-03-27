@@ -1380,7 +1380,7 @@ class Kotakneo {
 
 async  MultipleplaceOrder(req, res) {
     try {
-        const { id, signalid, quantity } = req.body;
+        const { id, signalid, quantity} = req.body;
 
         // ✅ Client Check
         const client = await Clients_Modal.findById(id);
@@ -1398,62 +1398,48 @@ async  MultipleplaceOrder(req, res) {
         const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
         if (stocks.length === 0) return res.status(404).json({ status: false, message: "No stock found for this signal" });
 
-        let ordersData = [];
+        let responses = [];
 
         for (let stock of stocks) {
-            let optiontype, exchange, producttype;
-            
-            // ✅ Determine Exchange & Option Type
+            let optiontype, exchange, producttype, exchangess;
+
             if (stock.segment === "C") {
-                exchange = "NSE";
-                optiontype = "EQ";
+                exchange = "nse_cm";
+                exchangess = "NSE";
             } else {
-                exchange = "NFO";
-                optiontype = stock.optiontype || (stock.segment === "F" ? "UT" : "");
+                optiontype = stock.segment === "F" ? "UT" : stock.optiontype;
+                exchange = "nse_fo";
+                exchangess = "NFO";
             }
 
-            // ✅ Determine Product Type
             producttype = signal.callduration === "Intraday" ? "MIS" : (stock.segment === "C" ? "CNC" : "NRML");
 
-            // ✅ Find Stock Data
+            // ✅ Fetch Stock Data
             let stockData;
             if (stock.segment === "C") {
-                stockData = await Stock_Modal.findOne({
-                    symbol: signal.stock,
-                    segment: stock.segment,
-                    //    option_type: optiontype 
-                });
-            } else if (signal.segment === "F") {
-                stockData = await Stock_Modal.findOne({
-                    symbol: signal.stock,
-                    segment: stock.segment,
-                    expiry: stock.expirydate,
-                    //   option_type: optiontype 
-                });
+                stockData = await Stock_Modal.findOne({ symbol: signal.stock, segment: stock.segment });
+            } else if (stock.segment === "F") {
+                stockData = await Stock_Modal.findOne({ symbol: signal.stock, segment: stock.segment, expiry: stock.expirydate });
             } else {
-                stockData = await Stock_Modal.findOne({
-                    symbol: signal.stock,
-                    segment: stock.segment,
-                    expiry: stock.expirydate,
-                    option_type: optiontype,
-                    strike: stock.strikeprice
-                });
+                stockData = await Stock_Modal.findOne({ symbol: signal.stock, segment: stock.segment, expiry: stock.expirydate, option_type: optiontype, strike: stock.strikeprice });
             }
 
             if (!stockData) {
-                return res.status(404).json({ status: false, message: `Stock not found for ${stock.tradesymbol}` });
-            }
-
-            // ✅ Get Instrument Token from CSV
-            let token = await getTokenFromCSV(stockData, stock.segment, optiontype);
-            if (!token) {
-                return res.status(404).json({ status: false, message: `Token not found for ${stock.tradesymbol}` });
+                console.warn(`Stock not found for ${stockData.tradesymbol}, skipping order.`);
+                continue;
             }
 
             let calltype = stock.calltype === "BUY" ? "B" : "S";
 
+            // ✅ Get Instrument Token from CSV
+            let token = await getTokenFromCSV(stockData, stock.segment, optiontype);
+            if (!token) {
+                console.warn(`Token not found for ${stockData.tradesymbol}, skipping order.`);
+                continue;
+            }
+
             // ✅ Prepare Order Data
-            let data = JSON.stringify({
+            let orderData = JSON.stringify({
                 "am": "NO",
                 "dq": "0",
                 "es": exchange,
@@ -1469,7 +1455,7 @@ async  MultipleplaceOrder(req, res) {
                 "tt": calltype
             });
 
-            const requestData = `jData=${data}`;
+            const requestData = `jData=${orderData}`;
             let url = `https://gw-napi.kotaksecurities.com/Orders/2.0/quick/order/rule/ms/place?sId=${client.hserverid}`;
 
             let config = {
@@ -1487,50 +1473,30 @@ async  MultipleplaceOrder(req, res) {
                 data: requestData
             };
 
-            ordersData.push({ config, stockData });
-        }
-
-        // ✅ Execute All Orders
-        let responses = await Promise.all(ordersData.map(async ({ config, stockData }) => {
             try {
                 let response = await axios.request(config);
                 if (response.data.stat === 'Ok') {
-                    return { 
-                        status: true, 
-                        data: response.data, 
-                        message: "Order Placed Successfully", 
-                        stock: stockData 
-                    };
+
+                    const order = new Order_Modal({
+                        clientid: client._id,
+                        signalid: signal._id,
+                        orderid: response.data.nOrdNo,
+                        ordertype: stock.calltype,
+                        borkerid: 3,
+                        quantity: quantity,
+                        ordertoken: stockData.instrument_token,
+                        exchange: exchangess
+                    });
+
+                    await order.save();
+                    responses.push({ status: true, data: response.data, message: "Order Placed Successfully", stock: stock.tradesymbol });
+
                 } else {
-                    return { 
-                        status: false, 
-                        message: response.data.message || 'Unknown error in response', 
-                        stock: stockData 
-                    };
+                    responses.push({ status: false, message: response.data.message || 'Unknown error in response', stock: stock.tradesymbol });
                 }
             } catch (error) {
-                return { 
-                    status: false, 
-                    message: `Error placing order for ${stockData.tradesymbol}: ${error.message}` 
-                };
+                responses.push({ status: false, message: `Error placing order for ${stock.tradesymbol}: ${error.message}` });
             }
-        }));
-
-        // ✅ Insert Orders into Database
-        let successfulOrders = responses.filter(order => order.status === true);
-        if (successfulOrders.length > 0) {
-            let orderRecords = successfulOrders.map(order => ({
-                clientid: client._id,
-                signalid: signal._id,
-                orderid: order.data.nOrdNo,
-                ordertype: signal.calltype,
-                borkerid: 3,
-                quantity: quantity,
-                ordertoken: order.stock.instrument_token,
-                exchange: exchange
-            }));
-
-            await Order_Modal.insertMany(orderRecords);
         }
 
         return res.json({ status: true, responses });
@@ -1540,7 +1506,7 @@ async  MultipleplaceOrder(req, res) {
     }
 }
 
-async MultipleExitplaceOrder(req, res) {
+async  MultipleExitplaceOrder(req, res) {
     try {
         const { id, signalid, quantity } = req.body;
 
@@ -1560,7 +1526,7 @@ async MultipleExitplaceOrder(req, res) {
         const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
         if (stocks.length === 0) return res.status(404).json({ status: false, message: "No stock found for this signal" });
 
-        let ordersData = [];
+        let responses = [];
 
         for (let stock of stocks) {
             let optiontype, exchange, producttype;
@@ -1576,32 +1542,21 @@ async MultipleExitplaceOrder(req, res) {
 
             // ✅ Determine Product Type
             producttype = signal.callduration === "Intraday" ? "MIS" : (stock.segment === "C" ? "CNC" : "NRML");
+
             let stockData;
             if (stock.segment === "C") {
-                stockData = await Stock_Modal.findOne({
-                    symbol: signal.stock,
-                    segment: stock.segment,
-                    //    option_type: optiontype 
-                });
-            } else if (signal.segment === "F") {
-                stockData = await Stock_Modal.findOne({
-                    symbol: signal.stock,
-                    segment: stock.segment,
-                    expiry: stock.expirydate,
-                    //   option_type: optiontype 
-                });
+                stockData = await Stock_Modal.findOne({ symbol: signal.stock, segment: stock.segment });
+            } else if (stock.segment === "F") {
+                stockData = await Stock_Modal.findOne({ symbol: signal.stock, segment: stock.segment, expiry: stock.expirydate });
             } else {
-                stockData = await Stock_Modal.findOne({
-                    symbol: signal.stock,
-                    segment: stock.segment,
-                    expiry: stock.expirydate,
-                    option_type: optiontype,
-                    strike: stock.strikeprice
-                });
+                stockData = await Stock_Modal.findOne({ symbol: signal.stock, segment: stock.segment, expiry: stock.expirydate, option_type: optiontype, strike: stock.strikeprice });
             }
 
+        
+
             if (!stockData) {
-                return res.status(404).json({ status: false, message: `Stock not found for ${stock.tradesymbol}` });
+                responses.push({ status: false, message: `Stock not found for ${stockData.tradesymbol}` });
+                continue;
             }
 
             // ✅ Get Position & Holding Data
@@ -1626,10 +1581,9 @@ async MultipleExitplaceOrder(req, res) {
                 totalValue = Math.abs(positionData.qty || 0);
             }
 
-            console.log(`Total available quantity for ${stockData.tradesymbol}:`, totalValue);
-
             if (totalValue < quantity) {
                 console.warn(`Not enough quantity to exit for ${stockData.tradesymbol}`);
+                responses.push({ status: false, message: `Not enough quantity for ${stockData.tradesymbol}` });
                 continue;
             }
 
@@ -1637,6 +1591,7 @@ async MultipleExitplaceOrder(req, res) {
             let token = await getTokenFromCSV(stockData, stock.segment, optiontype);
             if (!token) {
                 console.warn(`Token not found for ${stockData.tradesymbol}, skipping order.`);
+                responses.push({ status: false, message: `Token not found for ${stockData.tradesymbol}` });
                 continue;
             }
 
@@ -1677,50 +1632,38 @@ async MultipleExitplaceOrder(req, res) {
                 data: requestData
             };
 
-            ordersData.push({ config, stockData });
-        }
-
-        // ✅ Execute All Exit Orders
-        let responses = await Promise.all(ordersData.map(async ({ config, stockData }) => {
             try {
                 let response = await axios.request(config);
                 if (response.data.stat === 'Ok') {
-                    return {
+                    responses.push({
                         status: true,
                         data: response.data,
-                        message: "Exit Order Placed Successfully",
-                        stock: stock.tradesymbol
-                    };
+                        message: `Exit Order Placed Successfully for ${stockData.tradesymbol}`
+                    });
+
+                    // ✅ Insert Exit Order into Database
+                    await Order_Modal.create({
+                        clientid: client._id,
+                        signalid: signal._id,
+                        orderid: response.data.nOrdNo,
+                        ordertype: signal.calltype === "BUY" ? "SELL" : "BUY",
+                        borkerid: 3,
+                        quantity: quantity,
+                        ordertoken: stockData.instrument_token,
+                        exchange: exchange
+                    });
                 } else {
-                    return {
+                    responses.push({
                         status: false,
-                        message: response.data.message || 'Unknown error in response',
-                        stock: stock.tradesymbol
-                    };
+                        message: response.data.message || `Exit Order failed for ${stock.tradesymbol}`
+                    });
                 }
             } catch (error) {
-                return {
+                responses.push({
                     status: false,
                     message: `Error placing exit order for ${stock.tradesymbol}: ${error.message}`
-                };
+                });
             }
-        }));
-
-        // ✅ Insert Exit Orders into Database
-        let successfulOrders = responses.filter(order => order.status === true);
-        if (successfulOrders.length > 0) {
-            let exitOrderRecords = successfulOrders.map(order => ({
-                clientid: client._id,
-                signalid: signal._id,
-                orderid: order.data.nOrdNo,
-                ordertype: signal.calltype === "BUY" ? "SELL" : "BUY",
-                borkerid: 3,
-                quantity: quantity,
-                ordertoken: order.stock.instrument_token,
-                exchange: exchange
-            }));
-
-            await Order_Modal.insertMany(exitOrderRecords);
         }
 
         return res.json({ status: true, responses });
@@ -1850,6 +1793,7 @@ async function CheckPosition(userId, segment, instrument_token) {
     }
 
 }
+
 
 
 

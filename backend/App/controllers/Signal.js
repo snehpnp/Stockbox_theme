@@ -2085,7 +2085,7 @@ async AddSignals(req, res) {
       });
   });
     // Destructure required fields from req.body, including stocks array
-    const { stock, strategy_name, callduration, service, description, planid, profitlosstype, stocks } = req.body;
+    const { stock, strategy_name, callduration, service, description, planid, maximum_loss, maximum_profit, required_margin, stocks } = req.body;
 
     // Validate required fields (planid and stocks)
     if (!planid) {
@@ -2136,7 +2136,9 @@ async AddSignals(req, res) {
         callduration: callduration,
         description: description,
         planid: id,
-        profitlosstype: profitlosstype,
+        maximum_loss: maximum_loss,
+        maximum_profit: maximum_profit,
+        required_margin: required_margin,
         report: report,
       });
     });
