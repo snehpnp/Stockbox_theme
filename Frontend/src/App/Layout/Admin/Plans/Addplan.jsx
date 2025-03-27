@@ -73,7 +73,7 @@ const Addplan = () => {
             validity: values.validity,
             category: values.category,
             add_by: user_id,
-            deliverystatus: values.Status === 1 ? true : values.Status == 0 ? false : ""
+            // deliverystatus: values.Status === 1 ? true : values.Status == 0 ? false : ""
         };
 
         try {
@@ -100,7 +100,7 @@ const Addplan = () => {
             validity: "",
             category: "",
             add_by: "",
-            Status: ""
+            // Status: ""
         },
         validate,
         onSubmit,
@@ -151,15 +151,15 @@ const Addplan = () => {
             disable: false,
             star: true
         },
-        {
-            name: "Status",
-            label: "Plan Delivery status ",
-            type: "togglebtn",
-            label_size: 12,
-            col_size: 3,
-            disable: false,
-            star: true
-        },
+        // {
+        //     name: "Status",
+        //     label: "Plan Delivery status ",
+        //     type: "togglebtn",
+        //     label_size: 12,
+        //     col_size: 3,
+        //     disable: false,
+        //     star: true
+        // },
         {
             name: "description",
             label: "Description",

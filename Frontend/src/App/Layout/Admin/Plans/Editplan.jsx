@@ -67,7 +67,7 @@ const Editplan = () => {
             price: values.price,
             validity: values.validity,
             category: values.category,
-            deliverystatus: values.deliverystatus == 1 ? true : false,
+            // deliverystatus: values.deliverystatus == 1 ? true : false,
             id: id,
 
         };
@@ -91,7 +91,7 @@ const Editplan = () => {
             price: info?.price || "",
             validity: info?.validity ? info.validity : "",
             category: info?.category ? info.category._id : "",
-            deliverystatus: info?.deliverystatus ? 1 : 0,
+            // deliverystatus: info?.deliverystatus ? 1 : 0,
         },
         enableReinitialize: true,
         validate,
@@ -138,15 +138,15 @@ const Editplan = () => {
             disable: false,
             star: true
         },
-        {
-            name: "deliverystatus",
-            label: "Plan Delivery status ",
-            type: "togglebtn",
-            label_size: 12,
-            col_size: 3,
-            disable: false,
-            star: true
-        },
+        // {
+        //     name: "deliverystatus",
+        //     label: "Plan Delivery status ",
+        //     type: "togglebtn",
+        //     label_size: 12,
+        //     col_size: 3,
+        //     disable: false,
+        //     star: true
+        // },
         {
             name: "description",
             label: "Description",
