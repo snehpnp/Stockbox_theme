@@ -26,35 +26,8 @@ const AddSignal = () => {
 
 
   const [loading, setLoading] = useState(false);
-  const [serviceList, setServiceList] = useState([]);
-  const [stockList, setStockList] = useState([]);
   const [expirydate, setExpirydate] = useState([]);
-  const [strikePrice, setStrikePrice] = useState([]);
   const [searchItem, setSearchItem] = useState("");
-  const [selectitem, setSelectitem] = useState("");
-  const [showDropdown, setShowDropdown] = useState(true);
-
-
-
-
-
-  useEffect(() => {
-    fetchAdminServices();
-  }, []);
-
-
-
-  const fetchAdminServices = async () => {
-    try {
-      const response = await GetService(token);
-      if (response.status) {
-        setServiceList(response.data);
-      }
-    } catch (error) {
-      console.log('Error fetching services:', error);
-    }
-  };
-
 
 
 
@@ -67,12 +40,11 @@ const AddSignal = () => {
       report: '',
       description: '',
       callduration: '',
-    Plan: '',
-    maximumloss: '',  
-    maximumprofit: '',
-      
-      tradesymbol: expirydate[0]?.stock?.tradesymbol || "",
-     
+      Plan: '',
+      maximumloss: '',
+      maximumprofit: '',
+      tradesymbol: "",
+
 
     },
     validate: (values) => {
@@ -165,8 +137,8 @@ const AddSignal = () => {
       setLoading(!loading)
       const req = {
         add_by: user_id,
-        tradesymbol: expirydate[0]?.stock?.tradesymbol || "",
-        lotsize: expirydate[0]?.stock?.lotsize || "",
+        tradesymbol: "",
+        lotsize: "",
         stock: values.stock,
         price: values.price,
         tag1: values.tag1,
@@ -210,16 +182,16 @@ const AddSignal = () => {
         segment: formik.values.segment,
         price: '',
         stock: '',
-     
+
         report: '',
         description: '',
         callduration: '',
-       
+
         expiry: '',
-     
+
         strikeprice: '',
         tradesymbol: '',
-       
+
       });
 
       setSearchItem("")
@@ -241,46 +213,9 @@ const AddSignal = () => {
 
 
 
-  useEffect(() => {
-    const fetchStockData = async () => {
-
-      const data = { segment: formik.values.segment, symbol: searchItem };
-      try {
-        const stockResponse = await getstockbyservice(data);
-        if (stockResponse.status) {
-          setStockList(stockResponse.data);
-        } else {
-          console.log("Failed to fetch stock data", stockResponse);
-        }
-
-        const expiryResponse = await getexpirydate(data);
-        if (expiryResponse.status) {
-          setExpirydate(expiryResponse.data);
-        } else {
-          console.log("Failed to fetch expiry date", expiryResponse);
-        }
-
-
-        const data1 = { ...data, expiry: formik.values.expiry, optiontype: formik.values.optiontype };
-        const strikePriceResponse = await getstockStrickprice(data1);
-        if (strikePriceResponse.status) {
-          setStrikePrice(strikePriceResponse.data);
-        } else {
-          console.log("Failed to fetch strike price", strikePriceResponse);
-        }
-      } catch (error) {
-        console.log("Error fetching stock or expiry date:", error);
-      }
-    };
-
-    fetchStockData();
-  }, [formik.values.segment, searchItem, formik.values.expiry, formik.values.optiontype]);
-
-
-
 
   const fields = [
-   
+
     {
       name: 'strategy',
       label: 'Strategy Name',
@@ -307,8 +242,8 @@ const AddSignal = () => {
       col_size: 6,
       star: true
     },
-    
-    
+
+
     {
       name: 'segment',
       label: 'Segment',
@@ -322,7 +257,7 @@ const AddSignal = () => {
       col_size: 6,
       star: true
     },
-   
+
     {
       name: 'plan',
       label: 'Plan',
@@ -374,10 +309,10 @@ const AddSignal = () => {
       col_size: 6,
       star: true
     },
-    
-    
-   
-   
+
+
+
+
     {
       name: 'maximumloss',
       label: 'Maximum Loss',
@@ -386,11 +321,19 @@ const AddSignal = () => {
       col_size: 3,
       star: true,
     },
-     
+
     {
       name: 'maximumprofit',
       label: 'Maximum Profit',
       type: 'number',
+      label_size: 12,
+      col_size: 3,
+      star: true,
+    },
+    {
+      name: 'signalstretegy',
+      // label: '',
+      type: 'signalstretegy',
       label_size: 12,
       col_size: 3,
       star: true,
@@ -414,25 +357,36 @@ const AddSignal = () => {
 
 
 
-  const dropdownStyles = {
-    position: 'absolute',
-    top: '100%',
-    left: 0,
-    right: 0,
-    backgroundColor: '#fff',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    maxHeight: '200px',
-    overflowY: 'auto',
-    zIndex: 1000,
+  const [rows, setRows] = useState([
+    {
+      segment: "1",
+      bs: "1",
+      expiry: "1",
+      strikePrice: 0,
+      type: "1",
+      lots: "1",
+      price: 0,
+    },
+  ]);
+
+  const addRow = () => {
+    setRows([
+      ...rows,
+      {
+        segment: "1",
+        bs: "1",
+        expiry: "1",
+        strikePrice: 0,
+        type: "1",
+        lots: "1",
+        price: 0,
+      },
+    ]);
   };
 
-
-  const dropdownItemStyles = {
-    padding: '8px 16px',
-    cursor: 'pointer',
-    borderBottom: '1px solid #ddd',
-  };
+  const removeRow = (index) => {
+    setRows(rows.filter((_, i) => i !== index));
+  }
 
 
 
@@ -452,103 +406,96 @@ const AddSignal = () => {
         sumit_btn={true}
         btn_name1_route="/admin/signal"
         btnstatus={loading}
-        additional_field={
+        additional_field2={
           <div className="card mb-3">
-          <div className="card-body">
-            <div className="col-lg-12">
-              <table className="table border-0 border-light signalstrategy-table">
-                <thead>
-                  <tr>
-                    <td>Segment</td>
-                    <td>B/S</td>
-                    <td>Expiry</td>
-                    <td>Strike Price</td>
-                    <td>Type</td>
-                    <td>Lots</td>
-                    <td width={80}>Price</td>
-                    <td width={80}></td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      {" "}
-                      <select className="form-select">
-                        <option value="1">Cash</option>
-                        <option value="2">Future</option>
-                        <option value="3">Option</option>
-                      </select>
-                    </td>
-                    <td>
-                      <select className="form-select">
-                        <option value="1">Buy</option>
-                        <option value="2">Sell</option>
-                      </select>
-                    </td>
-                    <td>
-                      <select className="form-select">
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
-                      </select>
-                    </td>
-                    <td>
-                      {" "}
-                      <div className="input-group d-flex">
-                        <button
-                          type="button"
-                          className="button-minus btn"
-                          onClick={decrementValue}
-                        >
-                          -
-                        </button>
-                        <input
-                          type="number"
-                          step="1"
-                          value={quantity}
-                          name="quantity"
-                          className="quantity-field"
-                          readOnly
-                        />
-                        <button
-                          type="button"
-                          className="button-plus btn"
-                          onClick={incrementValue}
-                        >
-                          +
-                        </button>
-                      </div>
-                    </td>
-                    <td>
-                      <select className="form-select">
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
-                      </select>
-                    </td>
-                    <td>
-                      <select className="form-select">
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
-                      </select>
-                    </td>
-                    <td>
-                      <input className="form-control" type="number" />
-                    </td>
-                    <td>
-                      {" "}
-                      <i class="bx bx-trash"></i>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <div>
-                <button className="btn btn-sm btn-secondary">Add More</button>
+            <div className="card-body">
+              <div className="col-lg-12">
+                <table className="table border-0 border-light signalstrategy-table">
+                  <thead>
+                    <tr>
+                      <td>Segment</td>
+                      <td>B/S</td>
+                      <td>Expiry</td>
+                      <td>Strike Price</td>
+                      <td>Type</td>
+                      <td>Lots</td>
+                      <td width={80}>Price</td>
+                      <td width={80}></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((row, index) => (
+                      <tr key={index}>
+                        <td>
+                          <select className="form-select">
+                            <option value="1">Cash</option>
+                            <option value="2">Future</option>
+                            <option value="3">Option</option>
+                          </select>
+                        </td>
+                        <td>
+                          <select className="form-select">
+                            <option value="1">Buy</option>
+                            <option value="2">Sell</option>
+                          </select>
+                        </td>
+                        <td>
+                          <select className="form-select">
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                          </select>
+                        </td>
+                        <td>
+                          <div className="input-group d-flex">
+                            <button type="button" className="button-minus btn">
+                              -
+                            </button>
+                            <input
+                              type="number"
+                              step="1"
+                              name="quantity"
+                              className="quantity-field"
+                              readOnly
+                              value={row.strikePrice}
+                            />
+                            <button type="button" className="button-plus btn">
+                              +
+                            </button>
+                          </div>
+                        </td>
+                        <td>
+                          <select className="form-select">
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                          </select>
+                        </td>
+                        <td>
+                          <select className="form-select">
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input className="form-control" type="number" />
+                        </td>
+                        <td>
+                          <i className="bx bx-trash" onClick={() => removeRow(index)} style={{ cursor: "pointer" }}></i>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div>
+                  <button className="btn btn-sm btn-secondary" onClick={addRow}>
+                    Add More
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
         }
       />
     </Content>
