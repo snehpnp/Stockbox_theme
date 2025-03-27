@@ -906,7 +906,7 @@ ol.breadcrumb.mb-0.p-0 {
 
 
 /* Secondary button using CSS variables */
-.btn-secondary {
+.btn-secondary,.btn-primary:hover {
   background-color: var(--BtnSecBgCol) !important;
   color: var(--BtnSecTxtCol) !important;
   border-color: var(
@@ -917,7 +917,7 @@ ol.breadcrumb.mb-0.p-0 {
 .content-heading {
   color: var(--dynamic-color, black) !important; 
 }
-.btn-primary,.nav-link.active , .btn-primary i ,.btn-secondary.active{
+.btn-primary,.nav-link.active , .btn-primary i ,.btn-secondary.active, .btn-secondary:hover{
   background-color: var(
     --BtnPriBgCol,
     black
@@ -1477,7 +1477,7 @@ button {
   transition: all 250ms !important;
 }
 button:hover {
-  transform: translateY(3px);
+  transform: translateY(1px);
   box-shadow: inset 0 1px 0 0 #f4f4f4,
   0 1px 0 0 #efefef,
   0 1px 0 0 #ececec,
