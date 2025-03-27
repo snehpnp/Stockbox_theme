@@ -398,7 +398,7 @@ const Cash = () => {
                       <i className="bx bx-left-arrow-alt"></i> {months[(months.findIndex((m) => m.value === month) - 1 + 12) % 12]?.name} {year}
                     </button>
                     <button className="btn btn-primary">
-                      {months.find((m) => m.value === month)?.name} {year} <i className="bx bx-right-arrow-alt"></i>
+                      {months.find((m) => m.value === month)?.name} {year}
                     </button>
                     <button className="btn btn-primary ms-2" onClick={() => changeMonth("next")}>
                       {months[(months.findIndex((m) => m.value === month) + 1) % 12]?.name} {year} <i className="bx bx-right-arrow-alt"></i>
