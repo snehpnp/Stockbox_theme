@@ -164,11 +164,9 @@ const Viewclientdetail = () => {
       };
 
       const response = await GetClientSignaldetail(data, token);
-      if (response.status) {
-        console.log("response", response)
-        setClients(response.data);
+      if (response && response.status) {
         setTotalRows(response.pagination.total);
-
+        setClients(response.data);
       }
     } catch (error) {
       console.log("Error:", error);
