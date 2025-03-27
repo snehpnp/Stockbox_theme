@@ -171,7 +171,7 @@ const Viewclientdetail = () => {
       if (response.status) {
         console.log("response", response)
         setClients(response.data);
-        setTotalRows(response.pagination.totalPages);
+        setTotalRows(response.pagination.total);
 
       }
     } catch (error) {
