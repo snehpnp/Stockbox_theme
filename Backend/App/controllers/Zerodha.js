@@ -1081,7 +1081,7 @@ let tradingsymbol;
             const authToken = client.authtoken;
             const apikey = client.apikey;
     
-            let ordersData = [];
+            let orderResponses = [];
     
             for (let stock of stocks) {
                 let optiontype, exchange, producttype, tradingsymbol;
@@ -1097,217 +1097,7 @@ let tradingsymbol;
     
                 producttype = signal.callduration === "Intraday" ? "MIS" : (stock.segment === "C" ? "CNC" : "NRML");
     
-                let stockData;
-                if (stock.segment === "C") {
-                    stockData = await Stock_Modal.findOne({
-                        symbol: signal.stock,
-                        segment: stock.segment,
-                        //    option_type: optiontype 
-                    });
-                } else if (stock.segment === "F") {
-                    stockData = await Stock_Modal.findOne({
-                        symbol: signal.stock,
-                        segment: stock.segment,
-                        expiry: stock.expirydate,
-                        //    option_type: optiontype 
-                    });
-                } else {
-                    stockData = await Stock_Modal.findOne({
-                        symbol: signal.stock,
-                        segment: stock.segment,
-                        expiry: stock.expirydate,
-                        option_type: optiontype,
-                        strike: stock.strikeprice
-                    });
-                }
-    
-                if (!stockData) {
-                    return res.status(404).json({ status: false, message: `Stock not found for ${stockData.tradesymbol}` });
-                }
-    
-                // ✅ Fetch Trading Symbol from CSV
-                const filePath = path.join(__dirname, '../../tokenzerodha/Zerodha.csv');
-                const searchToken = stockData.instrument_token;
-    
-                try {
-                    const data = fs.readFileSync(filePath, 'utf8');
-                    const lines = data.split('\n');
-    
-                    for (const line of lines) {
-                        const parts = line.split(',');
-                        if (parts.length > 2 && parts[1] === searchToken) {
-                            tradingsymbol = parts[2];
-                            break;
-                        }
-                    }
-                } catch (err) {
-                    console.error(`Error reading file: ${err.message}`);
-                }
-    
-                // ✅ Set Final Trading Symbol
-                tradingsymbol = signal.segment.toLowerCase() === 'c' ? signal.stock : tradingsymbol;
-    
-                // ✅ Order Data
-                ordersData.push({
-                    tradingsymbol: tradingsymbol,
-                    exchange: exchange,
-                    transaction_type: stock.calltype,
-                    quantity: parseInt(quantity),
-                    order_type: "MARKET",
-                    product: producttype,
-                    price: stock.price,
-                    trigger_price: 0.00,
-                    validity: "DAY"
-                });
-            }
-    
-            // ✅ Order API Call
-            let config = {
-                method: 'post',
-                url: 'https://api.kite.trade/orders/regular',
-                headers: {
-                    'Authorization': `token ${apikey}:${authToken}`
-                },
-                data: ordersData
-            };
-    
-            axios(config)
-                .then(async (response) => {
-                    if (response.data.status === "success") {
-                        let orderRecords = [];
-
-                        for (let stock of stocks) {
-                            let optiontype, exchange;
-                
-                            if (stock.segment === "C") {
-                                exchange = "NSE";
-                            } else {
-                                exchange = "NFO";
-                            }
-                
-                
-                            let stockData;
-                            if (stock.segment === "C") {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    //    option_type: optiontype 
-                                });
-                            } else if (stock.segment === "F") {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    expiry: stock.expirydate,
-                                    //    option_type: optiontype 
-                                });
-                            } else {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    expiry: stock.expirydate,
-                                    option_type: optiontype,
-                                    strike: stock.strikeprice
-                                });
-                            }
-                            
-                            
-                            orderRecords.push({
-                                clientid: client._id,
-                                signalid: signal._id,
-                                orderid: response.data.data.order_id,
-                                ordertype: stock.calltype,
-                                borkerid: 5,
-                                quantity: quantity,
-                                ordertoken: stockData.instrument_token,
-                                exchange: exchange
-                            });
-                        }
-    
-                        await Order_Modal.insertMany(orderRecords);
-    
-                        return res.json({
-                            status: true,
-                            message: "Order Placed Successfully",
-                            data: response.data
-                        });
-                    } else {
-                        return res.status(500).json({
-                            status: false,
-                            message: response.data
-                        });
-                    }
-                })
-                .catch(async (error) => {
-                    const message = (JSON.stringify(error.response.data)).replace(/["',]/g, '');
-    
-                    let url;
-                    if (message === "") {
-                        url = `https://kite.zerodha.com/connect/login?v=3&api_key=${client.apikey}`;
-                    }
-    
-                    return res.status(500).json({
-                        status: false,
-                        url: url,
-                        message: message
-                    });
-                });
-    
-        } catch (error) {
-            return res.status(500).json({
-                status: false,
-                message: error.response ? error.response.data : "An error occurred while placing the order"
-            });
-        }
-    }
-
-
-    
-async MultipleExitplaceOrder(req, res) {
-    try {
-        const { id, signalid, quantity } = req.body;
-
-        // ✅ Client Check
-        const client = await Clients_Modal.findById(id);
-        if (!client) {
-            return res.status(404).json({ status: false, message: "Client not found" });
-        }
-
-        if (client.tradingstatus == 0) {
-            return res.status(404).json({ status: false, message: "Client Broker Not Login, Please Login With Broker" });
-        }
-
-        // ✅ Signal Check
-        const signal = await Signalsdata_Modal.findById(signalid);
-        if (!signal) {
-            return res.status(404).json({ status: false, message: "Signal not found" });
-        }
-
-        // ✅ Fetch Stocks for the Given Signal
-        const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
-        if (stocks.length === 0) {
-            return res.status(404).json({ status: false, message: "No stock found for this signal" });
-        }
-
-        // ✅ Authorization Data
-        const authToken = client.authtoken;
-        const apikey = client.apikey;
-
-        let ordersData = [];
-
-        for (let stock of stocks) {
-            let optiontype, exchange, producttype, tradingsymbol;
-
-            if (stock.segment === "C") {
-                optiontype = "EQ";
-                exchange = "NSE";
-                tradingsymbol = signal.stock;
-            } else {
-                optiontype = stock.segment === "F" ? "UT" : stock.optiontype;
-                exchange = "NFO";
-            }
-
-            producttype = signal.callduration === "Intraday" ? "MIS" : (stock.segment === "C" ? "CNC" : "NRML");
-
+              
             let stockData;
             if (stock.segment === "C") {
                 stockData = await Stock_Modal.findOne({
@@ -1331,91 +1121,206 @@ async MultipleExitplaceOrder(req, res) {
                     strike: stock.strikeprice
                 });
             }
-
-            if (!stockData) {
-                return res.status(404).json({ status: false, message: `Stock not found for ${stockData.tradesymbol}` });
-            }
-
-            // ✅ Fetch Trading Symbol from CSV
-            const filePath = path.join(__dirname, '../../tokenzerodha/Zerodha.csv');
-            const searchToken = stockData.instrument_token;
-
-            try {
-                const data = fs.readFileSync(filePath, 'utf8');
-                const lines = data.split('\n');
-
-                for (const line of lines) {
-                    const parts = line.split(',');
-                    if (parts.length > 2 && parts[1] === searchToken) {
-                        tradingsymbol = parts[2];
-                        break;
-                    }
+    
+                if (!stockData) {
+                    console.warn(`Stock not found for ${stockData.tradesymbol}, skipping.`);
+                    continue;
                 }
-            } catch (err) {
-                console.error(`Error reading file: ${err.message}`);
-            }
-
-            // ✅ Set Final Trading Symbol
-            tradingsymbol = signal.segment.toLowerCase() === 'c' ? signal.stock : tradingsymbol;
-
-            // ✅ Check Position & Holdings
-            let holdingData = { qty: 0 };
-            let positionData = { qty: 0 };
-            let totalValue = 0;
-
-            try {
-                positionData = await CheckPosition(apikey, authToken, stock.segment, stockData.instrument_token, producttype, stock.calltype, tradingsymbol);
-            } catch (error) {}
-
-            if (stock.segment === "C") {
+    
+                // ✅ Fetch Trading Symbol from CSV
+                const filePath = path.join(__dirname, '../../tokenzerodha/Zerodha.csv');
+                const searchToken = stockData.instrument_token;
+    
                 try {
-                    holdingData = await CheckHolding(apikey, authToken, stock.segment, stockData.instrument_token, producttype, stock.calltype, tradingsymbol);
-                } catch (error) {}
-
-                totalValue = (Number(positionData.qty) || 0) + (Number(holdingData.qty) || 0);
-            } else {
-                totalValue = Math.abs(positionData.qty);
-            }
-
-            let calltypes = stock.calltype === 'BUY' ? "SELL" : "BUY";
-
-            if (totalValue >= quantity) {
-                ordersData.push({
+                    const data = fs.readFileSync(filePath, 'utf8');
+                    const lines = data.split('\n');
+    
+                    for (const line of lines) {
+                        const parts = line.split(',');
+                        if (parts.length > 2 && parts[1] === searchToken) {
+                            tradingsymbol = parts[2];
+                            break;
+                        }
+                    }
+                } catch (err) {
+                    console.error(`Error reading file: ${err.message}`);
+                }
+    
+                tradingsymbol = tradingsymbol || signal.stock;
+    
+                let orderData = {
                     tradingsymbol: tradingsymbol,
                     exchange: exchange,
-                    transaction_type: calltypes,
+                    transaction_type: stock.calltype,
                     quantity: parseInt(quantity),
                     order_type: "MARKET",
                     product: producttype,
                     price: stock.price,
                     trigger_price: 0.00,
                     validity: "DAY"
+                };
+    
+                let config = {
+                    method: 'post',
+                    url: 'https://api.kite.trade/orders/regular',
+                    headers: {
+                        'Authorization': `token ${apikey}:${authToken}`
+                    },
+                    data: orderData
+                };
+    
+                try {
+                    let response = await axios.request(config);
+                    if (response.data.status === "success") {
+                        await Order_Modal.create({
+                            clientid: client._id,
+                            signalid: signal._id,
+                            orderid: response.data.data.order_id,
+                            ordertype: stock.calltype,
+                            borkerid: 5,
+                            quantity: quantity,
+                            ordertoken: stockData.instrument_token,
+                            exchange: exchange
+                        });
+    
+                        orderResponses.push({ status: true, message: "Order placed successfully", data: response.data });
+                    } else {
+                        orderResponses.push({ status: false, message: response.data });
+                    }
+                } catch (error) {
+                    const message = error.response ? JSON.stringify(error.response.data).replace(/["',]/g, '') : error.message;
+                    let url = message === "" ? `https://kite.zerodha.com/connect/login?v=3&api_key=${client.apikey}` : null;
+                    orderResponses.push({ status: false, url: url, message: message });
+                }
+            }
+    
+            return res.json({ status: true, responses: orderResponses });
+    
+        } catch (error) {
+            return res.status(500).json({
+                status: false,
+                message: error.response ? error.response.data : "An error occurred while placing the order"
+            });
+        }
+    }
+    
+    async MultipleExitplaceOrder(req, res) {
+        try {
+            const { id, signalid, quantity } = req.body;
+    
+            // ✅ Client Check
+            const client = await Clients_Modal.findById(id);
+            if (!client) {
+                return res.status(404).json({ status: false, message: "Client not found" });
+            }
+    
+            if (client.tradingstatus == 0) {
+                return res.status(404).json({ status: false, message: "Client Broker Not Login, Please Login With Broker" });
+            }
+    
+            // ✅ Signal Check
+            const signal = await Signalsdata_Modal.findById(signalid);
+            if (!signal) {
+                return res.status(404).json({ status: false, message: "Signal not found" });
+            }
+    
+            // ✅ Fetch Stocks for the Given Signal
+            const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
+            if (stocks.length === 0) {
+                return res.status(404).json({ status: false, message: "No stock found for this signal" });
+            }
+    
+            // ✅ Authorization Data
+            const authToken = client.authtoken;
+            const apikey = client.apikey;
+    
+            for (let stock of stocks) {
+                let optiontype = stock.segment === "F" ? "UT" : stock.optiontype;
+                let exchange = stock.segment === "C" ? "NSE" : "NFO";
+                let producttype = signal.callduration === "Intraday" ? "MIS" : (stock.segment === "C" ? "CNC" : "NRML");
+                let stockData;
+            if (stock.segment === "C") {
+                stockData = await Stock_Modal.findOne({
+                    symbol: signal.stock,
+                    segment: stock.segment,
+                    //    option_type: optiontype 
+                });
+            } else if (stock.segment === "F") {
+                stockData = await Stock_Modal.findOne({
+                    symbol: signal.stock,
+                    segment: stock.segment,
+                    expiry: stock.expirydate,
+                    //    option_type: optiontype 
+                });
+            } else {
+                stockData = await Stock_Modal.findOne({
+                    symbol: signal.stock,
+                    segment: stock.segment,
+                    expiry: stock.expirydate,
+                    option_type: optiontype,
+                    strike: stock.strikeprice
                 });
             }
-        }
-
-        if (ordersData.length === 0) {
-            return res.status(500).json({ status: false, message: "Sorry, the requested quantity is not available." });
-        }
-
-        // ✅ Order API Call
-        let config = {
-            method: 'post',
-            url: 'https://api.kite.trade/orders/regular',
-            headers: {
-                'Authorization': `token ${apikey}:${authToken}`
-            },
-            data: ordersData
-        };
-
-        axios(config)
-            .then(async (response) => {
-                if (response.data.status === "success") {
-                    let orderRecords = [];
-                    for (let stock of stocks) {
-                        let calltypes = stock.calltype === 'BUY' ? "SELL" : "BUY";
-
-                        orderRecords.push({
+    
+    
+                if (!stockData) {
+                    console.warn(`Stock not found for ${signal.stock}`);
+                    continue; // Skip this stock if not found
+                }
+    
+                // ✅ Fetch Trading Symbol from CSV
+                const filePath = path.join(__dirname, '../../tokenzerodha/Zerodha.csv');
+                let tradingsymbol = signal.stock;
+                const searchToken = stockData.instrument_token;
+                
+                try {
+                    const data = fs.readFileSync(filePath, 'utf8');
+                    const lines = data.split('\n');
+                    for (const line of lines) {
+                        const parts = line.split(',');
+                        if (parts.length > 2 && parts[1] === searchToken) {
+                            tradingsymbol = parts[2];
+                            break;
+                        }
+                    }
+                } catch (err) {
+                    console.error(`Error reading file: ${err.message}`);
+                }
+    
+                let positionData = await CheckPosition(apikey, authToken, stock.segment, stockData.instrument_token, producttype, stock.calltype, tradingsymbol);
+                let holdingData = stock.segment === "C" ? await CheckHolding(apikey, authToken, stock.segment, stockData.instrument_token, producttype, stock.calltype, tradingsymbol) : { qty: 0 };
+                let totalValue = (Number(positionData.qty) || 0) + (Number(holdingData.qty) || 0);
+    
+                let calltypes = stock.calltype === 'BUY' ? "SELL" : "BUY";
+                if (totalValue < quantity) {
+                    console.warn(`Not enough quantity for ${tradingsymbol}`);
+                    continue;
+                }
+    
+                // ✅ Place Order One by One
+                let config = {
+                    method: 'post',
+                    url: 'https://api.kite.trade/orders/regular',
+                    headers: {
+                        'Authorization': `token ${apikey}:${authToken}`
+                    },
+                    data: {
+                        tradingsymbol: tradingsymbol,
+                        exchange: exchange,
+                        transaction_type: calltypes,
+                        quantity: parseInt(quantity),
+                        order_type: "MARKET",
+                        product: producttype,
+                        price: stock.price,
+                        trigger_price: 0.00,
+                        validity: "DAY"
+                    }
+                };
+    
+                try {
+                    let response = await axios(config);
+                    if (response.data.status === "success") {
+                        await Order_Modal.create({
                             clientid: client._id,
                             signalid: signal._id,
                             orderid: response.data.data.order_id,
@@ -1423,44 +1328,23 @@ async MultipleExitplaceOrder(req, res) {
                             borkerid: 5,
                             quantity: quantity,
                         });
+                        console.log(`Order placed for ${tradingsymbol}`);
+                    } else {
+                        console.error(`Order failed for ${tradingsymbol}: ${response.data}`);
                     }
-
-                    await Order_Modal.insertMany(orderRecords);
-
-                    return res.json({
-                        status: true,
-                        message: "Exit Order Placed Successfully",
-                        data: response.data
-                    });
-                } else {
-                    return res.status(500).json({
-                        status: false,
-                        message: response.data
-                    });
+                } catch (error) {
+                    console.error(`Error placing order for ${tradingsymbol}: ${error.message}`);
                 }
-            })
-            .catch(async (error) => {
-                const message = (JSON.stringify(error.response.data)).replace(/["',]/g, '');
-
-                let url;
-                if (message === "") {
-                    url = `https://kite.zerodha.com/connect/login?v=3&api_key=${client.apikey}`;
-                }
-
-                return res.status(500).json({
-                    status: false,
-                    url: url,
-                    message: message
-                });
+            }
+    
+            return res.json({ status: true, message: "Exit Orders Processed" });
+        } catch (error) {
+            return res.status(500).json({
+                status: false,
+                message: error.response ? error.response.data : "An error occurred while placing exit orders"
             });
-
-    } catch (error) {
-        return res.status(500).json({
-            status: false,
-            message: error.response ? error.response.data : "An error occurred while placing the exit order"
-        });
+        }
     }
-}
 
 }
 
