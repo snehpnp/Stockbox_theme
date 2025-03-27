@@ -1,9 +1,16 @@
-import React, { useState } from "react";
-import Content from "../../../components/Contents/Content";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
+import React, { useEffect, useState } from 'react';
+import { useFormik } from 'formik';
+import DynamicForm from '../../../Extracomponents/FormicForm';
+import { AddSignalByAdmin, GetService, getstockbyservice, getexpirydate, getstockStrickprice } from '../../../Services/Admin/Admin';
+import { useNavigate } from 'react-router-dom';
+import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+import { Plane } from 'lucide-react';
 
-const SignalStrategy = () => {
+
+
+const AddSignal = () => {
+
   const [quantity, setQuantity] = useState(1);
 
   const incrementValue = () => {
@@ -13,413 +20,539 @@ const SignalStrategy = () => {
   const decrementValue = () => {
     setQuantity((prev) => (prev > 0 ? prev - 1 : 0));
   };
+  const navigate = useNavigate();
+  const user_id = localStorage.getItem('id');
+  const token = localStorage.getItem('token');
+
+
+  const [loading, setLoading] = useState(false);
+  const [serviceList, setServiceList] = useState([]);
+  const [stockList, setStockList] = useState([]);
+  const [expirydate, setExpirydate] = useState([]);
+  const [strikePrice, setStrikePrice] = useState([]);
+  const [searchItem, setSearchItem] = useState("");
+  const [selectitem, setSelectitem] = useState("");
+  const [showDropdown, setShowDropdown] = useState(true);
 
 
 
-  const validationSchema = Yup.object({
-    segment: Yup.string().required("Segment is required"),
-    stock: Yup.string().required("Stock selection is required"),
-    expiry: Yup.string().required("Expiry date is required"),
-    calltype: Yup.string().required("Call type is required"),
-    price: Yup.number().required("Entry price is required"),
-    plan: Yup.number().required("Plan is required"),
-    callduration: Yup.string().required("Trade duration is required"),
-    entrytype: Yup.string().required("Entry type is required"),
-    stoploss: Yup.number().required("Stop loss is required"),
-    profit: Yup.number().required("Maximum profit is required"),
-    target: Yup.number().required("Fix target is required"),
+
+
+  useEffect(() => {
+    fetchAdminServices();
+  }, []);
+
+
+
+  const fetchAdminServices = async () => {
+    try {
+      const response = await GetService(token);
+      if (response.status) {
+        setServiceList(response.data);
+      }
+    } catch (error) {
+      console.log('Error fetching services:', error);
+    }
+  };
+
+
+
+
+  const formik = useFormik({
+    initialValues: {
+      add_by: user_id,
+      segment: '',
+      price: '',
+      stock: '',
+      report: '',
+      description: '',
+      callduration: '',
+    Plan: '',
+    maximumloss: '',  
+    maximumprofit: '',
+      
+      tradesymbol: expirydate[0]?.stock?.tradesymbol || "",
+     
+
+    },
+    validate: (values) => {
+      const errors = {};
+      if (!values.segment) errors.segment = 'Please Select a Segment';
+      if (!values.stock) errors.stock = 'Please Select a Stock';
+      if (values.price <= 0) {
+        errors.price = 'Price Should Be Grater Than Zero'
+      }
+      if (!values.price) errors.price = 'Please Select a Price';
+      if (!values.tag1) errors.tag1 = 'Please Enter Target1';
+      if (values.calltype === "BUY") {
+
+
+        if (values.price && values.tag1 && values.price > values.tag1) {
+          errors.tag1 = "Please Enter Greater Than Entry Price";
+        }
+
+        if (values.tag2 && values.tag1 > values.tag2) {
+          errors.tag2 = "Please Enter Greater Than Target1";
+        }
+
+        if (values.tag3 && !values.tag2) {
+          errors.tag2 = "Please Enter Target2";
+        }
+
+
+        if (values.tag3 && values.tag2 && values.tag2 > values.tag3) {
+          errors.tag3 = "Please Enter Greater Than Target2";
+        }
+
+        if (values.stoploss && values.price < values.stoploss) {
+          errors.stoploss = "Please Enter Less Than Entry Price";
+        }
+
+      } else if (values.calltype === "SELL") {
+
+        if (values.price && values.tag1 && values.price < values.tag1) {
+          errors.tag1 = "Please Enter Less Than Entry Price";
+        }
+
+
+        if (values.tag2 && values.tag1 < values.tag2) {
+          errors.tag2 = "Please Enter Less Than Target1";
+        }
+        if (values.tag3 && !values.tag2) {
+          errors.tag2 = "Please Enter Target2";
+        }
+        if (values.tag3 && values.tag2 && values.tag2 < values.tag3) {
+          errors.tag3 = "Please Enter Less Than Target2";
+        }
+
+        if (values.stoploss && values.price > values.stoploss) {
+          errors.stoploss = "Please Enter Greater Than Entry Price";
+        }
+      }
+      if (!values.stoploss) errors.stoploss = 'Please Enter Stoploss';
+      if (!values.callduration) errors.callduration = 'Please Select Trade Duration';
+      if (!values.calltype) errors.calltype = 'Please select call type';
+      if (!values.description) errors.description = 'Please Enter Description';
+
+      if (values.segment === "O" && !values.optiontype) {
+        errors.optiontype = 'Please Enter Option Type';
+      }
+
+      if ((values.segment === "O" || values.segment === "F") && !values.expiry) {
+        errors.expiry = 'Please Enter Expiry Date';
+      }
+
+      if (values.segment === "O" && !values.strikeprice) {
+        errors.strikePrice = 'Please Select Strike Price';
+      }
+      if (!values.entrytype) {
+        errors.entrytype = 'Please Select Entry Type';
+      }
+
+      // if (!values.lot) {
+      //   errors.lot = 'Please Enter Lot';
+      // }
+      if (values.lot && values.lot <= 0) {
+        errors.lot = 'Please Enter Greater Than Zero';
+      }
+
+      return errors;
+    },
+
+
+
+    onSubmit: async (values) => {
+      setLoading(!loading)
+      const req = {
+        add_by: user_id,
+        tradesymbol: expirydate[0]?.stock?.tradesymbol || "",
+        lotsize: expirydate[0]?.stock?.lotsize || "",
+        stock: values.stock,
+        price: values.price,
+        tag1: values.tag1,
+        tag2: values.tag2,
+        tag3: values.tag3,
+        stoploss: values.stoploss,
+        description: values.description,
+        report: values.report,
+        calltype: values.calltype,
+        callduration: values.callduration,
+        expirydate: values.expiry,
+        segment: values.segment,
+        optiontype: values.optiontype,
+        strikeprice: values.strikeprice,
+        entrytype: values.entrytype,
+        lot: values.lot,
+      };
+
+      try {
+        const response = await AddSignalByAdmin(req, token);
+        if (response.status) {
+          showCustomAlert("Success", response.message, navigate, '/admin/signal')
+        } else {
+          showCustomAlert("error", response.message)
+          setLoading(false)
+        }
+      } catch (error) {
+        setLoading(false)
+        showCustomAlert("error", 'An unexpected error occurred. Please try again later.')
+      }
+    }
   });
 
 
 
 
+  useEffect(() => {
+    if (formik.values.segment) {
+      formik.setValues({
+        add_by: user_id,
+        segment: formik.values.segment,
+        price: '',
+        stock: '',
+     
+        report: '',
+        description: '',
+        callduration: '',
+       
+        expiry: '',
+     
+        strikeprice: '',
+        tradesymbol: '',
+       
+      });
+
+      setSearchItem("")
+    }
+  }, [formik.values.segment]);
+
+
+
+  useEffect(() => {
+    if (!searchItem || searchItem.length === 0) {
+      Object.keys(formik.values).forEach(field => {
+        if (field !== "stock") {
+          formik.setFieldValue("stock", "");
+        }
+      });
+    }
+  }, [formik.values.stock, searchItem]);
+
+
+
+
+  useEffect(() => {
+    const fetchStockData = async () => {
+
+      const data = { segment: formik.values.segment, symbol: searchItem };
+      try {
+        const stockResponse = await getstockbyservice(data);
+        if (stockResponse.status) {
+          setStockList(stockResponse.data);
+        } else {
+          console.log("Failed to fetch stock data", stockResponse);
+        }
+
+        const expiryResponse = await getexpirydate(data);
+        if (expiryResponse.status) {
+          setExpirydate(expiryResponse.data);
+        } else {
+          console.log("Failed to fetch expiry date", expiryResponse);
+        }
+
+
+        const data1 = { ...data, expiry: formik.values.expiry, optiontype: formik.values.optiontype };
+        const strikePriceResponse = await getstockStrickprice(data1);
+        if (strikePriceResponse.status) {
+          setStrikePrice(strikePriceResponse.data);
+        } else {
+          console.log("Failed to fetch strike price", strikePriceResponse);
+        }
+      } catch (error) {
+        console.log("Error fetching stock or expiry date:", error);
+      }
+    };
+
+    fetchStockData();
+  }, [formik.values.segment, searchItem, formik.values.expiry, formik.values.optiontype]);
+
+
+
+
+  const fields = [
+   
+    {
+      name: 'strategy',
+      label: 'Strategy Name',
+      type: 'select',
+      options: [
+        { label: 'At', value: 'At' },
+        { label: 'Above', value: 'Above' },
+        { label: 'Below', value: 'Below' },
+      ],
+      label_size: 12,
+      col_size: 6,
+      star: true
+    },
+    {
+      name: 'stock',
+      label: 'Select Stock',
+      type: 'select',
+      options: [
+        { label: 'At', value: 'At' },
+        { label: 'Above', value: 'Above' },
+        { label: 'Below', value: 'Below' },
+      ],
+      label_size: 12,
+      col_size: 6,
+      star: true
+    },
+    
+    
+    {
+      name: 'segment',
+      label: 'Segment',
+      type: 'select',
+      options: [
+        { label: 'At', value: 'At' },
+        { label: 'Above', value: 'Above' },
+        { label: 'Below', value: 'Below' },
+      ],
+      label_size: 12,
+      col_size: 6,
+      star: true
+    },
+   
+    {
+      name: 'plan',
+      label: 'Plan',
+      type: 'select',
+      options: [
+        { label: 'At', value: 'At' },
+        { label: 'Above', value: 'Above' },
+        { label: 'Below', value: 'Below' },
+      ],
+      label_size: 12,
+      col_size: 6,
+      star: true
+    },
+
+    {
+      name: 'callduration',
+      label: 'Trade Duration',
+      type: 'select',
+      options: (() => {
+        if (formik.values.segment === "C") {
+          return formik.values.calltype === "SELL" ? [
+            { label: 'Intraday', value: 'Intraday' }
+          ] : [
+            { label: 'Short Term (15-30 Days)', value: 'Short Term' },
+            { label: 'Medium Term (Above 3 Month)', value: 'Medium Term' },
+            { label: 'Long Term (Above 1 year)', value: 'Long Term' },
+            { label: 'Intraday', value: 'Intraday' }
+          ];
+        } else if (formik.values.segment === "F") {
+          return formik.values.calltype === "SELL" ? [
+            { label: 'Short Term', value: 'Short Term' },
+            { label: 'Intraday', value: 'Intraday' },
+            { label: 'Still Expiry Date', value: 'Still Expiry Date' }
+          ] : [
+            { label: 'Short Term', value: 'Short Term' },
+            { label: 'Intraday', value: 'Intraday' },
+            { label: 'Still Expiry Date', value: 'Still Expiry Date' }
+          ];
+        } else if (formik.values.segment === "O") {
+          return [
+            { label: 'Short Term', value: 'Short Term' },
+            { label: 'Intraday', value: 'Intraday' },
+            { label: 'Still Expiry Date', value: 'Still Expiry Date' }
+          ];
+        }
+        return [];
+      })(),
+      label_size: 12,
+      col_size: 6,
+      star: true
+    },
+    
+    
+   
+   
+    {
+      name: 'maximumloss',
+      label: 'Maximum Loss',
+      type: 'number',
+      label_size: 12,
+      col_size: 3,
+      star: true,
+    },
+     
+    {
+      name: 'maximumprofit',
+      label: 'Maximum Profit',
+      type: 'number',
+      label_size: 12,
+      col_size: 3,
+      star: true,
+    },
+    {
+      name: 'report',
+      label: 'Report',
+      type: 'file2',
+      label_size: 12,
+      col_size: 6,
+    },
+    {
+      name: 'description',
+      label: 'Description',
+      type: 'text5',
+      label_size: 12,
+      col_size: 6,
+      star: true
+    },
+  ];
+
+
+
+  const dropdownStyles = {
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    maxHeight: '200px',
+    overflowY: 'auto',
+    zIndex: 1000,
+  };
+
+
+  const dropdownItemStyles = {
+    padding: '8px 16px',
+    cursor: 'pointer',
+    borderBottom: '1px solid #ddd',
+  };
+
+
+
   return (
     <Content
-      Page_title="Signal Strategy"
+      Page_title="Add Signal"
       button_status={false}
       backbutton_status={true}
       backForword={true}
     >
-      <div className="card mb-0">
-        <Formik
-          initialValues={{
-            segment: "",
-            stock: "",
-            expiry: "",
-            calltype: "",
-            price: "",
-            plan: "",
-            callduration: "",
-            entrytype: "",
-            stoploss: "",
-            profit: "",
-            target: "",
-          }}
-          validationSchema={validationSchema}
-          onSubmit={(values) => {
-            console.log("Form Values:", values);
-          }}
-        >
-          {({ handleSubmit }) => (
-            <form autoComplete="off">
-              <div className="card-body ">
-                <form autoComplete="off">
-                  <div className="card-body ">
-                    <div>
-                      <div className="row d-flex ">
-                        <div className="col-lg-6">
-                          <div className="input-block row mb-3">
-                            <label
-                              className="col-lg-7  col-form-label p-0 mx-3 "
-                              htmlFor="segment"
-                            >
-                              Segment<span className="text-danger">*</span>
-                            </label>
-                            <div className="col-lg-12">
-                              <select
-                                className="default-select wide form-control"
-                                aria-describedby="basic-addon1"
-                                id="segment"
-                                name="segment"
-                              >
-                                <option value="">Select Segment</option>
-                                <option value="C">Cash</option>
-                                <option value="F">Future</option>
-                                <option value="O">Option</option>
-                                <option value="O">Option Strategy</option>
-                                <option value="O">Future Strategy</option>
-                              </select>
-                              <ErrorMessage name="segment" component="div" className="text-danger" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-6">
-                          <div className="mb-3">
-                            <div className="position-relative">
-                              <label className="form-label">Select Stock</label>
-                              <span className="text-danger">*</span>
-                              <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Search stock"
-                                name="stock"
-                                defaultValue=""
-                                style={{ cursor: "pointer" }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-6">
-                          <div className="input-block row mb-3">
-                            <label
-                              className="col-lg-7  col-form-label p-0 mx-3 "
-                              htmlFor="expiry"
-                            >
-                              Expiry Date<span className="text-danger">*</span>
-                            </label>
-                            <div className="col-lg-12">
-                              <select
-                                className="default-select wide form-control"
-                                aria-describedby="basic-addon1"
-                                id="expiry"
-                                name="expiry"
-                              >
-                                <option value="">Expiry Date</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-6">
-                          <div className="input-block row mb-3">
-                            <label
-                              className="col-lg-7  col-form-label p-0 mx-3 "
-                              htmlFor="calltype"
-                            >
-                              Call Type<span className="text-danger">*</span>
-                            </label>
-                            <div className="col-lg-12">
-                              <select
-                                className="default-select wide form-control"
-                                aria-describedby="basic-addon1"
-                                id="calltype"
-                                name="calltype"
-                              >
-                                <option value="">Call Type</option>
-                                <option value="BUY">Buy</option>
-                                <option value="SELL">Sell</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-6">
-                          <div className="row d-flex">
-                            <div className="col-lg-12 ">
-                              <div className="form-group input-block mb-3">
-                                <label htmlFor="price">
-                                  Entry Price<span className="text-danger">*</span>
-                                </label>
-                                <input
-                                  type="number"
-                                  name="price"
-                                  aria-describedby="basic-addon1"
-                                  className="form-control"
-                                  id="price"
-                                  placeholder="Enter Entry Price"
-                                  defaultValue=""
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-6">
-                          <div className="row d-flex">
-                            <div className="col-lg-12 ">
-                              <div className="form-group input-block mb-3">
-                                <label htmlFor="price">
-                                  Plan<span className="text-danger">*</span>
-                                </label>
-                                <input
-                                  type="number"
-                                  name="price"
-                                  aria-describedby="basic-addon1"
-                                  className="form-control"
-                                  id="price"
-                                  placeholder="Enter Entry Price"
-                                  defaultValue=""
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-6">
-                          <div className="input-block row mb-3">
-                            <label
-                              className="col-lg-7  col-form-label p-0 mx-3 "
-                              htmlFor="callduration"
-                            >
-                              Trade Duration<span className="text-danger">*</span>
-                            </label>
-                            <div className="col-lg-12">
-                              <select
-                                className="default-select wide form-control"
-                                aria-describedby="basic-addon1"
-                                id="callduration"
-                                name="callduration"
-                              >
-                                <option value="">Trade Duration</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-6">
-                          <div className="input-block row mb-3">
-                            <label
-                              className="col-lg-7  col-form-label p-0 mx-3 "
-                              htmlFor="entrytype"
-                            >
-                              Entry Type<span className="text-danger">*</span>
-                            </label>
-                            <div className="col-lg-12">
-                              <select
-                                className="default-select wide form-control"
-                                aria-describedby="basic-addon1"
-                                id="entrytype"
-                                name="entrytype"
-                              >
-                                <option value="">Entry Type</option>
-                                <option value="At">At</option>
-                                <option value="Above">Above</option>
-                                <option value="Below">Below</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="card mb-3">
-                          <div className="card-body">
-                            <div className="col-lg-12">
-                              <table className="table border-0 border-light signalstrategy-table">
-                                <thead>
-                                  <tr>
-                                    <td></td>
-                                    <td>B/S</td>
-                                    <td>Expiry</td>
-                                    <td>Strike</td>
-                                    <td>Type</td>
-                                    <td>Lots</td>
-                                    <td width={80}>Price</td>
-                                    <td width={80}></td>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr>
-                                    <td>
-                                      {" "}
-                                      <select className="form-select">
-                                        <option value="1">Cash</option>
-                                        <option value="2">Future</option>
-                                        <option value="3">Option</option>
-                                      </select>
-                                    </td>
-                                    <td>
-                                      <select className="form-select">
-                                        <option value="1">Buy</option>
-                                        <option value="2">Sell</option>
-                                      </select>
-                                    </td>
-                                    <td>
-                                      <select className="form-select">
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
-                                      </select>
-                                    </td>
-                                    <td>
-                                      {" "}
-                                      <div className="input-group d-flex">
-                                        <button
-                                          type="button"
-                                          className="button-minus btn"
-                                          onClick={decrementValue}
-                                        >
-                                          -
-                                        </button>
-                                        <input
-                                          type="number"
-                                          step="1"
-                                          value={quantity}
-                                          name="quantity"
-                                          className="quantity-field"
-                                          readOnly
-                                        />
-                                        <button
-                                          type="button"
-                                          className="button-plus btn"
-                                          onClick={incrementValue}
-                                        >
-                                          +
-                                        </button>
-                                      </div>
-                                    </td>
-                                    <td>
-                                      <select className="form-select">
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
-                                      </select>
-                                    </td>
-                                    <td>
-                                      <select className="form-select">
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
-                                      </select>
-                                    </td>
-                                    <td>
-                                      <input className="form-control" type="number" />
-                                    </td>
-                                    <td>
-                                      {" "}
-                                      <i class="bx bx-trash"></i>
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                              <div>
-                                <button className="btn btn-sm btn-secondary">Add More</button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-
-                        <div className="col-lg-4">
-                          <div className="row d-flex">
-                            <div className="col-lg-12 ">
-                              <div className="form-group input-block mb-3">
-                                <label htmlFor="stoploss">
-                                  Maximum Loss<span className="text-danger">*</span>
-                                </label>
-                                <input
-                                  type="number"
-                                  name="stoploss"
-                                  aria-describedby="basic-addon1"
-                                  className="form-control"
-                                  id="stoploss"
-                                  placeholder="Maximum Loss"
-                                  defaultValue=""
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-4">
-                          <div className="row d-flex">
-                            <div className="col-lg-12 ">
-                              <div className="form-group input-block mb-3">
-                                <label htmlFor="stoploss">
-                                  Maximum Profit<span className="text-danger">*</span>
-                                </label>
-                                <input
-                                  type="number"
-                                  name="stoploss"
-                                  aria-describedby="basic-addon1"
-                                  className="form-control"
-                                  id="stoploss"
-                                  placeholder=" Maximum Profit"
-                                  defaultValue=""
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-4">
-                          <div className="row d-flex">
-                            <div className="col-lg-12 ">
-                              <div className="form-group input-block mb-3">
-                                <label htmlFor="stoploss">
-                                  Fix Target<span className="text-danger">*</span>
-                                </label>
-                                <input
-                                  type="number"
-                                  name="stoploss"
-                                  aria-describedby="basic-addon1"
-                                  className="form-control"
-                                  id="stoploss"
-                                  placeholder="Fix Target"
-                                  defaultValue=""
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="add-customer-btns text-end mt-3 ">
-                          <a
-                            className="btn customer-btn-cancel btn btn-primary"
-                            href="#/admin/signal"
-                            data-discover="true"
-                          >
-                            Cancel
-                          </a>
-                          <button
-                            type="submit"
-                            className="btn customer-btn-save btn btn-primary m-2"
-                          >
-                            Add Signal
-                          </button>
-                        </div>
+      <DynamicForm
+        fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
+        // page_title="Add Signal"
+        btn_name="Add Signal"
+        btn_name1="Cancel"
+        formik={formik}
+        sumit_btn={true}
+        btn_name1_route="/admin/signal"
+        btnstatus={loading}
+        additional_field={
+          <div className="card mb-3">
+          <div className="card-body">
+            <div className="col-lg-12">
+              <table className="table border-0 border-light signalstrategy-table">
+                <thead>
+                  <tr>
+                    <td>Segment</td>
+                    <td>B/S</td>
+                    <td>Expiry</td>
+                    <td>Strike Price</td>
+                    <td>Type</td>
+                    <td>Lots</td>
+                    <td width={80}>Price</td>
+                    <td width={80}></td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      {" "}
+                      <select className="form-select">
+                        <option value="1">Cash</option>
+                        <option value="2">Future</option>
+                        <option value="3">Option</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select className="form-select">
+                        <option value="1">Buy</option>
+                        <option value="2">Sell</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select className="form-select">
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                      </select>
+                    </td>
+                    <td>
+                      {" "}
+                      <div className="input-group d-flex">
+                        <button
+                          type="button"
+                          className="button-minus btn"
+                          onClick={decrementValue}
+                        >
+                          -
+                        </button>
+                        <input
+                          type="number"
+                          step="1"
+                          value={quantity}
+                          name="quantity"
+                          className="quantity-field"
+                          readOnly
+                        />
+                        <button
+                          type="button"
+                          className="button-plus btn"
+                          onClick={incrementValue}
+                        >
+                          +
+                        </button>
                       </div>
-                    </div>
-                  </div>
-                </form>
+                    </td>
+                    <td>
+                      <select className="form-select">
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select className="form-select">
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                      </select>
+                    </td>
+                    <td>
+                      <input className="form-control" type="number" />
+                    </td>
+                    <td>
+                      {" "}
+                      <i class="bx bx-trash"></i>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div>
+                <button className="btn btn-sm btn-secondary">Add More</button>
               </div>
-            </form>
-          )}
-        </Formik>
-      </div>
+            </div>
+          </div>
+        </div>
+        }
+      />
     </Content>
   );
 };
 
-export default SignalStrategy;
-
+export default AddSignal;
