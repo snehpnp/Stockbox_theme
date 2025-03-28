@@ -47,10 +47,13 @@ const BasketDetail = () => {
 
   return (
     <Content Page_title="Basket Detail" button_status={false} backbutton_status={true} backbutton_title="Back">
-      <div className="row border-bottom pb-3">
-        <div className="col-md-8">
-          <h5><b>{item?.title}</b></h5>
-          <ul className="list-group list-group-flush list shadow p-3 border border-success">
+      <div className="row  pb-3">
+        <div className="col-md-7">
+        
+          <ul className="list-group list-group-flush list basket-detail-card">
+            <li className="list-group-item btn-primary">
+            <h5 className="mb-0"><b className="text-white">{item?.title}</b></h5>
+            </li>
             <li className="list-group-item d-flex justify-content-between align-items-center">
               Launch Date <span className="badge bg-dark rounded-pill">{item?.mininvamount}</span>
             </li>
@@ -74,15 +77,20 @@ const BasketDetail = () => {
             </li>
           </ul>
         </div>
-        <div className="col-md-4">
-          <Doughnut data={chartData} />
+        <div className="col-md-5 mx-auto">
+          <Doughnut data={chartData}  className="mx-auto"/>
         </div>
       </div>
 
       {/* Line Chart Integration */}
       <div className="row px-4 pt-4">
         <div className="col-md-12">
-          <Line data={chartDataLine} />
+          <div className="card">
+            <div className="card-body">
+            <Line data={chartDataLine} />
+            </div>
+          </div>
+         
         </div>
       </div>
 
