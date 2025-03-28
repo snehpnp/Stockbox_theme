@@ -3850,7 +3850,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
 
           // Broadcast notifications
           {
-            clienttype: { $in: ['active', 'expired', 'nonsubscribe', 'all'] },
+            clienttype: { $in: ['active', 'expired', 'nonsubscribe', 'All'] },
             $or: [
               // For active clients, include active plans
               { clienttype: 'active', segmentid: { $in: activePlans } },
@@ -3859,7 +3859,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
               // For clients with no active or expired plans (no subscription)
               ...(noPlans ? [{ clienttype: 'nonsubscribe' }] : []),
               // For all clients
-              { clienttype: 'all' }
+              { clienttype: 'All' }
             ]
           }
         ]
