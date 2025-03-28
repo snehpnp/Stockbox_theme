@@ -3325,7 +3325,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
       // If 'all' is selected, include all broadcasts
       if (activePlans.length > 0 || expiredPlans.length > 0 || allPlans.length === 0) {
         query.$or.push(
-          { type: 'all' }
+          { type: 'All' }
         );
       }
 
