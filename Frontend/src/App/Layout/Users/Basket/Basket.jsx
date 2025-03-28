@@ -160,6 +160,7 @@ function Basket() {
               <div className="col-md-12 col-lg-4 mb-3" key={item?.id}>
                 <div className="card radius-10 overflow-hidden">
                   <div className="card-body">
+                    <img src="https://stockboxpnp.pnpuniverse.com/uploads/blogs/image-1742206277154-910627492.png" alt="Basket" className="w-100 img-fluid mb-3" />
                     <div className="d-flex justify-content-between align-items-center">
                       <h5 className="mb-0">
                         {item?.title} ({item?.themename})
