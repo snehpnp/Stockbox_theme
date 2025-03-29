@@ -52,7 +52,7 @@ const Generalsettings = () => {
     const getsettinglist = async () => {
         try {
             const response = await basicsettinglist(token);
-            
+
             if (response.status) {
                 setClients(response.data);
             }
@@ -127,7 +127,7 @@ const Generalsettings = () => {
 
                                 try {
                                     const response = await Updatebasicsettings(req, token);
-                                    
+
                                     if (response.status) {
                                         showCustomAlert("Success", response.message)
                                         setIsModified(false);
@@ -335,12 +335,16 @@ const Generalsettings = () => {
                                                         </span>
                                                         <Field
                                                             name="gstin"
-                                                            type="number"
+                                                            type="text"
                                                             className="form-control"
                                                             placeholder="GSTIN"
+                                                            onInput={(e) => {
+                                                                e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, '');
+                                                            }}
                                                         />
                                                     </div>
                                                 </div>
+
                                             </div>
 
                                             <div className="row mb-3 align-items-center">

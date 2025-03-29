@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Doughnut, Line } from "react-chartjs-2"; // Line chart import kiya
 import Content from "../../../components/Contents/Content";
 import { Link, useLocation } from "react-router-dom";
+import { fDateTime } from "../../../../Utils/Date_formate";
 
 const BasketDetail = () => {
   const [activeTab, setActiveTab] = useState("rational");
@@ -49,36 +50,36 @@ const BasketDetail = () => {
     <Content Page_title="Basket Detail" button_status={false} backbutton_status={true} backbutton_title="Back">
       <div className="row  pb-3">
         <div className="col-md-7">
-        
+
           <ul className="list-group list-group-flush list basket-detail-card">
             <li className="list-group-item btn-primary">
-            <h5 className="mb-0"><b className="text-white">{item?.title}</b></h5>
+              <h5 className="mb-0"><b className="text-white">{item?.title}</b></h5>
             </li>
             <li className="list-group-item d-flex justify-content-between align-items-center">
-              Launch Date <span className="badge bg-dark rounded-pill">{item?.mininvamount}</span>
+              Launch Date <span className="badge bg-dark rounded-pill text-white">{fDateTime(item?.created_at)}</span>
             </li>
             <li className="list-group-item d-flex justify-content-between align-items-center">
-              Theme <span className="badge bg-success rounded-pill">{item?.cagr} %</span>
+              CAGR <span className="badge bg-success rounded-pill text-white">{item?.cagr} %</span>
             </li>
             <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
-              Since Launch <span className="badge bg-danger rounded-pill">{item?.type}</span>
+            Risk Type <span className="badge bg-danger rounded-pill text-white">{item?.type}</span>
             </li>
             <li className="list-group-item d-flex justify-content-between align-items-center">
-              No. of stocks <span className="badge bg-warning rounded-pill">{item?.themename}</span>
+              No. of stocks <span className="badge bg-warning rounded-pill text-white">{(item?.stock_details) ? item.stock_details.length : 0}</span>
             </li>
             <li className="list-group-item d-flex justify-content-between align-items-center">
-              Validity <span className="badge bg-primary rounded-pill">{item?.next_rebalance_date}</span>
+              Validity <span className="badge bg-secondary rounded-pill text-white">{item?.validity}</span>
             </li>
             <li className="list-group-item d-flex justify-content-between align-items-center">
-              Rebalance Frequency <span className="badge bg-success rounded-pill">{item?.frequency}</span>
+              Rebalance Frequency <span className="badge bg-success rounded-pill text-white">{item?.frequency}</span>
             </li>
             <li className="list-group-item d-flex justify-content-between align-items-center">
-              Next Rebalance Date <span className="badge bg-primary rounded-pill">{item?.next_rebalance_date}</span>
+              Next Rebalance Date <span className="badge bg-primary rounded-pill text-white">{item?.next_rebalance_date}</span>
             </li>
           </ul>
         </div>
         <div className="col-md-5 mx-auto">
-          <Doughnut data={chartData}  className="mx-auto"/>
+          <Doughnut data={chartData} className="mx-auto" />
         </div>
       </div>
 
@@ -87,10 +88,10 @@ const BasketDetail = () => {
         <div className="col-md-12">
           <div className="card">
             <div className="card-body">
-            <Line data={chartDataLine} />
+              <Line data={chartDataLine} />
             </div>
           </div>
-         
+
         </div>
       </div>
 
