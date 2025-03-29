@@ -58,11 +58,11 @@ const showCustomAlert = (type, message, navigate, redirectTo, onConfirm) => {
         didRender: () => {
           document.getElementById("confirmBtn").addEventListener("click", () => {
             Swal.close();
-            resolve(true); // Confirmed
+            resolve({isConfirmed:true}); // Confirmed
           });
           document.getElementById("cancelBtn").addEventListener("click", () => {
             Swal.close();
-            resolve(false); // Cancelled
+            resolve({ isConfirmed: false }); // Cancelled
           });
         },
       });
@@ -80,6 +80,7 @@ const showCustomAlert = (type, message, navigate, redirectTo, onConfirm) => {
           } else if (navigate && redirectTo) {
             navigate(redirectTo);
           }
+          resolve({ isConfirmed: true });
         },
         html: `
           <div style="width: 100%; height: auto; max-height: 250px; 
@@ -97,7 +98,6 @@ const showCustomAlert = (type, message, navigate, redirectTo, onConfirm) => {
           </div>
         `,
       });
-      resolve(); // Resolve immediately for non-confirm alerts
     }
   });
 };

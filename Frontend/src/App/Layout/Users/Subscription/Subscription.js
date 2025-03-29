@@ -40,6 +40,8 @@ const Subscription = () => {
   const fetchMySubscription = async () => {
     try {
       const res = await getMySubscription(id, token);
+      console.log("fetchMySubscription", res);
+
       if (res?.status) {
         setPlanData(res?.data);
       } else {
@@ -165,17 +167,18 @@ const Subscription = () => {
                       </td>
                       <td>{accordion?.plan_end || "--"}</td>
                     </tr>
-                    <tr>
-                      <td>
-                        <strong>Discount Price:</strong>
-                      </td>
-                      <td>₹{accordion?.discount || "--"}</td>
-                    </tr>
+                    
                     <tr>
                       <td>
                         <strong>Plan Price:</strong>
                       </td>
-                      <td>₹{accordion?.plan_price || "--"}</td>
+                      <td>₹{accordion?.plan_price ?? "--"}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Discount Price:</strong>
+                      </td>
+                      <td>₹ {accordion?.discount ?? "--"}</td>
                     </tr>
                     <tr>
                       <td>
@@ -183,8 +186,17 @@ const Subscription = () => {
                       </td>
                       <td>
                         ₹{accordion?.total}
-                        <small className="text-muted"> {accordion?.gst ? `(${accordion?.gst}% Tax included)` : ""}</small>
+                        {accordion?.plan_price !== accordion?.total && accordion?.gst ? (
+                          <small className="text-muted"> ({accordion?.gst}% Tax included)</small>
+                        ) : null}
                       </td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <strong>Order_ID:</strong>
+                      </td>
+                      <td>{accordion?.orderid || "Make By Admin"}</td>
                     </tr>
                   </tbody>
                 </table>

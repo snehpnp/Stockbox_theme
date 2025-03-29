@@ -96,6 +96,9 @@ const Plan = () => {
         const data = { id: id, status: user_active_status };
 
         const result = await showCustomAlert('confirm', 'Do you want Changes The Pakage Status?')
+        // console.log("result.isConfirmed",result.isConfirmed);
+        // return
+        
 
         if (result.isConfirmed) {
             try {
