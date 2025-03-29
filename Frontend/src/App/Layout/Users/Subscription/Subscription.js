@@ -146,7 +146,16 @@ const Subscription = () => {
                 </button>
               </div>
               <div className="card-body">
-                <table className="table table-bordered mb-0">
+                <div className="row">
+                  <div className="col-md-6 mb-3 ">
+                  <table className="table table-bordered mb-0">
+                    <thead>
+                      <tr className="table-primary">
+                        <th colSpan="2" className="text-center">
+                          Plan Details
+                        </th>
+                      </tr>
+                    </thead>
                   <tbody>
                     <tr>
                       <td>
@@ -199,6 +208,61 @@ const Subscription = () => {
                     </tr>
                   </tbody>
                 </table>
+                    </div>
+                    <div className="col-md-6 mb-3">
+                    <table className="table table-bordered mb-0">
+                    <thead>
+                      <tr className="table-primary">
+                        <th colSpan="2" className="text-center">
+                          Paymenet History
+                        </th>
+                      </tr>
+                    </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <strong>Plan Duration:</strong>
+                      </td>
+                      <td>{accordion?.planDetails?.validity || "--"}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Purchase On:</strong>
+                      </td>
+                      <td>{accordion?.plan_start || "--"}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Expired On:</strong>
+                      </td>
+                      <td>{accordion?.plan_end || "--"}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Discount Price:</strong>
+                      </td>
+                      <td>₹{accordion?.discount || "--"}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Plan Price:</strong>
+                      </td>
+                      <td>₹{accordion?.plan_price || "--"}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Purchase Price:</strong>
+                      </td>
+                      <td>
+                        ₹{accordion?.total}
+                        <small className="text-muted"> {accordion?.gst ? `(${accordion?.gst}% Tax included)` : ""}</small>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                      </div>
+                </div>
+              
               </div>
             </div>
           </div>

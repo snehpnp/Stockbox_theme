@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Doughnut } from "react-chartjs-2";
+import { Doughnut, Line } from "react-chartjs-2"; // Line chart import kiya
 import Content from "../../../components/Contents/Content";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { fDate } from "../../../../Utils/Date_formate";
-
+import { Link, useLocation } from "react-router-dom";
 
 const BasketDetail = () => {
-
   const [activeTab, setActiveTab] = useState("rational");
-  const [itemdata, setItemdata] = useState()
-
-  const token = localStorage.getItem("token");
-  const userid = localStorage.getItem("id");
+  const [itemdata, setItemdata] = useState();
 
   const location = useLocation();
   const { item } = location?.state;
@@ -21,8 +15,7 @@ const BasketDetail = () => {
     return input.replace(/<\/?[^>]+(>|$)/g, "");
   };
 
-
-
+  // Doughnut Chart Data
   const chartData = {
     labels: ["Hit Ratio", "Miss Ratio"],
     datasets: [
@@ -34,102 +27,109 @@ const BasketDetail = () => {
     ],
   };
 
+  // Line Chart Data
+  const chartDataLine = {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+    datasets: [
+      {
+        label: "Performance",
+        data: [10, 25, 35, 50, 40, 60], // Sample data, API se bhi fetch kar sakte hain
+        fill: false,
+        borderColor: "#007bff",
+        tension: 0.1,
+      },
+    ],
+  };
 
   useEffect(() => {
-    setItemdata(item)
-  }, [item])
-
+    setItemdata(item);
+  }, [item]);
 
   return (
-    <Content
-      Page_title="Basket Detail"
-      button_status={false}
-      backbutton_status={true}
-      backbutton_title="Back"
-    >
-      <div className="row border-bottom pb-3">
-        <div className="col-md-8">
-          <h5><b>{item?.title}</b></h5>
-          <ul className="list-group list-group-flush list shadow p-3 border border-success">
-            <li className="list-group-item d-flex justify-content-between align-items-center">
-           Launch Date
-              <span className="badge bg-dark rounded-pill">{item?.mininvamount}</span>
+    <Content Page_title="Basket Detail" button_status={false} backbutton_status={true} backbutton_title="Back">
+      <div className="row  pb-3">
+        <div className="col-md-7">
+        
+          <ul className="list-group list-group-flush list basket-detail-card">
+            <li className="list-group-item btn-primary">
+            <h5 className="mb-0"><b className="text-white">{item?.title}</b></h5>
             </li>
             <li className="list-group-item d-flex justify-content-between align-items-center">
-              Theme<span className="badge bg-success rounded-pill">{item?.cagr} %</span>
+              Launch Date <span className="badge bg-dark rounded-pill">{item?.mininvamount}</span>
+            </li>
+            <li className="list-group-item d-flex justify-content-between align-items-center">
+              Theme <span className="badge bg-success rounded-pill">{item?.cagr} %</span>
             </li>
             <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
-              Since Launch<span className="badge bg-danger rounded-pill">{item?.type}</span>
+              Since Launch <span className="badge bg-danger rounded-pill">{item?.type}</span>
             </li>
             <li className="list-group-item d-flex justify-content-between align-items-center">
-              No. of stocks<span className="badge bg-warning rounded-pill">{item?.themename}</span>
+              No. of stocks <span className="badge bg-warning rounded-pill">{item?.themename}</span>
             </li>
             <li className="list-group-item d-flex justify-content-between align-items-center">
-              Validity
-              <span className="badge bg-primary rounded-pill">
-                {item?.next_rebalance_date}</span>
+              Validity <span className="badge bg-primary rounded-pill">{item?.next_rebalance_date}</span>
             </li>
             <li className="list-group-item d-flex justify-content-between align-items-center">
-              Rebalance Frequency<span className="badge bg-success rounded-pill">{item?.frequency}</span>
+              Rebalance Frequency <span className="badge bg-success rounded-pill">{item?.frequency}</span>
             </li>
             <li className="list-group-item d-flex justify-content-between align-items-center">
-              Next Rebalance Date
-              <span className="badge bg-primary rounded-pill">
-                {item?.next_rebalance_date}</span>
+              Next Rebalance Date <span className="badge bg-primary rounded-pill">{item?.next_rebalance_date}</span>
             </li>
           </ul>
-        
         </div>
-        <div className="col-md-4">
-          <Doughnut data={chartData} />
-        </div>
-         <div className="col-md-12">  
-          <div className="row">
-            </div>
-          </div>
-        <div className="row px-4 pt-4">
-          <div className="col-md-12">
-            <h6>
-              <b>Description</b>
-            </h6>
-            <p>
-              {stripHtmlTags(item?.description)}
-            </p>
-          </div>
-
+        <div className="col-md-5 mx-auto">
+          <Doughnut data={chartData}  className="mx-auto"/>
         </div>
       </div>
+
+      {/* Line Chart Integration */}
+      <div className="row px-4 pt-4">
+        <div className="col-md-12">
+          <div className="card">
+            <div className="card-body">
+            <Line data={chartDataLine} />
+            </div>
+          </div>
+         
+        </div>
+      </div>
+
+      {/* Description Section */}
+      <div className="row px-4 pt-4">
+        <div className="col-md-12">
+          <h6><b>Description</b></h6>
+          <p>{stripHtmlTags(item?.description)}</p>
+        </div>
+      </div>
+
+      {/* Tabs Section */}
       <div className="row px-4 border-top pt-3 align-items-center">
         <div className="col-md-12">
-          <ul className="nav nav-pills mb-3 justify-content-center  ">
+          <ul className="nav nav-pills mb-3 justify-content-center">
             <li className="nav-item">
-              <button
-                className={`nav-link ${activeTab === "rational" ? "active btn-primary" : ""
-                  }`}
-                onClick={() => setActiveTab("rational")}
-              >
+              <button className={`nav-link ${activeTab === "rational" ? "active btn-primary" : ""}`}
+                onClick={() => setActiveTab("rational")}>
                 Rational
               </button>
             </li>
             <hr />
             <li className="nav-item">
-              <button
-                className={`nav-link ${activeTab === "methodology" ? "active btn-primary" : ""
-                  }`}
-                onClick={() => setActiveTab("methodology")}
-              >
+              <button className={`nav-link ${activeTab === "methodology" ? "active btn-primary" : ""}`}
+                onClick={() => setActiveTab("methodology")}>
                 Methodology
               </button>
             </li>
-          </ul></div>
-        <div > {activeTab === "rational" && (
-          <div className="row">
-            <div className="col-md-8">
-              <div dangerouslySetInnerHTML={{ __html: item?.rationale }} />
-            </div>
-          </div>
-        )}
+          </ul>
+        </div>
 
+        <div>
+          {activeTab === "rational" && (
+            <div className="row">
+              <div className="col-md-8">
+                <div dangerouslySetInnerHTML={{ __html: item?.rationale }} />
+              </div>
+            </div>
+          )}
           {activeTab === "methodology" && (
             <div className="row">
               <div className="col-md-8">
@@ -138,12 +138,15 @@ const BasketDetail = () => {
                 </p>
               </div>
             </div>
-          )}  </div>
-
-
+          )}
+        </div>
       </div>
+
+      {/* Footer Button */}
       <div className="card-footer mt-3 text-center">
-        <Link to="/user/basketstocklist" state={{ item }} className="btn btn-primary w-50 mx-auto mt-3">View Detail</Link>
+        <Link to="/user/basketstocklist" state={{ item }} className="btn btn-primary w-50 mx-auto mt-3">
+          View Detail
+        </Link>
       </div>
     </Content>
   );
