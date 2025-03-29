@@ -92,6 +92,39 @@ class Stock {
     }
   }
 
+
+
+  
+  async getStockByServiceStratrgy(req, res) {
+    try {
+
+      const { symbol } = req.body;
+      let segment ="F";
+      const result = await Stock_Modal.aggregate([
+        {
+          $match: {
+            segment: segment,
+            symbol: { $regex: symbol, $options: 'i' }  // Like query for symbol
+          }
+        },
+        {
+          $group: {
+            _id: "$symbol",
+          }
+        }
+      ]);
+
+      return res.json({
+        status: true,
+        message: "get",
+        data: result
+      });
+
+    } catch (error) {
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
+
   async getStocksByExpiry(req, res) {
     try {
       const { segment, symbol } = req.body;

@@ -4,7 +4,7 @@ const storage = multer.memoryStorage(); // Store files in memory
 const upload = multer({ storage }); // Apply storage settings
 const { checkPermission } = require('../Middleware/permissionMiddleware'); // Path to your middleware
 
-const {AddStock,getStock,updateStock,deleteStock,detailStock,statusChange,AddBulkStock,activeStock,getStockByService,getStocksByExpiry,getStocksByExpiryByStrike,getStockBySymbol} = require('../Controllers/Stock')
+const {AddStock,getStock,updateStock,deleteStock,detailStock,statusChange,AddBulkStock,activeStock,getStockByService,getStocksByExpiry,getStocksByExpiryByStrike,getStockBySymbol,getStockByServiceStratrgy} = require('../Controllers/Stock')
 
 const PERMISSIONS = {
     ADD: 'addstock',
@@ -31,5 +31,6 @@ router.post('/stock/getstockbysymbol', getStockBySymbol);
 router.post('/stock/getstocksbyexpiry', getStocksByExpiry);
 router.post('/stock/getstocksbyexpirybystrike', getStocksByExpiryByStrike);
 
+router.post('/stock/getstockbyservicestratrgy', getStockByServiceStratrgy);
 
 module.exports = router;

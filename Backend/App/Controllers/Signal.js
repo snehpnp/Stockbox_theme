@@ -16,7 +16,7 @@ const Clients_Modal = db.Clients;
 const { sendFCMNotification } = require('./Pushnotification'); // Adjust if necessary
 
 var axios = require('axios');
- 
+
 
 class Signal {
 
@@ -951,7 +951,7 @@ class Signal {
           data: []
         });
       }
-
+      const validServiceIds = plans.map(plan => plan.serviceid.toString());
 
       const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
 
@@ -975,7 +975,7 @@ class Signal {
 
 
       const query = {
-        service: { $in: service_ids }
+        service: { $in: validServiceIds }
       };
 
       if (client.deliverystatus === true) {
@@ -1106,6 +1106,7 @@ class Signal {
           data: []
         });
       }
+      const validServiceIds = plans.map(plan => plan.serviceid.toString());
 
       const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
 
@@ -1128,7 +1129,7 @@ class Signal {
 
 
       const query = {
-        service: { $in: service_ids },
+        service: { $in: validServiceIds },
       };
 
       // Check if deliverystatus is true
@@ -2079,7 +2080,7 @@ class Signal {
         });
       });
       // Destructure required fields from req.body, including stocks array
-      const { stock, strategy_name, callduration, service, description, planid, profitlosstype, stocks } = req.body;
+      const { stock, strategy_name, callduration, service, description, planid, maximum_loss, maximum_profit, required_margin, stocks } = req.body;
 
       // Validate required fields (planid and stocks)
       if (!planid) {
@@ -2130,7 +2131,9 @@ class Signal {
           callduration: callduration,
           description: description,
           planid: id,
-          profitlosstype: profitlosstype,
+          maximum_loss: maximum_loss,
+          maximum_profit: maximum_profit,
+          required_margin: required_margin,
           report: report,
         });
       });
@@ -2161,7 +2164,6 @@ class Signal {
           }
 
 
-          console.log("stock", stock);
           let stockss;
           let tradesymbols;
 

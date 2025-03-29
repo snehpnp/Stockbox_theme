@@ -1764,8 +1764,6 @@ async function getCurrentPrice(tradesymbol) {
     }
 }
 
-
-// Main function to calculate profit/loss for baskets
 async function addBasketgraphdata(req, res) {
     try {
         // Step 1: Get the latest version for each basket_id
@@ -1777,6 +1775,10 @@ async function addBasketgraphdata(req, res) {
                 }
             }
         ]);
+
+        if (latestVersions.length === 0) {
+            return res.json({ status: false, message: "No basket versions found", data: [] });
+        }
 
         // Step 2: Build a filter query for all latest versions with status = 1
         const versionFilters = latestVersions.map((basket) => ({
@@ -1795,19 +1797,16 @@ async function addBasketgraphdata(req, res) {
 
 
         for (const stock of stocks) {
+
             const { basket_id, price, quantity, tradesymbol, name, type } = stock;
 
             const basket = await Basket_Modal.findById(basket_id);
             if (!basket) {
-              return res.status(400).json({
-                status: false,
-                message: "Basket not found.",
-              });
+                console.log(`Basket not found for ID: ${basket_id}, skipping...`);
+                continue; // ✅ Continue loop instead of returning
             }
-
             // Fetch current price and prev_close
             const { price: currentPrice, prev_close, co_code  } = await getCurrentPrice(name);
-           
             // Calculate profit/loss
             const profitLoss = (currentPrice - prev_close) * quantity;
 
@@ -1830,6 +1829,16 @@ async function addBasketgraphdata(req, res) {
         let profitLossPercentageMapApi = {}; // ✅ Store API-based percentages for each basket
         let profitLossSymbolMapApi = {}; // ✅ Correctly placed outside the loop
 for (const [basket_id, stockTypeSet] of Object.entries(basketStockTypes)) {
+
+
+    const basket = await Basket_Modal.findById(basket_id).lean();
+    
+    if (!basket) {
+        console.log(`Skipping missing basket: ${basket_id}`);
+        continue;
+    }
+
+
     const typesArray = Array.from(stockTypeSet);
 
     let profitLossPercentageapi = 0; // Initialize per basket
@@ -1844,7 +1853,7 @@ for (const [basket_id, stockTypeSet] of Object.entries(basketStockTypes)) {
     }
     else {
 
-    
+
     if (typesArray.includes("Small Cap") && typesArray.includes("Mid Cap") && typesArray.includes("Large Cap")) {
         symbolgraph = "NFT500MULT"; 
         const { price: currentPrice, prev_close } = await getCurrentPrice('NFT500MULT');
@@ -1885,7 +1894,6 @@ for (const [basket_id, stockTypeSet] of Object.entries(basketStockTypes)) {
 }
 
 
-
         // Step 5: Insert profit/loss and percentage only if today's record doesn't exist
         const basketProfitLoss = [];
 
@@ -1916,6 +1924,7 @@ for (const [basket_id, stockTypeSet] of Object.entries(basketStockTypes)) {
         return res.json({ status: false, message: "Server error", data: [] });
     }
 }
+
 
 async function addBasketVolatilityData(req, res) {
     try {

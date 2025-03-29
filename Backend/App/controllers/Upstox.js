@@ -24,7 +24,6 @@ class Upstox {
         try {
             var tokenCode = req.query.code;
             var email = req.query.state;
-
             if (tokenCode != undefined) {
 
                 const client = await Clients_Modal.findOne({ Email: email,ActiveStatus:1,del:0 });
@@ -35,6 +34,8 @@ class Upstox {
                         message: "Client not found"
                     });
                 }
+
+
                 var hosts = req.headers.host;
 
                 const requestData = new URLSearchParams();
@@ -1215,103 +1216,88 @@ let config = {
         }
     }
 
-    async MultipleplaceOrder(req, res) {
-        try {
-            const { id, signalid, quantity } = req.body;
-    
-            // ✅ Client Check
-            const client = await Clients_Modal.findById(id);
-            if (!client) return res.status(404).json({ status: false, message: "Client not found" });
-    
-            if (client.tradingstatus == 0) {
-                return res.status(400).json({ status: false, message: "Client Broker Not Login, Please Login With Broker" });
-            }
-    
-            // ✅ Signal Check
-            const signal = await Signalsdata_Modal.findById(signalid);
-            if (!signal) return res.status(404).json({ status: false, message: "Signal not found" });
-    
-            // ✅ Fetch Stocks for the Given Signal
-            const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
-            if (stocks.length === 0) return res.status(404).json({ status: false, message: "No stock found for this signal" });
-    
-            // ✅ Authorization Data
-            const authToken = client.authtoken;
-            const apikey = client.apikey;
-    
-            let ordersData = [];
-    
-            for (let stock of stocks) {
-                let optiontype, exchange, producttype, tradingsymbol, stockData;
-    
-                if (stock.segment === "C") {
-                    optiontype = "EQ";
-                    exchange = "NSE";
+  
+async  MultipleplaceOrder(req, res) {
+    try {
+        const { id, signalid, quantity } = req.body;
 
-                } else {
-                    optiontype = stock.segment === "F" ? "UT" : stock.optiontype;
-                    exchange = "NFO";
+        // ✅ Client Check
+        const client = await Clients_Modal.findById(id);
+        if (!client) return res.status(404).json({ status: false, message: "Client not found" });
+
+        if (client.tradingstatus == 0) {
+            return res.status(400).json({ status: false, message: "Client Broker Not Login, Please Login With Broker" });
+        }
+
+        // ✅ Signal Check
+        const signal = await Signalsdata_Modal.findById(signalid);
+        if (!signal) return res.status(404).json({ status: false, message: "Signal not found" });
+
+        // ✅ Fetch Stocks for the Given Signal
+        const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
+        if (stocks.length === 0) return res.status(404).json({ status: false, message: "No stock found for this signal" });
+
+        // ✅ Authorization Data
+        const authToken = client.authtoken;
+        const apikey = client.apikey;
+
+        let placedOrders = [];
+
+        for (let stock of stocks) {
+            let optiontype = stock.segment === "C" ? "EQ" : (stock.segment === "F" ? "UT" : stock.optiontype);
+            let exchange = stock.segment === "C" ? "NSE" : "NFO";
+            let producttype = signal.callduration === "Intraday" ? "I" : "D";
+
+            // ✅ Fetch Stock Data
+            let stockQuery = { symbol: signal.stock, segment: stock.segment };
+            if (stock.segment !== "C") {
+                stockQuery.expiry = stock.expirydate;
+                if (stock.segment !== "F") {
+                    stockQuery.option_type = optiontype;
+                    stockQuery.strike = stock.strikeprice;
                 }
-    
-                producttype = signal.callduration === "Intraday" ? "I" : (stock.segment === "C" ? "D" : "D");
-    
-                // ✅ Fetch Stock Data from `Stock_Modal`
-                if (stock.segment === "C") {
-                    stockData = await Stock_Modal.findOne({ symbol: signal.stock, segment: stock.segment });
-                } else if (stock.segment === "F") {
-                    stockData = await Stock_Modal.findOne({ symbol: signal.stock, segment: stock.segment, expiry: stock.expirydate });
-                } else {
-                    stockData = await Stock_Modal.findOne({
-                        symbol: signal.stock,
-                        segment: stock.segment,
-                        expiry: stock.expirydate,
-                        option_type: optiontype,
-                        strike: stock.strikeprice
-                    });
-                }
-    
-                if (!stockData) {
-                    return res.status(404).json({ status: false, message: `Stock not found for ${stockData.tradesymbol}` });
-                }
-    
-                // ✅ Fetch Trading Symbol from CSV
-                const filePath = path.join(__dirname, '../../tokenupstox/complete.csv');
-                const searchToken = stockData.instrument_token;
-    
-                try {
-                    const data = fs.readFileSync(filePath, 'utf8');
-                    const lines = data.split('\n');
-    
-                    for (const line of lines) {
-                        const parts = line.split(',');
-                        if (parts.length > 1 && parts[1].replace(/"/g, "") === searchToken) {
-                            tradingsymbol = parts[0].replace(/"/g, "");
-                            break;
-                        }
-                    }
-                } catch (err) {
-                    console.error(`Error reading file: ${err.message}`);
-                }
-    
-                tradingsymbol = signal.segment.toLowerCase() === 'c' ? stockData.symbol : tradingsymbol;
-    
-                // ✅ Order Data
-                ordersData.push({
-                    "quantity": parseInt(quantity),
-                    "product": producttype,
-                    "validity": "DAY",
-                    "price": 0,
-                    "tag": "string",
-                    "instrument_token": tradingsymbol,
-                    "order_type": "MARKET",
-                    "transaction_type": stock.calltype,
-                    "disclosed_quantity": 0,
-                    "trigger_price": 0,
-                    "is_amo": false
-                });
             }
-    
-            // ✅ Order API Call to Upstox
+
+            let stockData = await Stock_Modal.findOne(stockQuery);
+            if (!stockData) {
+                console.warn(`⚠️ Stock not found for ${stockData.tradesymbol}, skipping.`);
+                continue;
+            }
+
+            // ✅ Fetch Trading Symbol from CSV
+            const filePath = path.join(__dirname, '../../tokenupstox/complete.csv');
+            let tradingsymbol = null;
+            try {
+                const data = fs.readFileSync(filePath, 'utf8');
+                const lines = data.split('\n');
+                for (const line of lines) {
+                    const parts = line.split(',');
+                    if (parts.length > 1 && parts[1].replace(/"/g, "") === stockData.instrument_token) {
+                        tradingsymbol = parts[0].replace(/"/g, "");
+                        break;
+                    }
+                }
+            } catch (err) {
+                console.error(`Error reading file: ${err.message}`);
+            }
+
+            tradingsymbol = tradingsymbol || stockData.symbol;
+
+            // ✅ Order Data
+            let orderData = {
+                "quantity": parseInt(quantity),
+                "product": producttype,
+                "validity": "DAY",
+                "price": 0,
+                "tag": "string",
+                "instrument_token": tradingsymbol,
+                "order_type": "MARKET",
+                "transaction_type": stock.calltype,
+                "disclosed_quantity": 0,
+                "trigger_price": 0,
+                "is_amo": false
+            };
+
             let config = {
                 method: 'post',
                 maxBodyLength: Infinity,
@@ -1320,293 +1306,225 @@ let config = {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${authToken}`
                 },
-                data: ordersData
+                data: orderData
             };
-    
-            axios(config)
-                .then(async (response) => {
-                    if (response.data.data != undefined) {
-                        let orderRecords = [];
-                        for (let stock of stocks) {
-                            let stockData,exchange;
-                
-                           
-                            // ✅ Fetch Stock Data from `Stock_Modal`
-                            if (stock.segment === "C") {
-                                stockData = await Stock_Modal.findOne({ symbol: signal.stock, segment: stock.segment });
-                            } else if (stock.segment === "F") {
-                                stockData = await Stock_Modal.findOne({ symbol: signal.stock, segment: stock.segment, expiry: stock.expirydate });
-                            } else {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    expiry: stock.expirydate,
-                                    option_type: optiontype,
-                                    strike: stock.strikeprice
-                                });
-                            }
 
+            try {
+                let response = await axios.request(config);
+                if (response.data.data != undefined) {
 
-                            if (stock.segment === "C") {
-                                exchange = "NSE";
-                            } else {
-                                exchange = "NFO";
-                            }
-                          orderRecords.push({
-                                clientid: client._id,
-                                signalid: signal._id,
-                                orderid: response.data.data.order_id,
-                                ordertype: stock.calltype,
-                                borkerid: 6,
-                                quantity: quantity,
-                                ordertoken: stockData.instrument_token,
-                                exchange: exchange
-                            });
-                        }
-    
-                        await Order_Modal.insertMany(orderRecords);
-    
-                        return res.json({
-                            status: true,
-                            message: "Order Placed Successfully",
-                            data: response.data
-                        });
-                    } else {
-                        let url;
-                        var hosts = req.headers.host;
-    
-                        if (response.data.message == "Invalid Token") {
-                            url = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=${apikey}&redirect_uri=https://${hosts}/backend/upstox/getaccesstoken&state=${client.Email}`;
-                        }
-                        return res.status(500).json({
-                            status: false,
-                            url: url,
-                            message: "Invalid Token"
-                        });
-                    }
-                })
-                .catch(async (error) => {
-                    return res.status(500).json({
-                        status: false,
-                        message: error.response ? error.response.data : error.message
-                    });
-                });
-    
-        } catch (error) {
-            return res.status(500).json({
-                status: false,
-                message: error.response ? error.response.data : "An error occurred while placing the order"
-            });
-        }
-    }
-    
-    async MultipleExitplaceOrder(req, res) {
-        try {
-            const { id, signalid, quantity } = req.body;
-    
-            // ✅ Client Check
-            const client = await Clients_Modal.findById(id);
-            if (!client) return res.status(404).json({ status: false, message: "Client not found" });
-    
-            if (client.tradingstatus == 0) {
-                return res.status(400).json({ status: false, message: "Client Broker Not Login, Please Login With Broker" });
-            }
-    
-            // ✅ Signal Check
-            const signal = await Signalsdata_Modal.findById(signalid);
-            if (!signal) return res.status(404).json({ status: false, message: "Signal not found" });
-    
-            // ✅ Fetch Stocks for the Signal
-            const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
-            if (stocks.length === 0) return res.status(404).json({ status: false, message: "No stock found for this signal" });
-    
-            // ✅ Authorization Data
-            const authToken = client.authtoken;
-            const apikey = client.apikey;
-    
-            let ordersData = [];
-    
-            for (let stock of stocks) {
-                let optiontype, exchange, producttype, stockData;
-    
-                // ✅ Determine Exchange & Option Type
-                if (stock.segment === "C") {
-                    optiontype = "EQ";
-                    exchange = "NSE";
-                } else {
-                    optiontype = stock.optiontype || (stock.segment === "F" ? "UT" : "");
-                    exchange = "NFO";
-                }
-    
-                // ✅ Determine Product Type
-                producttype = signal.callduration === "Intraday" ? "I" : "D";
-    
-                // ✅ Fetch Stock Data from `Stock_Modal`
-                
-                           
-                // ✅ Fetch Stock Data from `Stock_Modal`
-                if (stock.segment === "C") {
-                    stockData = await Stock_Modal.findOne({ symbol: signal.stock, segment: stock.segment });
-                } else if (stock.segment === "F") {
-                    stockData = await Stock_Modal.findOne({ symbol: signal.stock, segment: stock.segment, expiry: stock.expirydate });
-                } else {
-                    stockData = await Stock_Modal.findOne({
-                        symbol: signal.stock,
-                        segment: stock.segment,
-                        expiry: stock.expirydate,
-                        option_type: optiontype,
-                        strike: stock.strikeprice
-                    });
-                }
-
-    
-                if (!stockData) {
-                    console.warn(`Stock not found for ${stockData.tradesymbol}, skipping.`);
-                    continue;
-                }
-    
-                // ✅ Fetch Trading Symbol from CSV
-                const filePath = path.join(__dirname, "../../tokenupstox/complete.csv");
-                const searchToken = stockData.instrument_token;
-                let tradingsymbol = null;
-    
-                try {
-                    const data = fs.readFileSync(filePath, "utf8");
-                    const lines = data.split("\n");
-    
-                    for (const line of lines) {
-                        const parts = line.split(",");
-                        if (parts.length > 1 && parts[1].replace(/"/g, "") === searchToken) {
-                            tradingsymbol = parts[0].replace(/"/g, "");
-                            break;
-                        }
-                    }
-                } catch (err) {
-                    console.error("Error reading file:", err);
-                }
-    
-                if (!tradingsymbol) {
-                    console.warn(`Trading symbol not found for ${stockData.tradesymbol}, skipping.`);
-                    continue;
-                }
-    
-                // ✅ Check Position & Holdings
-                let holdingData = { qty: 0 };
-                let positionData = { qty: 0 };
-                let totalValue = 0;
-    
-                try {
-                    positionData = await CheckPosition(client.apikey, authToken, stock.segment, stockData.instrument_token, producttype, stock.calltype, tradingsymbol);
-                } catch (error) {
-                    console.error(`Error in CheckPosition for ${stockData.tradesymbol}:`, error.message);
-                }
-    
-                if (stock.segment === "C") {
-                    try {
-                        holdingData = await CheckHolding(client.apikey, authToken, stock.segment, stockData.instrument_token, producttype, stock.calltype, tradingsymbol);
-                    } catch (error) {
-                        console.error(`Error in CheckHolding for ${stock.tradesymbol}:`, error.message);
-                    }
-                    totalValue = Math.abs(positionData.qty || 0) + (holdingData.qty || 0);
-                } else {
-                    totalValue = Math.abs(positionData.qty || 0);
-                }
-    
-                let calltypes = signal.calltype === "BUY" ? "SELL" : "BUY";
-    
-                if (totalValue >= quantity) {
-                    let orderData = {
+                        
+                    let orderRecord = {
+                        clientid: client._id,
+                        signalid: signal._id,
+                        orderid: response.data.data.order_id,
+                        uniqueorderid: response.data.data.order_id,
+                        ordertype: stock.calltype,
+                        borkerid: 6,
                         quantity: quantity,
-                        product: producttype,
-                        validity: "DAY",
-                        price: 0,
-                        tag: "string",
-                        instrument_token: tradingsymbol,
-                        order_type: "MARKET",
-                        transaction_type: calltypes,
-                        disclosed_quantity: 0,
-                        trigger_price: 0,
-                        is_amo: false
+                        ordertoken: stockData.instrument_token,
+                        exchange: exchange
                     };
-    
-                    let config = {
-                        method: "post",
-                        maxBodyLength: Infinity,
-                        url: "https://api-hft.upstox.com/v2/order/place",
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${authToken}`
-                        },
-                        data: orderData
-                    };
-    
-                    ordersData.push({ config, stockData });
+
+                    await Order_Modal.create(orderRecord);
+                    placedOrders.push(orderRecord);
+
+                    console.log(`✅ Order placed successfully for ${tradingsymbol}`);
                 } else {
-                    console.warn(`Not enough quantity to exit for ${stockData.tradesymbol}, skipping.`);
+                    console.warn(`⚠️ Failed to place order for ${tradingsymbol}: ${response.data.message}`);
+                }
+            } catch (error) {
+                console.error(`❌ Error placing order for ${tradingsymbol}: ${error.message}`);
+            }
+        }
+
+        return res.json({
+            status: true,
+            message: "Orders processed",
+            data: placedOrders
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            message: error.response ? error.response.data : "An error occurred while placing the order"
+        });
+    }
+}
+async MultipleExitplaceOrder(req, res) {
+    try {
+        const { id, signalid, quantity } = req.body;
+
+        // ✅ Client Check
+        const client = await Clients_Modal.findById(id);
+        if (!client) return res.status(404).json({ status: false, message: "Client not found" });
+
+        if (client.tradingstatus == 0) {
+            return res.status(400).json({ status: false, message: "Client Broker Not Login, Please Login With Broker" });
+        }
+
+        // ✅ Signal Check
+        const signal = await Signalsdata_Modal.findById(signalid);
+        if (!signal) return res.status(404).json({ status: false, message: "Signal not found" });
+
+        // ✅ Fetch Stocks for the Signal
+        const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
+        if (stocks.length === 0) return res.status(404).json({ status: false, message: "No stock found for this signal" });
+
+        // ✅ Authorization Data
+        const authToken = client.authtoken;
+        const apikey = client.apikey;
+
+        let successfulOrders = [];
+
+        for (let stock of stocks) {
+            let optiontype = stock.segment === "C" ? "EQ" : (stock.segment === "F" ? "UT" : stock.optiontype);
+            let exchange = stock.segment === "C" ? "NSE" : "NFO";
+            let producttype = signal.callduration === "Intraday" ? "I" : "D";
+
+            // ✅ Fetch Stock Data from `Stock_Modal`
+            let stockQuery = { symbol: signal.stock, segment: stock.segment };
+            if (stock.segment !== "C") {
+                stockQuery.expiry = stock.expirydate;
+                if (stock.segment !== "F") {
+                    stockQuery.option_type = optiontype;
+                    stockQuery.strike = stock.strikeprice;
                 }
             }
-    
-            // ✅ Execute All Exit Orders
-            let responses = await Promise.all(ordersData.map(async ({ config, stockData }) => {
+
+            let stockData = await Stock_Modal.findOne(stockQuery);
+            if (!stockData) {
+                console.warn(`⚠️ Stock not found for ${stockData.tradesymbol}, skipping.`);
+                continue;
+            }
+
+            // ✅ Fetch Trading Symbol from CSV
+            const filePath = path.join(__dirname, "../../tokenupstox/complete.csv");
+            const searchToken = stockData.instrument_token;
+            let tradingsymbol = null;
+
+            try {
+                const data = fs.readFileSync(filePath, "utf8");
+                const lines = data.split("\n");
+
+                for (const line of lines) {
+                    const parts = line.split(",");
+                    if (parts.length > 1 && parts[1].replace(/"/g, "") === searchToken) {
+                        tradingsymbol = parts[0].replace(/"/g, "");
+                        break;
+                    }
+                }
+            } catch (err) {
+                console.error("Error reading file:", err);
+            }
+
+            if (!tradingsymbol) {
+                console.warn(`⚠️ Trading symbol not found for ${stockData.tradesymbol}, skipping.`);
+                continue;
+            }
+
+            // ✅ Check Position & Holdings
+            let holdingData = { qty: 0 };
+            let positionData = { qty: 0 };
+            let totalValue = 0;
+
+            try {
+                positionData = await CheckPosition(client.apikey, authToken, stock.segment, stockData.instrument_token, producttype, stock.calltype, tradingsymbol);
+            } catch (error) {
+                console.error(`Error in CheckPosition for ${stockData.tradesymbol}:`, error.message);
+            }
+
+            if (stock.segment === "C") {
+                try {
+                    holdingData = await CheckHolding(client.apikey, authToken, stock.segment, stockData.instrument_token, producttype, stock.calltype, tradingsymbol);
+                } catch (error) {
+                    console.error(`Error in CheckHolding for ${stock.tradesymbol}:`, error.message);
+                }
+                totalValue = Math.abs(positionData.qty || 0) + (holdingData.qty || 0);
+            } else {
+                totalValue = Math.abs(positionData.qty || 0);
+            }
+
+            let calltypes = signal.calltype === "BUY" ? "SELL" : "BUY";
+
+            if (totalValue >= quantity) {
+                let orderData = {
+                    quantity: quantity,
+                    product: producttype,
+                    validity: "DAY",
+                    price: 0,
+                    tag: "string",
+                    instrument_token: tradingsymbol,
+                    order_type: "MARKET",
+                    transaction_type: calltypes,
+                    disclosed_quantity: 0,
+                    trigger_price: 0,
+                    is_amo: false
+                };
+
+                let config = {
+                    method: "post",
+                    maxBodyLength: Infinity,
+                    url: "https://api-hft.upstox.com/v2/order/place",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${authToken}`
+                    },
+                    data: orderData
+                };
+
                 try {
                     let response = await axios.request(config);
-                    if (response.data.data) {
-                        return {
-                            status: true,
-                            data: response.data,
-                            message: "Exit Order Placed Successfully",
-                            stock: stockData
+                    if (response.data.data != undefined) {
 
+                        
+                        let exitOrderRecord = {
+                            clientid: client._id,
+                            signalid: signal._id,
+                            orderid: response.data.data.order_id,
+                            uniqueorderid: response.data.data.order_id,
+                            ordertype: stock.calltype === "BUY" ? "SELL" : "BUY",
+                            borkerid: 6,
+                            quantity: quantity,
+                            ordertoken: stockData.instrument_token
                         };
+
+                        await Order_Modal.create(exitOrderRecord);
+                        successfulOrders.push(exitOrderRecord);
+
+                        console.log(`✅ Exit order placed successfully for ${tradingsymbol}`);
                     } else {
                         let url;
                         let hosts = req.headers.host;
-    
+
                         if (response.data.message === "Invalid Token") {
                             url = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=${apikey}&redirect_uri=https://${hosts}/backend/upstox/getaccesstoken&state=${client.Email}`;
                         }
-                        return {
-                            status: false,
-                            url: url,
-                            message: "Invalid Token",
-                            stock: stock.tradesymbol
-                        };
+
+                        console.warn(`⚠️ Exit order failed for ${tradingsymbol}: ${response.data.message}`);
                     }
                 } catch (error) {
-                    return {
-                        status: false,
-                        message: `Error placing exit order for ${stockData.tradesymbol}: ${error.message}`
-                    };
+                    console.error(`❌ Error placing exit order for ${tradingsymbol}: ${error.message}`);
                 }
-            }));
-    
-            // ✅ Insert Successful Exit Orders into Database
-            let successfulOrders = responses.filter(order => order.status === true);
-            if (successfulOrders.length > 0) {
-                let exitOrderRecords = successfulOrders.map(order => ({
-                    clientid: client._id,
-                    signalid: signal._id,
-                    orderid: order.data.data.order_id,
-                    uniqueorderid: order.data.data.order_id,
-                    ordertype: order.stock.calltype === "BUY" ? "SELL" : "BUY",
-                    borkerid: 6,
-                    quantity: quantity,
-                    ordertoken: order.stock.instrument_token
-                }));
-    
-                await Order_Modal.insertMany(exitOrderRecords);
+            } else {
+                console.warn(`⚠️ Not enough quantity to exit for ${stockData.tradesymbol}, skipping.`);
             }
-    
-            return res.json({ status: true, responses });
-    
-        } catch (error) {
-            return res.status(500).json({
-                status: false,
-                message: error.response ? error.response.data : error.message
-            });
         }
+
+        return res.json({
+            status: true,
+            message: "Exit orders processed",
+            data: successfulOrders
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            message: error.response ? error.response.data : "An error occurred while placing the exit order"
+        });
     }
-    
+}
+
 
 }
 

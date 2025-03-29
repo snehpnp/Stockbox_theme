@@ -5181,7 +5181,7 @@ class List {
 
           // Broadcast notifications based on client type
           {
-            clienttype: { $in: ['active', 'expired', 'nonsubscribe', 'all'] },
+            clienttype: { $in: ['active', 'expired', 'nonsubscribe', 'All'] },
             $or: [
               // For active clients with active subscriptions
               ...(hasActiveSubscriptions ? [{ clienttype: 'active', segmentid: { $in: activePlans } }] : []),
@@ -5193,7 +5193,7 @@ class List {
               ...(noSubscriptions ? [{ clienttype: 'nonsubscribe' }] : []),
 
               // For all clients
-              { clienttype: 'all' }
+              { clienttype: 'All' }
             ]
           }
         ]

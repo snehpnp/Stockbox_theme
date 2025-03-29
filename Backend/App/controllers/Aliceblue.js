@@ -1241,7 +1241,6 @@ class Aliceblue {
         }
     }
 
-
     async MultipleplaceOrder(req, res) {
         try {
             const { id, signalid, quantity } = req.body;
@@ -1253,7 +1252,7 @@ class Aliceblue {
             }
     
             if (client.tradingstatus == 0) {
-                return res.status(404).json({ status: false, message: "Client Broker Not Login, Please Login With Broker" });
+                return res.status(403).json({ status: false, message: "Client Broker Not Logged In" });
             }
     
             // ✅ Signal Check
@@ -1272,9 +1271,10 @@ class Aliceblue {
             const authToken = client.authtoken;
             const userId = client.alice_userid;
     
-            // ✅ Order Requests Array
-            let ordersData = [];
+            let orderRecords = []; // ✅ To Store Orders for Database
+            let failedOrders = []; // ❌ To Track Failed Orders
     
+            // ✅ Loop Through Stocks and Place Orders One by One
             for (let stock of stocks) {
                 let optiontype, exchange, producttype;
     
@@ -1288,6 +1288,7 @@ class Aliceblue {
     
                 producttype = signal.callduration === "Intraday" ? "MIS" : (stock.segment === "C" ? "CNC" : "NRML");
     
+                // ✅ Fetch Stock Data from DB
                 let stockData;
                 if (stock.segment === "C") {
                     stockData = await Stock_Modal.findOne({
@@ -1313,11 +1314,12 @@ class Aliceblue {
                 }
     
                 if (!stockData) {
-                    return res.status(404).json({ status: false, message: `Stock not found for ${stock.tradesymbol}` });
+                    failedOrders.push({ stock: stockData.tradesymbol, message: "Stock not found" });
+                    continue; // ❌ Skip this stock and move to the next
                 }
     
                 // ✅ Order Object
-                ordersData.push({
+                let orderData = {
                     "complexty": "regular",
                     "discqty": "0",
                     "exch": exchange,
@@ -1331,102 +1333,69 @@ class Aliceblue {
                     "transtype": stock.calltype,
                     "trigPrice": "00.00",
                     "orderTag": "order1"
-                });
-            }
+                };
     
-            let config = {
-                method: 'post',
-                maxBodyLength: Infinity,
-                url: 'https://ant.aliceblueonline.com/rest/AliceBlueAPIService/api/placeOrder/executePlaceOrder',
-                headers: {
-                    'Authorization': 'Bearer ' + userId + ' ' + authToken,
-                    'Content-Type': 'application/json',
-                },
-                data: JSON.stringify(ordersData)
-            };
+                // ✅ API Request Configuration
+                let config = {
+                    method: 'post',
+                    maxBodyLength: Infinity,
+                    url: 'https://ant.aliceblueonline.com/rest/AliceBlueAPIService/api/placeOrder/executePlaceOrder',
+                    headers: {
+                        'Authorization': `Bearer ${userId} ${authToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                    data: JSON.stringify(orderData)
+                };
     
-            axios(config)
-                .then(async (response) => {
-                    const responseData = response.data;
+                // ✅ Place Order API Call
+                try {
+                    let response = await axios(config);
+                    let responseData = response.data;
     
+                    // ✅ If Order is Placed Successfully
                     if (responseData[0].stat == 'Ok') {
-                        let orderRecords = [];
-                        for (let stock of stocks) {
-
-
-                            let stockData;
-                            if (stock.segment === "C") {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    //    option_type: optiontype 
-                                });
-                            } else if (stock.segment === "F") {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    expiry: stock.expirydate,
-                                    //    option_type: optiontype 
-                                });
-                            } else {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    expiry: stock.expirydate,
-                                    option_type: optiontype,
-                                    strike: stock.strikeprice
-                                });
-                            }
-                
-
-                            orderRecords.push({
-                                clientid: client._id,
-                                signalid: signal._id,
-                                orderid: responseData[i].NOrdNo,
-                                ordertype: stock.calltype,
-                                borkerid: 2,
-                                quantity: quantity,
-                                ordertoken: stockData.instrument_token,
-                                exchange: stockData.exchange
-                            });
-                        }
-    
-                        await Order_Modal.insertMany(orderRecords);
-    
-                        return res.json({
-                            status: true,
-                            message: "Order Successfully Placed",
-                            data: responseData
+                        orderRecords.push({
+                            clientid: client._id,
+                            signalid: signal._id,
+                            orderid: responseData[0].NOrdNo,
+                            ordertype: stock.calltype,
+                            borkerid: 2,
+                            quantity: quantity,
+                            ordertoken: stockData.instrument_token,
+                            exchange: stockData.exchange
                         });
                     } else {
-                        return res.status(500).json({
-                            status: false,
-                            message: responseData
-                        });
+                        failedOrders.push({ stock: stockData.tradesymbol, message: responseData });
                     }
-                })
-                .catch(async (error) => {
-                    const message = (JSON.stringify(error.response.data)).replace(/["',]/g, '');
-    
-                    let url;
-                    if (message == "") {
-                        url = `https://ant.aliceblueonline.com/?appcode=${client.apikey}`;
-                    }
-    
-                    return res.status(500).json({
-                        status: false,
-                        url: url,
-                        message: message
+                } catch (error) {
+                    failedOrders.push({
+                        stock: stockData.tradesymbol,
+                        message: error.response ? JSON.stringify(error.response.data) : error.message
                     });
-                });
+                }
+            }
+    
+            // ✅ Insert Successful Orders into Database
+            if (orderRecords.length > 0) {
+                await Order_Modal.insertMany(orderRecords);
+            }
+    
+            // ✅ Final Response
+            return res.json({
+                status: true,
+                message: `Orders Processed: ${orderRecords.length} Success, ${failedOrders.length} Failed`,
+                successOrders: orderRecords,
+                failedOrders: failedOrders
+            });
     
         } catch (error) {
             return res.status(500).json({
                 status: false,
-                message: error.response ? error.response.data : "An error occurred while placing the order"
+                message: error.response ? error.response.data : "An error occurred while placing the orders"
             });
         }
     }
+    
     
     async MultipleExitplaceOrder(req, res) {
         try {
@@ -1459,7 +1428,6 @@ class Aliceblue {
             const userId = client.alice_userid;
     
             // ✅ Order Requests Array
-            let ordersData = [];
             let totalQuantityAvailable = 0;
     
             for (let stock of stocks) {
@@ -1480,14 +1448,12 @@ class Aliceblue {
                     stockData = await Stock_Modal.findOne({
                         symbol: signal.stock,
                         segment: stock.segment,
-                        //    option_type: optiontype 
                     });
                 } else if (stock.segment === "F") {
                     stockData = await Stock_Modal.findOne({
                         symbol: signal.stock,
                         segment: stock.segment,
                         expiry: stock.expirydate,
-                        //    option_type: optiontype 
                     });
                 } else {
                     stockData = await Stock_Modal.findOne({
@@ -1500,7 +1466,7 @@ class Aliceblue {
                 }
     
                 if (!stockData) {
-                    return res.status(404).json({ status: false, message: `Stock not found for ${stock.tradesymbol}` });
+                    return res.status(404).json({ status: false, message: `Stock not found for ${stockData.tradesymbol}` });
                 }
     
                 // ✅ Get Holding & Position Data
@@ -1528,7 +1494,7 @@ class Aliceblue {
     
                 if (totalValue >= quantity) {
                     // ✅ Order Object
-                    ordersData.push({
+                    const orderData = {
                         "complexty": "regular",
                         "discqty": "0",
                         "exch": exchange,
@@ -1542,7 +1508,53 @@ class Aliceblue {
                         "transtype": calltypes,
                         "trigPrice": "00.00",
                         "orderTag": "order1"
-                    });
+                    };
+    
+                    let config = {
+                        method: 'post',
+                        maxBodyLength: Infinity,
+                        url: 'https://ant.aliceblueonline.com/rest/AliceBlueAPIService/api/placeOrder/executePlaceOrder',
+                        headers: {
+                            'Authorization': 'Bearer ' + userId + ' ' + authToken,
+                            'Content-Type': 'application/json',
+                        },
+                        data: JSON.stringify([orderData]) // Send one order at a time
+                    };
+    
+                    // Place the order and handle the response for each order
+                    await axios(config)
+                        .then(async (response) => {
+                            const responseData = response.data;
+    
+                            if (responseData[0].stat === 'Ok') {
+                                // ✅ Insert Order Record for this particular order
+                                const orderRecord = {
+                                    clientid: client._id,
+                                    signalid: signal._id,
+                                    orderid: responseData[0].NOrdNo,  // Unique Order ID from response
+                                    ordertype: calltypes,
+                                    borkerid: 2,
+                                    quantity: quantity,
+                                };
+    
+                                await Order_Modal.create(orderRecord); // Insert each order separately
+    
+                                // ✅ Update Existing Order
+                                const orderupdate = await Order_Modal.findOne({ clientid: id, signalid, borkerid: 2 });
+                                if (orderupdate) {
+                                    orderupdate.tsstatus = 0;
+                                    await orderupdate.save();
+                                }
+                            } else {
+                                return res.status(500).json({ status: false, message: responseData });
+                            }
+                        })
+                        .catch(async (error) => {
+                            const message = (JSON.stringify(error.response.data)).replace(/["',]/g, '');
+                            let url = message === "" ? `https://ant.aliceblueonline.com/?appcode=${client.apikey}` : null;
+    
+                            return res.status(500).json({ status: false, url: url, message: message });
+                        });
                 }
             }
     
@@ -1550,63 +1562,10 @@ class Aliceblue {
                 return res.status(500).json({ status: false, message: "Sorry, the requested quantity is not available." });
             }
     
-            let config = {
-                method: 'post',
-                maxBodyLength: Infinity,
-                url: 'https://ant.aliceblueonline.com/rest/AliceBlueAPIService/api/placeOrder/executePlaceOrder',
-                headers: {
-                    'Authorization': 'Bearer ' + userId + ' ' + authToken,
-                    'Content-Type': 'application/json',
-                },
-                data: JSON.stringify(ordersData)
-            };
-    
-            axios(config)
-                .then(async (response) => {
-                    const responseData = response.data;
-    
-                    if (responseData[0].stat == 'Ok') {
-                        let orderRecords = [];
-                        let i=0;
-                        for (let stock of stocks) {
-
-                            let calltypes = stock.calltype === 'BUY' ? "SELL" : "BUY";
-
-                            orderRecords.push({
-                                clientid: client._id,
-                                signalid: signal._id,
-                                orderid: responseData[i].NOrdNo,
-                                ordertype: calltypes,
-                                borkerid: 2,
-                                quantity: quantity,
-                            });
-                            $i++;
-                        }
-    
-                        await Order_Modal.insertMany(orderRecords);
-    
-                        // ✅ Update Existing Order
-                        const orderupdate = await Order_Modal.findOne({ clientid: id, signalid, borkerid: 2 });
-                        if (orderupdate) {
-                            orderupdate.tsstatus = 0;
-                            await orderupdate.save();
-                        }
-    
-                        return res.json({
-                            status: true,
-                            message: "Exit Order Successfully Placed",
-                            data: responseData
-                        });
-                    } else {
-                        return res.status(500).json({ status: false, message: responseData });
-                    }
-                })
-                .catch(async (error) => {
-                    const message = (JSON.stringify(error.response.data)).replace(/["',]/g, '');
-                    let url = message === "" ? `https://ant.aliceblueonline.com/?appcode=${client.apikey}` : null;
-    
-                    return res.status(500).json({ status: false, url: url, message: message });
-                });
+            return res.json({
+                status: true,
+                message: "Orders have been placed successfully.",
+            });
     
         } catch (error) {
             return res.status(500).json({

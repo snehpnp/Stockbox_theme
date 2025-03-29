@@ -1325,7 +1325,7 @@ class Clients {
         url = `https://kite.zerodha.com/connect/login?v=3&api_key=${apikey}`;
       }
       else if (brokerid == 6) {
-        url = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=124c6797-b28d-47b1-91e5-6c26f7cb9a02&redirect_uri=https://${hosts}/backend/upstox/getaccesstoken&state=${client.Email}`;
+        url = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=${client.apikey}&redirect_uri=https://${hosts}/backend/upstox/getaccesstoken&state=${client.Email}`;
       }
       else {
         url = `https://ant.aliceblueonline.com/?appcode=${apikey}`;

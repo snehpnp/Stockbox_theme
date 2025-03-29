@@ -1207,16 +1207,13 @@ class Dhan {
         }
     }
 
-
     async MultipleplaceOrder(req, res) {
         try {
             const { id, signalid, quantity } = req.body;
     
             // ✅ Client Check
             const client = await Clients_Modal.findById(id);
-            if (!client) {
-                return res.status(404).json({ status: false, message: "Client not found" });
-            }
+            if (!client) return res.status(404).json({ status: false, message: "Client not found" });
     
             if (client.tradingstatus == 0) {
                 return res.status(404).json({ status: false, message: "Client Broker Not Login, Please Login With Broker" });
@@ -1224,22 +1221,17 @@ class Dhan {
     
             // ✅ Signal Check
             const signal = await Signalsdata_Modal.findById(signalid);
-            if (!signal) {
-                return res.status(404).json({ status: false, message: "Signal not found" });
-            }
+            if (!signal) return res.status(404).json({ status: false, message: "Signal not found" });
     
-            // ✅ Multiple Stocks Fetch (Ascending Order)
+            // ✅ Fetch Stocks
             const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
-            if (stocks.length === 0) {
-                return res.status(404).json({ status: false, message: "No stock found for this signal" });
-            }
+            if (stocks.length === 0) return res.status(404).json({ status: false, message: "No stock found for this signal" });
     
             // ✅ Authorization Data
             const apikey = client.apikey;
             const authToken = client.authtoken;
     
             let ordersData = [];
-    
             for (let stock of stocks) {
                 let optiontype, exchange, exchangess, producttype;
     
@@ -1278,14 +1270,12 @@ class Dhan {
                     });
                 }
     
-                if (!stockData) {
-                    return res.status(404).json({ status: false, message: `Stock not found for ${stock.tradesymbol}` });
-                }
+                if (!stockData) return res.status(404).json({ status: false, message: `Stock not found for ${stockData.tradesymbol}` });
     
                 // ✅ Unique Correlation ID
                 const correlationId = crypto.randomBytes(12).toString('hex').substring(0, 25);
     
-                ordersData.push({
+                let orderPayload = {
                     "dhanClientId": apikey,
                     "transactionType": stock.calltype,
                     "exchangeSegment": exchange,
@@ -1301,104 +1291,52 @@ class Dhan {
                     "amoTime": "OPEN",
                     "boProfitValue": 0,
                     "boStopLossValue": 0
-                });
+                };
+    
+                let config = {
+                    method: 'post',
+                    url: 'https://api.dhan.co/orders',
+                    headers: {
+                        'access-token': authToken,
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify(orderPayload)
+                };
+    
+                try {
+                    let response = await axios(config);
+    
+                    if (response.data.orderStatus != undefined) {
+
+                        let orderRecord = {
+                            clientid: client._id,
+                            signalid: signal._id,
+                            orderid: response.data.orderId,
+                            uniqueorderid: correlationId, // ✅ Unique Order ID
+                            ordertype: stock.calltype,
+                            borkerid: 7,
+                            quantity: quantity,
+                            ordertoken: stockData.instrument_token,
+                            exchange: exchangess
+                        };
+    
+                        await Order_Modal.create(orderRecord);
+                        ordersData.push(orderRecord);
+                    }
+                } catch (error) {
+                    console.error(`Error placing order for ${stockData.tradesymbol}:`, error.message);
+                    ordersData.push({
+                        status: false,
+                        message: `Error placing order for ${stockData.tradesymbol}`
+                    });
+                }
             }
     
-            let config = {
-                method: 'post',
-                maxBodyLength: Infinity,
-                url: 'https://api.dhan.co/orders',
-                headers: {
-                    'access-token': authToken,
-                    'Content-Type': 'application/json'
-                },
-                data: JSON.stringify(ordersData)
-            };
-    
-            axios(config)
-                .then(async (response) => {
-                    if (response.data.orderStatus !== undefined) {
-                        let orderRecords = [];
-                        let i = 0;
-                        for (let stock of stocks) {
-                            let optiontype, exchange, exchangess, producttype;
-                
-                            if (stock.segment === "C") {
-                                exchange = "NSE_EQ";
-                                exchangess = "NSE";
-                            } else {
-                                optiontype = stock.segment === "F" ? "UT" : stock.optiontype;
-                                exchange = "NSE_FNO";
-                                exchangess = "NFO";
-                            }
-                
-                            producttype = signal.callduration === "Intraday" ? "INTRADAY" : (stock.segment === "C" ? "CNC" : "MARGIN");
-                
-                            let stockData;
-                            if (stock.segment === "C") {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    //    option_type: optiontype 
-                                });
-                            } else if (stock.segment === "F") {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    expiry: stock.expirydate,
-                                    //    option_type: optiontype 
-                                });
-                            } else {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    expiry: stock.expirydate,
-                                    option_type: optiontype,
-                                    strike: stock.strikeprice
-                                });
-                            }
-                             orderRecords.push({
-                                clientid: client._id,
-                                signalid: signal._id,
-                                orderid: response.data.orderId,
-                                ordertype: stock.calltype,
-                                borkerid: 7,
-                                quantity: quantity,
-                                ordertoken: stockData.instrument_token,
-                                exchange: exchangess
-                            });
-                            i++;
-                        }
-    
-                        await Order_Modal.insertMany(orderRecords);
-    
-                        return res.json({
-                            status: true,
-                            message: "Order Placed Successfully",
-                            data: response.data
-                        });
-                    } else {
-                        return res.status(500).json({
-                            status: false,
-                            message: response.data || 'Unknown error in response'
-                        });
-                    }
-                })
-                .catch((error) => {
-                    let errorMessage = "An error occurred while placing the order";
-                    if (error.response) {
-                        errorMessage = error.response.data;
-                    } else if (error.request) {
-                        errorMessage = error.request;
-                    } else {
-                        errorMessage = error.message;
-                    }
-    
-                    return res.status(500).json({
-                        status: false,
-                        message: errorMessage
-                    });
-                });
+            return res.json({
+                status: true,
+                message: "Orders processed",
+                data: ordersData
+            });
     
         } catch (error) {
             return res.status(500).json({
@@ -1407,7 +1345,7 @@ class Dhan {
             });
         }
     }
-
+    
 
 
     async MultipleExitplaceOrder(req, res) {
@@ -1416,9 +1354,7 @@ class Dhan {
     
             // ✅ Client Check
             const client = await Clients_Modal.findById(id);
-            if (!client) {
-                return res.status(404).json({ status: false, message: "Client not found" });
-            }
+            if (!client) return res.status(404).json({ status: false, message: "Client not found" });
     
             if (client.tradingstatus == 0) {
                 return res.status(404).json({ status: false, message: "Client Broker Not Login, Please Login With Broker" });
@@ -1426,15 +1362,11 @@ class Dhan {
     
             // ✅ Signal Check
             const signal = await Signalsdata_Modal.findById(signalid);
-            if (!signal) {
-                return res.status(404).json({ status: false, message: "Signal not found" });
-            }
+            if (!signal) return res.status(404).json({ status: false, message: "Signal not found" });
     
-            // ✅ Fetch Stocks for the Given Signal
+            // ✅ Fetch Stocks
             const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
-            if (stocks.length === 0) {
-                return res.status(404).json({ status: false, message: "No stock found for this signal" });
-            }
+            if (stocks.length === 0) return res.status(404).json({ status: false, message: "No stock found for this signal" });
     
             // ✅ Authorization Data
             const apikey = client.apikey;
@@ -1455,6 +1387,7 @@ class Dhan {
                 }
     
                 producttype = signal.callduration === "Intraday" ? "INTRADAY" : (stock.segment === "C" ? "CNC" : "MARGIN");
+    
                 let stockData;
                 if (stock.segment === "C") {
                     stockData = await Stock_Modal.findOne({
@@ -1478,9 +1411,8 @@ class Dhan {
                         strike: stock.strikeprice
                     });
                 }
-                if (!stockData) {
-                    return res.status(404).json({ status: false, message: `Stock not found for ${stock.tradesymbol}` });
-                }
+    
+                if (!stockData) return res.status(404).json({ status: false, message: `Stock not found for ${stockData.tradesymbol}` });
     
                 // ✅ Check Holding & Position
                 let holdingData = { qty: 0 };
@@ -1506,7 +1438,10 @@ class Dhan {
                 let calltypess = stock.calltype === 'BUY' ? 'SELL' : 'BUY';
     
                 if (totalValue >= quantity) {
-                    ordersData.push({
+                    // ✅ Unique Correlation ID
+                    const correlationId = crypto.randomBytes(12).toString('hex').substring(0, 25);
+    
+                    let orderPayload = {
                         "dhanClientId": apikey,
                         "transactionType": calltypess,
                         "exchangeSegment": exchange,
@@ -1522,106 +1457,58 @@ class Dhan {
                         "amoTime": "OPEN",
                         "boProfitValue": 0,
                         "boStopLossValue": 0
-                    });
-                } else {
-                    return res.status(400).json({ status: false, message: `Insufficient quantity for ${stock.tradesymbol}` });
-                }
-            }
+                    };
     
-            let config = {
-                method: 'post',
-                maxBodyLength: Infinity,
-                url: 'https://api.dhan.co/orders',
-                headers: {
-                    'access-token': authToken,
-                    'Content-Type': 'application/json'
-                },
-                data: JSON.stringify(ordersData)
-            };
+                    let config = {
+                        method: 'post',
+                        url: 'https://api.dhan.co/orders',
+                        headers: {
+                            'access-token': authToken,
+                            'Content-Type': 'application/json'
+                        },
+                        data: JSON.stringify(orderPayload)
+                    };
     
-            axios(config)
-                .then(async (response) => {
-                    if (response.data.orderStatus !== undefined) {
-                        let orderRecords = [];
-                        let i = 0;
-                        for (let stock of stocks) {
-                 let optiontype;
-                            if (stock.segment === "C") {
-                                exchangess = "NSE";
-                            } else {
-                                exchangess = "NFO";
-                                optiontype = stock.segment === "F" ? "UT" : stock.optiontype;
+                    try {
+                        let response = await axios(config);
+    
+                        if (response.data.orderStatus != undefined) {
 
-                            }
-                
-                            let stockData;
-                            if (stock.segment === "C") {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    //    option_type: optiontype 
-                                });
-                            } else if (stock.segment === "F") {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    expiry: stock.expirydate,
-                                    //    option_type: optiontype 
-                                });
-                            } else {
-                                stockData = await Stock_Modal.findOne({
-                                    symbol: signal.stock,
-                                    segment: stock.segment,
-                                    expiry: stock.expirydate,
-                                    option_type: optiontype,
-                                    strike: stock.strikeprice
-                                });
-                            }
-
-                            let calltypess = stock.calltype === 'BUY' ? 'SELL' : 'BUY';
-
-                            orderRecords.push({
+                            let orderRecord = {
                                 clientid: client._id,
                                 signalid: signal._id,
                                 orderid: response.data.orderId,
+                                uniqueorderid: correlationId, // ✅ Unique Order ID
                                 ordertype: calltypess,
                                 borkerid: 7,
                                 quantity: quantity,
                                 ordertoken: stockData.instrument_token,
                                 exchange: exchangess
-                            });
-                            i++;
+                            };
+    
+                            await Order_Modal.create(orderRecord);
+                            ordersData.push(orderRecord);
                         }
-    
-                        await Order_Modal.insertMany(orderRecords);
-    
-                        return res.json({
-                            status: true,
-                            message: "Exit Order Placed Successfully",
-                            data: response.data
-                        });
-                    } else {
-                        return res.status(500).json({
+                    } catch (error) {
+                        console.error(`Error placing exit order for ${stockData.tradesymbol}:`, error.message);
+                        ordersData.push({
                             status: false,
-                            message: response.data || 'Unknown error in response'
+                            message: `Error placing exit order for ${stockData.tradesymbol}`
                         });
                     }
-                })
-                .catch((error) => {
-                    let errorMessage = "An error occurred while placing the order";
-                    if (error.response) {
-                        errorMessage = error.response.data;
-                    } else if (error.request) {
-                        errorMessage = error.request;
-                    } else {
-                        errorMessage = error.message;
-                    }
-    
-                    return res.status(500).json({
+                } else {
+                    ordersData.push({
                         status: false,
-                        message: errorMessage
+                        message: `Insufficient quantity for ${stock.tradesymbol}`
                     });
-                });
+                }
+            }
+    
+            return res.json({
+                status: true,
+                message: "Exit Orders processed",
+                data: ordersData
+            });
     
         } catch (error) {
             return res.status(500).json({
@@ -1630,7 +1517,6 @@ class Dhan {
             });
         }
     }
-
 
 }
 
