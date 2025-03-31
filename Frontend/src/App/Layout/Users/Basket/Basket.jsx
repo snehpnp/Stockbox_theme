@@ -1,105 +1,85 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
 import { Doughnut } from "react-chartjs-2";
-import { Link, useNavigate } from 'react-router-dom';
-import { GetBasketService, BasketPurchaseList } from '../../../Services/UserService/User';
+import { Link, useNavigate } from "react-router-dom";
+import {
+  GetBasketService,
+  BasketPurchaseList,
+} from "../../../Services/UserService/User";
 import { basicsettinglist } from "../../../Services/Admin/Admin";
-import { loadScript } from '../../../../Utils/Razorpayment';
-import Loader from '../../../../Utils/Loader';
-
+import { loadScript } from "../../../../Utils/Razorpayment";
+import Loader from "../../../../Utils/Loader";
 
 function Basket() {
-
-
   const [activeTab, setActiveTab] = useState("allbasket");
-  const [basketdata, setBasketdata] = useState([])
+  const [basketdata, setBasketdata] = useState([]);
 
-  const [purchasedata, setPurchasedata] = useState([])
+  const [purchasedata, setPurchasedata] = useState([]);
 
-  const [isLoading, setIsLoading] = useState(true)
-
-
-
+  const [isLoading, setIsLoading] = useState(true);
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
   const navigate = useNavigate();
 
-  const [onlinePaymentStatus, setOnlinePaymentStatus] = useState()
-  const [offlinePaymentStatus, setOfflinePaymentStatus] = useState()
-
-
+  const [onlinePaymentStatus, setOnlinePaymentStatus] = useState();
+  const [offlinePaymentStatus, setOfflinePaymentStatus] = useState();
 
   useEffect(() => {
     if (activeTab === "allbasket") {
-      getbasketdata()
+      getbasketdata();
     } else if (activeTab === "subscribedbasket") {
-      getbasketpurchasedata()
+      getbasketpurchasedata();
     }
-  }, [activeTab, isLoading])
+  }, [activeTab, isLoading]);
 
   useEffect(() => {
-    getkeybydata()
-  }, [])
-
+    getkeybydata();
+  }, []);
 
   const getkeybydata = async () => {
     try {
       const response = await basicsettinglist();
       if (response.status) {
-        setOnlinePaymentStatus(response.data[0].paymentstatus)
-        setOfflinePaymentStatus(response.data[0].officepaymenystatus)
+        setOnlinePaymentStatus(response.data[0].paymentstatus);
+        setOfflinePaymentStatus(response.data[0].officepaymenystatus);
       }
     } catch (error) {
       console.error("Error fetching coupons:", error);
     }
   };
 
-
-
-
-
   const getbasketdata = async () => {
     try {
-      const data = { clientid: userid }
-      const response = await GetBasketService(data, token)
+      const data = { clientid: userid };
+      const response = await GetBasketService(data, token);
       if (response.status) {
-        setBasketdata(response.data)
-
+        setBasketdata(response.data);
       }
     } catch (error) {
-      console.log("error", error)
+      console.log("error", error);
     }
-    setIsLoading(false)
-  }
-
-
-
+    setIsLoading(false);
+  };
 
   const getbasketpurchasedata = async () => {
     try {
-      const data = { clientid: userid }
-      const response = await BasketPurchaseList(data, token)
+      const data = { clientid: userid };
+      const response = await BasketPurchaseList(data, token);
       if (response.status) {
-        setPurchasedata(response.data)
-
+        setPurchasedata(response.data);
       }
     } catch (error) {
-      console.log("error", error)
+      console.log("error", error);
     }
-    setIsLoading(false)
-  }
-
-
+    setIsLoading(false);
+  };
 
   const stripHtmlTags = (input) => {
     if (!input) return "";
     return input.replace(/<\/?[^>]+(>|$)/g, "");
   };
-
-
-
 
   // Static details
   const details = {
@@ -118,7 +98,6 @@ function Basket() {
     description: "Mid Cap",
   };
 
-
   return (
     <Content
       Page_title="Basket"
@@ -126,14 +105,13 @@ function Basket() {
       backbutton_title="back"
       button_status={false}
       backbutton_status={false}
-
     >
-
-      <ul className="nav nav-pills mb-3 justify-content-center border-bottom">
+      <ul className="nav nav-pills mb-3 justify-content-center border-bottom mb-">
         <li className="nav-item">
           <button
-            className={`nav-link ${activeTab === "allbasket" ? "active btn-primary" : ""
-              }`}
+            className={`nav-link ${
+              activeTab === "allbasket" ? "active btn-primary" : ""
+            }`}
             onClick={() => setActiveTab("allbasket")}
           >
             All Basket
@@ -142,91 +120,119 @@ function Basket() {
 
         <li className="nav-item">
           <button
-            className={`nav-link ${activeTab === "subscribedbasket" ? "active btn-primary" : ""
-              }`}
+            className={`nav-link ${
+              activeTab === "subscribedbasket" ? "active btn-primary" : ""
+            }`}
             onClick={() => setActiveTab("subscribedbasket")}
           >
             Subscribed Basket
           </button>
         </li>
-
       </ul>
-      {activeTab === "allbasket" && (
-        isLoading ? (
+      {activeTab === "allbasket" &&
+        (isLoading ? (
           <Loader />
         ) : basketdata?.length > 0 ? (
           <div className="row">
             {basketdata?.map((item) => (
-              <div className="col-md-12 col-lg-4 mb-3" key={item?.id}>
-                <div className="card radius-10 overflow-hidden">
-                  <div className="card-body">
-                    <img src="https://stockboxpnp.pnpuniverse.com/uploads/blogs/image-1742206277154-910627492.png" alt="Basket" className="w-100 img-fluid mb-3" />
-                    <div className="d-flex justify-content-between align-items-center">
-                      <h5 className="mb-0">
-                        {item?.title} ({item?.themename})
-                      </h5>
-                      {item?.isSubscribed && (
-                        <span className="badge bg-success">Subscribed</span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="progress-wrapper">
-                    <div className="progress" style={{ height: 7 }}>
-                      <div
-                        className="progress-bar"
-                        role="progressbar"
-                        style={{ width: "75%" }}
+              <div className="col-md-12 col-lg-6 mb-4" key={item?.id}>
+                <div className="card radius-10 overflow-hidden shadow basket-card">
+                  <div className="card-body pb-0">
+                    <div className="d-flex ">
+                      <img
+                        src="https://stockboxpnp.pnpuniverse.com/uploads/blogs/image-1742206277154-910627492.png"
+                        alt="Basket"
+                        style={{ width: "70px", height: "70px" }}
+                        className=" img-fluid mb-3"
                       />
+                      <div className="mb-0 ms-3 ">
+                        <h4>
+                          {item?.title} ({item?.themename})
+                          {item?.isSubscribed && (
+                            <span
+                              className="badge bg-success ms-2"
+                              style={{ fontSize: "12px" }}
+                            >
+                              Subscribed
+                            </span>
+                          )}
+                        </h4>
+
+                        <p className="basket-short-description mb-1">
+                          {stripHtmlTags(item?.description || "")}
+                        </p>
+
+                        <div className="text-muted fs-6">
+                          {" "}
+                          Since Launch
+                          <span>
+                            <b className="">: {item?.cagr}</b>
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
+                  <hr />
+                  <div className="card-body pt-0  ">
+                    <ul className="list-group list-group-flush list d-flex flex-row justify-content-between mb-3">
+                      <li className="list-group-item border-bottom-0 border-right">
+                        <div className="text-muted fs-6">
+                          Minimum Investment
+                        </div>
+                        <b className="">{item?.mininvamount}</b>
+                      </li>
 
-                  <div className="card-body">
-                    <ul className="list-group list-group-flush list shadow p-3 ">
-                      <li className="list-group-item d-flex justify-content-between align-items-center">
-                        <textarea
-                          className="form-control"
-                          value={stripHtmlTags(item?.description || "")}
-                          readOnly
-                        />
+                      <li className="list-group-item border-bottom-0">
+                        <div className="text-muted fs-6">Volatility</div>
+                        <b className="">{item?.volatility}</b>
                       </li>
-                      <li className="list-group-item d-flex justify-content-between align-items-center">
-                        Minimum Investment
-                        <span className="badge bg-dark rounded-pill">{item?.mininvamount}</span>
-                      </li>
-                      <li className="list-group-item d-flex justify-content-between align-items-center">
-                        CAGR
-                        <span className="badge bg-success rounded-pill">{item?.cagr}</span>
-                      </li>
-                      <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
-                        Validity
-                        <span className="badge bg-danger rounded-pill">{item?.validity}</span>
+                      <li className="list-group-item border-bottom-0">
+                        {item?.isSubscribed || item?.isActive ? (
+                          <Link
+                            to="/user/basketdetail"
+                            state={{ item }}
+                            className="btn btn-primary w-100"
+                          >
+                            View Details
+                          </Link>
+                        ) : item?.isSubscribed === false &&
+                          item?.isActive === false ? (
+                          <Link
+                            to={
+                              onlinePaymentStatus || offlinePaymentStatus
+                                ? "/user/payment"
+                                : "#"
+                            }
+                            state={{ item }}
+                            className="btn btn-primary w-100"
+                            style={{
+                              pointerEvents:
+                                onlinePaymentStatus || offlinePaymentStatus
+                                  ? "auto"
+                                  : "none",
+                              opacity:
+                                onlinePaymentStatus || offlinePaymentStatus
+                                  ? "1"
+                                  : "0.5",
+                            }}
+                          >
+                            Subscribe <del>{item?.full_price}</del>{" "}
+                            {item?.basket_price}
+                          </Link>
+                        ) : item?.isSubscribed === true &&
+                          item?.isActive === false ? (
+                          <Link
+                            to="/user/rebalancestock"
+                            state={{ item }}
+                            className="btn btn-primary w-100"
+                          >
+                            View Rebalance
+                          </Link>
+                        ) : null}
                       </li>
                       {/* <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100 mb-1">
                         View Details
                       </Link> */}
-
-                      {item?.isSubscribed || item?.isActive ? (
-                        <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100">
-                          View Details
-                        </Link>
-                      ) : item?.isSubscribed === false && item?.isActive === false ? (
-                        <Link
-                          to={onlinePaymentStatus || offlinePaymentStatus ? "/user/payment" : "#"}
-                          state={{ item }}
-                          className="btn btn-primary w-100"
-                          style={{
-                            pointerEvents: onlinePaymentStatus || offlinePaymentStatus ? "auto" : "none",
-                            opacity: onlinePaymentStatus || offlinePaymentStatus ? "1" : "0.5",
-                          }}
-                        >
-                          Subscribe <del>{item?.full_price}</del> {item?.basket_price}
-                        </Link>
-                      ) : item?.isSubscribed === true && item?.isActive === false ? (
-                        <Link to="/user/rebalancestock" state={{ item }} className="btn btn-primary w-100">
-                          View Rebalance
-                        </Link>
-                      ) : null}
                     </ul>
                   </div>
                 </div>
@@ -235,74 +241,99 @@ function Basket() {
           </div>
         ) : (
           <div className="text-center mt-4">
-            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+            <img
+              src="/assets/images/norecordfound.png"
+              alt="No Records Found"
+            />
           </div>
-        )
-      )}
+        ))}
 
-
-      {activeTab === "subscribedbasket" && (
-        isLoading ? (
+      {activeTab === "subscribedbasket" &&
+        (isLoading ? (
           <Loader />
         ) : purchasedata?.length > 0 ? (
           <div className="row">
             {purchasedata?.map((item) => (
-              <div className="col-md-12 col-lg-4 mb-3" key={item?.id}>
-                <div className="card radius-10 overflow-hidden">
-                  <div className="card-body">
-                    <h5>{item?.title} ({item?.themename})</h5>
-                  </div>
+              <div className="col-md-6 col-lg-6 mb-3" key={item?.id}>
+                <div className="card radius-10 overflow-hidden shadow basket-card">
 
-                  <div className="progress-wrapper">
-                    <div className="progress" style={{ height: 7 }}>
-                      <div
-                        className="progress-bar"
-                        role="progressbar"
-                        style={{ width: "75%" }}
+                <div className="card-body pb-0">
+                    <div className="d-flex ">
+                      <img
+                        src="https://stockboxpnp.pnpuniverse.com/uploads/blogs/image-1742206277154-910627492.png"
+                        alt="Basket"
+                        style={{ width: "70px", height: "70px" }}
+                        className=" img-fluid mb-3"
                       />
+                      <div className="mb-0 ms-3 ">
+                        <h4>
+                          {item?.title} ({item?.themename})
+                         
+                        </h4>
+
+                        <p className="basket-short-description mb-1">
+                          {stripHtmlTags(item?.description || "")}
+                        </p>
+
+                        <div className="text-muted fs-6">
+                          {" "}
+                          Since Launch
+                          <span>
+                            <b className="">: {item?.cagr}</b>
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
+                  <hr />
+                  <div className="card-body pt-0  ">
+                    <ul className="list-group list-group-flush list d-flex flex-row justify-content-between mb-3">
+                      <li className="list-group-item border-bottom-0 border-right">
+                        <div className="text-muted fs-6">
+                          Minimum Investment
+                        </div>
+                        <b className="">{item?.mininvamount}</b>
+                      </li>
 
-                  <div className="card-body">
-                    <ul className="list-group list-group-flush list shadow-none">
-                      <li className="list-group-item d-flex justify-content-between align-items-center">
-                        <textarea
-                          className="form-control"
-                          value={stripHtmlTags(item?.description || "")}
-                          readOnly
-                        />
+                      <li className="list-group-item border-bottom-0">
+                        <div className="text-muted fs-6">Volatility</div>
+                        <b className="">{item?.volatility}</b>
                       </li>
-                      <li className="list-group-item d-flex justify-content-between align-items-center">
-                        Minimum Investment
-                        <span className="badge bg-dark rounded-pill">{item?.mininvamount}</span>
-                      </li>
-                      <li className="list-group-item d-flex justify-content-between align-items-center">
-                        CAGR
-                        <span className="badge bg-success rounded-pill">{item?.cagr}</span>
-                      </li>
-                      <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
-                        Validity
-                        <span className="badge bg-danger rounded-pill">{item?.validity}</span>
-                      </li>
-                      <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100">
+                      <li className="list-group-item border-bottom-0">
+                      <Link
+                        to="/user/basketdetail"
+                        state={{ item }}
+                        className="btn btn-primary w-100"
+                      >
                         View Details
                       </Link>
+                         
+                       
+                      </li>
+                      {/* <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100 mb-1">
+                        View Details
+                      </Link> */}
                     </ul>
                   </div>
+                
+
+               
+
+               
                 </div>
               </div>
             ))}
           </div>
         ) : (
           <div className="text-center mt-4">
-            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+            <img
+              src="/assets/images/norecordfound.png"
+              alt="No Records Found"
+            />
           </div>
-        )
-      )}
-
-
+        ))}
     </Content>
-  )
+  );
 }
 
-export default Basket
+export default Basket;
