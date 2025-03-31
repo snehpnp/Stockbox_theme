@@ -226,7 +226,7 @@ const History = () => {
             width: '200px',
         },
         {
-            name: 'GST %',
+            name: 'Total Amount',
             selector: row => row?.total || "-",
             cell: row => <div>{row?.total} <span style={{ fontSize: "12px" }}>({row?.gst}% Gst Included)</span></div>,
             sortable: true,
@@ -243,12 +243,12 @@ const History = () => {
 
 
 
-        {
-            name: 'Total',
-            selector: row => <div> <IndianRupee />{row.total}</div>,
-            sortable: true,
-            width: '200px',
-        },
+        // {
+        //     name: 'Total',
+        //     selector: row => <div> <IndianRupee />{row.total}</div>,
+        //     sortable: true,
+        //     width: '200px',
+        // },
         // {
         //     name: 'Plan Price',
         //     selector: row => row.planDetails.plan_price,

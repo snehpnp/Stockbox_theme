@@ -107,6 +107,7 @@ const Generalsettings = () => {
                                 simage: null,
                                 gstin: clients[0].gstin || '',
                                 state: clients[0].state || '',
+                                invoicetnc: clients[0].invoicetnc || '',
 
                             }}
                             onSubmit={async (values, { resetForm }) => {
@@ -121,6 +122,7 @@ const Generalsettings = () => {
                                     simage: values.simage,
                                     gstin: values.gstin,
                                     state: values.state,
+                                    invoicetnc: values.invoicetnc,
                                     id: user_id,
 
                                 };
@@ -281,7 +283,7 @@ const Generalsettings = () => {
 
                                             </div>
 
-                                            <div className="row mb-3 align-items-center">
+                                            {/* <div className="row mb-3 align-items-center">
                                                 <label htmlFor="simage" className="col-sm-3 col-form-label">
                                                     <b>Signature Image</b>
                                                 </label>
@@ -303,7 +305,7 @@ const Generalsettings = () => {
                                                     )}
                                                 </div>
 
-                                            </div>
+                                            </div> */}
 
                                             <div className="row mb-3 align-items-center">
                                                 <label htmlFor="address" className="col-sm-3 col-form-label">
@@ -364,6 +366,25 @@ const Generalsettings = () => {
                                                                 </option>
                                                             ))}
                                                         </Field>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="row mb-3 align-items-center">
+                                                <label htmlFor="invoicetnc" className="col-sm-3 col-form-label">
+                                                    <b> Terms & Condition</b>
+                                                </label>
+                                                <div className="col-sm-9">
+                                                    <div className="input-group">
+                                                        <span className="input-group-text">
+                                                            <i className="bx bx-home" />
+                                                        </span>
+                                                        <Field
+                                                            name="invoicetnc"
+                                                            as="textarea"
+                                                            className="form-control"
+                                                            placeholder="Terms & Condition"
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>

@@ -1872,6 +1872,7 @@ export async function Updatebasicsettings(data, token) {
     formData.append('simage', data.simage);
     formData.append('gstin', data.gstin);
     formData.append('state', data.state);
+    formData.append('invoicetnc', data.invoicetnc);
 
 
 
@@ -2614,6 +2615,7 @@ export async function UpdatereferAndEarn(data, token) {
     formData.append('refer_description', data.refer_description);
     formData.append('refer_image', data.refer_image);
     formData.append('refer_status', data.refer_status);
+    formData.append('refersendmsg', data.refersendmsg);
 
     try {
         const res = await axios.post(`${Config.base_url}basicsetting/add`, formData, {

@@ -17,6 +17,7 @@ const ReferAndEarn = () => {
   const getsettinglist = async () => {
     try {
       const response = await basicsettinglist(token);
+      console.log("getsettinglist",response)
       if (response.status) {
         setClients(response.data);
       }
@@ -73,6 +74,7 @@ const ReferAndEarn = () => {
                 refer_image: null,
                 Multipletime: clients[0]?.refer_status === 1,
                 Singletime: clients[0]?.refer_status === 0,
+                refersendmsg: clients[0]?.refersendmsg || "",
               }}
               onSubmit={async (values) => {
                 const req = {
@@ -82,6 +84,7 @@ const ReferAndEarn = () => {
                   refer_description: values?.refer_description,
                   refer_image: values?.refer_image,
                   refer_status: values?.refer_status,
+                  refersendmsg: values?.refersendmsg,
                 };
 
                 try {
@@ -193,6 +196,26 @@ const ReferAndEarn = () => {
                             style={{ width: "100%" }}
                             onChange={(e) => {
                               handleFieldChange("refer_description", e.target.value, setFieldValue);
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="row mb-3 align-items-center">
+                      <label htmlFor="refersendmsg" className="col-sm-3 col-form-label">
+                        <b>Refer Send Msg</b>
+                      </label>
+                      <div className="col-sm-9">
+                        <div className="input-group">
+                          <Field
+                            as="textarea"
+                            name="refersendmsg"
+                            className="form-control"
+                            placeholder="Refer Send Msg"
+                            style={{ width: "100%" }}
+                            onChange={(e) => {
+                              handleFieldChange("refersendmsg", e.target.value, setFieldValue);
                             }}
                           />
                         </div>
