@@ -365,6 +365,7 @@ class Dashboard {
       const signals = await Signal_Modal.find({
         del: 0,
         close_status: true,
+        closeprice: { $ne: 0 },
         service: new mongoose.Types.ObjectId(id) // Ensure service is an ObjectId
       });
 
@@ -686,6 +687,8 @@ class Dashboard {
       const query = {
         service: service_id,
         close_status: true,
+        closeprice: { $ne: 0 },
+        del: 0,
       };
 
       // Get the total number of matching records
@@ -1116,6 +1119,7 @@ class Dashboard {
   
       // Base query
       const query = {
+        del: 0,
         service: service_id,
         close_status: true,
         closeprice: { $ne: 0 }

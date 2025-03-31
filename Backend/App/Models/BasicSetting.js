@@ -288,6 +288,22 @@ const BasicSettingSchema = new Schema({
         type: String,
         default: null
     },
+    pdf_template: {
+        type: String,
+        default: null
+    },
+    pdf_header: {
+        type: String,
+        default: null
+    },
+    pdf_footer: {
+        type: String,
+        default: null
+    },
+    noof_pdf_pages: {
+        type: Number,
+        default: 0
+    },
     
 }, {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
