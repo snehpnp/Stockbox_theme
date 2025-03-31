@@ -186,7 +186,8 @@ const Payementgateway = () => {
                                 <SwitchField
                                     label="GST Status"
                                     checked={clients?.gststatus === 1}
-                                    onChange={(e) => GSThandleSwitchChange(e)}
+                                    // onChange={(e) => GSThandleSwitchChange(e)}
+                                    onChange={()=>showCustomAlert("error","cannot change status")}
                                 />
                             </form>
                         </div>
@@ -202,12 +203,13 @@ const Payementgateway = () => {
                                         className="form-control me-2"
                                         id="gst"
                                         value={addgst}
-                                        onChange={(e) => setAddgst(e.target.value)}
+                                        // onChange={(e) => setAddgst(e.target.value)}
                                     />
                                     <button
                                         type="button"
                                         className="btn btn-primary"
-                                        onClick={UpdateGstdata}
+                                        disabled
+                                        // onClick={UpdateGstdata}
                                     >
                                         Update
                                     </button>

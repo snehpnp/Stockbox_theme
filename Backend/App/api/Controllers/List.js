@@ -864,13 +864,13 @@ class List {
       }
 
       // if (settings.invoicestatus == 1) {
-      const length = 6;
-      const digits = '0123456789';
-      let orderNumber = '';
+        const length = 6;
+        const digits = '0123456789';
+        let orderNumber = '';
 
-      for (let i = 0; i < length; i++) {
-        orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
-      }
+        for (let i = 0; i < length; i++) {
+          orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
+        }
 
 
       let payment_type;
@@ -900,35 +900,35 @@ class List {
 
 
 
-      htmlContent = htmlContent
-        .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
-        .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
-        .replace(/{{payment_type}}/g, payment_type)
-        .replace(/{{clientname}}/g, client.FullName)
-        .replace(/{{email}}/g, client.Email)
-        .replace(/{{PhoneNo}}/g, client.PhoneNo)
-        .replace(/{{validity}}/g, savedSubscription.validity)
-        .replace(/{{plan_end}}/g, formatDate(savedSubscription.plan_end))
-        .replace(/{{plan_price}}/g, savedSubscription.plan_price)
-        .replace(/{{total}}/g, savedSubscription.total)
-        .replace(/{{discount}}/g, savedSubscription.discount)
-        .replace(/{{orderid}}/g, savedSubscription.orderid)
-        .replace(/{{planname}}/g, plan.category.title)
-        .replace(/{{plantype}}/g, "Plan")
-        .replace(/{{company_email}}/g, settings.email_address)
-        .replace(/{{company_phone}}/g, settings.contact_number)
-        .replace(/{{company_address}}/g, settings.address)
-        .replace(/{{company_website_title}}/g, settings.website_title)
-        .replace(/{{gstin}}/g, settings.gstin)
-        .replace(/{{gstamount}}/g, totalgst)
-        .replace(/{{state}}/g, client.state)
-        .replace(/{{gst}}/g, settings.gst)
-        .replace(/{{sgst}}/g, sgst.toFixed(2))
-        .replace(/{{cgst}}/g, cgst.toFixed(2))
-        .replace(/{{igst}}/g, igst.toFixed(2))
-        .replace(/{{logo}}/g, logo)
-        .replace(/{{simage}}/g, simage)
-        .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
+        htmlContent = htmlContent
+          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+          .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
+          .replace(/{{payment_type}}/g, payment_type)
+          .replace(/{{clientname}}/g, client.FullName)
+          .replace(/{{email}}/g, client.Email)
+          .replace(/{{PhoneNo}}/g, client.PhoneNo)
+          .replace(/{{validity}}/g, savedSubscription.validity)
+          .replace(/{{plan_end}}/g, formatDate(savedSubscription.plan_end))
+          .replace(/{{plan_price}}/g, savedSubscription.plan_price)
+          .replace(/{{total}}/g, savedSubscription.total)
+          .replace(/{{discount}}/g, savedSubscription.discount)
+          .replace(/{{orderid}}/g, savedSubscription.orderid)
+          .replace(/{{planname}}/g, plan.category.title)
+          .replace(/{{plantype}}/g, "Plan")
+          .replace(/{{company_email}}/g, settings.email_address)
+          .replace(/{{company_phone}}/g, settings.contact_number)
+          .replace(/{{company_address}}/g, settings.address)
+          .replace(/{{company_website_title}}/g, settings.website_title)
+          .replace(/{{gstin}}/g, settings.gstin)
+          .replace(/{{gstamount}}/g, totalgst)
+          .replace(/{{state}}/g, client.state)
+          .replace(/{{gst}}/g, settings.gst)
+          .replace(/{{sgst}}/g, sgst.toFixed(2))
+          .replace(/{{cgst}}/g, cgst.toFixed(2))
+          .replace(/{{igst}}/g, igst.toFixed(2))
+          .replace(/{{logo}}/g, logo)
+          .replace(/{{simage}}/g, simage)
+          .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
 
       const browser = await puppeteer.launch({
@@ -937,9 +937,9 @@ class List {
       const page = await browser.newPage();
       await page.setContent(htmlContent);
 
-      // Define the path to save the PDF
-      const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
-      const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+        // Define the path to save the PDF
+        const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
 
       // Generate PDF and save to the specified path
       await page.pdf({
@@ -956,10 +956,10 @@ class List {
 
       await browser.close();
 
-      savedSubscription.ordernumber = `INV-${orderNumber}`;
-      savedSubscription.invoice = `INV-${orderNumber}.pdf`;
-      const updatedSubscription = await savedSubscription.save();
-      if (settings.invoicestatus == 1) {
+        savedSubscription.ordernumber = `INV-${orderNumber}`;
+        savedSubscription.invoice = `INV-${orderNumber}.pdf`;
+        const updatedSubscription = await savedSubscription.save();
+        if (settings.invoicestatus == 1) {
 
         const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
         if (!mailtemplate || !mailtemplate.mail_body) {
@@ -992,7 +992,7 @@ class List {
             html: finalHtml,
             attachments: [
               {
-                filename: `INV-${orderNumber}.pdf`, // PDF file name
+                filename: `${orderNumber}.pdf`, // PDF file name
                 path: pdfPath, // Path to the PDF file
               }
             ]
@@ -1097,13 +1097,13 @@ class List {
 
       // if (settings.invoicestatus == 1) {
 
-      const length = 6;
-      const digits = '0123456789';
-      let orderNumber = '';
+        const length = 6;
+        const digits = '0123456789';
+        let orderNumber = '';
 
-      for (let i = 0; i < length; i++) {
-        orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
-      }
+        for (let i = 0; i < length; i++) {
+          orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
+        }
 
 
       let payment_type;
@@ -1132,35 +1132,35 @@ class List {
 
 
 
-      htmlContent = htmlContent
-        .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
-        .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
-        .replace(/{{payment_type}}/g, payment_type)
-        .replace(/{{clientname}}/g, client.FullName)
-        .replace(/{{email}}/g, client.Email)
-        .replace(/{{PhoneNo}}/g, client.PhoneNo)
-        .replace(/{{validity}}/g, savedSubscription.validity)
-        .replace(/{{plan_end}}/g, formatDate(savedSubscription.enddate))
-        .replace(/{{plan_price}}/g, savedSubscription.plan_price)
-        .replace(/{{total}}/g, savedSubscription.total)
-        .replace(/{{discount}}/g, savedSubscription.discount)
-        .replace(/{{orderid}}/g, savedSubscription.orderid)
-        .replace(/{{planname}}/g, basket.title)
-        .replace(/{{plantype}}/g, "Basket")
-        .replace(/{{company_email}}/g, settings.email_address)
-        .replace(/{{company_phone}}/g, settings.contact_number)
-        .replace(/{{company_address}}/g, settings.address)
-        .replace(/{{company_website_title}}/g, settings.website_title)
-        .replace(/{{gstin}}/g, settings.gstin)
-        .replace(/{{gstamount}}/g, totalgst)
-        .replace(/{{state}}/g, client.state)
-        .replace(/{{gst}}/g, settings.gst)
-        .replace(/{{sgst}}/g, sgst.toFixed(2))
-        .replace(/{{cgst}}/g, cgst.toFixed(2))
-        .replace(/{{igst}}/g, igst.toFixed(2))
-        .replace(/{{logo}}/g, logo)
-        .replace(/{{simage}}/g, simage)
-        .replace(/{{plan_start}}/g, formatDate(savedSubscription.startdate));
+        htmlContent = htmlContent
+          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+          .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
+          .replace(/{{payment_type}}/g, payment_type)
+          .replace(/{{clientname}}/g, client.FullName)
+          .replace(/{{email}}/g, client.Email)
+          .replace(/{{PhoneNo}}/g, client.PhoneNo)
+          .replace(/{{validity}}/g, savedSubscription.validity)
+          .replace(/{{plan_end}}/g, formatDate(savedSubscription.enddate))
+          .replace(/{{plan_price}}/g, savedSubscription.plan_price)
+          .replace(/{{total}}/g, savedSubscription.total)
+          .replace(/{{discount}}/g, savedSubscription.discount)
+          .replace(/{{orderid}}/g, savedSubscription.orderid)
+          .replace(/{{planname}}/g, basket.title)
+          .replace(/{{plantype}}/g, "Basket")
+          .replace(/{{company_email}}/g, settings.email_address)
+          .replace(/{{company_phone}}/g, settings.contact_number)
+          .replace(/{{company_address}}/g, settings.address)
+          .replace(/{{company_website_title}}/g, settings.website_title)
+          .replace(/{{gstin}}/g, settings.gstin)
+          .replace(/{{gstamount}}/g, totalgst)
+          .replace(/{{state}}/g, client.state)
+          .replace(/{{gst}}/g, settings.gst)
+          .replace(/{{sgst}}/g, sgst.toFixed(2))
+          .replace(/{{cgst}}/g, cgst.toFixed(2))
+          .replace(/{{igst}}/g, igst.toFixed(2))
+          .replace(/{{logo}}/g, logo)
+          .replace(/{{simage}}/g, simage)
+          .replace(/{{plan_start}}/g, formatDate(savedSubscription.startdate));
 
 
       const browser = await puppeteer.launch({
@@ -1169,9 +1169,9 @@ class List {
       const page = await browser.newPage();
       await page.setContent(htmlContent);
 
-      // Define the path to save the PDF
-      const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
-      const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+        // Define the path to save the PDF
+        const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
 
       // Generate PDF and save to the specified path
       await page.pdf({
@@ -1188,9 +1188,9 @@ class List {
 
       await browser.close();
 
-      savedSubscription.ordernumber = `INV-${orderNumber}`;
-      savedSubscription.invoice = `INV-${orderNumber}.pdf`;
-      const updatedSubscription = await savedSubscription.save();
+        savedSubscription.ordernumber = `INV-${orderNumber}`;
+        savedSubscription.invoice = `INV-${orderNumber}.pdf`;
+        const updatedSubscription = await savedSubscription.save();
 
       if (settings.invoicestatus == 1) {
 
@@ -1227,7 +1227,7 @@ class List {
             html: finalHtml,
             attachments: [
               {
-                filename: `INV-${orderNumber}.pdf`, // PDF file name
+                filename: `${orderNumber}.pdf`, // PDF file name
                 path: pdfPath, // Path to the PDF file
               }
             ]
@@ -3224,11 +3224,30 @@ class List {
 
       const freetrialDays = parseInt(settings.freetrial, 10); // or you can use +settings.freetrial
 
-      const start = new Date();
-      const end = new Date(start);
-      end.setDate(start.getDate() + freetrialDays);  // Add 7 days to the start date
-      end.setHours(23, 59, 59, 999);
+      // const start = new Date();
+      // const end = new Date(start);
+      // end.setDate(start.getDate() + freetrialDays);  // Add 7 days to the start date
+      // end.setHours(23, 59, 59, 999);
 
+
+const start = new Date(); // Current date
+const end = new Date(start);
+let addedDays = 0;
+
+
+while (addedDays < freetrialDays) {
+  let dayOfWeek = end.getDay(); 
+  if (dayOfWeek !== 0 && dayOfWeek !== 6) { 
+    addedDays++;
+  }
+
+  if (addedDays < freetrialDays) {
+    end.setDate(end.getDate() + 1); 
+  }
+}
+
+
+end.setHours(23, 59, 59, 999);
 
       const existingPlan = await Planmanage.findOne({ clientid: client_id }).exec();
 
@@ -3325,7 +3344,7 @@ class List {
       // If 'all' is selected, include all broadcasts
       if (activePlans.length > 0 || expiredPlans.length > 0 || allPlans.length === 0) {
         query.$or.push(
-          { type: 'all' }
+          { type: 'All' }
         );
       }
 
@@ -3850,7 +3869,7 @@ class List {
 
           // Broadcast notifications
           {
-            clienttype: { $in: ['active', 'expired', 'nonsubscribe', 'all'] },
+            clienttype: { $in: ['active', 'expired', 'nonsubscribe', 'All'] },
             $or: [
               // For active clients, include active plans
               { clienttype: 'active', segmentid: { $in: activePlans } },
@@ -3859,7 +3878,7 @@ class List {
               // For clients with no active or expired plans (no subscription)
               ...(noPlans ? [{ clienttype: 'nonsubscribe' }] : []),
               // For all clients
-              { clienttype: 'all' }
+              { clienttype: 'All' }
             ]
           }
         ]
@@ -5764,24 +5783,26 @@ class List {
         return console.log('Client not found or inactive.');
       }
 
-      const length = 6;
-      const digits = '0123456789';
-      let orderNumbers = '';
-      let orderNumber = '';
+      // const length = 6;
+      // const digits = '0123456789';
+      // let orderNumbers = '';
+      // let orderNumber = '';
 
-      for (let i = 0; i < length; i++) {
-        orderNumbers += digits.charAt(Math.floor(Math.random() * digits.length));
-      }
+      // for (let i = 0; i < length; i++) {
+      //   orderNumbers += digits.charAt(Math.floor(Math.random() * digits.length));
+      // }
+
+      
       const settings = await BasicSetting_Modal.findOne();
 
       let sno = 0;
       for (const plan_id of plan_ids) {
-        sno++;
-        orderNumber = `${orderNumbers}-${sno}`;
-        // Fetch the plan and populate the category
-        const plan = await Plan_Modal.findById(plan_id)
-          .populate('category')
-          .exec();
+       sno++;
+      orderNumber = `${orderNumbers}-${sno}`;
+      // Fetch the plan and populate the category
+      const plan = await Plan_Modal.findById(plan_id)
+        .populate('category')
+        .exec();
 
         if (!plan) {
           return res.status(404).json({ status: false, message: 'Plan not found' });
@@ -5987,24 +6008,24 @@ class List {
         }
 
 
-        // Create a new plan subscription record
-        const newSubscription = new PlanSubscription_Modal({
-          plan_id,
-          plan_category_id: plan.category._id,
-          client_id,
-          total: total,
-          plan_price: plan.price,
-          discount: discountPerPlan,
-          gstamount: totalgst,
-          gst: settings.gst,
-          coupon: coupon_code,
-          plan_start: start,
-          plan_end: end,
-          validity: plan.validity,
-          orderid: orderid,
-          ordernumber: `INV-${orderNumber}`,
-          invoice: `INV-${orderNumber}.pdf`,
-        });
+      // Create a new plan subscription record
+      const newSubscription = new PlanSubscription_Modal({
+        plan_id,
+        plan_category_id: plan.category._id,
+        client_id,
+        total: total,
+        plan_price: plan.price,
+        discount: discountPerPlan,
+        gstamount:totalgst,
+        gst: settings.gst,
+        coupon: coupon_code,
+        plan_start: start,
+        plan_end: end,
+        validity: plan.validity,
+        orderid: orderid,
+        ordernumber:`INV-${orderNumber}`,
+        invoice:`INV-${orderNumber}.pdf`,
+      });
 
         // Save the subscription
         const savedSubscription = await newSubscription.save();
@@ -6064,25 +6085,25 @@ class List {
         const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
 
 
-        htmlContent = htmlContent
-          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
-          .replace(/{{created_at}}/g, formatDate(todays))
-          .replace(/{{payment_type}}/g, payment_type)
-          .replace(/{{clientname}}/g, client.FullName)
-          .replace(/{{email}}/g, client.Email)
-          .replace(/{{PhoneNo}}/g, client.PhoneNo)
-          .replace(/{{plan_details}}/g, planDetailsHtml)
-          .replace(/{{company_email}}/g, settings.email_address)
-          .replace(/{{company_phone}}/g, settings.contact_number)
-          .replace(/{{company_address}}/g, settings.address)
-          .replace(/{{company_website_title}}/g, settings.website_title)
-          .replace(/{{gstin}}/g, settings.gstin)
-          .replace(/{{state}}/g, client.state)
-          .replace(/{{logo}}/g, logo)
-          .replace(/{{simage}}/g, simage)
-          .replace(/{{total}}/g, price)
-          .replace(/{{plantype}}/g, "Plan")
-          .replace(/{{discount}}/g, discount);
+htmlContent = htmlContent
+.replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+.replace(/{{created_at}}/g, formatDate(todays))
+.replace(/{{payment_type}}/g, payment_type)
+.replace(/{{clientname}}/g, client.FullName)
+.replace(/{{email}}/g, client.Email)
+.replace(/{{PhoneNo}}/g, client.PhoneNo)
+.replace(/{{plan_details}}/g, planDetailsHtml)
+.replace(/{{company_email}}/g, settings.email_address)
+.replace(/{{company_phone}}/g, settings.contact_number)
+.replace(/{{company_address}}/g, settings.address)
+.replace(/{{company_website_title}}/g, settings.website_title)
+.replace(/{{gstin}}/g, settings.gstin)
+.replace(/{{state}}/g, client.state)
+.replace(/{{logo}}/g, logo)
+.replace(/{{simage}}/g, simage)
+.replace(/{{total}}/g, price)
+.replace(/{{plantype}}/g, "Plan")
+.replace(/{{discount}}/g, discount);
 
 
         const browser = await puppeteer.launch({
@@ -6091,9 +6112,9 @@ class List {
         const page = await browser.newPage();
         await page.setContent(htmlContent);
 
-        // Define the path to save the PDF
-        const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
-        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+// Define the path to save the PDF
+const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
 
         // Generate PDF and save to the specified path
         await page.pdf({
@@ -6137,18 +6158,18 @@ class List {
               .replace(/{{body}}/g, finalMailBody)
               .replace(/{{logo}}/g, logo);
 
-            const mailOptions = {
-              to: client.Email,
-              from: `${settings.from_name} <${settings.from_mail}>`,
-              subject: `${mailtemplate.mail_subject}`,
-              html: finalHtml,
-              attachments: [
-                {
-                  filename: `INV-${orderNumber}.pdf`, // PDF file name
-                  path: pdfPath, // Path to the PDF file
-                }
-              ]
-            };
+const mailOptions = {
+to: client.Email,
+from: `${settings.from_name} <${settings.from_mail}>`,
+subject: `${mailtemplate.mail_subject}`,
+html: finalHtml,
+attachments: [
+  {
+    filename: `INV-${orderNumber}.pdf`, // PDF file name
+    path: pdfPath, // Path to the PDF file
+  }
+]
+};
 
             // Send email
             await sendEmail(mailOptions);
@@ -6961,41 +6982,41 @@ class List {
       */
 
 
-  /////end old ///////////////
-
-  async addBasketSubscriptionAddToCart(req, res) {
-    try {
-      const { basket_ids, client_id, price, discount, orderid, coupon } = req.body;
-
-      // Validate input
-      if (!basket_ids || !Array.isArray(basket_ids) || basket_ids.length === 0 || !client_id) {
-        return res.status(400).json({ status: false, message: 'Missing required fields' });
-      }
-
-      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
-
-      if (!client) {
-        return console.log('Client not found or inactive.');
-      }
-
-      const settings = await BasicSetting_Modal.findOne();
-
-
-      const length = 6;
-      const digits = '0123456789';
-      let orderNumbers = '';
-      let orderNumber = '';
-
-      for (let i = 0; i < length; i++) {
-        orderNumbers += digits.charAt(Math.floor(Math.random() * digits.length));
-      }
-
-      let sno = 0;
-
-
-      for (const basket_id of basket_ids) {
-        sno++;
-        orderNumber = `${orderNumbers}-${sno}`;
+      /////end old ///////////////
+  
+    async addBasketSubscriptionAddToCart(req, res) {
+      try {
+        const { basket_ids, client_id, price, discount, orderid, coupon } = req.body;
+  
+        // Validate input
+        if (!basket_ids || !Array.isArray(basket_ids) || basket_ids.length === 0 || !client_id) {
+          return res.status(400).json({ status: false, message: 'Missing required fields' });
+        }
+  
+        const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+  
+        if (!client) {
+          return console.log('Client not found or inactive.');
+        }
+  
+        const settings = await BasicSetting_Modal.findOne();
+  
+  
+        const length = 6;
+        const digits = '0123456789';
+        let orderNumbers = '';
+        let orderNumber = '';
+  
+        for (let i = 0; i < length; i++) {
+          orderNumbers += digits.charAt(Math.floor(Math.random() * digits.length));
+        }
+  
+       let sno=0;
+       
+  
+        for (const basket_id of basket_ids) {
+          sno++;
+          orderNumber = `${orderNumbers}-${sno}`;
 
         const basket = await Basket_Modal.findOne({
           _id: basket_id,
@@ -7055,8 +7076,8 @@ class List {
           enddate: end,
           validity: basket.validity,
           orderid: orderid,
-          ordernumber: `INV-${orderNumber}`,
-          invoice: `INV-${orderNumber}.pdf`,
+          ordernumber : `INV-${orderNumber}`,
+          invoice : `INV-${orderNumber}.pdf`,
         });
 
         // Save to the database
@@ -7112,25 +7133,25 @@ class List {
 
         const todays = new Date();
 
-        htmlContent = htmlContent
-          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
-          .replace(/{{created_at}}/g, formatDate(todays))
-          .replace(/{{payment_type}}/g, payment_type)
-          .replace(/{{clientname}}/g, client.FullName)
-          .replace(/{{email}}/g, client.Email)
-          .replace(/{{PhoneNo}}/g, client.PhoneNo)
-          .replace(/{{total}}/g, ttl)
-          .replace(/{{discount}}/g, discount)
-          .replace(/{{plan_details}}/g, planDetailsHtml)
-          .replace(/{{company_email}}/g, settings.email_address)
-          .replace(/{{company_phone}}/g, settings.contact_number)
-          .replace(/{{company_address}}/g, settings.address)
-          .replace(/{{company_website_title}}/g, settings.website_title)
-          .replace(/{{gstin}}/g, settings.gstin)
-          .replace(/{{state}}/g, client.state)
-          .replace(/{{logo}}/g, logo)
-          .replace(/{{simage}}/g, simage)
-          .replace(/{{plantype}}/g, "Basket");
+     htmlContent = htmlContent
+       .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+       .replace(/{{created_at}}/g, formatDate(todays))
+       .replace(/{{payment_type}}/g, payment_type)
+       .replace(/{{clientname}}/g, client.FullName)
+       .replace(/{{email}}/g, client.Email)
+       .replace(/{{PhoneNo}}/g, client.PhoneNo)
+       .replace(/{{total}}/g, ttl)
+       .replace(/{{discount}}/g, discount)
+       .replace(/{{plan_details}}/g, planDetailsHtml)
+       .replace(/{{company_email}}/g, settings.email_address)
+       .replace(/{{company_phone}}/g, settings.contact_number)
+       .replace(/{{company_address}}/g, settings.address)
+       .replace(/{{company_website_title}}/g, settings.website_title)
+       .replace(/{{gstin}}/g, settings.gstin)
+       .replace(/{{state}}/g, client.state)
+       .replace(/{{logo}}/g, logo)
+       .replace(/{{simage}}/g, simage)
+       .replace(/{{plantype}}/g, "Basket");
 
 
         const browser = await puppeteer.launch({
@@ -7139,9 +7160,9 @@ class List {
         const page = await browser.newPage();
         await page.setContent(htmlContent);
 
-        // Define the path to save the PDF
-        const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
-        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+     // Define the path to save the PDF
+     const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
+     const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
 
         // Generate PDF and save to the specified path
         await page.pdf({
@@ -7187,18 +7208,18 @@ class List {
               .replace(/{{body}}/g, finalMailBody)
               .replace(/{{logo}}/g, logo);
 
-            const mailOptions = {
-              to: client.Email,
-              from: `${settings.from_name} <${settings.from_mail}>`,
-              subject: `${mailtemplate.mail_subject}`,
-              html: finalHtml,
-              attachments: [
-                {
-                  filename: `INV-${orderNumber}.pdf`, // PDF file name
-                  path: pdfPath, // Path to the PDF file
-                }
-              ]
-            };
+       const mailOptions = {
+         to: client.Email,
+         from: `${settings.from_name} <${settings.from_mail}>`,
+         subject: `${mailtemplate.mail_subject}`,
+         html: finalHtml,
+         attachments: [
+           {
+             filename: `INV-${orderNumber}.pdf`, // PDF file name
+             path: pdfPath, // Path to the PDF file
+           }
+         ]
+       };
 
             // Send email
             await sendEmail(mailOptions);

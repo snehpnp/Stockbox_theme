@@ -139,7 +139,15 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const getAllMessageRead = async () => {
     try {
       const response = await GetAllNotificationRead(token);
-      navigate("/admin/notificationlist");
+      if (Role === 'ADMIN')
+        navigate("/admin/notificationlist");
+      else if (Role === 'USER')
+        navigate("/user/notification");
+      else if (Role === 'EMPLOYEE')
+        navigate("/employee/notification");
+      else
+        navigate("/admin/notificationlist");
+
       getdemoclient();
     } catch (error) {
       console.error("Error while marking notifications as read:", error);

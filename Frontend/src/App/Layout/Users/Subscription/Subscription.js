@@ -40,6 +40,7 @@ const Subscription = () => {
   const fetchMySubscription = async () => {
     try {
       const res = await getMySubscription(id, token);
+
       if (res?.status) {
         setPlanData(res?.data);
       } else {
@@ -166,25 +167,26 @@ const Subscription = () => {
                       <td>
                         <strong>Purchase On:</strong>
                       </td>
-                      <td>{accordion?.plan_start || "--"}</td>
+                      <td>{fDateTime(accordion?.plan_start) || "--"}</td>
                     </tr>
                     <tr>
                       <td>
                         <strong>Expired On:</strong>
                       </td>
-                      <td>{accordion?.plan_end || "--"}</td>
+                      <td>{fDateTime(accordion?.plan_end) || "--"}</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>
+                        <strong>Plan Price:</strong>
+                      </td>
+                      <td>₹{accordion?.plan_price ?? "--"}</td>
                     </tr>
                     <tr>
                       <td>
                         <strong>Discount Price:</strong>
                       </td>
-                      <td>₹{accordion?.discount || "--"}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Plan Price:</strong>
-                      </td>
-                      <td>₹{accordion?.plan_price || "--"}</td>
+                      <td>₹ {accordion?.discount ?? "--"}</td>
                     </tr>
                     <tr>
                       <td>
@@ -192,8 +194,17 @@ const Subscription = () => {
                       </td>
                       <td>
                         ₹{accordion?.total}
-                        <small className="text-muted"> {accordion?.gst ? `(${accordion?.gst}% Tax included)` : ""}</small>
+                        {accordion?.plan_price !== accordion?.total && accordion?.gst ? (
+                          <small className="text-muted"> ({accordion?.gst}% Tax included)</small>
+                        ) : null}
                       </td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <strong>Order_ID:</strong>
+                      </td>
+                      <td>{accordion?.orderid || "Make By Admin"}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -203,7 +214,7 @@ const Subscription = () => {
                     <thead>
                       <tr className="table-primary">
                         <th colSpan="2" className="text-center">
-                          Paymenet History
+                          Payment History
                         </th>
                       </tr>
                     </thead>
@@ -218,19 +229,13 @@ const Subscription = () => {
                       <td>
                         <strong>Purchase On:</strong>
                       </td>
-                      <td>{accordion?.plan_start || "--"}</td>
+                      <td>{fDateTime(accordion?.plan_start) || "--"}</td>
                     </tr>
                     <tr>
                       <td>
                         <strong>Expired On:</strong>
                       </td>
-                      <td>{accordion?.plan_end || "--"}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Discount Price:</strong>
-                      </td>
-                      <td>₹{accordion?.discount || "--"}</td>
+                      <td>{fDateTime(accordion?.plan_end) || "--"}</td>
                     </tr>
                     <tr>
                       <td>
@@ -240,11 +245,20 @@ const Subscription = () => {
                     </tr>
                     <tr>
                       <td>
+                        <strong>Discount Price:</strong>
+                      </td>
+                      <td>₹ {accordion?.discount || "0"}</td>
+                    </tr>
+                   
+                    <tr>
+                      <td>
                         <strong>Purchase Price:</strong>
                       </td>
                       <td>
                         ₹{accordion?.total}
-                        <small className="text-muted"> {accordion?.gst ? `(${accordion?.gst}% Tax included)` : ""}</small>
+                        {accordion?.plan_price !== accordion?.total && accordion?.gst ? (
+                          <small className="text-muted"> ({accordion?.gst}% Tax included)</small>
+                        ) : null}
                       </td>
                     </tr>
                   </tbody>
