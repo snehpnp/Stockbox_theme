@@ -1665,3 +1665,47 @@ background-color: #ffffffc4;
  html, body ,.App, div#root, .wrapper {
   height: 100%;
 }
+.basket-short-description
+{
+  overflow: hidden;
+text-overflow: ellipsis;
+display: -webkit-box;
+-webkit-line-clamp: 2;
+-webkit-box-orient: vertical;
+}
+.basket-card
+{
+  position: relative;
+}
+.basket-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50px;
+  height: 50px;
+  background-color: var(
+    --BtnPriBgCol,
+    black
+  ) !important; 
+  backdrop-filter: blur(10px);
+  /* z-index: -1; */
+  border-radius: 0px 0px 0px 100px;
+}
+.basket-card:hover::before {
+  background-color: var(
+    --BtnPriBgCol,
+    black
+  ) !important; 
+  transform: scale(1.99);
+  transition: all 0.3s ease-in-out;
+}
+.basket-card:hover {
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+  transition: all 0.3s ease-in-out;
+}
+.sticky-card
+{
+  width:100%;  background:#edf7f6; display:inline-block; float:left; position:sticky; top:50px;
+}
