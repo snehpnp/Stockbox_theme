@@ -46,69 +46,83 @@ const BasketDetail = () => {
   }, [item]);
 
   return (
-    <Content Page_title="Basket Detail" button_status={false} backbutton_status={true} backbutton_title="Back">
+    <Content
+      Page_title="Basket Detail"
+      button_status={false}
+      backbutton_status={true}
+      backbutton_title="Back"
+    >
       <div className=" pb-3">
-<div className="card " >
-  <div className="card-body">
-    <div className="row">
-      <div className="col-md-2">
-      <img
-                        src="https://stockboxpnp.pnpuniverse.com/uploads/blogs/image-1742206277154-910627492.png"
-                        alt="Basket"
-                       
-                        className=" img-fluid mb-3"
-                      />
-      </div>
-      <div className="col-md-10">
-        <h5 className="mb-0"><b>{item?.title}</b></h5>
-        <p>{stripHtmlTags(item?.description)}</p>
-      </div>
-      <div className="row">
-        <div className="col-md-6">
-        <ul className="list-group list-group-flush listrd mt-4 card">
-          
-          <li className="list-group-item d-flex justify-content-between align-items-center">
-            Launch Date <span className="badge bg-dark rounded-pill">{item?.mininvamount}</span>
-          </li>
-          <li className="list-group-item d-flex justify-content-between align-items-center">
-            Theme <span className="badge bg-success rounded-pill">{item?.cagr} %</span>
-          </li>
-          <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
-            Since Launch <span className="badge bg-danger rounded-pill">{item?.type}</span>
-          </li>
-          <li className="list-group-item d-flex justify-content-between align-items-center">
-            No. of stocks <span className="badge bg-warning rounded-pill">{item?.themename}</span>
-          </li>
-          
-        </ul>
-        </div>
-        <div className="col-md-6">
-        <ul className="list-group list-group-flush list card mt-4">
-          
-          
-          <li className="list-group-item d-flex justify-content-between align-items-center">
-            Validity <span className="badge bg-primary rounded-pill">{item?.next_rebalance_date}</span>
-          </li>
-          <li className="list-group-item d-flex justify-content-between align-items-center">
-            Rebalance Frequency <span className="badge bg-success rounded-pill">{item?.frequency}</span>
-          </li>
-          <li className="list-group-item d-flex justify-content-between align-items-center">
-            Next Rebalance Date <span className="badge bg-primary rounded-pill">{item?.next_rebalance_date}</span>
-          </li>
-        </ul>
-        </div>
-      </div>
-      
-    </div>
-  </div>
-</div>
-        <div className="col-md-7">
-        
-        
-        </div>
-        <div className="col-md-5 mx-auto">
-          <div className="card shadow">
-          <Doughnut data={chartData}  className="mx-auto"/>
+        <div className="card ">
+          <div className="card-body">
+            <div className="row">
+              <div className="col-md-2">
+                <img
+                  src="https://stockboxpnp.pnpuniverse.com/uploads/blogs/image-1742206277154-910627492.png"
+                  alt="Basket"
+                  className=" img-fluid mb-3"
+                />
+              </div>
+              <div className="col-md-10">
+                <h5 className="mb-0">
+                  <b>{item?.title}</b>
+                </h5>
+                <p>{stripHtmlTags(item?.description)}</p>
+              </div>
+              <div className="row">
+                <div className="col-md-6">
+                  <ul className="list-group list-group-flush list basket-detail-card mt-4">
+                    <li className="list-group-item d-flex justify-content-between align-items-center">
+                      Launch Date{" "}
+                      <span className="badge bg-dark rounded-pill">
+                        {item?.mininvamount}
+                      </span>
+                    </li>
+                    <li className="list-group-item d-flex justify-content-between align-items-center">
+                      Theme{" "}
+                      <span className="badge bg-success rounded-pill">
+                        {item?.cagr} %
+                      </span>
+                    </li>
+                    <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
+                      Since Launch{" "}
+                      <span className="badge bg-danger rounded-pill">
+                        {item?.type}
+                      </span>
+                    </li>
+                    <li className="list-group-item d-flex justify-content-between align-items-center">
+                      No. of stocks{" "}
+                      <span className="badge bg-warning rounded-pill">
+                        {item?.themename}
+                      </span>
+                    </li>
+                    <li className="list-group-item d-flex justify-content-between align-items-center">
+                      Validity{" "}
+                      <span className="badge bg-primary rounded-pill">
+                        {item?.next_rebalance_date}
+                      </span>
+                    </li>
+                    <li className="list-group-item d-flex justify-content-between align-items-center">
+                      Rebalance Frequency{" "}
+                      <span className="badge bg-success rounded-pill">
+                        {item?.frequency}
+                      </span>
+                    </li>
+                    <li className="list-group-item d-flex justify-content-between align-items-center">
+                      Next Rebalance Date{" "}
+                      <span className="badge bg-primary rounded-pill">
+                        {item?.next_rebalance_date}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="col-md-6">
+                  <div className="">
+                    <Doughnut data={chartData} className="mx-auto" />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -116,30 +130,36 @@ const BasketDetail = () => {
       {/* Line Chart Integration */}
       <div className="row px-4 pt-4">
         <div className="col-md-12">
-          <div className="card">
-            <div className="card-body">
-            <Line data={chartDataLine} />
+          <div className="">
+            <div className="">
+              <Line data={chartDataLine} />
             </div>
           </div>
-         
         </div>
       </div>
 
- 
       {/* Tabs Section */}
       <div className="row px-4 border-top pt-3 align-items-center">
         <div className="col-md-12">
           <ul className="nav nav-pills mb-3 justify-content-center">
             <li className="nav-item">
-              <button className={`nav-link ${activeTab === "rational" ? "active btn-primary" : ""}`}
-                onClick={() => setActiveTab("rational")}>
+              <button
+                className={`nav-link ${
+                  activeTab === "rational" ? "active btn-primary" : ""
+                }`}
+                onClick={() => setActiveTab("rational")}
+              >
                 Rational
               </button>
             </li>
             <hr />
             <li className="nav-item">
-              <button className={`nav-link ${activeTab === "methodology" ? "active btn-primary" : ""}`}
-                onClick={() => setActiveTab("methodology")}>
+              <button
+                className={`nav-link ${
+                  activeTab === "methodology" ? "active btn-primary" : ""
+                }`}
+                onClick={() => setActiveTab("methodology")}
+              >
                 Methodology
               </button>
             </li>
@@ -168,7 +188,11 @@ const BasketDetail = () => {
 
       {/* Footer Button */}
       <div className="card-footer mt-3 text-center">
-        <Link to="/user/basketstocklist" state={{ item }} className="btn btn-primary w-50 mx-auto mt-3">
+        <Link
+          to="/user/basketstocklist"
+          state={{ item }}
+          className="btn btn-primary w-50 mx-auto mt-3"
+        >
           View Detail
         </Link>
       </div>
