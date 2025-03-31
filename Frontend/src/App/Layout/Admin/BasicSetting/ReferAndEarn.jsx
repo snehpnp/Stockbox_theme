@@ -17,7 +17,6 @@ const ReferAndEarn = () => {
   const getsettinglist = async () => {
     try {
       const response = await basicsettinglist(token);
-      console.log("getsettinglist",response)
       if (response.status) {
         setClients(response.data);
       }
