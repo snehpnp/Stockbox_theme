@@ -58,6 +58,8 @@ class BasicSetting {
           gststatus,
           gstin,
           state,
+          invoicetnc,
+          refersendmsg,
 
         } = req.body;
 
@@ -129,6 +131,8 @@ class BasicSetting {
           simage,
           gstin,
           state,
+          invoicetnc,
+          refersendmsg,
         };
 
         const options = {

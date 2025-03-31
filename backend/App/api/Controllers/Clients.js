@@ -311,7 +311,7 @@ class Clients {
           id: client.id,
           token: token,
           angleredirecturl: `https://${req.headers.host}/backend/angle/getaccesstoken?key=${client._id}`,
-          aliceredirecturl: `https://${req.headers.host}/backend/aliceblue/getaccesstoken?key=${client._id}`,
+          aliceredirecturl: `https://${req.headers.host}/backend/aliceblue/getaccesstoken}`,
           zerodharedirecturl : `https://${req.headers.host}/backend/zerodha/getaccesstoken?key=${client.Email}`,
           upstoxredirecturl : `https://${req.headers.host}/backend/upstox/getaccesstoken&state=${client.Email}`
         },

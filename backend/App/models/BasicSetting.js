@@ -271,6 +271,24 @@ const BasicSettingSchema = new Schema({
         trim: true,
         default: null
     },
+    invoice: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    invoicestart: {
+        type: Number,
+        default: 0
+    },
+    invoicetnc: {
+        type: String,
+        default: null
+    },
+    refersendmsg: {
+        type: String,
+        default: null
+    },
+    
 }, {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 });

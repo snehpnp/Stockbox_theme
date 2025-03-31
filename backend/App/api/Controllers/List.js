@@ -864,13 +864,24 @@ class List {
       }
 
       // if (settings.invoicestatus == 1) {
-        const length = 6;
-        const digits = '0123456789';
-        let orderNumber = '';
+        // const length = 6;
+        // const digits = '0123456789';
+        // let orderNumber = '';
 
-        for (let i = 0; i < length; i++) {
-          orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
-        }
+        // for (let i = 0; i < length; i++) {
+        //   orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
+        // }
+
+        const invoicePrefix = settings.invoice;
+        const invoiceStart = settings.invoicestart; 
+        const basketCount = await BasketSubscription_Modal.countDocuments({});
+        const planCount = await PlanSubscription_Modal.countDocuments({});
+        const totalCount = basketCount + planCount;
+        const invoiceNumber = invoiceStart + totalCount;
+        const formattedNumber = invoiceNumber < 10 ? `0${invoiceNumber}` : `${invoiceNumber}`;
+        const orderNumber = `${invoicePrefix}${formattedNumber}`;
+
+
 
 
         let payment_type;
@@ -901,7 +912,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
 
 
         htmlContent = htmlContent
-          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+          .replace(/{{orderNumber}}/g, `${orderNumber}`)
           .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
           .replace(/{{payment_type}}/g, payment_type)
           .replace(/{{clientname}}/g, client.FullName)
@@ -939,7 +950,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
 
         // Define the path to save the PDF
         const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
-        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+        const pdfPath = path.join(pdfDir, `${orderNumber}.pdf`);
 
         // Generate PDF and save to the specified path
         await page.pdf({
@@ -956,8 +967,8 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
 
         await browser.close();
 
-        savedSubscription.ordernumber = `INV-${orderNumber}`;
-        savedSubscription.invoice = `INV-${orderNumber}.pdf`;
+        savedSubscription.ordernumber = `${orderNumber}`;
+        savedSubscription.invoice = `${orderNumber}.pdf`;
         const updatedSubscription = await savedSubscription.save();
         if (settings.invoicestatus == 1) {
 
@@ -992,7 +1003,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
             html: finalHtml,
             attachments: [
               {
-                filename: `INV-${orderNumber}.pdf`, // PDF file name
+                filename: `${orderNumber}.pdf`, // PDF file name
                 path: pdfPath, // Path to the PDF file
               }
             ]
@@ -1097,13 +1108,23 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
 
       // if (settings.invoicestatus == 1) {
 
-        const length = 6;
-        const digits = '0123456789';
-        let orderNumber = '';
+        // const length = 6;
+        // const digits = '0123456789';
+        // let orderNumber = '';
 
-        for (let i = 0; i < length; i++) {
-          orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
-        }
+        // for (let i = 0; i < length; i++) {
+        //   orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
+        // }
+
+        const invoicePrefix = settings.invoice;
+        const invoiceStart = settings.invoicestart; 
+        const basketCount = await BasketSubscription_Modal.countDocuments({});
+        const planCount = await PlanSubscription_Modal.countDocuments({});
+        const totalCount = basketCount + planCount;
+        const invoiceNumber = invoiceStart + totalCount;
+        const formattedNumber = invoiceNumber < 10 ? `0${invoiceNumber}` : `${invoiceNumber}`;
+        const orderNumber = `${invoicePrefix}${formattedNumber}`;
+
 
 
         let payment_type;
@@ -1133,7 +1154,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
   
 
         htmlContent = htmlContent
-          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+          .replace(/{{orderNumber}}/g, `${orderNumber}`)
           .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
           .replace(/{{payment_type}}/g, payment_type)
           .replace(/{{clientname}}/g, client.FullName)
@@ -1171,7 +1192,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
 
         // Define the path to save the PDF
         const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
-        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+        const pdfPath = path.join(pdfDir, `${orderNumber}.pdf`);
 
         // Generate PDF and save to the specified path
         await page.pdf({
@@ -1188,8 +1209,8 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
 
         await browser.close();
 
-        savedSubscription.ordernumber = `INV-${orderNumber}`;
-        savedSubscription.invoice = `INV-${orderNumber}.pdf`;
+        savedSubscription.ordernumber = `${orderNumber}`;
+        savedSubscription.invoice = `${orderNumber}.pdf`;
         const updatedSubscription = await savedSubscription.save();
 
         if (settings.invoicestatus == 1) {
@@ -1227,7 +1248,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
             html: finalHtml,
             attachments: [
               {
-                filename: `INV-${orderNumber}.pdf`, // PDF file name
+                filename: `${orderNumber}.pdf`, // PDF file name
                 path: pdfPath, // Path to the PDF file
               }
             ]
@@ -3224,11 +3245,30 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
 
       const freetrialDays = parseInt(settings.freetrial, 10); // or you can use +settings.freetrial
 
-      const start = new Date();
-      const end = new Date(start);
-      end.setDate(start.getDate() + freetrialDays);  // Add 7 days to the start date
-      end.setHours(23, 59, 59, 999);
+      // const start = new Date();
+      // const end = new Date(start);
+      // end.setDate(start.getDate() + freetrialDays);  // Add 7 days to the start date
+      // end.setHours(23, 59, 59, 999);
 
+
+const start = new Date(); // Current date
+const end = new Date(start);
+let addedDays = 0;
+
+
+while (addedDays < freetrialDays) {
+  let dayOfWeek = end.getDay(); 
+  if (dayOfWeek !== 0 && dayOfWeek !== 6) { 
+    addedDays++;
+  }
+
+  if (addedDays < freetrialDays) {
+    end.setDate(end.getDate() + 1); 
+  }
+}
+
+
+end.setHours(23, 59, 59, 999);
 
       const existingPlan = await Planmanage.findOne({ clientid: client_id }).exec();
 
@@ -5764,20 +5804,34 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
         return console.log('Client not found or inactive.');
       }
 
-      const length = 6;
-      const digits = '0123456789';
-      let orderNumbers = '';
-      let orderNumber = '';
+      // const length = 6;
+      // const digits = '0123456789';
+      // let orderNumbers = '';
+      // let orderNumber = '';
 
-      for (let i = 0; i < length; i++) {
-        orderNumbers += digits.charAt(Math.floor(Math.random() * digits.length));
-      }
+      // for (let i = 0; i < length; i++) {
+      //   orderNumbers += digits.charAt(Math.floor(Math.random() * digits.length));
+      // }
+
+      
       const settings = await BasicSetting_Modal.findOne();
 
      let sno=0;
       for (const plan_id of plan_ids) {
        sno++;
-      orderNumber = `${orderNumbers}-${sno}`;
+      // orderNumber = `${orderNumbers}-${sno}`;
+      const invoicePrefix = settings.invoice;
+      const invoiceStart = settings.invoicestart; 
+      const basketCount = await BasketSubscription_Modal.countDocuments({});
+      const planCount = await PlanSubscription_Modal.countDocuments({});
+      const totalCount = basketCount + planCount;
+      const invoiceNumber = invoiceStart + totalCount;
+      const formattedNumber = invoiceNumber < 10 ? `0${invoiceNumber}` : `${invoiceNumber}`;
+      const orderNumber = `${invoicePrefix}${formattedNumber}`;
+
+
+
+
       // Fetch the plan and populate the category
       const plan = await Plan_Modal.findById(plan_id)
         .populate('category')
@@ -6003,8 +6057,8 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
         plan_end: end,
         validity: plan.validity,
         orderid: orderid,
-        ordernumber:`INV-${orderNumber}`,
-        invoice:`INV-${orderNumber}.pdf`,
+        ordernumber:`${orderNumber}`,
+        invoice:`${orderNumber}.pdf`,
       });
 
       // Save the subscription
@@ -6066,7 +6120,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
 
 
 htmlContent = htmlContent
-.replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+.replace(/{{orderNumber}}/g, `${orderNumber}`)
 .replace(/{{created_at}}/g, formatDate(todays))
 .replace(/{{payment_type}}/g, payment_type)
 .replace(/{{clientname}}/g, client.FullName)
@@ -6081,7 +6135,7 @@ htmlContent = htmlContent
 .replace(/{{state}}/g, client.state)
 .replace(/{{logo}}/g, logo)
 .replace(/{{simage}}/g, simage)
-.replace(/{{total}}/g, price)
+.replace(/{{total}}/g, total)
 .replace(/{{plantype}}/g, "Plan")
 .replace(/{{discount}}/g, discount);
 
@@ -6094,7 +6148,7 @@ await page.setContent(htmlContent);
 
 // Define the path to save the PDF
 const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
-const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+const pdfPath = path.join(pdfDir, `${orderNumber}.pdf`);
 
 // Generate PDF and save to the specified path
 await page.pdf({
@@ -6145,7 +6199,7 @@ subject: `${mailtemplate.mail_subject}`,
 html: finalHtml,
 attachments: [
   {
-    filename: `INV-${orderNumber}.pdf`, // PDF file name
+    filename: `${orderNumber}.pdf`, // PDF file name
     path: pdfPath, // Path to the PDF file
   }
 ]
@@ -6982,21 +7036,30 @@ await sendEmail(mailOptions);
         const settings = await BasicSetting_Modal.findOne();
   
   
-        const length = 6;
-        const digits = '0123456789';
-        let orderNumbers = '';
-        let orderNumber = '';
+        // const length = 6;
+        // const digits = '0123456789';
+        // let orderNumbers = '';
+        // let orderNumber = '';
   
-        for (let i = 0; i < length; i++) {
-          orderNumbers += digits.charAt(Math.floor(Math.random() * digits.length));
-        }
+        // for (let i = 0; i < length; i++) {
+        //   orderNumbers += digits.charAt(Math.floor(Math.random() * digits.length));
+        // }
   
        let sno=0;
        
   
         for (const basket_id of basket_ids) {
           sno++;
-          orderNumber = `${orderNumbers}-${sno}`;
+          // orderNumber = `${orderNumbers}-${sno}`;
+
+      const invoicePrefix = settings.invoice;
+      const invoiceStart = settings.invoicestart; 
+      const basketCount = await BasketSubscription_Modal.countDocuments({});
+      const planCount = await PlanSubscription_Modal.countDocuments({});
+      const totalCount = basketCount + planCount;
+      const invoiceNumber = invoiceStart + totalCount;
+      const formattedNumber = invoiceNumber < 10 ? `0${invoiceNumber}` : `${invoiceNumber}`;
+      const orderNumber = `${invoicePrefix}${formattedNumber}`;
 
         const basket = await Basket_Modal.findOne({
           _id: basket_id,
@@ -7056,8 +7119,8 @@ await sendEmail(mailOptions);
           enddate: end,
           validity: basket.validity,
           orderid: orderid,
-          ordernumber : `INV-${orderNumber}`,
-          invoice : `INV-${orderNumber}.pdf`,
+          ordernumber : `${orderNumber}`,
+          invoice : `${orderNumber}.pdf`,
         });
   
         // Save to the database
@@ -7114,13 +7177,13 @@ await sendEmail(mailOptions);
      const todays = new Date(); 
 
      htmlContent = htmlContent
-       .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+       .replace(/{{orderNumber}}/g, `${orderNumber}`)
        .replace(/{{created_at}}/g, formatDate(todays))
        .replace(/{{payment_type}}/g, payment_type)
        .replace(/{{clientname}}/g, client.FullName)
        .replace(/{{email}}/g, client.Email)
        .replace(/{{PhoneNo}}/g, client.PhoneNo)
-       .replace(/{{total}}/g, ttl)
+       .replace(/{{total}}/g, total)
        .replace(/{{discount}}/g, discount)
        .replace(/{{plan_details}}/g, planDetailsHtml)
        .replace(/{{company_email}}/g, settings.email_address)
@@ -7142,7 +7205,7 @@ await sendEmail(mailOptions);
 
      // Define the path to save the PDF
      const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
-     const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+     const pdfPath = path.join(pdfDir, `${orderNumber}.pdf`);
 
      // Generate PDF and save to the specified path
      await page.pdf({
@@ -7195,7 +7258,7 @@ await sendEmail(mailOptions);
          html: finalHtml,
          attachments: [
            {
-             filename: `INV-${orderNumber}.pdf`, // PDF file name
+             filename: `${orderNumber}.pdf`, // PDF file name
              path: pdfPath, // Path to the PDF file
            }
          ]
