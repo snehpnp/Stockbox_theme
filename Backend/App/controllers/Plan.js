@@ -10,6 +10,8 @@ const Refer_Modal = db.Refer;
 const BasicSetting_Modal = db.BasicSetting;
 const Addtocart_Modal = db.Addtocart;
 const Mailtemplate_Modal = db.Mailtemplate;
+const BasketSubscription_Modal = db.BasketSubscription;
+
 const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs');
@@ -801,13 +803,23 @@ if (settings.gst > 0 && settings.gststatus==1) {
    
 
 //////////////////////// invoice
-  const length = 6;
-        const digits = '0123456789';
-        let orderNumber = '';
+  // const length = 6;
+  //       const digits = '0123456789';
+  //       let orderNumber = '';
 
-        for (let i = 0; i < length; i++) {
-          orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
-        }
+  //       for (let i = 0; i < length; i++) {
+  //         orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
+  //       }
+
+  const invoicePrefix = settings.invoice;
+        const invoiceStart = settings.invoicestart; 
+        const basketCount = await BasketSubscription_Modal.countDocuments({});
+        const planCount = await PlanSubscription_Modal.countDocuments({});
+        const totalCount = basketCount + planCount;
+        const invoiceNumber = invoiceStart + totalCount;
+        const formattedNumber = invoiceNumber < 10 ? `0${invoiceNumber}` : `${invoiceNumber}`;
+        const orderNumber = `${invoicePrefix}${formattedNumber}`;
+
 
 
         let payment_type;
@@ -830,7 +842,7 @@ if (settings.gst > 0 && settings.gststatus==1) {
 
         
                 htmlContent = htmlContent
-                  .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+                  .replace(/{{orderNumber}}/g, `${orderNumber}`)
                   .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
                   .replace(/{{payment_type}}/g, payment_type)
                   .replace(/{{clientname}}/g, client.FullName)
@@ -868,7 +880,7 @@ if (settings.gst > 0 && settings.gststatus==1) {
 
         // Define the path to save the PDF
         const pdfDir = path.join(__dirname, `../../../${process.env.DOMAIN}/uploads`, 'invoice');
-        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+        const pdfPath = path.join(pdfDir, `${orderNumber}.pdf`);
 
         // Generate PDF and save to the specified path
         await page.pdf({
@@ -885,8 +897,8 @@ if (settings.gst > 0 && settings.gststatus==1) {
 
         await browser.close();
 
-        savedSubscription.ordernumber = `INV-${orderNumber}`;
-        savedSubscription.invoice = `INV-${orderNumber}.pdf`;
+        savedSubscription.ordernumber = `${orderNumber}`;
+        savedSubscription.invoice = `${orderNumber}.pdf`;
         const updatedSubscription = await savedSubscription.save();
         if (settings.invoicestatus == 1) {
 
@@ -921,7 +933,7 @@ if (settings.gst > 0 && settings.gststatus==1) {
             html: finalHtml,
             attachments: [
               {
-                filename: `INV-${orderNumber}.pdf`, // PDF file name
+                filename: `${orderNumber}.pdf`, // PDF file name
                 path: pdfPath, // Path to the PDF file
               }
             ]
@@ -1457,15 +1469,24 @@ if (settings.gst > 0 && settings.gststatus==1) {
   totalgst = (plan.price * settings.gst) / 100; // Use settings.gst instead of gst
   total = plan.price + totalgst;
 }
-const length = 6;
-const digits = '0123456789';
-let orderNumber = '';
+// const length = 6;
+// const digits = '0123456789';
+// let orderNumber = '';
 
-for (let i = 0; i < length; i++) {
-  orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
-}
+// for (let i = 0; i < length; i++) {
+//   orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
+// }
 
-  
+const invoicePrefix = settings.invoice;
+const invoiceStart = settings.invoicestart; 
+const basketCount = await BasketSubscription_Modal.countDocuments({});
+const planCount = await PlanSubscription_Modal.countDocuments({});
+const totalCount = basketCount + planCount;
+const invoiceNumber = invoiceStart + totalCount;
+const formattedNumber = invoiceNumber < 10 ? `0${invoiceNumber}` : `${invoiceNumber}`;
+const orderNumber = `${invoicePrefix}${formattedNumber}`;
+
+
       // Create a new plan subscription record
       const newSubscription = new PlanSubscription_Modal({
         plan_id,
@@ -1478,8 +1499,8 @@ for (let i = 0; i < length; i++) {
         plan_start: start,
         plan_end: end,
         validity: plan.validity,
-        ordernumber:`INV-${orderNumber}`,
-        invoice:`INV-${orderNumber}.pdf`,
+        ordernumber:`${orderNumber}`,
+        invoice:`${orderNumber}.pdf`,
       });
   
       // Save the subscription
@@ -1632,7 +1653,7 @@ for (let i = 0; i < length; i++) {
 
 
           htmlContent = htmlContent
-          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+          .replace(/{{orderNumber}}/g, `${orderNumber}`)
           .replace(/{{created_at}}/g, formatDate(todays))
           .replace(/{{payment_type}}/g, payment_type)
           .replace(/{{clientname}}/g, client.FullName)
@@ -1662,7 +1683,7 @@ for (let i = 0; i < length; i++) {
 
         // Define the path to save the PDF
         const pdfDir = path.join(__dirname, `../../../${process.env.DOMAIN}/uploads`, 'invoice');
-        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+        const pdfPath = path.join(pdfDir, `${orderNumber}.pdf`);
 
         // Generate PDF and save to the specified path
         await page.pdf({
@@ -1713,7 +1734,7 @@ for (let i = 0; i < length; i++) {
             html: finalHtml,
             attachments: [
               {
-                filename: `INV-${orderNumber}.pdf`, // PDF file name
+                filename: `${orderNumber}.pdf`, // PDF file name
                 path: pdfPath, // Path to the PDF file
               }
             ]

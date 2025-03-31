@@ -18,6 +18,8 @@ const BasketSubscription_Modal = db.BasketSubscription;
 const Clients_Modal = db.Clients;
 const BasicSetting_Modal = db.BasicSetting;
 const Mailtemplate_Modal = db.Mailtemplate;
+const PlanSubscription_Modal = db.PlanSubscription;
+
 
 const { addBasketVolatilityData } = require("./Cron"); 
 const Basketghaphdata_Modal = require("../Models/Basketgraphdata");
@@ -1659,13 +1661,24 @@ class Basket {
 
 
 
-        const length = 6;
-        const digits = '0123456789';
-        let orderNumber = '';
+        // const length = 6;
+        // const digits = '0123456789';
+        // let orderNumber = '';
 
-        for (let i = 0; i < length; i++) {
-          orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
-        }
+        // for (let i = 0; i < length; i++) {
+        //   orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
+        // }
+
+        const invoicePrefix = settings.invoice;
+        const invoiceStart = settings.invoicestart; 
+        const basketCount = await BasketSubscription_Modal.countDocuments({});
+        const planCount = await PlanSubscription_Modal.countDocuments({});
+        const totalCount = basketCount + planCount;
+        const invoiceNumber = invoiceStart + totalCount;
+        const formattedNumber = invoiceNumber < 10 ? `0${invoiceNumber}` : `${invoiceNumber}`;
+        const orderNumber = `${invoicePrefix}${formattedNumber}`;
+
+
 
 
         let payment_type;
@@ -1691,7 +1704,7 @@ class Basket {
 
 
         htmlContent = htmlContent
-          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+          .replace(/{{orderNumber}}/g, `${orderNumber}`)
           .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
           .replace(/{{payment_type}}/g, payment_type)
           .replace(/{{clientname}}/g, client.FullName)
@@ -1729,7 +1742,7 @@ class Basket {
 
         // Define the path to save the PDF
         const pdfDir = path.join(__dirname, `../../../${process.env.DOMAIN}/uploads`, 'invoice');
-        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+        const pdfPath = path.join(pdfDir, `${orderNumber}.pdf`);
 
         // Generate PDF and save to the specified path
         await page.pdf({
@@ -1746,8 +1759,8 @@ class Basket {
 
         await browser.close();
 
-        savedSubscription.ordernumber = `INV-${orderNumber}`;
-        savedSubscription.invoice = `INV-${orderNumber}.pdf`;
+        savedSubscription.ordernumber = `${orderNumber}`;
+        savedSubscription.invoice = `${orderNumber}.pdf`;
         const updatedSubscription = await savedSubscription.save();
 
         if (settings.invoicestatus == 1) {
@@ -1785,7 +1798,7 @@ class Basket {
             html: finalHtml,
             attachments: [
               {
-                filename: `INV-${orderNumber}.pdf`, // PDF file name
+                filename: `${orderNumber}.pdf`, // PDF file name
                 path: pdfPath, // Path to the PDF file
               }
             ]
@@ -1894,13 +1907,23 @@ class Basket {
 
 
 
-      const length = 6;
-      const digits = '0123456789';
-      let orderNumber = '';
+      // const length = 6;
+      // const digits = '0123456789';
+      // let orderNumber = '';
 
-      for (let i = 0; i < length; i++) {
-        orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
-      }
+      // for (let i = 0; i < length; i++) {
+      //   orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
+      // }
+
+
+      const invoicePrefix = settings.invoice;
+      const invoiceStart = settings.invoicestart; 
+      const basketCount = await BasketSubscription_Modal.countDocuments({});
+      const planCount = await PlanSubscription_Modal.countDocuments({});
+      const totalCount = basketCount + planCount;
+      const invoiceNumber = invoiceStart + totalCount;
+      const formattedNumber = invoiceNumber < 10 ? `0${invoiceNumber}` : `${invoiceNumber}`;
+      const orderNumber = `${invoicePrefix}${formattedNumber}`;
 
 
       let payment_type;
@@ -1925,7 +1948,7 @@ class Basket {
 
 
       htmlContent = htmlContent
-        .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
+        .replace(/{{orderNumber}}/g, `${orderNumber}`)
         .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
         .replace(/{{payment_type}}/g, payment_type)
         .replace(/{{clientname}}/g, client.FullName)
@@ -1963,7 +1986,7 @@ class Basket {
 
       // Define the path to save the PDF
       const pdfDir = path.join(__dirname, `../../../${process.env.DOMAIN}/uploads`, 'invoice');
-      const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
+      const pdfPath = path.join(pdfDir, `${orderNumber}.pdf`);
 
       // Generate PDF and save to the specified path
       await page.pdf({
@@ -1980,8 +2003,8 @@ class Basket {
 
       await browser.close();
 
-      savedSubscription.ordernumber = `INV-${orderNumber}`;
-      savedSubscription.invoice = `INV-${orderNumber}.pdf`;
+      savedSubscription.ordernumber = `${orderNumber}`;
+      savedSubscription.invoice = `${orderNumber}.pdf`;
       const updatedSubscription = await savedSubscription.save();
 
       if (settings.invoicestatus == 1) {
@@ -2019,7 +2042,7 @@ class Basket {
           html: finalHtml,
           attachments: [
             {
-              filename: `INV-${orderNumber}.pdf`, // PDF file name
+              filename: `${orderNumber}.pdf`, // PDF file name
               path: pdfPath, // Path to the PDF file
             }
           ]
