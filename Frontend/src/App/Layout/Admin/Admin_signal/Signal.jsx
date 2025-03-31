@@ -281,6 +281,7 @@ const Signal = () => {
             };
 
             const response = await GetSignallistWithFilter(data, token);
+            console.log("GetSignallistWithFilter",response)
 
             if (response && response.status) {
                 setTotalRows(response.pagination.totalRecords);
@@ -568,6 +569,8 @@ const Signal = () => {
 
 
             const response = await SignalCloseApi(data, token);
+            console.log("SignalCloseApi",response);
+            
 
             if (response && response.status) {
                 showCustomAlert("Success", 'Signal Closed Successfully.')

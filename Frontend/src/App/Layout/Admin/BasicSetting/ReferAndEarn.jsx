@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { image_baseurl } from "../../../../Utils/config";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import * as Yup from "yup";
 
 const ReferAndEarn = () => {
 
@@ -12,6 +13,7 @@ const ReferAndEarn = () => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const [clients, setClients] = useState(null);
+
   const [isChanged, setIsChanged] = useState(false);
 
   const getsettinglist = async () => {
@@ -40,6 +42,10 @@ const ReferAndEarn = () => {
     return <div><Loader /></div>;
   }
 
+  const validationSchema = Yup.object().shape({
+    refersendmsg: Yup.string().trim().required("R&E Share Message is required"),
+  });
+
 
 
   return (
@@ -62,6 +68,7 @@ const ReferAndEarn = () => {
       <div className="row">
         <div className="col-lg-8 mx-auto">
           <div className="card radius-15">
+
             <Formik
               enableReinitialize={true}
               initialValues={{
@@ -75,6 +82,7 @@ const ReferAndEarn = () => {
                 Singletime: clients[0]?.refer_status === 0,
                 refersendmsg: clients[0]?.refersendmsg || "",
               }}
+              validationSchema={validationSchema}
               onSubmit={async (values) => {
                 const req = {
                   sender_earn: values?.sender_earn,
@@ -106,7 +114,7 @@ const ReferAndEarn = () => {
                 }
               }}
             >
-              {({ setFieldValue, values }) => (
+              {({ setFieldValue, values, errors, touched }) => (
                 <Form className="card-body p-4">
                   <div className="p-4 border radius-15">
 
@@ -203,21 +211,24 @@ const ReferAndEarn = () => {
 
                     <div className="row mb-3 align-items-center">
                       <label htmlFor="refersendmsg" className="col-sm-3 col-form-label">
-                        <b>Refer Send Msg</b>
+                        <b>R&E Share Message</b>
                       </label>
                       <div className="col-sm-9">
                         <div className="input-group">
                           <Field
                             as="textarea"
                             name="refersendmsg"
-                            className="form-control"
-                            placeholder="Refer Send Msg"
+                            className={`form-control ${errors.refersendmsg && touched.refersendmsg ? "is-invalid" : ""}`}
+                            placeholder="R&E Share Message"
                             style={{ width: "100%" }}
                             onChange={(e) => {
-                              handleFieldChange("refersendmsg", e.target.value, setFieldValue);
+                              setFieldValue("refersendmsg", e.target.value);
                             }}
                           />
                         </div>
+                        {errors.refersendmsg && touched.refersendmsg && (
+                          <div className="invalid-feedback">{errors.refersendmsg}</div>
+                        )}
                       </div>
                     </div>
 

@@ -14,6 +14,7 @@ const Generalsettings = () => {
     const navigate = useNavigate();
 
     const [clients, setClients] = useState(null);
+    console.log("clients",clients)
 
     const [isModified, setIsModified] = useState(false);
     const [istoggle, setToggle] = useState([])
@@ -129,6 +130,7 @@ const Generalsettings = () => {
 
                                 try {
                                     const response = await Updatebasicsettings(req, token);
+                                    console.log("Updatebasicsettings",response);
 
                                     if (response.status) {
                                         showCustomAlert("Success", response.message)
@@ -372,7 +374,7 @@ const Generalsettings = () => {
 
                                             <div className="row mb-3 align-items-center">
                                                 <label htmlFor="invoicetnc" className="col-sm-3 col-form-label">
-                                                    <b> Terms & Condition</b>
+                                                    <b> T&C Message</b>
                                                 </label>
                                                 <div className="col-sm-9">
                                                     <div className="input-group">
