@@ -870,11 +870,18 @@ class Clients {
       const datetime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}${ampm}`;
 
       // PDF generation section
-      const templatePath = path.join(__dirname, '../../../template', 'kyc-agreement-template.html');
-      let htmlContent = fs.readFileSync(templatePath, 'utf8');
+      // const templatePath = path.join(__dirname, '../../../template', 'kyc-agreement-template.html');
+      // let htmlContent = fs.readFileSync(templatePath, 'utf8');
+
+      let htmlContent = settings.pdf_template || '';
+      let pdf_header = settings.pdf_header || '';
+      let pdf_footer = settings.pdf_footer || '';
+
+
+
 
       // Replace placeholders with actual values
-      htmlContent = htmlContent
+       htmlContent = htmlContent
         .replace(/{{name}}/g, name)
         .replace(/{{email}}/g, email)
         .replace(/{{phone}}/g, phone)
@@ -900,6 +907,9 @@ class Clients {
         path: pdfPath,
         format: 'A4',
         printBackground: true,
+        displayHeaderFooter: true,  // Ensure footer is enabled
+        headerTemplate: pdf_header,
+        footerTemplate: pdf_footer,
         margin: {
           top: '20mm',
           right: '10mm',
@@ -1015,23 +1025,27 @@ class Clients {
     });
 
     // Prepare the request body for signing
+    const noof_pdf_pages = settings.noof_pdf_pages; // Number of pages in the PDF
+
+    // Generate sign_coordinates dynamically
+    const signCoordinates = {};
+    signCoordinates[client.PhoneNo] = {}; // Initialize the phone number key
+    
+    for (let i = 1; i <= noof_pdf_pages; i++) {
+        signCoordinates[client.PhoneNo][i] = [{ llx: 315, lly: 160, urx: 600, ury: 60 }];
+    }
+    
     const requestBody = {
-      signers: [{
-        identifier: client.PhoneNo,
-        aadhaar_id: client.aadhaarno,
-        reason: 'Contract'
-      }],
-      sign_coordinates: {
-        [client.PhoneNo]: {
-          "1": [{ llx: 315, lly: 160, urx: 600, ury: 60 }],
-          "2": [{ llx: 315, lly: 160, urx: 600, ury: 60 }],
-          "3": [{ llx: 315, lly: 160, urx: 600, ury: 60 }]
-        }
-      },
-      expire_in_days: 10,
-      display_on_page: "custom",
-      notify_signers: true,
-      send_sign_link: true
+        signers: [{
+            identifier: client.PhoneNo,
+            aadhaar_id: client.aadhaarno,
+            reason: 'Contract'
+        }],
+        sign_coordinates: signCoordinates, // Use dynamically generated object
+        expire_in_days: 10,
+        display_on_page: "custom",
+        notify_signers: true,
+        send_sign_link: true
     };
 
     // Add the request payload to the form
