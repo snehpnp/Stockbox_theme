@@ -73,6 +73,10 @@ const Client = () => {
   //state for loading
   const [isLoading, setIsLoading] = useState(true);
 
+  //this state for button disable
+
+  const [loading, setLoading] = useState(false);
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -361,6 +365,7 @@ const Client = () => {
 
   // Update service
   const Updateplansubscription = async () => {
+    setLoading(true);
     try {
       const data = {
         plan_id: updatetitle.plan_id,
@@ -380,6 +385,7 @@ const Client = () => {
     } catch (error) {
       showCustomAlert("error", "Server error");
     }
+    setLoading(false);
   };
 
 
@@ -1105,8 +1111,9 @@ const Client = () => {
                 type="button"
                 className="btn btn-primary"
                 onClick={() => Updateplansubscription()}
+                disabled={loading}
               >
-                Save Plan
+                {loading ? "Saving..." : "Save Plan"} 
               </button>
             )}
             {checkedIndex === 1 && (
@@ -1114,8 +1121,9 @@ const Client = () => {
                 type="button"
                 className="btn btn-primary"
                 onClick={() => UpdateBasketservice()}
+                disabled={loading}
               >
-                Save Plan
+                {loading ? "Saving..." : "Save Plan"} 
               </button>
             )}
           </>
