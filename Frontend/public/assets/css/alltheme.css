@@ -1705,3 +1705,7 @@ display: -webkit-box;
   transform: scale(1.05);
   transition: all 0.3s ease-in-out;
 }
+.sticky-card
+{
+  width:100%;  background:#edf7f6; display:inline-block; float:left; position:sticky; top:50px;
+}

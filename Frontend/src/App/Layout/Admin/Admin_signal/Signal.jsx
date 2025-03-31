@@ -813,189 +813,270 @@ const Signal = () => {
                     <hr />
 
                     <div className="card">
-                        <div className="card-body">
+    <div className="card-body">
+        {/* View Mode Buttons */}
+        <div className="d-flex justify-content-between mb-4">
+            <div className="btn-group">
+                <button
+                    className={`btn btn-outline-primary ${viewMode === "table" ? "active" : ""}`}
+                    onClick={() => setViewMode("table")}
+                >
+                    Table View
+                </button>
+                <button
+                    className={`btn btn-outline-primary ${viewMode === "card" ? "active" : ""}`}
+                    onClick={() => setViewMode("card")}
+                >
+                    Card View
+                </button>
+                <button
+                    className={`btn btn-outline-primary ${viewMode === "strategy" ? "active" : ""}`}
+                    onClick={() => setViewMode("strategy")}
+                >
+                    Strategy
+                </button>
+            </div>
+        </div>
 
-                            <div className="d-flex justify-content-between mb-4">
-                                <div className="btn-group">
-                                    <button
-                                        className={`btn btn-outline-primary ${viewMode === "table" ? "active" : ""}`}
-                                        onClick={() => setViewMode("table")}
-                                    >
-                                        Table View
-                                    </button>
-                                    <button
-                                        className={`btn btn-outline-primary ${viewMode === "card" ? "active" : ""}`}
-                                        onClick={() => setViewMode("card")}
-                                    >
-                                        Card View
-                                    </button>
+        {/* Search and Add Button */}
+        <div className="d-md-flex align-items-center mb-4 gap-3">
+            <div className="position-relative">
+                <input
+                    type="text"
+                    className="form-control ps-5 radius-10"
+                    placeholder="Search Signal"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                />
+                <span className="position-absolute top-50 product-show translate-middle-y">
+                    <i className="bx bx-search" />
+                </span>
+            </div>
+            <div className="ms-sm-auto mt-2 mt-md-0">
+                <Link to="/admin/addsignal" className="btn btn-primary">
+                    <i className="bx bxs-plus-square" aria-hidden="true" /> Add Signal
+                </Link>
+            </div>
+
+            {/* Export Button */}
+            <div className="ms-0 ms-md-2 mt-2 mt-md-0">
+                {viewMode === "table" ? (
+                    <button
+                        type="button"
+                        className="btn btn-primary float-md-end"
+                        title="Export To Excel"
+                        onClick={getexportfile}
+                    >
+                        <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
+                    </button>
+                ) : (
+                    <button
+                        type="button"
+                        className="btn btn-primary float-md-end"
+                        title="Export Card Data"
+                        onClick={getexportfile1}
+                    >
+                        <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
+                    </button>
+                )}
+            </div>
+        </div>
+
+        {/* Filters */}
+        <div className="row">
+            <div className="col-md-3 mb-3">
+                <label>From Date</label>
+                <input
+                    type="date"
+                    name="from"
+                    className="form-control radius-10"
+                    value={filters.from}
+                    onChange={handleFilterChange}
+                />
+            </div>
+            <div className="col-md-3 mb-3">
+                <label>To Date</label>
+                <input
+                    type="date"
+                    name="to"
+                    className="form-control radius-10"
+                    value={filters.to}
+                    onChange={handleFilterChange}
+                    min={filters.from}
+                />
+            </div>
+            <div className="col-md-3 mb-3">
+                <label>Select Service</label>
+                <select
+                    name="service"
+                    className="form-control radius-10"
+                    value={filters.service}
+                    onChange={handleFilterChange}
+                >
+                    <option value="">Select Service</option>
+                    {serviceList.map((service) => (
+                        <option key={service._id} value={service._id}>
+                            {service.title}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <div className="col-md-3 d-flex">
+                <div style={{ width: "80%" }}>
+                    <label>Select Stock</label>
+                    <Select
+                        options={options}
+                        value={options.find((option) => option.value === searchstock) || null}
+                        onChange={handleChange1}
+                        isClearable
+                        placeholder="Select Stock"
+                    />
+                </div>
+                <div className="rfreshicon">
+                    <RefreshCcw onClick={resethandle} />
+                </div>
+            </div>
+        </div>
+
+        {/* Conditional Rendering for Different Views */}
+        {viewMode === "table" ? (
+            isLoading ? (
+                <Loader />
+            ) : clients.length > 0 ? (
+                <Table
+                    columns={columns}
+                    data={clients}
+                    totalRows={totalRows}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
+                />
+            ) : (
+                <div className="text-center mt-5">
+                    <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                </div>
+            )
+        ) : viewMode === "card" ? (
+            isLoading ? (
+                <Loader />
+            ) : clients.length > 0 ? (
+                <div className="row mt-3">
+                    {clients.map((client, index) => (
+                        <div className="col-md-12" key={index}>
+                            <div className="card radius-10 mb-3 border">
+                                <div className="card-body">
+                                    <p className="mb-1">
+                                        <b>Date: {fDateTimeH(client?.created_at)}</b>
+                                    </p>
+                                    <p className="mb-2">
+                                        <b>
+                                            Segment:{" "}
+                                            {client?.segment === "C"
+                                                ? "CASH"
+                                                : client?.segment === "O"
+                                                    ? "OPTION"
+                                                    : "FUTURE"}
+                                        </b>
+                                    </p>
+                                    <p className="mb-1">
+                                        {client?.calltype} {client?.stock}{" "}
+                                        {client?.expirydate && `${client.expirydate}`}{" "}
+                                        {client?.optiontype && `${client.optiontype}`}{" "}
+                                        {client?.calltype} {client?.entrytype} {client?.price} Target{" "}
+                                        {client?.tag1}
+                                        {client?.tag2 && `/${client.tag2}`}
+                                        {client?.tag3 && `/${client.tag3}`}{" "}
+                                        {client?.stoploss && `SL ${client.stoploss}`}
+                                    </p>
                                 </div>
                             </div>
-
-
-                            <div className="d-md-flex align-items-center mb-4 gap-3">
-                                <div className="position-relative">
-                                    <input
-                                        type="text"
-                                        className="form-control ps-5 radius-10"
-                                        placeholder="Search Signal"
-                                        value={searchInput}
-                                        onChange={(e) => setSearchInput(e.target.value)}
-                                    />
-                                    <span className="position-absolute top-50 product-show translate-middle-y">
-                                        <i className="bx bx-search" />
-                                    </span>
-                                </div>
-                                <div className="ms-sm-auto mt-2 mt-md-0">
-                                    <Link to="/admin/addsignal" className="btn btn-primary">
-                                        <i className="bx bxs-plus-square" aria-hidden="true" /> Add Signal
-                                    </Link>
-                                </div>
-                                {/* <div className="ms-2" onClick={getexportfile}>
-                                    <button type="button" className="btn btn-primary float-end" title="Export To Excel">
-                                        <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
-                                    </button>
-                                </div> */}
-
-                                <div className="ms-0 ms-md-2 mt-2 mt-md-0">
-                                    {viewMode === "table" ? (
-                                        <button
-                                            type="button"
-                                            className="btn btn-primary float-md-end"
-                                            title="Export To Excel"
-                                            onClick={getexportfile}
-                                        >
-                                            <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
-                                        </button>
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            className="btn btn-primary float-md-end"
-                                            title="Export Card data"
-                                            onClick={getexportfile1}
-                                        >
-                                            <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="row">
-                                <div className="col-md-3 mb-3">
-                                    <label>From date</label>
-                                    <input
-                                        type="date"
-                                        name="from"
-                                        className="form-control radius-10"
-                                        value={filters.from}
-                                        onChange={handleFilterChange}
-                                    />
-                                </div>
-                                <div className="col-md-3 mb-3">
-                                    <label>To Date</label>
-                                    <input
-                                        type="date"
-                                        name="to"
-                                        className="form-control radius-10"
-                                        value={filters.to}
-                                        onChange={handleFilterChange}
-                                        min={filters.from}
-                                    />
-                                </div>
-                                <div className="col-md-3 mb-3">
-                                    <label>Select Service</label>
-                                    <select
-                                        name="service"
-                                        className="form-control radius-10"
-                                        value={filters.service}
-                                        onChange={handleFilterChange}
-                                    >
-                                        <option value="">Select Service</option>
-                                        {serviceList.map((service) => (
-                                            <option key={service._id} value={service._id}>
-                                                {service.title}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="col-md-3 d-flex">
-                                    <div style={{ width: "80%" }}>
-                                        <label>Select Stock</label>
-                                        <Select
-                                            options={options}
-                                            value={options.find((option) => option.value === searchstock) || null}
-                                            onChange={handleChange1}
-                                            isClearable
-                                            placeholder="Select Stock"
-                                        />
-                                    </div>
-                                    <div className="rfreshicon">
-                                        <RefreshCcw onClick={resethandle} />
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            {viewMode === "table" ? (
-                                isLoading ? (
-                                    <Loader />
-                                ) : clients.length > 0 ? (
-                                    <Table
-                                        columns={columns}
-                                        data={clients}
-                                        totalRows={totalRows}
-                                        currentPage={currentPage}
-                                        onPageChange={handlePageChange}
-                                    />
-                                ) : (
-                                    <div className="text-center mt-5">
-                                        <img src="/assets/images/norecordfound.png" alt="No Records Found" />
-                                    </div>
-                                )
-                            ) : isLoading ? (
-                                <Loader />
-                            ) : clients.length > 0 ? (
-                                <div className="row mt-3">
-                                    {clients.map((client, index) => (
-                                        <div className="col-md-12" key={index}>
-                                            <div className="card radius-10 mb-3 border">
-                                                <div className="card-body">
-                                                    <p className="mb-1">
-                                                        <b>Date: {fDateTimeH(client?.created_at)}</b>
-                                                    </p>
-                                                    <p className="mb-2">
-                                                        <b>
-                                                            Segment:{" "}
-                                                            {client?.segment === "C"
-                                                                ? "CASH"
-                                                                : client?.segment === "O"
-                                                                    ? "OPTION"
-                                                                    : "FUTURE"}
-                                                        </b>
-                                                    </p>
-                                                    <p className="mb-1">
-                                                        {client?.calltype} {client?.stock}{" "}
-                                                        {client?.expirydate && `${client.expirydate}`}{" "}
-                                                        {client?.optiontype && `${client.optiontype}`}{" "}
-                                                        {client?.calltype} {client?.entrytype} {client?.price} Target{" "}
-                                                        {client?.tag1}
-                                                        {client?.tag2 && `/${client.tag2}`}
-                                                        {client?.tag3 && `/${client.tag3}`}{" "}
-                                                        {client?.stoploss && `SL ${client.stoploss}`}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="text-center mt-5">
-                                    <img src="/assets/images/norecordfound.png" alt="No Records Found" />
-                                </div>
-                            )}
-
                         </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="text-center mt-5">
+                    <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                </div>
+            )
+        ) : (
+            // **Strategy Content**
+            <div className="strategy-content mt-4">
+                <div className='card py-3'>
+                <div className='row w-100 mx-auto'>
+                    <div className='col-md-3 '>
+                        <div className=' d-flex flex-column gap-3  p-4 sticky-card'>
+                        <button className='btn btn-secondary w-100'>Open Signal</button>
+                        <button className='btn btn-secondary w-100'>About Trade</button>
+                        <button className='btn btn-secondary w-100'>PDF</button>
+</div>
                     </div>
+                    <div className='col-md-9'>
+                        <div className='row w-100'>
+                            <div className='col-md-4'>
+                            <label className='text-muted'> Stock Name</label>
+                            <p>Test</p>
+                            </div>
+                            <div className='col-md-4'>
+                            <label className='text-muted'>Strategy</label>
+                            <p>Test</p>
+                            </div>
+                            <div className='col-md-4'>
+                            <label className='text-muted'>Plan Name</label>
+                            <p>Test</p>
+                            </div>
+                        </div>
+                        <div className='row w-100'>
+                            <div className='col-md-4'>
+                            <label className='text-muted'>Trade Duration</label>
+                            <p>Test</p>
+                            </div>
+                            <div className='col-md-4'>
+                            <label className='text-muted'>Max. Loss</label>
+                            <p>Test</p>
+                            </div>
+                            <div className='col-md-4'>
+                            <label className='text-muted'>Max. Profit</label>
+                            <p>Test</p>
+                            </div>
+                        </div>
+                        <div className='row w-100'>
+                            <div className='shadow card p-3'>
+                            <table className='table table-bordered '>
+                                <tbody>
+                                <tr> 
+                                    <td >F</td>
+                                    <td>Buy</td>
+                                    <td>Exp.</td>
+                                    <td>CE</td>
+                                    <td>25545</td>
+                                    <td>1</td>
+                                    <td>1</td>
+
+                                </tr>
+                                <tr> 
+                                    <td>F</td>
+                                    <td>Buy</td>
+                                    <td>Exp.</td>
+                                    <td>CE</td>
+                                    <td>25545</td>
+                                    <td>1</td>
+                                    <td>1</td>
+
+                                </tr>
+                                </tbody>
+                            </table>
+                            </div>
+                            </div>
+                        
+                   
+                    </div>
+                </div>
+              
+</div>
+            </div>
+        )}
+    </div>
+</div>
+
                 </div>
             </div>
 
