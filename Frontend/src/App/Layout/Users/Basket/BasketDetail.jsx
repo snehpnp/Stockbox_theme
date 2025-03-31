@@ -70,8 +70,8 @@ const BasketDetail = () => {
                 <p>{stripHtmlTags(item?.description)}</p>
               </div>
               <div className="row">
-                <div className="col-md-6">
-                  <ul className="list-group list-group-flush list basket-detail-card mt-4">
+                <div className="col-md-7">
+                  <ul className="list-group list-group-flush list  mt-4">
                     <li className="list-group-item d-flex justify-content-between align-items-center">
                       Launch Date{" "}
                       <span className="badge bg-dark rounded-pill">
@@ -116,7 +116,7 @@ const BasketDetail = () => {
                     </li>
                   </ul>
                 </div>
-                <div className="col-md-6">
+                <div className="col-md-5">
                   <div className="">
                     <Doughnut data={chartData} className="mx-auto" />
                   </div>
@@ -130,8 +130,8 @@ const BasketDetail = () => {
       {/* Line Chart Integration */}
       <div className="row px-4 pt-4">
         <div className="col-md-12">
-          <div className="">
-            <div className="">
+          <div className="card shadow">
+            <div className="card-body">
               <Line data={chartDataLine} />
             </div>
           </div>
@@ -139,7 +139,7 @@ const BasketDetail = () => {
       </div>
 
       {/* Tabs Section */}
-      <div className="row px-4 border-top pt-3 align-items-center">
+      <div className="row px-4  pt-3 align-items-center">
         <div className="col-md-12">
           <ul className="nav nav-pills mb-3 justify-content-center">
             <li className="nav-item">
