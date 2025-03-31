@@ -64,7 +64,7 @@ class Angle {
                 return res.status(500).json({ status: false, message: "Server error" });
             }
         } catch (error) {
-            return res.status(500).json({ status: false, message: error });
+            return res.status(500).json({ status: false, message: error.message });
 
         }
 
