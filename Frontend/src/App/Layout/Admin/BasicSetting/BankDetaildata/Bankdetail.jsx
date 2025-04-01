@@ -69,7 +69,7 @@ const Bankdetail = () => {
         try {
             const result = await showCustomAlert("confirm", 'Do you want to delete this bank detail? This action cannot be undone.')
 
-            if (result) {
+            if (result.isConfirmed) {
                 const response = await DeleteBankDetail(_id, token);
                 if (response.status) {
                     showCustomAlert("Success", 'The Details has been successfully deleted.')
@@ -97,7 +97,7 @@ const Bankdetail = () => {
 
         const result = await showCustomAlert("confirm", "Do you want to save the changes?");
 
-        if (result) {
+        if (result.isConfirmed) {
             try {
                 const response = await BankStatusdetail(data, token);
                 if (response?.status) {

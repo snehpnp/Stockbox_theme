@@ -243,7 +243,7 @@ const Freeclient = () => {
             const result = await showCustomAlert("confirm", 'Do you want to delete this member This action cannot be undone.');
 
 
-            if (result) {
+            if (result.isConfirmed) {
                 const response = await DeleteFreeClient(_id, token);
                 if (response.status) {
                     showCustomAlert("Success", 'Do you want to delete this member This action cannot be undone.');

@@ -63,7 +63,7 @@ const Payementgateway = () => {
                 : { paymentstatus: clients?.paymentstatus, officepaymenystatus: user_active_status };
         const result = await showCustomAlert("confirm", "Do you want to save the changes?")
 
-        if (result) {
+        if (result.isConfirmed) {
             try {
                 const response = await UpdatePaymentstatus(data, token);
                 if (response?.status) {
@@ -120,7 +120,7 @@ const Payementgateway = () => {
         const user_active_status = event.target.checked ? 1 : 0;
         const data = { gststatus: user_active_status }
         const result = await showCustomAlert("confirm", "Do you want to save the changes?")
-        if (result) {
+        if (result.isConfirmed) {
             try {
                 const response = await UpdatePaymentGSTstatus(data, token);
                 if (response?.status) {

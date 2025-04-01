@@ -177,7 +177,7 @@ const Blogs = () => {
         const data = { id: id, status: user_active_status };
         const result = await showCustomAlert("confirm", "Do you want to save the changes?")
 
-        if (result) {
+        if (result.isConfirmed) {
             try {
                 const response = await changeblogsstatus(data, token);
                 if (response.status) {

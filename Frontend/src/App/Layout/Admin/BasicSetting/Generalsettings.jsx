@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { image_baseurl } from '../../../../Utils/config';
 import Loader from '../../../../Utils/Loader';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+import ReactQuill from "react-quill";
 
 
 
@@ -13,9 +14,10 @@ const Generalsettings = () => {
     const user_id = localStorage.getItem('id');
     const navigate = useNavigate();
 
-    const [clients, setClients] = useState(null);
-    console.log("clients",clients)
+    const [getTermandCon,setTermandCon] = useState("")
 
+    const [clients, setClients] = useState(null);
+    
     const [isModified, setIsModified] = useState(false);
     const [istoggle, setToggle] = useState([])
 
@@ -53,9 +55,9 @@ const Generalsettings = () => {
     const getsettinglist = async () => {
         try {
             const response = await basicsettinglist(token);
-
             if (response.status) {
                 setClients(response.data);
+                setTermandCon(response.data[0]?.invoicetnc)
             }
         } catch (error) {
             console.log('error', error);
@@ -69,7 +71,6 @@ const Generalsettings = () => {
     if (!clients) {
         return <div><Loader /></div>;
     }
-
 
 
 
@@ -95,7 +96,7 @@ const Generalsettings = () => {
                     <div className="card radius-15">
 
                         <Formik
-                            enableReinitialize={true}
+                            // enableReinitialize={true}
                             initialValues={{
                                 id: user_id,
                                 from_name: clients[0].from_name || '',
@@ -112,6 +113,7 @@ const Generalsettings = () => {
 
                             }}
                             onSubmit={async (values, { resetForm }) => {
+
                                 const req = {
                                     from_name: values.from_name,
                                     address: values.address,
@@ -123,14 +125,13 @@ const Generalsettings = () => {
                                     simage: values.simage,
                                     gstin: values.gstin,
                                     state: values.state,
-                                    invoicetnc: values.invoicetnc,
+                                    invoicetnc: getTermandCon,
                                     id: user_id,
 
                                 };
 
                                 try {
                                     const response = await Updatebasicsettings(req, token);
-                                    console.log("Updatebasicsettings",response);
 
                                     if (response.status) {
                                         showCustomAlert("Success", response.message)
@@ -154,138 +155,137 @@ const Generalsettings = () => {
 
 
                                     <Form className="card-body p-4" onChange={() => setIsModified(true)}>
-                                        <div className=" ">
 
-                                            <div className="row mb-3 align-items-center">
-                                                <label htmlFor="from_name" className="col-sm-3 col-form-label">
-                                                    <b> Company Name</b>
-                                                </label>
-                                                <div className="col-sm-9">
-                                                    <div className="input-group">
-                                                        <span className="input-group-text">
-                                                            <i className="fadeIn animated bx bx-building" />
-                                                        </span>
-                                                        <Field name="from_name"
-                                                            type="text"
-                                                            className="form-control"
-                                                            placeholder="Your Name"
-
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="row mb-3 align-items-center">
-                                                <label htmlFor="contact_number" className="col-sm-3 col-form-label">
-                                                    <b> Phone No</b>
-                                                </label>
-                                                <div className="col-sm-9">
-                                                    <div className="input-group">
-                                                        <span className="input-group-text">
-                                                            <i className="fadeIn animated bx bx-phone" />
-                                                        </span>
-                                                        <Field name="contact_number"
-                                                            type="text" className="form-control"
-                                                            placeholder="Phone No"
-
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="row mb-3 align-items-center">
-                                                <label htmlFor="email_address" className="col-sm-3 col-form-label">
-                                                    <b> Email Address</b>
-                                                </label>
-                                                <div className="col-sm-9">
-                                                    <div className="input-group">
-                                                        <span className="input-group-text">
-                                                            <i className="bx bx-envelope" />
-                                                        </span>
-                                                        <Field name="email_address"
-                                                            type="email"
-                                                            className="form-control"
-                                                            placeholder="Email"
-
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="row mb-3 align-items-center">
-                                                <label htmlFor="favicon" className="col-sm-3 col-form-label">
-                                                    <b>Favicon</b>
-                                                </label>
-                                                <div className="col-sm-8">
-                                                    <input
-                                                        name="favicon"
-                                                        accept="image/*"
-                                                        type="file"
+                                        <div className="row mb-3 align-items-center">
+                                            <label htmlFor="from_name" className="col-sm-3 col-form-label">
+                                                <b> Company Name</b>
+                                            </label>
+                                            <div className="col-sm-9">
+                                                <div className="input-group">
+                                                    <span className="input-group-text">
+                                                        <i className="fadeIn animated bx bx-building" />
+                                                    </span>
+                                                    <Field name="from_name"
+                                                        type="text"
                                                         className="form-control"
-
-                                                        onChange={(event) => setFieldValue("favicon", event.currentTarget.files[0])}
-                                                    />
-                                                </div>
-                                                <div className="col-sm-1">
-                                                    {clients[0].favicon && (
-                                                        <div className="file-preview">
-                                                            <img src={`${image_baseurl}uploads/basicsetting/${clients[0].favicon}`} alt="Favicon Preview" className="image-preview"
-
-                                                            />
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            <div className="row mb-3 align-items-center">
-                                                <label htmlFor="logo" className="col-sm-3 col-form-label">
-                                                    <b> Logo</b>
-                                                </label>
-                                                <div className="col-sm-8">
-                                                    <input
-                                                        name="logo"
-                                                        type="file"
-                                                        accept="image/*"
-                                                        className="form-control"
-                                                        onChange={(event) => setFieldValue("logo", event.currentTarget.files[0])}
+                                                        placeholder="Your Name"
 
                                                     />
                                                 </div>
-                                                <div className="col-sm-1">
-                                                    {clients[0].logo && (
-                                                        <div className="file-preview">
-                                                            <img src={`${image_baseurl}uploads/basicsetting/${clients[0].logo}`} alt="Logo Preview" className="image-preview" />
-                                                        </div>
-                                                    )}
-                                                </div>
-
                                             </div>
+                                        </div>
 
-                                            <div className="row mb-3 align-items-center">
-                                                <label htmlFor="offer_image" className="col-sm-3 col-form-label">
-                                                    <b>Offer Image</b>
-                                                </label>
-                                                <div className="col-sm-8">
-                                                    <input
-                                                        name="offer_image"
-                                                        type="file"
-                                                        accept="image/*"
-                                                        className="form-control"
-                                                        onChange={(event) => setFieldValue("offer_image", event.currentTarget.files[0])}
+                                        <div className="row mb-3 align-items-center">
+                                            <label htmlFor="contact_number" className="col-sm-3 col-form-label">
+                                                <b> Phone No</b>
+                                            </label>
+                                            <div className="col-sm-9">
+                                                <div className="input-group">
+                                                    <span className="input-group-text">
+                                                        <i className="fadeIn animated bx bx-phone" />
+                                                    </span>
+                                                    <Field name="contact_number"
+                                                        type="text" className="form-control"
+                                                        placeholder="Phone No"
 
                                                     />
                                                 </div>
-                                                <div className="col-sm-1">
-                                                    {clients[0].offer_image && (
-                                                        <div className="file-preview">
-                                                            <img src={`${image_baseurl}uploads/basicsetting/${clients[0].offer_image}`} alt="offer_image Preview" className="image-preview" />
-                                                        </div>
-                                                    )}
-                                                </div>
+                                            </div>
+                                        </div>
 
+                                        <div className="row mb-3 align-items-center">
+                                            <label htmlFor="email_address" className="col-sm-3 col-form-label">
+                                                <b> Email Address</b>
+                                            </label>
+                                            <div className="col-sm-9">
+                                                <div className="input-group">
+                                                    <span className="input-group-text">
+                                                        <i className="bx bx-envelope" />
+                                                    </span>
+                                                    <Field name="email_address"
+                                                        type="email"
+                                                        className="form-control"
+                                                        placeholder="Email"
+
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="row mb-3 align-items-center">
+                                            <label htmlFor="favicon" className="col-sm-3 col-form-label">
+                                                <b>Favicon</b>
+                                            </label>
+                                            <div className="col-sm-8">
+                                                <input
+                                                    name="favicon"
+                                                    accept="image/*"
+                                                    type="file"
+                                                    className="form-control"
+
+                                                    onChange={(event) => setFieldValue("favicon", event.currentTarget.files[0])}
+                                                />
+                                            </div>
+                                            <div className="col-sm-1">
+                                                {clients[0].favicon && (
+                                                    <div className="file-preview">
+                                                        <img src={`${image_baseurl}uploads/basicsetting/${clients[0].favicon}`} alt="Favicon Preview" className="image-preview"
+
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="row mb-3 align-items-center">
+                                            <label htmlFor="logo" className="col-sm-3 col-form-label">
+                                                <b> Logo</b>
+                                            </label>
+                                            <div className="col-sm-8">
+                                                <input
+                                                    name="logo"
+                                                    type="file"
+                                                    accept="image/*"
+                                                    className="form-control"
+                                                    onChange={(event) => setFieldValue("logo", event.currentTarget.files[0])}
+
+                                                />
+                                            </div>
+                                            <div className="col-sm-1">
+                                                {clients[0].logo && (
+                                                    <div className="file-preview">
+                                                        <img src={`${image_baseurl}uploads/basicsetting/${clients[0].logo}`} alt="Logo Preview" className="image-preview" />
+                                                    </div>
+                                                )}
                                             </div>
 
-                                            {/* <div className="row mb-3 align-items-center">
+                                        </div>
+
+                                        <div className="row mb-3 align-items-center">
+                                            <label htmlFor="offer_image" className="col-sm-3 col-form-label">
+                                                <b>Offer Image</b>
+                                            </label>
+                                            <div className="col-sm-8">
+                                                <input
+                                                    name="offer_image"
+                                                    type="file"
+                                                    accept="image/*"
+                                                    className="form-control"
+                                                    onChange={(event) => setFieldValue("offer_image", event.currentTarget.files[0])}
+
+                                                />
+                                            </div>
+                                            <div className="col-sm-1">
+                                                {clients[0].offer_image && (
+                                                    <div className="file-preview">
+                                                        <img src={`${image_baseurl}uploads/basicsetting/${clients[0].offer_image}`} alt="offer_image Preview" className="image-preview" />
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                        </div>
+
+                                        {/* <div className="row mb-3 align-items-center">
                                                 <label htmlFor="simage" className="col-sm-3 col-form-label">
                                                     <b>Signature Image</b>
                                                 </label>
@@ -309,86 +309,94 @@ const Generalsettings = () => {
 
                                             </div> */}
 
-                                            <div className="row mb-3 align-items-center">
-                                                <label htmlFor="address" className="col-sm-3 col-form-label">
-                                                    <b> Address</b>
-                                                </label>
-                                                <div className="col-sm-9">
-                                                    <div className="input-group">
-                                                        <span className="input-group-text">
-                                                            <i className="bx bx-home" />
-                                                        </span>
-                                                        <Field
-                                                            name="address"
-                                                            as="textarea"
-                                                            className="form-control"
-                                                            placeholder="Address"
-                                                        />
-                                                    </div>
+                                        <div className="row mb-3 align-items-center">
+                                            <label htmlFor="address" className="col-sm-3 col-form-label">
+                                                <b> Address</b>
+                                            </label>
+                                            <div className="col-sm-9">
+                                                <div className="input-group">
+                                                    <span className="input-group-text">
+                                                        <i className="bx bx-home" />
+                                                    </span>
+                                                    <Field
+                                                        name="address"
+                                                        as="textarea"
+                                                        className="form-control"
+                                                        placeholder="Address"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="row mb-3 align-items-center">
+                                            <label htmlFor="gstin" className="col-sm-3 col-form-label">
+                                                <b> GSTIN</b>
+                                            </label>
+                                            <div className="col-sm-9">
+                                                <div className="input-group">
+                                                    <span className="input-group-text">
+                                                        <i className="bx bx-calculator" />
+                                                    </span>
+                                                    <Field
+                                                        name="gstin"
+                                                        type="text"
+                                                        className="form-control"
+                                                        placeholder="GSTIN"
+                                                        onInput={(e) => {
+                                                            e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, '');
+                                                        }}
+                                                    />
                                                 </div>
                                             </div>
 
-                                            <div className="row mb-3 align-items-center">
-                                                <label htmlFor="gstin" className="col-sm-3 col-form-label">
-                                                    <b> GSTIN</b>
-                                                </label>
-                                                <div className="col-sm-9">
-                                                    <div className="input-group">
-                                                        <span className="input-group-text">
-                                                            <i className="bx bx-calculator" />
-                                                        </span>
-                                                        <Field
-                                                            name="gstin"
-                                                            type="text"
-                                                            className="form-control"
-                                                            placeholder="GSTIN"
-                                                            onInput={(e) => {
-                                                                e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, '');
-                                                            }}
-                                                        />
-                                                    </div>
-                                                </div>
+                                        </div>
 
-                                            </div>
-
-                                            <div className="row mb-3 align-items-center">
-                                                <label htmlFor="state" className="col-sm-3 col-form-label">
-                                                    <b>State</b>
-                                                </label>
-                                                <div className="col-sm-9">
-                                                    <div className="input-group">
-                                                        <span className="input-group-text">
-                                                            <i className="bx bx-globe" />
-                                                        </span>
-                                                        <Field as="select" name="state" className="form-control">
-                                                            <option value="">Select State</option>
-                                                            {indianStates.map((state, index) => (
-                                                                <option key={index} value={state.name}>
-                                                                    {state.name}
-                                                                </option>
-                                                            ))}
-                                                        </Field>
-                                                    </div>
+                                        <div className="row mb-3 align-items-center">
+                                            <label htmlFor="state" className="col-sm-3 col-form-label">
+                                                <b>State</b>
+                                            </label>
+                                            <div className="col-sm-9">
+                                                <div className="input-group">
+                                                    <span className="input-group-text">
+                                                        <i className="bx bx-globe" />
+                                                    </span>
+                                                    <Field as="select" name="state" className="form-control">
+                                                        <option value="">Select State</option>
+                                                        {indianStates.map((state, index) => (
+                                                            <option key={index} value={state.name}>
+                                                                {state.name}
+                                                            </option>
+                                                        ))}
+                                                    </Field>
                                                 </div>
                                             </div>
+                                        </div>
 
-                                            <div className="row mb-3 align-items-center">
-                                                <label htmlFor="invoicetnc" className="col-sm-3 col-form-label">
-                                                    <b> T&C Message</b>
-                                                </label>
-                                                <div className="col-sm-9">
-                                                    <div className="input-group">
-                                                        <span className="input-group-text">
-                                                            <i className="bx bx-home" />
-                                                        </span>
-                                                        <Field
-                                                            name="invoicetnc"
-                                                            as="textarea"
-                                                            className="form-control"
-                                                            placeholder="Terms & Condition"
-                                                        />
-                                                    </div>
+                                        <div className="row mb-3 align-items-center">
+                                            <label htmlFor="invoicetnc" className="col-sm-3 col-form-label">
+                                                <b> T&C Message</b>
+                                            </label>
+                                            <div className="col-sm-9">
+                                                <div
+                                                    style={{
+                                                        maxHeight: "500px",
+                                                        overflowY: "auto",
+                                                        marginTop: "20px",
+                                                        padding: "10px",
+                                                    }}
+                                                >
+
+
+                                                    <ReactQuill
+
+                                                        value={getTermandCon || values.invoicetnc} // Formik state se bind karein
+                                                        onChange={(value) => {setTermandCon( value);setIsModified(true)}}
+                                                    />
+
+
                                                 </div>
+
+
                                             </div>
 
                                             <div className="row">

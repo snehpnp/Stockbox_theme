@@ -127,7 +127,7 @@ const QRDetails = () => {
         const data = { id: id, status: user_active_status };
         const result = await showCustomAlert("confirm", "Do you want to save the changes?")
 
-        if (result) {
+        if (result.isConfirmed) {
             try {
                 const response = await changeQRstatuscode(data, token);
                 if (response.status) {
@@ -153,7 +153,7 @@ const QRDetails = () => {
         try {
             const result = await showCustomAlert("confirm", 'Do you want to delete this ? This action cannot be undone.')
 
-            if (result) {
+            if (result.isConfirmed) {
                 const response = await DeleteQRCode(_id, token);
                 if (response.status) {
                     showCustomAlert("Success", 'The QR Code has been successfully deleted.')

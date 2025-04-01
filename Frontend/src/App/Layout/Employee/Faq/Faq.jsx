@@ -170,7 +170,7 @@ const Faq = () => {
         try {
             const result = await showCustomAlert("confirm", 'Do you want to delete this Faq ? This action cannot be undone.');
 
-            if (result) {
+            if (result.isConfirmed) {
                 const response = await DeleteFAQ(_id, token);
                 if (response.status) {
                     showCustomAlert("Success", 'The Faq has been successfully deleted.');

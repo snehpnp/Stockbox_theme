@@ -143,7 +143,7 @@ const News = () => {
         const user_active_status = event.target.checked ? "true" : "false";
         const data = { id: id, status: user_active_status };
         const result = await showCustomAlert("confirm","Do you want to save the changes?")
-        if (result) {
+        if (result.isConfirmed) {
             try {
                 const response = await changeNewsStatus(data, token);
                 if (response.status) {
@@ -169,7 +169,7 @@ const News = () => {
         try {
             const result = await showCustomAlert("confirm", 'Do you want to delete this News This action cannot be undone.')
 
-            if (result) {
+            if (result.isConfirmed) {
                 const response = await DeleteNews(_id, token);
                 if (response.status) {
                     showCustomAlert("Success", 'The News has been successfully deleted.')

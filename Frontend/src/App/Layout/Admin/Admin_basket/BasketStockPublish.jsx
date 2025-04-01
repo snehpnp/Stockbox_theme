@@ -65,7 +65,7 @@ const BasketStockPublish = () => {
 
     const result = await showCustomAlert("confirm", "Do you want to save the changes?");
 
-    if (result) {
+    if (result.isConfirmed) {
       try {
         const response = await Basketstatusofdetail(data, token);
         if (response.status) {
@@ -89,7 +89,7 @@ const BasketStockPublish = () => {
 
     const result = await showCustomAlert("confirm", "Do you want to save the changes?");
 
-    if (result) {
+    if (result.isConfirmed) {
       try {
         const response = await changestatusrebalance(data, token);
         if (response.status) {
@@ -130,7 +130,7 @@ const BasketStockPublish = () => {
   const Deletebasket = async (_id) => {
     try {
       const result = await showCustomAlert("confirm", "Do you want to delete this item? This action cannot be undone.");
-      if (result) {
+      if (result.isConfirmed) {
         const response = await deletebasket(_id, token);
         if (response.status) {
           showCustomAlert("Success", "The item has been successfully deleted.");

@@ -130,7 +130,7 @@ const News = () => {
         try {
             const result = await showCustomAlert("confirm", 'Do you want to delete this News This action cannot be undone.')
 
-            if (result) {
+            if (result.isConfirmed) {
                 const response = await DeleteNews(_id, token);
                 if (response.status) {
                     showCustomAlert("Success", 'The News has been successfully deleted.')

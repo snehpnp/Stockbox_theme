@@ -162,7 +162,7 @@ const Category = () => {
         const data = { id: id, status: user_active_status };
         const result = await showCustomAlert("confirm", "Do you want to save the changes?")
 
-        if (result) {
+        if (result.isConfirmed) {
             try {
                 const response = await updatecategorydstatus(data, token);
                 if (response.status) {
@@ -188,7 +188,7 @@ const Category = () => {
         try {
             const result = await showCustomAlert("confirm", 'Do you want to delete this catrgory This action cannot be undone.')
 
-            if (result) {
+            if (result.isConfirmed) {
                 const response = await deleteplancategory(_id, token);
                 if (response.status) {
                     showCustomAlert("Success", 'The catrgory has been successfully deleted.')

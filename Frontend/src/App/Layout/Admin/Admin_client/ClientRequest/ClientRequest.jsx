@@ -78,7 +78,7 @@ const ClientRequest = () => {
         try {
             const result = await showCustomAlert("confirm", 'Do you want to delete this member This action cannot be undone.');
 
-            if (result) {
+            if (result.isConfirmed) {
                 const response = await DeleteClientRequest(_id, token);
                 if (response.status) {
                     showCustomAlert("Success", 'The Client has been successfully deleted.');

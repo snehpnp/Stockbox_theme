@@ -96,7 +96,7 @@ const Apiinfo = () => {
         const data = { kyc: user_active_status };
         const result = await showCustomAlert("confirm", "Do you want to change the status?")
 
-        if (result) {
+        if (result.isConfirmed) {
             try {
                 const response = await UpdateKycstatus(data, token);
                 if (response.status) {
@@ -119,7 +119,7 @@ const Apiinfo = () => {
         const data = { invoicestatus: user_active_status };
         const result = await showCustomAlert("confirm", "Do you want to change the status?")
 
-        if (result) {
+        if (result.isConfirmed) {
             try {
                 const response = await Invoicestatus(data, token);
                 if (response.status) {

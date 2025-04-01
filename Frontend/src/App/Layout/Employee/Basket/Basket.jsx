@@ -135,7 +135,7 @@ const Basket = () => {
   const Deletebasket = async (_id) => {
     try {
       const result = await showCustomAlert("confirm", "Do you want to delete this item? This action cannot be undone.");
-      if (!result) return
+      if (!result.isConfirmed) return
       const response = await deletebasket(_id, token);
       if (response.status) {
         showCustomAlert("Success", "The item has been successfully deleted.")

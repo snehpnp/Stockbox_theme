@@ -182,7 +182,7 @@ const PaymentRequest = () => {
 
         const result = await showCustomAlert("confirm", "Do you want to save the changes?");
 
-        if (result) {
+        if (result.isConfirmed) {
             try {
                 await Updatestatus(rowId, selectedValue);
                 setSelectedValues((prevValues) => ({

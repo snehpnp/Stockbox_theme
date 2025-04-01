@@ -57,7 +57,7 @@ const Message = () => {
         try {
             const result = await showCustomAlert("confirm", 'Do you want to delete this broadcast message This action cannot be undone.')
 
-            if (result) {
+            if (result.isConfirmed) {
                 const response = await DeleteBroadCastmessage(_id, token);
                 if (response.status) {
                     showCustomAlert("Success", 'The message has been successfully deleted.')

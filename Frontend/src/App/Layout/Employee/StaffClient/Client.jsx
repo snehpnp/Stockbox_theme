@@ -354,7 +354,7 @@ const Client = () => {
         const data = { id, status: user_active_status };
 
         const result = await showCustomAlert("confirm", "Do you want to save the changes?");
-        if (!result) return;
+        if (!result.isConfirmed) return;
 
         try {
             const response = await UpdateClientStatus(data, token);

@@ -17,6 +17,7 @@ import { Tooltip } from "antd";
 import { fDate } from "../../../../Utils/Date_formate";
 import { GetAllThemesNameApi } from '../../../Services/Themes/Theme'
 import Loader from "../../../../Utils/Loader";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 const Company = () => {
   const token = localStorage.getItem("token");
@@ -69,14 +70,8 @@ const Company = () => {
 
   const DeleteCompanydata = async (_id) => {
     try {
-      const result = await Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to delete this Client member? This action cannot be undone.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel",
-      });
+      const result = await showCustomAlert('confirm', 'Do you want to delete this ? This action cannot be undone.')
+       
 
       if (result.isConfirmed) {
         const response = await deleteCompany(_id, token);
@@ -113,13 +108,7 @@ const Company = () => {
     const user_active_status = originalChecked ? "true" : "false";
     const data = { id: id, status: user_active_status };
 
-    const result = await Swal.fire({
-      title: "Do you want to save the changes?",
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      cancelButtonText: "Cancel",
-      allowOutsideClick: false,
-    });
+    const result = await showCustomAlert('confirm', 'Do you want to save the changes?') 
 
     if (result.isConfirmed) {
       try {

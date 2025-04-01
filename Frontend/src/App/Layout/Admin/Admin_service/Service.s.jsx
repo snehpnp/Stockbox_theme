@@ -112,7 +112,7 @@ const Service = () => {
     const user_active_status = event.target.checked ? "true" : "false";
     const data = { id: id, status: user_active_status };
     const result = await showCustomAlert("confirm", "Do you want to save the changes?")
-    if (result) {
+    if (result.isConfirmed) {
       try {
         const response = await UpdateServiceStatus(data, token);
         if (response.status) {
@@ -135,7 +135,7 @@ const Service = () => {
   const DeleteService = async (_id) => {
     try {
       const result = await showCustomAlert("confirm", "Do you want to delete this ? This action cannot be undone.")
-      if (result) {
+      if (result.isConfirmed) {
         const response = await Deleteservices(_id, token);
         if (response.status) {
           showCustomAlert("Success", "The Service has been successfully deleted.")

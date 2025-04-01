@@ -225,7 +225,7 @@ const Profiles = () => {
 
   const DeleteDematAccountApi = async () => {
     const result = await showCustomAlert("confirm", "You won't be able to revert this action!")
-    if (result) {
+    if (result.isConfirmed) {
       try {
         const response = await DeleteDematAccount({ id: userid }, token);
         if (response.status) {
