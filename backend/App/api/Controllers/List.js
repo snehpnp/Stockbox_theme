@@ -8484,60 +8484,58 @@ async SignalClientWithPlanStrategy(req, res) {
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
     // 🔹 Check if an existing plan exists
+
+    const protocol = req.protocol;
+    const baseUrl = `${protocol}://${req.headers.host}`;
     const service_ids = ['67e12758a0a2be895da19550', '67e1279ba0a2be895da19551']; 
+
+
     const existingPlan = await Planmanage.findOne({
       clientid: client_id,
-      serviceid: { $in: service_ids }  // Matches either of the service_ids in the array
+      serviceid: { $in: service_ids } 
     }).exec();
 
 
-        const protocol = req.protocol;
-    const baseUrl = `${protocol}://${req.headers.host}`;
-    // 🔹 No Plan? Return Last 5 Signals
-    if (!existingPlan) {
-      const lastFiveSignals = await Signalsdata_Modal.find({ close_status: false })
-        .sort({ created_at: -1 })
-        .limit(5)
-        .lean();
+       
+    // if (!existingPlan) {
+    //   const lastFiveSignals = await Signalsdata_Modal.find({ close_status: false })
+    //     .sort({ created_at: -1 })
+    //     .limit(5)
+    //     .lean();
 
-      // 🔹 Extract Signal IDs to fetch Stock Data
-      const signalIds = lastFiveSignals.map(signal => signal._id);
+    //   const signalIds = lastFiveSignals.map(signal => signal._id);
 
-      // 🔹 Fetch Stock Data in Bulk
-      const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
-        .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price")
-        .lean();
+    //   const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
+    //     .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price")
+    //     .lean();
 
-      // 🔹 Map Stock Details to Signals
-      const stockMap = {};
-      stockDetails.forEach(stock => {
-        if (!stockMap[stock.signal_id]) {
-          stockMap[stock.signal_id] = [];
-        }
-        stockMap[stock.signal_id].push(stock);
-      });
+    //   const stockMap = {};
+    //   stockDetails.forEach(stock => {
+    //     if (!stockMap[stock.signal_id]) {
+    //       stockMap[stock.signal_id] = [];
+    //     }
+    //     stockMap[stock.signal_id].push(stock);
+    //   });
 
-      // 🔹 Attach Stock Details to Signals
-      const finalSignals = lastFiveSignals.map(signal => ({
-        ...signal,
-        stockDetails: stockMap[signal._id] || [],
-        report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null // Full report URL
-      }));
+    //   const finalSignals = lastFiveSignals.map(signal => ({
+    //     ...signal,
+    //     stockDetails: stockMap[signal._id] || [],
+    //     report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null // Full report URL
+    //   }));
 
-      return res.json({
-        status: true,
-        message: "Returning last 5 signals due to no existing plan",
-        data: finalSignals,
-        pagination: {
-          total: finalSignals.length,
-          page: 1,
-          limit: 5,
-          totalPages: 1
-        }
-      });
-    }
+    //   return res.json({
+    //     status: true,
+    //     message: "Returning last 5 signals due to no existing plan",
+    //     data: finalSignals,
+    //     pagination: {
+    //       total: finalSignals.length,
+    //       page: 1,
+    //       limit: 5,
+    //       totalPages: 1
+    //     }
+    //   });
+    // }
 
-    // 🔹 Fetch Subscriptions if plan exists
     const subscriptions = await PlanSubscription_Modal.find({ client_id });
     if (subscriptions.length === 0) {
       return res.json({ status: false, message: "No plan subscriptions found", data: [] });
