@@ -4,15 +4,15 @@ const { checkPermission } = require('../Middleware/permissionMiddleware'); // Pa
 const {AddSignal,getSignal,deleteSignal,detailSignal,closeSignal,targethitSignal,getSignalWithFilter,updateReport,showSignalsToClients,allShowSignalsToClients,AddSignalwithPlan,getPlansByService,getSymbol,getSignalWithFilterplan,closeSignalwithplan,getSignalWithFilterExport,getSignalWithFilterplanExport,AddSignals,getSignalsListWithFilte} = require('../Controllers/Signal')
 
 const PERMISSIONS = {
-  ADD: 'addsignal',
-  VIEW: 'viewsignal',
-  ALL_VIEW: 'allviewsignal',
-  DELETE: 'deletesignal',
-  CLOSE: 'closesignal',
-  HIT: 'targethit',
-};
-
-
+    ADD: 'addsignal',
+    VIEW: 'viewsignal',
+    ALL_VIEW: 'allviewsignal',
+    DELETE: 'deletesignal',
+    CLOSE: 'closesignal',
+    HIT: 'targethit',
+  };
+  
+  
 router.post('/signal/add', AddSignal);
 router.get('/signal/list', getSignal);
 router.post('/signal/listwithfilter', getSignalWithFilter);
