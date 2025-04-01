@@ -33,15 +33,15 @@ const BlogsDetail = () => {
     >
 
 <div className="card">
-  <div className="card-header ">
-    <b>
+  <div className=" card-body">
+    <h4>
       In case of Option Contracts "Traded Value" represents "Premium Turnover"
-    </b>
-  </div>
+    </h4>
+ 
   <div className="row">
-    <div className="col-md-8 ">
-      <div className="card">
-        <div className="card-img ">
+    <div className="col-md-6 ">
+      <div className="">
+        <div className="card-img  p-3">
           <img
             src="https://stockboxpnp.pnpuniverse.com/uploads/news/image-1736745027111-438243699.jpg"
             alt="news"
@@ -94,7 +94,7 @@ const BlogsDetail = () => {
     </div>
   </div>
 </div>
- 
+</div>
       
     </Content>
   );

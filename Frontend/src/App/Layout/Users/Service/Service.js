@@ -340,17 +340,20 @@ const Service = () => {
           <Loader />
         ) : getFilteredPlans?.length > 0 ? (
           <div className="pricing-container price1 mt-4">
-            <div className="row row-cols-1 row-cols-md-1 row-cols-lg-1 row-cols-xl-1">
+            <div className="row row-cols-1 row-cols-md-1 row-cols-lg-2 row-cols-xl-2">
               {getFilteredPlans?.map((item) =>
                 item?.plans?.length > 0 ? (
                   item?.plans?.map((plan, index) => (
-                    <div className="col col-lg-6" key={`${item?._id}-${index}`}>
-                      <div className="card card1 mb-4">
+                    <div className="col col-lg-6 mb-4" key={`${item?._id}-${index}`}>
+                      <div className="card card1 mb-4 shadow h-100 mb-4">
                         <div className="card-body">
                          
                             <div className="d-flex justify-content-between">
                               <div>
                             <h5 className="mb-0">{item?.title}</h5>
+                           
+                            </div>
+                           
                             <span className="price-original">
                                 {Array.isArray(item?.services) && item?.services?.length > 0
                                   ? item.services
@@ -362,43 +365,24 @@ const Service = () => {
                                     .join(" + ")
                                   : "N/A"}
                               </span>
-                            </div>
-                            <div className="">
-                            <button
-                              className="btn btn-secondary rounded-1 mt-2 mt-sm-0 me-2 me-sm-0"
-                              onClick={() => {
-                                setViewModel(true);
-                                setDiscription(plan?.description);
-                              }}
-                            >
-                              Know More
-                            </button>
-
-                            <button
-                              className="btn btn-primary rounded-1 mt-2 mt-sm-0 ms-3"
-                              onClick={() => handleShowModal(plan)}
-                            >
-                              Subscribe Now
-                            </button>
-                          </div>
-                           
                            
                             </div>
                           
                           <hr />
                           <div className="row">
-                            <div className="col-md-3">
-                            <b>Price</b>:   <IndianRupee  style={{width:'25px'}}/> {plan?.price}
+                            <div className="col-md-6">
+                            <b>Price</b>:   <IndianRupee  style={{width:'15px', margin:'0'}}/> {plan?.price}
                            
                             
                             </div>
-                            <div className="col-md-3">
+                            <div className="col-md-6">
                             
                               <b>Validity</b>: {plan?.validity}
                             
                             </div>
                       
                             </div>
+                            
                           {/* <div className="d-flex align-items-center justify-content-between">
                             <div>
                               <b>Price:</b>
@@ -422,7 +406,7 @@ const Service = () => {
                                 </p>
                             </li>
                           </ul>
-                          {/* <div className="d-block d-sm-flex align-items-center justify-content-between mt-3">
+                          <div className="">
                             <button
                               className="btn btn-secondary rounded-1 mt-2 mt-sm-0 me-2 me-sm-0"
                               onClick={() => {
@@ -434,12 +418,13 @@ const Service = () => {
                             </button>
 
                             <button
-                              className="btn btn-primary rounded-1 mt-2 mt-sm-0"
+                              className="btn btn-primary rounded-1 mt-2 mt-sm-0 ms-3"
                               onClick={() => handleShowModal(plan)}
                             >
                               Subscribe Now
                             </button>
-                          </div> */}
+                          </div>
+                         
                         </div>
                       </div>
                     </div>

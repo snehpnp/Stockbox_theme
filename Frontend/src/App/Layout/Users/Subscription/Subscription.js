@@ -120,7 +120,7 @@ const Subscription = () => {
                 </p>
               </div>
               <p className="m-0 pe-2">
-                <span className="badge bg-primary rounded-pill">
+                <span className="badge bg-success rounded-pill text-capitalize" >
                   {accordion?.planDetails.status}
                 </span>
               </p>
