@@ -5,7 +5,7 @@ const BlogCard = ({ blog }) => {
   return (
  
      <div className="col-md-4 mb-3">
-     <div className="card">
+     <div className="card h-100">
       <img src={blog.image} alt="blog" style={styles.image} />
       <div style={styles.content}>
       <small style={styles.date}>

@@ -1709,3 +1709,26 @@ display: -webkit-box;
 {
   width:100%;  background:#edf7f6; display:inline-block; float:left; position:sticky; top:50px;
 }
+ul.mb-3.border-tab.nav.nav-tabs {
+  justify-content: center;
+}
+.border-tab.nav.nav-tabs .nav-item.show .nav-link, .border-tab.nav.nav-tabs .nav-link.active {
+  border-color: var(
+    --BtnSecBorderColor,
+    black
+  ) !important; 
+  color: var(--BtnSecTxtCol) !important;
+  background-color: var(--BtnSecBgCol) !important;
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+  border-width: 3px;
+  font-weight: 600;
+}
+.border-tab.nav.nav-tabs .nav-item.show .nav-link:hover, .border-tab.nav.nav-tabs .nav-item.show .nav-link:focus{
+  border: 0px !important;
+}
+.basket-chart-data canvas
+{
+ height: 350px !important;
+}
