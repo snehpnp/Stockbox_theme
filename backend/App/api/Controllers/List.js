@@ -34,7 +34,8 @@ const Requestclient_Modal = db.Requestclient;
 const Addtocart_Modal = db.Addtocart;
 const Stockrating_Modal = db.Stockrating;
 const Basketghaphdata_Modal = db.Basketgraphdata;
-
+const Signalsdata_Modal = db.Signalsdata;
+const Signalstock_Modal = db.Signalstock;
 
 const { sendEmail } = require('../../Utils/emailService');
 const puppeteer = require('puppeteer');
@@ -8476,9 +8477,241 @@ async  getLivePrices(req, res) {
     });
   }
 }
+async SignalClientWithPlanStrategy(req, res) {
+  try {
+    const {  client_id, search, page = 1 } = req.body;
+    const limit = 10;
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    // 🔹 Check if an existing plan exists
+    const service_ids = ['67e12758a0a2be895da19550', '67e1279ba0a2be895da19551']; 
+    const existingPlan = await Planmanage.findOne({
+      clientid: client_id,
+      serviceid: { $in: service_ids }  // Matches either of the service_ids in the array
+    }).exec();
 
 
-  
+        const protocol = req.protocol;
+    const baseUrl = `${protocol}://${req.headers.host}`;
+    // 🔹 No Plan? Return Last 5 Signals
+    if (!existingPlan) {
+      const lastFiveSignals = await Signalsdata_Modal.find({ close_status: false })
+        .sort({ created_at: -1 })
+        .limit(5)
+        .lean();
+
+      // 🔹 Extract Signal IDs to fetch Stock Data
+      const signalIds = lastFiveSignals.map(signal => signal._id);
+
+      // 🔹 Fetch Stock Data in Bulk
+      const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
+        .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price")
+        .lean();
+
+      // 🔹 Map Stock Details to Signals
+      const stockMap = {};
+      stockDetails.forEach(stock => {
+        if (!stockMap[stock.signal_id]) {
+          stockMap[stock.signal_id] = [];
+        }
+        stockMap[stock.signal_id].push(stock);
+      });
+
+      // 🔹 Attach Stock Details to Signals
+      const finalSignals = lastFiveSignals.map(signal => ({
+        ...signal,
+        stockDetails: stockMap[signal._id] || [],
+        report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null // Full report URL
+      }));
+
+      return res.json({
+        status: true,
+        message: "Returning last 5 signals due to no existing plan",
+        data: finalSignals,
+        pagination: {
+          total: finalSignals.length,
+          page: 1,
+          limit: 5,
+          totalPages: 1
+        }
+      });
+    }
+
+    // 🔹 Fetch Subscriptions if plan exists
+    const subscriptions = await PlanSubscription_Modal.find({ client_id });
+    if (subscriptions.length === 0) {
+      return res.json({ status: false, message: "No plan subscriptions found", data: [] });
+    }
+
+    const planIds = subscriptions.map(sub => sub.plan_category_id).filter(id => id != null);
+    const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
+
+    const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
+
+    const query = {
+      close_status: false,
+      $or: uniquePlanIds.map((planId, index) => ({
+        planid: planId.toString(),
+        created_at: { $lte: planEnds[index] }
+      }))
+    };
+
+    // 🔹 Search Query
+    if (search && search.trim() !== '') {
+      query.$or = [
+        { stock: { $regex: search, $options: 'i' } },
+        { strategy_name: { $regex: search, $options: 'i' } },
+        { callduration: { $regex: search, $options: 'i' } },
+        // { closeprice: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    // 🔹 Fetch Signals with Pagination
+    const signals = await Signalsdata_Modal.find(query)
+      .skip(skip)
+      .limit(limit)
+      .sort({ created_at: -1 })
+      .populate({ path: "stock", select: "title" })
+      .populate({ path: "service", select: "title" })
+      .lean();
+
+    // 🔹 Extract Signal IDs for Stock Data
+    const signalIds = signals.map(signal => signal._id);
+
+    // 🔹 Fetch Stock Data for Existing Signals
+    const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
+      .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price")
+      .lean();
+
+    // 🔹 Map Stock Details to Signals
+    const stockMap = {};
+    stockDetails.forEach(stock => {
+      if (!stockMap[stock.signal_id]) {
+        stockMap[stock.signal_id] = [];
+      }
+      stockMap[stock.signal_id].push(stock);
+    });
+
+    // 🔹 Attach Stock Details to Signals
+    const finalSignals = signals.map(signal => ({
+      ...signal,
+      stockDetails: stockMap[signal._id] || [],
+      report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null // Full report URL
+    }));
+
+    // 🔹 Return Response with Pagination
+    return res.json({
+      status: true,
+      message: "Signals retrieved successfully",
+      data: finalSignals,
+      pagination: {
+        total: signals.length,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        totalPages: Math.ceil(signals.length / limit)
+      }
+    });
+
+  } catch (error) {
+    console.error("Error fetching signals:", error);
+    return res.json({ status: false, message: "Server error", data: [] });
+  }
+}
+
+
+
+async SignalClientWithPlanCloseStrategy(req, res) {
+  try {
+    const {  client_id, search, page = 1 } = req.body;
+    const limit = 10;
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+   
+    const protocol = req.protocol;
+    const baseUrl = `${protocol}://${req.headers.host}`;
+    // 🔹 Fetch Subscriptions if plan exists
+    const subscriptions = await PlanSubscription_Modal.find({ client_id });
+    if (subscriptions.length === 0) {
+      return res.json({ status: false, message: "No plan subscriptions found", data: [] });
+    }
+
+    const planIds = subscriptions.map(sub => sub.plan_category_id).filter(id => id != null);
+    const planStarts = subscriptions.map(sub => new Date(sub.plan_start));
+    const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
+
+    const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
+
+    const query = {
+      close_status: true,
+      $or: uniquePlanIds.map((planId, index) => ({
+        planid: planId.toString(), // Matching the planid with regex
+        created_at: { $lte: planEnds[index] },  
+        closedate: { $gte: planStarts[index] }      // Checking if created_at is <= to planEnds
+      }))
+    };
+    // 🔹 Search Query
+    if (search && search.trim() !== '') {
+      query.$or = [
+        { stock: { $regex: search, $options: 'i' } },
+        { strategy_name: { $regex: search, $options: 'i' } },
+        { callduration: { $regex: search, $options: 'i' } },
+        // { closeprice: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    // 🔹 Fetch Signals with Pagination
+    const signals = await Signalsdata_Modal.find(query)
+      .skip(skip)
+      .limit(limit)
+      .sort({ closedate: -1 })
+      .populate({ path: "stock", select: "title" })
+      .populate({ path: "service", select: "title" })
+      .lean();
+
+    // 🔹 Extract Signal IDs for Stock Data
+    const signalIds = signals.map(signal => signal._id);
+
+    // 🔹 Fetch Stock Data for Existing Signals
+    const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
+      .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price")
+      .lean();
+
+    // 🔹 Map Stock Details to Signals
+    const stockMap = {};
+    stockDetails.forEach(stock => {
+      if (!stockMap[stock.signal_id]) {
+        stockMap[stock.signal_id] = [];
+      }
+      stockMap[stock.signal_id].push(stock);
+    });
+
+    // 🔹 Attach Stock Details to Signals
+    const finalSignals = signals.map(signal => ({
+      ...signal,
+      stockDetails: stockMap[signal._id] || [],
+      report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null // Full report URL
+    }));
+
+    // 🔹 Return Response with Pagination
+    return res.json({
+      status: true,
+      message: "Signals retrieved successfully",
+      data: finalSignals,
+      pagination: {
+        total: signals.length,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        totalPages: Math.ceil(signals.length / limit)
+      }
+    });
+
+  } catch (error) {
+    console.error("Error fetching signals:", error);
+    return res.json({ status: false, message: "Server error", data: [] });
+  }
+}
+
+
+
 
 }
 

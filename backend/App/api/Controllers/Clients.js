@@ -102,6 +102,7 @@ class Clients {
       }
 
 
+ 
 
       let refer_tokenss = referCode + refer_token;
       const refer_tokens = token || crypto.randomBytes(10).toString('hex'); // Use the provided token or generate a new one
@@ -1149,6 +1150,31 @@ class Clients {
 
 
       await resultnm.save();
+
+
+//////////////////// send mail sign document ///////////// 
+const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'kyc' });
+if (mailtemplate) {
+    let finalMailBody = mailtemplate.mail_body.replace('{clientName}', `${client.FullName}`);
+    const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+    const finalHtml = mailtemplate.mail_body
+        .replace(/{{company_name}}/g, settings.website_title)
+        .replace(/{{body}}/g, finalMailBody)
+        .replace(/{{logo}}/g, logo);
+
+    const mailOptions = {
+        to: client.Email,
+        from: `${settings.from_name} <${settings.from_mail}>`,
+        subject: `${mailtemplate.mail_subject}`,
+        html: finalHtml,
+        attachments: [{ filename: fileName, path: tempPath }]
+    };
+
+    await sendEmail(mailOptions);
+}
+
+//////////////////// send mail sign document ///////////// 
+
 
       // Return the file name or path for further use
       res.json({
