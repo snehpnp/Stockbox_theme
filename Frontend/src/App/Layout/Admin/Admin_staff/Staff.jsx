@@ -180,7 +180,7 @@ const Staff = () => {
 
         try {
             const result = await showCustomAlert("confirm", "Do you want to save the changes?");
-            if (!result) {
+            if (!result.isConfirmed) {
                 event.target.checked = !event.target.checked;
                 return;
             }
