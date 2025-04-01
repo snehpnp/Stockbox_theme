@@ -3,6 +3,7 @@ const Company_Modal = db.Company1;
 const axios = require("axios");
 
 class CompanyController {
+  
   // Create a new Company post
   async AddCompany(req, res) {
     try {

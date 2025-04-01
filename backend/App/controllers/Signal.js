@@ -2360,11 +2360,14 @@ async getSignalsListWithFilte(req, res) {
       }
       stockMap[stock.signal_id].push(stock);
     });
-
+    const protocol = req.protocol;
+    const baseUrl = `${protocol}://${req.headers.host}`;
     // ✅ Attach Stocks to Signals
     const finalSignals = signals.map(signal => ({
       ...signal,
-      stocks: stockMap[signal._id] || []
+      stocks: stockMap[signal._id] || [],
+      report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null // Full report URL
+
     }));
 
     // ✅ Total Records for Pagination
