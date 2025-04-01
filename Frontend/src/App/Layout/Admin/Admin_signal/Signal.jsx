@@ -281,7 +281,6 @@ const Signal = () => {
             };
 
             const response = await GetSignallistWithFilter(data, token);
-            console.log("GetSignallistWithFilter", response)
 
             if (response && response.status) {
                 setTotalRows(response.pagination.totalRecords);

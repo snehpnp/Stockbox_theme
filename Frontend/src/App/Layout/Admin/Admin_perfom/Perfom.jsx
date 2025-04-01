@@ -134,7 +134,6 @@ const Perform = () => {
         try {
             const data = { service_id, page: currentPage }
             const response = await getperformacebysegmentwithfilter(data, token);
-            console.log("getperformacebysegmentwithfilter",response)
             if (response.status) {
                 setClosesignal(response.data);
                 setTotalRows(response.pagination.totalRecords)
