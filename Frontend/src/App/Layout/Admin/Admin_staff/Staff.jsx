@@ -136,22 +136,27 @@ const Staff = () => {
 
     const DeleteStaff = async (_id) => {
         try {
-            showCustomAlert("confirm", "Do you want to delete this Employee member? This action cannot be undone.", navigate, null, async () => {
-                try {
-                    socket.emit("deactivestaff", { id: _id, msg: "logout" });
-                    const response = await deleteStaff(_id, token);
-                    if (response.status) {
-                        showCustomAlert("success", "Employee successfully deleted!", navigate, null);
-                        getAdminclient();
-                    }
-                } catch (error) {
-                    showCustomAlert("error", "There was an error deleting the Employee.", navigate, null);
-                }
-            });
+            const result = await showCustomAlert(
+                "confirm",
+                "Do you want to delete this Employee member? This action cannot be undone."
+            );
+    
+            if (!result.isConfirmed) return;
+    
+            socket.emit("deactivestaff", { id: _id, msg: "logout" });
+    
+            const response = await deleteStaff(_id, token);
+            if (response.status) {
+                showCustomAlert("success", "Employee successfully deleted!");
+                getAdminclient();
+            } else {
+                throw new Error("Deletion failed");
+            }
         } catch (error) {
-            showCustomAlert("error", "There was an error with the confirmation process.");
+            showCustomAlert("error", "There was an error deleting the Employee.");
         }
     };
+    
 
 
 
