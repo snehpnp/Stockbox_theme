@@ -659,6 +659,8 @@ class Dashboard {
       const query = {
         service: service_id,
         close_status: true,
+        closeprice: { $ne: 0 },
+        del: 0,
       };
       // Fetch signals and sort by createdAt in descending order
       const signals = await Signal_Modal.find(query).sort({ created_at: -1 }).lean();
@@ -1356,6 +1358,8 @@ class Dashboard {
       const query = {
         service: service_id,
         close_status: true,
+        closeprice: { $ne: 0 },
+        del: 0,
       };
 
       // Get the total number of matching records
