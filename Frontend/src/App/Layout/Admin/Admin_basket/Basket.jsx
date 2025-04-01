@@ -154,20 +154,24 @@ const Basket = () => {
 
   const Deletebasket = async (_id) => {
     try {
-      const result = await showCustomAlert("confirm", "Do you want to delete this item? This action cannot be undone.");
-      if (!result) return
-      const response = await deletebasket(_id, token);
-      if (response.status) {
-        showCustomAlert("Success", "The item has been successfully deleted.")
-        getbasketlist();
-      } else {
-        showCustomAlert("error", response.message)
-      }
+        const result = await showCustomAlert("confirm", "Do you want to delete this item? This action cannot be undone.");
+        
+        if (!result.isConfirmed) return; 
+        
+        const response = await deletebasket(_id, token);
+        
+        if (response?.status) {
+            showCustomAlert("success", "The item has been successfully deleted.");
+            getbasketlist(); 
+        } else {
+            showCustomAlert("error", response?.message || "Failed to delete item.");
+        }
     } catch (error) {
-      showCustomAlert("error", "There was an error deleting the item.")
-
+        console.error("Delete error:", error);
+        showCustomAlert("error", "There was an error deleting the item.");
     }
-  };
+};
+
 
 
   function stripHtml(html) {
@@ -363,10 +367,10 @@ const Basket = () => {
                 onPageChange={handlePageChange}
               />
             </>
-          ):(
+          ) : (
             <div className="text-center mt-5">
-                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
-              </div>
+              <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+            </div>
           )}
         </div>
       </div>
