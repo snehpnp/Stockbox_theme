@@ -112,7 +112,7 @@ const HelpDesk = () => {
 
     return (
         <Content Page_title="Help Desk" button_status={false}>
-            <Tabs activeKey={key} onSelect={(k) => setKey(k)} className="mb-3">
+            <Tabs activeKey={key} onSelect={(k) => setKey(k)} className="mb-3 border-tab">
                 <Tab eventKey="sendMessage" title="Send Message">
                     <FormicForm fieldtype={fieldtype} formik={formik} ButtonName="Submit" BtnStatus={true} />
                 </Tab>

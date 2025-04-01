@@ -140,52 +140,50 @@ const BasketDetail = () => {
       </div>
 
       {/* Tabs Section */}
-      <div className="row px-4  pt-3 align-items-center">
-        <div className="col-md-12">
-          <ul className="nav nav-pills mb-3 justify-content-center">
-            <li className="nav-item">
-              <button
-                className={`nav-link ${
-                  activeTab === "rational" ? "active btn-primary" : ""
-                }`}
-                onClick={() => setActiveTab("rational")}
-              >
-                Rational
-              </button>
-            </li>
-            <hr />
-            <li className="nav-item">
-              <button
-                className={`nav-link ${
-                  activeTab === "methodology" ? "active btn-primary" : ""
-                }`}
-                onClick={() => setActiveTab("methodology")}
-              >
-                Methodology
-              </button>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          {activeTab === "rational" && (
-            <div className="row">
-              <div className="col-md-8">
-                <div dangerouslySetInnerHTML={{ __html: item?.rationale }} />
-              </div>
-            </div>
-          )}
-          {activeTab === "methodology" && (
-            <div className="row">
-              <div className="col-md-8">
-                <p>
-                  <div dangerouslySetInnerHTML={{ __html: item?.rationale }} />
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
+      <div className="row px-4 pt-3 align-items-center">
+      <div className="col-md-12">
+        <ul className="nav nav-pills mb-3 justify-content-center">
+          <li className="nav-item">
+            <button
+              className={`nav-link ${
+                activeTab === "rational" ? "active btn-primary" : ""
+              }`}
+              onClick={() => setActiveTab("rational")}
+            >
+              Rational
+            </button>
+          </li>
+          <hr />
+          <li className="nav-item">
+            <button
+              className={`nav-link ${
+                activeTab === "methodology" ? "active btn-primary" : ""
+              }`}
+              onClick={() => setActiveTab("methodology")}
+            >
+              Methodology
+            </button>
+          </li>
+        </ul>
       </div>
+
+      <div>
+        {activeTab === "rational" && (
+          <div className="row">
+            <div className="col-md-12">
+              <div dangerouslySetInnerHTML={{ __html: item?.rationale }} />
+            </div>
+          </div>
+        )}
+        {activeTab === "methodology" && (
+          <div className="row">
+            <div className="col-md-12">
+              <div dangerouslySetInnerHTML={{ __html: item?.methodology }} />
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
 
       {/* Footer Button */}
       <div className="card-footer mt-3 text-center">

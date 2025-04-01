@@ -171,6 +171,17 @@ const Subscription = () => {
                     </tr>
                     <tr>
                       <td>
+                        <strong>Purchase Price:</strong>
+                      </td>
+                      <td>
+                        ₹{accordion?.total}
+                        {accordion?.plan_price !== accordion?.total && accordion?.gst ? (
+                          <small className="text-muted"> ({accordion?.gst}% Tax included)</small>
+                        ) : null}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
                         <strong>Expired On:</strong>
                       </td>
                       <td>{fDateTime(accordion?.plan_end) || "--"}</td>
@@ -188,21 +199,11 @@ const Subscription = () => {
                       </td>
                       <td>₹ {accordion?.discount ?? "--"}</td>
                     </tr>
+                  
+                   
                     <tr>
                       <td>
-                        <strong>Purchase Price:</strong>
-                      </td>
-                      <td>
-                        ₹{accordion?.total}
-                        {accordion?.plan_price !== accordion?.total && accordion?.gst ? (
-                          <small className="text-muted"> ({accordion?.gst}% Tax included)</small>
-                        ) : null}
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>
-                        <strong>Order_ID:</strong>
+                        <strong>Start Date:</strong>
                       </td>
                       <td>{accordion?.orderid || "Make By Admin"}</td>
                     </tr>
@@ -332,27 +333,23 @@ const Subscription = () => {
                 <table className="table table-bordered mb-0">
                   <tbody>
                     <tr>
-                      <td><strong>Plan Duration:</strong></td>
+                      <td><strong>Paid Amount:</strong></td>
                       <td>{accordion?.validity || "--"}</td>
                     </tr>
                     <tr>
-                      <td><strong>Purchase On:</strong></td>
+                      <td><strong>Plan Discount:</strong></td>
                       <td>{fDateTime(accordion?.startdate) || "--"}</td>
                     </tr>
                     <tr>
-                      <td><strong>Price:</strong></td>
+                      <td><strong>Purchase Type:</strong></td>
                       <td>₹{accordion?.plan_price || "--"}</td>
                     </tr>
                     <tr>
-                      <td><strong>Purchase Price:</strong></td>
-                      <td>₹{accordion?.total || "--"} {accordion?.gst ? `(${accordion?.gst}% Tax included)` : ""}</td>
+                      <td><strong>Plan Validity:</strong></td>
+                      <td>{fDateTime(accordion?.startdate) || "--"}</td>
                     </tr>
                     <tr>
-                      <td><strong>Expired On:</strong></td>
-                      <td>{fDateTime(accordion?.enddate) || "--"}</td>
-                    </tr>
-                    <tr>
-                      <td><strong>Minimum Investment:</strong></td>
+                      <td><strong>Order Id:</strong></td>
                       <td>₹{accordion?.basketDetails?.mininvamount || "--"}</td>
                     </tr>
                   </tbody>
