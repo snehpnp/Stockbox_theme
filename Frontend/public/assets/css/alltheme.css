@@ -1728,3 +1728,7 @@ ul.mb-3.border-tab.nav.nav-tabs {
 .border-tab.nav.nav-tabs .nav-item.show .nav-link:hover, .border-tab.nav.nav-tabs .nav-item.show .nav-link:focus{
   border: 0px !important;
 }
+.basket-chart-data canvas
+{
+ height: 350px !important;
+}
