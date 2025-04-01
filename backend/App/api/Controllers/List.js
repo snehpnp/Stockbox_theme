@@ -8497,44 +8497,44 @@ async SignalClientWithPlanStrategy(req, res) {
 
 
        
-    // if (!existingPlan) {
-    //   const lastFiveSignals = await Signalsdata_Modal.find({ close_status: false })
-    //     .sort({ created_at: -1 })
-    //     .limit(5)
-    //     .lean();
+    if (!existingPlan) {
+      const lastFiveSignals = await Signalsdata_Modal.find({ close_status: false })
+        .sort({ created_at: -1 })
+        .limit(5)
+        .lean();
 
-    //   const signalIds = lastFiveSignals.map(signal => signal._id);
+      const signalIds = lastFiveSignals.map(signal => signal._id);
 
-    //   const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
-    //     .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price")
-    //     .lean();
+      const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
+        .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price")
+        .lean();
 
-    //   const stockMap = {};
-    //   stockDetails.forEach(stock => {
-    //     if (!stockMap[stock.signal_id]) {
-    //       stockMap[stock.signal_id] = [];
-    //     }
-    //     stockMap[stock.signal_id].push(stock);
-    //   });
+      const stockMap = {};
+      stockDetails.forEach(stock => {
+        if (!stockMap[stock.signal_id]) {
+          stockMap[stock.signal_id] = [];
+        }
+        stockMap[stock.signal_id].push(stock);
+      });
 
-    //   const finalSignals = lastFiveSignals.map(signal => ({
-    //     ...signal,
-    //     stockDetails: stockMap[signal._id] || [],
-    //     report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null // Full report URL
-    //   }));
+      const finalSignals = lastFiveSignals.map(signal => ({
+        ...signal,
+        stockDetails: stockMap[signal._id] || [],
+        report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null // Full report URL
+      }));
 
-    //   return res.json({
-    //     status: true,
-    //     message: "Returning last 5 signals due to no existing plan",
-    //     data: finalSignals,
-    //     pagination: {
-    //       total: finalSignals.length,
-    //       page: 1,
-    //       limit: 5,
-    //       totalPages: 1
-    //     }
-    //   });
-    // }
+      return res.json({
+        status: true,
+        message: "Returning last 5 signals due to no existing plan",
+        data: finalSignals,
+        pagination: {
+          total: finalSignals.length,
+          page: 1,
+          limit: 5,
+          totalPages: 1
+        }
+      });
+    }
 
     const subscriptions = await PlanSubscription_Modal.find({ client_id });
     if (subscriptions.length === 0) {
