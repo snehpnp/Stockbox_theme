@@ -1155,9 +1155,10 @@ class Clients {
 //////////////////// send mail sign document ///////////// 
 const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'kyc' });
 if (mailtemplate) {
-    let finalMailBody = mailtemplate.mail_body.replace('{clientName}', `${client.FullName}`);
+  let finalMailBody = mailtemplate.mail_body.replace(/{clientName}/g, client.FullName);
+       
     const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
-    const finalHtml = mailtemplate.mail_body
+    const finalHtml = finalMailBody
         .replace(/{{company_name}}/g, settings.website_title)
         .replace(/{{body}}/g, finalMailBody)
         .replace(/{{logo}}/g, logo);
@@ -1167,7 +1168,7 @@ if (mailtemplate) {
         from: `${settings.from_name} <${settings.from_mail}>`,
         subject: `${mailtemplate.mail_subject}`,
         html: finalHtml,
-        attachments: [{ filename: fileName, path: tempPath }]
+       attachments: [{ filename: fileName, path: tempPath }]
     };
 
     await sendEmail(mailOptions);
