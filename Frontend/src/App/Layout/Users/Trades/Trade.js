@@ -581,6 +581,7 @@ function Trade() {
                   }`}
                 onClick={() => setSelectedTab(tab)}
                 role="tab"
+                style={{ cursor: "pointer" }}
               >
                 <div className="d-flex align-items-center">
                   <div className="tab-icon">

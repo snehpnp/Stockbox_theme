@@ -346,20 +346,25 @@ const Client = () => {
     const originalChecked = event.target.checked;
     const user_active_status = originalChecked ? "1" : "0";
     const data = { id, status: user_active_status };
-
+  
     const result = await showCustomAlert("confirm", "Do you want to save the changes?");
-    if (!result) return;
-
-    try {
-      const response = await UpdateClientStatus(data, token);
-      if (response.status) {
-        showCustomAlert("success", "Status Changed");
+  
+    if (result.isConfirmed) {
+      try {
+        const response = await UpdateClientStatus(data, token);
+        if (response.status) {
+          showCustomAlert("success", "Status Changed");
+        }
+        getAdminclient();
+      } catch (error) {
+        showCustomAlert("error", "There was an error processing your request.");
       }
-      getAdminclient();
-    } catch (error) {
-      showCustomAlert("error", "There was an error processing your request.");
+    } else {
+      // Agar user "No" kare to switch ko original state pe wapas le aao
+      event.target.checked = !originalChecked;
     }
   };
+  
 
 
 
@@ -1113,7 +1118,7 @@ const Client = () => {
                 onClick={() => Updateplansubscription()}
                 disabled={loading}
               >
-                {loading ? "Saving..." : "Save Plan"} 
+                {loading ? "Saving..." : "Save Plan"}
               </button>
             )}
             {checkedIndex === 1 && (
@@ -1123,7 +1128,7 @@ const Client = () => {
                 onClick={() => UpdateBasketservice()}
                 disabled={loading}
               >
-                {loading ? "Saving..." : "Save Plan"} 
+                {loading ? "Saving..." : "Save Plan"}
               </button>
             )}
           </>

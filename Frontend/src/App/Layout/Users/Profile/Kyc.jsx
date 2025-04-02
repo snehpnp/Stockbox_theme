@@ -26,7 +26,8 @@ function Kyc() {
   };
 
   return (
-    <Content Page_title="User KYC" button_status={false} backbutton_status={true}>
+    <Content Page_title="User KYC" button_status={false} backbutton_status={false}
+      backForword={true}>
       <div className="container mt-4">
         <div className="card shadow-sm">
           <div className="card-header bg-primary text-white">

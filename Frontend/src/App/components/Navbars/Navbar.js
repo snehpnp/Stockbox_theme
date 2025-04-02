@@ -128,7 +128,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       try {
         const response = await GetNotificationData({ user_id: userid }, token);
         if (response.status) {
-          setUserNotification(response.data);
+          setUserNotification(response?.data);
         }
       } catch (error) {
         console.log(error);

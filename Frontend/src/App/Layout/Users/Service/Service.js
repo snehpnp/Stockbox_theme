@@ -65,6 +65,8 @@ const Service = () => {
 
   const [discription, setDiscription] = useState("");
 
+  const [kycStatus, setKycStatus] = useState(0)
+
 
 
   useEffect(() => {
@@ -153,6 +155,8 @@ const Service = () => {
   const getkeybydata = async () => {
     try {
       const response = await basicsettinglist();
+      // console.log("basicsettinglist", response?.data[0].kyc);
+
 
       if (response.status) {
         setGetkey(response?.data[0]?.razorpay_key);
@@ -161,6 +165,7 @@ const Service = () => {
         setGstStatus(response.data[0].gststatus)
         setOnlinePaymentStatus(response.data[0].paymentstatus)
         setOfflinePaymentStatus(response.data[0].officepaymenystatus)
+        setKycStatus(response?.data[0].kyc)
       }
     } catch (error) {
       console.error("Error fetching coupons:", error);
@@ -216,6 +221,8 @@ const Service = () => {
 
           try {
             const response2 = await AddplanSubscription(data, token);
+            console.log("AddplanSubscription", response2);
+
             if (response2?.status) {
               setShowModal(false);
               window.location.reload();
@@ -241,8 +248,12 @@ const Service = () => {
 
 
   const handleShowModal = (item) => {
-    setSelectedPlanDetails(item);
-    setShowModal(true);
+    if (kycStatus === 0) {
+      navigate("/user/kyc")
+    } else {
+      setSelectedPlanDetails(item);
+      setShowModal(true);
+    }
   };
 
 
@@ -347,42 +358,42 @@ const Service = () => {
                     <div className="col col-lg-6 mb-4" key={`${item?._id}-${index}`}>
                       <div className="card card1 mb-4 shadow h-100 mb-4">
                         <div className="card-body">
-                         
-                            <div className="d-flex justify-content-between">
-                              <div>
-                            <h5 className="mb-0">{item?.title}</h5>
-                           
+
+                          <div className="d-flex justify-content-between">
+                            <div>
+                              <h5 className="mb-0">{item?.title}</h5>
+
                             </div>
-                           
+
                             <span className="price-original">
-                                {Array.isArray(item?.services) && item?.services?.length > 0
-                                  ? item.services
-                                    .map((service) =>
-                                      typeof service.title === "string"
-                                        ? service.title.split(/(?=[A-Z])/).join(" + ")
-                                        : "N/A"
-                                    )
-                                    .join(" + ")
-                                  : "N/A"}
-                              </span>
-                           
-                            </div>
-                          
+                              {Array.isArray(item?.services) && item?.services?.length > 0
+                                ? item.services
+                                  .map((service) =>
+                                    typeof service.title === "string"
+                                      ? service.title.split(/(?=[A-Z])/).join(" + ")
+                                      : "N/A"
+                                  )
+                                  .join(" + ")
+                                : "N/A"}
+                            </span>
+
+                          </div>
+
                           <hr />
                           <div className="row">
                             <div className="col-md-6">
-                            <b>Price</b>:   <IndianRupee  style={{width:'15px', margin:'0'}}/> {plan?.price}
-                           
-                            
+                              <b>Price</b>:   <IndianRupee style={{ width: '15px', margin: '0' }} /> {plan?.price}
+
+
                             </div>
                             <div className="col-md-6">
-                            
+
                               <b>Validity</b>: {plan?.validity}
-                            
+
                             </div>
-                      
-                            </div>
-                            
+
+                          </div>
+
                           {/* <div className="d-flex align-items-center justify-content-between">
                             <div>
                               <b>Price:</b>
@@ -400,10 +411,14 @@ const Service = () => {
                             <li>
                               <b>Description</b>:
                               <p>
-                               
-                                {stripHtmlTags(plan?.description || "")}
-                                
-                                </p>
+                                {(() => {
+                                  const text = stripHtmlTags(plan?.description || "");
+                                  const words = text.split(" ");
+                                  return words.length > 20
+                                    ? words.slice(0, 20).join(" ") + "....."
+                                    : text;
+                                })()}
+                              </p>
                             </li>
                           </ul>
                           <div className="">
@@ -424,7 +439,7 @@ const Service = () => {
                               Subscribe Now
                             </button>
                           </div>
-                         
+
                         </div>
                       </div>
                     </div>
@@ -476,7 +491,7 @@ const Service = () => {
                       scrollbarWidth: "thin",
                     }}
                   >
-                    <div className="mb-3">
+                    <div style={{ position: "sticky", top: 0, background: "white", zIndex: 10, padding: "10px", boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)" }}>
                       <div className="d-flex align-items-center">
                         <input
                           type="text"

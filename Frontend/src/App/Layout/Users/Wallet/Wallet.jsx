@@ -123,7 +123,7 @@ const Wallet = () => {
                 boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.1)",
               }}
             >
-              {data.FullName ? data.FullName.charAt(0).toUpperCase() : "U"}
+              {data?.FullName ? data?.FullName.charAt(0).toUpperCase() : "U"}
             </div>
             <div>
               <h5 className="mb-0">{data?.FullName}</h5>

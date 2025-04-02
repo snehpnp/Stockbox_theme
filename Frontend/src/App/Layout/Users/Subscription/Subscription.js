@@ -40,6 +40,8 @@ const Subscription = () => {
   const fetchMySubscription = async () => {
     try {
       const res = await getMySubscription(id, token);
+      console.log("getMySubscription",res);
+
 
       if (res?.status) {
         setPlanData(res?.data);
@@ -58,7 +60,7 @@ const Subscription = () => {
 
   const fetchBasketMySubscription = async () => {
     try {
-      const res = await getMyBasketSubscription(id, token);
+      const res = await getMyBasketSubscription(id, token);      
       if (res?.status) {
         setBasketData(res?.data);
       } else {
@@ -205,7 +207,7 @@ const Subscription = () => {
                       <td>
                         <strong>Start Date:</strong>
                       </td>
-                      <td>{accordion?.orderid || "Make By Admin"}</td>
+                      <td>{fDateTime(accordion?.plan_start) || "Make By Admin"}</td>
                     </tr>
                   </tbody>
                 </table>
