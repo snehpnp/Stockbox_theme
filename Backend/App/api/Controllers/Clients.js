@@ -336,7 +336,8 @@ class Clients {
 
 
       // Find the user by email
-      const client = await Clients_Modal.findOne({ Email });
+      const client = await Clients_Modal.findOne({ Email, del: 0 });
+      // const client = await Clients_Modal.findOne({ Email });
       if (!client) {
         return res.status(404).json({
           status: false,
@@ -448,7 +449,8 @@ class Clients {
       // Find the user by reset token and check if the token is valid
       const client = await Clients_Modal.findOne({
         forgotPasswordToken: resetToken,
-        forgotPasswordTokenExpiry: { $gt: Date.now() } // Token should not be expired
+        forgotPasswordTokenExpiry: { $gt: Date.now() },
+        del:0
       });
 
 
@@ -662,7 +664,8 @@ class Clients {
 
       // Find the user by reset token and check if the token is valid
       const client = await Clients_Modal.findOne({
-        Email: email
+        Email: email,
+        del:0
       });
 
 
@@ -1308,7 +1311,7 @@ if (mailtemplate) {
         // Check if user_id matched, show receiveramount
         if (entry.user_id.toString() === id.toString()) {
           // Fetch the client based on the token
-          const relatedClient = await Clients_Modal.findOne({ refer_token: entry.token });
+          const relatedClient = await Clients_Modal.findOne({ refer_token: entry.token, del: 0, ActiveStatus: 1 });
           clientName = relatedClient ? relatedClient.FullName : "";
 
           amountType = {
