@@ -2105,62 +2105,6 @@ class Signal {
 
       const reportFile = req.files['report'] ? req.files['report'][0] : null;
 
-<<<<<<< HEAD
-    // ✅ Sorting Logic
-    let sortCriteria = { created_at: -1 };
-    if (closestatus == true) {
-      sortCriteria = { closedate: -1 };
-    }
-
-    // ✅ Fetch Signals With Pagination
-    const signals = await Signalsdata_Modal.find(query)
-      .skip(skip)
-      .limit(limit)
-      .sort(sortCriteria)
-      .populate({ path: "stock", select: "title" })
-      .populate({ path: "service", select: "title" })
-      .lean();
-
-    // ✅ Extract Signal IDs for Bulk Stock Query
-    const signalIds = signals.map(signal => signal._id);
-
-    // ✅ Fetch Stock Data in Bulk
-    const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
-      .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price")
-      .lean();
-
-    // ✅ Map Stocks to Signals
-    const stockMap = {};
-    stockDetails.forEach(stock => {
-      if (!stockMap[stock.signal_id]) {
-        stockMap[stock.signal_id] = [];
-      }
-      stockMap[stock.signal_id].push(stock);
-    });
-    const protocol = req.protocol;
-    const baseUrl = `${protocol}://${req.headers.host}`;
-    // ✅ Attach Stocks to Signals
-    const finalSignals = signals.map(signal => ({
-      ...signal,
-      stocks: stockMap[signal._id] || [],
-      report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null // Full report URL
-
-    }));
-
-    // ✅ Total Records for Pagination
-    const totalCount = await Signalsdata_Modal.countDocuments(query);
-    const totalPages = Math.ceil(totalCount / limit);
-
-    return res.json({
-      status: true,
-      message: "Signals fetched successfully",
-      data: {
-        signals: finalSignals,
-        pagination: {
-          totalRecords: totalCount,
-          totalPages,
-          currentPage: page
-=======
       if (reportFile) {
         const fileMimeType = reportFile.mimetype; // Get the MIME type of the uploaded file
         if (!allowedMimeTypes.includes(fileMimeType)) {
@@ -2168,7 +2112,6 @@ class Signal {
             status: false,
             message: "Invalid file type. Only PDF and Word files are allowed.",
           });
->>>>>>> ce656b2a842fba737d562f773f3339e8e24bb1f8
         }
       }
 
