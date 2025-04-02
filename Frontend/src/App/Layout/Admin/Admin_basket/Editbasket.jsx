@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Updatebasket, Viewbasket } from '../../../Services/Admin/Admin';
 import { image_baseurl } from '../../../../Utils/config';
 import Content from '../../../components/Contents/Content';
-
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Editbasket = () => {
 
@@ -54,7 +53,7 @@ const Editbasket = () => {
         frequency: data?.frequency || "",
         validity: data?.validity ? data?.validity : "",
         next_rebalance_date: data?.next_rebalance_date ? data?.next_rebalance_date : "",
-        cagr: data?.cagr,
+        // cagr: data?.cagr,
         full_price: data?.full_price,
         type: data?.type,
         image: data?.image,
@@ -67,7 +66,6 @@ const Editbasket = () => {
 
 
   const validate = (values) => {
-    // console.log("values",values);
 
     let errors = {};
 
@@ -89,7 +87,7 @@ const Editbasket = () => {
       errors.mininvamount = "Please Enter Minimum Investment Amount";
     }
     if (!values.frequency) {
-      errors.frequency = "Please Enter Frequency";
+      errors.frequency = "Please Enter Rebalance Frequency";
     }
 
     if (!values.validity) {
@@ -103,9 +101,9 @@ const Editbasket = () => {
     if (values.description === "<p><br></p>") {
       errors.description = "Please Enter Description";
     }
-    if (!values.cagr) {
-      errors.cagr = "Please Enter CAGR";
-    }
+    // if (!values.cagr) {
+    //   errors.cagr = "Please Enter CAGR";
+    // }
     if (!values.type) {
       errors.type = "Please Enter type";
     }
@@ -138,7 +136,7 @@ const Editbasket = () => {
       frequency: values.frequency,
       validity: values.validity,
       next_rebalance_date: values.next_rebalance_date,
-      cagr: values.cagr,
+      // cagr: values.cagr,
       full_price: values.full_price || 0,
       type: values.type,
       image: values.image,
@@ -151,38 +149,16 @@ const Editbasket = () => {
     try {
       const response = await Updatebasket(req, token);
 
-      // return
-
       if (response.status) {
-        Swal.fire({
-          title: "Client Create Successfull !",
-          text: response.message,
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        setTimeout(() => {
-          navigate("/admin/basket");
-        }, 1500);
+        showCustomAlert("Success", response.message, navigate, "/admin/basket");
       } else {
-        Swal.fire({
-          title: "Alert",
-          text: response.message,
-          icon: "warning",
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("error", response.message);
         setLoading(false)
       }
     } catch (error) {
       setLoading(false)
-      Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred. Please try again later.",
-        icon: "error",
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert("error", "An unexpected error occurred. Please try again later.");
+
     }
   };
 
@@ -198,7 +174,7 @@ const Editbasket = () => {
       frequency: "",
       validity: "",
       next_rebalance_date: "",
-      cagr: "",
+      // cagr: "",
       full_price: "",
       type: "",
       image: "",
@@ -263,7 +239,7 @@ const Editbasket = () => {
     },
     {
       name: "frequency",
-      label: "Frequency",
+      label: "Rebalance Frequency",
       type: "select",
       label_size: 12,
       col_size: 6,
@@ -273,7 +249,9 @@ const Editbasket = () => {
         { value: "Monthly", label: "Monthly" },
         { value: "Quarterly", label: "Quarterly" },
         { value: "Half Yearly", label: "Half Yearly" },
-        { value: "Yearly", label: "Yearly" }
+        { value: "Yearly", label: "Yearly" },
+        { value: "Market Condition", label: "Market Condition" },
+        { value: "Need basis", label: "Need basis" }
       ],
     },
 
@@ -292,15 +270,15 @@ const Editbasket = () => {
       ],
       star: true
     },
-    {
-      name: "cagr",
-      label: "CAGR",
-      type: "number",
-      label_size: 12,
-      col_size: 6,
-      disable: false,
-      star: true
-    },
+    // {
+    //   name: "cagr",
+    //   label: "CAGR",
+    //   type: "number",
+    //   label_size: 12,
+    //   col_size: 6,
+    //   disable: false,
+    //   star: true
+    // },
     {
       name: "next_rebalance_date",
       label: "Rebalance Date",
@@ -391,7 +369,6 @@ const Editbasket = () => {
       <DynamicForm
         fields={fields}
         formik={formik}
-        page_title="Edit Basket"
         btn_name="Edit Basket"
         btn_name1="Cancel"
         sumit_btn={true}

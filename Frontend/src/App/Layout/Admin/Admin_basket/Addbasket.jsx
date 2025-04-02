@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { Addbasketplan } from '../../../Services/Admin/Admin';
 import { Link } from 'react-router-dom';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+
 const AddBasket = () => {
 
 
@@ -98,7 +99,7 @@ const AddBasket = () => {
       frequency: values.frequency,
       validity: values.validity,
       next_rebalance_date: values.next_rebalance_date,
-      cagr: values.cagr,
+      // cagr: values.cagr,
       full_price: values.full_price || 0,
       type: values.type,
       image: values.image,
@@ -112,35 +113,15 @@ const AddBasket = () => {
       const response = await Addbasketplan(req, token);
 
       if (response.status) {
-        Swal.fire({
-          title: "Basket Create Successfull !",
-          text: response.message,
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        setTimeout(() => {
-          navigate("/admin/basket");
-        }, 1500);
+        showCustomAlert("Success", response.message, navigate, "/admin/basket")
       } else {
-        Swal.fire({
-          title: "Alert",
-          text: response.message,
-          icon: "warning",
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("error", response.message, navigate, null)
         setLoading(false)
       }
     } catch (error) {
       setLoading(false)
-      Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred. Please try again later.",
-        icon: "error",
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert("error", "An unexpected error occurred. Please try again later.", null, null)
+
     }
   };
 
@@ -155,7 +136,7 @@ const AddBasket = () => {
       frequency: "",
       validity: "",
       next_rebalance_date: "",
-      cagr: "",
+      // cagr: "",
       full_price: "",
       type: "",
       image: "",
@@ -232,7 +213,9 @@ const AddBasket = () => {
         { value: "Monthly", label: "Monthly" },
         { value: "Quarterly", label: "Quarterly" },
         { value: "Half Yearly", label: "Half Yearly" },
-        { value: "Yearly", label: "Yearly" }
+        { value: "Yearly", label: "Yearly" },
+        { value: "Market Condition", label: "Market Condition" },
+        { value: "Need basis", label: "Need basis" }
       ],
     },
     {
@@ -250,15 +233,15 @@ const AddBasket = () => {
       ],
       star: true
     },
-    {
-      name: "cagr",
-      label: "CAGR",
-      type: "number",
-      label_size: 12,
-      col_size: 6,
-      disable: false,
-      star: true
-    },
+    // {
+    //   name: "cagr",
+    //   label: "CAGR",
+    //   type: "number",
+    //   label_size: 12,
+    //   col_size: 6,
+    //   disable: false,
+    //   star: true
+    // },
     {
       name: "next_rebalance_date",
       label: "Rebalance Date",
@@ -344,7 +327,7 @@ const AddBasket = () => {
       <DynamicForm
         fields={fields}
         formik={formik}
-       
+
         btn_name="Add Basket"
         btn_name1="Cancel"
         sumit_btn={true}

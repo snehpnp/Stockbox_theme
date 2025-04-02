@@ -40,13 +40,17 @@ const Privacy = () => {
       >
         <div className="page-content">
 
-          <div className="card">
+          {privacyPolicy.length > 0 ? <div className="card">
             {isLoading ? <Loader /> : <div className="card-body">
-              <h5 className="card-title">Privacy & Policy</h5>
-              <hr />
-              <div dangerouslySetInnerHTML={{ __html: privacyPolicy }} />
+
+              <div className="privacy-data" dangerouslySetInnerHTML={{ __html: privacyPolicy }} />
             </div>}
-          </div>
+          </div> : <div className="text-center mt-5">
+            <img
+              src="/assets/images/norecordfound.png"
+              alt="No Records Found"
+            />
+          </div>}
         </div>
       </Content>
     </div>

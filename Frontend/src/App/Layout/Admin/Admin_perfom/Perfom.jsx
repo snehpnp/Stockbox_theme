@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getPerformerstatus, GetService, getperformacebysegment, getperformacebysegmentwithfilter } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table1';
-import Swal from 'sweetalert2';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import { Link } from 'react-router-dom';
 import { Settings2, Eye, IndianRupee } from 'lucide-react';
@@ -13,6 +12,9 @@ import ReusableModal from '../../../components/Models/ReusableModal';
 
 
 const Perform = () => {
+
+
+
     const token = localStorage.getItem('token');
     const [clients, setClients] = useState([]);
     const [searchInput, setSearchInput] = useState("");
@@ -255,18 +257,33 @@ const Perform = () => {
 
     const renderTable1 = () => {
         const activeService = servicedata.find(service => service._id === activeTab);
-        return (
+    
+        if (isLoading) {
+            return (
+                <div className="text-center mt-5">
+                    <Loader />
+                </div>
+            );
+        }
+    
+        return closesignal.length > 0 ? (
             <div className="table-responsive">
                 <h5>{activeService ? `Performance for ${activeService.title}` : 'Performance'}</h5>
-                <Table columns={columns1}
+                <Table
+                    columns={columns1}
                     data={closesignal}
                     totalRows={totalRows}
                     currentPage={currentPage}
                     onPageChange={handlePageChange}
                 />
             </div>
+        ) : (
+            <div className="text-center mt-5">
+                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+            </div>
         );
     };
+    
 
 
 
@@ -276,6 +293,7 @@ const Perform = () => {
         getperformdata(serviceId);
         getdatabysegment(serviceId)
         setserviceid(serviceId)
+
     };
 
 
@@ -284,7 +302,7 @@ const Perform = () => {
     return (
         <div>
             <div className='page-content'>
-                <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                <div className="page-breadcrumb d-flex align-items-center mb-3">
                     <div className="breadcrumb-title pe-3">Performance Status</div>
                     <div className="ps-3">
                         <nav aria-label="breadcrumb">
@@ -300,10 +318,7 @@ const Perform = () => {
                 </div>
                 <hr />
 
-                {isLoading ? (
-                    <Loader />
-                ) : (
-                    <>
+               
 
                         <div className='card'>
                             <div className='card-body'>
@@ -334,7 +349,7 @@ const Perform = () => {
                                                                             <div className="col-lg-6">
 
                                                                                 <div className="p-3">
-                                                                                    <b className="mb-0">Avg.return / trade</b>
+                                                                                    <b className="mb-0">Avg.return / trade :  </b>
                                                                                     <small className="mb-0">
                                                                                         {item?.avgreturnpertrade?.toFixed(2)}
 
@@ -343,7 +358,7 @@ const Perform = () => {
                                                                             </div>
                                                                             <div className="col-lg-6 ">
                                                                                 <div className="p-3">
-                                                                                    <b className="mb-0">  Avg.return / month</b>
+                                                                                    <b className="mb-0">  Avg.return/month : </b>
                                                                                     <small className="mb-0">
                                                                                         {item?.avgreturnpermonth?.toFixed(2)}
                                                                                     </small>
@@ -352,7 +367,10 @@ const Perform = () => {
 
                                                                         </div>
                                                                         <div className='p-3'>
-                                                                            <b className='text-black p-0'>Ideal Hit Accuracy</b><br />
+                                                                            <b className='text-black p-0'>Ideal Hit Accuracy : <small className="mb-0">
+                                                                                {item?.accuracy?.toFixed(2)}
+                                                                            </small>
+                                                                            </b><br />
                                                                             <b className='text-black p-0'>Ideal Hit Closed : <small className="mb-0">
                                                                                 {item?.count}
 
@@ -411,9 +429,6 @@ const Perform = () => {
                                 </div>
                             </div>
                         </div>
-
-                    </>
-                )}
 
 
                 <ReusableModal

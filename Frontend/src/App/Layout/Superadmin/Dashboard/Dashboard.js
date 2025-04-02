@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
+import Loader from '../../../../Utils/Loader'
 const data = {
   total_client: 10,
   total_active_client: 10,
@@ -25,7 +26,14 @@ const data = {
 };
 
 
+
 const Dashboard1 = () => {
+  const [isLoader,setIsLoader] = useState(true)
+
+  useEffect(() => {
+    setIsLoader(false); // Set isLoader to false after data is loaded (or after a delay)
+    
+  }, []);
 
   let arr = [
     {
@@ -155,6 +163,11 @@ const Dashboard1 = () => {
   ]
 
   return <>
+  {isLoader?(
+    <Loader/>
+  ):(<>
+  
+  
     <div className='theme-4-dashboard'>
       <div className='row'>
         {arr.map((item, index) => {
@@ -188,6 +201,7 @@ const Dashboard1 = () => {
         })}
       </div>
     </div>
+    </>)}
   </>
 }
 

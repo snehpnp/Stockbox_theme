@@ -3,12 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 // import { getbannerlist, AddQRdetaildata, UpdateBanner, changeBannerStatus, DeleteBanner } from '../../../Services/Admin';
 import Table from '../../../../Extracomponents/Table';
 import { SquarePen, Trash2, PanelBottomOpen, Eye } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { fDateTime } from '../../../../../Utils/Date_formate';
 import { image_baseurl } from '../../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { AddQRdetaildata, getQrdetails, UpdateQrcodelist, DeleteQRCode, changeQRstatuscode } from '../../../../Services/Admin/Admin';
 import ReusableModal from '../../../../components/Models/ReusableModal';
+import showCustomAlert from '../../../../Extracomponents/CustomAlert/CustomAlert';
+import Loader from '../../../../../Utils/Loader';
+
 
 const QRDetails = () => {
 
@@ -43,6 +45,9 @@ const QRDetails = () => {
     const token = localStorage.getItem('token');
     const userid = localStorage.getItem('id');
 
+    const [isLoading, setIsLoading] = useState(true)
+
+
 
 
 
@@ -57,6 +62,7 @@ const QRDetails = () => {
         } catch (error) {
             console.log("Error fetching services:", error);
         }
+        setIsLoading(false)
     };
 
     useEffect(() => {
@@ -74,32 +80,16 @@ const QRDetails = () => {
             const response = await UpdateQrcodelist(data, token);
 
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: response.message || 'Banner updated successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
-
+                showCustomAlert("Success", response.message)
                 setUpdatetitle({ title: "", id: "", hyperlink: "" });
                 getQrlist();
                 setModel(false);
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: response.message || 'There was an error updating the Banner.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", response.message)
+
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'server error',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'server error')
         }
     };
 
@@ -111,41 +101,18 @@ const QRDetails = () => {
     const AddQR = async () => {
         try {
             const data = { image: title.image };
-
-
             const response = await AddQRdetaildata(data, token);
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: response.message || 'QR added successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
-
+                showCustomAlert("Success", response.message)
                 setTitle({ title: "", add_by: "", hyperlink: "" });
                 getQrlist();
-
-                const modal = document.getElementById('exampleModal');
-                const bootstrapModal = window.bootstrap.Modal.getInstance(modal);
-                if (bootstrapModal) {
-                    bootstrapModal.hide();
-                }
+                setShowModal(false)
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: response.message || 'There was an error adding.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", response.message)
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'server error',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'server error')
+
         }
     };
 
@@ -158,37 +125,21 @@ const QRDetails = () => {
     const handleSwitchChange = async (event, id) => {
         const user_active_status = event.target.checked ? "true" : "false";
         const data = { id: id, status: user_active_status };
-        const result = await Swal.fire({
-            title: "Do you want to save the changes?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
+        const result = await showCustomAlert("confirm", "Do you want to save the changes?")
 
         if (result.isConfirmed) {
             try {
                 const response = await changeQRstatuscode(data, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: "Saved!",
-                        icon: "success",
-                        timer: 1000,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1000);
+                    showCustomAlert("Success", "Status Changed")
                 }
                 getQrlist();
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+                showCustomAlert("error", "There was an error processing your request.")
+
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
+            event.target.checked = !event.target.checked
             getQrlist();
         }
     };
@@ -200,44 +151,20 @@ const QRDetails = () => {
 
     const DeletQrlist = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this ? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert("confirm", 'Do you want to delete this ? This action cannot be undone.')
 
             if (result.isConfirmed) {
                 const response = await DeleteQRCode(_id, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The QR Code has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
+                    showCustomAlert("Success", 'The QR Code has been successfully deleted.')
                     getQrlist();
 
                 }
             } else {
-
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The QR deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
+                showCustomAlert("error", 'The QR deletion was cancelled.')
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the QR.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
-
+            showCustomAlert("error", 'There was an error deleting the QR.')
         }
     };
 
@@ -349,7 +276,7 @@ const QRDetails = () => {
         <div>
             <div className="page-content">
 
-                <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                <div className="page-breadcrumb  d-flex align-items-center mb-3">
                     <div className="breadcrumb-title pe-3">QR Details</div>
                     <div className="ps-3">
                         <nav aria-label="breadcrumb">
@@ -502,16 +429,24 @@ const QRDetails = () => {
 
                             </div>
                         </div>
-                        <div className="table-responsive">
-                            <Table
-                                columns={columns}
-                                data={clients}
-                                pagination
-                                striped
-                                highlightOnHover
-                                dense
-                            />
-                        </div>
+                        {isLoading ? (
+                            <Loader />
+                        ) : clients.length > 0 ? (
+                            <div className="table-responsive">
+                                <Table
+                                    columns={columns}
+                                    data={clients}
+                                    pagination
+                                    striped
+                                    highlightOnHover
+                                    dense
+                                />
+                            </div>
+                        ) : (
+                            <div className="text-center mt-5">
+                                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

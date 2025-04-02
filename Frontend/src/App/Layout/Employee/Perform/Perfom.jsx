@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getPerformerstatus, GetService, getperformacebysegment, getperformacebysegmentwithfilter } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table1';
-import Swal from 'sweetalert2';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import { Link } from 'react-router-dom';
 import { Settings2, Eye, IndianRupee } from 'lucide-react';
@@ -284,7 +283,7 @@ const Perform = () => {
     return (
         <div>
             <div className='page-content'>
-                <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                <div className="page-breadcrumb  d-flex align-items-center mb-3">
                     <div className="breadcrumb-title pe-3">Performance Status</div>
                     <div className="ps-3">
                         <nav aria-label="breadcrumb">
@@ -310,7 +309,7 @@ const Perform = () => {
                                 <div className="tab-content" id="myTabContent3">
                                     <div className="tab-pane fade show active" id="NavPills">
                                         <div className="card-body pt-0">
-                                            <ul className="nav nav-pills nav-pills1 mb-4 light">
+                                            <ul className="nav nav-pills nav-pills1 mb-4 light border-bottom justify-content-center" >
                                                 {servicedata.map((service) => (
                                                     <li className="nav-item" key={service._id}>
                                                         <button
@@ -323,7 +322,7 @@ const Perform = () => {
                                                 ))}
                                             </ul>
                                             <div className="row">
-                                                <div className="col-6">
+                                                <div className="col-md-6">
                                                     <div className="row">
                                                         <div>
 
@@ -382,12 +381,12 @@ const Perform = () => {
                                                     </div>
                                                 </div>
                                                 <div
-                                                    className="ms-2"
+                                                    className="ms-sm-auto mt-2 mt-md-0 mb-3"
                                                     onClick={(e) => getexportfile()}
                                                 >
                                                     <button
                                                         type="button"
-                                                        className="btn btn-primary float-end"
+                                                        className="btn btn-primary float-sm-end"
                                                         data-toggle="tooltip"
                                                         data-placement="top"
                                                         title="Export To Excel"

@@ -1,10 +1,10 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { UpdateClient } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 
@@ -14,6 +14,37 @@ const EditClient = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { row } = location.state;
+
+  const indianStates = [
+    { name: "Andhra Pradesh" },
+    { name: "Arunachal Pradesh" },
+    { name: "Assam" },
+    { name: "Bihar" },
+    { name: "Chhattisgarh" },
+    { name: "Goa" },
+    { name: "Gujarat" },
+    { name: "Haryana" },
+    { name: "Himachal Pradesh" },
+    { name: "Jharkhand" },
+    { name: "Karnataka" },
+    { name: "Kerala" },
+    { name: "Madhya Pradesh" },
+    { name: "Maharashtra" },
+    { name: "Manipur" },
+    { name: "Meghalaya" },
+    { name: "Mizoram" },
+    { name: "Nagaland" },
+    { name: "Odisha" },
+    { name: "Punjab" },
+    { name: "Rajasthan" },
+    { name: "Sikkim" },
+    { name: "Tamil Nadu" },
+    { name: "Telangana" },
+    { name: "Tripura" },
+    { name: "Uttar Pradesh" },
+    { name: "Uttarakhand" },
+    { name: "West Bengal" }
+  ];
 
 
 
@@ -35,6 +66,10 @@ const EditClient = () => {
     if (!values.PhoneNo) {
       errors.PhoneNo = "Please Enter Phone Number";
     }
+    if (!values.state) {
+      errors.state = "Please Select State";
+    }
+
     // if (!values.password) {
     //   errors.password = "Please Enter Password";
     // }
@@ -51,38 +86,24 @@ const EditClient = () => {
       PhoneNo: values.PhoneNo,
       // password: values.password,
       id: row._id,
+      state: values.state,
     };
 
     try {
       const response = await UpdateClient(req, token);
       if (response.status) {
-        Swal.fire({
-          title: "Update Successful!",
-          text: response.message,
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        setTimeout(() => {
-          navigate("/employee/client");
-        }, 1500);
-      } else {
-        Swal.fire({
-          title: "Error",
-          text: response.message,
-          icon: "error",
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("Success", response.message, navigate, "/employee/client");
+      }else {
+        if (response.error.status === false) {
+          showCustomAlert("error", response.error.message);
+        } else if (response.error.status === false) {
+          showCustomAlert("error", response.error.message);
+        } else {
+          showCustomAlert("error", "Email or Mobile number are already exists.");
+        }
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred. Please try again later.",
-        icon: "error",
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert("error", "An unexpected error occurred. Please try again later.");
     }
   };
 
@@ -92,6 +113,7 @@ const EditClient = () => {
       // UserName: row?.UserName || "",
       Email: row?.Email || "",
       PhoneNo: row?.PhoneNo || "",
+      state: row?.state || "",
 
     },
     validate,
@@ -133,6 +155,19 @@ const EditClient = () => {
       col_size: 4,
       disable: false,
     },
+    {
+      name: "state",
+      label: "Select State",
+      type: 'select',
+      options: indianStates?.map((item) => ({
+          label: item.name, 
+          value: item.name,
+      })),
+      label_size: 12,
+      col_size: 4,
+      disable: false,
+      star: true
+  }
     // {
     //   name: "password",
     //   label: "Password",
@@ -153,7 +188,6 @@ const EditClient = () => {
     
       <DynamicForm
         fields={fields}
-        page_title="Update Client"
         btn_name="Update Client"
         btn_name1="Cancel"
         formik={formik}

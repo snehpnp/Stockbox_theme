@@ -4,13 +4,13 @@ import axios from 'axios';
 import { getcouponlist } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table';
 import { Eye, Pencil, Trash2, IndianRupee } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { DeleteCoupon, UpdateClientStatus, CouponStatus, CouponShowstatus, getstaffperuser, GetService } from '../../../Services/Admin/Admin';
 import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDate, fDateTime } from '../../../../Utils/Date_formate';
 import Loader from '../../../../Utils/Loader';
 import ReusableModal from '../../../components/Models/ReusableModal';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 
@@ -37,13 +37,12 @@ const Coupon = () => {
     const [isLoading, setIsLoading] = useState(true)
 
     const [showModal, setShowModal] = useState(false);
-    
+
 
 
     const getcoupon = async () => {
         try {
             const response = await getcouponlist(token);
-            // console.log("response",response.data);
 
             if (response.status) {
                 const filterdata = response.data.filter((item) =>
@@ -65,11 +64,11 @@ const Coupon = () => {
     const getService = async () => {
         try {
             const response = await GetService(token);
-            // console.log("response",response);
+
 
             if (response.status) {
                 setService(response.data)
-                // console.log("chaking",response.data);
+
 
             }
         } catch (error) {
@@ -109,46 +108,23 @@ const Coupon = () => {
 
     const DeleteCouponbyadmin = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this coupon? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert("confirm", 'Do you want to delete this coupon This action cannot be undone.')
 
             if (result.isConfirmed) {
                 const response = await DeleteCoupon(_id, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The coupon has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
+                    showCustomAlert("Success", 'The Coupon has been successfully deleted.')
                     getcoupon();
 
                 }
             } else {
-
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The coupon deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
+                showCustomAlert("error", 'The coupon deletion was cancelled.')
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the coupon.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
-
+            showCustomAlert("error", 'There was an error deleting the coupon.')
         }
     };
+
 
 
 
@@ -161,37 +137,20 @@ const Coupon = () => {
         const user_active_status = event.target.checked === true ? "true" : "false"
 
         const data = { id: id, status: user_active_status }
-        const result = await Swal.fire({
-            title: "Do you want to save the changes?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
+        const result = await showCustomAlert("confirm", "Do you want to save the changes?")
 
         if (result.isConfirmed) {
             try {
                 const response = await CouponStatus(data, token)
                 if (response.status) {
-                    Swal.fire({
-                        title: "Saved!",
-                        icon: "success",
-                        timer: 1000,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1000);
+                    showCustomAlert("Success", 'Changed status')
                 }
                 getcoupon();
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+                showCustomAlert("error", "There was an error processing your request.")
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
+            event.target.checked = !event.target.checked
             getcoupon();
         }
     };
@@ -203,38 +162,19 @@ const Coupon = () => {
         const user_active_status = event.target.checked === true ? "1" : "0"
         const data = { id: id, status: user_active_status }
 
-
-        const result = await Swal.fire({
-            title: "Do you want to save the changes?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
-
+        const result = await showCustomAlert("confirm", "Do you want to save the changes?")
         if (result.isConfirmed) {
             try {
                 const response = await CouponShowstatus(data, token)
                 if (response.status) {
-                    Swal.fire({
-                        title: "Saved!",
-                        icon: "success",
-                        timer: 1000,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1000);
+                    showCustomAlert("Success", 'Changed status')
                 }
                 getcoupon();
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+                showCustomAlert("error", "There was an error processing your request.")
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
+            event.target.checked = !event.target.checked
             getcoupon();
         }
     };
@@ -422,8 +362,8 @@ const Coupon = () => {
                                     <Tooltip placement="top" overlay="View">
                                         <Eye
                                             style={{ marginRight: "10px" }}
-                                            
-                                            onClick={() => {setShowModal(true);setViewpage(row)}}
+
+                                            onClick={() => { setShowModal(true); setViewpage(row) }}
                                         />
                                     </Tooltip>
                                 </div> : ""}
@@ -453,7 +393,7 @@ const Coupon = () => {
         <div>
             <div>
                 <div className="page-content">
-                    <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                    <div className="page-breadcrumb  d-flex align-items-center mb-3">
                         <div className="breadcrumb-title pe-3">Coupon</div>
                         <div className="ps-3">
                             <nav aria-label="breadcrumb">
@@ -470,7 +410,7 @@ const Coupon = () => {
                     <hr />
                     <div className="card">
                         <div className="card-body">
-                            <div className="d-lg-flex align-items-center mb-4 gap-3">
+                            <div className="d-sm-flex align-items-center  gap-3">
                                 <div className="position-relative">
                                     <input
                                         type="text"
@@ -483,7 +423,7 @@ const Coupon = () => {
                                         <i className="bx bx-search" />
                                     </span>
                                 </div>
-                                {permission.includes("addcoupon") ? <div className="ms-auto">
+                                {permission.includes("addcoupon") ? <div className="ms-auto mt-3 mt-sm-0">
                                     <Link
                                         to="/employee/addcoupon"
                                         className="btn btn-primary"
@@ -499,20 +439,21 @@ const Coupon = () => {
 
 
                         </div>
+                        {isLoading ? (
+                            <Loader />
+                        ) : (
+                            <>
+
+                                <Table
+                                    columns={columns}
+                                    data={clients}
+                                />
+                            </>
+                        )}
                     </div>
                 </div>
 
-                {isLoading ? (
-                    <Loader />
-                ) : (
-                    <>
 
-                        <Table
-                            columns={columns}
-                            data={clients}
-                        />
-                    </>
-                )}
                 {/* <div className="button-group">
 
                     <div
@@ -588,7 +529,7 @@ const Coupon = () => {
                                                 </div>
                                             </div>
                                         </li> */}
-                                        {/* <li>
+                {/* <li>
                                             <div className="row justify-content-between">
                                                 <div className="col-md-8">
                                                     {viewpage?.startdate ? (
@@ -613,7 +554,7 @@ const Coupon = () => {
                                             </div>
                                         </li> */}
 
-                                        {/* <li>
+                {/* <li>
                                             <div className="row justify-content-between">
                                                 <div className="col-md-6">
                                                     <b>Image </b>
@@ -624,7 +565,7 @@ const Coupon = () => {
                                             </div>
                                         </li> */}
 
-                                    {/* </ul>
+                {/* </ul>
                                 </div>
                             </div>
                         </div>
@@ -640,57 +581,27 @@ const Coupon = () => {
                     </>}
                     body={
                         <>
-                            <ul>
-                                <li>
-                                    <div className="row justify-content-between">
-                                        <div className="col-md-6">
-                                            <b>Name : {viewpage?.name}</b>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div className="row justify-content-between">
-                                        <div className="col-md-6">
-                                            <b>Code : {viewpage?.code}</b>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div className="row justify-content-between">
-                                        <div className="col-md-6">
-                                            <b>Min Purchase Value : {viewpage?.minpurchasevalue}</b>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div className="row justify-content-between">
-                                        <div className="col-md-6">
-                                            <b>Max Discount Value : {viewpage?.mincouponvalue}</b>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div className="row justify-content-between">
-                                        <div className="col-md-6">
-                                            {viewpage?.startdate ? (
-                                                <b>Start Date: {fDateTime(viewpage.startdate)}</b>
-                                            ) : (
-                                                <b>Start Date: Not available</b>
-                                            )}
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div className="row justify-content-between">
-                                        <div className="col-md-6">
-                                            {viewpage?.enddate ? (
-                                                <b>End Date: {fDateTime(viewpage.enddate)}</b>
-                                            ) : (
-                                                <b>End Date: Not available</b>
-                                            )}
-                                        </div>
-                                    </div>
-                                </li>
+                            <ul className="list-group">
+                                <div>
+                                    <strong>Name:</strong> <span>{viewpage?.name || "N/A"}</span>
+                                </div>
+                                <div>
+                                    <strong>Code:</strong> <span>{viewpage?.code || "N/A"}</span>
+                                </div>
+                                <div>
+                                    <strong>Min Purchase Value:</strong> <span>{viewpage?.minpurchasevalue || "N/A"}</span>
+                                </div>
+                                <div >
+                                    <strong>Max Discount Value:</strong> <span>{viewpage?.mincouponvalue || "N/A"}</span>
+                                </div>
+                                <div>
+                                    <strong>Start Date:</strong>
+                                    <span>{viewpage?.startdate ? fDateTime(viewpage.startdate) : "Not available"}</span>
+                                </div>
+                                <div>
+                                    <strong>End Date:</strong>
+                                    <span>{viewpage?.enddate ? fDateTime(viewpage.enddate) : "Not available"}</span>
+                                </div>
                             </ul>
                         </>
                     }

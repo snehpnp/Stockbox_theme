@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { Addbasketplan } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 
@@ -115,35 +116,15 @@ const AddBasket = () => {
       const response = await Addbasketplan(req, token);
 
       if (response.status) {
-        Swal.fire({
-          title: "Basket Create Successfull !",
-          text: response.message,
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        setTimeout(() => {
-          navigate("/employee/basket");
-        }, 1500);
+        showCustomAlert("Success", response.message, navigate, "/employee/basket")
       } else {
-        Swal.fire({
-          title: "Alert",
-          text: response.message,
-          icon: "warning",
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("error", response.message, navigate, null)
         setLoading(false)
       }
     } catch (error) {
       setLoading(false)
-      Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred. Please try again later.",
-        icon: "error",
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert("error", "An unexpected error occurred. Please try again later.", null, null)
+
     }
   };
 
@@ -344,7 +325,7 @@ const AddBasket = () => {
       <DynamicForm
         fields={fields}
         formik={formik}
-        page_title="Add Basket"
+        // page_title="Add Basket"
         btn_name="Add Basket"
         btn_name1="Cancel"
         sumit_btn={true}

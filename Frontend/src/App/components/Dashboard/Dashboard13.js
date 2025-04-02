@@ -8,6 +8,8 @@ import ReactApexChart from "react-apexcharts";
 import { Bar, Pie } from "react-chartjs-2";
 
 const Dashboard1 = ({ monthexpiry }) => {
+  const role = localStorage.getItem("Role")?.toLowerCase(); 
+
   const currentMonthYear = new Date().toLocaleString("en-US", {
     month: "long",
     year: "numeric",
@@ -31,18 +33,18 @@ const Dashboard1 = ({ monthexpiry }) => {
   // Map colors dynamically
   const cardsData = [
     {
-      link: "/admin/planexpirymonth",
+      link: `/${role}/planexpirymonth`,
       bgClass: "bg-gradient-moonlit",
       value1:
         monthexpiry?.monthexpiry?.length > 0
           ? monthexpiry?.monthexpiry?.some(
-              (item) => fDateMonth(item?.month) === currentMonthYear
-            )
+            (item) => fDateMonth(item?.month) === currentMonthYear
+          )
             ? monthexpiry?.monthexpiry.reduce((acc, item) => {
-                return fDateMonth(item?.month) === currentMonthYear
-                  ? acc + (item.noofclient || 0)
-                  : acc;
-              }, 0)
+              return fDateMonth(item?.month) === currentMonthYear
+                ? acc + (item.noofclient || 0)
+                : acc;
+            }, 0)
             : 0
           : 0,
 
@@ -53,7 +55,7 @@ const Dashboard1 = ({ monthexpiry }) => {
       color: labelColors["Current Month Active License"],
     },
     {
-      link: "/admin/client",
+      link: `/${role}/client`,
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.clientCountTotal,
       label: "Total Clients",
@@ -63,7 +65,7 @@ const Dashboard1 = ({ monthexpiry }) => {
       color: labelColors["Total Clients"],
     },
     {
-      link: "/admin/client",
+      link: `/${role}/client`,
       state: { clientStatus: 1 },
       bgClass: "bg-gradient-ohhappiness",
       value1: monthexpiry?.data?.clientCountActive,
@@ -74,7 +76,7 @@ const Dashboard1 = ({ monthexpiry }) => {
       color: labelColors["Total Active Clients"],
     },
     {
-      link: "/admin/client",
+      link: `/${role}/client`,
       state: { clientStatus: 0 },
       bgClass: "bg-gradient-ibiza",
       value1:
@@ -87,7 +89,7 @@ const Dashboard1 = ({ monthexpiry }) => {
       color: labelColors["Total Deactive Clients"],
     },
     {
-      link: "/admin/signal",
+      link: `/${role}/signal`,
       state: { clientStatus: "todayopensignal" },
       bgClass: "bg-gradient-moonlit",
       value1: monthexpiry?.data?.todayOpenSignal,
@@ -98,7 +100,7 @@ const Dashboard1 = ({ monthexpiry }) => {
       color: labelColors["Today's Open Signal"],
     },
     {
-      link: "/admin/closesignal",
+      link: `/${role}/closesignal`,
       state: { clientStatus: "todayclosesignal" },
       bgClass: "bg-gradient-ibiza",
       value1: monthexpiry?.data?.todayCloseSignal,
@@ -109,7 +111,7 @@ const Dashboard1 = ({ monthexpiry }) => {
       color: labelColors["Today's Close Signal"],
     },
     {
-      link: "/admin/signal",
+      link: `/${role}/signal`,
       bgClass: "bg-gradient-ohhappiness",
       value1: monthexpiry?.data?.OpensignalCountTotal,
       label: "Total Open Signals",
@@ -119,7 +121,7 @@ const Dashboard1 = ({ monthexpiry }) => {
       color: labelColors["Total Open Signals"],
     },
     {
-      link: "/admin/closesignal",
+      link: `/${role}/closesignal`,
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.CloseSignalCountTotal,
       label: "Total Close Signals",
@@ -129,7 +131,7 @@ const Dashboard1 = ({ monthexpiry }) => {
       color: labelColors["Total Close Signals"],
     },
     {
-      link: "/admin/client",
+      link: `/${role}/client`,
       state: { clientStatus: "active" },
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.activePlanclient,
@@ -140,7 +142,7 @@ const Dashboard1 = ({ monthexpiry }) => {
       color: labelColors["Total Plan Active Clients"],
     },
     {
-      link: "/admin/client",
+      link: `/${role}/client`,
       state: { clientStatus: "expired" },
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.inActivePlanclient,
@@ -151,7 +153,7 @@ const Dashboard1 = ({ monthexpiry }) => {
       color: labelColors["Total Plan Expired"],
     },
     {
-      link: "/admin/freeclient",
+      link: `/${role}/freeclient`,
       state: { clientStatus: "active" },
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.activeFreetrial,
@@ -162,7 +164,7 @@ const Dashboard1 = ({ monthexpiry }) => {
       color: labelColors["Total Active Free Clients"],
     },
     {
-      link: "/admin/freeclient",
+      link: `/${role}/freeclient`,
       state: { clientStatus: "expired" },
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.inActiveFreetrial,
@@ -189,7 +191,7 @@ const Dashboard1 = ({ monthexpiry }) => {
           monthexpiry?.data?.clientCountTotal || 0,
           monthexpiry?.data?.clientCountActive || 0,
           monthexpiry?.data.clientCountTotal -
-            monthexpiry?.data.clientCountActive || 0,
+          monthexpiry?.data.clientCountActive || 0,
         ],
         backgroundColor: [
           "#3498db",
@@ -212,7 +214,7 @@ const Dashboard1 = ({ monthexpiry }) => {
         data: [
           monthexpiry?.data?.clientCountActive || 0,
           monthexpiry?.data.clientCountTotal -
-            monthexpiry?.data.clientCountActive || 0,
+          monthexpiry?.data.clientCountActive || 0,
         ],
         backgroundColor: ["#2ecc71", "#e74c3c", "#f1c40f"],
       },
@@ -296,7 +298,7 @@ const Dashboard1 = ({ monthexpiry }) => {
               <h3 className="my-3 text-center">{item.value1}</h3>
               <div className="text-center">
                 <Link
-                  to={item.link}
+                  to={{ pathname: item.link }} state={item.state || {}}
                   className="btn btn-light"
                   style={{
                     borderRadius: "20px",

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { Addplanbyadmin, getcategoryplan, getplanlist, getActivecategoryplan } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 
@@ -66,7 +66,6 @@ const Addplan = () => {
 
     const onSubmit = async (values) => {
         setLoading(!loading);
-        console.log("values", values.Status)
         const req = {
             title: "",
             description: values.description,
@@ -82,35 +81,14 @@ const Addplan = () => {
 
 
             if (response.status) {
-                Swal.fire({
-                    title: "Create Successful!",
-                    text: response.message,
-                    icon: "success",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
-                setTimeout(() => {
-                    navigate("/employee/plan");
-                }, 1500);
+                showCustomAlert('Success',"Create Successful!",navigate,"/employee/plan")
             } else {
-                Swal.fire({
-                    title: "Error",
-                    text: response.message,
-                    icon: "error",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
+                showCustomAlert('error', response.message)
                 setLoading(false)
             }
         } catch (error) {
             setLoading(false)
-            Swal.fire({
-                title: "Error",
-                text: "An unexpected error occurred. Please try again later.",
-                icon: "error",
-                timer: 1500,
-                timerProgressBar: true,
-            });
+            showCustomAlert('error', "An unexpected error occurred. Please try again later.")
         }
     };
 
@@ -228,7 +206,6 @@ const Addplan = () => {
             <DynamicForm
                 fields={fields}
                 formik={formik}
-                page_title="Add New Package"
                 btn_name="Add Package"
                 btn_name1="Cancel"
                 sumit_btn={true}

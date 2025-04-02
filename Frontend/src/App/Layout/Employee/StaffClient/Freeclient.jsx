@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Table from '../../../Extracomponents/Table1';
 import { Settings2, Eye, SquarePen, Trash2, Download, ArrowDownToLine } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { FreeClientList, FreeClientListWithFilter, getstaffperuser, PlanSubscription, BasketSubscription, DeleteFreeClient, getcategoryplan, getplanlist, getPlanbyUser, BasketAllActiveList } from '../../../Services/Admin/Admin';
 import { Tooltip } from 'antd';
 import { image_baseurl } from '../../../../Utils/config';
@@ -11,6 +10,8 @@ import { fDate, fDateTime } from '../../../../Utils/Date_formate';
 import { IndianRupee } from 'lucide-react';
 import { exportToCSV } from '../../../../Utils/ExportData';
 import Loader from '../../../../Utils/Loader';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+
 
 const Freeclient = () => {
 
@@ -239,44 +240,20 @@ const Freeclient = () => {
 
     const DeleteClient = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this member? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert("confirm", 'Do you want to delete this member This action cannot be undone.');
+
 
             if (result.isConfirmed) {
                 const response = await DeleteFreeClient(_id, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The Client has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
+                    showCustomAlert("Success", 'Do you want to delete this member This action cannot be undone.');
                     getdemoclient();
-
                 }
             } else {
-
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The  deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
+                showCustomAlert("error", 'The deletion was cancelled.');
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the Member.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
-
+            showCustomAlert("error", 'The deletion was cancelled.');
         }
     };
 
@@ -336,32 +313,15 @@ const Freeclient = () => {
 
 
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: response.message || 'Plan updated successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
-
+                showCustomAlert("Success", response.message);
                 setUpdatetitle({ plan_id: "", client_id: "", price: "" });
                 getdemoclient();
                 handleCancel()
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: response.message || 'There was an error updating the Plan.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", response.message);
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'Server error',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'Server error');
         }
     };
 
@@ -373,34 +333,18 @@ const Freeclient = () => {
             const data = { basket_id: basketdetail.basket_id, client_id: client._id, price: basketdetail.price, };
             const response = await BasketSubscription(data, token);
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Basket service updated successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
-
+                showCustomAlert("Success", 'Basket service updated successfully')
                 setBasketdetail({ basket_id: "", client_id: "", price: "" });
                 getdemoclient();
                 handleCancel()
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: response.message || 'There was an error updating the Basket.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", response.message)
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error updating the Basket.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'There was an error updating the Basket.')
         }
     };
+
 
 
 
@@ -535,7 +479,7 @@ const Freeclient = () => {
             <div>
                 <div>
                     <div className="page-content">
-                        <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3 ">
+                        <div className="page-breadcrumb  d-flex align-items-center mb-3 ">
                             <div className="breadcrumb-title pe-3">{header}</div>
                             <div className="ps-3">
                                 <nav aria-label="breadcrumb">
@@ -552,7 +496,7 @@ const Freeclient = () => {
                         <hr />
                         <div className="card">
                             <div className="card-body">
-                                <div className="d-lg-flex align-items-center mb-4 gap-3 justify-content-between">
+                                <div className="d-sm-flex align-items-center mb-4 gap-3 justify-content-between">
                                     <div className="position-relative">
                                         <input
                                             type="text"
@@ -567,12 +511,12 @@ const Freeclient = () => {
                                     </div>
 
                                     <div
-                                        className="ms-2"
+                                        className="ms-0 ms-sm-2 mt-2 mt-sm-0"
                                         onClick={(e) => getexportfile()}
                                     >
                                         <button
                                             type="button"
-                                            className="btn btn-primary float-end"
+                                            className="btn btn-primary float-sm-end"
                                             data-toggle="tooltip"
                                             data-placement="top"
                                             title="Export To Excel"
@@ -591,7 +535,7 @@ const Freeclient = () => {
 
                                 {isLoading ? (
                                     <Loader />
-                                ) : (
+                                ) : clients?.length > 0 ? (
                                     <>
 
                                         <Table
@@ -602,6 +546,10 @@ const Freeclient = () => {
                                             onPageChange={handlePageChange}
                                         />
                                     </>
+                                ) : (
+                                    <div className="text-center mt-5">
+                                        <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                                    </div>
                                 )}
                             </div>
                         </div>

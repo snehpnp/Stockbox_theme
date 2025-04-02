@@ -13,11 +13,35 @@ export async function LoginApi(data) {
   }
 }
 
-
-
 export async function UserLoginApi(data) {
   try {
-    const response = await axios.post(`${Config.base_url}api/client/login`, data);
+    const response = await axios.post(
+      `${Config.base_url}api/client/login`,
+      data
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log("Error fetching login:", error.message || error);
+    throw error;
+  }
+}
+
+export async function UserSignupApi(data) {
+  try {
+    const response = await axios.post(`${Config.base_url}api/client/add`, data);
+
+    return response.data;
+  } catch (error) {
+    console.log("Error fetching login:", error.message || error);
+    throw error;
+  }
+}
+
+
+export async function UserOtpSubmit(data) {
+  try {
+    const response = await axios.post(`${Config.base_url}api/client/otp_submit`, data);
 
     return response.data;
   } catch (error) {

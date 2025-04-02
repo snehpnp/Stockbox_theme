@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
-import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+
+
+
+import { redirect, useNavigate } from "react-router-dom";
 import { LoginApi } from "../../Services/Auth/Login";
 import { image_baseurl } from "../../../Utils/config";
 import { Link } from "react-router-dom";
 import BgImg from "./bg-login-img.png";
+import showCustomAlert from "../../Extracomponents/CustomAlert/CustomAlert";
 
 import { basicsettinglist } from "../../Services/Admin/Admin";
 import $ from "jquery";
 
 const Login = () => {
-  let logoSrc =
-    "https://www.pms.crmplus.in/files/system/_file5c2e1123e834d-site-logo.png";
+
 
   const navigate = useNavigate();
   const [information, setInformation] = useState([]);
@@ -23,12 +25,9 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     if (username.trim() === "" || password.trim() === "") {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Please enter both username and password",
-      });
+      showCustomAlert("error", "Please enter both Username and Password", navigate, null);
       return;
     }
 
@@ -39,40 +38,34 @@ const Login = () => {
     if (ResData.status) {
       localStorage.setItem("token", ResData.data?.token);
       localStorage.setItem("id", ResData.data?.id);
-      localStorage.setItem(
-        "Role",
-        ResData?.data?.Role === 0
-          ? "SUPERADMIN"
-          : ResData?.data?.Role === 1
-            ? "ADMIN"
-            : ResData?.data?.Role === 2
-              ? "EMPLOYEE"
-              : ""
-      );
 
-      Swal.fire({
-        icon: "success",
-        title: "Success",
-        text: "Login successful!",
-        timer: 1500,
-      }).then(() => {
-        if (ResData?.data?.Role === 0) {
-          navigate("/superadmin/dashboard");
-        } else if (ResData?.data?.Role === 1) {
-          navigate("/admin/dashboard");
-        } else if (ResData?.data?.Role === 2) {
-          navigate("/employee/dashboard");
-        }
+      const roleMap = {
+        0: "SUPERADMIN",
+        1: "ADMIN",
+        2: "EMPLOYEE",
+      };
+
+      const role = roleMap[ResData?.data?.Role] || "";
+      localStorage.setItem("Role", role);
+
+      const redirectTo = () => {
+        const routes = {
+          0: "/superadmin/company",
+          1: "/admin/dashboard",
+          2: "/employee/dashboard",
+        };
+        navigate(routes[ResData?.data?.Role] || "/");
         window.location.reload();
-      });
+      };
+
+      showCustomAlert("success", "Login successful!", navigate, redirectTo);
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: ResData.message,
-      });
+      showCustomAlert("error", ResData.message, navigate, null);
     }
   };
+
+
+
 
   const getsettinglist = async () => {
     try {
@@ -115,7 +108,9 @@ const Login = () => {
             <div className="login-wrapper">
               <div className="background"></div>
               <div className="login-container active">
-                <img src={logoSrc} alt="Logo" />
+                <img
+                  src={`${image_baseurl}uploads/basicsetting/${information[0]?.logo}`}
+                  alt="Logo" />
                 <div className="inner-div mt-4">
                   <form className="login-form" onSubmit={handleLogin}>
                     <div className="form-item">
@@ -254,7 +249,9 @@ const Login = () => {
           ) : (
             <div className="glass-container">
               <div className="wrapper">
-                <img src={logoSrc} alt="Logo" />
+                <img
+                  src={`${image_baseurl}uploads/basicsetting/${information[0]?.logo}`}
+                  alt="Logo" />
                 <form onSubmit={handleLogin}>
                   <div>
                     <label htmlFor="username-input">

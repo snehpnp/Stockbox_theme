@@ -4,10 +4,9 @@ import { useNavigate, Link, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import * as Config from "../../../../Utils/config";
 import { Tooltip } from 'antd';
-import Swal from "sweetalert2";
 import { Addstockbasketform } from "../../../Services/Admin/Admin";
 import Content from "../../../components/Contents/Content";
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 const AddStock = () => {
 
@@ -15,14 +14,15 @@ const AddStock = () => {
   const { id: basket_id } = useParams();
   const [selectedServices, setSelectedServices] = useState([]);
   const [options, setOptions] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [formikValues, setFormikValues] = useState({});
   const [weightagecounting, setWeightagecounting] = useState(0);
   const [currentlocation, setCurrentlocation] = useState({})
   const [header, setHeader] = useState("Add Stock")
-
-
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [loadingPublish, setLoadingPublish] = useState(false);
+  const [loadingOptions, setLoadingOptions] = useState(false);
+  const [description, setDescription] = useState("")
 
   const navigate = useNavigate();
 
@@ -43,8 +43,8 @@ const AddStock = () => {
       setOptions([]);
       return;
     }
+    setLoadingOptions(true);
 
-    setLoading(true);
     try {
       const response = await axios.post(
         `${Config.base_url}stock/getstockbysymbol`,
@@ -64,10 +64,9 @@ const AddStock = () => {
         setOptions([]);
       }
     } catch (error) {
-      console.error("Error fetching options:", error);
       setOptions([]);
     } finally {
-      setLoading(false);
+      setLoadingOptions(false);
     }
   };
 
@@ -131,10 +130,8 @@ const AddStock = () => {
   };
 
   const handleSubmit = async (status) => {
-    setLoading(true);
-
     if (Object.keys(formikValues).length === 0) {
-      Swal.fire("Warning", "Please add stock", "warning");
+      showCustomAlert("error", "Please add stock", null, null)
       return;
     }
 
@@ -144,11 +141,7 @@ const AddStock = () => {
 
 
     if (invalidStocks.length > 0) {
-      Swal.fire(
-        "Error",
-        "Each stock's weightage should be greater than zero.",
-        "error"
-      );
+      showCustomAlert("error", "Each stock's weightage should be greater than zero.", null, null)
       return;
     }
 
@@ -159,16 +152,12 @@ const AddStock = () => {
     });
 
     if (totalWeightage !== 100) {
-      Swal.fire(
-        "Error",
-        "Total weightage of all stocks must be exactly 100.",
-        "error"
-      );
+      showCustomAlert("error", "Total weightage of all stocks must be exactly 100.", null, null)
       return;
     }
 
     if (!basket_id) {
-      Swal.fire("Error", "Basket ID is missing. Please try again.", "error");
+      showCustomAlert("error", "Basket ID is missing. Please try again.", null, null)
       return;
     }
 
@@ -177,11 +166,7 @@ const AddStock = () => {
     );
 
     if (emptyType.length > 0) {
-      Swal.fire(
-        "Warning",
-        "Please select type.",
-        "warning"
-      );
+      showCustomAlert("error", "Please select type.", null, null)
       return;
     }
 
@@ -194,25 +179,29 @@ const AddStock = () => {
       basket_id,
       stocks: stocksWithStatus,
       publishstatus: status === 1,
+      comments: description
     };
 
+
+    if (status === 1) {
+      setLoadingPublish(true);
+    } else {
+      setLoadingSubmit(true);
+    }
 
     try {
       const response = await Addstockbasketform(requestData);
       if (response?.status) {
-        Swal.fire("Success", response.message, "success");
-        setTimeout(() => navigate(redirectTo), 1500);
+        showCustomAlert("Success", response.message, navigate, redirectTo)
+
       } else {
-        Swal.fire("Error", response.message, "error");
+        showCustomAlert("error", response.message, null, null)
       }
     } catch (error) {
-      setLoading(false);
-
-      Swal.fire(
-        "Error",
-        "An unexpected error occurred. Please try again.",
-        "error"
-      );
+      showCustomAlert("error", "An unexpected error occurred. Please try again.", null, null)
+    } finally {
+      setLoadingSubmit(false);
+      setLoadingPublish(false);
     }
 
   };
@@ -236,9 +225,10 @@ const AddStock = () => {
   }, [formikValues])
 
 
+
   return (
     <Content
-      Page_title="Add Stock"
+      Page_title={header}
       button_status={false}
       backbutton_status={true}
       backForword={true}
@@ -256,19 +246,17 @@ const AddStock = () => {
                 placeholder="Search and select stocks..."
                 isClearable
                 isMulti
-                isLoading={loading}
+                isLoading={loadingOptions}
                 noOptionsMessage={() =>
-                  loading ? "Loading..." : "No options found"
+                  loadingOptions ? "Loading..." : "No options found"
                 }
               />
               <div className="row">
-                <div className="col-md-6"></div>
+                <div className="col-md-6"> <h5 className="mt-3">Stock</h5></div>
                 <div className="col-md-6 text-end">
                   <h6 className="mt-3">Total Weightage : {weightagecounting}  </h6>
                 </div>
-
               </div>
-              <hr />
             </div>
           </div>
           <form>
@@ -335,28 +323,42 @@ const AddStock = () => {
                               readOnly={fieldKey === "name"}
                             />
                           )}
+
+
                         </div>
+
                       )
                   )}
+
                 </div>
+
               </div>
             )))}
+            <div style={{ marginTop: "15px" }}>
+              <label>Rationale</label>
+              <textarea
+                className="form-control"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
+
+
             <button
               type="button"
               className="btn btn-primary mt-4"
               onClick={() => handleSubmit(0)}
-              disabled={loading}
+              disabled={loadingSubmit}
             >
-              {loading ? "Submitting..." : "Submit"}
+              {loadingSubmit ? "Submitting..." : "Submit"}
             </button>
             <button
               type="button"
               className="btn btn-primary mt-4 ms-2"
               onClick={() => handleSubmit(1)}
-              disabled={loading}
+              disabled={loadingPublish}
             >
-              {loading ? "Publishing..." : " Submit & Publish"}
-
+              {loadingPublish ? "Publishing..." : "Submit & Publish"}
             </button>
           </form>
         </div>

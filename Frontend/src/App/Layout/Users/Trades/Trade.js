@@ -1,1533 +1,838 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
 import { Link } from "react-router-dom";
-import DataTable from "react-data-table-component";
-import { Eye } from "lucide-react";
-import { Button, Tooltip } from "antd";
 import ReusableModal from "../../../components/Models/ReusableModal";
+import {
+  GetSignalClient,
+  GetServicedata,
+  GetCloseSignalClient,
+  PlaceOrderApi,
+  GetUserData,
+  ExitPlaceOrderData,
+  GetNsePriceData
+} from "../../../Services/UserService/User";
+
+import { fDate, fDateTimeH } from "../../../../Utils/Date_formate";
+import { image_baseurl } from "../../../../Utils/config";
+
+import Loader from "../../../../Utils/Loader";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+
+
+
 
 function Trade() {
 
-  const [selectedPlan, setSelectedPlan] = useState("all");
+
+  const token = localStorage.getItem("token");
+  const userid = localStorage.getItem("id");
+
+  const [isLoading, setIsLoading] = useState(true)
+
   const [model, setModel] = useState(false);
+  const [calltypedata, setCalltypedata] = useState("");
+  const [viewModel, setViewModel] = useState(false);
+  const [exitModel, setExitModel] = useState(false);
+  const [service, setService] = useState([]);
+
+  const [tradeData, setTradeData] = useState({ live: [], close: [] });
+  const [description, setDescription] = useState("");
+  const [brokerstatus, setBrokerstatus] = useState([])
+  const [targetEnabled, setTargetEnabled] = useState(false);
+  const [checkdata, setCheckdata] = useState([])
 
 
-  const handleSelectChange = (event) => {
-    setSelectedPlan(event.target.value);
+
+  const [orderdata, setOrderdata] = useState({
+    id: "",
+    signalid: "",
+    quantity: "",
+    price: "",
+    tsprice: "",
+    tsstatus: "",
+    slprice: "",
+    exitquantity: ""
+  })
+
+
+
+
+  const [exitorderdata, setExitOrderdata] = useState({
+    id: "",
+    signalid: "",
+    quantity: "",
+    price: "",
+    entrytype: ""
+  })
+
+
+  const UpdateExitdata = (item) => {
+    setExitModel(true)
+    setExitOrderdata({
+      ...item,
+      price: item.price,
+      quantity: item.order_quantity,
+    });
   };
 
-  const data = [
-    {
-      id: 1,
-      sno: "1",
-      segment: "Cash ",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 2,
-      sno: "2",
-      segment: "Future",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 3,
-      sno: "3",
-      segment: "Option",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 4,
-      sno: "4",
-      segment: "Cash",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 5,
-      sno: "5",
-      segment: "Future",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 6,
-      sno: "6",
-      segment: "Option",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 7,
-      sno: "7",
-      segment: "Cash",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 8,
-      sno: "8",
-      segment: "Future",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 9,
-      sno: "9",
-      segment: "Option",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 10,
-      sno: "10",
-      segment: "Cash",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 11,
-      sno: "11",
-      segment: "Future",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-    {
-      id: 12,
-      sno: "12",
-      segment: "Option",
-      type: "Short Term",
-      symbol: "TATAMotors-EQ",
-      price: "₹778",
-      date: "14Nov2024",
-      time: "15:19",
-      target1: "₹710",
-      target2: "₹720",
-      target3: "₹730",
-      stoploss: "₹770",
-      hold: "(15-30days)",
-    },
-  ];
 
-  const columns1 = [
-    { name: "S.NO.", selector: (row) => row.sno, sortable: true },
-    {
-      name: "Segment",
-      selector: (row) => row.segment,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Type",
-      selector: (row) => row.type,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Trading Symbol",
-      selector: (row) => row.symbol,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Entry Price",
-      selector: (row) => row.price,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Entry Date",
-      selector: (row) => row.date,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Entry Time",
-      selector: (row) => row.time,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Target1",
-      selector: (row) => row.target1,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Target2",
-      selector: (row) => row.target2,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Target3",
-      selector: (row) => row.target3,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Stoploss",
-      selector: (row) => row.stoploss,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Hold Duration",
-      selector: (row) => row.hold,
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Buy/Sell",
-      selector: (row) => (
-        <div>
-          <button className="btn btn-success">Buy</button>
-        </div>
-      ),
-      sortable: true,
-      width: "180px",
-    },
-    {
-      name: "Action",
-      selector: (row) => (
-        <div>
-          <Tooltip placement="top" title="View">
-            <Eye
-              style={{ marginRight: "10px" }}
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
-            />
-          </Tooltip>
-        </div>
-      ),
-    },
-  ];
 
-  const customStyles = {
-    header: {
-      style: {
-        fontSize: "20px",
-        fontWeight: "bold",
-        color: "#4A4A4A",
-        borderRadius: "20px",
-      },
-    },
-    rows: {
-      style: {
-        minHeight: "72px",
-        "&:hover": {
-          backgroundColor: "#e0e0e0",
-        },
-      },
-    },
-    headCells: {
-      style: {
-        fontSize: "16px",
-        fontWeight: "bold",
-        backgroundColor: "#0092e4 !important",
-        color: "#fff",
-      },
-    },
-    cells: {
-      style: {
-        fontSize: "15px",
-        color: "#4A4A4A",
-      },
-    },
+
+
+  const UpdateData = (item) => {
+    setModel(true);
+    setOrderdata({
+      ...item,
+      price: item.price,
+      tsprice: Math.max(item.tag1 || 0, item.tag2 || 0, item.tag3 || 0),
+      slprice: item.stoploss,
+      quantity: item.order_quantity,
+      exitquantity: item.order_quantity
+    });
   };
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filteredData, setFilteredData] = useState(data);
 
-  // Function to handle search input changes
-  const handleSearch = (event) => {
-    const query = event.target.value;
-    setSearchQuery(query);
 
-    // Filter the data based on the search query
-    if (query) {
-      const filteredResults = data.filter((item) =>
-        item.segment.toLowerCase().includes(query.toLowerCase())
-      );
-      setFilteredData(filteredResults);
-    } else {
-      // If the query is empty, reset to the original data
-      setFilteredData(data);
+
+
+  const [selectedService, setSelectedService] = useState(
+    "66d2c3bebf7e6dc53ed07626"
+  );
+
+
+  const [selectedTab, setSelectedTab] = useState("live");
+
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  useEffect(() => {
+    fetchServiceData();
+    fetchData();
+    fetchuserDetail()
+    getnsedata()
+  }, [selectedService]);
+
+
+
+
+  useEffect(() => {
+    fetchData();
+  }, [page, selectedTab]);
+
+
+
+  useEffect(() => {
+    setPage(1);
+  }, [selectedTab]);
+
+
+
+
+  const fetchData = async () => {
+    if (selectedTab === "live") {
+      await fetchTradeData();
+    } else if (selectedTab === "close") {
+      await fetchCloseData();
     }
   };
 
-  return (
-    <Content
-      Page_title="Trade"
-      button_title="Add Trade"
-      button_status={true}
-    >
 
-      <div className="card">
-        <div className="card-body">
-          <div>
-            <div>
-              <label htmlFor="planSelect" className="mb-1">
-                Plans For You
-              </label>
-              <div className="col-lg-4 d-flex">
-                <select
-                  id="planSelect"
-                  className="form-select"
-                  onChange={handleSelectChange}
-                  value={selectedPlan}
+
+
+  const fetchServiceData = async () => {
+    try {
+      const response = await GetServicedata(token);
+      if (response.status)
+        setService(response.data);
+    } catch (error) {
+      console.error("Error fetching services:", error);
+    }
+  };
+
+
+  const getnsedata = async () => {
+    try {
+      const response = await GetNsePriceData(token);
+      const checkdata = response?.data?.data?.map((item) => {
+        return item
+      })
+      setCheckdata(checkdata)
+
+    } catch (error) {
+      console.error("Error fetching services:", error);
+    }
+  };
+
+
+
+
+
+  const fetchuserDetail = async () => {
+    try {
+      const response = await GetUserData(userid, token);
+      if (response.status)
+        setBrokerstatus(response?.data?.brokerid);
+
+    } catch (error) {
+      console.error("Error fetching services:", error);
+    }
+  };
+
+
+
+  const PlanceOrderdata = async () => {
+    try {
+      const data = {
+        id: userid,
+        signalid: calltypedata?._id,
+        quantity: orderdata?.quantity,
+        price: orderdata?.price,
+        tsprice: orderdata?.tsprice,
+        tsstatus: targetEnabled,
+        slprice: orderdata?.slprice,
+        exitquantity: orderdata?.quantity,
+      };
+
+      const response = await PlaceOrderApi(data, token, brokerstatus);
+
+      if (response.status) {
+        showCustomAlert("Success", response.message || "Order Placed Successfully!")
+      } else {
+        showCustomAlert("error", response.message || "Failed to place the order. Please try again.")
+      }
+    } catch (error) {
+      showCustomAlert("error", "An error occurred while placing the order. Please check your network or try again later.")
+
+    }
+  };
+
+
+
+  const ExitPlaceOrder = async () => {
+    try {
+      const data = {
+        id: userid,
+        signalid: calltypedata?._id,
+        quantity: exitorderdata?.quantity,
+        price: exitorderdata?.price,
+
+      };
+      const response = await ExitPlaceOrderData(data, token, brokerstatus);
+      if (response.status) {
+        showCustomAlert("Success", response.message || "Order Exit Successfully!")
+      } else {
+        showCustomAlert("error", response.message || "Order Failed")
+      }
+    } catch (error) {
+      showCustomAlert("error", "An error occurred while placing the order. Please check your network or try again later.")
+    }
+  };
+
+
+
+
+
+  const fetchTradeData = async () => {
+    try {
+      const data = {
+        page: page,
+        service_id: selectedService,
+        client_id: userid,
+        search: "",
+      };
+      const response = await GetSignalClient(data, token);
+
+      if (response.status) {
+        setTradeData((prev) => ({ ...prev, live: response.data }));
+        setTotalPages(response.pagination?.totalPages || 1);
+      }
+    } catch (error) {
+      console.error("Error fetching trade data:", error);
+    }
+    setIsLoading(false)
+  };
+
+
+
+
+  const fetchCloseData = async () => {
+    try {
+      const data = {
+        page: page,
+        service_id: selectedService,
+        client_id: userid,
+        search: "",
+      };
+      const response = await GetCloseSignalClient(data, token);
+      if (response.status) {
+        setTradeData((prev) => ({ ...prev, close: response.data }));
+        setTotalPages(response.pagination?.totalPages || 1);
+      }
+    } catch (error) {
+      console.error("Error fetching close trade data:", error);
+    }
+    setIsLoading(false)
+  };
+
+
+
+
+  const handleDownload = (item) => {
+    if (item.report == null) {
+      showCustomAlert("error", "No Data Available To See")
+      return
+    } else {
+      const url = `${image_baseurl}uploads/report/${item.report}`;
+      const link = document.createElement("a");
+      link.href = url;
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+
+
+  const calculatePnL = (item) => {
+    if (!item || !item.price || !item.calltype) return "N/A";
+
+    const entryPrice = parseFloat(item.price);
+    const targetPrice = item.closeprice ? parseFloat(item.closeprice) : parseFloat(item.targetprice1);
+    const callType = item.calltype.toUpperCase();
+
+    if (isNaN(entryPrice) || isNaN(targetPrice)) return "N/A";
+
+    let profitLossPercentage = 0;
+
+    if (callType === "BUY") {
+      profitLossPercentage = ((targetPrice - entryPrice) / entryPrice) * 100;
+    } else if (callType === "SELL") {
+      profitLossPercentage = ((entryPrice - targetPrice) / entryPrice) * 100;
+    } else {
+      return "Invalid Call Type";
+    }
+
+    return profitLossPercentage.toFixed(2) + "%";
+  };
+
+
+
+  const PotentialLeftButton = (item) => {
+    if (!item || !checkdata) return null;
+    const matchedStock = checkdata?.find(stock => stock?.SYMBOL === item?.stock);
+    const entryPrice = parseFloat(matchedStock?.price) || 0;
+
+
+    const targetPrices = [
+      parseFloat(item?.tag1) || 0,
+      parseFloat(item?.tag2) || 0,
+      parseFloat(item?.tag3) || 0
+    ].filter(price => price > 0);
+
+    let potentialLeft = 0;
+
+    if (item?.calltype === "BUY") {
+      const highestTarget = Math.max(...targetPrices);
+      potentialLeft = highestTarget - entryPrice;
+
+    } else if (item?.calltype === "SELL") {
+      const lowestTarget = Math.min(...targetPrices);
+      potentialLeft = entryPrice - lowestTarget;
+
+
+    }
+
+    const potentialPercentage = ((potentialLeft / entryPrice) * 100).toFixed(2);
+    return <div>{potentialPercentage}</div>;
+
+
+  };
+
+
+
+
+
+  const renderTradeCard = (item) => (
+    <div className="row" key={item._id}>
+      <div className="col-md-12">
+        <div className="trade-card shadow" style={{ backgroundColor: "#dcedf2" }}>
+          <div className="row mb-3">
+            <div className="col-lg-3">
+              <span className="date-btn">
+                <i class="fa-solid fa-calendar me-3"></i>
+                <b>{fDateTimeH(item?.created_at)}</b>
+              </span>
+            </div>
+
+            {selectedTab === "live" && <div className="col-lg-3">
+              <button className="btn btn-secondary" style={{ borderRadius: "20px", padding: "0px 10px", fontSize: "15px" }}>
+                Sugg. Qty : {item?.lot}
+              </button>
+            </div>}
+
+            <div className={`${selectedTab === "live" ? "col-lg-3" : "offset-5 col-lg-2"} `}>
+              <button className="btn btn-secondary" style={{ borderRadius: "20px", padding: "0px 10px", fontSize: "15px" }}>
+                {item?.callduration}
+              </button>
+            </div>
+
+
+
+            {selectedTab === "live" ?
+              <div className="col-lg-3 text-end">
+                <button className="btn btn-success d-flex " style={{ marginLeft: "40px", padding: "0px 10px", fontSize: "15px" }}>
+                  Potential Left : {PotentialLeftButton(item)}%
+                </button>
+              </div> :
+              <div className="col-lg-2 text-end ">
+                <button className={`btn btn-success ${parseFloat(calculatePnL(item)) >= 0 ? "btn-success" : "btn-danger"}`} style={{ padding: "0px 10px", fontSize: "15px" }}>
+                  P&L : {calculatePnL(item)}
+                </button>
+              </div>
+            }
+          </div>
+
+          <div className="row bg-white">
+
+            <div className="col-md-2 d-flex align-items-center">
+              <div className="trade-header">
+                <div className="mb-3">
+                  <span className="trade-type">Hold Duration : <br /> {item?.callduration === "Intraday" ? "Intraday" : item?.callduration === "Short Term" ? "(15-30 days)" :
+                    item?.callduration === "Medium Term" ? "(Above 3 month)" : "(Above 1 year)"}</span>
+                </div>
+                <div>
+                  <span className="trade-type1">
+                    {service?.find((srv) => srv?._id === item?.service)?.title}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-md-12 col-lg-7">
+              <div className="trade-content">
+                <div className="d-sm-flex justify-content-between tradehead mb-3">
+                  <h3>{item.tradesymbol || "Trade Symbol"}</h3>
+                  {/* <span>{item?.stock}</span> */}
+                  {selectedTab !== "live" && (
+                    <span><b>Entry Type</b>: {item?.calltype} {item?.entrytype}</span>)}
+                </div>
+                <div className="trade-details row justify-content-center">
+                  {[
+                    { label: "Entry price", value: `₹${item?.price}` },
+                    ...(selectedTab === "close"
+                      ? [{ label: "Exit Price", value: item?.closeprice || "--" }]
+                      : []),
+                    ...(selectedTab === "live" ? [{ label: "Entry Type", value: `${item?.calltype} ${item?.entrytype}` }] : []),
+                    { label: "Stoploss", value: item?.stoploss || "--" },
+                    { label: "Target1", value: item?.tag1 || "--" },
+                    { label: "Target2", value: item?.tag2 || "--" },
+                    { label: "Target3", value: item?.tag3 || "--" },
+
+                  ].map((detail, idx) => (
+                    <div
+                      className={`col-md-${idx < 2 ? 4 : 4} d-flex justify-content-md-${idx < 2 ? "start" : "start"
+                        }`}
+                      key={idx}
+                    >
+                      <div>
+                        <strong>{detail.label}:</strong>
+                        <p>{detail.value}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+              </div>
+            </div>
+
+            <div className="col-md-12 col-lg-3 d-flex align-items-center">
+              <div className="d-flex flex-column w-100">
+
+                {selectedTab === "close" ? (
+                  <button
+                    className="btn w-100 my-1"
+                    style={{
+                      backgroundColor:
+                        item?.purchased === false || new Date(item?.created_at) > new Date()
+                          ? "#ccc"
+                          : "#0d6efd",
+                      color: "black",
+                      border: "1px solid black",
+                    }}
+                    disabled={
+                      item?.purchased === false || new Date(item?.created_at) > new Date()
+                    }
+                    onClick={() => {
+                      UpdateExitdata(item);
+                      setCalltypedata(item);
+                    }}
+                  >
+                    {item?.purchased === false || new Date(item?.created_at) > new Date()
+                      ? "Trade Closed"
+                      : "EXIT"}
+                  </button>
+
+                ) : (
+                  <button
+                    className="btn w-100 my-1"
+                    onClick={() => {
+                      setCalltypedata(item);
+                      UpdateData(item)
+                    }}
+                    style={{ backgroundColor: item?.calltype ? "green" : "red", color: "white" }}
+                  >
+                    {`BUY${item?.purchased ? " (Add more)" : ""}`}
+
+                  </button>
+
+                )}
+
+                <button
+                  className="btn btn-secondary w-100 my-1"
+                  onClick={() => {
+                    setViewModel(true);
+                    setDescription(item?.description);
+
+                  }}
                 >
-                  <option value="" disabled>
-                    Select Plans
-                  </option>
-                  <option value="all">All</option>
-                  <option value="cash">Cash</option>
-                  <option value="future">Future</option>
-                  <option value="option">Option</option>
-                </select>
+                  View Detail
+                </button>
+                <button
+                  className="btn w-100 my-1"
+                  style={{
+                    backgroundColor: item?.report ? "green" : "#ccc",
+                    color: item?.report ? "white" : "black",
+                    border: "1px solid black",
+                  }}
+                  onClick={() => handleDownload(item)}
+                  disabled={!item?.report} // Button disabled if report is not available
+                >
+                  View Analysis
+                </button>
+
+
+
+                {item?.purchased && (
+                  <Link to="/user/broker-response">
+                    <button className="btn btn-secondary w-100 my-1">
+                      Broker Response
+                    </button>
+                  </Link>
+                )}
               </div>
             </div>
           </div>
-          <ul
-            className="nav nav-pills border-bottom mb-3 justify-content-center"
-            role="tablist"
+
+
+        </div>
+      </div>
+    </div>
+  );
+
+
+
+  const handlePageChange = (direction) => {
+    if (direction === "prev" && page > 1) {
+      setPage(page - 1);
+    } else if (direction === "next" && page < totalPages) {
+      setPage(page + 1);
+    }
+  };
+
+
+
+
+  return (
+    <Content Page_title="Trade" button_title="Add Trade" button_status={false}>
+      <div className="page-content">
+        <div>
+          <label htmlFor="planSelect" className="mb-1">
+            Plans For You
+          </label>
+          <div className="col-lg-4 d-flex">
+            <select
+              id="planSelect"
+              className="form-select"
+              value={selectedService}
+              onChange={(e) => setSelectedService(e.target.value)}
+            >
+              {service.map((item) => (
+
+                <option key={item._id} value={item._id}>
+                  {item?.title}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <ul
+          className="nav nav-pills border-bottom my-3 justify-content-center"
+          role="tablist"
+        >
+          {[
+            { tab: "live", icon: "bx-home", label: "Live Trade" },
+            { tab: "close", icon: "bx-user-pin", label: "Close Trade" },
+          ].map(({ tab, icon, label }) => (
+            <li className="nav-item" role="presentation" key={tab}>
+              <a
+                className={`nav-link ${selectedTab === tab ? "btn-primary active" : ""
+                  }`}
+                onClick={() => setSelectedTab(tab)}
+                role="tab"
+                style={{ cursor: "pointer" }}
+              >
+                <div className="d-flex align-items-center">
+                  <div className="tab-icon">
+                    <i className={`bx ${icon} font-18 me-1`} />
+                  </div>
+                  <div
+                    className={`tab-title ${selectedTab === tab ? "btn-primary" : ""
+                      }`}
+                  >
+                    {label}
+                  </div>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <div className="tab-content">
+          {isLoading ? <Loader /> : tradeData[selectedTab]?.map(renderTradeCard)}
+        </div>
+        <div className="pagination-controls d-flex justify-content-between mt-3">
+          <button
+            className="btn btn-secondary"
+            onClick={() => handlePageChange("prev")}
+            disabled={page === 1}
           >
-            <li className="nav-item" role="presentation">
-              <a
-                className="nav-link active"
-                data-bs-toggle="pill"
-                href="#primary-pills-home"
-                role="tab"
-                aria-selected="true"
-              >
-                <div className="d-flex align-items-center">
-                  <div className="tab-icon">
-                    <i className="bx bx-home font-18 me-1" />
-                  </div>
-                  <div className="tab-title">Live Trade </div>
-                </div>
-              </a>
-            </li>
-            <li className="nav-item" role="presentation">
-              <a
-                className="nav-link"
-                data-bs-toggle="pill"
-                href="#primary-pills-profile"
-                role="tab"
-                aria-selected="false"
-                tabIndex={-1}
-              >
-                <div className="d-flex align-items-center">
-                  <div className="tab-icon">
-                    <i className="bx bx-user-pin font-18 me-1" />
-                  </div>
-                  <div className="tab-title">Close Trade</div>
-                </div>
-              </a>
-            </li>
-          </ul>
-          <div className="tab-content" id="pills-tabContent">
-            <div
-              className="tab-pane fade show active"
-              id="primary-pills-home"
-              role="tabpanel"
-            >
-              {selectedPlan === "all" && (
-                <div className="row">
-                  <div className="col-md-12">
-                    <div className="trade-card shadow">
-                      <div className="row">
-                        <div className="col-md-2 d-flex align-items-center">
-                          <div className="trade-header ">
-                            <div>
-                              <span className="trade-time tradetime1">
-                                <b>18 Nov 2024</b>
-                                <p>17:08:20</p>
-                              </span>
-                            </div>
-                            <div className="mb-3">
-                              <span className="trade-type">Short Term</span>
-                            </div>
-                            <div>
-                              <span className="trade-type1">
-                                Cash,Future,Option
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <dv className="col-md-7">
-                          <div className="trade-content">
-                            <div className="d-flex justify-content-between tradehead mb-3">
-                              <h3>THERMAX-EQ</h3>
-                              <span className="trade-type1 mb-2">open</span>
-                            </div>
-
-                            <div className="trade-details">
-                              <div className="row justify-content-center">
-                                <div className="col-md-6">
-                                  <div>
-                                    <strong>Entry price:</strong>
-                                    <p> (₹100)</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-6 d-flex justify-content-end">
-                                  <div>
-                                    <strong>Hold duration:</strong>
-                                    <p>(15-30 days)</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3">
-                                  <div>
-                                    <strong>Stoploss:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </dv>
-                        <div className="col-md-3 d-flex align-items-center">
-                          <div className="">
-                            <button
-                              className="btn btn-success w-100"
-                              onClick={() => { setModel(true) }}
-                            >
-                              BUY
-                            </button>
-                            <button
-                              className="btn btn-success w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Detail
-                            </button>
-                            <button
-                              className="btn btn-success w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Ananlysis
-                            </button>
-                            <button
-                              className="btn btn-success w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              Broker Response
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {selectedPlan === "cash" && (
-                <div className="row">
-                  <div className="col-md-12">
-                    <div className="trade-card shadow">
-                      <div className="row">
-                        <div className="col-md-2 d-flex align-items-center">
-                          <div className="trade-header ">
-                            <div>
-                              <span className="trade-time tradetime1">
-                                <b>18 Nov 2024</b>
-                                <p>17:08:20</p>
-                              </span>
-                            </div>
-                            <div className="mb-3">
-                              <span className="trade-type">Short Term</span>
-                            </div>
-                            <div>
-                              <span className="trade-type1">
-                                Cash,Future,Option
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <dv className="col-md-7">
-                          <div className="trade-content">
-                            <div className="d-flex justify-content-between tradehead mb-3">
-                              <h3>THERMAX-EQ</h3>
-                              <span className="trade-type1 mb-2">open</span>
-                            </div>
-
-                            <div className="trade-details">
-                              <div className="row justify-content-center">
-                                <div className="col-md-6">
-                                  <div>
-                                    <strong>Entry price:</strong>
-                                    <p> (₹100)</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-6 d-flex justify-content-end">
-                                  <div>
-                                    <strong>Hold duration:</strong>
-                                    <p>(15-30 days)</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3">
-                                  <div>
-                                    <strong>Stoploss:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </dv>
-                        <div className="col-md-3 d-flex align-items-center">
-                          <div className="">
-                            <button
-                              className="btn btn-buy mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal"
-                            >
-                              BUY
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Detail
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Ananlysis
-                            </button>
-                            <button
-                              className="btn btn-view-detail w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              Broker Response
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="trade-card shadow">
-                      <div className="row">
-                        <div className="col-md-2 d-flex align-items-center">
-                          <div className="trade-header ">
-                            <div>
-                              <span className="trade-time tradetime1">
-                                <b>18 Nov 2024</b>
-                                <p>17:08:20</p>
-                              </span>
-                            </div>
-                            <div className="mb-3">
-                              <span className="trade-type">Short Term</span>
-                            </div>
-                            <div>
-                              <span className="trade-type1">
-                                Cash,Future,Option
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <dv className="col-md-7">
-                          <div className="trade-content">
-                            <div className="d-flex justify-content-between tradehead mb-3">
-                              <h3>THERMAX-EQ</h3>
-                              <span className="trade-type1 mb-2">open</span>
-                            </div>
-
-                            <div className="trade-details">
-                              <div className="row justify-content-center">
-                                <div className="col-md-6">
-                                  <div>
-                                    <strong>Entry price:</strong>
-                                    <p> (₹100)</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-6 d-flex justify-content-end">
-                                  <div>
-                                    <strong>Hold duration:</strong>
-                                    <p>(15-30 days)</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3">
-                                  <div>
-                                    <strong>Stoploss:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </dv>
-                        <div className="col-md-3 d-flex align-items-center">
-                          <div className="">
-                            <button
-                              className="btn btn-buy mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal"
-                            >
-                              BUY
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Detail
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Ananlysis
-                            </button>
-                            <button
-                              className="btn btn-view-detail w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              Broker Response
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {selectedPlan === "future" && (
-                <div className="row">
-                  <div className="col-md-12">
-                    {/* Card 1 */}
-                    <div className="trade-card shadow">
-                      <div className="row">
-                        <div className="col-md-2 d-flex align-items-center">
-                          <div className="trade-header ">
-                            <div>
-                              <span className="trade-time tradetime1">
-                                <b>18 Nov 2024</b>
-                                <p>17:08:20</p>
-                              </span>
-                            </div>
-                            <div className="mb-3">
-                              <span className="trade-type">Short Term</span>
-                            </div>
-                            <div>
-                              <span className="trade-type1">
-                                Cash,Future,Option
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <dv className="col-md-7">
-                          <div className="trade-content">
-                            <div className="d-flex justify-content-between tradehead mb-3">
-                              <h3>THERMAX-EQ</h3>
-                              <span className="trade-type1 mb-2">open</span>
-                            </div>
-
-                            <div className="trade-details">
-                              <div className="row justify-content-center">
-                                <div className="col-md-6">
-                                  <div>
-                                    <strong>Entry price:</strong>
-                                    <p> (₹100)</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-6 d-flex justify-content-end">
-                                  <div>
-                                    <strong>Hold duration:</strong>
-                                    <p>(15-30 days)</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3">
-                                  <div>
-                                    <strong>Stoploss:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </dv>
-                        <div className="col-md-3 d-flex align-items-center">
-                          <div className="">
-                            <button
-                              className="btn btn-buy mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal"
-                            >
-                              BUY
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Detail
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Ananlysis
-                            </button>
-                            <button
-                              className="btn btn-view-detail w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              Broker Response
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="trade-card shadow">
-                      <div className="row">
-                        <div className="col-md-2 d-flex align-items-center">
-                          <div className="trade-header ">
-                            <div>
-                              <span className="trade-time tradetime1">
-                                <b>18 Nov 2024</b>
-                                <p>17:08:20</p>
-                              </span>
-                            </div>
-                            <div className="mb-3">
-                              <span className="trade-type">Short Term</span>
-                            </div>
-                            <div>
-                              <span className="trade-type1">
-                                Cash,Future,Option
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <dv className="col-md-7">
-                          <div className="trade-content">
-                            <div className="d-flex justify-content-between tradehead mb-3">
-                              <h3>THERMAX-EQ</h3>
-                              <span className="trade-type1 mb-2">open</span>
-                            </div>
-
-                            <div className="trade-details">
-                              <div className="row justify-content-center">
-                                <div className="col-md-6">
-                                  <div>
-                                    <strong>Entry price:</strong>
-                                    <p> (₹100)</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-6 d-flex justify-content-end">
-                                  <div>
-                                    <strong>Hold duration:</strong>
-                                    <p>(15-30 days)</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3">
-                                  <div>
-                                    <strong>Stoploss:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </dv>
-                        <div className="col-md-3 d-flex align-items-center">
-                          <div className="">
-                            <button
-                              className="btn btn-buy mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal"
-                            >
-                              BUY
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Detail
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Ananlysis
-                            </button>
-                            <button
-                              className="btn btn-view-detail w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              Broker Response
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {selectedPlan === "option" && (
-                <div className="row">
-                  <div className="col-md-12">
-                    {/* Card 1 */}
-                    <div className="trade-card shadow">
-                      <div className="row">
-                        <div className="col-md-2 d-flex align-items-center">
-                          <div className="trade-header ">
-                            <div>
-                              <span className="trade-time tradetime1">
-                                <b>18 Nov 2024</b>
-                                <p>17:08:20</p>
-                              </span>
-                            </div>
-                            <div className="mb-3">
-                              <span className="trade-type">Short Term</span>
-                            </div>
-                            <div>
-                              <span className="trade-type1">
-                                Cash,Future,Option
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <dv className="col-md-7">
-                          <div className="trade-content">
-                            <div className="d-flex justify-content-between tradehead mb-3">
-                              <h3>THERMAX-EQ</h3>
-                              <span className="trade-type1 mb-2">open</span>
-                            </div>
-
-                            <div className="trade-details">
-                              <div className="row justify-content-center">
-                                <div className="col-md-6">
-                                  <div>
-                                    <strong>Entry price:</strong>
-                                    <p> (₹100)</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-6 d-flex justify-content-end">
-                                  <div>
-                                    <strong>Hold duration:</strong>
-                                    <p>(15-30 days)</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3">
-                                  <div>
-                                    <strong>Stoploss:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </dv>
-                        <div className="col-md-3 d-flex align-items-center">
-                          <div className="">
-                            <button
-                              className="btn btn-buy mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal"
-                            >
-                              BUY
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Detail
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Ananlysis
-                            </button>
-                            <button
-                              className="btn btn-view-detail w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              Broker Response
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="trade-card shadow">
-                      <div className="row">
-                        <div className="col-md-2 d-flex align-items-center">
-                          <div className="trade-header ">
-                            <div>
-                              <span className="trade-time tradetime1">
-                                <b>18 Nov 2024</b>
-                                <p>17:08:20</p>
-                              </span>
-                            </div>
-                            <div className="mb-3">
-                              <span className="trade-type">Short Term</span>
-                            </div>
-                            <div>
-                              <span className="trade-type1">
-                                Cash,Future,Option
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <dv className="col-md-7">
-                          <div className="trade-content">
-                            <div className="d-flex justify-content-between tradehead mb-3">
-                              <h3>THERMAX-EQ</h3>
-                              <span className="trade-type1 mb-2">open</span>
-                            </div>
-
-                            <div className="trade-details">
-                              <div className="row justify-content-center">
-                                <div className="col-md-6">
-                                  <div>
-                                    <strong>Entry price:</strong>
-                                    <p> (₹100)</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-6 d-flex justify-content-end">
-                                  <div>
-                                    <strong>Hold duration:</strong>
-                                    <p>(15-30 days)</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3">
-                                  <div>
-                                    <strong>Stoploss:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center">
-                                  <div>
-                                    <strong>Target:</strong>
-                                    <p>--</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </dv>
-                        <div className="col-md-3 d-flex align-items-center">
-                          <div className="">
-                            <button
-                              className="btn btn-buy mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal"
-                            >
-                              BUY
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Detail
-                            </button>
-                            <button
-                              className="btn btn-view-detail mb-2 w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              View Ananlysis
-                            </button>
-                            <button
-                              className="btn btn-view-detail w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                            >
-                              Broker Response
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-
-              <ReusableModal
-                show={model}
-                onClose={() => setModel(false)}
-                title={<>Kyc</>}
-                body={
-                  <>
-                    <div className="modal-body ">
-                      <div className="p-2">
-                        <form className="row g-3">
-                          <div className="col-md-12">
-                            <label htmlFor="input1" className="form-label">
-                              Name
-                            </label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              id="input1"
-                              placeholder="Name"
-                            />
-                          </div>
-                          <div className="col-md-12">
-                            <label htmlFor="input4" className="form-label">
-                              Email
-                            </label>
-                            <input
-                              type="email"
-                              className="form-control"
-                              id="input4"
-                              placeholder="Email"
-                            />
-                          </div>
-
-                          <div className="col-md-12">
-                            <label htmlFor="input3" className="form-label">
-                              Phone
-                            </label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              id="input3"
-                              placeholder="Phone"
-                            />
-                          </div>
-
-                          <div className="col-md-12">
-                            <label htmlFor="input5" className="form-label">
-                              Aadhaar No.
-                            </label>
-                            <input
-                              type="password"
-                              className="form-control"
-                              id="input5"
-                              placeholder="Aadhaar No."
-                            />
-                          </div>
-                          <div className="col-md-12">
-                            <label htmlFor="input5" className="form-label">
-                              PAN No.
-                            </label>
-                            <input
-                              type="password"
-                              className="form-control"
-                              id="input5"
-                              placeholder="PAN No."
-                            />
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-
-                  </>
-                }
-                footer={
-                  <>
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-
-                    >
-                      Save
-                    </button>
-                    <button
-                      className="btn btn-primary rounded-1"
-                      onClick={() => setModel(false)}
-                    >
-                      Cancel
-                    </button>
-                  </>
-                }
-              />
-
-
-              <div
-                className="modal fade"
-                id="exampleModal"
-                tabIndex={-1}
-                aria-labelledby="exampleModalLabel"
-                aria-hidden="true"
-              >
-
-              </div>
-            </div>
-            <div
-              className="tab-pane fade"
-              id="primary-pills-profile"
-              role="tabpanel"
-            >
-
-              <div className="row">
-                <div className="col-md-12">
-                  <div className="trade-card shadow">
-                    <div className="row">
-                      <div className="col-md-2 d-flex align-items-center">
-                        <div className="trade-header ">
-                          <div>
-                            <span className="trade-time tradetime1">
-                              <b>18 Nov 2024</b>
-                              <p>17:08:20</p>
-                            </span>
-                          </div>
-                          <div className="mb-3">
-                            <span className="trade-type">Short Term</span>
-                          </div>
-                          <div>
-                            <span className="trade-type1">
-                              Cash,Future,Option
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <dv className="col-md-7">
-                        <div className="trade-content">
-                          <div className="d-flex justify-content-between tradehead mb-3">
-                            <h3>THERMAX-EQ</h3>
-                            <span className="trade-type2 mb-2">Close</span>
-                          </div>
-
-                          <div className="trade-details">
-                            <div className="row justify-content-center">
-                              <div className="col-md-6">
-                                <div>
-                                  <strong>Entry price:</strong>
-                                  <p> (₹100)</p>
-                                </div>
-                              </div>
-
-                              <div className="col-md-6 d-flex justify-content-end">
-                                <div>
-                                  <strong>Hold duration:</strong>
-                                  <p>(15-30 days)</p>
-                                </div>
-                              </div>
-                              <div className="col-md-3">
-                                <div>
-                                  <strong>Stoploss:</strong>
-                                  <p>--</p>
-                                </div>
-                              </div>
-
-                              <div className="col-md-3 d-flex justify-content-center">
-                                <div>
-                                  <strong>Target:</strong>
-                                  <p>--</p>
-                                </div>
-                              </div>
-
-                              <div className="col-md-3 d-flex justify-content-center">
-                                <div>
-                                  <strong>Target:</strong>
-                                  <p>--</p>
-                                </div>
-                              </div>
-                              <div className="col-md-3 d-flex justify-content-center">
-                                <div>
-                                  <strong>Target:</strong>
-                                  <p>--</p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </dv>
-                      <div className="col-md-3 d-flex align-items-center">
-                        <div className="">
-                          <button
-                            className="btn btn-buy mb-2 w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal"
-                          >
-                            BUY
-                          </button>
-                          <button
-                            className="btn btn-view-detail mb-2 w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal1"
-                          >
-                            View Detail
-                          </button>
-                          <button
-                            className="btn btn-view-detail mb-2 w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal1"
-                          >
-                            View Ananlysis
-                          </button>
-                          <Link
-                            to={'/brokerresponse'}
-                            className="btn btn-view-detail w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal1"
-                          >
-                            Broker Response
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="trade-card shadow">
-                    <div className="row">
-                      <div className="col-md-2 d-flex align-items-center">
-                        <div className="trade-header ">
-                          <div>
-                            <span className="trade-time tradetime1">
-                              <b>18 Nov 2024</b>
-                              <p>17:08:20</p>
-                            </span>
-                          </div>
-                          <div className="mb-3">
-                            <span className="trade-type">Short Term</span>
-                          </div>
-                          <div>
-                            <span className="trade-type1">
-                              Cash,Future,Option
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <dv className="col-md-7">
-                        <div className="trade-content">
-                          <div className="d-flex justify-content-between tradehead mb-3">
-                            <h3>THERMAX-EQ</h3>
-                            <span className="trade-type2 mb-2">Close</span>
-                          </div>
-
-                          <div className="trade-details">
-                            <div className="row justify-content-center">
-                              <div className="col-md-6">
-                                <div>
-                                  <strong>Entry price:</strong>
-                                  <p> (₹100)</p>
-                                </div>
-                              </div>
-
-                              <div className="col-md-6 d-flex justify-content-end">
-                                <div>
-                                  <strong>Hold duration:</strong>
-                                  <p>(15-30 days)</p>
-                                </div>
-                              </div>
-                              <div className="col-md-3">
-                                <div>
-                                  <strong>Stoploss:</strong>
-                                  <p>--</p>
-                                </div>
-                              </div>
-
-                              <div className="col-md-3 d-flex justify-content-center">
-                                <div>
-                                  <strong>Target:</strong>
-                                  <p>--</p>
-                                </div>
-                              </div>
-
-                              <div className="col-md-3 d-flex justify-content-center">
-                                <div>
-                                  <strong>Target:</strong>
-                                  <p>--</p>
-                                </div>
-                              </div>
-                              <div className="col-md-3 d-flex justify-content-center">
-                                <div>
-                                  <strong>Target:</strong>
-                                  <p>--</p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </dv>
-                      <div className="col-md-3 d-flex align-items-center">
-                        <div className="">
-                          <button
-                            className="btn btn-buy mb-2 w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal"
-                          >
-                            BUY
-                          </button>
-                          <button
-                            className="btn btn-view-detail mb-2 w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal1"
-                          >
-                            View Detail
-                          </button>
-                          <button
-                            className="btn btn-view-detail mb-2 w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal1"
-                          >
-                            View Ananlysis
-                          </button>
-                          <button
-                            className="btn btn-view-detail w-100"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal1"
-                          >
-                            Broker Response
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+            Previous
+          </button>
+          <span>
+            Page {page} of {totalPages}
+          </span>
+          <button
+            className="btn btn-secondary"
+            onClick={() => handlePageChange("next")}
+            disabled={page === totalPages}
+          >
+            Next
+          </button>
         </div>
       </div>
 
+      <ReusableModal
+        show={model}
+        onClose={() => setModel(false)}
+        title={<span>{calltypedata?.calltype}</span>}
+        body={
+          <form className="row g-3">
+            <div className="col-md-12">
+              <label htmlFor="inputName" className="form-label">
+                Price
+              </label>
+              <input
+                type="number"
+                className="form-control"
+                id="inputName"
+                placeholder="Price"
+                value={orderdata?.price}
+                onChange={(e) => {
+                  setOrderdata({ ...orderdata, price: e.target.value });
+                }}
+              />
+            </div>
+            <div className="col-md-12">
+              <label htmlFor="inputQuantity" className="form-label">
+                Quantity
+              </label>
+              <input
+                type="number"
+                className="form-control"
+                id="inputQuantity"
+                placeholder="Quantity"
+                value={orderdata?.quantity}
+                onChange={(e) => {
+                  setOrderdata({ ...orderdata, quantity: e.target.value });
+                }}
+              />
+            </div>
 
-    </Content >
+            <div className="col-md-12">
+              <div className="row">
+                <div className="col-md-6">
+                  <div className="form-check">
+                    <input
+
+                      className="form-check-input"
+                      type="checkbox"
+                      id="targetCheckbox"
+                      checked={targetEnabled === 1}
+                      onChange={(e) => setTargetEnabled(e.target.checked ? 1 : 0)}
+                    />
+                    <label className="form-check-label" htmlFor="targetCheckbox">
+                      Target
+                    </label>
+                  </div>
+
+                </div>
+                <div className="col-md-6">
+
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id="stoplossCheckbox"
+                      checked={targetEnabled === 2}
+                      onChange={(e) => setTargetEnabled(e.target.checked ? 2 : 0)}
+                    />
+                    <label className="form-check-label" htmlFor="stoplossCheckbox">
+                      Stoploss
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <input
+                type="text"
+                className="form-control"
+                id="sharedInput"
+                placeholder={targetEnabled === 1 ? "Target Price" : targetEnabled === 2 ? "Stoploss Price" : "Select Target/Stoploss"}
+                disabled={targetEnabled === 0 || targetEnabled === 1}
+                value={targetEnabled === 1 ? orderdata.tsprice : targetEnabled === 2 ? orderdata.slprice : ""}
+                onChange={(e) => {
+                  if (targetEnabled === 1) {
+                    setOrderdata({ ...orderdata, tsprice: e.target.value });
+                  } else if (targetEnabled === 2) {
+                    setOrderdata({ ...orderdata, slprice: e.target.value });
+                  }
+                }}
+              />
+            </div>
+            <div className="col-md-12">
+              <label htmlFor="inputQuantity" className="form-label">
+                Exit Price
+              </label>
+              <input
+                disabled
+                type="number"
+                className="form-control"
+                id="inputQuantity"
+                placeholder="Quantity"
+                value={orderdata?.quantity}
+                onChange={(e) => {
+                  setOrderdata({ ...orderdata, quantity: e.target.value });
+                }}
+              />
+            </div>
+          </form>
+        }
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => {
+                PlanceOrderdata();
+              }}
+            >
+              Buy
+            </button>
+            <button className="btn btn-secondary" onClick={() => setModel(false)}>
+              Cancel
+            </button>
+          </>
+        }
+      />
+
+
+
+      <ReusableModal
+        show={exitModel}
+        onClose={() => setExitModel(false)}
+        title={<span>{calltypedata?.tradesymbol}</span>}
+        body={
+          <form className="row g-3">
+            <div className="col-md-12">
+              <label htmlFor="inputName" className="form-label">
+                Price
+              </label>
+              <input
+                type="number"
+                className="form-control"
+                id="inputName"
+                placeholder="Price"
+                value={exitorderdata?.price}
+                onChange={(e) => {
+                  setExitOrderdata({ ...exitorderdata, price: e.target.value });
+                }}
+              />
+            </div>
+            <div className="col-md-12">
+              <label htmlFor="inputName" className="form-label">
+                Entry Type
+              </label>
+              <input
+                disabled
+                type="string"
+                className="form-control"
+                id="inputName"
+                placeholder=""
+                value={exitorderdata?.calltype}
+                onChange={(e) => {
+                  setExitOrderdata({ ...exitorderdata, calltype: e.target.value });
+                }}
+              />
+            </div>
+            <div className="col-md-12">
+              <label htmlFor="inputQuantity" className="form-label">
+                Quantity
+              </label>
+              <input
+                type="number"
+                className="form-control"
+                id="inputQuantity"
+                placeholder="Quantity"
+                value={exitorderdata?.quantity}
+                onChange={(e) => {
+                  setExitOrderdata({ ...exitorderdata, quantity: e.target.value });
+                }}
+              />
+            </div>
+          </form>
+        }
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => {
+                ExitPlaceOrder();
+              }}
+            >
+              Save
+            </button>
+            <button className="btn btn-secondary" onClick={() => setModel(false)}>
+              Cancel
+            </button>
+          </>
+        }
+      />
+
+
+
+
+      <ReusableModal
+        show={viewModel}
+        onClose={() => setViewModel(false)}
+        title={<span>Detail</span>}
+        body={<div dangerouslySetInnerHTML={{ __html: description }} />}
+      />
+    </Content>
   );
 }
 
 export default Trade;
+

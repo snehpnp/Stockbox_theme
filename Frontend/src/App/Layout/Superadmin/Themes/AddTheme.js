@@ -86,7 +86,6 @@ const Addtheme = () => {
   }, []);
 
   const handleSubmit = async (values) => {
-    console.log("Form values:", values);
     const updatedValues = {
       ...values,
       sidebarColor: isGradient.sidebar

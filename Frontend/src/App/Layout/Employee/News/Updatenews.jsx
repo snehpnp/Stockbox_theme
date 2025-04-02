@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { UpdateNewsbyadmin } from '../../../Services/Admin/Admin';
 import { image_baseurl } from '../../../../Utils/config';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+
 
 
 const Updatenews = () => {
@@ -40,36 +41,16 @@ const Updatenews = () => {
             try {
                 const response = await UpdateNewsbyadmin(req, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: "Update Successful!",
-                        text: response.message,
-                        icon: "success",
-                        timer: 1500,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        navigate("/employee/news");
-                    }, 1500);
+                    showCustomAlert("Success", response.message, navigate, "/employee/news")
                 } else {
-                    Swal.fire({
-                        title: "Alert",
-                        text: response.message,
-                        icon: "warning",
-                        timer: 1500,
-                        timerProgressBar: true,
-                    });
+                    showCustomAlert("error", response.message, navigate, "/employee/news")
                 }
             } catch (error) {
-                Swal.fire({
-                    title: "Error",
-                    text: "An unexpected error occurred. Please try again later.",
-                    icon: "error",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
+                showCustomAlert("error", "An unexpected error occurred. Please try again later.")
             }
         },
     });
+
 
 
 
@@ -118,7 +99,6 @@ const Updatenews = () => {
             <DynamicForm
                 fields={fields}
                 formik={formik}
-                page_title="Update News"
                 btn_name="Update News"
                 btn_name1="Cancel"
                 sumit_btn={true}

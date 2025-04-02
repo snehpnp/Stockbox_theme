@@ -3,13 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { GetService, Addplancategory, UpdateCategoryplan, getcategoryplan, getstaffperuser, deleteplancategory, updatecategorydstatus } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table';
 import { SquarePen, Trash2, PanelBottomOpen } from 'lucide-react';
-import Swal from 'sweetalert2';
 import DropdownMultiselect from "react-multiselect-dropdown-bootstrap";
 import { Tooltip } from 'antd';
 import styled from 'styled-components';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import Loader from '../../../../Utils/Loader'
 import ReusableModal from '../../../components/Models/ReusableModal';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 
@@ -30,7 +30,7 @@ const Category = () => {
     const [isLoading, setIsLoading] = useState(true)
 
     const [showAddModal, setShowAddModal] = useState(false);
-    
+
 
     const [updatetitle, setUpdatetitle] = useState({
         title: "",
@@ -115,32 +115,15 @@ const Category = () => {
 
             const response = await UpdateCategoryplan(data, token);
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: response.message || 'Category updated successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
-
+                showCustomAlert("Success", response.message || 'Category updated successfully.')
                 setUpdatetitle({ title: "", id: "", service: "" });
                 getcategory();
                 setModel(false);
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: response.message || 'There was an error updating the Category.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", response.message || 'There was an error updating the Category.')
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'server error',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'server error')
         }
     };
 
@@ -153,14 +136,7 @@ const Category = () => {
             const data = { title: title.title, add_by: userid, service: title.service };
             const response = await Addplancategory(data, token);
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: response.message || 'Category added successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
-
+                showCustomAlert("Success", response.message || 'Category added successfully.')
                 setTitle({ title: "", add_by: "", service: "" });
                 getcategory();
 
@@ -170,20 +146,10 @@ const Category = () => {
                     bootstrapModal.hide();
                 }
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: response.message || 'There was an error adding the Category.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", response.message || 'There was an error adding the Category.')
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'server error.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'server error.')
         }
     };
 
@@ -194,37 +160,21 @@ const Category = () => {
     const handleSwitchChange = async (event, id) => {
         const user_active_status = event.target.checked ? "true" : "false";
         const data = { id: id, status: user_active_status };
-        const result = await Swal.fire({
-            title: "Do you want to save the changes?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
+        const result = await showCustomAlert("confirm", "Do you want to save the changes?")
 
         if (result.isConfirmed) {
             try {
                 const response = await updatecategorydstatus(data, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: "Saved!",
-                        icon: "success",
-                        timer: 1000,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1000);
+                    showCustomAlert("Success", response.message)
                 }
                 getcategory();
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+                showCustomAlert("error", "There was an error processing your request.")
+
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
+            event.target.checked = !event.target.checked
             getcategory();
         }
     };
@@ -236,43 +186,20 @@ const Category = () => {
 
     const DeleteCategory = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this catrgory? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert("confirm", 'Do you want to delete this catrgory This action cannot be undone.')
 
             if (result.isConfirmed) {
                 const response = await deleteplancategory(_id, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The catrgory has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
+                    showCustomAlert("Success", 'The catrgory has been successfully deleted.')
                     getcategory();
 
                 }
             } else {
-
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The catrgory deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
+                showCustomAlert("error", 'The catrgory deletion was cancelled.')
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the catrgory.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'There was an error deleting the catrgory.')
 
         }
     };
@@ -411,7 +338,7 @@ const Category = () => {
         <div>
             <div className="page-content">
 
-                <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                <div className="page-breadcrumb  d-flex align-items-center mb-3">
                     <div className="breadcrumb-title pe-3">Category</div>
                     <div className="ps-3">
                         <nav aria-label="breadcrumb">
@@ -429,7 +356,7 @@ const Category = () => {
 
                 <div className="card">
                     <div className="card-body">
-                        <div className="d-lg-flex align-items-center mb-4 gap-3">
+                        <div className="d-sm-flex align-items-center mb-4 gap-3">
                             <div className="position-relative">
                                 <input
                                     type="text"
@@ -442,149 +369,149 @@ const Category = () => {
                                     <i className="bx bx-search" />
                                 </span>
                             </div>
-                            {permission.includes("addcategory") ? 
-                            <div className="ms-auto">
-                            <button
-                                type="button"
-                                className="btn btn-primary"
-                                onClick={() => setShowAddModal(true)}
-                            >
-                                <i className="bx bxs-plus-square" />
-                                Add Category
-                            </button>
+                            {permission.includes("addcategory") ?
+                                <div className="ms-sm-auto  ms-0 mt-2 mt-sm-0">
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary "
+                                        onClick={() => setShowAddModal(true)}
+                                    >
+                                        <i className="bx bxs-plus-square" />
+                                        Add Category
+                                    </button>
 
-                            <ReusableModal
-                                show={showAddModal}
-                                onClose={() => setShowAddModal(false)}
-                                title={<span>Add Category</span>}
-                                body={
-                                    <>
-                                        <div className="row">
-                                            <div className="col-md-12">
-                                                <label htmlFor="service">Segment</label>
-                                                <span className="text-danger">*</span>
-                                                {servicedata.length > 0 && (
-                                                    <DropdownMultiselect
-                                                        name="Service"
-                                                        options={servicedata.map((item) => ({
-                                                            key: item._id,
-                                                            label: item.title,
-                                                        }))}
-                                                        placeholder="Select Segment"
-                                                        handleOnChange={(selected) => {
-                                                            const selectedService = selected;
-                                                            setTitle({ ...title, service: selectedService });
-                                                        }}
-                                                    />
-                                                )}
-                                            </div>
-                                            <div className="col-md-12">
-                                                <label htmlFor="categoryTitle">Category</label>
-                                                <span className="text-danger">*</span>
-                                                <input
-                                                    id="categoryTitle"
-                                                    className="form-control mb-3"
-                                                    type="text"
-                                                    placeholder="Enter Category Title"
-                                                    value={title.title}
-                                                    onChange={(e) => setTitle({ ...title, title: e.target.value })}
-                                                />
-                                            </div>
-                                        </div>
-                                    </>
-                                }
-                                footer={
-                                    <>
-                                        <button
-                                            type="button"
-                                            className="btn btn-secondary"
-                                            onClick={() => setShowAddModal(false)}
-                                        >
-                                            Close
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="btn btn-primary"
-                                            onClick={addcategory}
-                                        >
-                                            Save
-                                        </button>
-                                    </>
-                                }
-                            />
-
-                            {model && (
-                                <ReusableModal
-                                    show={model}
-                                    onClose={() => setModel(false)}
-                                    title={<span>Update Category</span>}
-                                    body={
-                                        <form>
-                                            <div className="row">
-                                                <div className="col-md-12">
-                                                    <label htmlFor="category">Category</label>
-                                                    <span className="text-danger">*</span>
-                                                    <input
-                                                        className="form-control mb-2"
-                                                        type="text"
-                                                        placeholder="Enter Category Title"
-                                                        id="category"
-                                                        value={updatetitle.title}
-                                                        onChange={(e) => updateServiceTitle('title', e.target.value)}
-                                                        required
-                                                    />
+                                    <ReusableModal
+                                        show={showAddModal}
+                                        onClose={() => setShowAddModal(false)}
+                                        title={<span>Add Category</span>}
+                                        body={
+                                            <>
+                                                <div className="row">
+                                                    <div className="col-md-12">
+                                                        <label htmlFor="service">Segment</label>
+                                                        <span className="text-danger">*</span>
+                                                        {servicedata.length > 0 && (
+                                                            <DropdownMultiselect
+                                                                name="Service"
+                                                                options={servicedata.map((item) => ({
+                                                                    key: item._id,
+                                                                    label: item.title,
+                                                                }))}
+                                                                placeholder="Select Segment"
+                                                                handleOnChange={(selected) => {
+                                                                    const selectedService = selected;
+                                                                    setTitle({ ...title, service: selectedService });
+                                                                }}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                    <div className="col-md-12">
+                                                        <label htmlFor="categoryTitle">Category</label>
+                                                        <span className="text-danger">*</span>
+                                                        <input
+                                                            id="categoryTitle"
+                                                            className="form-control mb-3"
+                                                            type="text"
+                                                            placeholder="Enter Category Title"
+                                                            value={title.title}
+                                                            onChange={(e) => setTitle({ ...title, title: e.target.value })}
+                                                        />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col-md-12">
-                                                    <label htmlFor="service">Segment</label>
-                                                    <span className="text-danger">*</span>
-                                                    {servicedata.length > 0 && (
-                                                        <div className="form-group">
-                                                            {servicedata.map((item) => (
-                                                                <div key={item._id} className="form-check">
-                                                                    <input
-                                                                        className="form-check-input"
-                                                                        type="checkbox"
-                                                                        id={`service_${item._id}`}
-                                                                        value={item._id}
-                                                                        checked={updatetitle.service.includes(item._id)}
-                                                                        onChange={(e) => handleServiceChange(item._id, e.target.checked)}
-                                                                    />
-                                                                    <label className="form-check-label" htmlFor={`service_${item._id}`}>
-                                                                        {item.title}
-                                                                    </label>
-                                                                </div>
-                                                            ))}
+                                            </>
+                                        }
+                                        footer={
+                                            <>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-secondary"
+                                                    onClick={() => setShowAddModal(false)}
+                                                >
+                                                    Close
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-primary"
+                                                    onClick={addcategory}
+                                                >
+                                                    Save
+                                                </button>
+                                            </>
+                                        }
+                                    />
+
+                                    {model && (
+                                        <ReusableModal
+                                            show={model}
+                                            onClose={() => setModel(false)}
+                                            title={<span>Update Category</span>}
+                                            body={
+                                                <form>
+                                                    <div className="row">
+                                                        <div className="col-md-12">
+                                                            <label htmlFor="category">Category</label>
+                                                            <span className="text-danger">*</span>
+                                                            <input
+                                                                className="form-control mb-2"
+                                                                type="text"
+                                                                placeholder="Enter Category Title"
+                                                                id="category"
+                                                                value={updatetitle.title}
+                                                                onChange={(e) => updateServiceTitle('title', e.target.value)}
+                                                                required
+                                                            />
                                                         </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </form>
-                                    }
-                                    footer={
-                                        <>
-                                            <button
-                                                type="button"
-                                                className="btn btn-secondary"
-                                                onClick={() => setModel(false)}
-                                            >
-                                                Close
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="btn btn-primary"
-                                                onClick={Updatecategory}
-                                                disabled={!updatetitle.title || !updatetitle.service}
-                                            >
-                                                Update Service
-                                            </button>
-                                        </>
-                                    }
-                                />
-                            )}
-                        </div>
-: ""}
+                                                    </div>
+                                                    <div className="row">
+                                                        <div className="col-md-12">
+                                                            <label htmlFor="service">Segment</label>
+                                                            <span className="text-danger">*</span>
+                                                            {servicedata.length > 0 && (
+                                                                <div className="form-group">
+                                                                    {servicedata.map((item) => (
+                                                                        <div key={item._id} className="form-check">
+                                                                            <input
+                                                                                className="form-check-input"
+                                                                                type="checkbox"
+                                                                                id={`service_${item._id}`}
+                                                                                value={item._id}
+                                                                                checked={updatetitle.service.includes(item._id)}
+                                                                                onChange={(e) => handleServiceChange(item._id, e.target.checked)}
+                                                                            />
+                                                                            <label className="form-check-label" htmlFor={`service_${item._id}`}>
+                                                                                {item.title}
+                                                                            </label>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            }
+                                            footer={
+                                                <>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-secondary"
+                                                        onClick={() => setModel(false)}
+                                                    >
+                                                        Close
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-primary"
+                                                        onClick={Updatecategory}
+                                                        disabled={!updatetitle.title || !updatetitle.service}
+                                                    >
+                                                        Update Category
+                                                    </button>
+                                                </>
+                                            }
+                                        />
+                                    )}
+                                </div>
+                                : ""}
                         </div>
                         {isLoading ? (
                             <Loader />
@@ -604,7 +531,7 @@ const Category = () => {
                     </div>
                 </div>
             </div>
-            
+
         </div>
     );
 };

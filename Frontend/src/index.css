@@ -48,3 +48,31 @@ p:hover {
   padding: 1rem;
 }
  */
+div:where(.swal2-container) div:where(.swal2-html-container) {
+  z-index: 1;
+  justify-content: center;
+  margin: 0;
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  padding: 0;
+  overflow: auto;
+  color: inherit;
+  font-size: 1.125em;
+  font-weight: normal;
+  line-height: normal;
+  text-align: center;
+  word-wrap: break-word;
+  word-break: break-word;
+  cursor: initial;
+}
+
+.swal2-html-container {
+
+  padding: 0;
+}
+.swal2-html-container {
+
+  padding: 0;
+}

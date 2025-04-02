@@ -2,30 +2,21 @@ import React, { useEffect, useState } from 'react';
 import Content from "../../../components/Contents/Content";
 import { GetCouponlist } from '../../../Services/UserService/User';
 import { fa_time } from '../../../../Utils/Date_formate';
-import Swal from 'sweetalert2';
+import Loader from '../../../../Utils/Loader';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Coupon = () => {
 
     const [coupon, setCoupon] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
 
 
 
     const handleCopyCode = (code) => {
         navigator.clipboard.writeText(code).then(() => {
-            Swal.fire({
-                title: 'Copied!',
-                text: `Coupon code "${code}" has been copied to your clipboard.`,
-                icon: 'success',
-                confirmButtonText: 'OK',
-                timer: 2000,
-            });
+            showCustomAlert("Success", `Coupon code "${code}" has been copied to your clipboard.`)
         }).catch((err) => {
-            Swal.fire({
-                title: 'Error!',
-                text: 'Failed to copy the coupon code. Please try again.',
-                icon: 'error',
-                confirmButtonText: 'OK',
-            });
+            showCustomAlert("error", 'Failed to copy the coupon code. Please try again.')
         });
     };
 
@@ -37,11 +28,12 @@ const Coupon = () => {
             const response = await GetCouponlist()
             if (response.status) {
                 setCoupon(response?.data)
-                console.log("response", response.data)
+
             }
         } catch (error) {
 
         }
+        setIsLoading(false)
     }
 
 
@@ -62,14 +54,13 @@ const Coupon = () => {
             >
                 <div className="page-content">
 
-
-                    <div className="card radius-5">
-                        <div className="card-body">
+                    {isLoading ? <Loader /> :
+                        coupon?.length > 0 ?
                             <ul className="list-unstyled">
                                 {coupon &&
                                     coupon?.map((item, index) => (
                                         <li
-                                            className="d-flex align-items-center border-bottom pb-2"
+                                            className=" d-sm-flex align-items-center border-bottom py-4"
                                             key={index}
                                         >
                                             <div
@@ -84,7 +75,7 @@ const Coupon = () => {
                                                 {item.serviceName}
                                             </div>
 
-                                            <div className="flex-grow-1 ms-3">
+                                            <div className="flex-grow-1 ms-sm-3">
                                                 <p className="mb-2">
                                                     <strong>Segment Name:</strong> {item.serviceName || "Premium Members"}
                                                 </p>
@@ -106,10 +97,13 @@ const Coupon = () => {
                                             </button>
                                         </li>
                                     ))}
-                            </ul>
+                            </ul> :
+                            <div className="text-center mt-5">
+                                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                            </div>
+                    }
 
-                        </div>
-                    </div>
+
                 </div>
             </Content>
 

@@ -156,7 +156,7 @@ const Planexpiry = () => {
 
     return (
         <div className="page-content">
-            <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+            <div className="page-breadcrumb  d-flex align-items-center mb-3">
                 <div className="breadcrumb-title pe-3">Plan Expiry</div>
                 <div className="ps-3">
                     <Link to="/admin/dashboard">
@@ -167,7 +167,7 @@ const Planexpiry = () => {
             <hr />
             <div className="card">
                 <div className="card-body">
-                    <div className="d-lg-flex align-items-center mb-4 gap-3">
+                    <div className="d-sm-flex align-items-center mb-4 gap-3">
                         <div className="position-relative">
                             <input
                                 type="text"
@@ -183,12 +183,12 @@ const Planexpiry = () => {
 
 
                         <div
-                            className="ms-2"
+                            className="ms-sm-auto mt-2 mt-md-0"
                             onClick={(e) => getexportfile()}
                         >
                             <button
                                 type="button"
-                                className="btn btn-primary float-end"
+                                className="btn btn-primary "
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 title="Export To Excel"
@@ -204,8 +204,8 @@ const Planexpiry = () => {
 
 
                     </div>
-                    <div className="row mb-2">
-                        <div className="col-md-3">
+                    <div className="row ">
+                        <div className="col-md-3 mb-3">
                             <label>Select From Date</label>
                             <input
                                 type="date"
@@ -214,7 +214,7 @@ const Planexpiry = () => {
                                 value={startDate}
                             />
                         </div>
-                        <div className="col-md-3">
+                        <div className="col-md-3 mb-3">
                             <label>Select To Date</label>
                             <input
                                 type="date"
@@ -223,7 +223,7 @@ const Planexpiry = () => {
                                 value={endDate}
                             />
                         </div>
-                        <div className="col-md-3">
+                        <div className="col-md-3 ">
                             <label>Select Service</label>
                             <select
                                 className="form-control radius-10"
@@ -238,7 +238,7 @@ const Planexpiry = () => {
                                 ))}
                             </select>
                         </div>
-                        <div className="col-md-3 d-flex align-items-center mt-3">
+                        <div className="col-md-3 mb-3 justify-content-between d-flex align-items-center mt-3">
                             <RefreshCcw className="refresh-icon" onClick={resetFilters} />
                         </div>
                     </div>

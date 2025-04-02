@@ -82,7 +82,14 @@ const Planexpiry = () => {
 
     const getexportfile = async () => {
         try {
-            const response = await getclientPlanexpiry(token);
+            const data = {
+                page: currentPage,
+                serviceid: searchStock,
+                startdate: startDate,
+                enddate: endDate,
+                search: searchInput,
+            };
+            const response = await getclientPlanexpiry(data, token);
             if (response.status) {
                 if (response.data?.length > 0) {
                     const csvArr = response.data?.map((item) => ({
@@ -171,7 +178,7 @@ const Planexpiry = () => {
 
     return (
         <div className="page-content">
-            <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+            <div className="page-breadcrumb  d-flex align-items-center mb-3">
                 <div className="breadcrumb-title pe-3">Plan Expiry</div>
                 <div className="ps-3">
                     <Link to="/admin/dashboard">
@@ -259,7 +266,7 @@ const Planexpiry = () => {
 
                     {isLoading ? (
                         <Loader />
-                    ) : (
+                    ) : clients.length > 0 ? (
                         <>
                             <Table
                                 columns={columns}
@@ -269,6 +276,10 @@ const Planexpiry = () => {
                                 onPageChange={handlePageChange}
                             />
                         </>
+                    ) : (
+                        <div className="text-center mt-5">
+                            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                        </div>
                     )}
 
                 </div>

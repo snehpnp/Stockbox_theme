@@ -44,16 +44,20 @@ const Terms = () => {
                 <div className="page-content">
                     <div className="page-content">
 
-                        <div className="card">
+                        {termsCondition.length > 0 ? <div className="card">
                             {isLoading ? <Loader /> : <div className="card-body">
-                                <h5 className="card-title">Terms & Condition</h5>
-                                <hr />
-                                {/* Render HTML content safely */}
+
                                 <div
                                     dangerouslySetInnerHTML={{ __html: termsCondition }}
                                 />
                             </div>}
+                        </div> : <div className="text-center mt-5">
+                            <img
+                                src="/assets/images/norecordfound.png"
+                                alt="No Records Found"
+                            />
                         </div>
+                        }
                     </div>
                 </div>
             </Content>

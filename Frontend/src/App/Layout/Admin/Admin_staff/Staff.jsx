@@ -5,12 +5,13 @@ import { GetStaff } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table';
 import { Eye, Pencil, Trash2, UserCog } from 'lucide-react';
 import { deleteStaff, updateStaffstatus } from '../../../Services/Admin/Admin';
-import Swal from 'sweetalert2';
 import { Tooltip } from 'antd';
 import ExportToExcel from '../../../../Utils/ExportCSV';
 import { fDate, fDateTime } from '../../../../Utils/Date_formate';
 import io from 'socket.io-client';
 import { soket_url } from '../../../../Utils/config';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+import Loader from '../../../../Utils/Loader';
 
 const Staff = () => {
 
@@ -25,6 +26,9 @@ const Staff = () => {
     const [searchInput, setSearchInput] = useState("");
     const [allsearchInput, setAllSearchInput] = useState([]);
 
+    //state for loading
+    const [isLoading, setIsLoading] = useState(true);
+
     const token = localStorage.getItem('token');
 
 
@@ -38,6 +42,8 @@ const Staff = () => {
         } catch (error) {
             console.log("error");
         }
+        setIsLoading(false)
+
     }
 
 
@@ -59,6 +65,8 @@ const Staff = () => {
     useEffect(() => {
         getAdminclient();
     }, []);
+
+
 
     useEffect(() => {
         forCSVdata()
@@ -82,48 +90,73 @@ const Staff = () => {
 
     // staff delete 
 
+    // const DeleteStaff = async (_id) => {
+    //     try {
+
+    //         const result = await Swal.fire({
+    //             title: 'Are you sure?',
+    //             text: 'Do you want to delete this Employee member? This action cannot be undone.',
+    //             icon: 'warning',
+    //             showCancelButton: true,
+    //             confirmButtonText: 'Yes, delete it!',
+    //             cancelButtonText: 'No, cancel',
+    //         });
+
+    //         if (result.isConfirmed) {
+    //             const response = await deleteStaff(_id, token);
+    //             socket.emit("deactivestaff", { id: _id, msg: "logout" });
+    //             if (response.status) {
+    //                 Swal.fire({
+    //                     title: 'Deleted!',
+    //                     text: 'The Employee has been successfully deleted.',
+    //                     icon: 'success',
+    //                     confirmButtonText: 'OK',
+    //                 });
+    //                 getAdminclient();
+    //             }
+    //         } else {
+
+    //             Swal.fire({
+    //                 title: 'Cancelled',
+    //                 text: 'The Employee deletion was cancelled.',
+    //                 icon: 'info',
+    //                 confirmButtonText: 'OK',
+    //             });
+    //         }
+    //     } catch (error) {
+    //         Swal.fire({
+    //             title: 'Error!',
+    //             text: 'There was an error deleting the Employee.',
+    //             icon: 'error',
+    //             confirmButtonText: 'Try Again',
+    //         });
+
+    //     }
+    // };
+
     const DeleteStaff = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this Employee member? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
-
-            if (result.isConfirmed) {
-                const response = await deleteStaff(_id, token);
-                socket.emit("deactivestaff", { id: _id, msg: "logout" });
-                if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The Employee has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
-                    getAdminclient();
-                }
+            const result = await showCustomAlert(
+                "confirm",
+                "Do you want to delete this Employee member? This action cannot be undone."
+            );
+    
+            if (!result.isConfirmed) return;
+    
+            socket.emit("deactivestaff", { id: _id, msg: "logout" });
+    
+            const response = await deleteStaff(_id, token);
+            if (response.status) {
+                showCustomAlert("success", "Employee successfully deleted!");
+                getAdminclient();
             } else {
-
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The Employee deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
+                throw new Error("Deletion failed");
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the Employee.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
-
+            showCustomAlert("error", "There was an error deleting the Employee.");
         }
     };
+    
 
 
 
@@ -141,57 +174,36 @@ const Staff = () => {
 
 
 
+
+
+
     // update status
 
     const handleSwitchChange = async (event, id) => {
-
         const user_active_status = event.target.checked ? "1" : "0";
-        const data = { id: id, status: user_active_status }
+        const data = { id, status: user_active_status };
 
-        const result = await Swal.fire({
-            title: "Do you want to save the changes?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
-
-        if (result.isConfirmed) {
-            try {
-                const response = await updateStaffstatus(data, token)
-                if (response.status) {
-
-                    if (!event.target.checked) {
-
-                        socket.emit("deactivestaff", { id: id, msg: "logout" });
-                    }
-
-
-                    Swal.fire({
-                        title: "Saved!",
-                        icon: "success",
-                        timer: 1500,
-                        timerProgressBar: true,
-                    });
-
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1500);
-                }
-                getAdminclient();
-            } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+        try {
+            const result = await showCustomAlert("confirm", "Do you want to save the changes?");
+            if (!result.isConfirmed) {
+                event.target.checked = !event.target.checked;
+                return;
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-            event.target.checked = !event.target.checked
-            // Swal.fire("Cancelled","No changes were made.","info")
+            const response = await updateStaffstatus(data, token);
+            if (response?.status) {
+                if (!event.target.checked) {
+                    socket.emit("deactivestaff", { id, msg: "logout" });
+                }
+                showCustomAlert("success", "Status Changed!");
+            } else {
+                throw new Error("Failed to update status");
+            }
+        } catch (error) {
+            event.target.checked = !event.target.checked;
+            showCustomAlert("error", "Status Change Failed", "There was an error processing your request.");
+        } finally {
             getAdminclient();
         }
-
     };
 
 
@@ -260,11 +272,11 @@ const Staff = () => {
         // },
 
         // {
-        //     name: 'Permission',
+        //     name: 'testing',
         //     cell: row => (
         //         <>
         //             <div>
-        //                 <UserPen onClick={() => updatepermission(row)} />
+        //                 <UserCog onClick={() => testing()} />
         //             </div>
         //         </>
         //     ),
@@ -305,7 +317,7 @@ const Staff = () => {
                 <div>
                     <div className="page-content">
 
-                        <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                        <div className="page-breadcrumb  d-flex align-items-center mb-3">
                             <div className="breadcrumb-title pe-3">Employee</div>
                             <div className="ps-3">
                                 <nav aria-label="breadcrumb">
@@ -323,7 +335,7 @@ const Staff = () => {
 
                         <div className="card">
                             <div className="card-body">
-                                <div className="d-lg-flex align-items-center mb-4 gap-3">
+                                <div className="d-lg-flex align-items-center gap-3">
                                     <div className="position-relative">
                                         <input
                                             type="text"
@@ -336,31 +348,40 @@ const Staff = () => {
                                             <i className="bx bx-search" />
                                         </span>
                                     </div>
-                                    <div className="ms-auto">
-                                        <Link
-                                            to="/admin/addstaff"
-                                            className="btn btn-primary"
-                                        >
-                                            <i
-                                                className="bx bxs-plus-square"
-                                                aria-hidden="true"
-                                            />
-                                            Add Employee
-                                        </Link>
-                                    </div>
-                                    <div className="ms-2" >
-                                        <ExportToExcel
-                                            className="btn btn-primary "
-                                            apiData={ForGetCSV}
-                                            fileName={'All Users'} />
+                                    <div className="d-sm-flex gap-3 justify-content-lg-end w-100 mt-3 mt-lg-0">
+                                        <div className="flaot-lg-end">
+                                            <Link
+                                                to="/admin/addstaff"
+                                                className="btn btn-primary"
+                                            >
+                                                <i
+                                                    className="bx bxs-plus-square"
+                                                    aria-hidden="true"
+                                                />
+                                                Add Employee
+                                            </Link>
+                                        </div>
+                                        <div className="ms-0 ms-sm-0 mt-2 mt-sm-0" >
+                                            <ExportToExcel
+                                                className="btn btn-primary "
+                                                apiData={ForGetCSV}
+                                                fileName={'All Users'} />
 
+                                        </div>
                                     </div>
                                 </div>
 
-                                <Table
-                                    columns={columns}
-                                    data={clients}
-                                />
+                                {isLoading ? (
+                                    <Loader />
+                                ) : clients.length > 0 ? (
+                                    <Table
+                                        columns={columns}
+                                        data={clients}
+                                    />) : (
+                                    <div className="text-center mt-5">
+                                        <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { GetClient } from '../../../Services/Admin/Admin';
 // import Table from '../../../components/Table';
 import { Settings2, Eye, SquarePen, RadioTower, Trash2, Download, ArrowDownToLine, RefreshCcw } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { deleteClient, UpdateClientStatus, PlanSubscription, getstaffperuser, getActivecategoryplan, getplanlist, BasketSubscription, BasketAllList, getcategoryplan, getPlanbyUser, AllclientFilter, getclientExportfile, BasketAllActiveList } from '../../../Services/Admin/Admin';
 import { Tooltip } from 'antd';
 import { fDateTime } from '../../../../Utils/Date_formate';
@@ -12,6 +11,8 @@ import { IndianRupee } from 'lucide-react';
 import { exportToCSV } from '../../../../Utils/ExportData';
 import Table from '../../../Extracomponents/Table1';
 import Loader from '../../../../Utils/Loader';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+import ReusableModal from '../../../components/Models/ReusableModal';
 
 
 
@@ -317,43 +318,21 @@ const Client = () => {
 
     const DeleteClient = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this Client member? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert("confirm", "Do you want to delete this Client member? This action cannot be undone.");
 
             if (result.isConfirmed) {
                 const response = await deleteClient(_id, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The Client has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
+                    showCustomAlert("error", "The Client has been successfully deleted.");
                     getAdminclient();
 
                 }
             } else {
-
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The Client deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
+                showCustomAlert("error", "The Client deletion was cancelled.");
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the Client.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", "There was an error deleting the Client.");
+
 
         }
     };
@@ -372,42 +351,19 @@ const Client = () => {
     const handleSwitchChange = async (event, id) => {
         const originalChecked = event.target.checked;
         const user_active_status = originalChecked ? "1" : "0";
-        const data = { id: id, status: user_active_status };
+        const data = { id, status: user_active_status };
 
-        const result = await Swal.fire({
-            title: "Do you want to save the changes?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
+        const result = await showCustomAlert("confirm", "Do you want to save the changes?");
+        if (!result.isConfirmed) return;
 
-        if (result.isConfirmed) {
-            try {
-                const response = await UpdateClientStatus(data, token);
-                if (response.status) {
-                    Swal.fire({
-                        title: "Saved!",
-                        icon: "success",
-                        timer: 1000,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1000);
-                }
-                // Reload the plan list
-                getAdminclient();
-            } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+        try {
+            const response = await UpdateClientStatus(data, token);
+            if (response.status) {
+                showCustomAlert("success", "Status Changed");
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-            event.target.checked = !originalChecked;
             getAdminclient();
+        } catch (error) {
+            showCustomAlert("error", "There was an error processing your request.");
         }
     };
 
@@ -423,32 +379,16 @@ const Client = () => {
 
 
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: response.message || 'Plan updated successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
+                showCustomAlert("success", response.message);
 
                 setUpdatetitle({ plan_id: "", client_id: "", price: "" });
                 getAdminclient();
                 handleCancel()
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: response.message || 'There was an error updating the Plan.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", response.message);
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'Server error',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", "Server error");
         }
     };
 
@@ -462,32 +402,17 @@ const Client = () => {
             const data = { basket_id: basketdetail.basket_id, client_id: client._id, price: basketdetail.price, };
             const response = await BasketSubscription(data, token);
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Basket service updated successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
+                showCustomAlert("Success", "Basket service updated successfully.");
+
 
                 setBasketdetail({ basket_id: "", client_id: "", price: "" });
                 getAdminclient();
                 handleCancel()
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: response.message || 'There was an error updating the Basket.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", response.message);
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error updating the Basket.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", "There was an error updating the Basket.");
         }
     };
 
@@ -658,12 +583,7 @@ const Client = () => {
                                     setClientid(row);
                                     getplanlistassinstatus(row._id);
                                 } else {
-                                    Swal.fire({
-                                        title: 'Reminder',
-                                        text: 'Activate the client first Then assign the package.',
-                                        icon: 'warning',
-                                        confirmButtonText: 'OK',
-                                    });
+                                    showCustomAlert("error", "Activate the client first Then assign the package.");
                                 }
                             }}
                             style={{ cursor: 'pointer' }}
@@ -673,11 +593,11 @@ const Client = () => {
                     </Tooltip>}
 
                     {permission.includes("viewdetail") && <Tooltip title="view">
-                        <Eye onClick={() => Clientdetail(row)} />
+                        <Eye onClick={() => Clientdetail(row)} className='ms-2' />
                     </Tooltip>}
 
                     {permission.includes("editclient") && <Tooltip title="Update">
-                        <SquarePen className='ms-3' onClick={() => updateClient(row)} />
+                        <SquarePen className='ms-2' onClick={() => updateClient(row)} />
                     </Tooltip>}
                     {/* <Tooltip title="delete">
                   <Trash2 onClick={() => DeleteClient(row._id)} />
@@ -697,7 +617,7 @@ const Client = () => {
             <div>
                 <div className="page-content">
 
-                    <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                    <div className="page-breadcrumb  d-flex align-items-center mb-3">
                         <div className="breadcrumb-title pe-3">{header}</div>
                         <div className="ps-3">
                             <nav aria-label="breadcrumb">
@@ -715,7 +635,7 @@ const Client = () => {
 
                     <div className="card">
                         <div className="card-body">
-                            <div className="d-lg-flex align-items-center mb-4 gap-3">
+                            <div className="d-md-flex align-items-center mb-4 gap-3">
                                 <div className="position-relative">
                                     <input
                                         type="text"
@@ -732,7 +652,7 @@ const Client = () => {
                                 {permission.includes("addclient") && <div className="ms-auto">
                                     <Link
                                         to="/employee/addclient"
-                                        className="btn btn-primary"
+                                        className="btn btn-primary  mt-2 mt-md-0"
                                     >
                                         <i
                                             className="bx bxs-plus-square"
@@ -743,12 +663,12 @@ const Client = () => {
                                 </div>}
 
                                 <div
-                                    className="ms-2"
+                                    className="  mt-2 mt-md-0"
                                     onClick={(e) => getexportfile()}
                                 >
                                     <button
                                         type="button"
-                                        className="btn btn-primary float-end"
+                                        className="btn btn-primary float-md-end"
                                         data-toggle="tooltip"
                                         data-placement="top"
                                         title="Export To Excel"
@@ -775,8 +695,8 @@ const Client = () => {
 
 
                             </div>
-                            <div className="row mb-4">
-                                <div className="col-md-4 ">
+                            <div className="row">
+                                <div className="col-md-4 mb-3">
                                     <div>
                                         <label htmlFor="kycSelect">Select Kyc</label>
                                         <select
@@ -791,7 +711,7 @@ const Client = () => {
                                         </select>
                                     </div>
                                 </div>
-                                <div className="col-md-4">
+                                <div className="col-md-4 mb-3">
                                     <div >
                                         <label htmlFor="kycSelect">Select CreatedBy</label>
                                         <select
@@ -824,7 +744,7 @@ const Client = () => {
 
                                 </div>
                                 <div className="col-md-1">
-                                    <div className="refresh-icon mt-4">
+                                    <div className="refresh-icon mt-2">
                                         <RefreshCcw onClick={resethandle} />
                                     </div>
                                 </div>
@@ -854,222 +774,190 @@ const Client = () => {
                 </div>
             </div>
 
+            <ReusableModal
+                show={isModalVisible}
+                onClose={() => handleCancel()}
+                title={<> Assign Package</>}
+                size="xl"
+                body={
+                    <>
+                        <div className="card">
+                            <div className="d-flex justify-content-center align-items-center card-body">
+                                {["Plan", "Basket"].map((tab, index) => (
+                                    <label key={index} className="labelfont mx-3">
+                                        <input
+                                            style={{ marginLeft: "12px" }}
+                                            type="radio"
+                                            name="tab"
+                                            checked={checkedIndex === index}
+                                            onChange={() => handleTabChange(index)}
+                                            aria-label={`Select ${tab}`}
+                                        />
+                                        <span className="ps-2 text-secondary">{tab}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
 
-            {isModalVisible && (
-                <>
-                    <div className="modal-backdrop fade show"></div>
-                    <div
-                        className="modal fade show d-block"
-                        tabIndex="-1"
-                        aria-labelledby="exampleModalLabel"
-                        aria-hidden="true"
-                    >
-                        <div className="modal-dialog modal-xl" style={{ width: "900px" }}>
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title" id="exampleModalLabel">Assign Package</h5>
-                                    <button
-                                        type="button"
-                                        className="btn-close"
-                                        onClick={handleCancel}
-                                        aria-label="Close"
-                                    ></button>
-                                </div>
-                                <div className="modal-body">
-                                    <div className='card'>
-                                        <div className='d-flex justify-content-center align-items-center card-body'>
-                                            {['Plan', 'Basket'].map((tab, index) => (
-                                                <label key={index} className='labelfont'>
-                                                    <input
-                                                        className='ms-3'
-                                                        type="radio"
-                                                        name="tab"
-                                                        checked={checkedIndex === index}
-                                                        onChange={() => handleTabChange(index)}
-                                                    />
-                                                    <span className='ps-2'>{tab}</span>
-                                                </label>
-                                            ))}
-                                        </div>
+                        <div className="card">
+                            {checkedIndex === 0 && (
+                                <>
+                                    <div className="row my-3">
+                                        {category &&
+                                            category
+                                                .filter((cat) =>
+                                                    planlist.some((plan) => plan.category._id === cat._id)
+                                                )
+                                                .map((item, index) => (
+                                                    <div className="col-lg-4 mb-3" key={index}>
+                                                        <input
+                                                            style={{
+                                                                border: "1px solid #ddd",
+                                                                margin: "0 8px 1px",
+                                                            }}
+                                                            className="form-check-input"
+                                                            type="radio"
+                                                            name="planSelection"
+                                                            id={`proplus-${index}`}
+                                                            onClick={() => handleCategoryChange(item._id)}
+                                                        />
+                                                        <label
+                                                            className="form-check-label"
+                                                            htmlFor={`proplus-${index}`}
+                                                            style={{
+                                                                fontSize: "14px",
+                                                                fontWeight: "600",
+                                                                color: "#333",
+                                                            }}
+                                                        >
+                                                            {item.title} (
+                                                            {item.servicesDetails
+                                                                .map((service) => service.title)
+                                                                .join(", ")}
+                                                            )
+                                                        </label>
+                                                    </div>
+                                                ))}
                                     </div>
 
-                                    <div className='card'>
-                                        {checkedIndex === 0 && (
-                                            <>
-                                                <div className='row my-3'>
-                                                    {category && category
-                                                        .filter(cat => planlist.some(plan => plan.category._id === cat._id))
-                                                        .map((item, index) => (
-                                                            <div className='col-lg-4' key={index}>
-                                                                <input
-                                                                    style={{ border: "1px solid black" }}
-                                                                    className="form-check-input mx-2"
-                                                                    type="radio"
-                                                                    name="planSelection"
-                                                                    id={`proplus-${index}`}
-                                                                    onClick={() => handleCategoryChange(item._id)}
-                                                                />
-                                                                <label className="form-check-label" htmlFor={`proplus-${index}`} style={{ fontSize: "12px" }}>
-                                                                    {item.title} (
-                                                                    {item.servicesDetails.map((service) => service.title).join(", ")}
-                                                                    )
-                                                                </label>
-                                                            </div>
-                                                        ))}
-                                                </div>
+                                    {selectcategory && (
+                                        <form
+                                            className="card-body my-3"
+                                            style={{ height: "40vh", overflowY: "scroll" }}
+                                        >
+                                            <div className="row">
+                                                {planlist
+                                                    .filter(
+                                                        (item) => item.category._id === selectcategory
+                                                    )
+                                                    .map((item, index) => (
+                                                        <div className="col-md-6 mb-3" key={index}>
+                                                            <div className="card mb-0 shadow-sm">
+                                                                <div className="card-body p-2">
+                                                                    <h5 className="card-title d-flex align-items-center">
+                                                                        <input
+                                                                            style={{
+                                                                                height: "13px",
+                                                                                width: "13px",
+                                                                                marginTop: "0.52rem",
+                                                                                border: "1px solid #ddd",
+                                                                            }}
+                                                                            className="form-check-input"
+                                                                            type="radio"
+                                                                            name="planSelection"
+                                                                            id={`input-plan-${index}`}
+                                                                            checked={selectedPlanId === item._id}
+                                                                            onClick={() => {
+                                                                                setSelectedPlanId(item._id);
+                                                                                setUpdatetitle({
+                                                                                    plan_id: item._id,
+                                                                                    price: item.price,
+                                                                                });
+                                                                            }}
+                                                                        />
+                                                                        <label
+                                                                            className="form-check-label mx-2"
+                                                                            style={{
+                                                                                fontSize: "14px",
+                                                                                fontWeight: "700",
+                                                                                color: "#333",
+                                                                            }}
+                                                                            htmlFor={`input-plan-${index}`}
+                                                                        >
+                                                                            {item.validity}
+                                                                        </label>
+                                                                    </h5>
 
-                                                {selectcategory && (
-                                                    <form className='card-body my-3' style={{ height: "40vh", overflowY: "scroll" }} >
-                                                        <div className="row">
-                                                            {planlist
-                                                                .filter(item => item.category._id === selectcategory)
-                                                                .map((item, index) => (
-                                                                    <div className="col-md-6" key={index}>
-                                                                        <div className="card mb-0 my-2">
-                                                                            <div className="card-body p-1">
-                                                                                <h5 className="card-title">
-                                                                                    <input
-                                                                                        style={{ height: "13px", width: "13px", marginTop: "0.52rem", border: "1px solid black" }}
-                                                                                        className="form-check-input"
-                                                                                        type="radio"
-                                                                                        name="planSelection"
-                                                                                        id={`input-plan-${index}`}
-                                                                                        checked={selectedPlanId === item._id}
-                                                                                        onClick={() => {
-                                                                                            setSelectedPlanId(item._id);
-                                                                                            setUpdatetitle({ plan_id: item._id, price: item.price });
-                                                                                        }}
-                                                                                    />
-                                                                                    <label className="form-check-label mx-1" style={{ fontSize: "13px", fontWeight: "800" }} htmlFor={`input-plan-${index}`}>
-                                                                                        {item.validity}
-
-                                                                                    </label>
-                                                                                </h5>
-
-                                                                                <div className="accordion" id={`accordion-${selectcategory}`}>
-                                                                                    <div className="accordion-item">
-                                                                                        <h2 className="accordion-header" id={`heading-${item._id}`}>
-                                                                                            <button
-                                                                                                className={`accordion-button ${selectedPlanId === item._id ? '' : 'collapsed'} custom-accordion-button`}
-                                                                                                type="button"
-                                                                                                data-bs-toggle="collapse"
-                                                                                                data-bs-target={`#collapse-${item._id}`}
-                                                                                                aria-expanded={selectedPlanId === item._id}
-                                                                                                aria-controls={`collapse-${item._id}`}
-                                                                                            >
-                                                                                                <div className='d-flex justify-content-between'>
-                                                                                                    <div>
-                                                                                                        <strong className="text-secondary m-2">Detail</strong>
-                                                                                                        <strong className="text-success m-2 activestrong">{item?.subscription?.status === "active" ? "Active" : ""}</strong>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </button>
-                                                                                        </h2>
-                                                                                        <div
-                                                                                            id={`collapse-${item._id}`}
-                                                                                            className={`accordion-collapse collapse ${selectedPlanId === item._id ? 'show' : ''}`}
-                                                                                            aria-labelledby={`heading-${item._id}`}
-                                                                                            data-bs-parent={`#accordion-${selectcategory}`}
-                                                                                        >
-                                                                                            <div className="accordion-body">
-                                                                                                <div className="d-flex justify-content-between">
-                                                                                                    <strong>Price:</strong>
-                                                                                                    <span><IndianRupee style={{ width: '15px', height: '15px' }} /> {item.price && item.price}</span>
-
-
-                                                                                                </div>
-                                                                                                <div className="d-flex justify-content-between">
-                                                                                                    <strong>Validity:</strong>
-                                                                                                    <span>{item.validity}</span>
-
-                                                                                                </div>
-                                                                                                <div className="d-flex justify-content-between">
-                                                                                                    <strong>Created At:</strong>
-                                                                                                    <span>{fDateTime(item.created_at)}</span>
-                                                                                                </div>
-                                                                                                <div className="d-flex justify-content-between">
-                                                                                                    <strong>Updated At:</strong>
-                                                                                                    <span>{fDateTime(item.updated_at)}</span>
-                                                                                                </div>
-                                                                                            </div>
+                                                                    <div
+                                                                        className="accordion"
+                                                                        id={`accordion-${selectcategory}`}
+                                                                    >
+                                                                        <div className="accordion-item">
+                                                                            <h2
+                                                                                className="accordion-header"
+                                                                                id={`heading-${item._id}`}
+                                                                            >
+                                                                                <button
+                                                                                    className={`accordion-button ${selectedPlanId === item._id
+                                                                                        ? ""
+                                                                                        : "collapsed"
+                                                                                        } custom-accordion-button`}
+                                                                                    type="button"
+                                                                                    data-bs-toggle="collapse"
+                                                                                    data-bs-target={`#collapse-${item._id}`}
+                                                                                    aria-expanded={
+                                                                                        selectedPlanId === item._id
+                                                                                    }
+                                                                                    aria-controls={`collapse-${item._id}`}
+                                                                                >
+                                                                                    <div className="d-flex justify-content-between w-100">
+                                                                                        <div>
+                                                                                            <strong className=" heading-color  m-2">
+                                                                                                Detail
+                                                                                            </strong>
+                                                                                            <strong className="text-success m-2 activestrong">
+                                                                                                {item?.subscription?.status ===
+                                                                                                    "active"
+                                                                                                    ? "Active"
+                                                                                                    : ""}
+                                                                                            </strong>
                                                                                         </div>
                                                                                     </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                ))}
-                                                        </div>
-                                                    </form>
-                                                )}
-                                            </>
-                                        )}
-                                        {checkedIndex === 1 && (
-                                            <>
-                                                <form className='card-body my-3' style={{ height: "40vh", overflowY: "scroll" }}>
-                                                    <div className="row">
-                                                        {getBasket.map((item, index) => (
-                                                            <div className="col-md-6" key={index}>
-                                                                <div className="card mb-0 my-2">
-                                                                    <div className="card-body p-1">
-                                                                        <h5 className="card-title">
-                                                                            <input
-                                                                                style={{ height: "13px", width: "13px", marginTop: "0.52rem", border: "1px solid black" }}
-                                                                                className="form-check-input"
-                                                                                type="radio"
-                                                                                name="planSelection"
-                                                                                id={`input-plan-${index}`}
-                                                                                checked={selectedPlanId === item._id}
-                                                                                onClick={() => {
-                                                                                    setSelectedPlanId(item._id);
-                                                                                    setBasketdetail({ basket_id: item._id, price: item.basket_price });
-                                                                                }}
-                                                                            />
-                                                                            <label className="form-check-label mx-1" style={{ fontSize: "13px", fontWeight: "800" }} htmlFor={`input-plan-${index}`}>
-                                                                                {item.title} ({item.themename})
-                                                                            </label>
-                                                                        </h5>
+                                                                                </button>
+                                                                            </h2>
+                                                                            <div
+                                                                                id={`collapse-${item._id}`}
+                                                                                className={`accordion-collapse collapse ${selectedPlanId === item._id
+                                                                                    ? "show"
+                                                                                    : ""
+                                                                                    }`}
+                                                                                aria-labelledby={`heading-${item._id}`}
+                                                                                data-bs-parent={`#accordion-${selectcategory}`}
+                                                                            >
+                                                                                <div className="accordion-body">
+                                                                                    <div className="d-flex justify-content-between">
+                                                                                        <strong>Price:</strong>
+                                                                                        <span style={{ display: "flex", alignItems: "center" }}>
+                                                                                            <IndianRupee style={{ width: "15px", height: "15px" }} /> {item.price}
+                                                                                        </span>
 
-                                                                        <div className="accordion" id={`accordion-basket`}>
-                                                                            <div className="accordion-item">
-                                                                                <h2 className="accordion-header" id={`heading-${item._id}`}>
-                                                                                    <button
-                                                                                        className={`accordion-button ${selectedPlanId === item._id ? '' : 'collapsed'} custom-accordion-button`}
-                                                                                        type="button"
-                                                                                        data-bs-toggle="collapse"
-                                                                                        data-bs-target={`#collapse-${item._id}`}
-                                                                                        aria-expanded={selectedPlanId === item._id}
-                                                                                        aria-controls={`collapse-${item._id}`}
-                                                                                    >
-                                                                                        <div className='d-flex justify-content-between'>
-                                                                                            <div>
-                                                                                                <strong className="text-secondary m-2">Detail</strong>
-                                                                                                <strong className="text-success m-2 activestrong">{item?.subscription?.status === "active" ? "Active" : ""}</strong>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </button>
-                                                                                </h2>
-                                                                                <div
-                                                                                    id={`collapse-${item._id}`}
-                                                                                    className={`accordion-collapse collapse ${selectedPlanId === item._id ? 'show' : ''}`}
-                                                                                    aria-labelledby={`heading-${item._id}`}
-                                                                                    data-bs-parent={`#accordion-basket`}
-                                                                                >
-                                                                                    {/* {console.log("item", item)} */}
-                                                                                    <div className="accordion-body">
-                                                                                        <div className="d-flex justify-content-between">
-                                                                                            <strong>Price:</strong>
-                                                                                            <span><IndianRupee style={{ width: '15px', height: '15px' }} /> {item.basket_price && item.basket_price}</span>
-                                                                                        </div>
-                                                                                        <div className="d-flex justify-content-between">
-                                                                                            <strong>Validity:</strong>
-                                                                                            <span>{item.validity}</span>
-                                                                                        </div>
-                                                                                        <div className="d-flex justify-content-between">
-                                                                                            <strong>Miniumum Investment Amount:</strong>
-                                                                                            <span><IndianRupee style={{ width: '15px', height: '15px' }} />{item?.mininvamount}</span>
-                                                                                        </div>
-
+                                                                                       
+                                                                                    </div>
+                                                                                    <div className="d-flex justify-content-between">
+                                                                                        <strong>Validity:</strong>
+                                                                                        <span>{item.validity}</span>
+                                                                                    </div>
+                                                                                    <div className="d-flex justify-content-between">
+                                                                                        <strong>Created At:</strong>
+                                                                                        <span>
+                                                                                            {fDateTime(item.created_at)}
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <div className="d-flex justify-content-between">
+                                                                                        <strong>Updated At:</strong>
+                                                                                        <span>
+                                                                                            {fDateTime(item.updated_at)}
+                                                                                        </span>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -1077,49 +965,168 @@ const Client = () => {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        ))}
-                                                    </div>
-                                                </form>
-                                            </>
-                                        )}
+                                                        </div>
+                                                    ))}
+                                            </div>
+                                        </form>
+                                    )}
+                                </>
+                            )}
 
-                                    </div>
-                                </div>
-
-                                <div className="modal-footer">
-                                    <button
-                                        type="button"
-                                        className="btn btn-secondary"
-                                        onClick={handleCancel}
+                            {checkedIndex === 1 && (
+                                <>
+                                    <div
+                                        className="card-body my-3"
+                                        style={{ height: "40vh", overflowY: "scroll" }}
                                     >
-                                        Close
-                                    </button>
+                                        <div className="row">
+                                            {getBasket.map((item, index) => (
+                                                <div className="col-md-6 mb-3" key={index}>
+                                                    <div className="card mb-0 shadow-sm">
+                                                        <div className="card-body p-2">
+                                                            <h5 className="card-title d-flex align-items-center">
+                                                                <input
+                                                                    style={{
+                                                                        height: "13px",
+                                                                        width: "13px",
+                                                                        marginTop: "0.52rem",
+                                                                        border: "1px solid #ddd",
+                                                                    }}
+                                                                    className="form-check-input"
+                                                                    type="radio"
+                                                                    name="planSelection"
+                                                                    id={`input-plan-${index}`}
+                                                                    checked={selectedPlanId === item._id}
+                                                                    onClick={() => {
+                                                                        setSelectedPlanId(item._id);
+                                                                        setBasketdetail({
+                                                                            basket_id: item._id,
+                                                                            price: item.basket_price,
+                                                                        });
+                                                                    }}
+                                                                />
+                                                                <label
+                                                                    className="form-check-label mx-2"
+                                                                    style={{
+                                                                        fontSize: "14px",
+                                                                        fontWeight: "700",
+                                                                        color: "#333",
+                                                                    }}
+                                                                    htmlFor={`input-plan-${index}`}
+                                                                >
+                                                                    {item.title} ({item.themename})
+                                                                </label>
+                                                            </h5>
 
-                                    {checkedIndex === 0 && (
-                                        <button
-                                            type="button"
-                                            className="btn btn-primary"
-                                            onClick={() => Updateplansubscription()}
-                                        >
-                                            Save Plan
-                                        </button>
-                                    )}
-                                    {checkedIndex === 1 && (
-                                        <button
-                                            type="button"
-                                            className="btn btn-primary"
-                                            onClick={() => UpdateBasketservice()}
-                                        >
-                                            Save Plan
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
+                                                            <div
+                                                                className="accordion"
+                                                                id={`accordion-basket`}
+                                                            >
+                                                                <div className="accordion-item">
+                                                                    <h2
+                                                                        className="accordion-header"
+                                                                        id={`heading-${item._id}`}
+                                                                    >
+                                                                        <button
+                                                                            className={`accordion-button ${selectedPlanId === item._id
+                                                                                ? ""
+                                                                                : "collapsed"
+                                                                                } custom-accordion-button`}
+                                                                            type="button"
+                                                                            data-bs-toggle="collapse"
+                                                                            data-bs-target={`#collapse-${item._id}`}
+                                                                            aria-expanded={
+                                                                                selectedPlanId === item._id
+                                                                            }
+                                                                            aria-controls={`collapse-${item._id}`}
+                                                                        >
+                                                                            <div className="d-flex justify-content-between w-100">
+                                                                                <div>
+                                                                                    <strong className="m-2 heading-color">
+                                                                                        Detail
+                                                                                    </strong>
+                                                                                    <strong className="text-success m-2 activestrong">
+                                                                                        {item?.subscription?.status ===
+                                                                                            "active"
+                                                                                            ? "Active"
+                                                                                            : ""}
+                                                                                    </strong>
+                                                                                </div>
+                                                                            </div>
+                                                                        </button>
+                                                                    </h2>
+                                                                    <div
+                                                                        id={`collapse-${item._id}`}
+                                                                        className={`accordion-collapse collapse ${selectedPlanId === item._id ? "show" : ""
+                                                                            }`}
+                                                                        aria-labelledby={`heading-${item._id}`}
+                                                                        data-bs-parent={`#accordion-basket`}
+                                                                    >
+                                                                        <div className="accordion-body">
+                                                                            <div className="d-flex justify-content-between">
+                                                                                <strong>Price:</strong>
+                                                                                <span style={{ display: "flex", alignItems: "center" }}>
+                                                                                    <IndianRupee style={{ width: "15px", height: "15px" }} /> {item.basket_price}
+                                                                                </span>
+
+                                                                            </div>
+                                                                            <div className="d-flex justify-content-between">
+                                                                                <strong>Validity:</strong>
+                                                                                <span>{item.validity}</span>
+                                                                            </div>
+                                                                            <div className="d-flex justify-content-between">
+                                                                                <strong>
+                                                                                    Minimum Investment Amount:
+                                                                                </strong>
+                                                                                <span style={{ display: "flex", alignItems: "center" }}>
+                                                                                    <IndianRupee style={{ width: "15px", height: "15px" }} /> {item?.mininvamount}
+                                                                                </span>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
-                    </div>
-                </>
-            )}
-
+                    </>
+                }
+                footer={
+                    <>
+                        <button
+                            className="btn btn-primary rounded-1"
+                            onClick={() => handleCancel()}
+                        >
+                            Cancel
+                        </button>
+                        {checkedIndex === 0 && (
+                            <button
+                                type="button"
+                                className="btn btn-primary"
+                                onClick={() => Updateplansubscription()}
+                            >
+                                Save Plan
+                            </button>
+                        )}
+                        {checkedIndex === 1 && (
+                            <button
+                                type="button"
+                                className="btn btn-primary"
+                                onClick={() => UpdateBasketservice()}
+                            >
+                                Save Plan
+                            </button>
+                        )}
+                    </>
+                }
+            />
         </div >
 
 

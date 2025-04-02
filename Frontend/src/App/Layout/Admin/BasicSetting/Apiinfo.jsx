@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { basicsettinglist, updateApiinfo, UpdateKycstatus, Invoicestatus } from '../../../Services/Admin/Admin';
-import Swal from 'sweetalert2';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Apiinfo = () => {
 
@@ -61,16 +61,12 @@ const Apiinfo = () => {
         setIsButtonDisabled(!isDataChanged);
     }, [updateapi, initialApiData]);
 
+
+
     const UpdateApi = async () => {
         try {
             if (!updateapi.digio_client_id || !updateapi.digio_client_secret) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Update Failed',
-                    text: 'Please fill all the required fields.',
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
+                showCustomAlert("error", 'Please fill all the required fields.')
                 return;
             }
             const data = {
@@ -83,22 +79,13 @@ const Apiinfo = () => {
             const response = await updateApiinfo(data, token);
 
             if (response?.status) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Update Successful!',
-                    text: 'Your API information was updated successfully.',
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
+                showCustomAlert("Success", 'Your API information was updated successfully.')
+                getApidetail();
+
             }
         } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Update Failed',
-                text: 'There was an error updating the API information. Please try again.',
-                timer: 1500,
-                timerProgressBar: true,
-            });
+            showCustomAlert("error", 'There was an error updating the API information. Please try again.')
+
         }
     };
 
@@ -107,39 +94,19 @@ const Apiinfo = () => {
         const originalChecked = event.target.checked;
         const user_active_status = originalChecked ? 1 : 0;
         const data = { kyc: user_active_status };
-
-        const result = await Swal.fire({
-            title: "Do you want to change the status?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
+        const result = await showCustomAlert("confirm", "Do you want to change the status?")
 
         if (result.isConfirmed) {
             try {
                 const response = await UpdateKycstatus(data, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: "Success!",
-                        text: "Status changed successfully!",
-                        icon: "success",
-                        timer: 1000,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1000);
+                    showCustomAlert("Success", "Status changed successfully!")
                     getApidetail();
                 }
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+                showCustomAlert("error", "There was an error processing your request.")
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
             event.target.checked = !originalChecked;
             getApidetail();
         }
@@ -150,39 +117,19 @@ const Apiinfo = () => {
         const originalChecked = event.target.checked;
         const user_active_status = originalChecked ? 1 : 0;
         const data = { invoicestatus: user_active_status };
-
-        const result = await Swal.fire({
-            title: "Do you want to change the status?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
+        const result = await showCustomAlert("confirm", "Do you want to change the status?")
 
         if (result.isConfirmed) {
             try {
                 const response = await Invoicestatus(data, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: "Success!",
-                        text: "Status changed successfully!",
-                        icon: "success",
-                        timer: 1000,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1000);
+                    showCustomAlert("Success", "Status changed successfully!")
                     getApidetail();
                 }
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+                showCustomAlert("error", "There was an error processing your request.")
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
             event.target.checked = !originalChecked;
             getApidetail();
         }
@@ -195,7 +142,7 @@ const Apiinfo = () => {
     return (
         <div>
             <div className="page-content">
-                <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                <div className="page-breadcrumb  d-flex align-items-center mb-3">
                     <div className="breadcrumb-title pe-3">Api Information</div>
                     <div className="ps-3">
                         <nav aria-label="breadcrumb">
@@ -211,8 +158,8 @@ const Apiinfo = () => {
                 </div>
                 <hr />
 
-                <div className="row row-cols-1 row-cols-md-3 row-cols-lg-3 row-cols-xl-3 justify-content-center">
-                    <div className="col" style={{ width: "50%" }}>
+                <div className="row row-cols-12 justify-content-center">
+                    <div className="col" >
                         <div className="card">
                             <div className="card-header mt-2">
                                 <div className="row justify-content-end mb-3">
@@ -314,7 +261,7 @@ const Apiinfo = () => {
                                     </div>
                                 </form>
                             </div>
-                            <div className="card-footer text-center">
+                            <div className="card-footer text-end">
                                 <button
                                     type="button"
                                     className="btn btn-primary mb-2"

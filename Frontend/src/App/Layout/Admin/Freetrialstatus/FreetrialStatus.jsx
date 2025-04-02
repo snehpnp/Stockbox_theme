@@ -5,6 +5,9 @@ import { Link } from 'react-router-dom';
 import Table from '../../../Extracomponents/Table';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import ExportToExcel from '../../../../Utils/ExportCSV';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+import Loader from '../../../../Utils/Loader';
+
 
 const FreetrialStatus = () => {
   const token = localStorage.getItem('token');
@@ -13,10 +16,13 @@ const FreetrialStatus = () => {
   const [data, setData] = useState([]);
   const [addStatus, setAddStatus] = useState({
     id: '',
-    freetrial: '1', // Default value
+    freetrial: '1',
   });
-  const [initialFreeTrial, setInitialFreeTrial] = useState('1'); // Track the initial free trial status
-  const [disableUpdate, setDisableUpdate] = useState(true); // Control the "Update" button
+  const [initialFreeTrial, setInitialFreeTrial] = useState('1');
+  const [disableUpdate, setDisableUpdate] = useState(true);
+
+  //state for loading
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getApidetail();
@@ -41,11 +47,12 @@ const FreetrialStatus = () => {
   const getstatusdetail = async () => {
     try {
       const response = await basicsettinglist(token);
+      
       if (response?.status && response?.data) {
         const defaultTrial = response.data.length > 0 ? response.data[0].freetrial : '1';
         setAddStatus((prevState) => ({ ...prevState, freetrial: defaultTrial }));
         setInitialFreeTrial(defaultTrial);
-        setDisableUpdate(true); // Disable the button initially
+        setDisableUpdate(true);
       }
     } catch (error) {
       console.log('Error fetching basic settings:', error);
@@ -60,11 +67,13 @@ const FreetrialStatus = () => {
         const defaultTrial = response.data.length > 0 ? response.data[0].freetrial : '1';
         setAddStatus((prevState) => ({ ...prevState, freetrial: defaultTrial }));
         setInitialFreeTrial(defaultTrial);
-        setDisableUpdate(true); // Disable the button initially
+        setDisableUpdate(true);
       }
     } catch (error) {
       console.log('Error fetching free trial status:', error);
     }
+    setIsLoading(false)
+
   };
 
   const UpdateClientstatus = async () => {
@@ -76,25 +85,13 @@ const FreetrialStatus = () => {
       const response = await addfreeClient(data, token);
 
       if (response?.status) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Free Trial Update Successful!',
-          text: 'Your Free Trial Status updated successfully.',
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        setInitialFreeTrial(addStatus.freetrial); // Update the initial value
-        setDisableUpdate(true); // Disable the button again
-        getApidetail(); // Refresh the data
+        showCustomAlert("Success", "Your Free Trial Status updated successfully.")
+        setInitialFreeTrial(addStatus.freetrial);
+        setDisableUpdate(true);
+        getApidetail();
       }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Update Failed',
-        text: 'There was an error updating the API information. Please try again.',
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert("error", 'There was an error updating the API information. Please try again.')
     }
   };
 
@@ -115,19 +112,19 @@ const FreetrialStatus = () => {
       name: 'Previous Status',
       selector: (row) => `${row.olddays} Day`,
       sortable: true,
-      width: '200px',
+      width: '250px',
     },
     {
       name: 'Updated Status',
       selector: (row) => `${row.newdays} Day`,
       sortable: true,
-      width: '200px',
+      width: '250px',
     },
     {
       name: 'Created At',
       selector: (row) => fDateTime(row.createdAt),
       sortable: true,
-      width: '200px',
+      width: '250px',
     },
     {
       name: 'Updated At',
@@ -140,7 +137,7 @@ const FreetrialStatus = () => {
   return (
     <div>
       <div className="page-content">
-        <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+        <div className="page-breadcrumb  d-flex align-items-center mb-3">
           <div className="breadcrumb-title pe-3">Free Trial Status</div>
           <div className="ps-3">
             <nav aria-label="breadcrumb">
@@ -182,23 +179,33 @@ const FreetrialStatus = () => {
                 Update
               </button>
             </div>
-            <div className="ms-2" style={{ position: 'relative', top: '-38px' }}>
+            <div className="ms-2 float-lg-end mt-lg-0 mt-5" style={{ position: 'relative', top: '-38px' }}>
               <ExportToExcel
                 className="btn btn-primary"
                 apiData={ForGetCSV}
                 fileName="All Users"
               />
             </div>
-            <div className="table-responsive mt-5 d-flex justify-content-center">
-              <Table
-                columns={columns}
-                data={data}
-                pagination
-                striped
-                highlightOnHover
-                dense
-              />
-            </div>
+
+
+            {isLoading ? (
+              <Loader />
+            ) : data.length > 0 ? (
+              <div className="table-responsive  d-flex justify-content-center">
+                <Table
+                  columns={columns}
+                  data={data}
+                  pagination
+                  striped
+                  highlightOnHover
+                  dense
+                />
+              </div>
+            ) : (
+              <div className="text-center mt-5">
+                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+              </div>
+            )}
           </div>
         </div>
       </div>

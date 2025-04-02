@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Tooltip } from 'antd';
+import { Tooltip } from "antd";
 import { SuperAdmin, Admin, User, Employee } from "../Sidebars/Sidebar_config";
+import { getstaffperuser } from "../../Services/Admin/Admin";
+import { permissionMapping } from "./EmployeeManagement";
 
 import {
   UserRoundPlus,
@@ -33,13 +35,27 @@ import {
   ClipboardType,
   ShoppingCart,
   Cog,
+  UserCheck,
+  FileUser,
+  MessageCircleMore,
+  FileQuestion,
+  CircleUserRound,
+  Bell,
+  Puzzle,
+  Handshake,
+  ClipboardX
 } from "lucide-react";
 
 import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
 
+  const userid = localStorage.getItem('id');
+  const token = localStorage.getItem('token');
 
+
+
+  const [permission, setPermission] = useState([]);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isTopbar, setIsTopbar] = useState(false);
   const [openTab, setOpenTab] = useState(null);
@@ -50,8 +66,14 @@ const Sidebar = () => {
       ? SuperAdmin
       : localStorage.getItem("Role") == "ADMIN"
         ? Admin
-        : localStorage.getItem("Role") == "USER" ? User : Employee
+        : localStorage.getItem("Role") == "USER"
+          ? User
+          : Employee
   );
+
+  useEffect(() => {
+    getPermissionInfo()
+  }, [])
 
   useEffect(() => {
     if (theme && theme.sidebarPosition === "Header") {
@@ -103,6 +125,53 @@ const Sidebar = () => {
       document.body.classList.remove("sidebar-collapsed");
     }
   }, [isCollapsed]);
+
+
+
+  async function getPermissionInfo() {
+    try {
+      const response = await getstaffperuser(userid, token);
+      if (response?.status && Array.isArray(response.data?.permissions)) {
+        setPermission(response.data.permissions);
+      }
+    } catch (error) {
+      console.error("Error fetching permissions:", error);
+    }
+  }
+
+
+
+  useEffect(() => {
+    if (permission.length > 0) {
+      const filteredRoutes = routes.map(route => {
+        if (route.children) {
+          const filteredChildren = route.children.filter(child =>
+            permission.some(perm =>
+              permissionMapping[perm]?.includes(child.name)
+            )
+          );
+
+          if (filteredChildren.length > 0) {
+            return { ...route, children: filteredChildren };
+          }
+        } else {
+          return permission.some(perm =>
+            permissionMapping[perm]?.includes(route.name)
+          ) ? route : null;
+        }
+        return null;
+      }).filter(route => route !== null);
+
+      const dashboardRoute = routes.find(route => route.name === "Dashboard");
+      if (dashboardRoute && !filteredRoutes.some(route => route.name === "Dashboard")) {
+        filteredRoutes.unshift(dashboardRoute);
+      }
+
+      setRoutes(filteredRoutes);
+    }
+  }, [permission]);
+
+
 
 
   return (
@@ -165,15 +234,13 @@ const Sidebar = () => {
                           display: "flex",
                           alignItems: "center",
                         }}
-                      > 
+                      >
                         <Tooltip placement="top" title={tab?.name}>
-      <div>
-      <IconComponent icon={tab.icon} />
-      </div>
-    </Tooltip>
-                        {!isCollapsed ?     
-                        <span>{tab?.name}</span>
-                                : ""}
+                          <div>
+                            <IconComponent icon={tab.icon} />
+                          </div>
+                        </Tooltip>
+                        {!isCollapsed ? <span>{tab?.label}</span> : ""}
                       </Link>
                       {tab?.children?.length > 0 &&
                         (openTab === tab?.name ? (
@@ -207,16 +274,16 @@ const Sidebar = () => {
                                 textDecoration: "none",
                                 display: "flex",
                                 alignItems: "center",
-                                gap: "10px",
+                                // gap: "10px",
                               }}
-                            > <Tooltip placement="top" title={child.name}>
-                            <div>
-                              <IconComponent icon={child.icon} />
-                            </div>
-                          </Tooltip>
-                             
+                            >
+                              {" "}
+                              <Tooltip placement="top" title={child.name}>
+                                <div>
+                                  <IconComponent icon={child.icon} />
+                                </div>
+                              </Tooltip>
                               <span> {child.name}</span>
-                               
                             </Link>
                           </li>
                         ))}
@@ -227,8 +294,6 @@ const Sidebar = () => {
             </ul>
           </div>
         )}
-
-
       </div>
     </>
   );
@@ -262,6 +327,15 @@ const IconComponent = ({ icon }) => {
     ClipboardType,
     ShoppingCart,
     Cog,
+    FileUser,
+    MessageCircleMore,
+    FileQuestion,
+    CircleUserRound,
+    Bell,
+    Puzzle,
+    Handshake,
+    ClipboardX
+
   };
 
   const Icon = icons[icon] || null;

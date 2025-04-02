@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { UserLoginApi } from "../../Services/Auth/Login";
 import { image_baseurl } from "../../../Utils/config";
@@ -7,18 +6,17 @@ import { Link } from "react-router-dom";
 import { basicsettinglist } from "../../Services/Admin/Admin";
 import $ from "jquery";
 import BgImg from "./bg-login-img.png";
-const Userlogin = () => {
-  const navigate = useNavigate();
-  let logoSrc =
-    "https://www.pms.crmplus.in/files/system/_file5c2e1123e834d-site-logo.png";
+import showCustomAlert from "../../Extracomponents/CustomAlert/CustomAlert";
 
-  const [status, setStatus] = useState(2);
+
+const Userlogin = () => {
+
+  const navigate = useNavigate();
   const [email, setemail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  const [errors, setErrors] = useState({});
   const [information, setInformation] = useState([]);
 
   const togglePasswordVisibility = (e) => {
@@ -26,20 +24,10 @@ const Userlogin = () => {
     setShowPassword(!showPassword);
   };
 
-  const toggleConfirmPasswordVisibility = (e) => {
-    e.preventDefault();
-    setShowConfirmPassword(!showConfirmPassword);
-  };
-
   const handleLogin = async (e) => {
     e.preventDefault();
     if (email.trim() === "" || password.trim() === "") {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Please enter both email and password",
-      });
-      return;
+      showCustomAlert("error", "Please enter both email and password ", navigate, null)
     }
 
     setIsLoading(true);
@@ -49,32 +37,59 @@ const Userlogin = () => {
     if (ResData.status) {
       localStorage.setItem("token", ResData.data?.token);
       localStorage.setItem("id", ResData.data?.id);
-      localStorage.setItem(
-        "Role",
-        ResData?.data?.Role === 0
-          ? "SUPERADMIN"
-          : ResData?.data?.Role === 1
-            ? "ADMIN"
-            : ResData?.data?.Role === 2
-              ? "EMPLOYEE"
-              : "USER"
-      );
-
-      Swal.fire({
-        icon: "success",
-        title: "Success",
-        text: "Login successful!",
-        timer: 1500,
-      }).then(() => {
-        navigate("/user/dashboard");
-        window.location.reload();
-      });
+      localStorage.setItem("Role", "USER");
+      showCustomAlert("success", "Login successful!", navigate, "/user/dashboard")
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: ResData.message,
+      showCustomAlert("error", ResData.message, navigate, null)
+    }
+  };
+
+  const handleLogin1 = async (e) => {
+    e.preventDefault();
+
+    let errors = {};
+    if (!email) {
+      errors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.email = "Please enter a valid email address";
+    }
+
+    if (!password) {
+      errors.password = "Password is required";
+    } else if (password.length < 6) {
+      errors.password = "Password must be at least 6 characters long";
+    }
+
+
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors);
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const ResData = await UserLoginApi({
+        UserName: email,
+        password: password,
       });
+
+      if (ResData.status) {
+        localStorage.setItem("token", ResData.data?.token);
+        localStorage.setItem("id", ResData.data?.id);
+        localStorage.setItem("Role", "USER");
+
+        localStorage.setItem("email", email);
+        showCustomAlert("success", "Login successful!", navigate, "/user/dashboard")
+      } else {
+        errors.other = ResData.message;
+        setErrors(errors);
+      }
+    } catch (error) {
+      errors.password = "An error occurred while processing your request.";
+      setErrors(errors);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -83,7 +98,6 @@ const Userlogin = () => {
       let token = "";
       const response = await basicsettinglist(token);
       if (response.status) {
-        ;
         localStorage.setItem("theme", JSON.stringify(response?.Theme));
 
         const faviconElement = document.querySelector("link[rel='icon']");
@@ -110,51 +124,8 @@ const Userlogin = () => {
   return (
     <div className="main-login" style={{ backgroundImage: `url(${BgImg})` }}>
       <div className="row align-items-center h-100">
-
         <div className="col-lg-12 mx-auto">
-          {status === 1 ? (
-            <div className="login-wrapper">
-              <div className="background"></div>
-              <div className="login-container active">
-                <img src={logoSrc} alt="Logo" />
-                <div className="inner-div mt-4">
-                  <form className="login-form" onSubmit={handleLogin}>
-                    <div className="form-item">
-                      {/* <label htmlFor="email-login">Email</label> */}
-                      <input
-                        id="email-login"
-                        placeholder="Email"
-                        type="textemail"
-                        // aria-label="Enter your email"
-                        value={email}
-                        onChange={(e) => setemail(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="form-item">
-                      {/* <label htmlFor="password-login">Password</label> */}
-                      <input
-                        id="password-login"
-                        placeholder="Password"
-                        type="password"
-                        aria-label="Enter your password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <button
-                      className="form-button"
-                      type="submit"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? "Logging in..." : "Login"}
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
-          ) : status === 2 ? (
+          {1 === 1 ? (
             <div className="bg-login">
               <div className="section-authentication-signin d-flex align-items-center justify-content-center my-5 my-lg-0">
                 <div className="container-fluid ">
@@ -177,7 +148,7 @@ const Userlogin = () => {
                                     htmlFor="inputEmailAddress"
                                     className="form-label"
                                   >
-                                    Email
+                                    Email / Mobile
                                   </label>
                                   <input
                                     type="text"
@@ -235,9 +206,21 @@ const Userlogin = () => {
                                       type="submit"
                                       className="btn btn-primary"
                                     >
-                                      Sign in
+                                      Sign In
                                     </button>
                                   </div>
+                                </div>
+
+                                <div className="col-12 text-center mt-3">
+                                  <p className="mb-0">
+                                    Don't have an account?{" "}
+                                    <Link
+                                      to="/register"
+                                      className="btn btn-link p-0"
+                                    >
+                                      Sign Up
+                                    </Link>
+                                  </p>
                                 </div>
                               </form>
                             </div>
@@ -251,47 +234,154 @@ const Userlogin = () => {
               </div>
             </div>
           ) : (
-            <div className="login-wrapper">
-              <div className="background"></div>
-              <div className="login-container active">
-                <img src={logoSrc} alt="Logo" />
-                <div className="inner-div mt-4">
-                  <form className="login-form" onSubmit={handleLogin}>
-                    <div className="form-item">
-                      {/* <label htmlFor="email-login">Email</label> */}
-                      <input
-                        id="email-login"
-                        placeholder="Email"
-                        type="textemail"
-                        // aria-label="Enter your email"
-                        value={email}
-                        onChange={(e) => setemail(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="form-item">
-                      {/* <label htmlFor="password-login">Password</label> */}
-                      <input
-                        id="password-login"
-                        placeholder="Password"
-                        type="password"
-                        aria-label="Enter your password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <button
-                      className="form-button"
-                      type="submit"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? "Logging in..." : "Login"}
-                    </button>
-                  </form>
+            <>
+              <div
+                style={{
+                  width: "90%",
+                  maxWidth: "400px",
+                  margin: "auto",
+                  padding: "40px",
+                  background: "#fff",
+                  borderRadius: "15px",
+                  boxShadow: "0 10px 20px rgba(0, 0, 0, 0.1)",
+                  textAlign: "center",
+                }}
+              >
+                <div>
+                  <img
+                    style={{
+                      width: "100%",
+                      maxWidth: "240px",
+                      marginBottom: "20px",
+                    }}
+                    src={`${image_baseurl}uploads/basicsetting/${information[0]?.logo}`}
+                    alt="Logo"
+                  />
                 </div>
+                <form onSubmit={handleLogin1} noValidate>
+                  <div style={{ marginBottom: "20px", textAlign: "left" }}>
+                    <label
+                      htmlFor="email"
+                      style={{
+                        display: "block",
+                        fontWeight: "bold",
+                        marginBottom: "8px",
+                        fontSize: "14px",
+                      }}
+                    >
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      value={email}
+                      onChange={(e) => setemail(e.target.value)}
+                      placeholder="Enter your email"
+                      style={{
+                        width: "100%",
+                        padding: "12px",
+                        border: "1px solid #ccc",
+                        borderRadius: "8px",
+                        fontSize: "16px",
+                        boxSizing: "border-box",
+                        transition: "border-color 0.3s",
+                      }}
+                    />
+                    {errors.email && (
+                      <div
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "5px",
+                        }}
+                      >
+                        {errors.email}
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ marginBottom: "20px", textAlign: "left" }}>
+                    <label
+                      htmlFor="password"
+                      style={{
+                        display: "block",
+                        fontWeight: "bold",
+                        marginBottom: "8px",
+                        fontSize: "14px",
+                      }}
+                    >
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      id="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Your password"
+                      style={{
+                        width: "100%",
+                        padding: "12px",
+                        border: "1px solid #ccc",
+                        borderRadius: "8px",
+                        fontSize: "16px",
+                        boxSizing: "border-box",
+                        transition: "border-color 0.3s",
+                      }}
+                    />
+                    {errors.password && (
+                      <div
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "5px",
+                        }}
+                      >
+                        {errors.password}
+                      </div>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    style={{
+                      width: "100%",
+                      padding: "12px",
+                      border: "none",
+                      borderRadius: "8px",
+                      background: isLoading ? "#ddd" : "#007bff",
+                      color: "#fff",
+                      fontSize: "16px",
+                      cursor: isLoading ? "not-allowed" : "pointer",
+                      transition: "background-color 0.3s ease-in-out",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {isLoading ? "Logging in..." : "Log In"}
+                  </button>
+                  <div className="col-12 text-center mt-3">
+                    <p className="mb-0">
+                      Don't have an account?{" "}
+                      <Link to="/register" className="btn btn-link p-0">
+                        Sign Up
+                      </Link>
+                    </p>
+                  </div>
+
+                  {errors.other && (
+                    <div
+                      style={{
+                        color: "red",
+                        fontSize: "12px",
+                        marginTop: "5px",
+                      }}
+                    >
+                      {errors.other}
+                    </div>
+                  )}
+                </form>
               </div>
-            </div>
+            </>
           )}
         </div>
       </div>

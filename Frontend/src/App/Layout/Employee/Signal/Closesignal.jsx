@@ -12,7 +12,6 @@ import {
     ArrowDownToLine,
     CircleX
 } from "lucide-react";
-import Swal from "sweetalert2";
 import {
     GetSignallist,
     GetSignallistWithFilter,
@@ -25,12 +24,13 @@ import {
 } from "../../../Services/Admin/Admin";
 import { fDateTimeSuffix, fDateTimeH } from "../../../../Utils/Date_formate";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { exportToCSV } from "../../../../Utils/ExportData";
+import { exportToCSV, exportToCSV1 } from "../../../../Utils/ExportData";
 import Select from "react-select";
 import { Tooltip } from "antd";
 import { image_baseurl } from "../../../../Utils/config";
 import Loader from "../../../../Utils/Loader";
 import ReusableModal from "../../../components/Models/ReusableModal";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 const Closesignal = () => {
 
@@ -113,7 +113,18 @@ const Closesignal = () => {
 
     const getexportfile = async () => {
         try {
-            const response = await GetSignallist(token);
+            const data = {
+                page: currentPage,
+                from:
+                    clientStatus === "todayclosesignal" ? formattedDate : filters.from ? filters.from : "",
+                to:
+                    clientStatus === "todayclosesignal" ? formattedDate : filters.to ? filters.to : "",
+                service: filters.service,
+                stock: searchstock,
+                closestatus: "true",
+                search: searchInput,
+            };
+            const response = await GetSignallist(data, token);
             if (response.status) {
                 if (response.data?.length > 0) {
                     let filterdata = response.data.filter(
@@ -145,6 +156,74 @@ const Closesignal = () => {
                         };
                     });
                     exportToCSV(csvArr, "Close Signal");
+                }
+            }
+        } catch (error) {
+            console.log("Error:", error);
+        }
+    };
+
+
+    const getexportfile1 = async () => {
+        try {
+            const data = {
+                page: currentPage,
+                from:
+                    clientStatus === "todayclosesignal" ? formattedDate : filters.from ? filters.from : "",
+                to:
+                    clientStatus === "todayclosesignal" ? formattedDate : filters.to ? filters.to : "",
+                service: filters.service,
+                stock: searchstock,
+                closestatus: "true",
+                search: searchInput,
+            };
+
+
+            const response = await GetSignallist(data, token);
+            if (response.status) {
+                if (response.data?.length > 0) {
+                    let filterdata = response.data.filter(
+                        (item) => item.close_status === true
+                    );
+                    const csvArr = filterdata.map((item) => {
+                        let profitAndLossPercentage = 0;
+                        if (item.calltype === "BUY") {
+                            profitAndLossPercentage = (
+                                ((item.closeprice - item.price) / item.price) *
+                                100
+                            ).toFixed(2);
+                        } else if (item.calltype === "SELL") {
+                            profitAndLossPercentage = (
+                                ((item.price - item.closeprice) / item.price) *
+                                100
+                            ).toFixed(2);
+                        }
+
+                        const entryType = `BUY POSITION CLOSED IN ${item.tradesymbol || ""} ${item.expirydate || ""
+                            } ${item.optiontype || ""} SL ${item.stoploss || ""}, ${(() => {
+                                const count = [item.tag1, item.tag2, item.tag3].filter(Boolean).length;
+                                return count === 1
+                                    ? "1st"
+                                    : count === 2
+                                        ? "2nd"
+                                        : count === 3
+                                            ? "3rd"
+                                            : "";
+                            })()
+                            } Target Achieved Exit Price ${item?.closeprice}`;
+
+                        return {
+                            CloseSignal: `${fDateTimeH(item?.created_at)}  Segment: ${item.segment === "C"
+                                ? "CASH"
+                                : item.segment === "O"
+                                    ? "OPTION"
+                                    : item.segment === "F"
+                                        ? "FUTURE"
+                                        : ""
+                                }  P/L: ${profitAndLossPercentage}%   Entry Type: ${entryType}`,
+                        }
+                    });
+                    exportToCSV1(csvArr, "Close Signal");
                 }
             }
         } catch (error) {
@@ -403,7 +482,7 @@ const Closesignal = () => {
                                     onClick={() => {
                                         setModel1(true);
                                         setServiceid(row);
-                                        setUpdatetitle({ report: row.report, id: row._id });
+                                        setUpdatetitle({ report: row.report, id: row._id, description: row.description });
                                     }}
                                 />
                             </Tooltip>
@@ -443,32 +522,18 @@ const Closesignal = () => {
 
             const response = await UpdatesignalReport(data, token);
             if (response && response.status) {
-                Swal.fire({
-                    title: "Success!",
-                    text: response.message || "File updated successfully.",
-                    icon: "success",
-                    confirmButtonText: "OK",
-                    timer: 2000,
-                });
+                showCustomAlert("Success", response.message)
+
 
                 setUpdatetitle({ report: "", id: "", description: "" });
                 setModel1(false);
                 getAllSignal();
             } else {
-                Swal.fire({
-                    title: "Error!",
-                    text: response.message || "There was an error updating the file.",
-                    icon: "error",
-                    confirmButtonText: "Try Again",
-                });
+                showCustomAlert("error", response.message)
             }
         } catch (error) {
-            Swal.fire({
-                title: "Error!",
-                text: "server error",
-                icon: "error",
-                confirmButtonText: "Try Again",
-            });
+            showCustomAlert("error", "Server Error")
+
         }
     };
 
@@ -483,7 +548,7 @@ const Closesignal = () => {
         <div>
             <div>
                 <div className="page-content">
-                    <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                    <div className="page-breadcrumb  d-flex align-items-center mb-3">
                         <div className="breadcrumb-title pe-3">{header}</div>
                         <div className="ps-3">
                             <nav aria-label="breadcrumb">
@@ -623,7 +688,7 @@ const Closesignal = () => {
                             </div>
 
                             {/* Search and Filters */}
-                            <div className="d-lg-flex align-items-center mb-4 gap-3 justify-content-between">
+                            <div className="d-sm-flex align-items-center mb-4 gap-3 justify-content-between">
                                 <div className="position-relative">
                                     <input
                                         type="text"
@@ -636,21 +701,44 @@ const Closesignal = () => {
                                         <i className="bx bx-search" />
                                     </span>
                                 </div>
-                                <div className="ms-2" onClick={(e) => getexportfile()}>
+                                {/* <div className="ms-0 ms-md-2 mt-2 mt-md-0" onClick={(e) => getexportfile()}>
                                     <button
                                         type="button"
-                                        className="btn btn-primary float-end"
+                                        className="btn btn-primary float-sm-end"
                                         title="Export To Excel"
                                     >
                                         <i className="bx bxs-download" aria-hidden="true"></i>
                                         Export-Excel
                                     </button>
+                                </div> */}
+
+                                <div className="mt-2 mt-sm-0">
+                                    {activeTab === "table" ? (
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary float-sm-end"
+                                            title="Export To Excel"
+                                            onClick={getexportfile}
+                                        >
+                                            <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
+                                        </button>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary float-sm-end"
+                                            title="Export Card data"
+                                            onClick={getexportfile1}
+
+                                        >
+                                            <i className="bx bxs-download" aria-hidden="true" /> Export-Excel
+                                        </button>
+                                    )}
                                 </div>
                             </div>
 
                             {/* Filters */}
-                            <div className="row mb-4">
-                                <div className="col-md-3">
+                            <div className="row ">
+                                <div className="col-md-3 mb-3">
                                     <label>From Date</label>
                                     <input
                                         type="date"
@@ -661,7 +749,7 @@ const Closesignal = () => {
                                         onChange={handleFilterChange}
                                     />
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-md-3 mb-3">
                                     <label>To Date</label>
                                     <input
                                         type="date"
@@ -672,7 +760,7 @@ const Closesignal = () => {
                                         onChange={handleFilterChange}
                                     />
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-md-3 mb-3">
                                     <label>Select Service</label>
                                     <select
                                         name="service"
@@ -688,7 +776,7 @@ const Closesignal = () => {
                                         ))}
                                     </select>
                                 </div>
-                                <div className="col-md-3 d-flex">
+                                <div className="col-md-3 d-flex align-items-center justify-content-between">
                                     <div style={{ width: "80%" }}>
                                         <label>Select Stock</label>
                                         <Select
@@ -699,7 +787,7 @@ const Closesignal = () => {
                                                 ) || null
                                             }
                                             onChange={handleChange}
-                                            className="form-control radius-10"
+                                            className=""
                                             isClearable
                                             placeholder="Select Stock"
                                         />
@@ -893,12 +981,7 @@ const Closesignal = () => {
                                         const file = e.target.files[0];
                                         if (file) {
                                             if (file.type !== "application/pdf") {
-                                                Swal.fire({
-                                                    title: 'Error!',
-                                                    text: 'Only PDF files are allowed!',
-                                                    icon: 'error',
-                                                    confirmButtonText: 'Try Again',
-                                                });
+                                                showCustomAlert("error", 'Only PDF files are Allowed!')
                                                 return;
                                             }
                                             updateServiceTitle({ report: file });
@@ -910,13 +993,15 @@ const Closesignal = () => {
                         <div className="row">
                             <div className="col-md-12">
                                 <label htmlFor="description">Description</label>
-                                <input
+                                <textarea
                                     className="form-control mb-2"
-                                    type="text"
                                     placeholder="Enter Description Title"
                                     value={updatetitle.description}
                                     onChange={(e) => updateServiceTitle({ description: e.target.value })}
-                                />
+                                    rows={2}
+                                >
+
+                                </textarea>
                             </div>
                         </div>
                     </form>

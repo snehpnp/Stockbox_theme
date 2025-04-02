@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { UpdateClient } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
-
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 const EditClient = () => {
@@ -15,7 +14,43 @@ const EditClient = () => {
   const location = useLocation();
   const { row } = location.state;
 
-  
+
+  const [selectedState, setSelectedState] = useState("");
+
+
+  const indianStates = [
+    { name: "Andhra Pradesh" },
+    { name: "Arunachal Pradesh" },
+    { name: "Assam" },
+    { name: "Bihar" },
+    { name: "Chhattisgarh" },
+    { name: "Goa" },
+    { name: "Gujarat" },
+    { name: "Haryana" },
+    { name: "Himachal Pradesh" },
+    { name: "Jharkhand" },
+    { name: "Karnataka" },
+    { name: "Kerala" },
+    { name: "Madhya Pradesh" },
+    { name: "Maharashtra" },
+    { name: "Manipur" },
+    { name: "Meghalaya" },
+    { name: "Mizoram" },
+    { name: "Nagaland" },
+    { name: "Odisha" },
+    { name: "Punjab" },
+    { name: "Rajasthan" },
+    { name: "Sikkim" },
+    { name: "Tamil Nadu" },
+    { name: "Telangana" },
+    { name: "Tripura" },
+    { name: "Uttar Pradesh" },
+    { name: "Uttarakhand" },
+    { name: "West Bengal" }
+  ];
+
+
+
 
   const user_id = localStorage.getItem("id");
   const token = localStorage.getItem("token");
@@ -26,117 +61,72 @@ const EditClient = () => {
   const validate = (values) => {
     let errors = {};
 
-     // Regex to check for numbers
-  const numberRegex = /[0-9]/;
+    const numberRegex = /[0-9]/;
 
-  // Regex to check for special characters
-  const specialCharRegex = /[^a-zA-Z\s]/;
+    const specialCharRegex = /[^a-zA-Z\s]/;
 
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
-  const onlyNumbersRegex = /^[0-9]+$/;
+    const onlyNumbersRegex = /^[0-9]+$/;
 
-  // Regex to check phone number (10 digits)
-  const phoneRegex = /^[0-9]{10}$/;  // This will match only 10 digits
+    const phoneRegex = /^[0-9]{10}$/;
 
-  if (!values.FullName) {
-    errors.FullName = "Please Enter Full Name";
-  } else if (numberRegex.test(values.FullName)) {
-    errors.FullName = "Full Name should not contain numbers";
-  } else if (specialCharRegex.test(values.FullName)) {
-    errors.FullName = "Full Name should not contain special characters";
-  }
-   // Email Validation
-   if (!values.Email) {
-    errors.Email = "Please Enter Email";
-} else if (onlyNumbersRegex.test(values.Email)) {
-    // If the email contains only numbers
-    errors.Email = "Email should not contain only numbers";
-} else if (!emailRegex.test(values.Email)) {
-    // If email format is invalid
-    errors.Email = "Please Enter a valid Email";
-}
+    if (!values.FullName) {
+      errors.FullName = "Please Enter Full Name";
+    } else if (numberRegex.test(values.FullName)) {
+      errors.FullName = "Full Name should not contain numbers";
+    } else if (specialCharRegex.test(values.FullName)) {
+      errors.FullName = "Full Name should not contain special characters";
+    }
+    if (!values.Email) {
+      errors.Email = "Please Enter Email";
+    } else if (onlyNumbersRegex.test(values.Email)) {
+      errors.Email = "Email should not contain only numbers";
+    } else if (!emailRegex.test(values.Email)) {
+      errors.Email = "Please Enter a valid Email";
+    }
 
-    // if (!values.UserName) {
-    //   errors.UserName = "Please enter Username";
-    // }
     if (!values.PhoneNo) {
       errors.PhoneNo = "Please Enter Phone Number";
     } else if (!phoneRegex.test(values.PhoneNo)) {
-      // Check if phone number is not exactly 10 digits
       errors.PhoneNo = "Phone Number should be exactly 10 digits";
     }
-    // if (!values.password) {
-    //   errors.password = "Please Enter Password";
-    // }
 
+    if (!values.state) {
+      errors.state = "Please Select State";
+    }
 
     return errors;
   };
 
   const onSubmit = async (values) => {
-  const req = {
-    FullName: values.FullName,
-    Email: values.Email,
-    PhoneNo: values.PhoneNo,
-    id: row._id,
-  };
+    const req = {
+      FullName: values.FullName,
+      Email: values.Email,
+      PhoneNo: values.PhoneNo,
+      state: values.state,
+      id: row._id,
+    };
 
-  try {
-    const response = await UpdateClient(req, token);
-    // console.log("checking email and mobile number:",response);
-    
+    try {
+      const response = await UpdateClient(req, token);
 
-    if (response.status) {
-      Swal.fire({
-        title: "Update Successful!",
-        text: response.message,
-        icon: "success",
-        timer: 1500,
-        timerProgressBar: true,
-      });
-      setTimeout(() => {
-        navigate("/admin/client");
-      }, 1500);
-    } else {
-      // Check for specific error messages
-      if (response.error.status === false) {
-        Swal.fire({
-          title: "Error",
-          // text: "Email already exists. Please use a different email.",
-          text:response.error.message,
-          icon: "error",
-          timer: 2500,
-          timerProgressBar: true,
-        });
-      } else if (response.error.status === false) {
-        Swal.fire({
-          title: "Error",
-          text:response.error.message,
-          icon: "error",
-          timer: 2500,
-          timerProgressBar: true,
-        });
+
+      if (response.status) {
+        showCustomAlert("Success", response.message, navigate, "/admin/client");
       } else {
-        Swal.fire({
-          title: "Error",
-          text: "Email or Mobile number are already exists.",
-          icon: "error",
-          timer: 2500,
-          timerProgressBar: true,
-        });
+        if (response.error.status === false) {
+          showCustomAlert("error", response.error.message);
+        } else if (response.error.status === false) {
+          showCustomAlert("error", response.error.message);
+        } else {
+          showCustomAlert("error", "Email or Mobile number are already exists.");
+        }
       }
+    } catch (error) {
+      showCustomAlert("error", "An unexpected error occurred. Please try again later.");
     }
-  } catch (error) {
-    Swal.fire({
-      title: "Error",
-      text: "An unexpected error occurred. Please try again later.",
-      icon: "error",
-      timer: 1500,
-      timerProgressBar: true,
-    });
-  }
-};
+  };
 
 
   const formik = useFormik({
@@ -145,6 +135,7 @@ const EditClient = () => {
       // UserName: row?.UserName || "",
       Email: row?.Email || "",
       PhoneNo: row?.PhoneNo || "",
+      state: row?.state || "",
 
     },
     validate,
@@ -160,7 +151,7 @@ const EditClient = () => {
       label_size: 6,
       col_size: 4,
       disable: false,
-      star:true
+      star: true
 
     },
     // {
@@ -179,7 +170,7 @@ const EditClient = () => {
       label_size: 12,
       col_size: 4,
       disable: false,
-      star:true
+      star: true
 
     },
     {
@@ -189,10 +180,22 @@ const EditClient = () => {
       label_size: 12,
       col_size: 4,
       disable: false,
-      star:true
-      
-
+      star: true
     },
+    {
+      name: "state",
+      label: "Select State",
+      type: 'select',
+      options: indianStates?.map((item) => ({
+          label: item.name, 
+          value: item.name,
+      })),
+      label_size: 12,
+      col_size: 3,
+      disable: false,
+      star: true
+  }
+  
     // {
     //   name: "password",
     //   label: "Password",
@@ -212,16 +215,18 @@ const EditClient = () => {
     >
       <DynamicForm
         fields={fields}
-        page_title="Update Client"
         btn_name="Update Client"
         btn_name1="Cancel"
         formik={formik}
         sumit_btn={true}
         btn_name1_route={"/admin/client"}
-        additional_field={<></>}
+        additional_field={<>
+         
+
+        </>}
       />
-      </Content>
-   
+    </Content>
+
   );
 };
 

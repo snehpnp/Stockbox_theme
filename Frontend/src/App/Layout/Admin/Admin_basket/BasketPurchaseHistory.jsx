@@ -4,12 +4,12 @@ import { getAllSubscriptionListById } from '../../../Services/Admin/Admin';
 // import Table from '../../../components/Table';
 import Table from '../../../Extracomponents/Table1';
 import { SquarePen, Trash2, PanelBottomOpen, Eye, RefreshCcw, IndianRupee } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import { exportToCSV } from '../../../../Utils/ExportCSV';
 import Content from '../../../components/Contents/Content';
+import Loader from '../../../../Utils/Loader';
 
 
 
@@ -28,6 +28,9 @@ const BasketPurchaseHistory = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
+
+  const [isLoading, setIsLoading] = useState(true)
+
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -62,6 +65,7 @@ const BasketPurchaseHistory = () => {
     } catch (error) {
       console.log("Error fetching services:", error);
     }
+    setIsLoading(false)
   };
 
 
@@ -203,6 +207,9 @@ const BasketPurchaseHistory = () => {
                 </div>
               </div>
             </div>
+            {isLoading ? (
+            <Loader />
+          ) : clients.length > 0 ? (
             <div className="table-responsive">
               <Table
                 columns={columns}
@@ -212,6 +219,11 @@ const BasketPurchaseHistory = () => {
                 onPageChange={handlePageChange}
               />
             </div>
+          ):(
+            <div className="text-center mt-5">
+            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+          </div>
+          )}
           </div>
         </div>
       </div>

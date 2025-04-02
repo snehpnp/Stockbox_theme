@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { basicsettinglist, UpdatereferAndEarn } from "../../../Services/Admin/Admin";
 import { Formik, Form, Field } from "formik";
-import Swal from "sweetalert2";
 import { Link, useNavigate } from "react-router-dom";
 import { image_baseurl } from "../../../../Utils/config";
+import Loader from "../../../../Utils/Loader";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import * as Yup from "yup";
 
 const ReferAndEarn = () => {
+
+
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const [clients, setClients] = useState(null);
+
   const [isChanged, setIsChanged] = useState(false);
 
   const getsettinglist = async () => {
@@ -27,16 +32,21 @@ const ReferAndEarn = () => {
   }, []);
 
   const handleFieldChange = (fieldName, value, setFieldValue) => {
-    // Ensure value is less than or equal to 100
     if (value === "" || (Number(value) <= 100 && !isNaN(value))) {
-      setFieldValue(fieldName, value); // Update the specific field's value
+      setFieldValue(fieldName, value);
     }
-    setIsChanged(true); // Mark as changed
+    setIsChanged(true);
   };
 
   if (!clients) {
-    return <div>Loading...</div>;
+    return <div><Loader /></div>;
   }
+
+  const validationSchema = Yup.object().shape({
+    refersendmsg: Yup.string().trim().required("R&E Share Message is required"),
+  });
+
+
 
   return (
     <div className="page-content">
@@ -58,6 +68,7 @@ const ReferAndEarn = () => {
       <div className="row">
         <div className="col-lg-8 mx-auto">
           <div className="card radius-15">
+
             <Formik
               enableReinitialize={true}
               initialValues={{
@@ -67,9 +78,11 @@ const ReferAndEarn = () => {
                 refer_description: clients[0]?.refer_description || "",
                 refer_status: clients[0]?.refer_status || "",
                 refer_image: null,
-                Multipletime: clients[0]?.refer_status === 1, // Multiple time checkbox default
-                Singletime: clients[0]?.refer_status === 0, // Single time checkbox default
+                Multipletime: clients[0]?.refer_status === 1,
+                Singletime: clients[0]?.refer_status === 0,
+                refersendmsg: clients[0]?.refersendmsg || "",
               }}
+              validationSchema={validationSchema}
               onSubmit={async (values) => {
                 const req = {
                   sender_earn: values?.sender_earn,
@@ -78,44 +91,33 @@ const ReferAndEarn = () => {
                   refer_description: values?.refer_description,
                   refer_image: values?.refer_image,
                   refer_status: values?.refer_status,
+                  refersendmsg: values?.refersendmsg,
                 };
 
                 try {
                   const response = await UpdatereferAndEarn(req, token);
 
                   if (response.status) {
-                    Swal.fire({
-                      title: "Update Successful!",
-                      text: response.message,
-                      icon: "success",
-                      timer: 1500,
-                      timerProgressBar: true,
-                    });
+                    showCustomAlert("Success", "Refer and Earn Updated Successfully")
                   } else {
-                    Swal.fire({
-                      title: "Error",
-                      text: response.message,
-                      icon: "error",
-                      timer: 1500,
-                      timerProgressBar: true,
-                    });
+                    showCustomAlert("error", response.message)
                   }
-                  setIsChanged(false); // Reset after successful update
+                  setIsChanged(false);
+                  const fileInput = document.querySelector('input[name="refer_image"]');
+                  if (fileInput) {
+                    fileInput.value = "";
+                  }
+
                 } catch (error) {
-                  Swal.fire({
-                    title: "Error",
-                    text: "An unexpected error occurred. Please try again later.",
-                    icon: "error",
-                    timer: 1500,
-                    timerProgressBar: true,
-                  });
+                  showCustomAlert("error", "An unexpected error occurred. Please try again later.")
+
                 }
               }}
             >
-              {({ setFieldValue, values }) => (
+              {({ setFieldValue, values, errors, touched }) => (
                 <Form className="card-body p-4">
                   <div className="p-4 border radius-15">
-                    {/* Title field */}
+
                     <div className="row mb-3 align-items-center">
                       <label htmlFor="refer_title" className="col-sm-3 col-form-label">
                         <b>Title</b>
@@ -138,7 +140,7 @@ const ReferAndEarn = () => {
                       </div>
                     </div>
 
-                    {/* Sender Earn field */}
+
                     <div className="row mb-3 align-items-center">
                       <label htmlFor="sender_earn" className="col-sm-3 col-form-label">
                         <b>Sender Earn</b>
@@ -162,7 +164,7 @@ const ReferAndEarn = () => {
                       </div>
                     </div>
 
-                    {/* Receiver Earn field */}
+
                     <div className="row mb-3 align-items-center">
                       <label htmlFor="receiver_earn" className="col-sm-3 col-form-label">
                         <b>Receiver Earn</b>
@@ -186,7 +188,7 @@ const ReferAndEarn = () => {
                       </div>
                     </div>
 
-                    {/* Description field */}
+
                     <div className="row mb-3 align-items-center">
                       <label htmlFor="refer_description" className="col-sm-3 col-form-label">
                         <b>Description</b>
@@ -207,7 +209,30 @@ const ReferAndEarn = () => {
                       </div>
                     </div>
 
-                    {/* Image upload */}
+                    <div className="row mb-3 align-items-center">
+                      <label htmlFor="refersendmsg" className="col-sm-3 col-form-label">
+                        <b>R&E Share Message</b>
+                      </label>
+                      <div className="col-sm-9">
+                        <div className="input-group">
+                          <Field
+                            as="textarea"
+                            name="refersendmsg"
+                            className={`form-control ${errors.refersendmsg && touched.refersendmsg ? "is-invalid" : ""}`}
+                            placeholder="R&E Share Message"
+                            style={{ width: "100%" }}
+                            onChange={(e) => {
+                              setFieldValue("refersendmsg", e.target.value);
+                            }}
+                          />
+                        </div>
+                        {errors.refersendmsg && touched.refersendmsg && (
+                          <div className="invalid-feedback">{errors.refersendmsg}</div>
+                        )}
+                      </div>
+                    </div>
+
+
                     <div className="row mb-3 align-items-center">
                       <label htmlFor="refer_image" className="col-sm-3 col-form-label">
                         <b>Image</b>
@@ -217,10 +242,16 @@ const ReferAndEarn = () => {
                           name="refer_image"
                           type="file"
                           className="form-control"
+                          accept="image/*"
                           onChange={(event) => {
-                            handleFieldChange("refer_image", event.currentTarget.files[0], setFieldValue);
+                            const file = event.currentTarget.files[0];
+                            if (file) {
+                              setFieldValue("refer_image", file);
+                              setIsChanged(true);
+                            }
                           }}
                         />
+
                       </div>
                       <div className="col-sm-3">
                         {clients[0]?.refer_image && (
@@ -235,7 +266,6 @@ const ReferAndEarn = () => {
                       </div>
                     </div>
 
-                    {/* Multiple Time and Single Time checkboxes */}
                     <div className="d-flex">
                       <div className="col-sm-7">
                         <div className="input-group">
@@ -249,7 +279,7 @@ const ReferAndEarn = () => {
                               setFieldValue("Multipletime", isChecked);
                               setFieldValue("refer_status", isChecked ? 1 : 0);
                               setFieldValue("Singletime", !isChecked);
-                              setIsChanged(true); // Mark changes
+                              setIsChanged(true);
                             }}
                           />
                           <label htmlFor="Multipletime" className="form-check-label">
@@ -269,7 +299,7 @@ const ReferAndEarn = () => {
                               setFieldValue("Singletime", isChecked);
                               setFieldValue("refer_status", isChecked ? 0 : 1);
                               setFieldValue("Multipletime", !isChecked);
-                              setIsChanged(true); // Mark changes
+                              setIsChanged(true);
                             }}
                           />
                           <label htmlFor="Singletime" className="form-check-label">
@@ -279,7 +309,7 @@ const ReferAndEarn = () => {
                       </div>
                     </div>
 
-                    {/* Submit button */}
+
                     <div className="row">
                       <label className="col-sm-3 col-form-label" />
                       <div className="col-sm-9">

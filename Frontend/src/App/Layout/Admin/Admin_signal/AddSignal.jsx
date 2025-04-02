@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
 import { AddSignalByAdmin, GetService, getstockbyservice, getexpirydate, getstockStrickprice } from '../../../Services/Admin/Admin';
-import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import Content from '../../../components/Contents/Content';
-
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 
@@ -26,7 +25,7 @@ const AddSignal = () => {
   const [selectitem, setSelectitem] = useState("");
   const [showDropdown, setShowDropdown] = useState(true);
 
-  
+
 
 
 
@@ -84,6 +83,7 @@ const AddSignal = () => {
       if (!values.tag1) errors.tag1 = 'Please Enter Target1';
       if (values.calltype === "BUY") {
 
+
         if (values.price && values.tag1 && values.price > values.tag1) {
           errors.tag1 = "Please Enter Greater Than Entry Price";
         }
@@ -91,6 +91,11 @@ const AddSignal = () => {
         if (values.tag2 && values.tag1 > values.tag2) {
           errors.tag2 = "Please Enter Greater Than Target1";
         }
+
+        if (values.tag3 && !values.tag2) {
+          errors.tag2 = "Please Enter Target2";
+        }
+
 
         if (values.tag3 && values.tag2 && values.tag2 > values.tag3) {
           errors.tag3 = "Please Enter Greater Than Target2";
@@ -106,10 +111,13 @@ const AddSignal = () => {
           errors.tag1 = "Please Enter Less Than Entry Price";
         }
 
+
         if (values.tag2 && values.tag1 < values.tag2) {
           errors.tag2 = "Please Enter Less Than Target1";
         }
-
+        if (values.tag3 && !values.tag2) {
+          errors.tag2 = "Please Enter Target2";
+        }
         if (values.tag3 && values.tag2 && values.tag2 < values.tag3) {
           errors.tag3 = "Please Enter Less Than Target2";
         }
@@ -177,40 +185,14 @@ const AddSignal = () => {
       try {
         const response = await AddSignalByAdmin(req, token);
         if (response.status) {
-          Swal.fire({
-            title: 'Create Successful!',
-            text: response.message,
-            icon: 'success',
-            timer: 2000,
-            timerProgressBar: true,
-          });
-          setTimeout(() => {
-            navigate('/admin/signal');
-
-          }, 2000);
-
-
+          showCustomAlert("Success", response.message, navigate, '/admin/signal')
         } else {
-          Swal.fire({
-            title: 'Alert',
-            text: response.message,
-            icon: 'warning',
-            timer: 1500,
-            timerProgressBar: true,
-          });
-
+          showCustomAlert("error", response.message)
           setLoading(false)
         }
       } catch (error) {
         setLoading(false)
-
-        Swal.fire({
-          title: 'Error',
-          text: 'An unexpected error occurred. Please try again later.',
-          icon: 'error',
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("error", 'An unexpected error occurred. Please try again later.')
       }
     }
   });
@@ -367,18 +349,14 @@ const AddSignal = () => {
       showWhen: (values) => values.segment === "O"
     },
     {
-      name: 'entrytype',
-      label: 'Entry Type',
-      type: 'select',
-      options: [
-        { label: 'At', value: 'At' },
-        { label: 'Above', value: 'Above' },
-        { label: 'Below', value: 'Below' },
-      ],
+      name: 'price',
+      label: 'Entry Price',
+      type: 'number',
       label_size: 12,
       col_size: 6,
       star: true
     },
+
     {
       name: 'callduration',
       label: 'Trade Duration',
@@ -417,9 +395,14 @@ const AddSignal = () => {
       star: true
     },
     {
-      name: 'price',
-      label: 'Entry Price',
-      type: 'number',
+      name: 'entrytype',
+      label: 'Entry Type',
+      type: 'select',
+      options: [
+        { label: 'At', value: 'At' },
+        { label: 'Above', value: 'Above' },
+        { label: 'Below', value: 'Below' },
+      ],
       label_size: 12,
       col_size: 6,
       star: true
@@ -432,9 +415,6 @@ const AddSignal = () => {
       col_size: 6,
       star: false
     },
-
-
-
     {
       name: 'tag1',
       label: 'Target-1',
@@ -516,7 +496,7 @@ const AddSignal = () => {
     >
       <DynamicForm
         fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
-        page_title="Add Signal"
+        // page_title="Add Signal"
         btn_name="Add Signal"
         btn_name1="Cancel"
         formik={formik}

@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { basicsettinglist, UpdateEmailSettings } from '../../../Services/Admin/Admin';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import Swal from 'sweetalert2';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Emailsettings = () => {
 
@@ -47,7 +47,7 @@ const Emailsettings = () => {
 
   return (
     <div className='page-content'>
-      <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+      <div className="page-breadcrumb  d-flex align-items-center mb-3">
         <div className="breadcrumb-title pe-3">Email Settings</div>
         <div className="ps-3">
           <nav aria-label="breadcrumb">
@@ -63,7 +63,7 @@ const Emailsettings = () => {
       </div>
       <hr />
       <div className="row">
-        <div className="col-lg-8 mx-auto">
+        <div className="col-lg-12 mx-auto">
           <div className="card radius-15">
 
             <Formik
@@ -92,30 +92,13 @@ const Emailsettings = () => {
                 try {
                   const response = await UpdateEmailSettings(req, token);
                   if (response.status) {
-                    Swal.fire({
-                      title: "Update Successful!",
-                      text: response.message,
-                      icon: "success",
-                      timer: 1500,
-                      timerProgressBar: true,
-                    });
+                    showCustomAlert("Success", response.message)
+                    getsettingdetail()
                   } else {
-                    Swal.fire({
-                      title: "Error",
-                      text: response.message,
-                      icon: "error",
-                      timer: 1500,
-                      timerProgressBar: true,
-                    });
+                    showCustomAlert("error", response.message)
                   }
                 } catch (error) {
-                  Swal.fire({
-                    title: "Error",
-                    text: "An unexpected error occurred. Please try again later.",
-                    icon: "error",
-                    timer: 1500,
-                    timerProgressBar: true,
-                  });
+                  showCustomAlert("error", "An unexpected error occurred. Please try again later.")
                 } finally {
                   setSubmitting(false);
                 }
@@ -123,7 +106,7 @@ const Emailsettings = () => {
             >
               {({ values, dirty, isSubmitting }) => (
                 <Form className="card-body">
-                  <div className='p-4 border radius-15'>
+                  <div className=''>
 
                     <div className="row">
 

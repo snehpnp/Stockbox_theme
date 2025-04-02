@@ -3,12 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Table from '../../../../Extracomponents/Table';
 import { Eye, Pencil, Trash2 } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { BankDetailListbyadmin, BankStatusdetail, DeleteBankDetail } from '../../../../Services/Admin/Admin';
 import { image_baseurl } from '../../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDateTime } from '../../../../../Utils/Date_formate';
-
+import showCustomAlert from '../../../../Extracomponents/CustomAlert/CustomAlert';
+import Loader from '../../../../../Utils/Loader';
 
 
 const Bankdetail = () => {
@@ -22,6 +22,9 @@ const Bankdetail = () => {
     const [datewise, setDatewise] = useState("")
 
     const token = localStorage.getItem('token');
+
+    const [isLoading, setIsLoading] = useState(true)
+
 
 
 
@@ -44,6 +47,7 @@ const Bankdetail = () => {
         } catch (error) {
             console.log("error");
         }
+        setIsLoading(false)
     }
 
 
@@ -63,43 +67,20 @@ const Bankdetail = () => {
 
     const Deletedetailbyadmin = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this bank detail? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert("confirm", 'Do you want to delete this bank detail? This action cannot be undone.')
 
             if (result.isConfirmed) {
                 const response = await DeleteBankDetail(_id, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The Details has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
+                    showCustomAlert("Success", 'The Details has been successfully deleted.')
                     getBankData();
 
                 }
             } else {
-
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The Details deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
+                showCustomAlert("error", 'The Details deletion was cancelled.')
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the details.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'There was an error deleting the details.')
 
         }
     };
@@ -111,40 +92,23 @@ const Bankdetail = () => {
     // update status 
 
     const handleSwitchChange = async (event, id) => {
+        const user_active_status = event.target.checked ? "true" : "false";
+        const data = { id, status: user_active_status };
 
-        const user_active_status = event.target.checked === true ? "true" : "false"
-        const data = { id: id, status: user_active_status }
-        const result = await Swal.fire({
-            title: "Do you want to save the changes?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
+        const result = await showCustomAlert("confirm", "Do you want to save the changes?");
 
         if (result.isConfirmed) {
             try {
-                const response = await BankStatusdetail(data, token)
-                if (response.status) {
-                    Swal.fire({
-                        title: "Saved!",
-                        icon: "success",
-                        timer: 1000,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1000);
+                const response = await BankStatusdetail(data, token);
+                if (response?.status) {
+                    showCustomAlert("success", "Status Changed");
                 }
                 getBankData();
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+                showCustomAlert("error", "There was an error processing your request.");
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
+            event.target.checked = !event.target.checked;
             getBankData();
         }
     };
@@ -197,14 +161,14 @@ const Bankdetail = () => {
                 return (
                     <div className="form-check form-switch form-check-info">
                         <input
-                            id={`rating_${row.status}`}
+                            id={`rating_${row._id}`}
                             className="form-check-input toggleswitch"
                             type="checkbox"
                             defaultChecked={row.status === true}
                             onChange={(event) => handleSwitchChange(event, row._id)}
                         />
                         <label
-                            htmlFor={`rating_${row.status}`}
+                            htmlFor={`rating_${row._id}`}
                             className="checktoggle checkbox-bg"
                         ></label>
                     </div>
@@ -261,7 +225,7 @@ const Bankdetail = () => {
         <div>
             <div>
                 <div className="page-content">
-                    <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                    <div className="page-breadcrumb d-flex align-items-center mb-3">
                         <div className="breadcrumb-title pe-3">Bank Detail</div>
                         <div className="ps-3">
                             <nav aria-label="breadcrumb">
@@ -278,7 +242,7 @@ const Bankdetail = () => {
                     <hr />
                     <div className="card">
                         <div className="card-body">
-                            <div className="d-lg-flex align-items-center mb-4 gap-3">
+                            <div className="d-sm-flex align-items-center mb-4 gap-3">
                                 <div className="position-relative">
                                     <input
                                         type="text"
@@ -294,7 +258,7 @@ const Bankdetail = () => {
                                 <div className="ms-auto">
                                     <Link
                                         to="/admin/addbankdetail"
-                                        className="btn btn-primary"
+                                        className="btn btn-primary mt-2 mt-sm-0"
                                     >
                                         <i
                                             className="bx bxs-plus-square"
@@ -305,10 +269,18 @@ const Bankdetail = () => {
                                 </div>
                             </div>
 
-                            <Table
-                                columns={columns}
-                                data={clients}
-                            />
+                            {isLoading ? (
+                                <Loader />
+                            ) : clients.length > 0 ? (
+                                <Table
+                                    columns={columns}
+                                    data={clients}
+                                />
+                            ) : (
+                                <div className="text-center mt-5">
+                                    <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

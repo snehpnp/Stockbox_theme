@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { Addblogsbyadmin } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 const Addblogs = () => {
@@ -24,13 +24,13 @@ const Addblogs = () => {
         let errors = {};
 
         if (!values.title) {
-            errors.title = "Please enter title";
+            errors.title = "Please enter Title";
         }
         if (!values.description) {
-            errors.description = "Please enter description";
+            errors.description = "Please enter Description";
         }
         if (!values.image) {
-            errors.image = "Please enter image";
+            errors.image = "Please enter Image";
         }
 
 
@@ -49,37 +49,17 @@ const Addblogs = () => {
         try {
             const response = await Addblogsbyadmin(req, token);
             if (response.status) {
-                Swal.fire({
-                    title: "Blog Add  Successful!",
-                    text: response.message,
-                    icon: "success",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
-                setTimeout(() => {
-                    navigate("/employee/blogs");
-                }, 1500);
+                showCustomAlert("Success", response.message, navigate, "/employee/blogs")
             } else {
-                Swal.fire({
-                    title: "Alert",
-                    text: response.message,
-                    icon: "warning",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
+                showCustomAlert("error", response.message)
                 setLoading(false)
             }
         } catch (error) {
             setLoading(false)
-            Swal.fire({
-                title: "Error",
-                text: "An unexpected error occurred. Please try again later.",
-                icon: "error",
-                timer: 1500,
-                timerProgressBar: true,
-            });
+            showCustomAlert("error", "An unexpected error occurred. Please try again later.")
         }
     };
+
 
     const formik = useFormik({
         initialValues: {
@@ -100,6 +80,7 @@ const Addblogs = () => {
             label_size: 12,
             col_size: 6,
             disable: false,
+            star: true
         },
         {
             name: "image",
@@ -108,6 +89,7 @@ const Addblogs = () => {
             label_size: 12,
             col_size: 6,
             disable: false,
+            star: true
         },
         {
             name: "description",
@@ -116,6 +98,7 @@ const Addblogs = () => {
             label_size: 12,
             col_size: 12,
             disable: false,
+            star: true
         },
     ];
 
@@ -129,7 +112,7 @@ const Addblogs = () => {
             <DynamicForm
                 fields={fields}
                 formik={formik}
-                page_title="Add Blog"
+                // page_title="Add Blog"
                 btn_name="Add Blog"
                 btn_name1="Cancel"
                 sumit_btn={true}

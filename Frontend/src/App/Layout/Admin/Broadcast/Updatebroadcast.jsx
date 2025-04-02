@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SendBroadCast, GetService, UpdateCastmessage } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Updatebroadcast = () => {
     const location = useLocation();
@@ -54,33 +55,13 @@ const Updatebroadcast = () => {
             try {
                 const response = await UpdateCastmessage(req, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: "Update Successful!",
-                        text: response.message,
-                        icon: "success",
-                        timer: 1500,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        navigate("/admin/message");
-                    }, 1500);
+                    showCustomAlert("Success", response.message, navigate, "/admin/message")
                 } else {
-                    Swal.fire({
-                        title: "Alert",
-                        text: response.message,
-                        icon: "warning",
-                        timer: 1500,
-                        timerProgressBar: true,
-                    });
+                    showCustomAlert("error", response.message)
                 }
             } catch (error) {
-                Swal.fire({
-                    title: "Error",
-                    text: "An unexpected error occurred. Please try again later.",
-                    icon: "error",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
+                showCustomAlert("error", "An unexpected error occurred. Please try again later.")
+
             }
         },
     });

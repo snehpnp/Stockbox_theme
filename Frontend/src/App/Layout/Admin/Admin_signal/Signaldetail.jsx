@@ -9,6 +9,7 @@ import { ArrowDownToLine, } from 'lucide-react';
 import { IndianRupee } from 'lucide-react';
 import Content from '../../../components/Contents/Content';
 
+
 const Signaldetail = () => {
 
 
@@ -63,8 +64,6 @@ const Signaldetail = () => {
     const getsignaldetail = async () => {
         try {
             const response = await Signalperdetail(id, token);
-            console.log("Signalperdetail", response);
-
             if (response.status) {
                 const signalData = response.data;
                 let totalGain = 0;
@@ -109,6 +108,7 @@ const Signaldetail = () => {
                                         <React.Fragment key={index}>
                                             <div className="row">
                                                 <h6>{item.tradesymbol}</h6>
+                                                <hr />
                                                 <div className="card-body col-md-6">
                                                     <ul className="list-group list-group-flush">
                                                         <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
@@ -127,7 +127,9 @@ const Signaldetail = () => {
                                                         </li>
                                                         <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                             <h6 className="mb-0">Exit Price</h6>
-                                                            <span className="text-secondary"><IndianRupee size={16} />{item.closeprice || '-'}</span>
+                                                            <span className="text-secondary"><IndianRupee size={16} />{Math.max(item.targetprice1, item.targetprice2, item.targetprice3)
+                                                                ? Math.max(item.targetprice1, item.targetprice2, item.targetprice3)
+                                                                : item.closeprice || '-'}</span>
                                                         </li>
                                                         <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                             <h6 className="mb-0">Entry Date & Time</h6>
@@ -135,11 +137,11 @@ const Signaldetail = () => {
                                                         </li>
                                                         <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                             <h6 className="mb-0">Target-1</h6>
-                                                            <span className="text-secondary">{item.targetprice1 || item.tag1 || '-'}</span>
+                                                            <span className="text-secondary">{item.tag1 || '-'}</span>
                                                         </li>
                                                         <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                             <h6 className="mb-0">Target-3</h6>
-                                                            <span className="text-secondary">{item.targetprice3 || item.tag3 || '-'}</span>
+                                                            <span className="text-secondary">{item.tag3 || '-'}</span>
                                                         </li>
 
                                                     </ul>
@@ -169,7 +171,7 @@ const Signaldetail = () => {
                                                         </li>
                                                         <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                             <h6 className="mb-0">Target-2</h6>
-                                                            <span className="text-secondary">{item.targetprice2 || item.tag2 || '-'}</span>
+                                                            <span className="text-secondary">{item.tag2 || '-'}</span>
                                                         </li>
                                                         <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                             <h6 className="mb-0">Stoploss</h6>

@@ -16,6 +16,7 @@ const Table = ({ columns, data, totalRows, currentPage, onPageChange }) => {
                 striped
                 customStyles={customStyles}
                 responsive={true}
+                paginationComponentOptions={{ rowsPerPageText: '', noRowsPerPage: true }}
             />
         </div>
     );
@@ -66,6 +67,7 @@ const customStyles = {
             padding: '12px 20px',
             fontSize: '14px',
             color: '#555',
+            fontWeight: 'bold',
             backgroundColor: '#fff',
             borderBottom: '1px solid #eee',
             textAlign: 'center',

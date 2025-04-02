@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GETPlanList } from '../../../Services/UserService/User';
-import Table from '../../../Extracomponents/Table1';
+import Table from '../../../Extracomponents/Table';
 import { SquarePen, Trash2, PanelBottomOpen, Eye, RefreshCcw, IndianRupee, ArrowDownToLine } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import { exportToCSV } from '../../../../Utils/ExportData';
+import Loader from '../../../../Utils/Loader';
 
 
 
@@ -16,7 +16,7 @@ const PaymentHistory = () => {
 
 
   const token = localStorage.getItem('Token');
-  const userid = localStorage.getItem('Id');
+  const userid = localStorage.getItem('id');
 
   const navigate = useNavigate();
   const [clients, setClients] = useState([]);
@@ -34,6 +34,8 @@ const PaymentHistory = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+
+  const [isLoading, setIsLoading] = useState(true);
 
 
 
@@ -88,9 +90,12 @@ const PaymentHistory = () => {
   const gethistory = async () => {
     try {
       const response = await GETPlanList(userid, token);
+
+
       if (response.status) {
         let filteredData = response?.data;
         setClients(filteredData);
+        setIsLoading(false)
       }
     } catch (error) {
       console.log("Error fetching services:", error);
@@ -192,16 +197,11 @@ const PaymentHistory = () => {
 
 
 
-
-
-
-
-
   return (
     <div>
       <div className="page-content">
 
-        <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+        <div className="page-breadcrumb  d-flex align-items-center mb-3">
           <div className="breadcrumb-title pe-3">Payment History</div>
           <div className="ps-3">
             <nav aria-label="breadcrumb">
@@ -219,56 +219,28 @@ const PaymentHistory = () => {
         <div className="card">
           <div className="card-body">
             <div className="d-lg-flex align-items-center mb-4 gap-3 justify-content-between">
-
-              {/* <div className="position-relative">
-                <input
-                  type="text"
-                  className="form-control ps-5 radius-10"
-                  placeholder="Search Payment History"
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  value={searchInput}
-                />
-                <span className="position-absolute top-50 product-show translate-middle-y">
-                  <i className="bx bx-search" />
-                </span>
-
-              </div> */}
             </div>
-            {/* <div className='row mb-2'>
-              <div className="col-md-3">
-                <input
-                  type="date"
-                  className="form-control"
-                  onChange={(e) => setStartDate(e.target.value)}
-                  value={startDate}
-                />
-              </div>
 
-
-              <div className='col-md-3'>
-                <input
-                  type="date"
-                  className="form-control"
-                  onChange={(e) => setEndDate(e.target.value)}
-                  value={endDate}
-                />
-              </div>
-
-              <div className="col-md-1">
-                <div className="refresh-icon mt-1">
-                  <RefreshCcw onClick={resethandle} />
-                </div>
-              </div>
-            </div> */}
-            <div className="table-responsive">
-              <Table
-                columns={columns}
-                data={clients}
-                totalRows={totalRows}
-                currentPage={currentPage}
-                onPageChange={handlePageChange}
-              />
-            </div>
+            {isLoading ? (
+              <Loader />
+            ) : (
+              <>
+                {clients.length > 0 ? <div className="table-responsive">
+                  <Table
+                    columns={columns}
+                    data={clients}
+                    totalRows={totalRows}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
+                  />
+                </div> : <div className="text-center mt-5">
+                  <img
+                    src="/assets/images/norecordfound.png"
+                    alt="No Records Found"
+                  />
+                </div>}
+              </>
+            )}
           </div>
         </div>
       </div>

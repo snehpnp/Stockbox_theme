@@ -3,11 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getFaqlist, AddFaq, UpdateFaq, changeFAQStatus, DeleteFAQ } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table';
 import { SquarePen, Trash2, PanelBottomOpen, Eye } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { Tooltip } from 'antd';
 import { fDate, fDateTime } from '../../../../Utils/Date_formate';
 import Loader from '../../../../Utils/Loader';
 import ReusableModal from '../../../components/Models/ReusableModal';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Faq = () => {
 
@@ -64,9 +64,8 @@ const Faq = () => {
         } catch (error) {
             console.log("Error fetching Faq:", error);
         }
-        setTimeout(() => {
-            setIsLoading(false)
-        })
+        setIsLoading(false)
+
     };
 
     useEffect(() => {
@@ -84,32 +83,16 @@ const Faq = () => {
             const response = await UpdateFaq(data, token);
 
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'bolgs updated successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
-
+                showCustomAlert("Success", 'Faq updated successfully.');
                 setUpdatetitle({ title: "", id: "" });
                 getFaq();
                 setModel(false);
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'There was an error updating the Faq.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", 'There was an error updating the Faq.');
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error updating the Faq.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'There was an error updating the Faq.');
+
         }
     };
 
@@ -123,13 +106,7 @@ const Faq = () => {
             const data = { title: title.title, description: title.description, add_by: userid };
             const response = await AddFaq(data, token);
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Faq added successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
+                showCustomAlert("Success", 'Faq added successfully.');
 
                 setTitle({ title: "", add_by: "", description: "" });
                 setShowAddModal(false);
@@ -141,22 +118,12 @@ const Faq = () => {
                     bootstrapModal.hide();
                 }
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'There was an error adding.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", 'There was an error adding.');
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error adding',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'There was an error adding.');
         }
-        
+
     };
 
 
@@ -166,37 +133,19 @@ const Faq = () => {
     const handleSwitchChange = async (event, id) => {
         const user_active_status = event.target.checked ? "true" : "false";
         const data = { id: id, status: user_active_status };
-        const result = await Swal.fire({
-            title: "Do you want to save the changes?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
-
+        const result = await showCustomAlert("confirm", "Do you want to save the changes?");
         if (result.isConfirmed) {
             try {
                 const response = await changeFAQStatus(data, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: "Saved!",
-                        icon: "success",
-                        timer: 1000,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1000);
+                    showCustomAlert("Success", "Status Changed");
                 }
                 getFaq();
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+                showCustomAlert("error", "There was an error processing your request.");
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
+            event.target.checked = !user_active_status;
             getFaq();
         }
     };
@@ -209,43 +158,20 @@ const Faq = () => {
 
     const DeleteFaq = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this Faq ? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert("confirm", 'Do you want to delete this Faq ? This action cannot be undone.');
 
             if (result.isConfirmed) {
                 const response = await DeleteFAQ(_id, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The Faq has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
+                    showCustomAlert("Success", 'The Faq has been successfully deleted.');
                     getFaq();
 
                 }
             } else {
-
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The Faq deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
+                showCustomAlert("error", 'The Faq deletion was cancelled.');
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the staff.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'There was an error deleting the faq.');
 
         }
     };
@@ -366,7 +292,7 @@ const Faq = () => {
         <div>
             <div className="page-content">
 
-                <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                <div className="page-breadcrumb  d-flex align-items-center mb-3">
                     <div className="breadcrumb-title pe-3">FAQ</div>
                     <div className="ps-3">
                         <nav aria-label="breadcrumb">
@@ -384,7 +310,7 @@ const Faq = () => {
 
                 <div className="card">
                     <div className="card-body">
-                        <div className="d-lg-flex align-items-center mb-4 gap-3">
+                        <div className="d-sm-flex align-items-center mb-4 gap-3">
                             <div className="position-relative">
                                 <input
                                     type="text"
@@ -400,7 +326,7 @@ const Faq = () => {
                             <div className="ms-auto">
                                 <button
                                     type="button"
-                                    className="btn btn-primary"
+                                    className="btn btn-primary mt-2 mt-sm-0"
                                     onClick={() => setShowAddModal(true)}
                                 >
                                     <i className="bx bxs-plus-square" />
@@ -683,7 +609,7 @@ const Faq = () => {
                         </div>
                         {isLoading ? (
                             <Loader />
-                        ) : (
+                        ) : clients.length > 0 ? (
                             <>
                                 <div className="table-responsive">
                                     <Table
@@ -696,6 +622,10 @@ const Faq = () => {
                                     />
                                 </div>
                             </>
+                        ):(
+                            <div className="text-center mt-5">
+                    <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                </div>
                         )}
 
                     </div>
@@ -757,7 +687,7 @@ const Faq = () => {
                         </button>
                     </>
                 }
-            />;
+            />
 
         </div>
     );

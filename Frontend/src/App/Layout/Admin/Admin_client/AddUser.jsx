@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { AddClient } from '../../../Services/Admin/Admin';
 import { Link } from 'react-router-dom';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 const AddUser = () => {
@@ -17,7 +17,42 @@ const AddUser = () => {
   const token = localStorage.getItem("token");
 
   const [loading, setLoading] = useState(false);
-  
+
+
+
+
+  const indianStates = [
+    { name: "Andhra Pradesh" },
+    { name: "Arunachal Pradesh" },
+    { name: "Assam" },
+    { name: "Bihar" },
+    { name: "Chhattisgarh" },
+    { name: "Goa" },
+    { name: "Gujarat" },
+    { name: "Haryana" },
+    { name: "Himachal Pradesh" },
+    { name: "Jharkhand" },
+    { name: "Karnataka" },
+    { name: "Kerala" },
+    { name: "Madhya Pradesh" },
+    { name: "Maharashtra" },
+    { name: "Manipur" },
+    { name: "Meghalaya" },
+    { name: "Mizoram" },
+    { name: "Nagaland" },
+    { name: "Odisha" },
+    { name: "Punjab" },
+    { name: "Rajasthan" },
+    { name: "Sikkim" },
+    { name: "Tamil Nadu" },
+    { name: "Telangana" },
+    { name: "Tripura" },
+    { name: "Uttar Pradesh" },
+    { name: "Uttarakhand" },
+    { name: "West Bengal" }
+  ];
+
+
 
 
 
@@ -26,6 +61,8 @@ const AddUser = () => {
 
     // Full Name validation: Only alphabets and one space between two words allowed
     const fullNameRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)?$/;
+
+    //this is testing comment
 
     if (!values.FullName) {
       errors.FullName = "Please Enter Full Name";
@@ -46,6 +83,9 @@ const AddUser = () => {
     } else if (values.password !== values.ConfirmPassword) {
       errors.ConfirmPassword = "Passwords Must Match";
     }
+    if (!values.state) {
+      errors.state = "Please Select State";
+    }
 
     return errors;
   };
@@ -58,7 +98,8 @@ const AddUser = () => {
       PhoneNo: values.PhoneNo,
       password: values.password,
       add_by: user_id,
-      freetrial: values.freetrial
+      freetrial: values.freetrial,
+      state: values.state
     };
 
 
@@ -66,35 +107,15 @@ const AddUser = () => {
       const response = await AddClient(req, token);
 
       if (response.status) {
-        Swal.fire({
-          title: "Client Create Successfull !",
-          text: response.message,
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        setTimeout(() => {
-          navigate("/admin/client");
-        }, 1500);
+        showCustomAlert("Success", response.message, navigate, "/admin/client");
       } else {
-        Swal.fire({
-          title: "Alert",
-          text: response.message,
-          icon: "warning",
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("error", response.message);
         setLoading(false)
       }
     } catch (error) {
       setLoading(false)
-      Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred. Please try again later.",
-        icon: "error",
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert("error", "An unexpected error occurred. Please try again later.");
+
     }
   };
 
@@ -107,6 +128,7 @@ const AddUser = () => {
       ConfirmPassword: "",
       freetrial: 0,
       add_by: "",
+      state: "",
     },
     validate,
     onSubmit,
@@ -114,10 +136,9 @@ const AddUser = () => {
 
 
   const traialStatus = formik.values.freetrial;
-  // console.log("traialStatus",traialStatus);
+
 
   const handleToggleChange = () => {
-    console.log("Custom Clicked", traialStatus);
   }
 
   const fields = [
@@ -167,43 +188,38 @@ const AddUser = () => {
       disable: false,
       star: true
     },
-    // {
-    //   name: "freetrial",
-    //   label: "Free trial status",
-    //   type: "togglebtn",
-    //   label_size: 6,
-    //   col_size: 4,
-    //   disable: false,
-    //   star: true,
-    // },
+    {
+      name: "state",
+      label: "Select State",
+      type: 'select',
+      options: indianStates?.map((item) => ({
+        label: item.name,
+        value: item.name,
+      })),
+      label_size: 12,
+      col_size: 6,
+      disable: false,
+      star: true
+    }
   ];
 
 
 
-  const handlefreeTrialChange = (e) => {
-    const currentValue = formik.values.freetrial; // Store current value
-  
-    console.log("Current toggle value:", e.target.checked);
-  
-    Swal.fire({
-      title: currentValue ? "Are you sure you want to disable the free trial?" : "Are you sure you want to enable the free trial?",
-      showDenyButton: true,
-      showCancelButton: false,
-      confirmButtonText: "Yes",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // If toggle is currently true (checked), and user clicks "Yes", set it to false
-        // If toggle is false (unchecked), and user clicks "Yes", set it to true
-        formik.setFieldValue("freetrial", !currentValue);
-        console.log("Updated toggle value:", !currentValue); // Log the updated value
-      } else if (result.isDenied) {
-        // If "No" (Deny) clicked, revert the value to its original state
-        formik.setFieldValue("freetrial", currentValue);
-        console.log("Value reverted to:", currentValue); // Log reverted value
-      }
-    });
+  const handlefreeTrialChange = async () => {
+    const currentValue = formik.values.freetrial;
+
+    const result = await showCustomAlert(
+      "confirm",
+      currentValue ? "Are you sure you want to disable the free trial?" : "Are you sure you want to enable the free trial?"
+    );
+
+    if (!result) return;
+    formik.setFieldValue("freetrial", !currentValue);
+    if (result.isDenied) {
+      formik.setFieldValue("freetrial", currentValue);
+    }
   };
-  
+
 
 
   return (
@@ -213,49 +229,50 @@ const AddUser = () => {
       backbutton_status={true}
       backForword={true}
     >
-    <div className="page-content">
-         
-      <DynamicForm
-        fields={fields}
-        formik={formik}
-       
-        btn_name="Add Client"
-        btn_name1="Cancel"
-        sumit_btn={true}
-        btnstatus={loading}
-        btn_name1_route={"/admin/client"}
-        additional_field={<>
+      <div className="page-content">
+
+        <DynamicForm
+          fields={fields}
+          formik={formik}
+
+          btn_name="Add Client"
+          btn_name1="Cancel"
+          sumit_btn={true}
+          btnstatus={loading}
+          btn_name1_route={"/admin/client"}
+          additional_field={<>
 
 
-          <div className={`col-lg-6`}>
-            <div className="input-block row">
+            <div className={`col-lg-6`}>
+              <div className="input-block row">
 
-              <label htmlFor="freetrial" className={`col-lg-12 col-form-label`}>
-                Free trial status
-              </label>
+                <label htmlFor="freetrial" className={`col-lg-12 col-form-label`}>
+                  Free trial status
+                </label>
 
-              <div className="col-lg-8">
-                <div className="form-switch">
-                  <input
-                    className="form-check-input"
-                    style={{
-                      height: "22px",
-                      width: "45px"
-                    }}
-                    type="checkbox"
-                    checked={formik.values["freetrial"] == 1}
-                    onChange={(e) =>handlefreeTrialChange(e)   }
-                  />
+                <div className="col-lg-8">
+                  <div className="form-switch">
+                    <input
+                      className="form-check-input"
+                      style={{
+                        height: "22px",
+                        width: "45px"
+                      }}
+                      type="checkbox"
+                      checked={formik.values["freetrial"] == 1}
+                      onChange={(e) => handlefreeTrialChange(e)}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+
           </>}
 
-      />
+        />
       </div>
-      </Content>
-   
+    </Content>
+
   );
 };
 

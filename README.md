@@ -2,6 +2,7 @@
 
 **🚀 Automatic Trading Platform**
 
+<<<<<<< HEAD
 ---
 #test
 ## Developers 👩‍💻👨‍💻
@@ -10,6 +11,8 @@
 - [**Neha Sharma**](https://github.com/NehaSharma3496)
 
 ---
+=======
+>>>>>>> ce656b2a842fba737d562f773f3339e8e24bb1f8
 
 ## 📝 Project Description
 

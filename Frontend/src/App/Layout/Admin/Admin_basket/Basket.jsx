@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, RefreshCcw, Trash2, SquarePen, IndianRupee, X, Plus, RotateCcw } from 'lucide-react';
-import Swal from "sweetalert2";
 import { Tooltip } from 'antd';
 // import Table from "../../../components/Table";
 import Table from '../../../Extracomponents/Table1';
 import { BasketAllList, deletebasket, Basketstatus, changestatusrebalance, getstocklistById } from "../../../Services/Admin/Admin";
-import { fDate} from "../../../../Utils/Date_formate";
+import { fDate } from "../../../../Utils/Date_formate";
 import Loader from "../../../../Utils/Loader";
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 const Basket = () => {
@@ -24,7 +23,6 @@ const Basket = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
 
-  //state for loading
   const [isLoading, setIsLoading] = useState(true)
 
 
@@ -41,9 +39,6 @@ const Basket = () => {
     try {
       const data = { page: currentPage, search: searchInput || "" }
       const response = await BasketAllList(data, token);
-      console.log("BasketAllList",response);
-      
-     
 
       if (response.status) {
         setClients(response.data);
@@ -63,48 +58,70 @@ const Basket = () => {
 
 
 
+  // const handleSwitchChange = async (event, id) => {
+  //   const originalChecked = true;
+  //   const user_active_status = originalChecked
+  //   const data = { id: id, status: user_active_status };
+
+  //   const result = await Swal.fire({
+  //     title: "Do you want to save the changes?",
+  //     showCancelButton: true,
+  //     confirmButtonText: "Save",
+  //     cancelButtonText: "Cancel",
+  //     allowOutsideClick: false,
+  //   });
+
+  //   if (result.isConfirmed) {
+  //     try {
+  //       const response = await Basketstatus(data, token);
+
+  //       if (response.status) {
+  //         Swal.fire({
+  //           title: "Saved!",
+  //           icon: "success",
+  //           timer: 1000,
+  //           timerProgressBar: true,
+  //         });
+  //         setTimeout(() => {
+  //           Swal.close();
+  //         }, 1000);
+  //       }
+  //       getbasketlist();
+  //     } catch (error) {
+  //       Swal.fire(
+  //         "Error",
+  //         "There was an error processing your request.",
+  //         "error"
+  //       );
+  //     }
+  //   } else if (result.dismiss === Swal.DismissReason.cancel) {
+  //     event.target.checked = !originalChecked;
+  //     getbasketlist();
+  //   }
+  // };
+
+
+
+
   const handleSwitchChange = async (event, id) => {
     const originalChecked = true;
     const user_active_status = originalChecked
     const data = { id: id, status: user_active_status };
+    const confirmed = await showCustomAlert("confirm", "Do you want to save the changes ?");
+    if (!confirmed) return;
 
-    const result = await Swal.fire({
-      title: "Do you want to save the changes?",
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      cancelButtonText: "Cancel",
-      allowOutsideClick: false,
-    });
-
-    if (result.isConfirmed) {
-      try {
-        const response = await Basketstatus(data, token);
-        if (response.status) {
-          Swal.fire({
-            title: "Saved!",
-            icon: "success",
-            timer: 1000,
-            timerProgressBar: true,
-          });
-          setTimeout(() => {
-            Swal.close();
-          }, 1000);
-        }
+    try {
+      const response = await Basketstatus(data, token);
+      if (response.status) {
+        showCustomAlert("Success", "Publish Stock Successfully ")
         getbasketlist();
-      } catch (error) {
-        Swal.fire(
-          "Error",
-          "There was an error processing your request.",
-          "error"
-        );
+      } else {
+        showCustomAlert("error", response.message)
       }
-    } else if (result.dismiss === Swal.DismissReason.cancel) {
-      event.target.checked = !originalChecked;
-      getbasketlist();
+    } catch (error) {
+      showCustomAlert("error", "There was an error processing your request.")
     }
   };
-
-
 
 
 
@@ -113,39 +130,19 @@ const Basket = () => {
     const originalChecked = event.target.checked;
     const user_active_status = originalChecked
     const data = { id: id, status: user_active_status };
-    const result = await Swal.fire({
-      title: "Do you want to save the changes?",
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      cancelButtonText: "Cancel",
-      allowOutsideClick: false,
-    });
+    const confirmed = await showCustomAlert("confirm", "Do you want to save the changes ?");
 
-    if (result.isConfirmed) {
-      try {
-        const response = await changestatusrebalance(data, token);
-        if (response.status) {
-          Swal.fire({
-            title: "Saved!",
-            icon: "success",
-            timer: 1000,
-            timerProgressBar: true,
-          });
-          setTimeout(() => {
-            Swal.close();
-          }, 1000);
-        }
-        getbasketlist();
-      } catch (error) {
-        Swal.fire(
-          "Error",
-          "There was an error processing your request.",
-          "error"
-        );
+    if (!confirmed) return
+    try {
+      const response = await changestatusrebalance(data, token);
+      if (response.status) {
+        showCustomAlert("Success", "Publish Stock Successfully ")
+      } else {
+        showCustomAlert("error", response.message)
       }
-    } else if (result.dismiss === Swal.DismissReason.cancel) {
-      event.target.checked = !originalChecked;
       getbasketlist();
+    } catch (error) {
+      showCustomAlert("error", "There was an error processing your request.")
     }
   };
 
@@ -157,43 +154,24 @@ const Basket = () => {
 
   const Deletebasket = async (_id) => {
     try {
-      const result = await Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to delete this item? This action cannot be undone.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel",
-      });
-
-      if (result.isConfirmed) {
+        const result = await showCustomAlert("confirm", "Do you want to delete this item? This action cannot be undone.");
+        
+        if (!result.isConfirmed) return; 
+        
         const response = await deletebasket(_id, token);
-        if (response.status) {
-          Swal.fire({
-            title: "Deleted!",
-            text: "The item has been successfully deleted.",
-            icon: "success",
-            confirmButtonText: "OK",
-          });
-          getbasketlist();
+        
+        if (response?.status) {
+            showCustomAlert("success", "The item has been successfully deleted.");
+            getbasketlist(); 
+        } else {
+            showCustomAlert("error", response?.message || "Failed to delete item.");
         }
-      } else {
-        Swal.fire({
-          title: "Cancelled",
-          text: "The item deletion was cancelled.",
-          icon: "info",
-          confirmButtonText: "OK",
-        });
-      }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error deleting the item.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+        console.error("Delete error:", error);
+        showCustomAlert("error", "There was an error deleting the item.");
     }
-  };
+};
+
 
 
   function stripHtml(html) {
@@ -204,8 +182,6 @@ const Basket = () => {
 
 
 
-
-  // Columns for DataTable
   const columns = [
     {
       name: 'S.No',
@@ -336,7 +312,7 @@ const Basket = () => {
 
   return (
     <div className="page-content">
-      <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+      <div className="page-breadcrumb  d-flex align-items-center mb-3">
         <div className="breadcrumb-title pe-3"> Basket List</div>
         <div className="ps-3">
           <nav aria-label="breadcrumb">
@@ -350,10 +326,10 @@ const Basket = () => {
           </nav>
         </div>
       </div>
-      <hr />
+
       <div className="card">
         <div className="card-body">
-          <div className="d-lg-flex align-items-center mb-4 gap-3">
+          <div className="d-sm-flex align-items-center mb-4 gap-3">
             <div className="position-relative">
               <input
                 type="text"
@@ -366,7 +342,7 @@ const Basket = () => {
                 <i className="bx bx-search" />
               </span>
             </div>
-            <div className="ms-auto">
+            <div className="ms-auto mt-2 mt-sm-0">
               <Link to="/admin/addbasket" className="btn btn-primary">
                 <i className="bx bxs-plus-square" aria-hidden="true" />
                 Add Basket
@@ -381,7 +357,7 @@ const Basket = () => {
           </div>
           {isLoading ? (
             <Loader />
-          ) : (
+          ) : clients.length > 0 ? (
             <>
               <Table
                 columns={columns}
@@ -391,6 +367,10 @@ const Basket = () => {
                 onPageChange={handlePageChange}
               />
             </>
+          ) : (
+            <div className="text-center mt-5">
+              <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+            </div>
           )}
         </div>
       </div>

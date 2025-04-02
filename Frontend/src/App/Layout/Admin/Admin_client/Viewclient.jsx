@@ -19,12 +19,14 @@ import {
   fDateTimeH,
   fDateTimeSuffix,
 } from "../../../../Utils/Date_formate";
-import { RefreshCcw, IndianRupee } from "lucide-react";
+import { RefreshCcw, IndianRupee, ArrowDownToLine } from "lucide-react";
 import { exportToCSV } from "../../../../Utils/ExportData";
 import Select from "react-select";
 import Content from "../../../components/Contents/Content";
+import { image_baseurl } from "../../../../Utils/config";
 
 const Viewclientdetail = () => {
+
   const { id } = useParams();
   const token = localStorage?.getItem("token");
 
@@ -44,6 +46,10 @@ const Viewclientdetail = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
+
+
+
+
   const [filters, setFilters] = useState({
     from: "",
     to: "",
@@ -62,6 +68,8 @@ const Viewclientdetail = () => {
     fetchAdminServices();
   }, []);
 
+
+
   const getCategoryTitle = async (categoryId) => {
     try {
       const response = await getcategoryplan(token);
@@ -74,6 +82,9 @@ const Viewclientdetail = () => {
     }
     return "-";
   };
+
+
+
 
   const getPlanDetail = async () => {
     try {
@@ -97,6 +108,9 @@ const Viewclientdetail = () => {
     }
   };
 
+
+
+
   const getClientDetail = async () => {
     try {
       const response = await clientdetailbyid(id, token);
@@ -108,6 +122,8 @@ const Viewclientdetail = () => {
       console.error("Error fetching client details:", error);
     }
   };
+
+
 
   const getclientservice = async () => {
     try {
@@ -121,6 +137,10 @@ const Viewclientdetail = () => {
     }
   };
 
+
+
+
+
   const fetchAdminServices = async () => {
     try {
       const response = await GetService(token);
@@ -132,28 +152,40 @@ const Viewclientdetail = () => {
     }
   };
 
+
+
   const getAllSignal = async () => {
     try {
       const data = {
         page: currentPage,
         client_id: id,
-        from: filters.from,
-        to: filters.to,
-        service_id: filters.service,
-        stock: searchstock,
+        from: filters.from || "",
+        to: filters.to || "",
+        service_id: filters.service || "",
+        stock: searchstock || "",
         type: "",
-        search: searchInput,
+        search: searchInput || "",
       };
 
       const response = await GetClientSignaldetail(data, token);
-      if (response && response.status) {
-        setTotalRows(response.pagination.total);
-        setClients(response.data);
+
+      if (response.status) {
+        if (response?.data?.length > 0 && response?.data) {
+          setClients(response.data);
+          setTotalRows(response.pagination.total);
+        } else {
+          setClients([]);
+        }
+      } else {
+        setClients([]);
       }
     } catch (error) {
       console.log("Error:", error);
     }
   };
+
+
+
 
   const getexportfile = async () => {
     try {
@@ -177,6 +209,9 @@ const Viewclientdetail = () => {
       console.log("Error:", error);
     }
   };
+
+
+
 
   const fetchStockList = async () => {
     try {
@@ -215,12 +250,26 @@ const Viewclientdetail = () => {
     setSearchInput("");
     fetchAdminServices("");
     fetchStockList();
-    getAllSignal();
+
   };
 
   useEffect(() => {
     getAllSignal();
   }, [filters, searchInput, searchstock, currentPage]);
+
+
+
+  const handleDownload = (row) => {
+    const url = `${image_baseurl}uploads/invoice/${row.invoice}`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
 
   const columns = [
     {
@@ -235,8 +284,15 @@ const Viewclientdetail = () => {
     },
     {
       name: "Amount",
-      selector: (row) => row.plan_price ?? "-",
+      selector: (row) => <>  <IndianRupee />  {row.plan_price ?? "-"} </>,
       width: "189px",
+    },
+    {
+      name: 'GST',
+      selector: row => row?.total || "-",
+      cell: row => <div>{row?.total} <span style={{ fontSize: "12px" }}>({row?.gst}% Gst Included)</span></div>,
+      sortable: true,
+      width: '250px',
     },
     {
       name: "Validity Date",
@@ -251,13 +307,37 @@ const Viewclientdetail = () => {
 
     {
       name: "Purchase Date",
-      selector: (row) => (row?.plan_start ? fDateTime(row?.plan_start) : ""),
-      width: "180px",
+      selector: (row) => (row?.created_at ? fDateTimeH(row?.created_at) : ""),
+      width: "260px",
+    },
+    {
+      name: "Start Date",
+      selector: (row) => (row?.plan_start ? fDateTimeH(row?.plan_start) : ""),
+      width: "260px",
     },
     {
       name: "Expiry Date",
-      selector: (row) => (row?.plan_end ? fDateTime(row?.plan_end) : ""),
-      width: "195px",
+      selector: (row) => (row?.plan_end ? fDateTimeH(row?.plan_end) : ""),
+      width: "260px",
+    },
+    {
+      name: 'Invoice',
+      cell: row => (
+        <>
+
+          <div className='d-flex '>
+            {row.invoice ?
+              <Link className="btn px-2" onClick={() => handleDownload(row)}>
+                <Tooltip placement="top" overlay="Download">
+                  <ArrowDownToLine />
+                </Tooltip>
+              </Link> : "-"}
+          </div>
+
+        </>
+      ),
+      sortable: true,
+      width: '200px',
     },
   ];
 
@@ -309,10 +389,13 @@ const Viewclientdetail = () => {
 
     {
       name: "Exit Price",
-      selector: (row) => (row.closeprice ? row.closeprice : "-"),
+      selector: (row) =>
+        <>
+          <IndianRupee /> {row.closeprice ? row.closeprice : "-"}
+        </>,
       sortable: true,
-      width: "132px",
-    },
+      width: "150px",
+    }, ,
     {
       name: "Entry Date",
       selector: (row) => fDateTimeH(row?.created_at),
@@ -341,19 +424,23 @@ const Viewclientdetail = () => {
             <div className="card-body">
               <div className="p-4 border radius-15">
                 <div className="row justify-content-center align-items-center">
-                  {client.map(({ id, FullName, Email, PhoneNo }) => (
+                  {client.map(({ id, FullName, Email, PhoneNo, state }) => (
                     <div key={id} className="row">
-                      <div className="col-md-4 d-flex align-items-center">
+                      <div className="col-md-2 d-flex align-items-center">
                         <strong>Full Name</strong>
-                        <p className="my-0 ms-4">{FullName}</p>
+                        <p className="my-0 ms-3">{FullName}</p>
                       </div>
                       <div className="col-md-4 d-flex align-items-center">
                         <strong>Email</strong>
-                        <p className="my-0 ms-4">{Email}</p>
+                        <p className="my-0 ms-3">{Email}</p>
                       </div>
-                      <div className="col-md-4 d-flex align-items-center">
+                      <div className="col-md-3 d-flex align-items-center">
                         <strong>Phone No</strong>
                         <p className="my-0 ms-4">{PhoneNo}</p>
+                      </div>
+                      <div className="col-md-3 d-flex align-items-center">
+                        <strong>State</strong>
+                        <p className="my-0 ms-4">{state}</p>
                       </div>
                     </div>
                   ))}
@@ -375,7 +462,7 @@ const Viewclientdetail = () => {
                       className="list-group-item d-flex justify-content-between align-items-center flex-wrap"
                     >
                       <h6 className="mb-0">{item?.serviceName}</h6>
-                      {/* <span className="text-secondary">{ fDateTime(item?.enddate)}</span> */}
+                      <span className="text-secondary">{fDateTime(item?.enddate)}</span>
                     </li>
                   ))}
               </ul>
@@ -465,11 +552,11 @@ const Viewclientdetail = () => {
                       <select
                         name="service"
                         className="form-control radius-10"
-                        value={filters.service}
+                        value={filters.service || ""}
                         onChange={handleFilterChange}
                       >
                         <option value="">Select Service</option>
-                        {serviceList.map((service) => (
+                        {serviceList?.map((service) => (
                           <option key={service._id} value={service._id}>
                             {service.title}
                           </option>
@@ -501,11 +588,9 @@ const Viewclientdetail = () => {
                   <Table1
                     columns={columns1}
                     data={clients}
-                    pagination
-                    paginationServer
-                    paginationTotalRows={totalRows}
-                    onChangePage={handlePageChange}
-                    paginationDefaultPage={currentPage}
+                    totalRows={totalRows}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
                   />
                 </>
               )}

@@ -12,7 +12,6 @@ import {
   ArrowDownToLine,
   RefreshCcw,
 } from "lucide-react";
-import Swal from "sweetalert2";
 import {
   deleteClient,
   UpdateClientStatus,
@@ -34,6 +33,10 @@ import { IndianRupee } from "lucide-react";
 import { exportToCSV } from "../../../../Utils/ExportData";
 import Table from "../../../Extracomponents/Table1";
 import Loader from "../../../../Utils/Loader";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+
+
+
 
 const Client = () => {
   useEffect(() => {
@@ -69,6 +72,10 @@ const Client = () => {
 
   //state for loading
   const [isLoading, setIsLoading] = useState(true);
+
+  //this state for button disable
+
+  const [loading, setLoading] = useState(false);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -141,7 +148,26 @@ const Client = () => {
 
   const getexportfile = async () => {
     try {
-      const response = await getclientExportfile(token);
+      const data = {
+        page: currentPage,
+        kyc_verification: searchkyc,
+        status: clientStatus == 1 ? 1 : clientStatus == 0 ? 0 : "",
+        createdby: statuscreatedby,
+        search: searchInput,
+        planStatus:
+          expired === "active"
+            ? "active"
+            : expired === "expired"
+              ? "expired"
+              : clientStatus === "active"
+                ? "active"
+                : clientStatus === "expired"
+                  ? "expired"
+                  : expired === "NA" ? "NA" : "",
+        add_by: "",
+      };
+
+      const response = await getclientExportfile(data, token);
       if (response.status) {
         if (response.data?.length > 0) {
           const csvArr = response.data?.map((item) => ({
@@ -187,10 +213,11 @@ const Client = () => {
     }
   };
 
+
   const getcategoryplanlist = async () => {
     try {
       const response = await getActivecategoryplan(token);
-      console.log("getActivecategoryplan", response);
+
 
       if (response.status) {
         setCategory(response.data);
@@ -211,6 +238,8 @@ const Client = () => {
     }
   };
 
+
+
   const getAdminclient = async () => {
     try {
       const data = {
@@ -228,19 +257,24 @@ const Client = () => {
                 ? "active"
                 : clientStatus === "expired"
                   ? "expired"
-                  : "",
+                  : expired === "NA" ? "NA" : "",
         add_by: "",
       };
+
+
       const response = await AllclientFilter(data, token);
 
       if (response.status) {
         setClients(response.data);
         setTotalRows(response.pagination.total);
+        setIsLoading(false)
       }
     } catch (error) {
       console.error("Error fetching clients:", error);
     }
   };
+
+
 
   const getplanlistassinstatus = async (_id) => {
     try {
@@ -253,6 +287,9 @@ const Client = () => {
     }
   };
 
+
+
+
   const getbasketlist = async () => {
     try {
       const response = await BasketAllList(token);
@@ -264,9 +301,12 @@ const Client = () => {
     }
   };
 
+
+
   const updateClient = async (row) => {
     navigate("/admin/client/updateclient/" + row._id, { state: { row } });
   };
+
 
   const signaldetail = async (row) => {
     navigate("/admin/clientsignaldetail/" + row._id, { state: { row } });
@@ -276,43 +316,26 @@ const Client = () => {
     navigate("/admin/client/clientdetail/" + row._id, { state: { row } });
   };
 
+
+
+
+
   const DeleteClient = async (_id) => {
     try {
-      const result = await Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to delete this Client member? This action cannot be undone.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel",
-      });
+      const result = await showCustomAlert("confirm", "Do you want to delete this Client member? This action cannot be undone.");
 
       if (result.isConfirmed) {
         const response = await deleteClient(_id, token);
         if (response.status) {
-          Swal.fire({
-            title: "Deleted!",
-            text: "The Client has been successfully deleted.",
-            icon: "success",
-            confirmButtonText: "OK",
-          });
+          showCustomAlert("error", "The Client has been successfully deleted.");
           getAdminclient();
         }
       } else {
-        Swal.fire({
-          title: "Cancelled",
-          text: "The Client deletion was cancelled.",
-          icon: "info",
-          confirmButtonText: "OK",
-        });
+        showCustomAlert("error", "The Client deletion was cancelled.");
+
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error deleting the Client.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error", "There was an error deleting the Client.");
     }
   };
 
@@ -322,47 +345,32 @@ const Client = () => {
   const handleSwitchChange = async (event, id) => {
     const originalChecked = event.target.checked;
     const user_active_status = originalChecked ? "1" : "0";
-    const data = { id: id, status: user_active_status };
-
-    const result = await Swal.fire({
-      title: "Do you want to save the changes?",
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      cancelButtonText: "Cancel",
-      allowOutsideClick: false,
-    });
-
+    const data = { id, status: user_active_status };
+  
+    const result = await showCustomAlert("confirm", "Do you want to save the changes?");
+  
     if (result.isConfirmed) {
       try {
         const response = await UpdateClientStatus(data, token);
         if (response.status) {
-          Swal.fire({
-            title: "Saved!",
-            icon: "success",
-            timer: 1000,
-            timerProgressBar: true,
-          });
-          setTimeout(() => {
-            Swal.close();
-          }, 1000);
+          showCustomAlert("success", "Status Changed");
         }
-        // Reload the plan list
         getAdminclient();
       } catch (error) {
-        Swal.fire(
-          "Error",
-          "There was an error processing your request.",
-          "error"
-        );
+        showCustomAlert("error", "There was an error processing your request.");
       }
-    } else if (result.dismiss === Swal.DismissReason.cancel) {
+    } else {
+      // Agar user "No" kare to switch ko original state pe wapas le aao
       event.target.checked = !originalChecked;
-      getAdminclient();
     }
   };
+  
+
+
 
   // Update service
   const Updateplansubscription = async () => {
+    setLoading(true);
     try {
       const data = {
         plan_id: updatetitle.plan_id,
@@ -372,34 +380,20 @@ const Client = () => {
       const response = await PlanSubscription(data, token);
 
       if (response && response.status) {
-        Swal.fire({
-          title: "Success!",
-          text: response.message || "Plan updated successfully.",
-          icon: "success",
-          confirmButtonText: "OK",
-          timer: 2000,
-        });
-
+        showCustomAlert("success", response.message);
         setUpdatetitle({ plan_id: "", client_id: "", price: "" });
         getAdminclient();
         handleCancel();
       } else {
-        Swal.fire({
-          title: "Error!",
-          text: response.message || "There was an error updating the Plan.",
-          icon: "error",
-          confirmButtonText: "Try Again",
-        });
+        showCustomAlert("error", response.message);
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "Server error",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error", "Server error");
     }
+    setLoading(false);
   };
+
+
 
   // assign basket
   const UpdateBasketservice = async () => {
@@ -411,34 +405,21 @@ const Client = () => {
       };
       const response = await BasketSubscription(data, token);
       if (response && response.status) {
-        Swal.fire({
-          title: "Success!",
-          text: "Basket service updated successfully.",
-          icon: "success",
-          confirmButtonText: "OK",
-          timer: 2000,
-        });
-
+        showCustomAlert("Success", "Basket service updated successfully.");
         setBasketdetail({ basket_id: "", client_id: "", price: "" });
         getAdminclient();
         handleCancel();
       } else {
-        Swal.fire({
-          title: "Error!",
-          text: response.message || "There was an error updating the Basket.",
-          icon: "error",
-          confirmButtonText: "Try Again",
-        });
+        showCustomAlert("error", response.message);
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error updating the Basket.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error", "There was an error updating the Basket.");
     }
   };
+
+
+
+
 
   const columns = [
     {
@@ -459,6 +440,24 @@ const Client = () => {
       selector: (row) => row.Email,
       sortable: true,
       width: "350px",
+    },
+    {
+
+      name: "State",
+      selector: (row) => row?.state || "-",
+      sortable: true,
+      width: "300px",
+
+      name: "Phone No",
+      selector: (row) => row.PhoneNo,
+      sortable: true,
+      width: "200px",
+    },
+    {
+      name: "State",
+      selector: (row) => row.state ? row.state : "-",
+      sortable: true,
+      width: "200px",
     },
     {
       name: "Plan Status",
@@ -596,42 +595,40 @@ const Client = () => {
     {
       name: "Actions",
       selector: (row) => (
-        <div className="d-flex">
+        <div className="d-flex justify-content-end gap-2 " >
           <Tooltip placement="top" overlay="Package Assign">
             <span
               onClick={(e) => {
-                // Check if ActiveStatus is 1
                 if (row.ActiveStatus === 1) {
-                  // If active, proceed with the package assignment
                   showModal(true);
                   setClientid(row);
                   getplanlistassinstatus(row._id);
                 } else {
-                  // If not active, show the SweetAlert message
-                  Swal.fire({
-                    title: "Reminder",
-                    text: "Activate the client first Then assign the package.",
-                    icon: "warning",
-                    confirmButtonText: "OK",
-                  });
+                  showCustomAlert("error", "Activate the client first Then assign the package.");
                 }
               }}
-              style={{ cursor: "pointer" }}
+              style={{ cursor: "pointer", color: "orange" }}
             >
               <Settings2 />
             </span>
           </Tooltip>
 
           <Tooltip title="view">
-            <Eye onClick={() => Clientdetail(row)} />
+            <Eye onClick={() => Clientdetail(row)}
+              style={{ color: "green" }} />
           </Tooltip>
 
           <Tooltip title="Update">
-            <SquarePen className="ms-3" onClick={() => updateClient(row)} />
+            <SquarePen className="" onClick={() => updateClient(row)}
+              style={{ color: "#6f42c1" }}
+            />
           </Tooltip>
+
           {/* <Tooltip title="delete">
                   <Trash2 onClick={() => DeleteClient(row._id)} />
                 </Tooltip> */}
+
+
         </div>
       ),
       ignoreRowClick: true,
@@ -645,7 +642,7 @@ const Client = () => {
     <div>
       <div>
         <div className="page-content">
-          <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+          <div className="page-breadcrumb  d-flex align-items-center mb-3">
             <div className="breadcrumb-title pe-3">{header}</div>
             <div className="ps-3">
               <nav aria-label="breadcrumb">
@@ -676,39 +673,40 @@ const Client = () => {
                     <i className="bx bx-search" />
                   </span>
                 </div>
+                <div className="d-sm-flex gap-3 justify-content-lg-end w-100 mt-3 mt-lg-0">
+                  <div className="flaot-lg-auto">
+                    <Link to="/admin/addclient" className="btn btn-primary">
+                      <i className="bx bxs-plus-square" aria-hidden="true" />
+                      Add Client
+                    </Link>
+                  </div>
 
-                <div className="ms-auto">
-                  <Link to="/admin/addclient" className="btn btn-primary">
-                    <i className="bx bxs-plus-square" aria-hidden="true" />
-                    Add Client
-                  </Link>
-                </div>
-
-                <div className="ms-2" onClick={(e) => getexportfile()}>
-                  <button
-                    type="button"
-                    className="btn btn-primary float-end"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="Export To Excel"
-                    delay={{ show: "0", hide: "100" }}
-                  >
-                    <i className="bx bxs-download" aria-hidden="true"></i>
-                    Export-Excel
-                  </button>
-                </div>
-                <div className="">
-                  <Link
-                    to="/admin/clientdeletehistory"
-                    className="btn btn-primary"
-                  >
-                    <i className="bx bxs-trash" aria-hidden="true" />
-                    Deleted Client
-                  </Link>
+                  <div className="" onClick={(e) => getexportfile()}>
+                    <button
+                      type="button"
+                      className="btn btn-primary my-2 my-sm-0"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="Export To Excel"
+                      delay={{ show: "0", hide: "100" }}
+                    >
+                      <i className="bx bxs-download" aria-hidden="true"></i>
+                      Export-Excel
+                    </button>
+                  </div>
+                  <div className="">
+                    <Link
+                      to="/admin/clientdeletehistory"
+                      className="btn btn-primary"
+                    >
+                      <i className="bx bxs-trash" aria-hidden="true" />
+                      Deleted Client
+                    </Link>
+                  </div>
                 </div>
               </div>
-              <div className="row mb-4">
-                <div className="col-md-4 ">
+              <div className="row ">
+                <div className="col-sm-6 col-md-4 mb-3">
                   <div>
                     <label htmlFor="kycSelect">Select Kyc</label>
                     <select
@@ -723,7 +721,7 @@ const Client = () => {
                     </select>
                   </div>
                 </div>
-                <div className="col-md-4">
+                <div className="col-sm-6  col-md-4 mb-3">
                   <div>
                     <label htmlFor="kycSelect">Select CreatedBy</label>
                     <select
@@ -738,7 +736,7 @@ const Client = () => {
                     </select>
                   </div>
                 </div>
-                <div className="col-md-3">
+                <div className="col-sm-6  col-md-3 mb-3">
                   <div>
                     <label htmlFor="kycSelect">Select Client</label>
                     <select
@@ -749,18 +747,21 @@ const Client = () => {
                     >
                       <option value="">Select Client</option>
                       <option value="active">Active</option>
-                      <option value="expired">Expired </option>0
+                      <option value="expired">Expired </option>
+                      <option value="NA">N/A</option>
                     </select>
                   </div>
                 </div>
-                <div className="col-md-1">
-                  <div className="refresh-icon mt-4">
+                <div className="col-sm-6 col-md-1">
+                  <div className="refresh-icon ">
                     <RefreshCcw onClick={resethandle} />
                   </div>
                 </div>
               </div>
 
-              {clients ? (
+              {isLoading ? (
+                <Loader />
+              ) : clients.length > 0 ? (
                 <Table
                   columns={columns}
                   data={clients}
@@ -769,8 +770,11 @@ const Client = () => {
                   onPageChange={handlePageChange}
                 />
               ) : (
-                <Loader />
+                <div className="text-center mt-5">
+                  <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                </div>
               )}
+
             </div>
           </div>
         </div>
@@ -818,7 +822,7 @@ const Client = () => {
                             <input
                               style={{
                                 border: "1px solid #ddd",
-                                margin: "0 8px",
+                                margin: "0 8px 1px",
                               }}
                               className="form-check-input"
                               type="radio"
@@ -917,7 +921,7 @@ const Client = () => {
                                         >
                                           <div className="d-flex justify-content-between w-100">
                                             <div>
-                                              <strong className="text-secondary m-2">
+                                              <strong className=" heading-color  m-2">
                                                 Detail
                                               </strong>
                                               <strong className="text-success m-2 activestrong">
@@ -942,8 +946,8 @@ const Client = () => {
                                         <div className="accordion-body">
                                           <div className="d-flex justify-content-between">
                                             <strong>Price:</strong>
-                                            <span>
-                                              <IndianRupee /> {item.price}
+                                            <span style={{ display: "flex", alignItems: "center" }}>
+                                              <IndianRupee style={{ width: "15px", height: "15px" }} /> {item.price}
                                             </span>
                                           </div>
                                           <div className="d-flex justify-content-between">
@@ -1017,7 +1021,7 @@ const Client = () => {
                                   }}
                                   htmlFor={`input-plan-${index}`}
                                 >
-                                  {item.validity}
+                                  {item.title} ({item.themename})
                                 </label>
                               </h5>
 
@@ -1045,7 +1049,7 @@ const Client = () => {
                                     >
                                       <div className="d-flex justify-content-between w-100">
                                         <div>
-                                          <strong className="text-secondary m-2">
+                                          <strong className="m-2 heading-color">
                                             Detail
                                           </strong>
                                           <strong className="text-success m-2 activestrong">
@@ -1068,8 +1072,8 @@ const Client = () => {
                                     <div className="accordion-body">
                                       <div className="d-flex justify-content-between">
                                         <strong>Price:</strong>
-                                        <span>
-                                          <IndianRupee /> {item.basket_price}
+                                        <span style={{ display: "flex", alignItems: "center" }}>
+                                          <IndianRupee style={{ width: "15px", height: "15px" }} /> {item.basket_price}
                                         </span>
                                       </div>
                                       <div className="d-flex justify-content-between">
@@ -1080,8 +1084,8 @@ const Client = () => {
                                         <strong>
                                           Minimum Investment Amount:
                                         </strong>
-                                        <span>
-                                          <IndianRupee /> {item?.mininvamount}
+                                        <span style={{ display: "flex", alignItems: "center" }}>
+                                          <IndianRupee style={{ width: "15px", height: "15px" }} /> {item?.mininvamount}
                                         </span>
                                       </div>
                                     </div>
@@ -1112,8 +1116,9 @@ const Client = () => {
                 type="button"
                 className="btn btn-primary"
                 onClick={() => Updateplansubscription()}
+                disabled={loading}
               >
-                Save Plan
+                {loading ? "Saving..." : "Save Plan"}
               </button>
             )}
             {checkedIndex === 1 && (
@@ -1121,8 +1126,9 @@ const Client = () => {
                 type="button"
                 className="btn btn-primary"
                 onClick={() => UpdateBasketservice()}
+                disabled={loading}
               >
-                Save Plan
+                {loading ? "Saving..." : "Save Plan"}
               </button>
             )}
           </>

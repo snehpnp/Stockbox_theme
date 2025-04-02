@@ -9,7 +9,10 @@ import {
 } from "../../../Services/Admin/Admin";
 import Table from "../../../Extracomponents/Table";
 import { SquarePen, Trash2, PanelBottomOpen } from "lucide-react";
-import Swal from "sweetalert2";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import Loader from "../../../../Utils/Loader";
+
+
 
 const Service = () => {
   const navigate = useNavigate();
@@ -25,6 +28,9 @@ const Service = () => {
     title: "",
     add_by: "",
   });
+
+  //state for loading
+  const [isLoading, setIsLoading] = useState(true);
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
@@ -44,6 +50,7 @@ const Service = () => {
     } catch (error) {
       console.log("Error fetching services:", error);
     }
+    setIsLoading(false)
   };
 
   useEffect(() => {
@@ -57,34 +64,20 @@ const Service = () => {
       const response = await UpdateService(data, token);
 
       if (response && response.status) {
-        Swal.fire({
-          title: "Success!",
-          text: "Service updated successfully.",
-          icon: "success",
-          confirmButtonText: "OK",
-          timer: 2000,
-        });
-
+        showCustomAlert("Success", "Service updated successfully.")
         setUpdatetitle({ title: "", id: "" });
         getAdminservice();
         setModel(false);
       } else {
-        Swal.fire({
-          title: "Error!",
-          text: "There was an error updating the service.",
-          icon: "error",
-          confirmButtonText: "Try Again",
-        });
+        showCustomAlert("error", "There was an error updating the service.")
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error updating the service.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error", "There was an error updating the service.")
+
     }
   };
+
+
 
   // Add service
   const addservice = async () => {
@@ -92,14 +85,7 @@ const Service = () => {
       const data = { title: title.title, add_by: userid };
       const response = await AddService(data, token);
       if (response && response.status) {
-        Swal.fire({
-          title: "Success!",
-          text: "Service added successfully.",
-          icon: "success",
-          confirmButtonText: "OK",
-          timer: 2000,
-        });
-
+        showCustomAlert("Success", "Service added successfully.")
         setTitle({ title: "", add_by: "" });
         getAdminservice();
 
@@ -109,58 +95,35 @@ const Service = () => {
           bootstrapModal.hide();
         }
       } else {
-        Swal.fire({
-          title: "Error!",
-          text: "There was an error adding the service.",
-          icon: "error",
-          confirmButtonText: "Try Again",
-        });
+        showCustomAlert("error", "There was an error adding the service.")
+
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error adding the service.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error", "There was an error adding the service.")
+
     }
   };
+
+
+
 
   // Update status
   const handleSwitchChange = async (event, id) => {
     const user_active_status = event.target.checked ? "true" : "false";
     const data = { id: id, status: user_active_status };
-    const result = await Swal.fire({
-      title: "Do you want to save the changes?",
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      cancelButtonText: "Cancel",
-      allowOutsideClick: false,
-    });
-
+    const result = await showCustomAlert("confirm", "Do you want to save the changes?")
     if (result.isConfirmed) {
       try {
         const response = await UpdateServiceStatus(data, token);
         if (response.status) {
-          Swal.fire({
-            title: "Saved!",
-            icon: "success",
-            timer: 1000,
-            timerProgressBar: true,
-          });
-          setTimeout(() => {
-            Swal.close();
-          }, 1000);
+          showCustomAlert("Success", "Saved!")
         }
         getAdminservice();
       } catch (error) {
-        Swal.fire(
-          "Error",
-          "There was an error processing your request.",
-          "error"
-        );
+        showCustomAlert("error", "There was an error processing your request.")
       }
-    } else if (result.dismiss === Swal.DismissReason.cancel) {
+    } else {
+      event.target.checked = !user_active_status;
       getAdminservice();
     }
   };
@@ -171,41 +134,20 @@ const Service = () => {
 
   const DeleteService = async (_id) => {
     try {
-      const result = await Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to delete this ? This action cannot be undone.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel",
-      });
-
+      const result = await showCustomAlert("confirm", "Do you want to delete this ? This action cannot be undone.")
       if (result.isConfirmed) {
         const response = await Deleteservices(_id, token);
         if (response.status) {
-          Swal.fire({
-            title: "Deleted!",
-            text: "The staff has been successfully deleted.",
-            icon: "success",
-            confirmButtonText: "OK",
-          });
+          showCustomAlert("Success", "The Service has been successfully deleted.")
           getAdminservice();
         }
       } else {
-        Swal.fire({
-          title: "Cancelled",
-          text: "The staff deletion was cancelled.",
-          icon: "info",
-          confirmButtonText: "OK",
-        });
+        showCustomAlert("error", "The service deletion was cancelled.")
+
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error deleting the staff.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error", "There was an error deleting the Service.")
+
     }
   };
 
@@ -234,7 +176,7 @@ const Service = () => {
   return (
     <div>
       <div className="page-content">
-        <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+        <div className="page-breadcrumb  d-flex align-items-center mb-3">
           <div className="breadcrumb-title pe-3">Segment</div>
           <div className="ps-3">
             <nav aria-label="breadcrumb">
@@ -390,16 +332,24 @@ const Service = () => {
                 )}
               </div>
             </div>
-            <div className="table-responsive ">
-              <Table
-                columns={columns}
-                data={clients}
-                pagination
-                striped
-                highlightOnHover
-                dense
-              />
-            </div>
+            {isLoading ? (
+              <Loader />
+            ) : clients.length > 0 ? (
+              <div className="table-responsive ">
+                <Table
+                  columns={columns}
+                  data={clients}
+                  pagination
+                  striped
+                  highlightOnHover
+                  dense
+                />
+              </div>
+            ) : (
+              <div className="text-center mt-5">
+                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -3,11 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getnewslist, AddNewsbyadmin, UpdateNewsbyadmin, changeNewsStatus, getstaffperuser, DeleteNews } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table';
 import { SquarePen, Trash2, PanelBottomOpen, Eye } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDate, fDateTime } from '../../../../Utils/Date_formate';
 import Loader from '../../../../Utils/Loader';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 
@@ -96,32 +96,15 @@ const News = () => {
             const response = await UpdateNewsbyadmin(data, token);
 
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: response.message || 'Service updated successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
-
+                showCustomAlert('Success',response.message || 'Service updated successfully.')
                 setUpdatetitle({ title: "", id: "" });
                 getNews();
                 setModel(false);
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: response.message || 'There was an error updating the News.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert('error',response.message || 'There was an error updating the News.')
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error updating the News.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert('error',"There was an error updating the News.")
         }
     };
 
@@ -135,14 +118,7 @@ const News = () => {
             const data = { title: title.title, description: title.description, image: title.image, add_by: userid };
             const response = await AddNewsbyadmin(data, token);
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'blogs added successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
-
+                showCustomAlert('Success',response.message || 'blogs added successfully.')
                 setTitle({ title: "", add_by: "", description: "" });
                 getNews();
 
@@ -152,20 +128,10 @@ const News = () => {
                     bootstrapModal.hide();
                 }
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'There was an error adding.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert('error','There was an error adding the News.')
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error adding',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert('error',"There was an error adding the News.")
         }
     };
 
@@ -176,37 +142,19 @@ const News = () => {
     const handleSwitchChange = async (event, id) => {
         const user_active_status = event.target.checked ? "true" : "false";
         const data = { id: id, status: user_active_status };
-        const result = await Swal.fire({
-            title: "Do you want to save the changes?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
-
+        const result = await showCustomAlert("confirm","Do you want to save the changes?")
         if (result.isConfirmed) {
             try {
                 const response = await changeNewsStatus(data, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: "Saved!",
-                        icon: "success",
-                        timer: 1000,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1000);
+                    showCustomAlert('Success','Status Changed.')
                 }
                 getNews();
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+                showCustomAlert('error',"There was an error processing your request.")
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
+            event.target.checked = !user_active_status;
             getNews();
         }
     };
@@ -219,43 +167,21 @@ const News = () => {
     const DeleteService = async (_id) => {
 
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this News ? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert("confirm", 'Do you want to delete this News This action cannot be undone.')
 
             if (result.isConfirmed) {
                 const response = await DeleteNews(_id, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The News has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
+                    showCustomAlert("Success", 'The News has been successfully deleted.')
                     getNews();
 
                 }
             } else {
+                showCustomAlert("error", 'The News deletion was cancelled.')
 
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The News deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the News.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'There was an error deleting the News.')
 
         }
     };
@@ -277,7 +203,7 @@ const News = () => {
         <div>
             <div className="page-content">
 
-                <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                <div className="page-breadcrumb  d-flex align-items-center mb-3">
                     <div className="breadcrumb-title pe-3">News</div>
                     <div className="ps-3">
                         <nav aria-label="breadcrumb">
@@ -294,7 +220,7 @@ const News = () => {
                 <hr />
                 <div className="card">
                     <div className="card-body">
-                        <div className="d-lg-flex align-items-center mb-4 gap-3">
+                        <div className="d-sm-flex align-items-center mb-4 gap-3">
                             <div className="position-relative">
                                 <input
                                     type="text"
@@ -307,7 +233,7 @@ const News = () => {
                                     <i className="bx bx-search" />
                                 </span>
                             </div>
-                            {permission.includes("addnews") ? <div className="ms-auto">
+                            {permission.includes("addnews") ? <div className="ms-auto mt-2 mt-sm-0">
                                 <Link
                                     to="/employee/addnews"
                                     type="button"
@@ -337,12 +263,13 @@ const News = () => {
                                             <div className="card-body" style={{ width: "100%" }}>
                                                 <div className="d-flex justify-content-between align-items-start">
 
-                                                    <h4 className="card-title text-muted mb-0">{client.title}</h4>
+                                                    <h5 className="card-title text-muted mb-0">{client.title}</h5>
 
                                                     <div>
 
                                                         {permission.includes("editnews") ? <Tooltip placement="top" overlay="Update">
                                                             <SquarePen
+                                                            className='me-2'
                                                                 onClick={() => {
                                                                     navigate("/employee/updatenews", { state: { client } })
                                                                 }}
@@ -356,7 +283,7 @@ const News = () => {
                                                 <hr />
                                                 <div className="row">
                                                     {/* Image on the left side */}
-                                                    <div className="col-md-2" style={{ borderRight: "1px solid #D0D0D0", textAlign: "center" }}>
+                                                    <div className="col-md-2 border-md-right border-end" style={{  textAlign: "center" }}>
                                                         <img
                                                             src={`${image_baseurl}uploads/news/${client.image}`}
 

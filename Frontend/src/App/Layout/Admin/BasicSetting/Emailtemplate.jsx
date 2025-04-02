@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getemailtemplate, UpdateTemplate } from '../../../Services/Admin/Admin';
-import Swal from 'sweetalert2';
 import Table from '../../../Extracomponents/Table';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import { image_baseurl } from '../../../../Utils/config';
 import { SquarePen, Trash2, PanelBottomOpen } from 'lucide-react';
+import ReusableModal from '../../../components/Models/ReusableModal';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Emailtemplate = () => {
 
@@ -55,32 +56,17 @@ const Emailtemplate = () => {
             const response = await UpdateTemplate(data, token);
 
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'bolgs updated successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
-
+                showCustomAlert("Success", 'Template updated successfully.')
                 setUpdatetitle({ title: "", id: "" });
                 gettemplatelist();
                 setModel(false);
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'There was an error updating the blogs.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", 'There was an error updating the Template.')
+
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error updating the blogs.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'There was an error updating the Template.')
+
         }
     };
 
@@ -120,7 +106,7 @@ const Emailtemplate = () => {
     return (
         <div>
             <div className="page-content">
-                <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                <div className="page-breadcrumb  d-flex align-items-center mb-3">
                     <div className="breadcrumb-title pe-3">Email Template</div>
                     <div className="ps-3">
                         <nav aria-label="breadcrumb">
@@ -195,83 +181,56 @@ const Emailtemplate = () => {
                 </div>
             </div>
 
-            {model && (
-                <>
-                    <div className="modal-backdrop fade show"></div>
-                    <div
-                        className="modal fade show"
-                        style={{ display: 'block' }}
-                        tabIndex={-1}
-                        aria-labelledby="exampleModalLabel"
-                        aria-hidden="true"
-                    >
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title" id="exampleModalLabel">
-                                        Update Blogs
-                                    </h5>
-                                    <button
-                                        type="button"
-                                        className="btn-close"
-                                        onClick={() => setModel(false)}
-                                    />
-                                </div>
-                                <div className="modal-body">
-                                    <form className="row g-3">
+            <ReusableModal
+                show={model}
+                onClose={() => setModel(false)}
+                title="Upload Template"
+                body={
+                    <div className="modal-body">
+                        <form className="row g-3">
 
-                                        <div className="col-md-12">
-                                            <label htmlFor="subject" className="form-label">
-                                                Subject
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                id="subject"
-                                                value={updatetitle.mail_subject}
-                                                onChange={(e) => updateServiceTitle({ mail_subject: e.target.value })}
+                            <div className="col-md-12">
+                                <label htmlFor="subject" className="form-label">
+                                    Subject
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    id="subject"
+                                    value={updatetitle.mail_subject}
+                                    onChange={(e) => updateServiceTitle({ mail_subject: e.target.value })}
 
-                                            />
-                                        </div>
-
-                                        <div className="col-md-12">
-                                            <label htmlFor="mailContent" className="form-label">
-                                                Mail
-                                            </label>
-                                            <textarea
-                                                className="form-control"
-                                                id="mailContent"
-                                                rows={3}
-                                                value={updatetitle.mail_body}
-                                                onChange={(e) => updateServiceTitle({ mail_body: e.target.value })}
-                                            />
-                                        </div>
-                                    </form>
-
-
-                                </div>
-                                <div className="modal-footer">
-                                    <button
-                                        type="button"
-                                        className="btn btn-secondary"
-                                        onClick={() => setModel(false)}
-                                    >
-                                        Close
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary"
-                                        onClick={updateemaitemplate}
-                                    >
-                                        Update Temaplate
-                                    </button>
-                                </div>
+                                />
                             </div>
-                        </div>
-                    </div>
-                </>
-            )}
 
+                            <div className="col-md-12">
+                                <label htmlFor="mailContent" className="form-label">
+                                    Mail
+                                </label>
+                                <textarea
+                                    className="form-control"
+                                    id="mailContent"
+                                    rows={3}
+                                    value={updatetitle.mail_body}
+                                    onChange={(e) => updateServiceTitle({ mail_body: e.target.value })}
+                                />
+                            </div>
+                        </form>
+
+
+                    </div>
+                }
+                footer={
+                    <>
+                        <button type="button" className="btn btn-secondary" onClick={() => setModel(false)}>
+                            Close
+                        </button>
+                        <button type="button" className="btn btn-primary" onClick={updateemaitemplate}>
+                            Update Temaplate
+                        </button>
+                    </>
+                }
+            />
 
         </div>
     );

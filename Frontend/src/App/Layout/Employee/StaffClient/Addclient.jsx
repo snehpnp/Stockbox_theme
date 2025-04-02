@@ -6,14 +6,46 @@ import { useNavigate } from 'react-router-dom';
 import { AddClient } from '../../../Services/Admin/Admin';
 import { Link } from 'react-router-dom';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
-const AddUser = () => { 
+const AddUser = () => {
   const navigate = useNavigate();
 
   const user_id = localStorage.getItem("id");
   const token = localStorage.getItem("token");
 
   const [loading, setLoading] = useState(false);
+
+  const indianStates = [
+    { name: "Andhra Pradesh" },
+    { name: "Arunachal Pradesh" },
+    { name: "Assam" },
+    { name: "Bihar" },
+    { name: "Chhattisgarh" },
+    { name: "Goa" },
+    { name: "Gujarat" },
+    { name: "Haryana" },
+    { name: "Himachal Pradesh" },
+    { name: "Jharkhand" },
+    { name: "Karnataka" },
+    { name: "Kerala" },
+    { name: "Madhya Pradesh" },
+    { name: "Maharashtra" },
+    { name: "Manipur" },
+    { name: "Meghalaya" },
+    { name: "Mizoram" },
+    { name: "Nagaland" },
+    { name: "Odisha" },
+    { name: "Punjab" },
+    { name: "Rajasthan" },
+    { name: "Sikkim" },
+    { name: "Tamil Nadu" },
+    { name: "Telangana" },
+    { name: "Tripura" },
+    { name: "Uttar Pradesh" },
+    { name: "Uttarakhand" },
+    { name: "West Bengal" }
+  ];
 
 
   const validate = (values) => {
@@ -41,6 +73,10 @@ const AddUser = () => {
       errors.ConfirmPassword = "Password Must Match";
     }
 
+    if (!values.state) {
+      errors.state = "Please Select State";
+    }
+
     return errors;
   };
 
@@ -52,40 +88,20 @@ const AddUser = () => {
       PhoneNo: values.PhoneNo,
       password: values.password,
       add_by: user_id,
+      state: values.state
     };
 
     try {
       const response = await AddClient(req, token);
       if (response.status) {
-        Swal.fire({
-          title: "Client Create Successfull !",
-          text: response.message,
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        setTimeout(() => {
-          navigate("/employee/client");
-        }, 1500);
+        showCustomAlert('Success','Client Create Successfull !',navigate,"/employee/client")
       } else {
-        Swal.fire({
-          title: "Alert",
-          text: response.message,
-          icon: "warning",
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert('error',response.message)
         setLoading(false)
       }
     } catch (error) {
       setLoading(false)
-      Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred. Please try again later.",
-        icon: "error",
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert('error','An unexpected error occurred. Please try again later.')
     }
   };
 
@@ -97,6 +113,7 @@ const AddUser = () => {
       password: "",
       ConfirmPassword: "",
       add_by: "",
+      state: "",
     },
     validate,
     onSubmit,
@@ -130,7 +147,7 @@ const AddUser = () => {
     {
       name: "password",
       label: "Password",
-      type: "password", 
+      type: "password",
       label_size: 12,
       col_size: 6,
       disable: false,
@@ -143,77 +160,87 @@ const AddUser = () => {
       col_size: 6,
       disable: false,
     },
+    {
+      name: "state",
+      label: "Select State",
+      type: 'select',
+      options: indianStates?.map((item) => ({
+          label: item.name, 
+          value: item.name,
+      })),
+      label_size: 12,
+      col_size: 6,
+      disable: false,
+      star: true
+  }
   ];
 
-    const handlefreeTrialChange = (e) => {
-      const currentValue = formik.values.freetrial; // Store current value
-    
-      console.log("Current toggle value:", e.target.checked);
-    
-      Swal.fire({
-        title: currentValue ? "Are you sure you want to disable the free trial?" : "Are you sure you want to enable the free trial?",
-        showDenyButton: true,
-        showCancelButton: false,
-        confirmButtonText: "Yes",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // If toggle is currently true (checked), and user clicks "Yes", set it to false
-          // If toggle is false (unchecked), and user clicks "Yes", set it to true
-          formik.setFieldValue("freetrial", !currentValue);
-          console.log("Updated toggle value:", !currentValue); // Log the updated value
-        } else if (result.isDenied) {
-          // If "No" (Deny) clicked, revert the value to its original state
-          formik.setFieldValue("freetrial", currentValue);
-          console.log("Value reverted to:", currentValue); // Log reverted value
-        }
-      });
-    };
+  const handlefreeTrialChange = (e) => {
+    const currentValue = formik.values.freetrial;
+
+
+
+    Swal.fire({
+      title: currentValue ? "Are you sure you want to disable the free trial?" : "Are you sure you want to enable the free trial?",
+      showDenyButton: true,
+      showCancelButton: false,
+      confirmButtonText: "Yes",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        formik.setFieldValue("freetrial", !currentValue);
+        console.log("Updated toggle value:", !currentValue);
+      } else if (result.isDenied) {
+        formik.setFieldValue("freetrial", currentValue);
+        console.log("Value reverted to:", currentValue);
+      }
+    });
+  };
 
   return (
     <Content
-    Page_title="New Client"
-    button_status={false}
-    backbutton_status={true}
-    backForword={true}
-  >
-    
-        <DynamicForm
-          fields={fields}
-          formik={formik}
+      Page_title="New Client"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
 
-          btn_name="Add Client"
-          btn_name1="Cancel"
-          sumit_btn={true}
-          btn_name1_route={"/employee/client"}
-          additional_field={<>
+      <DynamicForm
+        fields={fields}
+        formik={formik}
 
-            <div className={`col-lg-6`}>
-              <div className="input-block row">
+        btn_name="Add Client"
+        btn_name1="Cancel"
+        sumit_btn={true}
+        btn_name1_route={"/employee/client"}
+        additional_field={<>
 
-                <label htmlFor="freetrial" className={`col-lg-12 col-form-label`}>
-                  Free trial status
-                </label>
+          <div className={`col-lg-6`}>
+            <div className="input-block row">
 
-                <div className="col-lg-8">
-                  <div className="form-switch">
-                    <input
-                      className="form-check-input"
-                      style={{
-                        height: "22px",
-                        width: "45px"
-                      }}
-                      type="checkbox"
-                      checked={formik.values["freetrial"] == 1}
-                      onChange={(e) => handlefreeTrialChange(e)}
-                    />
-                  </div>
+              <label htmlFor="freetrial" className={`col-lg-12 col-form-label`}>
+                Free trial status
+              </label>
+
+              <div className="col-lg-8">
+                <div className="form-switch">
+                  <input
+                    className="form-check-input"
+                    style={{
+                      height: "22px",
+                      width: "45px"
+                    }}
+                    type="checkbox"
+                    checked={formik.values["freetrial"] == 1}
+                    onChange={(e) => handlefreeTrialChange(e)}
+                  />
                 </div>
               </div>
             </div>
-          </>}
+          </div>
+        </>}
 
-        />
-      
+      />
+
     </Content>
   );
 };

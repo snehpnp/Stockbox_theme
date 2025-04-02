@@ -6,6 +6,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Updateblogsbyadmin } from '../../../Services/Admin/Admin';
 import { image_baseurl } from '../../../../Utils/config';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+
 
 
 
@@ -45,33 +47,12 @@ const Updateblogs = () => {
 
 
                 if (response.status) {
-                    Swal.fire({
-                        title: "Update Successful!",
-                        text: response.message,
-                        icon: "success",
-                        timer: 1500,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        navigate("/employee/blogs");
-                    }, 1500);
+                    showCustomAlert("Success", response.message, navigate, "/employee/blogs")
                 } else {
-                    Swal.fire({
-                        title: "Alert",
-                        text: response.message,
-                        icon: "warning",
-                        timer: 1500,
-                        timerProgressBar: true,
-                    });
+                    showCustomAlert("error", response.message)
                 }
             } catch (error) {
-                Swal.fire({
-                    title: "Error",
-                    text: "An unexpected error occurred. Please try again later.",
-                    icon: "error",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
+                showCustomAlert("error", "An unexpected error occurred. Please try again later.")
             }
         },
     });
@@ -123,7 +104,6 @@ const Updateblogs = () => {
             <DynamicForm
                 fields={fields}
                 formik={formik}
-                page_title="Update Blog"
                 btn_name="Update Blog"
                 btn_name1="Cancel"
                 sumit_btn={true}

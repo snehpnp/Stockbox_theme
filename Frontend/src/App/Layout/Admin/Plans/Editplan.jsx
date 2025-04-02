@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getcategoryplan, getbyidplan, Updateplan } from '../../../Services/Admin/Admin';
+import { Link } from 'react-router-dom';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+import Content from '../../../components/Contents/Content';
+
 
 const Editplan = () => {
 
@@ -64,7 +67,7 @@ const Editplan = () => {
             price: values.price,
             validity: values.validity,
             category: values.category,
-            deliverystatus: values.deliverystatus == 1 ? true : false,
+            // deliverystatus: values.deliverystatus == 1 ? true : false,
             id: id,
 
         };
@@ -73,33 +76,12 @@ const Editplan = () => {
             const response = await Updateplan(req, token);
 
             if (response.status) {
-                Swal.fire({
-                    title: "Edit Successful!",
-                    text: response.message,
-                    icon: "success",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
-                setTimeout(() => {
-                    navigate("/admin/plan");
-                }, 1500);
+                showCustomAlert('Success', "Edit Successful!", navigate, "/admin/plan")
             } else {
-                Swal.fire({
-                    title: "Error",
-                    text: response.message,
-                    icon: "error",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
+                showCustomAlert('error', response.message)
             }
         } catch (error) {
-            Swal.fire({
-                title: "Error",
-                text: "An unexpected error occurred. Please try again later.",
-                icon: "error",
-                timer: 1500,
-                timerProgressBar: true,
-            });
+            showCustomAlert('error', 'An unexpected error occurred. Please try again later.')
         }
     };
 
@@ -109,7 +91,7 @@ const Editplan = () => {
             price: info?.price || "",
             validity: info?.validity ? info.validity : "",
             category: info?.category ? info.category._id : "",
-            deliverystatus: info?.deliverystatus ? 1 : 0,
+            // deliverystatus: info?.deliverystatus ? 1 : 0,
         },
         enableReinitialize: true,
         validate,
@@ -156,15 +138,15 @@ const Editplan = () => {
             disable: false,
             star: true
         },
-        {
-            name: "deliverystatus",
-            label: "Plan Delivery status ",
-            type: "togglebtn",
-            label_size: 12,
-            col_size: 3,
-            disable: false,
-            star: true
-        },
+        // {
+        //     name: "deliverystatus",
+        //     label: "Plan Delivery status ",
+        //     type: "togglebtn",
+        //     label_size: 12,
+        //     col_size: 3,
+        //     disable: false,
+        //     star: true
+        // },
         {
             name: "description",
             label: "Description",
@@ -177,18 +159,25 @@ const Editplan = () => {
     ];
 
     return (
-        <div style={{ marginTop: "100px" }}>
+        <Content
+            Page_title="Edit Plan"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
+            <hr />
             <DynamicForm
                 fields={fields}
                 formik={formik}
-                page_title="Edit Plan"
+                // page_title="Edit Plan"
                 btn_name="Edit Plan"
                 btn_name1="Cancel"
                 sumit_btn={true}
                 btn_name1_route={"/admin/plan"}
                 additional_field={<></>}
             />
-        </div>
+        </Content>
+
     );
 };
 

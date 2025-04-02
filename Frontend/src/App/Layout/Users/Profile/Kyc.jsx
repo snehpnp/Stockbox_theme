@@ -21,13 +21,13 @@ function Kyc() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Process the form data (e.g., send to API)
-    console.log(formData);
+
     alert("KYC form submitted successfully!");
   };
 
   return (
-    <Content Page_title="User KYC" button_status={false} backbutton_status={true}>
+    <Content Page_title="User KYC" button_status={false} backbutton_status={false}
+      backForword={true}>
       <div className="container mt-4">
         <div className="card shadow-sm">
           <div className="card-header bg-primary text-white">

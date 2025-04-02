@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Table from '../../../Extracomponents/Table';
 import { Tooltip } from 'antd';
 import { getExpiryByMonth } from '../../../Services/Admin/Admin';
 import { fDate, fDateTime, fDateMonth } from '../../../../Utils/Date_formate';
+import Content from '../../../components/Contents/Content';
+import { Eye } from "lucide-react";
 
 
+const Planexpirymonth = () => { 
 
-
-const Planexpirymonth = () => {
-
-    const { id } = useParams();
     const token = localStorage?.getItem('token');
-
     const [data, setData] = useState([]);
+
+    const navigate = useNavigate();
+
 
 
     useEffect(() => {
@@ -32,6 +33,11 @@ const Planexpirymonth = () => {
         } catch (error) {
             console.error("Error fetching client details:", error);
         }
+    };
+
+
+    const plandetail = async (row) => {
+        navigate("/admin/planExpirymonthDetail", { state: { row } });
     };
 
 
@@ -56,56 +62,40 @@ const Planexpirymonth = () => {
             sortable: true,
             width: '300px',
         },
-        // {
-        //     name: 'Created_At',
-        //     selector: row => fDateTime(row.created_at),
-        //     sortable: true,
-        //     width: '300px',
-        // },
-
-        // {
-        //     name: 'Purchase Date',
-        //     selector: row => fDateTime(row.plan_start),
-        //     width: '180px'
-        // },
-        // {
-        //     name: 'Expiry Date',
-        //     selector: row => fDateTime(row.plan_end),
-        //     width: '180px'
-        // },
+        {
+            name: "Actions",
+            selector: (row) => (
+                <div className="d-flex justify-content-end gap-2 " >
+                    <Tooltip title="view">
+                        <Eye onClick={() => plandetail(row)}
+                            style={{ color: "green" }} />
+                    </Tooltip>
+                </div>
+            ),
+            width: "165px",
+        },
     ];
 
 
 
 
     return (
-        <div>
-            <div className="page-content">
-                <div className="row">
-                    <div className="col-md-6">
-                        <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-                            <div className="breadcrumb-title pe-3">Total Actice License</div>
-                            <div className="ps-3">
-                                <nav aria-label="breadcrumb">
-                                    <ol className="breadcrumb mb-0 p-0">
-                                        <li className="breadcrumb-item">
-                                            <Link to="/admin/dashboard">
-                                                <i className="bx bx-home-alt" />
-                                            </Link>
-                                        </li>
-                                    </ol>
-                                </nav>
-                            </div>
+        <Content
+            Page_title="Total Actice License"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
+            <div>
+                <div className="page-content">
+                    <div className="card">
+                        <div className="card-body">
+                            <Table columns={columns} data={data} />
                         </div>
                     </div>
                 </div>
-                <div className="card">
-                    <div className="card-body">
-                        <Table columns={columns} data={data} />
-                    </div>
-                </div>
             </div>
-        </div>
+        </Content>
     );
 };
 

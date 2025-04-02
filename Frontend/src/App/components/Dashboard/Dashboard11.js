@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { fDateTime, fDateMonth } from "../../../Utils/Date_formate";
 
 const Dashboard11 = ({ monthexpiry }) => {
+  const role = localStorage.getItem("Role")?.toLowerCase(); 
+
   const currentMonthYear = new Date().toLocaleString("en-US", {
     month: "long",
     year: "numeric",
@@ -10,18 +12,18 @@ const Dashboard11 = ({ monthexpiry }) => {
 
   const cardsData = [
     {
-      link: "/admin/planexpirymonth",
+      link: `/${role}/planexpirymonth`,
       bgClass: "bg-gradient-moonlit",
       value1:
         monthexpiry?.monthexpiry?.length > 0
           ? monthexpiry?.monthexpiry?.some(
-              (item) => fDateMonth(item?.month) === currentMonthYear
-            )
+            (item) => fDateMonth(item?.month) === currentMonthYear
+          )
             ? monthexpiry?.monthexpiry.reduce((acc, item) => {
-                return fDateMonth(item?.month) === currentMonthYear
-                  ? acc + (item.noofclient || 0)
-                  : acc;
-              }, 0)
+              return fDateMonth(item?.month) === currentMonthYear
+                ? acc + (item.noofclient || 0)
+                : acc;
+            }, 0)
             : 0
           : 0,
 
@@ -31,7 +33,7 @@ const Dashboard11 = ({ monthexpiry }) => {
       visible: true,
     },
     {
-      link: "/admin/client",
+      link: `/${role}/client`,
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.clientCountTotal,
       label: "Total Clients",
@@ -40,7 +42,7 @@ const Dashboard11 = ({ monthexpiry }) => {
       visible: true,
     },
     {
-      link: "/admin/client",
+      link: `/${role}/client`,
       state: { clientStatus: 1 },
       bgClass: "bg-gradient-ohhappiness",
       value1: monthexpiry?.data?.clientCountActive,
@@ -50,7 +52,7 @@ const Dashboard11 = ({ monthexpiry }) => {
       visible: true,
     },
     {
-      link: "/admin/client",
+      link: `/${role}/client`,
       state: { clientStatus: 0 },
       bgClass: "bg-gradient-ibiza",
       value1:
@@ -62,7 +64,7 @@ const Dashboard11 = ({ monthexpiry }) => {
       visible: true,
     },
     {
-      link: "/admin/signal",
+      link: `/${role}/signal`,
       state: { clientStatus: "todayopensignal" },
       bgClass: "bg-gradient-moonlit",
       value1: monthexpiry?.data?.todayOpenSignal,
@@ -72,7 +74,7 @@ const Dashboard11 = ({ monthexpiry }) => {
       visible: true,
     },
     {
-      link: "/admin/closesignal",
+      link: `/${role}/closesignal`,
       state: { clientStatus: "todayclosesignal" },
       bgClass: "bg-gradient-ibiza",
       value1: monthexpiry?.data?.todayCloseSignal,
@@ -82,7 +84,7 @@ const Dashboard11 = ({ monthexpiry }) => {
       visible: true,
     },
     {
-      link: "/admin/signal",
+      link: `/${role}/signal`,
       bgClass: "bg-gradient-ohhappiness",
       value1: monthexpiry?.data?.OpensignalCountTotal,
       label: "Total Open Signals",
@@ -91,7 +93,7 @@ const Dashboard11 = ({ monthexpiry }) => {
       visible: true,
     },
     {
-      link: "/admin/closesignal",
+      link: `/${role}/closesignal`,
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.CloseSignalCountTotal,
       label: "Total Close Signals",
@@ -100,7 +102,7 @@ const Dashboard11 = ({ monthexpiry }) => {
       visible: true,
     },
     {
-      link: "/admin/client",
+      link: `/${role}/client`,
       state: { clientStatus: "active" },
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.activePlanclient,
@@ -110,7 +112,7 @@ const Dashboard11 = ({ monthexpiry }) => {
       visible: true,
     },
     {
-      link: "/admin/client",
+      link: `/${role}/client`,
       state: { clientStatus: "expired" },
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.inActivePlanclient,
@@ -120,7 +122,7 @@ const Dashboard11 = ({ monthexpiry }) => {
       visible: true,
     },
     {
-      link: "/admin/freeclient",
+      link: `/${role}/freeclient`,
       state: { clientStatus: "active" },
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.activeFreetrial,
@@ -130,7 +132,7 @@ const Dashboard11 = ({ monthexpiry }) => {
       visible: true,
     },
     {
-      link: "/admin/freeclient",
+      link: `/${role}/freeclient`,
       state: { clientStatus: "expired" },
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.inActiveFreetrial,
@@ -145,15 +147,14 @@ const Dashboard11 = ({ monthexpiry }) => {
     <div className="theme-10-dashboard dashboard-card">
       <div className="row mt-2">
         {cardsData
-        
+
           .map((item, index) => {
             return (
               <div key={index} className="col-md-4 mb-4">
                 <div className="card shadow-sm border-light rounded">
                   <div
-                    className={`card-header ${
-                      item.index % 2 === 0 ? "bg-success" : "bg-primary"
-                    } text-white`}
+                    className={`card-header ${item.index % 2 === 0 ? "bg-success" : "bg-primary"
+                      } text-white`}
                   >
                     <h5>{item.label}</h5>
                   </div>
@@ -167,7 +168,7 @@ const Dashboard11 = ({ monthexpiry }) => {
                         <>
                           <h6>
                             {" "}
-                            <Link className="" to={item.link}>
+                            <Link className="" to={{ pathname: item.link }} state={item.state || {}}>
                               <i className="fa-regular fa-eye pe-1"></i>View
                             </Link>
                           </h6>
@@ -180,13 +181,12 @@ const Dashboard11 = ({ monthexpiry }) => {
                       <div
                         className="progress-bar"
                         style={{
-                          width: `${
-                            item.value1
-                              ? item.value1 > 100
-                                ? 100
-                                : item.value1
-                              : 0
-                          }%`, // Ensures the progress bar width is between 0 and 100
+                          width: `${item.value1
+                            ? item.value1 > 100
+                              ? 100
+                              : item.value1
+                            : 0
+                            }%`, // Ensures the progress bar width is between 0 and 100
                         }}
                       ></div>
                     </div>

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { AddStaffClient } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const AddStaff = () => {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ const AddStaff = () => {
   const token = localStorage.getItem("token");
 
   const [loading, setLoading] = useState(false);
-  
+
 
   const validate = (values) => {
     let errors = {};
@@ -65,35 +65,16 @@ const AddStaff = () => {
     try {
       const response = await AddStaffClient(req, token);
       if (response.status) {
-        Swal.fire({
-          title: "Create Successful!",
-          text: response.message,
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        setTimeout(() => {
-          navigate("/admin/employee");
-        }, 1500);
+        showCustomAlert("success", response.message, navigate, "/admin/staff");
+
       } else {
-        Swal.fire({
-          title: "Error",
-          text: response.message,
-          icon: "error",
-          timer: 1500,
-          timerProgressBar: true,
-        });
-      setLoading(false)
+        showCustomAlert("error", response.message, navigate);
+        setLoading(false)
       }
     } catch (error) {
       setLoading(false)
-      Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred. Please try again later.",
-        icon: "error",
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert("error", "An unexpected error occurred. Please try again later.");
+
     }
   };
 
@@ -175,14 +156,14 @@ const AddStaff = () => {
 
   return (
     <Content
-    Page_title="Add New Employee"
-    button_status={false}
-    backbutton_status={true}
-    backForword={true}
-  >
+      Page_title="Add New Employee"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
       <DynamicForm
         fields={fields}
-        page_title="Add New Employee"
+        // page_title="Add New Employee"
         btn_name="Add Employee"
         btn_name1="Cancel"
         formik={formik}

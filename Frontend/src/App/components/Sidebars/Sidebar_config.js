@@ -20,13 +20,13 @@ const Admin = [
   },
   {
     label: "Free Trial Client",
-    icon: "UserPen",
+    icon: "FileUser",
     link: "/admin/freeclient",
     name: "FreeTrialClient"
   },
   {
     label: "Employee",
-    icon: "UserPen",
+    icon: "CircleUserRound",
     link: "/admin/staff",
     name: "Employee"
   },
@@ -80,6 +80,11 @@ const Admin = [
         icon: "ScatterChart", link: "/admin/closesignal",
         name: "CloseSignal"
       },
+      // {
+      //   label: "Signal Strategy",
+      //   icon: "Activity", link: "/admin/signalstrategy",
+      //   name: "SignalStrategy"
+      // },
     ],
     name: "Signal",
   },
@@ -94,6 +99,12 @@ const Admin = [
     icon: "ArrowRightLeft",
     link: "/admin/paymentrequest",
     name: "WithdrawalRequest"
+  },
+  {
+    label: "Refer And Earn List",
+    icon: "HelpingHand",
+    link: "/admin/referAndEarnlist",
+    name: "ReferAndEarnList"
   },
   {
     label: "Blogs",
@@ -192,14 +203,20 @@ const Admin = [
     name: "BasicSettings",
   },
   {
+    label: "Order List",
+    icon: "MessageCircleMore",
+    link: "/admin/orderlist",
+    name: "Order List"
+  },
+  {
     label: "Broadcast SMS",
-    icon: "HelpingHand",
+    icon: "MessageCircleMore",
     link: "/admin/message",
     name: "BroadcastSMS"
   },
   {
     label: "FAQ",
-    icon: "HelpingHand",
+    icon: "FileQuestion",
     link: "/admin/faq",
     name: "FAQ"
   },
@@ -219,13 +236,13 @@ const Admin = [
 
 
 const SuperAdmin = [
-  {
-    name: "Dashboard",
-    label: "Dashboard",
-    icon: "LayoutDashboard",
-    link: "/superadmin/dashboard",
-    children: [],
-  },
+  // {
+  //   name: "Dashboard",
+  //   label: "Dashboard",
+  //   icon: "LayoutDashboard",
+  //   link: "/superadmin/dashboard",
+  //   children: [],
+  // },
   {
     name: "Company",
     label: "Company",
@@ -287,18 +304,25 @@ const User = [
     link: "/user/demat",
     children: [],
   },
+  // {
+  //   name: "TradeResponse",
+  //   label: "Trade Response",
+  //   icon: "ArrowRightLeft",
+  //   link: "/user/trade-response",
+  //   children: [],
+  // },
   {
-    name: "TradeResponse",
-    label: "Trade Response",
-    icon: "ArrowRightLeft",
-    link: "/user/trade-response",
+    name: "Basket Response",
+    label: "Basket Response",
+    icon: "FolderClock",
+    link: "/user/basket-response",
     children: [],
   },
   {
-    name: "BasketResponse",
-    label: "Basket Response",
+    name: "Broker Response",
+    label: "Broker Response",
     icon: "FolderClock",
-    link: "/user/broker_response/",
+    link: "/user/broker-response",
     children: [],
   },
   {
@@ -311,31 +335,18 @@ const User = [
   {
     name: "ReferEarn",
     label: "Refer & Earn",
-    icon: "HelpingHand",
+    icon: "Puzzle",
     link: "/user/refer-earn",
     children: [],
   },
   {
     name: "Faqs",
     label: "Faqs",
-    icon: "HelpingHand",
+    icon: "FileQuestion",
     link: "/user/faq",
     children: [],
   },
-  {
-    name: "PrivacyPolicy",
-    label: "Privacy Policy",
-    icon: "Wrench",
-    link: "/user/privacy-policy",
-    children: [],
-  },
-  {
-    name: "TermsConditions",
-    label: "Terms & Conditions",
-    icon: "Wrench",
-    link: "/user/terms-conditions",
-    children: [],
-  },
+
   {
     name: "HelpDesk",
     label: "Help Desk",
@@ -346,10 +357,33 @@ const User = [
   {
     name: "Brodcast",
     label: "Broadcast",
-    icon: "HelpingHand",
-    link: "/user/brodcast",
+    icon: "MessageCircleMore",
+    link: "/user/broadcast",
     children: [],
   },
+  {
+    name: "Notification",
+    label: "Notification",
+    icon: "Bell",
+    link: "/user/notification",
+    children: [],
+  },
+  {
+    name: "News",
+    label: "News",
+    icon: "Vote",
+    link: "/user/news",
+    children: [],
+  },
+  {
+    name: "Blogs",
+    label: "Blogs",
+    icon: "Paintbrush",
+    link: "/user/blogs",
+    children: [],
+
+  }
+  ,
   {
     name: "PaymentHistory",
     label: "Payment History",
@@ -363,6 +397,33 @@ const User = [
     icon: "ScatterChart",
     link: "/user/past-performance",
     children: [],
+  },
+  {
+    label: "Our Policy",
+    icon: "Handshake",
+    children: [
+      {
+        name: "PrivacyPolicy",
+        label: "Privacy Policy",
+        icon: "Wrench",
+        link: "/user/privacy-policy",
+
+      },
+      {
+        name: "TermsConditions",
+        label: "Terms & Conditions",
+        icon: "Handshake",
+        link: "/user/terms-conditions",
+      },
+      {
+        name: "Disclaimer",
+        label: "Disclaimer",
+        icon: "ClipboardX",
+        link: "/user/disclaimer",
+      },
+
+    ],
+    name: "Our Policy",
   },
 ];
 

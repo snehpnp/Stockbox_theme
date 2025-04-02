@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from "formik";
 import DynamicForm from "../../../Extracomponents/FormicForm";
-import Swal from "sweetalert2";
 import { useLocation, useNavigate } from "react-router-dom";
 import { updateCouponbyadmin, GetService } from "../../../Services/Admin/Admin";
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+
 
 
 
@@ -120,41 +121,20 @@ const Updatecoupon = () => {
       limitation: values.limitation,
       id: row._id,
     };
-    console.log("req data", req);
+
 
 
     try {
       const response = await updateCouponbyadmin(req, token);
-      console.log("datata", response);
 
       if (response.status) {
-        Swal.fire({
-          title: "Update Successful!",
-          text: response.message,
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        setTimeout(() => {
-          navigate("/employee/coupon");
-        }, 1500);
+        showCustomAlert("Success", response.message, navigate, "/employee/coupon")
       } else {
-        Swal.fire({
-          title: "Error",
-          text: response.message,
-          icon: "error",
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("error", response.message)
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred. Please try again later.",
-        icon: "error",
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert("error", "An unexpected error occurred. Please try again later.")
+
     }
   };
 
@@ -322,14 +302,13 @@ const Updatecoupon = () => {
 
   return (
     <Content
-    Page_title="Update Coupon Code"
-    button_status={false}
-    backbutton_status={true}
-    backForword={true}
-  >
+      Page_title="Update Coupon Code"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
       <DynamicForm
         fields={fields.filter((field) => !field.showWhen || field.showWhen(formik.values))}
-        page_title="Update Coupon Code"
         btn_name="Update Coupon"
         btn_name1="Cancel"
         formik={formik}
@@ -337,7 +316,7 @@ const Updatecoupon = () => {
         btn_name1_route={"/employee/coupon"}
         additional_field={<></>}
       />
-      </Content>
+    </Content>
   );
 };
 

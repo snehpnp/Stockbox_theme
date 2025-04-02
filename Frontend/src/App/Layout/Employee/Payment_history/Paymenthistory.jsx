@@ -4,10 +4,9 @@ import { getPayementhistory, getPayementhistorywithfilter } from '../../../Servi
 // import Table from '../../../components/Table';
 import Table from '../../../Extracomponents/Table1';
 import { SquarePen, Trash2, PanelBottomOpen, Eye, RefreshCcw, IndianRupee, ArrowDownToLine } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
-import { fDateTime } from '../../../../Utils/Date_formate';
+import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
 import { exportToCSV } from '../../../../Utils/ExportData';
 import Loader from '../../../../Utils/Loader';
 
@@ -225,7 +224,7 @@ const History = () => {
             name: 'Coupon Id',
             selector: row => row.coupon ? row.coupon : "N/A",
             sortable: true,
-            width: '200px',
+            width: '250px',
         },
 
 
@@ -248,9 +247,9 @@ const History = () => {
         },
         {
             name: 'Purchase Date.',
-            selector: row => fDateTime(row?.created_at),
+            selector: row => fDateTimeH(row?.created_at),
             sortable: true,
-            width: '200px',
+            width: '270px',
         },
         {
             name: 'Invoice',
@@ -315,7 +314,7 @@ const History = () => {
         <div>
             <div className="page-content">
 
-                <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+                <div className="page-breadcrumb  d-flex align-items-center mb-3">
                     <div className="breadcrumb-title pe-3">Payment History</div>
                     <div className="ps-3">
                         <nav aria-label="breadcrumb">
