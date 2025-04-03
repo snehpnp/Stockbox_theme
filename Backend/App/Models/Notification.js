@@ -38,6 +38,10 @@ const Notification = Schema({
         enum: [0, 1], // Example statuses
         default: 0
     },
+    signalcreatedate: {
+        type: Date,
+        default: null
+    },
     createdAt: {
         type: Date,
         default: Date.now
