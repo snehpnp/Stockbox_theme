@@ -154,8 +154,6 @@ exports.updateThemeCompany = async (req, res) => {
       { new: true }
     );
 
-    const ThemeFind = await Theme.findById(theme_id);
-
     if (!updatedCompany) {
       return res.status(404).json({
         status: false,
@@ -167,7 +165,7 @@ exports.updateThemeCompany = async (req, res) => {
       if (FindCompany?.url.includes("localhost")) {
         const response = await axios.post(
           "http://localhost:5001/basicsetting/updatethemecompany",
-          { theme_id: theme_id, ThemeData: "" }
+          { theme_id: theme_id }
         );
 
         return res.status(200).json({
@@ -177,8 +175,8 @@ exports.updateThemeCompany = async (req, res) => {
         });
       } else {
         const response = await axios.post(
-          `${FindCompany?.url}/backend/basicsetting/updatethemecompany`,
-          { theme_id: theme_id, ThemeData: ThemeFind }
+          `${FindCompany?.url}/basicsetting/updatethemecompany`,
+          { theme_id: theme_id }
         );
       }
       return res.status(200).json({
@@ -188,7 +186,7 @@ exports.updateThemeCompany = async (req, res) => {
       });
     }
   } catch (error) {
-    // console.error("Error updating Company:", error);
+    console.error("Error updating Company:", error);
     res.status(500).json({
       status: false,
       message: "Server error",

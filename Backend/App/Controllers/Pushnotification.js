@@ -11,7 +11,7 @@ if (!admin.apps.length) {
 }
 
 
-async function sendFCMNotification(title, body, tokens, type = "") {
+async function sendFCMNotification(title, body, tokens, type = "", segment = "") {
   try {
 
     const tokenss = [...new Set(tokens)];
@@ -30,6 +30,7 @@ async function sendFCMNotification(title, body, tokens, type = "") {
       data: {
         additional_data: 'value',
         type: type,
+        segment:segment,
       },
       android: {
         priority: "high", // High priority for real-time delivery

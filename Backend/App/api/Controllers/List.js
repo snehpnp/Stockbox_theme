@@ -3443,7 +3443,7 @@ end.setHours(23, 59, 59, 999);
 
 
    const result = await BasicSetting_Modal.findOne()
-  .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst gststatus refersendmsg')
+  .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst gststatus')
   .exec();
 
    if (result) {  
@@ -3848,11 +3848,22 @@ end.setHours(23, 59, 59, 999);
       const clientCreatedAt = client.createdAt;
 
       // Fetch active plans
-      const activePlans = await Planmanage.find({
+      // const activePlans = await Planmanage.find({
+      //   clientid: id,
+      //   startdate: { $lte: today },
+      //   enddate: { $gte: today }
+      // }).distinct('serviceid');
+
+      const activePlansData = await Planmanage.find({
         clientid: id,
         startdate: { $lte: today },
         enddate: { $gte: today }
-      }).distinct('serviceid');
+      }).select('serviceid startdate');
+  
+      // Extract active plans and find the earliest start date
+      const activePlans = activePlansData.map(plan => plan.serviceid);
+      const planStartDate = activePlansData.length > 0 ? new Date(Math.min(...activePlansData.map(plan => new Date(plan.startdate)))) : null;
+  
 
       // Fetch expired plans
       const expiredPlans = await Planmanage.find({
@@ -3884,8 +3895,14 @@ end.setHours(23, 59, 59, 999);
           {
             clientid: null,
             $or: [
+
+              { 
+                type: "close signal", 
+                segmentid: { $in: activePlans }, 
+                signalcreatedate: { $gte: planStartDate }  // Ensure it's created after plan start date
+              },
               // Global notifications with 'close signal', 'open signal', or 'add broadcast' types
-              { type: { $in: ['close signal', 'open signal', 'add broadcast'] }, segmentid: { $in: activePlans } },
+              { type: { $in: ['open signal', 'add broadcast'] }, segmentid: { $in: activePlans } },
               // Global notifications with other types
               { type: { $nin: ['close signal', 'open signal', 'add broadcast'] } }
             ]

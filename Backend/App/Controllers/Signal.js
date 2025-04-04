@@ -185,7 +185,7 @@ if (!stocks) {
 
             try {
             
-              await sendFCMNotification(notificationTitle, notificationBody, tokens,"open signal");
+              await sendFCMNotification(notificationTitle, notificationBody, tokens,"open signal",serviceName);
             
             } catch (error) {
            
@@ -657,14 +657,15 @@ async getSignalWithFilter(req, res) {
       // }).select('devicetoken');
       
       const today = new Date();
-
+      const signalCreatedAt = Signal.created_at; 
       const clients = await Clients_Modal.find({
         del: 0,
         ActiveStatus: 1,
         devicetoken: { $exists: true, $ne: null },
         _id: {
           $in: await Planmanage.find({
-            serviceid: service,  // Replace `service` with your actual service value
+            serviceid: service,
+            startdate: { $lte: signalCreatedAt },  // Replace `service` with your actual service value
             enddate: { $gte: today }
           }).distinct('clientid')  // Assuming 'clientid' is the field linking to Clients_Modal
         }
@@ -674,28 +675,27 @@ async getSignalWithFilter(req, res) {
       const tokens = clients.map(client => client.devicetoken);
 
       if (tokens.length > 0) {
-  
-        const resultn = new Notification_Modal({
-          segmentid: service,
-          type: close_status == "true" ? "close signal" : "open signal",
-          title: notificationTitle,
-          message: notificationBody
-      });
-      
-
-      await resultn.save();
-
-
       try {
         // Send notifications to all device tokens
-        await sendFCMNotification(notificationTitle, notificationBody, tokens,"close signal");
+        await sendFCMNotification(notificationTitle, notificationBody, tokens,close_status === true ? "close signal" : "open signal",serviceName);
         // console.log('Notifications sent successfully');
       } catch (error) {
     
       }
 
-
       }
+
+      const resultn = new Notification_Modal({
+        segmentid: service,
+        type: close_status == true ? "close signal" : "open signal",
+        title: notificationTitle,
+        message: notificationBody,
+        signalcreatedate: signalCreatedAt,
+    });
+    
+
+    await resultn.save();
+
   
       if (!updatedSignal) {
         return res.status(404).json({
