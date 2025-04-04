@@ -248,7 +248,9 @@ const Service = () => {
 
 
   const handleShowModal = (item) => {
-    if (kycStatus === 0) {
+    console.log(kycStatus);
+    
+    if (kycStatus === 1) {
       navigate("/user/kyc")
     } else {
       setSelectedPlanDetails(item);

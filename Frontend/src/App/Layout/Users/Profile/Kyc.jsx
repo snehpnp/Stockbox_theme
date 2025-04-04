@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
+import { clientKycAndAgreement } from "../../../Services/UserService/User"
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import Loader from "../../../../Utils/Loader";
 
 function Kyc() {
+  const userid = localStorage.getItem("id")
+  console.log("userid", userid)
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     phone: "",
-    address: "",
-    documentType: "Aadhaar",
-    documentFile: null,
+    aadhar: "",
+    panno: "PAN",
   });
 
   const handleChange = (e) => {
@@ -19,6 +24,32 @@ function Kyc() {
     });
   };
 
+  const handleKycSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true)
+
+    const data = new FormData();
+    data.append('email', formData.email);
+    data.append('name', formData.fullName);
+    data.append('phone', formData.phone);
+    data.append('panno', formData.panno);
+    data.append('aadhaarno', formData.aadhar);
+    data.append('id', userid);
+
+    try {
+      const token = localStorage.getItem('token');
+      const result = await clientKycAndAgreement(data, token);
+      console.log('KYC Success:', result);
+      showCustomAlert("success", "KYC form submitted successfully!");
+    } catch (err) {
+      console.error('KYC Failed:', err);
+      showCustomAlert("error", "KYC submission failed. Please try again.");
+    }
+    setLoading(false)
+  };
+
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -26,18 +57,18 @@ function Kyc() {
   };
 
   return (
-    <Content Page_title="User KYC" button_status={false} backbutton_status={false}
+    <Content Page_title="KYC" button_status={false} backbutton_status={false}
       backForword={true}>
       <div className="container mt-4">
         <div className="card shadow-sm">
-          <div className="card-header bg-primary text-white">
+          {/* <div className="card-header bg-primary text-white">
             <h5 className="mb-0">KYC Verification Form</h5>
-          </div>
+          </div> */}
           <div className="card-body">
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
                 <label htmlFor="fullName" className="form-label">
-                  Full Name
+                  Name
                 </label>
                 <input
                   type="text"
@@ -69,7 +100,7 @@ function Kyc() {
 
               <div className="mb-3">
                 <label htmlFor="phone" className="form-label">
-                  Phone Number
+                  Mobile No.
                 </label>
                 <input
                   type="tel"
@@ -84,59 +115,58 @@ function Kyc() {
               </div>
 
               <div className="mb-3">
-                <label htmlFor="address" className="form-label">
-                  Address
-                </label>
-                <textarea
-                  className="form-control"
-                  id="address"
-                  name="address"
-                  placeholder="Enter your address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  rows="3"
-                  required
-                ></textarea>
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="documentType" className="form-label">
-                  Document Type
-                </label>
-                <select
-                  className="form-select"
-                  id="documentType"
-                  name="documentType"
-                  value={formData.documentType}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="Aadhaar">Aadhaar Card</option>
-                  <option value="PAN">PAN Card</option>
-                  <option value="Passport">Passport</option>
-                  <option value="DrivingLicense">Driving License</option>
-                </select>
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="documentFile" className="form-label">
-                  Upload Document
+                <label htmlFor="aadhar" className="form-label">
+                  {/* Address */}
+                  Aadhar No.
                 </label>
                 <input
-                  type="file"
+                  type="number"
                   className="form-control"
-                  id="documentFile"
-                  name="documentFile"
+                  id="aadhar"
+                  name="aadhar"
+                  placeholder="Enter your aadhar"
+                  value={formData.aadhar}
                   onChange={handleChange}
+                  rows="3"
                   required
                 />
               </div>
 
+              <div className="mb-3">
+                <label htmlFor="panno" className="form-label">
+                  {/* Address */}
+                  PAN No.
+                </label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="panno"
+                  name="panno"
+                  placeholder="Enter your Pan No"
+                  value={formData.panno}
+                  onChange={handleChange}
+                  rows="3"
+                  required
+                />
+              </div>
               <div className="d-grid">
-                <button type="submit" className="btn btn-primary">
-                  Submit KYC
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  onClick={handleKycSubmit}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Submitting...
+                    </>
+                  ) : (
+                    "Submit"
+                  )}
                 </button>
               </div>
+
             </form>
           </div>
         </div>

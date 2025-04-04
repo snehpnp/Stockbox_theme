@@ -36,7 +36,7 @@ const Wallet = () => {
     } catch (error) {
       console.log("error", error);
     }
-  };
+  }; 
 
 
   const getEarning = async () => {

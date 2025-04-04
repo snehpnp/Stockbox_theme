@@ -1074,3 +1074,25 @@ export async function getpastperformacebymonth(data, token) {
     }
 }
 
+
+
+//user kyc api
+
+export async function clientKycAndAgreement(data, token) {
+    try {
+        const response = await axios.post(`${Config.base_url}api/client/clientkycandagreement` ,data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+            }
+        );
+
+        return response.data;
+
+    } catch (error) {
+        console.error('Error in clientKycAndAgreement API:', error.message);
+        throw error.response?.data || { message: 'Something went wrong!' };
+    }
+}

@@ -34,6 +34,7 @@ function Trade() {
   const [viewModel, setViewModel] = useState(false);
   const [exitModel, setExitModel] = useState(false);
   const [service, setService] = useState([]);
+  console.log("service", service.map(item => item.title))
 
   const [tradeData, setTradeData] = useState({ live: [], close: [] });
   const [description, setDescription] = useState("");
@@ -241,6 +242,7 @@ function Trade() {
         search: "",
       };
       const response = await GetSignalClient(data, token);
+      console.log("response", response)
 
       if (response.status) {
         setTradeData((prev) => ({ ...prev, live: response.data }));
@@ -397,10 +399,12 @@ function Trade() {
 
             <div className="col-md-2 d-flex align-items-center">
               <div className="trade-header">
-                <div className="mb-3">
-                  <span className="trade-type">Hold Duration : <br /> {item?.callduration === "Intraday" ? "Intraday" : item?.callduration === "Short Term" ? "(15-30 days)" :
-                    item?.callduration === "Medium Term" ? "(Above 3 month)" : "(Above 1 year)"}</span>
-                </div>
+                {service?.find((srv) => srv?._id === item?.service)?.title !== "Cash" && (
+                  <div className="mb-3">
+                    <span className="trade-type">Hold Duration : <br /> {item?.callduration === "Intraday" ? "Intraday" : item?.callduration === "Short Term" ? "(15-30 days)" :
+                      item?.callduration === "Medium Term" ? "(Above 3 month)" : "(Above 1 year)"}</span>
+                  </div>
+                )}
                 <div>
                   <span className="trade-type1">
                     {service?.find((srv) => srv?._id === item?.service)?.title}

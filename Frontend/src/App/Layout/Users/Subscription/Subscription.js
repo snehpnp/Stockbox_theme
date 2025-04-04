@@ -40,7 +40,6 @@ const Subscription = () => {
   const fetchMySubscription = async () => {
     try {
       const res = await getMySubscription(id, token);
-      console.log("getMySubscription",res);
 
 
       if (res?.status) {

@@ -108,8 +108,8 @@ const Profiles = () => {
   const getuserdetail = async () => {
     try {
       const response = await GetUserData(userid, token);
-      console.log("getuserdetail",response);
-      
+      console.log("getuserdetail", response);
+
       if (response.status) {
         setUserDetail(response.data);
       }
@@ -279,11 +279,14 @@ const Profiles = () => {
                 <li className="list-group-item">
                   <Link to="/user/wallet">Wallet</Link>
                 </li>
-                <li className="list-group-item">
+                {/* <li className="list-group-item">
                   <Link to="/user/payment-history">Payment History</Link>
-                </li>
+                </li> */}
                 <li className="list-group-item">
-                  <Link to="">My Basket Subscription</Link>
+                  <Link
+                    to="/user/basket"
+                    state={{ activeTab: 'basket' }}
+                  >My Basket Subscription</Link>
                 </li>
                 <li className="list-group-item">
                   <Link to="/user/kyc">User Kyc</Link>
@@ -378,51 +381,51 @@ const Profiles = () => {
         title="Change Password"
         body={
           <form onSubmit={formik.handleSubmit}>
-          {["currentPassword", "newPassword", "confirmPassword"].map((field, index) => {
-            const hasError = formik.touched[field] && formik.errors[field]; // Check if error exists
-            return (
-              <div className="mb-3 position-relative" key={index}>
-                <input
-                  type={showPassword[field] ? "text" : "password"}
-                  className="form-control"
-                  placeholder={field
-                    .replace(/([A-Z])/g, " $1")
-                    .trim()
-                    .replace(/^./, (str) => str.toUpperCase())}
-                  {...formik.getFieldProps(field)}
-                  style={{ paddingRight: "40px" }} // To prevent overlap of eye icon
-                />
-                {/* Eye Icon: Upar shift hoga agar error hai */}
-                <span
-                  className="position-absolute"
-                  style={{
-                    right: "10px",
-                    top: hasError ? "30%" : "50%", // Jab error ho to 40%, warna 50%
-                    transform: "translateY(-50%)",
-                    cursor: "pointer",
-                    transition: "top 0.2s ease-in-out", // Smooth animation
-                  }}
-                  onClick={() => togglePassword(field)}
-                >
-                  {showPassword[field] ? <Eye size={20} /> : <EyeOff size={20} />}
-                </span>
-                {/* Error Message */}
-                {hasError && (
-                  <div className="text-danger mt-1">{formik.errors[field]}</div>
-                )}
-              </div>
-            );
-          })}
-          <div className="d-flex justify-content-end">
-            <button type="button" className="btn btn-secondary me-2" onClick={() => setShowModal(false)}>
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-primary">
-              Save
-            </button>
-          </div>
-        </form>
-        
+            {["currentPassword", "newPassword", "confirmPassword"].map((field, index) => {
+              const hasError = formik.touched[field] && formik.errors[field]; // Check if error exists
+              return (
+                <div className="mb-3 position-relative" key={index}>
+                  <input
+                    type={showPassword[field] ? "text" : "password"}
+                    className="form-control"
+                    placeholder={field
+                      .replace(/([A-Z])/g, " $1")
+                      .trim()
+                      .replace(/^./, (str) => str.toUpperCase())}
+                    {...formik.getFieldProps(field)}
+                    style={{ paddingRight: "40px" }} // To prevent overlap of eye icon
+                  />
+                  {/* Eye Icon: Upar shift hoga agar error hai */}
+                  <span
+                    className="position-absolute"
+                    style={{
+                      right: "10px",
+                      top: hasError ? "30%" : "50%", // Jab error ho to 40%, warna 50%
+                      transform: "translateY(-50%)",
+                      cursor: "pointer",
+                      transition: "top 0.2s ease-in-out", // Smooth animation
+                    }}
+                    onClick={() => togglePassword(field)}
+                  >
+                    {showPassword[field] ? <Eye size={20} /> : <EyeOff size={20} />}
+                  </span>
+                  {/* Error Message */}
+                  {hasError && (
+                    <div className="text-danger mt-1">{formik.errors[field]}</div>
+                  )}
+                </div>
+              );
+            })}
+            <div className="d-flex justify-content-end">
+              <button type="button" className="btn btn-secondary me-2" onClick={() => setShowModal(false)}>
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary">
+                Save
+              </button>
+            </div>
+          </form>
+
         }
       />
     </Content>
