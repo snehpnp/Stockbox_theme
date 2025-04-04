@@ -185,7 +185,7 @@ if (!stocks) {
 
             try {
             
-              await sendFCMNotification(notificationTitle, notificationBody, tokens,"open signal");
+              await sendFCMNotification(notificationTitle, notificationBody, tokens,"open signal",serviceName);
             
             } catch (error) {
            
@@ -677,7 +677,7 @@ async getSignalWithFilter(req, res) {
       if (tokens.length > 0) {
       try {
         // Send notifications to all device tokens
-        await sendFCMNotification(notificationTitle, notificationBody, tokens,"close signal");
+        await sendFCMNotification(notificationTitle, notificationBody, tokens,close_status === true ? "close signal" : "open signal",serviceName);
         // console.log('Notifications sent successfully');
       } catch (error) {
     

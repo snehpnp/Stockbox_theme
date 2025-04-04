@@ -55,6 +55,12 @@ class Clients {
         });
       }
 
+
+      
+      if (!state) {
+        return res.status(400).json({ status: false, message: "Please select state" });
+      }
+
       if (token) {
         const refertokensss = await Clients_Modal.findOne({ refer_token: token, del: 0, ActiveStatus: 1 });
 
