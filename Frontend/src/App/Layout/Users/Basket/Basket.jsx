@@ -19,7 +19,7 @@ function Basket() {
   const [activeTab, setActiveTab] = useState(() =>
     newActiveTab === "basket" ? "subscribedbasket" : "allbasket"
   );
-  const [basketdata, setBasketdata] = useState([]);
+  const [basketdata, setBasketdata] = useState([]);  
 
 
   const [purchasedata, setPurchasedata] = useState([]);
@@ -147,7 +147,7 @@ function Basket() {
                   <div className="card-body pb-0">
                     <div className="d-flex ">
                       <img
-                        src="https://stockboxpnp.pnpuniverse.com/uploads/blogs/image-1742206277154-910627492.png"
+                        src={item.image}
                         alt="Basket"
                         style={{ width: "70px", height: "70px" }}
                         className=" img-fluid mb-3"
@@ -173,7 +173,7 @@ function Basket() {
                           {" "}
                           Since Launch
                           <span>
-                            <b className="">: {item?.cagr}</b>
+                            <b className="">: {item?.cagr}%</b>
                           </span>
                         </div>
                       </div>
@@ -267,7 +267,8 @@ function Basket() {
                   <div className="card-body pb-0">
                     <div className="d-flex ">
                       <img
-                        src="https://stockboxpnp.pnpuniverse.com/uploads/blogs/image-1742206277154-910627492.png"
+                        // src="https://stockboxpnp.pnpuniverse.com/uploads/blogs/image-1742206277154-910627492.png"
+                        src={item?.image}
                         alt="Basket"
                         style={{ width: "70px", height: "70px" }}
                         className=" img-fluid mb-3"

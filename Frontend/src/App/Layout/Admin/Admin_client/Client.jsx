@@ -293,7 +293,6 @@ const Client = () => {
   const getbasketlist = async () => {
     try {
       const response = await BasketAllList(token);
-      console.log("BasketAllList",response);
       
       if (response.status) {
         setBasketlist(response.data);

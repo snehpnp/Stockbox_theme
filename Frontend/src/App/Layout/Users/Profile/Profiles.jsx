@@ -32,6 +32,8 @@ const Profiles = () => {
     confirmPassword: false,
   });
 
+  const [dmateStatus, setDemateStatus] = useState(0);
+
 
 
   const togglePassword = (field) => {
@@ -108,10 +110,11 @@ const Profiles = () => {
   const getuserdetail = async () => {
     try {
       const response = await GetUserData(userid, token);
-      console.log("getuserdetail", response);
+      console.log("getuserdetail", response.data.dlinkstatus);
 
       if (response.status) {
         setUserDetail(response.data);
+        setDemateStatus(response?.data?.dlinkstatus)
       }
     } catch (error) {
       console.log("error", error);
@@ -291,12 +294,14 @@ const Profiles = () => {
                 <li className="list-group-item">
                   <Link to="/user/kyc">User Kyc</Link>
                 </li>
-                <li className="list-group-item">
-                  <Link to="" onClick={(e) => DeleteDematAccountApi()}
-                    className="btn btn-secondary w-100">
-                    Delete Demat Account
-                  </Link>
-                </li>
+                {dmateStatus === 1 &&
+                  <li className="list-group-item">
+                    <Link to="" onClick={(e) => DeleteDematAccountApi()}
+                      className="btn btn-secondary w-100">
+                      Delete Demat Account
+                    </Link>
+                  </li>
+                }
                 <li className="list-group-item">
                   <Link
                     to=""

@@ -235,6 +235,8 @@ const Closesignal = () => {
       };
 
       const response = await GetSignallistWithFilter(data, token);
+      console.log("GetSignallistWithFilter",response);
+      
       
       if (response && response.status) {
         let filterdata = response.data.filter(

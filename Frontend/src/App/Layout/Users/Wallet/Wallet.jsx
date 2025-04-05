@@ -29,6 +29,8 @@ const Wallet = () => {
   const getuserdetail = async () => {
     try {
       const response = await GetUserData(userid, token);
+      console.log("GetUserData",response);
+      
       if (response.status) {
         setData(response.data);
 

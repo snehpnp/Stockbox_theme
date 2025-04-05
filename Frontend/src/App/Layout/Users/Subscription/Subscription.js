@@ -59,7 +59,7 @@ const Subscription = () => {
 
   const fetchBasketMySubscription = async () => {
     try {
-      const res = await getMyBasketSubscription(id, token);      
+      const res = await getMyBasketSubscription(id, token);
       if (res?.status) {
         setBasketData(res?.data);
       } else {
@@ -149,125 +149,125 @@ const Subscription = () => {
               <div className="card-body">
                 <div className="row">
                   <div className="col-md-6 mb-3 ">
-                  <table className="table table-bordered mb-0">
-                    <thead>
-                      <tr className="table-primary">
-                        <th colSpan="2" className="text-center">
-                          Plan Details
-                        </th>
-                      </tr>
-                    </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <strong>Plan Duration:</strong>
-                      </td>
-                      <td>{accordion?.planDetails?.validity || "--"}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Purchase On:</strong>
-                      </td>
-                      <td>{fDateTime(accordion?.plan_start) || "--"}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Purchase Price:</strong>
-                      </td>
-                      <td>
-                        ₹{accordion?.total}
-                        {accordion?.plan_price !== accordion?.total && accordion?.gst ? (
-                          <small className="text-muted"> ({accordion?.gst}% Tax included)</small>
-                        ) : null}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Expired On:</strong>
-                      </td>
-                      <td>{fDateTime(accordion?.plan_end) || "--"}</td>
-                    </tr>
-                    
-                    <tr>
-                      <td>
-                        <strong>Plan Price:</strong>
-                      </td>
-                      <td>₹{accordion?.plan_price ?? "--"}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Discount Price:</strong>
-                      </td>
-                      <td>₹ {accordion?.discount ?? "--"}</td>
-                    </tr>
-                  
-                   
-                    <tr>
-                      <td>
-                        <strong>Start Date:</strong>
-                      </td>
-                      <td>{fDateTime(accordion?.plan_start) || "Make By Admin"}</td>
-                    </tr>
-                  </tbody>
-                </table>
-                    </div>
-                    <div className="col-md-6 mb-3">
                     <table className="table table-bordered mb-0">
-                    <thead>
-                      <tr className="table-primary">
-                        <th colSpan="2" className="text-center">
-                          Payment History
-                        </th>
-                      </tr>
-                    </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <strong>Plan Duration:</strong>
-                      </td>
-                      <td>{accordion?.planDetails?.validity || "--"}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Purchase On:</strong>
-                      </td>
-                      <td>{fDateTime(accordion?.plan_start) || "--"}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Expired On:</strong>
-                      </td>
-                      <td>{fDateTime(accordion?.plan_end) || "--"}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Plan Price:</strong>
-                      </td>
-                      <td>₹{accordion?.plan_price || "--"}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Discount Price:</strong>
-                      </td>
-                      <td>₹ {accordion?.discount || "0"}</td>
-                    </tr>
-                   
-                    <tr>
-                      <td>
-                        <strong>Purchase Price:</strong>
-                      </td>
-                      <td>
-                        ₹{accordion?.total}
-                        {accordion?.plan_price !== accordion?.total && accordion?.gst ? (
-                          <small className="text-muted"> ({accordion?.gst}% Tax included)</small>
-                        ) : null}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-                      </div>
+                      <thead>
+                        <tr className="table-primary">
+                          <th colSpan="2" className="text-center">
+                            Plan Details
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <strong>Plan Duration:</strong>
+                          </td>
+                          <td>{accordion?.planDetails?.validity || "--"}</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <strong>Purchase On:</strong>
+                          </td>
+                          <td>{fDateTime(accordion?.plan_start) || "--"}</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <strong>Purchase Price:</strong>
+                          </td>
+                          <td>
+                            ₹{accordion?.total}
+                            {accordion?.plan_price !== accordion?.total && accordion?.gst ? (
+                              <small className="text-muted"> ({accordion?.gst}% Tax included)</small>
+                            ) : null}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <strong>Expired On:</strong>
+                          </td>
+                          <td>{fDateTime(accordion?.plan_end) || "--"}</td>
+                        </tr>
+
+                        <tr>
+                          <td>
+                            <strong>Plan Price:</strong>
+                          </td>
+                          <td>₹{accordion?.plan_price ?? "--"}</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <strong>Discount Price:</strong>
+                          </td>
+                          <td>₹ {accordion?.discount ?? "--"}</td>
+                        </tr>
+
+
+                        <tr>
+                          <td>
+                            <strong>Start Date:</strong>
+                          </td>
+                          <td>{fDateTime(accordion?.plan_start) || "Make By Admin"}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <table className="table table-bordered mb-0">
+                      <thead>
+                        <tr className="table-primary">
+                          <th colSpan="2" className="text-center">
+                            Payment History
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <strong>Plan Duration:</strong>
+                          </td>
+                          <td>{accordion?.planDetails?.validity || "--"}</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <strong>Purchase On:</strong>
+                          </td>
+                          <td>{fDateTime(accordion?.plan_start) || "--"}</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <strong>Expired On:</strong>
+                          </td>
+                          <td>{fDateTime(accordion?.plan_end) || "--"}</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <strong>Plan Price:</strong>
+                          </td>
+                          <td>₹{accordion?.plan_price || "--"}</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <strong>Discount Price:</strong>
+                          </td>
+                          <td>₹ {accordion?.discount || "0"}</td>
+                        </tr>
+
+                        <tr>
+                          <td>
+                            <strong>Purchase Price:</strong>
+                          </td>
+                          <td>
+                            ₹{accordion?.total}
+                            {accordion?.plan_price !== accordion?.total && accordion?.gst ? (
+                              <small className="text-muted"> ({accordion?.gst}% Tax included)</small>
+                            ) : null}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              
+
               </div>
             </div>
           </div>
@@ -441,12 +441,28 @@ const Subscription = () => {
                 </div>
               )}
 
-              {activeTab === "basket" && (
+              {/* {activeTab === "basket" && (
                 <div className="mt-4">
                   <div className="accordion accordion-flush" id="accordionFlushExample">
                     {renderAccordionItems1()}
                   </div>
                 </div>
+              )} */}
+              {activeTab === "basket" && (
+                basketData && basketData.length > 0 ? (
+                  <div className="mt-4">
+                    <div className="accordion accordion-flush" id="accordionFlushExample">
+                      {renderAccordionItems1()}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center mt-5">
+                    <img
+                      src="/assets/images/norecordfound.png"
+                      alt="No Records Found"
+                    />
+                  </div>
+                )
               )}
             </>
           )}
