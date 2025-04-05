@@ -110,7 +110,6 @@ const Profiles = () => {
   const getuserdetail = async () => {
     try {
       const response = await GetUserData(userid, token);
-      console.log("getuserdetail", response.data.dlinkstatus);
 
       if (response.status) {
         setUserDetail(response.data);

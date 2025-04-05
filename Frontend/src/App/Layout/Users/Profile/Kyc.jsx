@@ -6,7 +6,6 @@ import Loader from "../../../../Utils/Loader";
 
 function Kyc() {
   const userid = localStorage.getItem("id")
-  console.log("userid", userid)
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -39,7 +38,6 @@ function Kyc() {
     try {
       const token = localStorage.getItem('token');
       const result = await clientKycAndAgreement(data, token);
-      console.log('KYC Success:', result);
       showCustomAlert("success", "KYC form submitted successfully!");
     } catch (err) {
       console.error('KYC Failed:', err);

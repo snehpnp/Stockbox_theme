@@ -29,7 +29,6 @@ const Wallet = () => {
   const getuserdetail = async () => {
     try {
       const response = await GetUserData(userid, token);
-      console.log("GetUserData",response);
       
       if (response.status) {
         setData(response.data);
@@ -46,7 +45,6 @@ const Wallet = () => {
       const response = await GetReferEarning(userid, token);
       if (response.status) {
         setEarning(response.data);
-        console.log(response.data)
       }
     } catch (error) {
       console.log("error", error);
