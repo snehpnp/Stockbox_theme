@@ -3323,7 +3323,13 @@ end.setHours(23, 59, 59, 999);
     try {
       const { id } = req.body;  // Extract client id from request body
       const currentDate = new Date();
-
+      
+      const client = await Clients_Modal.findById(id);
+      if (!client) {
+        return res.status(404).json({ status: false, message: "Client not found" });
+      }
+      const clientCreatedAt = client.createdAt;
+  
       // Fetch active plans
       const activePlans = await Planmanage.find({
         clientid: id,
@@ -3345,7 +3351,8 @@ end.setHours(23, 59, 59, 999);
       // Determine the type based on active/expired plans
       let query = {
         del: false,
-        status: true
+        status: true,
+        created_at: { $gte: clientCreatedAt }
       };
 
       if (activePlans.length > 0) {
