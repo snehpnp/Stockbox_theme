@@ -1732,12 +1732,11 @@ ul.mb-3.border-tab.nav.nav-tabs {
 {
  height: 350px !important;
 }
-.chart-tab
-{
-
-    /* width: 245px; */
-    float: right;
-    border: 1px solid;
-    justify-content: space-between;
-    display: flex;
+.chart-tab {
+  /* width: 245px; */
+  float: right;
+  border: 1px solid #dfdfdf;
+  justify-content: space-between;
+  display: flex;
+  border-radius: 10px;
 }
