@@ -325,13 +325,13 @@ const User = [
     link: "/user/broker-response",
     children: [],
   },
-  {
-    name: "Coupons",
-    label: "Coupons",
-    icon: "Copyright",
-    link: "/user/coupons",
-    children: [],
-  },
+  // {
+  //   name: "Coupons",
+  //   label: "Coupons",
+  //   icon: "Copyright",
+  //   link: "/user/coupons",
+  //   children: [],
+  // },
   {
     name: "ReferEarn",
     label: "Refer & Earn",
@@ -361,13 +361,13 @@ const User = [
     link: "/user/broadcast",
     children: [],
   },
-  {
-    name: "Notification",
-    label: "Notification",
-    icon: "Bell",
-    link: "/user/notification",
-    children: [],
-  },
+  // {
+  //   name: "Notification",
+  //   label: "Notification",
+  //   icon: "Bell",
+  //   link: "/user/notification",
+  //   children: [],
+  // },
   {
     name: "News",
     label: "News",
