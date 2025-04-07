@@ -2086,7 +2086,7 @@ async AddSignals(req, res) {
       });
   });
     // Destructure required fields from req.body, including stocks array
-    const { stock, strategy_name, callduration, service, description, planid, maximum_loss, maximum_profit, required_margin, stocks } = req.body;
+    const { stock, strategy_name, callduration, service, description, planid, maximum_loss, maximum_profit, required_margin, stocks, add_by } = req.body;
 
     // Validate required fields (planid and stocks)
     if (!planid) {
@@ -2141,6 +2141,7 @@ async AddSignals(req, res) {
         maximum_profit: maximum_profit,
         required_margin: required_margin,
         report: report,
+        add_by:add_by,
       });
     });
     // Insert all signal entries at once
@@ -2321,10 +2322,7 @@ async getSignalsListWithFilte(req, res) {
       const matchingPlanIds = matchingPlans.map(plan => plan._id.toString());
 
       query.$or = [
-        { tradesymbol: { $regex: search, $options: 'i' } },
-        { calltype: { $regex: search, $options: 'i' } },
-        { price: { $regex: search, $options: 'i' } },
-        { closeprice: { $regex: search, $options: 'i' } },
+        { stock: { $regex: search, $options: 'i' } },
         { planid: { $in: matchingPlanIds } }
       ];
     }
