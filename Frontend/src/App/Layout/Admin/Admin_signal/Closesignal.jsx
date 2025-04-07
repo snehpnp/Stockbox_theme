@@ -235,9 +235,6 @@ const Closesignal = () => {
       };
 
       const response = await GetSignallistWithFilter(data, token);
-      console.log("GetSignallistWithFilter",response);
-      
-      
       if (response && response.status) {
         let filterdata = response.data.filter(
           (item) => item.close_status === true
@@ -319,6 +316,22 @@ const Closesignal = () => {
       sortable: false,
       width: "100px",
     },
+    // {
+    //   name: "Segment",
+    //   selector: (row) => {
+    //     const segmentLabel =
+    //       row.segment === "C"
+    //         ? "CASH"
+    //         : row.segment === "O"
+    //           ? "OPTION"
+    //           : "FUTURE";
+    //     return row.closeprice == 0
+    //       ? <div>{segmentLabel}<span style={{ color: "red" }}> (Avoid)<Eye onClick={() => { setShowModal(true); setDescription(row?.close_description) }}></Eye></span></div>
+    //       : segmentLabel;
+    //   },
+    //   sortable: true,
+    //   width: "200px",
+    // },
     {
       name: "Segment",
       selector: (row) => {
@@ -328,13 +341,28 @@ const Closesignal = () => {
             : row.segment === "O"
               ? "OPTION"
               : "FUTURE";
-        return row.closeprice == 0
-          ? <div>{segmentLabel}<span style={{ color: "red" }}> (Avoid)<Eye onClick={() => { setShowModal(true); setDescription(row?.close_description) }}></Eye></span></div>
-          : segmentLabel;
+    
+        return (
+          <div>
+            {segmentLabel}
+            {row?.close_description && (
+              <span style={{ color: "red", marginLeft: "5px" }}>
+                (Avoid)
+                <Eye
+                  style={{ cursor: "pointer", marginLeft: "5px" }}
+                  onClick={() => {
+                    setShowModal(true);
+                    setDescription(row?.close_description);
+                  }}
+                />
+              </span>
+            )}
+          </div>
+        );
       },
       sortable: true,
       width: "200px",
-    },
+    },    
     {
       name: "Symbol",
       selector: (row) => row.tradesymbol,
@@ -370,9 +398,14 @@ const Closesignal = () => {
       name: "Exit Price",
       selector: (row) => (
         <div>
-          {" "}
-          <IndianRupee />
-          {row.closeprice ? row.closeprice : "-"}
+          {row?.close_description ? (
+            "N/A"
+          ) : (
+            <>
+              <IndianRupee />
+              {row.closeprice}
+            </>
+          )}
         </div>
       ),
       sortable: true,
@@ -381,6 +414,9 @@ const Closesignal = () => {
     {
       name: "Total P&L",
       cell: (row) => {
+        if (row.close_description) {
+          return "N/A";
+        }
         let totalPL = 0;
         if (row.calltype === "BUY") {
           totalPL = ((row.closeprice - row.price) * row.lotsize).toFixed(2);
@@ -653,7 +689,7 @@ const Closesignal = () => {
                 </div>
               </div>
 
-              {isLoading ? <Loader /> : clients.length > 0 ?(
+              {isLoading ? <Loader /> : clients.length > 0 ? (
 
                 activeTab === "table" && (
                   <Table
@@ -664,10 +700,10 @@ const Closesignal = () => {
                     onPageChange={handlePageChange}
                   />
                 )
-              ):(
+              ) : (
                 <div className="text-center mt-5">
-                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
-              </div>
+                  <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                </div>
               )}
 
               {activeTab === "card" && (

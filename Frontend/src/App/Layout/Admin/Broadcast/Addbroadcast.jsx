@@ -101,7 +101,7 @@ const Addbroadcast = () => {
             col_size: 4,
             disable: false,
             options: [
-                // { value: "all", label: "All" },
+                { value: "All", label: "All" },
                 { value: "active", label: "Active" },
                 { value: "expired", label: "Expired" },
                 { value: "nonsubscribe", label: "Non Subscribe" },
@@ -115,10 +115,13 @@ const Addbroadcast = () => {
             label_size: 6,
             col_size: 4,
             disable: false,
-            options: servicedata?.map((item) => ({
-                label: item?.title,
-                value: item?._id,
-            })),
+            options: [
+                { value: "All", label: "All" },
+                ...servicedata?.map((item) => ({
+                    value: item?._id,
+                    label: item?.title,
+                }))
+            ],
             star: true,
             showWhen: (values) => values.type !== "nonsubscribe"
         },
@@ -154,7 +157,7 @@ const Addbroadcast = () => {
             <DynamicForm
                 fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
                 formik={formik}
-                page_title="Add Broadcast"
+                // page_title="Add Broadcast"
                 btn_name="Add Broadcast"
                 btn_name1="Cancel"
                 sumit_btn={true}

@@ -615,20 +615,41 @@ export async function GetNewsData(token) {
 
 // /api/list/broadcast
 
-export async function GetBroadcastData(token) {
-    try {
-        const res = await axios.post(`${Config.base_url}api/list/broadcast`, {}, {
-            headers: {
-                Authorization: `${token}`,
-            },
-        });
+// export async function GetBroadcastData(token) {
+//     try {
+//         const res = await axios.post(`${Config.base_url}api/list/broadcast`, {}, {
+//             headers: {
+//                 Authorization: `${token}`,
+//             },
+//         });
 
-        return res?.data;
-    } catch (err) {
-        return err;
+//         return res?.data;
+//     } catch (err) {
+//         return err;
+//     }
+// }
+
+export async function GetBroadcastData(id, token) {
+    try {
+        const response = await axios.post(
+            `${Config.base_url}api/list/broadcast`, { id },
+            {
+                headers: {
+                    Authorization: `${token}`,
+                },
+            }
+        );
+
+        return response?.data
+    } catch (error) {
+        console.error("GetBroadcastData error:", error?.response || error.message);
+
+        return {
+            success: false,
+            message: error?.response?.data?.message || "Something went wrong",
+        };
     }
 }
-
 
 
 export async function GetNotificationData(data, token) {
@@ -1080,7 +1101,7 @@ export async function getpastperformacebymonth(data, token) {
 
 export async function clientKycAndAgreement(data, token) {
     try {
-        const response = await axios.post(`${Config.base_url}api/client/clientkycandagreement` ,data,
+        const response = await axios.post(`${Config.base_url}api/client/clientkycandagreement`, data,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,

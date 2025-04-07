@@ -151,7 +151,6 @@ const UserSignup = () => {
       token: referralCode,
     });
 
-
     if (ResData.status) {
       showCustomAlert("Success", ResData.message)
       setIsOtpModalOpen(true)
