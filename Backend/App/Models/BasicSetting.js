@@ -304,6 +304,26 @@ const BasicSettingSchema = new Schema({
         type: Number,
         default: 0
     },
+    base_url: {
+        type: String,
+        default: null
+    },
+    color1: {
+        type: String,
+        default: null
+    },
+    color2: {
+        type: String,
+        default: null
+    },
+    color3: {
+        type: String,
+        default: null
+    },
+    color4: {
+        type: String,
+        default: null
+    },
     
 }, {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
