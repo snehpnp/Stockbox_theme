@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
 import { Doughnut } from "react-chartjs-2";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   GetBasketService,
   BasketPurchaseList,
@@ -11,8 +11,16 @@ import { loadScript } from "../../../../Utils/Razorpayment";
 import Loader from "../../../../Utils/Loader";
 
 function Basket() {
-  const [activeTab, setActiveTab] = useState("allbasket");
-  const [basketdata, setBasketdata] = useState([]);
+  const location = useLocation();
+  const newActiveTab = location?.state?.activeTab || {};
+
+
+  // const [activeTab, setActiveTab] = useState("allbasket");
+  const [activeTab, setActiveTab] = useState(() =>
+    newActiveTab === "basket" ? "subscribedbasket" : "allbasket"
+  );
+  const [basketdata, setBasketdata] = useState([]);  
+
 
   const [purchasedata, setPurchasedata] = useState([]);
 
@@ -25,6 +33,7 @@ function Basket() {
 
   const [onlinePaymentStatus, setOnlinePaymentStatus] = useState();
   const [offlinePaymentStatus, setOfflinePaymentStatus] = useState();
+  
 
   useEffect(() => {
     if (activeTab === "allbasket") {
@@ -109,9 +118,8 @@ function Basket() {
       <ul className="nav nav-pills mb-3 justify-content-center border-bottom mb-">
         <li className="nav-item">
           <button
-            className={`nav-link ${
-              activeTab === "allbasket" ? "active btn-primary" : ""
-            }`}
+            className={`nav-link ${activeTab === "allbasket" ? "active btn-primary" : ""
+              }`}
             onClick={() => setActiveTab("allbasket")}
           >
             All Basket
@@ -120,9 +128,8 @@ function Basket() {
 
         <li className="nav-item">
           <button
-            className={`nav-link ${
-              activeTab === "subscribedbasket" ? "active btn-primary" : ""
-            }`}
+            className={`nav-link ${activeTab === "subscribedbasket" ? "active btn-primary" : ""
+              }`}
             onClick={() => setActiveTab("subscribedbasket")}
           >
             Subscribed Basket
@@ -140,7 +147,7 @@ function Basket() {
                   <div className="card-body pb-0">
                     <div className="d-flex ">
                       <img
-                        src="https://stockboxpnp.pnpuniverse.com/uploads/blogs/image-1742206277154-910627492.png"
+                        src={item.image}
                         alt="Basket"
                         style={{ width: "70px", height: "70px" }}
                         className=" img-fluid mb-3"
@@ -166,7 +173,7 @@ function Basket() {
                           {" "}
                           Since Launch
                           <span>
-                            <b className="">: {item?.cagr}</b>
+                            <b className="">: {item?.cagr}%</b>
                           </span>
                         </div>
                       </div>
@@ -257,10 +264,11 @@ function Basket() {
               <div className="col-md-6 col-lg-6 mb-3" key={item?.id}>
                 <div className="card radius-10 overflow-hidden shadow basket-card">
 
-                <div className="card-body pb-0">
+                  <div className="card-body pb-0">
                     <div className="d-flex ">
                       <img
-                        src="https://stockboxpnp.pnpuniverse.com/uploads/blogs/image-1742206277154-910627492.png"
+                        // src="https://stockboxpnp.pnpuniverse.com/uploads/blogs/image-1742206277154-910627492.png"
+                        src={item?.image}
                         alt="Basket"
                         style={{ width: "70px", height: "70px" }}
                         className=" img-fluid mb-3"
@@ -268,7 +276,7 @@ function Basket() {
                       <div className="mb-0 ms-3 ">
                         <h4>
                           {item?.title} ({item?.themename})
-                         
+
                         </h4>
 
                         <p className="basket-short-description mb-1">
@@ -300,26 +308,26 @@ function Basket() {
                         <b className="">{item?.volatility}</b>
                       </li>
                       <li className="list-group-item border-bottom-0">
-                      <Link
-                        to="/user/basketdetail"
-                        state={{ item }}
-                        className="btn btn-primary w-100"
-                      >
-                        View Details
-                      </Link>
-                         
-                       
+                        <Link
+                          to="/user/basketdetail"
+                          state={{ item }}
+                          className="btn btn-primary w-100"
+                        >
+                          View Details
+                        </Link>
+
+
                       </li>
                       {/* <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100 mb-1">
                         View Details
                       </Link> */}
                     </ul>
                   </div>
-                
 
-               
 
-               
+
+
+
                 </div>
               </div>
             ))}

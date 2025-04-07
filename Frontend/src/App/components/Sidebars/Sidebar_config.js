@@ -384,13 +384,13 @@ const User = [
 
   }
   ,
-  {
-    name: "PaymentHistory",
-    label: "Payment History",
-    icon: "WalletCards",
-    link: "/user/payment-history",
-    children: [],
-  },
+  // {
+  //   name: "PaymentHistory",
+  //   label: "Payment History",
+  //   icon: "WalletCards",
+  //   link: "/user/payment-history",
+  //   children: [],
+  // },
   {
     name: "PastPerformance",
     label: "Past Performance",

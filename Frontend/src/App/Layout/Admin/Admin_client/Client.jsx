@@ -293,6 +293,7 @@ const Client = () => {
   const getbasketlist = async () => {
     try {
       const response = await BasketAllList(token);
+      
       if (response.status) {
         setBasketlist(response.data);
       }
@@ -516,11 +517,11 @@ const Client = () => {
       width: "200px",
     },
 
-    {
-      name: "Phone No",
-      selector: (row) => row.PhoneNo,
-      sortable: true,
-    },
+    // {
+    //   name: "Phone No",
+    //   selector: (row) => row.PhoneNo,
+    //   sortable: true,
+    // },
 
     {
       name: "Created By",

@@ -11,6 +11,7 @@ const BasketDetail = () => {
   const location = useLocation();
   const { item } = location?.state;
 
+
   const stripHtmlTags = (input) => {
     if (!input) return "";
     return input.replace(/<\/?[^>]+(>|$)/g, "");
@@ -76,31 +77,31 @@ const BasketDetail = () => {
                     <li className="list-group-item d-flex justify-content-between align-items-center">
                       Launch Date{" "}
                       <span className="badge bg-dark rounded-pill">
-                        {item?.mininvamount}
+                        {fDateTime(item?.startdate)}
                       </span>
                     </li>
                     <li className="list-group-item d-flex justify-content-between align-items-center">
                       Theme{" "}
                       <span className="badge bg-success rounded-pill">
-                        {item?.cagr} %
+                        {item?.themename}
                       </span>
                     </li>
                     <li className="list-group-item d-flex justify-content-between align-items-center border-bottom">
                       Since Launch{" "}
                       <span className="badge bg-danger rounded-pill">
-                        {item?.type}
+                        {item?.cagr_live} %
                       </span>
                     </li>
                     <li className="list-group-item d-flex justify-content-between align-items-center">
                       No. of stocks{" "}
                       <span className="badge bg-warning rounded-pill">
-                        {item?.themename}
+                        {item?.stock_details.length}
                       </span>
                     </li>
                     <li className="list-group-item d-flex justify-content-between align-items-center">
                       Validity{" "}
                       <span className="badge bg-primary rounded-pill">
-                        {item?.next_rebalance_date}
+                        {item?.validity}
                       </span>
                     </li>
                     <li className="list-group-item d-flex justify-content-between align-items-center">

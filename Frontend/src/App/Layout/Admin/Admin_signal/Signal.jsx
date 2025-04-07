@@ -831,12 +831,12 @@ const Signal = () => {
                                     >
                                         Card View
                                     </button>
-                                    <button
+                                    {/* <button
                                         className={`btn btn-outline-primary ${viewMode === "strategy" ? "active" : ""}`}
                                         onClick={() => setViewMode("strategy")}
                                     >
                                         Strategy
-                                    </button>
+                                    </button> */}
                                 </div>
                             </div>
 

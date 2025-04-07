@@ -372,7 +372,7 @@ const Dashboard = () => {
       </div>
 
       <div class="row g-3 mt-4" >
-      <div className="col-lg-4 col-md-4">
+        <div className="col-lg-4 col-md-4">
           <div className="card">
             <div className="card-body">
               <div className="d-flex flex-column align-items-center text-center">
@@ -394,17 +394,17 @@ const Dashboard = () => {
 
               <ul className="list-group list-group-flush">
                 <li className="list-group-item">
-                  <Link to="/user/subscription">
+                  <Link to="">
                     <CreditCard className="me-2" /> My Subscription
                   </Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="/user/kyc">
+                  <Link to="">
                     <Shield className="me-2" /> KYC Pending
                   </Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="/user/payment-history">
+                  <Link to="">
                     <History className="me-2" /> Payment History
                   </Link>
                 </li>
@@ -412,7 +412,9 @@ const Dashboard = () => {
                   <Link to="">
                     <ShoppingCart className="me-2" /> My Basket Subscription
                   </Link>
+
                 </li>
+
                 <li className="list-group-item">
                   <button className="btn btn-primary mt-3 w-100">View Proflie</button>
                 </li>
@@ -517,7 +519,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-        
+
       </div>
 
       <div className="row mt-4">

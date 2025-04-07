@@ -17,6 +17,7 @@ import { image_baseurl } from "../../../../Utils/config";
 
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import { Eye } from "lucide-react";
 
 
 
@@ -36,7 +37,10 @@ function Trade() {
   const [service, setService] = useState([]);
 
   const [tradeData, setTradeData] = useState({ live: [], close: [] });
+  const [showModal, setShowModal] = useState(false);
   const [description, setDescription] = useState("");
+  const [avoidDescription, setAvoidDescription] = useState("");
+
   const [brokerstatus, setBrokerstatus] = useState([])
   const [targetEnabled, setTargetEnabled] = useState(false);
   const [checkdata, setCheckdata] = useState([])
@@ -241,6 +245,7 @@ function Trade() {
         search: "",
       };
       const response = await GetSignalClient(data, token);
+   
 
       if (response.status) {
         setTradeData((prev) => ({ ...prev, live: response.data }));
@@ -264,6 +269,9 @@ function Trade() {
         search: "",
       };
       const response = await GetCloseSignalClient(data, token);
+      // console.log("GetCloseSignalClient",response)
+   
+
       if (response.status) {
         setTradeData((prev) => ({ ...prev, close: response.data }));
         setTotalPages(response.pagination?.totalPages || 1);
@@ -352,11 +360,11 @@ function Trade() {
 
 
 
-
   const renderTradeCard = (item) => (
     <div className="row" key={item._id}>
-      <div className="col-md-12">
+    <div className="col-md-12">
         <div className="trade-card shadow" style={{ backgroundColor: "#dcedf2" }}>
+      
           <div className="row mb-3">
             <div className="col-lg-3">
               <span className="date-btn">
@@ -397,14 +405,40 @@ function Trade() {
 
             <div className="col-md-2 d-flex align-items-center">
               <div className="trade-header">
+
                 <div className="mb-3">
-                  <span className="trade-type">Hold Duration : <br /> {item?.callduration === "Intraday" ? "Intraday" : item?.callduration === "Short Term" ? "(15-30 days)" :
-                    item?.callduration === "Medium Term" ? "(Above 3 month)" : "(Above 1 year)"}</span>
+                  <span className="trade-type">
+                    Hold Duration : <br />
+                    {
+                      item?.callduration === "Intraday" ? "Intraday" :
+                        item?.callduration === "Short Term" ? "(15-30 days)" :
+                          item?.callduration === "Medium Term" ? "(Above 3 months)" :
+                            "(Above 1 year)"
+                    }
+                  </span>
                 </div>
+
                 <div>
                   <span className="trade-type1">
                     {service?.find((srv) => srv?._id === item?.service)?.title}
                   </span>
+                  <span style={{ color: "red" }}>
+                  
+                    {item?.close_description &&  <>
+                        {" (Avoid) "}
+                        <Eye
+                          onClick={() => {
+                            setShowModal(true);
+                            setAvoidDescription(item?.close_description
+                           
+                            );
+                          }}
+                          style={{ cursor: "pointer", marginLeft: "5px" }}
+                        />
+                      </>}
+                 
+                  </span>
+
                 </div>
               </div>
             </div>
@@ -830,6 +864,14 @@ function Trade() {
         title={<span>Detail</span>}
         body={<div dangerouslySetInnerHTML={{ __html: description }} />}
       />
+
+
+       <ReusableModal
+              show={showModal}
+              onClose={() => setShowModal(false)}
+              title="Description"
+              body={<p>{avoidDescription || "No description available."}</p>}
+            />
     </Content>
   );
 }

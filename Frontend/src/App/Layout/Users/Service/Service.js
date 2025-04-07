@@ -221,7 +221,6 @@ const Service = () => {
 
           try {
             const response2 = await AddplanSubscription(data, token);
-            console.log("AddplanSubscription", response2);
 
             if (response2?.status) {
               setShowModal(false);
@@ -248,7 +247,8 @@ const Service = () => {
 
 
   const handleShowModal = (item) => {
-    if (kycStatus === 0) {
+    
+    if (kycStatus === 1) {
       navigate("/user/kyc")
     } else {
       setSelectedPlanDetails(item);
