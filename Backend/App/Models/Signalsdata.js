@@ -46,6 +46,11 @@ const signalsdataModel = Schema({
         type: Date,
         default: null // Date when the signal was closed
     },
+    closeprice: {
+        type: Number,
+        trim: true,
+        default: 0
+    },
     add_by: {
         type: String,
         trim: true,
