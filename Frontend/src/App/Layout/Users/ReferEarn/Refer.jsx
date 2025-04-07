@@ -112,7 +112,7 @@ const Refer = () => {
                 </div>
                 <hr />
                 <div>
-                  <ul className="nav nav-pills border-bottom mb-3" role="tablist">
+                  <ul className="nav nav-pills border-bottom mb-3 border-tab" role="tablist">
                     <li className="nav-item mt-2 ms-2" role="presentation">
                       <a
                         className="nav-link active  border-bottom"
