@@ -8667,7 +8667,7 @@ async SignalClientWithPlanCloseStrategy(req, res) {
       $or: uniquePlanIds.map((planId, index) => ({
         planid: planId.toString(), // Matching the planid with regex
         created_at: { $lte: planEnds[index] },  
-        closedate: { $gte: planStarts[index] }      // Checking if created_at is <= to planEnds
+       // closedate: { $gte: planStarts[index] }      // Checking if created_at is <= to planEnds
       }))
     };
     // 🔹 Search Query
