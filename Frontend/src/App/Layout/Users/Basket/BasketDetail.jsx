@@ -132,36 +132,56 @@ const BasketDetail = () => {
       {/* Line Chart Integration */}
       <div className="row px-4 pt-4">
         <div className="col-md-12">
-          <div className="card shadow">
+          <div className="card shadow ch">
             <div className="card-body">
             <>
-  <ul className="nav nav-pills" role="tablist">
+            <div className="chart-tab">
+            <ul className="nav nav-pills justify-content-end " role="tablist">     
     <li className="nav-item">
       <a className="nav-link active" data-bs-toggle="pill" href="#home">
-        Home
+        5D
       </a>
     </li>
     <li className="nav-item">
       <a className="nav-link" data-bs-toggle="pill" href="#menu1">
-        Menu 1
+        1M
       </a>
     </li>
     <li className="nav-item">
       <a className="nav-link" data-bs-toggle="pill" href="#menu2">
-        Menu 2
+     6M
+      </a>
+    </li>
+    <li className="nav-item">
+      <a className="nav-link" data-bs-toggle="pill" href="#max">
+     Max
       </a>
     </li>
   </ul>
+  </div>
   {/* Tab panes */}
-  <div className="tab-content basket-chart-data">
+  <div className="tab-content basket-chart-data mx-auto" >
     <div id="home" className="container tab-pane active">
       <br />
-      <h3>HOME</h3>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua.
-      </p>
+      <h4>Live Performance Vs<span className="text-primary"> Equity large Cap</span></h4>
+        <hr/>
+
+        <div className="row mb-4 mt-4">
+          <div className="col-md-4">
+            <h6 className="text-muted">Current value of <b>₹100</b> invested once
+          <br/><u>3 year</u> ago would be</h6>
+          </div>
+          <div className="col-md-4">
+            <li className="text-primary">Equity & Gold assets </li>
+           <p className="ms-4 text-muted"> ₹5142</p> 
+          </div>
+          <div className="col-md-4">
+            <li className="text-warning">Equity Large Cap </li>
+           <p className="ms-4 text-muted"> ₹5142</p> 
+          </div>
+        </div>
       
+   
       <Line data={chartDataLine} />
     </div>
     <div id="menu1" className="container tab-pane fade">
@@ -180,7 +200,17 @@ const BasketDetail = () => {
         accusantium doloremque laudantium, totam rem aperiam.
       </p>
     </div>
+    <div id="max" className="container tab-pane fade">
+      <br />
+      <h3>MAX</h3>
+      <p>
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+        accusantium doloremque laudantium, totam rem aperiam.
+      </p>
+    </div>
   </div>
+  <hr/>
+  
 </>
 
             </div>
@@ -189,8 +219,10 @@ const BasketDetail = () => {
       </div>
 
       {/* Tabs Section */}
-      <div className="row px-4 pt-3 align-items-center">
-      <div className="col-md-12">
+      <div className="row px-4 pt-3 align-items-center ">
+      <div className="col-md-12 ">
+        <div className="card">
+          <div className="card-body">
         <ul className="nav nav-pills mb-3 justify-content-center">
           <li className="nav-item">
             <button
@@ -214,7 +246,7 @@ const BasketDetail = () => {
             </button>
           </li>
         </ul>
-      </div>
+      
 
       <div>
         {activeTab === "rational" && (
@@ -231,6 +263,9 @@ const BasketDetail = () => {
             </div>
           </div>
         )}
+        </div>
+      </div>
+      </div>
       </div>
     </div>
 
