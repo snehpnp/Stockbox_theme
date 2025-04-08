@@ -2492,6 +2492,69 @@ async closeSignals(req, res) {
   }
 }
 
+async updateReport(req, res) {
+  try {
+
+      // Handle file upload
+      await new Promise((resolve, reject) => {
+          upload('report').fields([{ name: 'report', maxCount: 1 }])(req, res, (err) => {
+              if (err) {
+                  // console.log('File upload error:', err);
+                  return reject(err);
+              }
+              resolve();
+          });
+      });
+      const { id,description } = req.body;
+     
+
+      if (!id) {
+          return res.status(400).json({
+              status: false,
+              message: "Signal ID is required",
+          });
+      }
+
+      // Extract the uploaded file information
+      const reportFile = req.files && req.files['report'] ? req.files['report'][0].filename : null;
+
+      // Prepare the update object
+      const updateFields = {}; // Initialize as an empty object
+      if (reportFile) {
+          updateFields.report = reportFile;
+          
+      }
+      updateFields.description = description;
+      // Update the report in the database
+      const updatedreport = await Signalsdata_Modal.findByIdAndUpdate(
+          id,
+          updateFields,
+          { new: true, runValidators: true } // Options to return the updated document and run validators
+      );
+
+      // If the report is not found
+      if (!updatedreport) {
+          return res.status(404).json({
+              status: false,
+              message: "Report not found",
+          });
+      }
+
+      return res.json({
+          status: true,
+          message: "Report updated successfully",
+          data: updatedreport,
+      });
+
+  } catch (error) {
+      // console.log("Error updating Report:", error);
+      return res.status(500).json({
+          status: false,
+          message: "Server error",
+          error: error.message,
+      });
+  }
+}
 
 
 
