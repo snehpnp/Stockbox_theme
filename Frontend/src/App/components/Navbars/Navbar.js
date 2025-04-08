@@ -40,6 +40,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const userid = localStorage.getItem("id");
 
   const [clients, setClients] = useState([]);
+  
   const [isDisabled, setIsDisabled] = useState(false);
   const [model, setModel] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
@@ -90,7 +91,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
         } else if (notification.type === "plan expire") {
           navigate("/admin/planexpiry");
           getdemoclient();
-        } else {
+        }else if (notification.type === "help desk") {
+          navigate("/admin/help");
+          getdemoclient();
+        }  else {
           navigate("/admin/client");
           getdemoclient();
         }

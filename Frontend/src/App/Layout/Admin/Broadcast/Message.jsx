@@ -107,7 +107,7 @@ const Message = () => {
 
                                 <div className="page-content">
                                     <div className="container py-2">
-                                        {chatMessages.length > 0 ? (
+                                        {chatMessages?.length > 0 ? (
                                             chatMessages.map((item, index) => {
                                                 const serviceIds = item.service?.split(',');
 

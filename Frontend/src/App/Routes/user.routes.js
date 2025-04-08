@@ -48,7 +48,7 @@ export default function App() {
       <Route path="/service" element={<Services />} />
       <Route path="/past-performance" element={<PastPerformance />} />
       <Route path="/refer-earn" element={<ReferEarn />} />
-      {/* <Route path="/coupons" element={<Coupon />} /> */}
+      <Route path="/coupons" element={<Coupon />} />
       <Route path="/faq" element={<Faq />} />
       <Route path="/payment-history" element={<PaymentHistory />} />
       <Route path="/subscription" element={<Subscription />} />
@@ -63,7 +63,7 @@ export default function App() {
       <Route path="/help-desk" element={<HelpDesk />} />
       <Route path="/broker-response" element={<BrokerReponse />} />
       <Route path="/basketdetail" element={<BasketDetail />} />
-      {/* <Route path="/notification" element={<Notification />} /> */}
+      <Route path="/notification" element={<Notification />} />
       <Route path="/broadcast" element={<Broadcast />} />
       <Route path="/news" element={<News />} />
       <Route path="/newsdetail" element={<NewsDetail />} />

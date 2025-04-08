@@ -159,7 +159,6 @@ const Addbankdetail = () => {
             <DynamicForm
                 fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
                 formik={formik}
-                page_title="Add Bank Account"
                 btn_name="Add Bank Account"
                 btn_name1="Cancel"
                 sumit_btn={true}

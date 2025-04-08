@@ -133,7 +133,6 @@ const Updatebankdetail = () => {
     >
       <DynamicForm
         fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
-        page_title="Update Bank Account"
         btn_name="Update Bank Account"
         btn_name1="Cancel"
         formik={formik}

@@ -45,12 +45,23 @@ const Terms = () => {
                     <div className="page-content">
 
                         {termsCondition.length > 0 ? <div className="card">
-                            {isLoading ? <Loader /> : <div className="card-body">
+                            {isLoading ? <Loader /> :
+                                <div className="card-body" style={{ overflow: "hidden" }}>
+                                    <style>
+                                        {`
+                                        .card-body img {
+                                             max-width: 100% !important;
+                                             height: auto !important;
+                                             object-fit: contain !important;
+                                             display: block !important;
+                                             margin: 0 auto !important;
+                                             }
+                                         `}
+                                    </style>
+                                    <div dangerouslySetInnerHTML={{ __html: termsCondition }} />
+                                </div>
 
-                                <div
-                                    dangerouslySetInnerHTML={{ __html: termsCondition }}
-                                />
-                            </div>}
+                            }
                         </div> : <div className="text-center mt-5">
                             <img
                                 src="/assets/images/norecordfound.png"
