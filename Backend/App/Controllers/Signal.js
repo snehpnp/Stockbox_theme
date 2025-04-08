@@ -2492,7 +2492,7 @@ async closeSignals(req, res) {
   }
 }
 
-async updateReport(req, res) {
+async updateReports(req, res) {
   try {
 
       // Handle file upload
