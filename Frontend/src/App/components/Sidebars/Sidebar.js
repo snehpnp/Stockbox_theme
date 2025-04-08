@@ -43,7 +43,8 @@ import {
   Bell,
   Puzzle,
   Handshake,
-  ClipboardX
+  ClipboardX,
+  GitCompare
 } from "lucide-react";
 
 import { Link, useLocation } from "react-router-dom";
@@ -334,7 +335,8 @@ const IconComponent = ({ icon }) => {
     Bell,
     Puzzle,
     Handshake,
-    ClipboardX
+    ClipboardX,
+    GitCompare
 
   };
 

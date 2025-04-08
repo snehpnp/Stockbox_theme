@@ -36,6 +36,7 @@ import RebalanceStock from "../Layout/Users/Basket/RebalanceStock";
 import Disclaimer from "../Layout/Users/Discliamer/Disclaimer";
 import BlogDetail from "../Layout/Users/Blogs/BlogDetail";
 import ThankYou from "../Layout/Users/Basket/ThankYou";
+import Strategy from "../Layout/Users/Strategy/Strategy";
 
 export default function App() {
   return (
@@ -75,7 +76,7 @@ export default function App() {
       <Route path="/wallet" element={<Wallet />} />
       <Route path="/payment" element={<Payments />} />
       <Route path="/disclaimer" element={<Disclaimer />} />
-
+      <Route path="/strategy" element={<Strategy />} />
       <Route path="/thankyou" element={<ThankYou />} />
     </Routes>
   );
