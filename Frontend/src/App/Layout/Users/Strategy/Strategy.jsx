@@ -11,7 +11,7 @@ const Strategy = () => {
     <Content
       Page_title="Strategy"
       button_status={false}
-      backbutton_status={true}
+      backbutton_status={false}
       backForword={true}
     >
       <div className="row">
@@ -41,17 +41,17 @@ const Strategy = () => {
                   <th>LTP</th>
                 </tr>
                 <tr>
-                  <td>🟢 Buy 27 Mar 1980 CE</td>
+                  <td><span className="alert alert-success px-2 py-1 me-2 ">Buy </span> 27 Mar 1980 CE</td>
                   <td>₹44.50</td>
                   <td>₹28.05</td>
                 </tr>
                 <tr>
-                  <td>🟢 Buy 27 Mar 1980 CE</td>
+                  <td><span className="alert alert-success px-2 py-1 me-2">Buy </span> 27 Mar 1980 CE</td>
                   <td>₹44.50</td>
                   <td>₹28.05</td>
                 </tr>
                 <tr>
-                  <td>🟢 Buy 27 Mar 1980 CE</td>
+                  <td><span className="alert alert-success px-2 py-1 me-2">Buy </span> 27 Mar 1980 CE</td>
                   <td>₹44.50</td>
                   <td>₹28.05</td>
                 </tr>
@@ -98,17 +98,17 @@ const Strategy = () => {
                   <th>LTP</th>
                 </tr>
                 <tr>
-                  <td>🟢 Buy 27 Mar 1980 CE</td>
+                  <td> <span className="alert alert-success px-2 py-1 me-2">Buy </span>27 Mar 1980 CE</td>
                   <td>₹44.50</td>
                   <td>₹28.05</td>
                 </tr>
                 <tr>
-                  <td>🟢 Buy 27 Mar 1980 CE</td>
+                  <td> <span className="alert alert-success px-2 py-1 me-2">Buy </span> 27 Mar 1980 CE</td>
                   <td>₹44.50</td>
                   <td>₹28.05</td>
                 </tr>
                 <tr>
-                  <td>🟢 Buy 27 Mar 1980 CE</td>
+                  <td> <span className="alert alert-success px-2 py-1 me-2">Buy </span> 27 Mar 1980 CE</td>
                   <td>₹44.50</td>
                   <td>₹28.05</td>
                 </tr>

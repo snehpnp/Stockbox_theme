@@ -284,6 +284,13 @@ const User = [
     children: [],
   },
   {
+    name: "Strategy",
+    label: "Strategy",
+    icon: "GitCompare",
+    link: "/user/strategy",
+    children: [],
+  },
+  {
     name: "Basket",
     label: "Basket",
     icon: "ShoppingCart",
@@ -382,13 +389,7 @@ const User = [
     link: "/user/blogs",
     children: [],
   }, 
-  {
-    name: "Strategy",
-    label: "Strategy",
-    icon: "Paintbrush",
-    link: "/user/strategy",
-    children: [],
-  },
+
   {
     name: "PaymentHistory",
     label: "Payment History",
