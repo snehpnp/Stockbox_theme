@@ -2396,6 +2396,167 @@ async getSignalsListWithFilte(req, res) {
 }
 
 
+async closeSignals(req, res) {
+  try {
+    const { id, closeprice, closestatus, closetype, close_description } = req.body;
+
+    if (!id) {
+      return res.status(400).json({ status: false, message: "Signal ID is required" });
+    }
+
+    const Signal = await Signalsdata_Modal.findById(id);
+    if (!Signal) {
+      return res.status(404).json({ status: false, message: "Signal not found" });
+    }
+
+    const stock = Signal.stock;
+    const strategy_name = Signal.strategy_name;
+    const service = Signal.planid;
+    const signalCreatedAt = Signal.createdAt;
+
+    let close_status = false;
+    let closedate = null;
+    let finalClosePrice = closeprice;
+
+    let notificationTitle = 'STRATEGY Update';
+    let notificationBody = '';
+
+    if (closetype === "1") {
+      close_status = true;
+      closedate = new Date();
+      notificationBody = `${strategy_name} Symbol ${stock} Strategy Closed Enjoy Profits`;
+    } else if (closetype === "2") {
+      close_status = closestatus;
+      closedate = new Date();
+      notificationBody = `${strategy_name} Symbol ${stock} Strategy Closed Enjoy Profits`;
+    } else if (closetype === "3") {
+      close_status = true;
+      finalClosePrice = 0;
+      closedate = new Date();
+      notificationBody = `${strategy_name} Symbol ${stock} Avoid Strategy Not executed`;
+    }
+
+    const updatedSignal = await Signalsdata_Modal.findByIdAndUpdate(
+      id,
+      {
+        closeprice: finalClosePrice,
+        close_status,
+        close_description,
+        closedate
+      },
+      { new: true, runValidators: true }
+    );
+
+    const today = new Date();
+
+    const clients = await Clients_Modal.find({
+      del: 0,
+      ActiveStatus: 1,
+      devicetoken: { $exists: true, $ne: null },
+      _id: {
+        $in: await Planmanage.find({
+          serviceid: service,
+          enddate: { $gte: today }
+        }).distinct('clientid')
+      }
+    }).select('devicetoken');
+
+    const tokens = clients.map(client => client.devicetoken);
+
+    if (tokens.length > 0) {
+      await sendFCMNotification(notificationTitle, notificationBody, tokens, "close signal");
+    }
+
+    const resultn = new Notification_Modal({
+      segmentid: service,
+      type: close_status ? "close signal" : "open signal",
+      title: notificationTitle,
+      message: notificationBody,
+      signalcreatedate: signalCreatedAt
+    });
+
+    await resultn.save();
+
+    return res.json({
+      status: true,
+      message: "Signal Closed successfully",
+      data: updatedSignal,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+}
+
+async updateReports(req, res) {
+  try {
+
+      // Handle file upload
+      await new Promise((resolve, reject) => {
+          upload('report').fields([{ name: 'report', maxCount: 1 }])(req, res, (err) => {
+              if (err) {
+                  // console.log('File upload error:', err);
+                  return reject(err);
+              }
+              resolve();
+          });
+      });
+      const { id,description } = req.body;
+     
+
+      if (!id) {
+          return res.status(400).json({
+              status: false,
+              message: "Signal ID is required",
+          });
+      }
+
+      // Extract the uploaded file information
+      const reportFile = req.files && req.files['report'] ? req.files['report'][0].filename : null;
+
+      // Prepare the update object
+      const updateFields = {}; // Initialize as an empty object
+      if (reportFile) {
+          updateFields.report = reportFile;
+          
+      }
+      updateFields.description = description;
+      // Update the report in the database
+      const updatedreport = await Signalsdata_Modal.findByIdAndUpdate(
+          id,
+          updateFields,
+          { new: true, runValidators: true } // Options to return the updated document and run validators
+      );
+
+      // If the report is not found
+      if (!updatedreport) {
+          return res.status(404).json({
+              status: false,
+              message: "Report not found",
+          });
+      }
+
+      return res.json({
+          status: true,
+          message: "Report updated successfully",
+          data: updatedreport,
+      });
+
+  } catch (error) {
+      // console.log("Error updating Report:", error);
+      return res.status(500).json({
+          status: false,
+          message: "Server error",
+          error: error.message,
+      });
+  }
+}
+
+
 
 }
 module.exports = new Signal();

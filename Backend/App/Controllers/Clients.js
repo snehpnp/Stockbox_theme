@@ -126,39 +126,80 @@ class Clients {
       }
 
 
+      // if (freetrial) {
+
+
+      //   const freetrialDays = parseInt(settings.freetrial, 10); // or you can use +settings.freetrial
+      //   const start = new Date();
+      //   const end = new Date(start);
+      //   end.setDate(start.getDate() + freetrialDays);  // Add 7 days to the start date
+      //   end.setHours(23, 59, 59, 999);
+
+      //   const service = await Service_Modal.find({ del: false });
+      //   const savePromises = service.map(async (svc) => {
+      //     // Create a new plan management record
+      //     const newPlanManage = new Planmanage({
+      //       clientid: result._id,
+      //       serviceid: svc._id,
+      //       startdate: start,
+      //       enddate: end,
+      //     });
+
+      //     // Save the new plan management record to the database
+      //     return newPlanManage.save();
+
+      //   })
+
+      //   const newSubscription = new Freetrial_Modal({
+      //     clientid: result._id,
+      //     startdate: start,
+      //     enddate: end,
+      //   });
+
+      //   const savedSubscription = await newSubscription.save();
+
+      // }
+
       if (freetrial) {
-
-
-        const freetrialDays = parseInt(settings.freetrial, 10); // or you can use +settings.freetrial
+        const freetrialDays = parseInt(settings.freetrial, 10);
         const start = new Date();
         const end = new Date(start);
-        end.setDate(start.getDate() + freetrialDays);  // Add 7 days to the start date
+      
+        let addedDays = 0;
+      
+        while (addedDays < freetrialDays) {
+          end.setDate(end.getDate() + 1);
+          const day = end.getDay();
+      
+          if (day !== 0 && day !== 6) {
+            addedDays++;
+          }
+        }
+      
         end.setHours(23, 59, 59, 999);
-
+      
         const service = await Service_Modal.find({ del: false });
+      
         const savePromises = service.map(async (svc) => {
-          // Create a new plan management record
           const newPlanManage = new Planmanage({
             clientid: result._id,
             serviceid: svc._id,
             startdate: start,
             enddate: end,
           });
-
-          // Save the new plan management record to the database
+      
           return newPlanManage.save();
-
-        })
-
+        });
+      
         const newSubscription = new Freetrial_Modal({
           clientid: result._id,
           startdate: start,
           enddate: end,
         });
-
+      
         const savedSubscription = await newSubscription.save();
-
       }
+
 
       const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'welcome_mail' }); // Use findOne if you expect a single document
       if (!mailtemplate || !mailtemplate.mail_body) {
