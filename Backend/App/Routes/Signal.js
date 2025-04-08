@@ -1,7 +1,7 @@
 const router = require("express").Router()
 const { checkPermission } = require('../Middleware/permissionMiddleware'); // Path to your middleware
 
-const {AddSignal,getSignal,deleteSignal,detailSignal,closeSignal,targethitSignal,getSignalWithFilter,updateReport,showSignalsToClients,allShowSignalsToClients,AddSignalwithPlan,getPlansByService,getSymbol,getSignalWithFilterplan,closeSignalwithplan,getSignalWithFilterExport,getSignalWithFilterplanExport,AddSignals,getSignalsListWithFilte,closeSignals} = require('../Controllers/Signal')
+const {AddSignal,getSignal,deleteSignal,detailSignal,closeSignal,targethitSignal,getSignalWithFilter,updateReport,showSignalsToClients,allShowSignalsToClients,AddSignalwithPlan,getPlansByService,getSymbol,getSignalWithFilterplan,closeSignalwithplan,getSignalWithFilterExport,getSignalWithFilterplanExport,AddSignals,getSignalsListWithFilte,closeSignals,updateReports} = require('../Controllers/Signal')
 
 const PERMISSIONS = {
     ADD: 'addsignal',
@@ -40,6 +40,7 @@ router.post('/signal/closesignalwithstock', closeSignals);
 
 router.post('/signal/getsignalslistwithfilte', getSignalsListWithFilte);
 
+router.post('/signal/updatereports', updateReports);
 
 
 module.exports = router;
