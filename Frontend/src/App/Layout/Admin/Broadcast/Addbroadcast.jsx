@@ -41,7 +41,9 @@ const Addbroadcast = () => {
 
     const validate = (values) => {
         let errors = {};
-        if (values.type !== "nonsubscribe" && !values.service) {
+        console.log("error", errors);
+        
+        if (values.type === "nonsubscribe" && !values.service) {
             errors.service = "Please Select Service";
         }
         if (!values.subject) {
@@ -53,8 +55,10 @@ const Addbroadcast = () => {
         if (!values.type) {
             errors.type = "Please Select Type";
         }
+    
         return errors;
     };
+    
 
     const onSubmit = async (values) => {
         setLoading(!loading)
@@ -65,8 +69,11 @@ const Addbroadcast = () => {
             type: values.type
         };
 
+        
+
         try {
             const response = await SendBroadCast(req, token);
+            console.log("response",response)
             if (response.status) {
                 showCustomAlert("Success", response.message, navigate, "/admin/message")
             } else {
@@ -123,7 +130,7 @@ const Addbroadcast = () => {
                 }))
             ],
             star: true,
-            showWhen: (values) => values.type !== "nonsubscribe"
+            showWhen: (values) => !(values.type === "nonsubscribe" || values.type === "All")
         },
         {
             name: "subject",
