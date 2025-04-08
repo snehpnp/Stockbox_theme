@@ -89,7 +89,7 @@ const UserSignup = () => {
     switch (name) {
       case "email":
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          errorMsg = "Invalid email format";
+          errorMsg = "Please enter a valid email address";
         }
         break;
       case "phone":
