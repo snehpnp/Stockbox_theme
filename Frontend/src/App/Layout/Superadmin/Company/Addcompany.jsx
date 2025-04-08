@@ -179,7 +179,6 @@ const Addcompany = () => {
     >
       <DynamicForm
         fields={fields}
-        page_title="Add New Company"
         btn_name="Add Company"
         btn_name1="Cancel"
         formik={formik}

@@ -40,6 +40,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const userid = localStorage.getItem("id");
 
   const [clients, setClients] = useState([]);
+  console.log("clients",clients.map((client)=>client.type));
+  
   const [isDisabled, setIsDisabled] = useState(false);
   const [model, setModel] = useState(false);
   const [isChecked, setIsChecked] = useState(false);

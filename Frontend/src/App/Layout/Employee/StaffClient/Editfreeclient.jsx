@@ -133,7 +133,6 @@ const Editfreeclient = () => {
    
       <DynamicForm
         fields={fields}
-        page_title="Update Client"
         btn_name="Update Client"
         btn_name1="Cancel"
         formik={formik}

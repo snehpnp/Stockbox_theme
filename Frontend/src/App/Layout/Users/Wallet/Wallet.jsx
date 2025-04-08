@@ -3,6 +3,7 @@ import Content from "../../../components/Contents/Content";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import { GetUserData, GetWithdrawRequest, GetReferEarning, GetPayoutDetail } from "../../../Services/UserService/User";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import { fDateTime, fDateTimeH } from "../../../../Utils/Date_formate";
 
 
 
@@ -16,7 +17,7 @@ const Wallet = () => {
   const [activeTab, setActiveTab] = useState("earning");
   const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState({});
-  const [eraning, setEarning] = useState({});
+  const [earning, setEarning] = useState({});
   const [payout, setPayout] = useState({});
 
   const [request, setRequest] = useState({
@@ -29,7 +30,6 @@ const Wallet = () => {
   const getuserdetail = async () => {
     try {
       const response = await GetUserData(userid, token);
-      
       if (response.status) {
         setData(response.data);
 
@@ -37,12 +37,14 @@ const Wallet = () => {
     } catch (error) {
       console.log("error", error);
     }
-  }; 
+  };
 
 
   const getEarning = async () => {
     try {
       const response = await GetReferEarning(userid, token);
+      console.log("GetReferEarning",response);
+
       if (response.status) {
         setEarning(response.data);
       }
@@ -55,6 +57,8 @@ const Wallet = () => {
   const getPayoutdata = async () => {
     try {
       const response = await GetPayoutDetail(userid, token);
+      console.log("GetPayoutDetail",response);
+      
       if (response.status) {
         setPayout(response.data);
 
@@ -76,7 +80,7 @@ const Wallet = () => {
       getPayoutdata();
     }
 
-  }, []);
+  }, [activeTab]);
 
 
 
@@ -182,19 +186,29 @@ const Wallet = () => {
                     <table className="table table-striped">
                       <thead className="table-light">
                         <tr>
-                          <th>clientName</th>
-                          <th>Recieve</th>
-                          <th>Recieve</th>
-                          <th>Sender</th>
-                          <th>Reciver Amount</th>
+                          <th>Name</th>
+                          <th>Earning Amount</th>
+                          <th>Status</th>
+                          <th>Date</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>₹ 0.00</td>
-                          <td>2021-10-07T12:11:00.000Z</td>
-                        </tr>
+                        {earning.length > 0 ? (
+                          earning.map((item, index) => (
+                            <tr key={index}>
+                              <td>{item.clientName || "-"}</td>
+                              <td>{item.amountType?.amount || "-"}</td>
+                              <td>{item.status ? "Completed" : "Pending"}</td>
+
+                              <td>{fDateTime(item.created_at)}</td>
+                              
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="5">No Data Found</td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   )}
@@ -209,11 +223,17 @@ const Wallet = () => {
                         </tr>
                       </thead>
                       <tbody>
+                        {payout.length > 0 ? (
                         <tr>
-                          <td>1</td>
-                          <td>₹ 0.00</td>
-                          <td>2021-10-07T12:11:00.000Z</td>
+                          <td>{payout.transaction_id}</td>
+                          <td>{payout.amount}</td>
+                          <td>{payout.date}</td>
                         </tr>
+                        ):(
+                          <tr>
+                            <td colSpan="5">No Data Found</td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   )}

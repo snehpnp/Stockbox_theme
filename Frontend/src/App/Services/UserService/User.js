@@ -567,7 +567,7 @@ export async function UpdateUserProfile(data, token) {
 
 export async function DeleteClient(data, token) {
     try {
-        const res = await axios.get(`${Config.base_url}api/client/deleteclient/:${data}`, {
+        const res = await axios.get(`${Config.base_url}api/client/deleteclient/${data}`, {
             headers: {
                 data: {},
                 'Authorization': `${token}`,
@@ -726,9 +726,9 @@ export async function GetWithdrawRequest(data, token) {
 
 //refer earning 
 
-export async function GetReferEarning(data, token) {
+export async function GetReferEarning(id, token) {
     try {
-        const res = await axios.post(`${Config.base_url}api/client/referearn`, data, {
+        const res = await axios.post(`${Config.base_url}api/client/referearn`, { id }, {
             headers: {
                 Authorization: `${token}`,
             },
@@ -744,9 +744,9 @@ export async function GetReferEarning(data, token) {
 // get payout 
 
 
-export async function GetPayoutDetail(data, token) {
+export async function GetPayoutDetail(id, token) {
     try {
-        const res = await axios.post(`${Config.base_url}api/client/payoutlist`, data, {
+        const res = await axios.post(`${Config.base_url}api/client/payoutlist`, { id }, {
             headers: {
                 Authorization: `${token}`,
             },

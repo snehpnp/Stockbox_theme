@@ -15,6 +15,7 @@ const HelpDesk = () => {
 
     const [key, setKey] = useState('sendMessage');
     const [messages, setMessages] = useState([]);
+    console.log("messages",messages)
     const [isLoading, setIsLoading] = useState(true)
 
 
@@ -25,6 +26,8 @@ const HelpDesk = () => {
     const FetchMessage = async () => {
         try {
             const response = await GetHelpMessage(userid, token);
+            console.log("GetHelpMessage",response);
+            
             if (response.status) {
                 setMessages(response.data)
             }

@@ -19,6 +19,7 @@ const UserSignup = () => {
     state: "",
   });
 
+
   const [otpInfo, setOtpInfo] = useState({
     "status": "",
     "otp": "",
@@ -138,25 +139,29 @@ const UserSignup = () => {
       return;
     }
 
+    // console.log("handleSignup k aage aaya",password)
 
+    try {
 
-    // return
+      const ResData = await UserSignupApi({
+        FullName: fullName,
+        Email: email,
+        PhoneNo: phone,
+        password,
+        state: state,
+        token: referralCode,
+      });
 
-    const ResData = await UserSignupApi({
-      FullName: fullName,
-      Email: email,
-      PhoneNo: phone,
-      password,
-      state: state,
-      token: referralCode,
-    });
-
-    if (ResData.status) {
-      showCustomAlert("Success", ResData.message)
-      setIsOtpModalOpen(true)
-      setOtpInfo(ResData)
-    } else {
-      showCustomAlert("error", ResData.message);
+      if (ResData.status) {
+        showCustomAlert("Success", ResData.message)
+        setIsOtpModalOpen(true)
+        setOtpInfo(ResData)
+      } else {
+        showCustomAlert("error", ResData.message);
+      }
+    } catch (error) {
+      // console.log("Signup error:", error.response.data.message);
+      showCustomAlert("error", error.response.data.message);
     }
   };
 
@@ -204,7 +209,7 @@ const UserSignup = () => {
   }, []);
 
   return (
-    <div className="main-login" style={{ backgroundImage: `url(${BgImg})` }}>
+    <div className="main-login" style={{ backgroundImage: `url(${BgImg})`, overflowY: "auto", }}>
       <div className="row align-items-center h-100">
         <div className="col-lg-12 mx-auto">
           <div className="bg-login">
@@ -226,7 +231,7 @@ const UserSignup = () => {
                             {[
                               { label: "Full Name", name: "fullName", type: "text" },
                               { label: "Email", name: "email", type: "text" },
-                              { label: "Phone", name: "phone", type: "text" },
+                              { label: "Phone", name: "phone", type: "text", maxLength: 10 },
                               { label: "Password", name: "password", type: "password" },
                               { label: "State", name: "state", type: "select" }, // ✅ State added inside map
                             ].map((field) => (

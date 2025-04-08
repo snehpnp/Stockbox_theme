@@ -25,6 +25,7 @@ const Profiles = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [userDetail, setUserDetail] = useState({});
+  console.log("userDetail",userDetail)
 
   const [showPassword, setShowPassword] = useState({
     currentPassword: false,
@@ -206,7 +207,9 @@ const Profiles = () => {
         return;
       }
 
-      const response = await DeleteClient(userDetail._id, token);
+      const response = await DeleteClient(userid, token);
+      console.log("DeleteClient",response)
+      // return
       if (response.status) {
         showCustomAlert("Success", "Your account has been deleted.",);
         localStorage.removeItem("token");

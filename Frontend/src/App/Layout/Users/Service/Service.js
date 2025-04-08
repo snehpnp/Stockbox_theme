@@ -202,6 +202,7 @@ const Service = () => {
       const basePrice = selectedPlanDetails?.price - (discountedPrice || 0);
       const gstAmount = (basePrice * gstdata) / 100;
       const finalAmount = (basePrice + gstAmount) * 100;
+      console.log("hello = 1")
 
       const options = {
         key: getkey,
@@ -210,6 +211,7 @@ const Service = () => {
         currency: "INR",
         title: item?.title || "Subscription Plan",
         handler: async function (response1) {
+          // navigate("/user/thankyou");
           const data = {
             plan_id: item?._id,
             client_id: userid,
@@ -219,12 +221,16 @@ const Service = () => {
             price: finalAmount,
           };
 
+          console.log("hello = 2")
+
+
           try {
             const response2 = await AddplanSubscription(data, token);
-
+            console.log("hello = 5",response2)
             if (response2?.status) {
               setShowModal(false);
-              window.location.reload();
+              navigate("/user/thankyou");
+              // window.location.reload();
             }
           } catch (error) {
             console.error("Error while adding plan subscription:", error);
@@ -236,7 +242,10 @@ const Service = () => {
         },
       };
 
+      console.log("hello = 3")
+
       const rzp = new window.Razorpay(options);
+      console.log("hello = 4", rzp)
       rzp.open();
     } catch (error) {
       console.error("Subscription error:", error);
@@ -247,7 +256,7 @@ const Service = () => {
 
 
   const handleShowModal = (item) => {
-    
+
     if (kycStatus === 1) {
       navigate("/user/kyc")
     } else {

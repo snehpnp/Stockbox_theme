@@ -19,7 +19,7 @@ function Basket() {
   const [activeTab, setActiveTab] = useState(() =>
     newActiveTab === "basket" ? "subscribedbasket" : "allbasket"
   );
-  const [basketdata, setBasketdata] = useState([]);  
+  const [basketdata, setBasketdata] = useState([]);
 
 
   const [purchasedata, setPurchasedata] = useState([]);
@@ -33,7 +33,7 @@ function Basket() {
 
   const [onlinePaymentStatus, setOnlinePaymentStatus] = useState();
   const [offlinePaymentStatus, setOfflinePaymentStatus] = useState();
-  
+
 
   useEffect(() => {
     if (activeTab === "allbasket") {
@@ -63,6 +63,8 @@ function Basket() {
     try {
       const data = { clientid: userid };
       const response = await GetBasketService(data, token);
+      console.log("GetBasketService",response);
+      
       if (response.status) {
         setBasketdata(response.data);
       }
@@ -143,7 +145,9 @@ function Basket() {
           <div className="row">
             {basketdata?.map((item) => (
               <div className="col-md-12 col-lg-6 mb-4" key={item?.id}>
-                <div className="card radius-10 overflow-hidden shadow basket-card">
+                <div className="card radius-10 overflow-hidden shadow"
+                style={{ minHeight: "253px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+                >
                   <div className="card-body pb-0">
                     <div className="d-flex ">
                       <img
@@ -153,17 +157,20 @@ function Basket() {
                         className=" img-fluid mb-3"
                       />
                       <div className="mb-0 ms-3 ">
-                        <h4>
-                          {item?.title} ({item?.themename})
+                        <div className="d-flex justify-content-between align-items-center">
+                          <h4 className="mb-0">
+                            {item?.title} ({item?.themename})
+                          </h4>
                           {item?.isSubscribed && (
                             <span
-                              className="badge bg-success ms-2"
-                              style={{ fontSize: "12px" }}
+                              className="badge bg-success"
+                              style={{ fontSize: "12px"}}
                             >
                               Subscribed
                             </span>
                           )}
-                        </h4>
+                        </div>
+
 
                         <p className="basket-short-description mb-1">
                           {stripHtmlTags(item?.description || "")}
@@ -173,7 +180,7 @@ function Basket() {
                           {" "}
                           Since Launch
                           <span>
-                            <b className="">: {item?.cagr}%</b>
+                            <b className="">: {item?.cagr_live}%</b>
                           </span>
                         </div>
                       </div>
@@ -191,7 +198,8 @@ function Basket() {
 
                       <li className="list-group-item border-bottom-0">
                         <div className="text-muted fs-6">Volatility</div>
-                        <b className="">{item?.volatility}</b>
+                        {/* <b className="">{item?.type}</b> */}
+                        <b className="">High Risk</b>
                       </li>
                       <li className="list-group-item border-bottom-0">
                         {item?.isSubscribed || item?.isActive ? (
@@ -262,7 +270,7 @@ function Basket() {
           <div className="row">
             {purchasedata?.map((item) => (
               <div className="col-md-6 col-lg-6 mb-3" key={item?.id}>
-                <div className="card radius-10 overflow-hidden shadow basket-card">
+                <div className="card radius-10 overflow-hidden shadow ">
 
                   <div className="card-body pb-0">
                     <div className="d-flex ">
