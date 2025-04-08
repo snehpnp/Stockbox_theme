@@ -2396,92 +2396,57 @@ async getSignalsListWithFilte(req, res) {
 }
 
 
-
-  
 async closeSignals(req, res) {
   try {
+    const { id, closeprice, closestatus, closetype, close_description } = req.body;
 
-   
-    const { id, closeprice,closestatus,closetype, close_description } = req.body;
-   
+    if (!id) {
+      return res.status(400).json({ status: false, message: "Signal ID is required" });
+    }
 
     const Signal = await Signalsdata_Modal.findById(id);
-
     if (!Signal) {
-        return res.status(404).json({
-            status: false,
-            message: "Signal not found"
-        });
+      return res.status(404).json({ status: false, message: "Signal not found" });
     }
- 
-    let stock = Signal.stock;
-    let strategy_name = Signal.strategy_name;
 
+    const stock = Signal.stock;
+    const strategy_name = Signal.strategy_name;
+    const service = Signal.planid;
+    const signalCreatedAt = Signal.createdAt;
 
     let close_status = false;
     let closedate = null;
-   
-    let  notificationTitle;
-    let notificationBody;
+    let finalClosePrice = closeprice;
+
+    let notificationTitle = 'STRATEGY Update';
+    let notificationBody = '';
+
     if (closetype === "1") {
-      // Close at target price
       close_status = true;
-      closeprice = closeprice;
       closedate = new Date();
-    
-
-       notificationTitle = 'STRATEGY Update';
-       notificationBody =`${strategy_name} Symbol ${stock} Strategy Closed Enjoy Profits`;
-
-
-
+      notificationBody = `${strategy_name} Symbol ${stock} Strategy Closed Enjoy Profits`;
     } else if (closetype === "2") {
-
-      
-      // Close based on closestatus and target price
       close_status = closestatus;
-    
-      closeprice = closeprice;
       closedate = new Date();
-    
-
-       notificationTitle = 'STRATEGY Update';
-       notificationBody =`${strategy_name} Symbol ${stock} Strategy Closed Enjoy Profits`;
-
-
-
-       notificationTitle = 'STRATEGY Update';
-
+      notificationBody = `${strategy_name} Symbol ${stock} Strategy Closed Enjoy Profits`;
     } else if (closetype === "3") {
-      // Close at exit price
       close_status = true;
-      closeprice = 0;
+      finalClosePrice = 0;
       closedate = new Date();
-
-       notificationTitle = 'STRATEGY Update';
-       notificationBody =`${strategy_name} Symbol ${stock} Avoid Strategy Not executed`;
-
-    }
-    
-    if (!id) {
-      return res.status(400).json({
-        status: false,
-        message: "Signal ID is required",
-      });
+      notificationBody = `${strategy_name} Symbol ${stock} Avoid Strategy Not executed`;
     }
 
     const updatedSignal = await Signalsdata_Modal.findByIdAndUpdate(
       id,
       {
-          closeprice:closeprice,
-          close_status:close_status,
-          close_description,
-          closedate: closedate
+        closeprice: finalClosePrice,
+        close_status,
+        close_description,
+        closedate
       },
-      { new: true, runValidators: true } // Options: return the updated document and run validators
+      { new: true, runValidators: true }
     );
 
-   
     const today = new Date();
 
     const clients = await Clients_Modal.find({
@@ -2490,57 +2455,27 @@ async closeSignals(req, res) {
       devicetoken: { $exists: true, $ne: null },
       _id: {
         $in: await Planmanage.find({
-          serviceid: service,  // Replace `service` with your actual service value
+          serviceid: service,
           enddate: { $gte: today }
-        }).distinct('clientid')  // Assuming 'clientid' is the field linking to Clients_Modal
+        }).distinct('clientid')
       }
     }).select('devicetoken');
-
 
     const tokens = clients.map(client => client.devicetoken);
 
     if (tokens.length > 0) {
-
-      const resultn = new Notification_Modal({
-        segmentid: Signal.planid,
-        type: close_status == "true" ? "close signal" : "open signal",
-        title: notificationTitle,
-        message: notificationBody
-    });
-    
-    await resultn.save();
-
-
-    try {
-      // Send notifications to all device tokens
-      await sendFCMNotification(notificationTitle, notificationBody, tokens,"close signal");
-      // console.log('Notifications sent successfully');
-    } catch (error) {
-  
+      await sendFCMNotification(notificationTitle, notificationBody, tokens, "close signal");
     }
-
-
-    }
-
 
     const resultn = new Notification_Modal({
       segmentid: service,
-      type: close_status == true ? "close signal" : "open signal",
+      type: close_status ? "close signal" : "open signal",
       title: notificationTitle,
       message: notificationBody,
-      signalcreatedate: signalCreatedAt,
-  });
-  
+      signalcreatedate: signalCreatedAt
+    });
 
-  await resultn.save();
-
-
-    if (!updatedSignal) {
-      return res.status(404).json({
-        status: false,
-        message: "Signal not found",
-      });
-    }
+    await resultn.save();
 
     return res.json({
       status: true,
@@ -2549,7 +2484,6 @@ async closeSignals(req, res) {
     });
 
   } catch (error) {
-    // console.error("Error updating Signal:", error);
     return res.status(500).json({
       status: false,
       message: "Server error",

@@ -1491,6 +1491,8 @@ if (mailtemplate) {
         message: messages
       });
 
+      await resultnm.save();
+
       return res.json({
         status: true,
         message: "Data add successfully.",
