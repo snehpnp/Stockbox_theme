@@ -312,6 +312,7 @@ const UserSignup = () => {
                                   value={formData.referralCode}
                                   onChange={handleChange}
                                   placeholder="Enter Referral Code"
+                                  required
                                 />
                               </div>
                             )}

@@ -495,9 +495,10 @@ const Service = () => {
                   <Accordion.Header>🎟️ Apply Coupon Code</Accordion.Header>
                   <Accordion.Body
                     style={{
-                      maxHeight: "210px",
+                      maxHeight: "230px",
                       overflowY: "auto",
                       scrollbarWidth: "thin",
+                      padding:'0',
                     }}
                   >
                     <div style={{ position: "sticky", top: 0, background: "white", zIndex: 10, padding: "10px", boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)" }}>
@@ -530,7 +531,7 @@ const Service = () => {
                       </div>
                     </div>
 
-                    <div>
+                    <div className="mt-3 px-2">
                       {coupons.map((coupon) => (
                         <li
                           key={coupon.code}
