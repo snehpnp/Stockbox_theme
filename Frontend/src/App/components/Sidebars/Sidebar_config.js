@@ -381,9 +381,14 @@ const User = [
     icon: "Paintbrush",
     link: "/user/blogs",
     children: [],
-
-  }
-  ,
+  }, 
+  {
+    name: "Strategy",
+    label: "Strategy",
+    icon: "Paintbrush",
+    link: "/user/strategy",
+    children: [],
+  },
   {
     name: "PaymentHistory",
     label: "Payment History",
