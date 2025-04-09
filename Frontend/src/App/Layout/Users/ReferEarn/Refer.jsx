@@ -17,8 +17,8 @@ const Refer = () => {
 
   const [data, setData] = useState([]);
   const [refertoken, setRefertoken] = useState({});
-  console.log("refertoken",refertoken);
-  
+
+
   const [isLoading, setIsLoading] = useState(true)
 
   const [referdata, setReferData] = useState([])
@@ -48,8 +48,7 @@ const Refer = () => {
     try {
       const data = { id: userid }
       const response = await ReferAndEarnData(data, token);
-      console.log("ReferAndEarnData",response);
-      
+
       if (response.status) {
         setReferData(response.data)
 
