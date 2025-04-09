@@ -201,8 +201,7 @@ const Service = () => {
 
       const basePrice = selectedPlanDetails?.price - (discountedPrice || 0);
       const gstAmount = (basePrice * gstdata) / 100;
-      const finalAmount = (basePrice + gstAmount) * 100;
-      console.log("hello = 1")
+      const finalAmount = Math.round((basePrice + gstAmount) * 100);
 
       const options = {
         key: getkey,
@@ -211,26 +210,21 @@ const Service = () => {
         currency: "INR",
         title: item?.title || "Subscription Plan",
         handler: async function (response1) {
-          // navigate("/user/thankyou");
           const data = {
             plan_id: item?._id,
             client_id: userid,
             coupon_code: appliedCoupon?.code || 0,
-            orderid: response1?.orderid,
+            orderid: response1?.razorpay_payment_id,
             discount: appliedCoupon?.value || 0,
             price: finalAmount,
           };
 
-          console.log("hello = 2")
-
-
           try {
             const response2 = await AddplanSubscription(data, token);
-            console.log("hello = 5",response2)
             if (response2?.status) {
-              setShowModal(false);
+              // setShowModal(false);
               navigate("/user/thankyou");
-              // window.location.reload();
+
             }
           } catch (error) {
             console.error("Error while adding plan subscription:", error);
@@ -242,15 +236,14 @@ const Service = () => {
         },
       };
 
-      console.log("hello = 3")
-
       const rzp = new window.Razorpay(options);
-      console.log("hello = 4", rzp)
       rzp.open();
+
     } catch (error) {
       console.error("Subscription error:", error);
     }
   };
+
 
 
 
@@ -498,7 +491,7 @@ const Service = () => {
                       maxHeight: "230px",
                       overflowY: "auto",
                       scrollbarWidth: "thin",
-                      padding:'0',
+                      padding: '0',
                     }}
                   >
                     <div style={{ position: "sticky", top: 0, background: "white", zIndex: 10, padding: "10px", boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)" }}>
@@ -682,7 +675,7 @@ const Service = () => {
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <b>💰 GST :</b>
                     <span className="text-primary fw-bold">
-                      {/* <IndianRupee /> */}{gstdata}％ 
+                      {/* <IndianRupee /> */}{gstdata}％
                     </span>
                   </div>
                 )}
