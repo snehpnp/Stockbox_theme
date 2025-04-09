@@ -682,7 +682,7 @@ const Service = () => {
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <b>💰 GST :</b>
                     <span className="text-primary fw-bold">
-                      <IndianRupee /> {gstdata}％
+                      {/* <IndianRupee /> */}{gstdata}％ 
                     </span>
                   </div>
                 )}

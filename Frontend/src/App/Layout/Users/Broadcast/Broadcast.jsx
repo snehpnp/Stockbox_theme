@@ -24,9 +24,8 @@ const Broadcast = () => {
   
     try {
       const response = await GetBroadcastData(userid, token);
-  
-      if (response.success) {
-        setBroadcastData(response.data.data); 
+      if (response.status) {
+        setBroadcastData(response.data); 
       } else {
         showCustomAlert("error", response.message || "Failed to fetch broadcast data");
       }

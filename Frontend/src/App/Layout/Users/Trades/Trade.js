@@ -245,7 +245,6 @@ function Trade() {
         search: "",
       };
       const response = await GetSignalClient(data, token);
-   
 
       if (response.status) {
         setTradeData((prev) => ({ ...prev, live: response.data }));
@@ -269,7 +268,6 @@ function Trade() {
         search: "",
       };
       const response = await GetCloseSignalClient(data, token);
-      // console.log("GetCloseSignalClient",response)
    
 
       if (response.status) {
