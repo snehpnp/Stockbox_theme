@@ -284,7 +284,7 @@ const Viewclientdetail = () => {
     },
     {
       name: "Amount",
-      selector: (row) => <>  <IndianRupee />  {row.plan_price ?? "-"} </>,
+      selector: (row) => <>  <IndianRupee />  {(row.plan_price).toFixed(2) ?? "-"} </>,
       width: "189px",
     },
     {
@@ -380,7 +380,7 @@ const Viewclientdetail = () => {
         <div>
           {" "}
           <IndianRupee />
-          {row.price}
+          {(row.price).toFixed(2)}
         </div>
       ),
       sortable: true,
@@ -391,7 +391,7 @@ const Viewclientdetail = () => {
       name: "Exit Price",
       selector: (row) =>
         <>
-          <IndianRupee /> {row.closeprice ? row.closeprice : "-"}
+          <IndianRupee /> {row.closeprice ? (row.closeprice).toFixed(2)  : "-"}
         </>,
       sortable: true,
       width: "150px",

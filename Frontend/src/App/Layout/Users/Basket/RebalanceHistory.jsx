@@ -108,7 +108,7 @@ const RebalanceHistory = () => {
                                     {groupedData[version].map((item, idx) => (
                                       <tr key={idx}>
                                         <td><b>{item.name}</b></td>
-                                        <td><b> <IndianRupee /> {item.price}</b></td>
+                                        <td><b> <IndianRupee /> {(item.price).toFixed(2)}</b></td>
                                         <td><b>{item.weightage}</b></td>
                                         <td><b>{item.quantity}</b></td>
                                       </tr>

@@ -221,13 +221,13 @@ const Coupon = () => {
         // },
         {
             name: 'Min Purchase Value',
-            selector: row => <div> <IndianRupee />{row.minpurchasevalue}</div>,
+            selector: row => <div> <IndianRupee />{(row.minpurchasevalue).toFixed(2)}</div>,
             sortable: true,
             width: '210px',
         },
         {
             name: 'Max Discount Value',
-            selector: row => <div> <IndianRupee />{row.mincouponvalue ? row.mincouponvalue : "-"}</div>,
+            selector: row => <div> <IndianRupee />{row.mincouponvalue ? (row.mincouponvalue).toFixed(2) : "-"}</div>,
             sortable: true,
             width: '210px',
         },

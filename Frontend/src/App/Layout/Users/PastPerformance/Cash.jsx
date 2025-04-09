@@ -219,7 +219,7 @@ const Cash = () => {
     },
     {
       name: 'Entry Price',
-      selector: row => <div> <IndianRupee />{row?.entryPrice}</div>,
+      selector: row => <div> <IndianRupee />{(row?.entryPrice).toFixed(2)}</div>,
       sortable: true,
       width: '200px',
     },
@@ -231,7 +231,7 @@ const Cash = () => {
     },
     {
       name: 'Exit Price',
-      selector: row => <div> <IndianRupee />{row?.exitPrice}</div>,
+      selector: row => <div> <IndianRupee />{(row?.exitPrice).toFixed(2)}</div>,
       sortable: true,
       width: '200px',
     },

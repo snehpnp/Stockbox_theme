@@ -391,7 +391,7 @@ const Service = () => {
                           <hr />
                           <div className="row">
                             <div className="col-md-6">
-                              <b>Price</b>:   <IndianRupee style={{ width: '15px', margin: '0' }} /> {plan?.price}
+                              <b>Price</b>:   <IndianRupee style={{ width: '15px', margin: '0' }} /> {(plan?.price).toFixed(2)}
 
 
                             </div>
@@ -479,7 +479,7 @@ const Service = () => {
                 <h5> {selectedPlanDetails?.title} Plan</h5>
                 <span className="text-success fw-bold">
                   <IndianRupee style={{ width: '15%;' }} />{" "}
-                  {selectedPlanDetails?.price || "N/A"}
+                  {(selectedPlanDetails?.price).toFixed(2) || "N/A"}
                 </span>
               </div>
 
@@ -674,7 +674,7 @@ const Service = () => {
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <b> Original Price:</b>
                   <span className="text-primary fw-bold">
-                    <IndianRupee style={{ width: '15%;' }} /> {selectedPlanDetails?.price}
+                    <IndianRupee style={{ width: '15%;' }} /> {(selectedPlanDetails?.price).toFixed(2)}
                   </span>
                 </div>
                 {gstStatus == 1 && (
@@ -691,7 +691,7 @@ const Service = () => {
                   <div className="d-flex justify-content-between align-items-center text-danger mb-2">
                     <b> Coupon Discount:</b>
                     <span className="fw-bold">
-                      - <IndianRupee style={{ width: '15%;' }} /> {appliedCoupon?.value}
+                      - <IndianRupee style={{ width: '15%;' }} /> {(appliedCoupon?.value).toFixed(2)}
                     </span>
                   </div>
                 )}

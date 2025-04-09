@@ -215,13 +215,13 @@ const History = () => {
 
         {
             name: 'Plan Amount',
-            selector: row => <div> <IndianRupee />{row.plan_price}</div>,
+            selector: row => <div> <IndianRupee />{(row.plan_price).toFixed(2)}</div>,
             sortable: true,
             width: '200px',
         },
         {
             name: 'Plan Discount',
-            selector: row => <div> <IndianRupee />{row.discount}</div>,
+            selector: row => <div> <IndianRupee />{(row.discount).toFixed(2)}</div>,
             sortable: true,
             width: '200px',
         },

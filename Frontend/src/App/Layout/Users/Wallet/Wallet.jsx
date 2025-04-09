@@ -151,7 +151,7 @@ const Wallet = () => {
                     </span>
                   </div>
                   <hr />
-                  <h5 className="mb-0">₹ {data?.wamount}</h5>
+                  <h5 className="mb-0">₹ {(data?.wamount).toFixed(2)}</h5>
                 </li>
               </ul>
             </div>

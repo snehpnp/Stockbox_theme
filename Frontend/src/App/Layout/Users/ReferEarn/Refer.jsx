@@ -220,7 +220,7 @@ const Refer = () => {
                                 {referdata?.map((item) => (
                                   <tr key={item?.id}>
                                     <th scope="row">{item?.clientName}</th>
-                                    <td>{item?.amountType?.amount}</td>
+                                    <td>{(item?.amountType?.amount).toFixed(2)}</td>
                                     <td>{item?.status === 1 ? "Completed" : "Pending"}</td>
                                     <td>{fDate(item?.created_at)}</td>
                                   </tr>
