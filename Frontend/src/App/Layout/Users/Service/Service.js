@@ -365,10 +365,9 @@ const Service = () => {
                 item?.plans?.length > 0 ? (
                   item?.plans?.map((plan, index) => (
                     <div className="col col-lg-6 mb-4" key={`${item?._id}-${index}`}>
-                      <div className="card card1 mb-4 shadow h-100 mb-4">
-                        <div className="card-body">
-
-                          <div className="d-flex justify-content-between">
+                      <div className="card card1 mb-4 shadow h-100 mb-4 service-card">
+                        <div className="card-header">
+                        <div className="d-flex justify-content-between align-items-center">
                             <div>
                               <h5 className="mb-0">{item?.title}</h5>
 
@@ -387,8 +386,10 @@ const Service = () => {
                             </span>
 
                           </div>
+                        </div>
+                        <div className="card-body pb-0">
 
-                          <hr />
+                
                           <div className="row">
                             <div className="col-md-6">
                               <b>Price</b>:   <IndianRupee style={{ width: '15px', margin: '0' }} /> {plan?.price}
@@ -430,7 +431,7 @@ const Service = () => {
                               </p>
                             </li>
                           </ul>
-                          <div className="">
+                          <div className="border-top pt-4">
                             <button
                               className="btn btn-secondary rounded-1 mt-2 mt-sm-0 me-2 me-sm-0"
                               onClick={() => {
