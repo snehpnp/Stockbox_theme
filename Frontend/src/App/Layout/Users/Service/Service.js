@@ -431,7 +431,7 @@ const Service = () => {
                               </p>
                             </li>
                           </ul>
-                          <div className="border-top pt-4">
+                          <div className="border-top pt-3">
                             <button
                               className="btn btn-secondary rounded-1 mt-2 mt-sm-0 me-2 me-sm-0"
                               onClick={() => {
