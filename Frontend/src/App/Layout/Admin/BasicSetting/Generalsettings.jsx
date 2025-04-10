@@ -14,10 +14,10 @@ const Generalsettings = () => {
     const user_id = localStorage.getItem('id');
     const navigate = useNavigate();
 
-    const [getTermandCon,setTermandCon] = useState("")
+    const [getTermandCon, setTermandCon] = useState("")
 
     const [clients, setClients] = useState(null);
-    
+
     const [isModified, setIsModified] = useState(false);
     const [istoggle, setToggle] = useState([])
 
@@ -110,6 +110,7 @@ const Generalsettings = () => {
                                 gstin: clients[0].gstin || '',
                                 state: clients[0].state || '',
                                 invoicetnc: clients[0].invoicetnc || '',
+                                saccode: clients[0].saccode || '',
 
                             }}
                             onSubmit={async (values, { resetForm }) => {
@@ -125,6 +126,7 @@ const Generalsettings = () => {
                                     simage: values.simage,
                                     gstin: values.gstin,
                                     state: values.state,
+                                    saccode: values.saccode,
                                     invoicetnc: getTermandCon,
                                     id: user_id,
 
@@ -350,6 +352,28 @@ const Generalsettings = () => {
                                             </div>
 
                                         </div>
+                                        <div className="row mb-3 align-items-center">
+                                            <label htmlFor="saccode" className="col-sm-3 col-form-label">
+                                                <b>Sac Code</b>
+                                            </label>
+                                            <div className="col-sm-9">
+                                                <div className="input-group">
+                                                    <span className="input-group-text">
+                                                        <i className="bx bx-calculator" />
+                                                    </span>
+                                                    <Field
+                                                        name="saccode"
+                                                        type="text"
+                                                        className="form-control"
+                                                        placeholder="saccode"
+                                                        onInput={(e) => {
+                                                            e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, '');
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                        </div>
 
                                         <div className="row mb-3 align-items-center">
                                             <label htmlFor="state" className="col-sm-3 col-form-label">
@@ -390,7 +414,7 @@ const Generalsettings = () => {
                                                     <ReactQuill
 
                                                         value={getTermandCon || values.invoicetnc} // Formik state se bind karein
-                                                        onChange={(value) => {setTermandCon( value);setIsModified(true)}}
+                                                        onChange={(value) => { setTermandCon(value); setIsModified(true) }}
                                                     />
 
 
