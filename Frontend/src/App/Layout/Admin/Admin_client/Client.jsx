@@ -25,6 +25,7 @@ import {
   AllclientFilter,
   getclientExportfile,
   BasketAllActiveList,
+  BasketListbyUser
 } from "../../../Services/Admin/Admin";
 import { Tooltip } from "antd";
 import { fDateTime } from "../../../../Utils/Date_formate";
@@ -42,7 +43,7 @@ const Client = () => {
   useEffect(() => {
     getbasketlist();
     getcategoryplanlist();
-    getActiveBasketdetail();
+    // getActiveBasketdetail();
   }, []);
 
   const location = useLocation();
@@ -227,16 +228,6 @@ const Client = () => {
     }
   };
 
-  const getActiveBasketdetail = async () => {
-    try {
-      const response = await BasketAllActiveList(token);
-      if (response.status) {
-        setGetBasket(response.data);
-      }
-    } catch (error) {
-      console.log("error");
-    }
-  };
 
 
 
@@ -288,12 +279,25 @@ const Client = () => {
   };
 
 
+  const getActiveBasketdetail = async (_id) => {
+    try {
+      const response = await BasketListbyUser(_id, token);
+      if (response.status) {
+        setGetBasket(response.data);
+      }
+    } catch (error) {
+      console.log("error");
+    }
+  };
+
+
+
 
 
   const getbasketlist = async () => {
     try {
       const response = await BasketAllList(token);
-      
+
       if (response.status) {
         setBasketlist(response.data);
       }
@@ -347,9 +351,9 @@ const Client = () => {
     const originalChecked = event.target.checked;
     const user_active_status = originalChecked ? "1" : "0";
     const data = { id, status: user_active_status };
-  
+
     const result = await showCustomAlert("confirm", "Do you want to save the changes?");
-  
+
     if (result.isConfirmed) {
       try {
         const response = await UpdateClientStatus(data, token);
@@ -365,7 +369,7 @@ const Client = () => {
       event.target.checked = !originalChecked;
     }
   };
-  
+
 
 
 
@@ -604,6 +608,7 @@ const Client = () => {
                   showModal(true);
                   setClientid(row);
                   getplanlistassinstatus(row._id);
+                  getActiveBasketdetail(row._id);
                 } else {
                   showCustomAlert("error", "Activate the client first Then assign the package.");
                 }
@@ -1006,6 +1011,10 @@ const Client = () => {
                                   id={`input-plan-${index}`}
                                   checked={selectedPlanId === item._id}
                                   onClick={() => {
+                                    if (item?.client_status === "active") {
+                                      showCustomAlert("error", "The Plan is Already Active")
+                                      return;
+                                    }
                                     setSelectedPlanId(item._id);
                                     setBasketdetail({
                                       basket_id: item._id,
@@ -1054,7 +1063,7 @@ const Client = () => {
                                             Detail
                                           </strong>
                                           <strong className="text-success m-2 activestrong">
-                                            {item?.subscription?.status ===
+                                            {item?.client_status ===
                                               "active"
                                               ? "Active"
                                               : ""}

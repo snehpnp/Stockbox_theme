@@ -2926,6 +2926,27 @@ export async function getPlanbyUser(_id, token) {
 }
 
 
+// get basket list by id 
+
+export async function BasketListbyUser(_id, token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}basket/activebasketlistbyclient/${_id}`, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
 // get client export file 
 
 export async function getclientExportfile(data, token) {
