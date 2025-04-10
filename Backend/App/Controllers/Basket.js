@@ -2318,6 +2318,62 @@ class Basket {
     }
   }
 
+  async activeBasketListByClient(req, res) {
+    try {
+      const { id } = req.params;
+  
+      if (!id) {
+        return res.json({
+          status: false,
+          message: "Client ID is required",
+          data: []
+        });
+      }
+  
+      // Step 1: Fetch all baskets (active only)
+      const baskets = await Basket_Modal.find({ del: false, publishstatus: true }).sort({ created_at: -1 });
+  
+      // Step 2: Fetch subscriptions of that client
+      const subscriptions = await BasketSubscription_Modal.find({ client_id: id, del: false });
+  
+      // Step 3: Map subscription data for easy lookup
+      const now = new Date();
+      const basketStatusMap = {};
+      subscriptions.forEach(sub => {
+        const basketIdStr = sub.basket_id?.toString();
+        if (!basketIdStr) return;
+  
+        const isValid = sub.status === 'active' && new Date(sub.startdate) <= now && new Date(sub.enddate) >= now;
+  
+        basketStatusMap[basketIdStr] = isValid ? 'active' : 'expired';
+      });
+      // Step 4: Attach basket subscription status
+      const basketsWithStatus = baskets.map(basket => {
+        const basketIdStr = basket._id.toString();
+        return {
+          ...basket._doc,
+          client_status: basketStatusMap[basketIdStr] || "NA"
+        };
+      });
+  
+      return res.json({
+        status: true,
+        message: "Baskets fetched successfully",
+        data: basketsWithStatus
+      });
+  
+    } catch (error) {
+      console.error("Error in activeBasket:", error);
+      return res.json({
+        status: false,
+        message: "Server error",
+        data: []
+      });
+    }
+  }
+
+
+
 }
 
 function formatDate(date) {
