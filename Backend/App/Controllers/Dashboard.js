@@ -357,19 +357,18 @@ class Dashboard {
     }
   }
 
-
   async pastPerformance(req, res) {
     try {
       const { id } = req.params;
-      // Query to find signals based on the service ID
+  
+      // Query all closed signals for the service ID
       const signals = await Signal_Modal.find({
         del: 0,
         close_status: true,
         closeprice: { $ne: 0 },
-        service: new mongoose.Types.ObjectId(id) // Ensure service is an ObjectId
+        service: new mongoose.Types.ObjectId(id)
       });
-
-      // Count the number of signals
+  
       const count = signals.length;
       if (count === 0) {
         return res.status(404).json({
@@ -377,96 +376,80 @@ class Dashboard {
           message: "No signals found"
         });
       }
-
+  
       let totalProfit = 0;
       let totalLoss = 0;
       let profitCount = 0;
       let lossCount = 0;
       let avgreturnpermonth = 0;
-
+  
+      // Get first and last signals based on created_at
       const [firstSignal, lastSignal] = await Promise.all([
         Signal_Modal.findOne({
           del: 0,
           close_status: true,
           service: new mongoose.Types.ObjectId(id)
-        }).sort({ created_at: 1 }), // Sort by created_at in ascending order
-
+        }).sort({ created_at: 1 }),
         Signal_Modal.findOne({
           del: 0,
           close_status: true,
           service: new mongoose.Types.ObjectId(id)
-        }).sort({ created_at: -1 }) // Sort by created_at in descending order
+        }).sort({ created_at: -1 })
       ]);
-
+  
       if (!firstSignal || !lastSignal) {
         return res.status(404).json({
           status: false,
           message: "No signals found"
         });
       }
-
-      const firstCreatedAt = firstSignal.created_at;
-      const lastCreatedAt = lastSignal.created_at;
-
-      const startYear = firstCreatedAt.getFullYear();
-      const startMonth = firstCreatedAt.getMonth();
-      const endYear = lastCreatedAt.getFullYear();
-      const endMonth = lastCreatedAt.getMonth();
-
-      const yearDifference = endYear - startYear;
-      const monthDifference = endMonth - startMonth;
-      const monthsBetween = yearDifference * 12 + monthDifference;
+  
+      const firstCreatedAt = new Date(firstSignal.created_at);
+      const lastCreatedAt = new Date(lastSignal.created_at);
+  
+      // Calculate the number of months between the two dates
+      const monthsBetween = (lastCreatedAt.getFullYear() - firstCreatedAt.getFullYear()) * 12 +
+                            (lastCreatedAt.getMonth() - firstCreatedAt.getMonth()) + 1;
+                            console.log('monthsBetween',monthsBetween);
 
       signals.forEach(signal => {
-        const entryPrice = parseFloat(signal.price); // Entry price
-        const exitPrice = parseFloat(signal.closeprice); // Exit price
-
-
-        const callType = signal.calltype; // "BUY" or "SELL"
-
+        const entryPrice = parseFloat(signal.price);
+        const exitPrice = parseFloat(signal.closeprice);
+        const callType = signal.calltype;
+  
         if (!isNaN(entryPrice) && !isNaN(exitPrice)) {
-          // const profitOrLoss = exitPrice - entryPrice;
-          let profitOrLoss;
+          let profitOrLoss = 0;
+  
           if (callType === "BUY") {
-            profitOrLoss = exitPrice - entryPrice; // Profit when exit is greater
+            profitOrLoss = exitPrice - entryPrice;
           } else if (callType === "SELL") {
-            profitOrLoss = entryPrice - exitPrice; // Profit when exit is less
+            profitOrLoss = entryPrice - exitPrice;
           }
-
-
+  
           if (profitOrLoss >= 0) {
-            //   totalProfit += profitOrLoss;
-
-            if (id == "66dfede64a88602fbbca9b72" || id == "66dfeef84a88602fbbca9b79") {
+            if (id === "66dfede64a88602fbbca9b72" || id === "66dfeef84a88602fbbca9b79") {
               totalProfit += profitOrLoss * signal.lotsize;
-            }
-            else {
+            } else {
               totalProfit += profitOrLoss;
             }
             profitCount++;
           } else {
-
-            if (id == "66dfede64a88602fbbca9b72" || id == "66dfeef84a88602fbbca9b79") {
+            if (id === "66dfede64a88602fbbca9b72" || id === "66dfeef84a88602fbbca9b79") {
               totalLoss += Math.abs(profitOrLoss) * signal.lotsize;
-            }
-            else {
+            } else {
               totalLoss += Math.abs(profitOrLoss);
             }
             lossCount++;
           }
         }
       });
-
+  
       const accuracy = (profitCount / count) * 100;
       const avgreturnpertrade = (totalProfit - totalLoss) / count;
-
-      if (monthsBetween > 0) {
-        avgreturnpermonth = (totalProfit - totalLoss) / monthsBetween;
-      } else {
-        avgreturnpermonth = totalProfit - totalLoss;
-      }
-
-
+      avgreturnpermonth = monthsBetween > 0
+        ? (totalProfit - totalLoss) / monthsBetween
+        : totalProfit - totalLoss;
+  
       return res.json({
         status: true,
         message: "Past performance data fetched successfully",
@@ -478,12 +461,11 @@ class Dashboard {
           lossCount: lossCount || 0,
           accuracy: accuracy || 0,
           avgreturnpertrade: avgreturnpertrade || 0,
-          avgreturnpermonth: avgreturnpermonth || 0
+          avgreturnpermonth: avgreturnpermonth || 0,
+          monthsBetween
         }
       });
     } catch (error) {
-      // console.log("Error fetching signal details:", error);
-
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -491,7 +473,7 @@ class Dashboard {
       });
     }
   }
-
+  
   async pastPerformances(req, res) {
     try {
       // Define fixed service IDs
@@ -564,7 +546,6 @@ class Dashboard {
         const yearDifference = endYear - startYear;
         const monthDifference = endMonth - startMonth;
         const monthsBetween = yearDifference * 12 + monthDifference;
-
         serviceSignals.forEach(signal => {
           const entryPrice = parseFloat(signal.price); // Entry price
           const exitPrice = parseFloat(signal.closeprice); // Exit price
