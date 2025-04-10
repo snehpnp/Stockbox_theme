@@ -1873,6 +1873,7 @@ export async function Updatebasicsettings(data, token) {
     formData.append('gstin', data.gstin);
     formData.append('state', data.state);
     formData.append('invoicetnc', data.invoicetnc);
+    formData.append('saccode', data.saccode);
 
 
 
