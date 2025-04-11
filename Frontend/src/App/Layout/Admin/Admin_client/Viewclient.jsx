@@ -360,24 +360,9 @@ const Viewclientdetail = () => {
             : row.segment === "O"
               ? "OPTION"
               : "FUTURE";
-
-        return (
-          <div>
-            {segmentLabel}
-            {row?.close_description && (
-              <span style={{ color: "red", marginLeft: "5px" }}>
-                (Avoid)
-                <Eye
-                  style={{ cursor: "pointer", marginLeft: "5px" }}
-                  onClick={() => {
-                    setShowModal(true);
-                    setDescription(row?.close_description);
-                  }}
-                />
-              </span>
-            )}
-          </div>
-        );
+        return row.closeprice == 0
+          ? <div>{segmentLabel}<span style={{ color: "red" }}> (Avoid)<Eye onClick={() => { setShowModal(true); setDescription(row?.close_description) }} /></span></div>
+          : segmentLabel;
       },
       sortable: true,
       width: "200px",
@@ -416,13 +401,21 @@ const Viewclientdetail = () => {
 
     {
       name: "Exit Price",
-      selector: (row) =>
-        <>
-          <IndianRupee /> {row.closeprice ? row.closeprice : "-"}
-        </>,
+      selector: (row) => (
+        <div>
+          {row?.closeprice == 0 ? (
+            "N/A"
+          ) : (
+            <>
+              <IndianRupee />
+              {row.closeprice}
+            </>
+          )}
+        </div>
+      ),
       sortable: true,
-      width: "150px",
-    }, ,
+      width: "132px",
+    },
     {
       name: "Entry Date",
       selector: (row) => fDateTimeH(row?.created_at),
