@@ -43,7 +43,6 @@ const Wallet = () => {
   const getEarning = async () => {
     try {
       const response = await GetReferEarning(userid, token);
-      console.log("GetReferEarning",response);
 
       if (response.status) {
         setEarning(response.data);
@@ -57,7 +56,6 @@ const Wallet = () => {
   const getPayoutdata = async () => {
     try {
       const response = await GetPayoutDetail(userid, token);
-      console.log("GetPayoutDetail",response);
       
       if (response.status) {
         setPayout(response.data);
@@ -151,7 +149,7 @@ const Wallet = () => {
                     </span>
                   </div>
                   <hr />
-                  <h5 className="mb-0">₹ {(data?.wamount).toFixed(2)}</h5>
+                  <h5 className="mb-0">₹ {data?.wamount}</h5>
                 </li>
               </ul>
             </div>

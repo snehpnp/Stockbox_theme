@@ -25,7 +25,6 @@ const Profiles = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [userDetail, setUserDetail] = useState({});
-  console.log("userDetail",userDetail)
 
   const [showPassword, setShowPassword] = useState({
     currentPassword: false,
