@@ -899,14 +899,20 @@ class List {
 
 
 
-        let sgst = 0, cgst = 0, igst = 0;
+        let sgst = 0, cgst = 0, igst = 0, pergstsc = 0, pergstt = 0;
 
 if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() ==="") {
     sgst = totalgst / 2;
     cgst = totalgst / 2;
+    pergstsc = settings.gst/ 2;
 } else {
     igst = totalgst;
+    pergstt = settings.gst;
 }
+
+console.log("pergstsc",pergstsc);
+console.log("pergstt",pergstt);
+
 const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
 const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
 
@@ -941,6 +947,11 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
           .replace(/{{igst}}/g, igst.toFixed(2))
           .replace(/{{logo}}/g, logo)
           .replace(/{{simage}}/g, simage)
+          .replace(/{{pergstsc}}/g, pergstsc)
+          .replace(/{{pergstt}}/g, pergstt)
+          .replace(/{{saccode}}/g, settings.saccode)
+          .replace(/{{bstate}}/g, settings.state)
+          .replace(/{{panno}}/g, client.panno)
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
 

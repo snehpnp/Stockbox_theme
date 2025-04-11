@@ -11,7 +11,8 @@ const Freetrial_Modal = db.Freetrial;
 const Adminnotification_Modal = db.Adminnotification;
 const Refer_Modal = db.Refer;
 const PlanSubscription_Modal = db.PlanSubscription;
-
+const States = db.States;
+const City = db.City;
 
 
 
@@ -1681,6 +1682,27 @@ async getDailyProfitLoss(req, res) {
   }
 }
 
+async  getAllStates(req, res) {
+  try {
+      const states = await States.find({}).toArray(); // MongoDB native driver ka use ho raha hai
+      res.status(200).json(states);
+  } catch (error) {
+      console.error("Error fetching states:", error);
+      res.status(500).json({ error: "Something went wrong" });
+  }
+}
+
+async getCityByStates(req, res) {
+  try {
+    const stateName = decodeURIComponent(req.params.stateName); // "Madhya Pradesh"
+    
+    const cities = await City.find({ state: stateName }).toArray(); // nativ
+    res.status(200).json(cities);
+  } catch (error) {
+    console.error("Error fetching cities:", error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+}
 
 
 }
