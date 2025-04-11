@@ -628,6 +628,7 @@ class Clients {
             createdAt: 1,
             updatedAt: 1,
             state: 1,
+            city: 1,
             'addedByDetails.FullName': 1, // Include user's first name
             plansStatus: 1, // Updated to include service name and status
             clientStatus: {
@@ -1056,6 +1057,7 @@ class Clients {
             createdAt: 1,
             updatedAt: 1,
             state: 1,
+            city: 1,
             'addedByDetails.FullName': 1, // Include user's first name
             plansStatus: 1, // Updated to include service name and status
             clientStatus: {
@@ -1460,6 +1462,7 @@ class Clients {
             createdAt: 1,
             updatedAt: 1,
             state: 1,
+            city: 1,
             'addedByDetails.FullName': 1, // Include addedBy user details
             plansStatus: 1,
             clientStatus: 1
@@ -3832,6 +3835,7 @@ class Clients {
             createdAt: 1,
             updatedAt: 1,
             state: 1,
+            city: 1,
             'addedByDetails.FullName': 1, // Include user's first name
             plansStatus: 1, // Updated to include service name and status
             clientStatus: {
