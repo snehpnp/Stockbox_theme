@@ -63,8 +63,6 @@ function Basket() {
     try {
       const data = { clientid: userid };
       const response = await GetBasketService(data, token);
-      console.log("GetBasketService",response);
-      
       if (response.status) {
         setBasketdata(response.data);
       }
@@ -147,6 +145,7 @@ function Basket() {
               <div className="col-md-12 col-lg-6 mb-4" key={item?.id}>
                 <div className="card radius-10 overflow-hidden shadow"
                 style={{ minHeight: "253px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+                onClick={() => navigate("/user/basketdetail", { state: { item } })}
                 >
                   <div className="card-body pb-0">
                     <div className="d-flex ">

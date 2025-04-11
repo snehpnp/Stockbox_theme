@@ -43,7 +43,6 @@ const Wallet = () => {
   const getEarning = async () => {
     try {
       const response = await GetReferEarning(userid, token);
-      console.log("GetReferEarning",response);
 
       if (response.status) {
         setEarning(response.data);
@@ -57,8 +56,6 @@ const Wallet = () => {
   const getPayoutdata = async () => {
     try {
       const response = await GetPayoutDetail(userid, token);
-      console.log("GetPayoutDetail",response);
-      
       if (response.status) {
         setPayout(response.data);
 
@@ -89,11 +86,12 @@ const Wallet = () => {
       const data = { clientId: userid, amount: request.amount };
       const response = await GetWithdrawRequest(data, token);
 
-      if (response.status) {
-        showCustomAlert("Success", response.message || 'Your withdrawal request has been processed successfully.')
+      if (response.status !==400) {
+
+        showCustomAlert("Success", response.data.message || 'Your withdrawal request has been processed successfully.')
         setRequest({ clientId: "", amount: "" });
       } else {
-        showCustomAlert("error", response.message || 'There was an issue processing your withdrawal request.')
+        showCustomAlert("error", response.response.data.message || 'There was an issue processing your withdrawal request.')
 
       }
     } catch (error) {
@@ -102,6 +100,25 @@ const Wallet = () => {
     }
   };
 
+
+  // const withdrawRequest = async () => {
+  //   try {
+  //     const data = { clientId: userid, amount: request.amount };
+  //     const response = await GetWithdrawRequest(data, token);
+      
+  //     // yahan pahucha matlab status 2xx hi hai
+  //     if (response.status) {
+  //       console.log("response for ceck")
+  //       showCustomAlert("Success", response.message || 'Your withdrawal request has been processed successfully.');
+  //       setRequest({ clientId: "", amount: "" });
+  //     }
+  //   } catch (error) {
+  //     // error.response exist kare to uska message dikhao
+  //     const message = error?.response?.data?.message || 'There was an issue processing your withdrawal request.';
+  //     showCustomAlert("error", message);
+  //   }
+  // };
+  
 
 
   return (

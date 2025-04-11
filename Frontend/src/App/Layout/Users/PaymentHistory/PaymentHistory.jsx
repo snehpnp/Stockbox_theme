@@ -149,43 +149,52 @@ const PaymentHistory = () => {
       width: '200px',
     },
     {
-      name: 'Order_ID',
-      selector: row => row.orderid ? row.orderid : "Make By Admin",
-      sortable: true,
-      width: '200px',
-    },
-
-    {
-      name: 'Plan Amount',
-      selector: row => <div> <IndianRupee />{row.plan_price}</div>,
+      name: 'Paid Amount',
+      selector: row => <div> <IndianRupee />{(row.total).toFixed(2)}</div>,
       sortable: true,
       width: '200px',
     },
     {
       name: 'Plan Discount',
-      selector: row => <div> <IndianRupee />{row?.discount}</div>,
-      sortable: true,
-      width: '200px',
-    },
-
-    {
-      name: 'Coupon Id',
-      selector: row => row.coupon ? row.coupon : "N/A",
+      selector: row => <div> <IndianRupee />{(row?.discount).toFixed(2)}</div>,
       sortable: true,
       width: '200px',
     },
     {
-      name: 'Total',
-      selector: row => <div> <IndianRupee />{row.total}</div>,
+      name: 'Purchase Type',
+      selector: row => row.orderid ? row.orderid : "Assigned by Admin",
       sortable: true,
       width: '200px',
     },
     {
-      name: 'Validity',
+      name: 'Plan Validity',
       selector: row => row?.planDetails?.validity,
       sortable: true,
       width: '200px',
     },
+     {
+      name: 'Order Id',
+      selector: row => row.orderid ? row.orderid : "null",
+      sortable: true,
+      width: '200px',
+    },
+
+    // {
+    //   name: 'Plan Amount',
+    //   selector: row => <div> <IndianRupee />{row.plan_price}</div>,
+    //   sortable: true,
+    //   width: '200px',
+    // },
+    
+
+    // {
+    //   name: 'Coupon Id',
+    //   selector: row => row.coupon ? row.coupon : "N/A",
+    //   sortable: true,
+    //   width: '200px',
+    // },
+    
+    
     // {
     //   name: 'Purchase Date.',
     //   selector: row => fDateTime(row?.created_at),

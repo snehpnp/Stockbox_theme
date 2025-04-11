@@ -184,7 +184,7 @@ const AllBasketHistory = () => {
 
         {
             name: 'Plan Amount',
-            selector: row => <div> <IndianRupee />{row.plan_price}</div>,
+            selector: row => <div> <IndianRupee />{(row.plan_price).toFixed(2)}</div>,
             sortable: true,
             width: '200px',
         },

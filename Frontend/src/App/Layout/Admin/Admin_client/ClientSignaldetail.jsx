@@ -197,7 +197,7 @@ const ClientSignaldetail = () => {
         },
         {
             name: 'Entry Price',
-            selector: row => <div> <IndianRupee />{row.price}</div>,
+            selector: row => <div> <IndianRupee />{(row.price).toFixed(2)}</div>,
             sortable: true,
             width: '200px',
         },

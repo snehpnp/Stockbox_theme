@@ -301,7 +301,7 @@ const RebalanceStock = () => {
                     {baskets[version].map((stock) => (
                       <tr key={stock._id}>
                         <td>{stock.name}</td>
-                        <td><IndianRupee /> {stock.price}</td>
+                        <td><IndianRupee /> {(stock.price).toFixed(2)}</td>
                         <td>{stock.quantity}</td>
                         <td id={`stock-price-${stock.instrument_token}`} >
                           <span className="live-price"> {stock.livePrice ? stock.livePrice : "-"} </span>
@@ -384,7 +384,7 @@ const RebalanceStock = () => {
                 {isLoading1 ? <Loader /> : viewdata?.map((stock) => (
                   <tr key={stock?._id}>
                     <td>{stock?.tradesymbol}</td>
-                    <td> <IndianRupee /> {stock?.price}</td>
+                    <td> <IndianRupee /> {(stock?.price).toFixed(2)}</td>
                     <td>{stock?.quantity}</td>
                     <td>{stock?.ordertype}</td>
                   </tr>

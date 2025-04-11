@@ -10,6 +10,7 @@ const BasketDetail = () => {
 
   const location = useLocation();
   const { item } = location?.state;
+  
 
 
   const stripHtmlTags = (input) => {
@@ -116,6 +117,12 @@ const BasketDetail = () => {
                         {item?.next_rebalance_date}
                       </span>
                     </li>
+                    {/* <li className="list-group-item d-flex justify-content-between align-items-center">
+                      Minimum Investment Amount{" "}
+                      <span className="badge bg-warning rounded-pill">
+                        {item?.mininvamount}
+                      </span>
+                    </li> */}
                   </ul>
                 </div>
                 <div className="col-md-5">

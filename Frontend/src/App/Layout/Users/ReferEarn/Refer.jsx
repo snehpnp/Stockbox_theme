@@ -18,7 +18,6 @@ const Refer = () => {
   const [data, setData] = useState([]);
   const [refertoken, setRefertoken] = useState({});
 
-
   const [isLoading, setIsLoading] = useState(true)
 
   const [referdata, setReferData] = useState([])
@@ -216,15 +215,18 @@ const Refer = () => {
                                 </tr>
                               </thead>
                               <tbody>
-                                {referdata?.map((item) => (
-                                  <tr key={item?.id}>
-                                    <th scope="row">{item?.clientName}</th>
-                                    <td>{item?.amountType?.amount}</td>
-                                    <td>{item?.status === 1 ? "Completed" : "Pending"}</td>
-                                    <td>{fDate(item?.created_at)}</td>
-                                  </tr>
-                                ))}
+                                {referdata
+                                  ?.filter((item) => item.clientName && item.clientName.trim() !== "")
+                                  .map((item) => (
+                                    <tr key={item?._id}>
+                                      <th scope="row">{item.clientName}</th>
+                                      <td>{item?.amountType?.amount.toFixed(2)}</td>
+                                      <td>{item?.status === 1 ? "Completed" : "Pending"}</td>
+                                      <td>{fDate(item?.created_at)}</td>
+                                    </tr>
+                                  ))}
                               </tbody>
+
                             </table>
                           </div>
                         </div>

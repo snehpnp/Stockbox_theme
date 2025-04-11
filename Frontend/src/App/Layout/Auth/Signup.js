@@ -325,7 +325,15 @@ const UserSignup = () => {
                                   className="form-check-input"
                                   id="enableReferral"
                                   checked={isReferralEnabled}
-                                  onChange={() => setIsReferralEnabled(!isReferralEnabled)}
+                                  onChange={() => {
+                                    setIsReferralEnabled(!isReferralEnabled);
+                                    if (isReferralEnabled) {
+                                      setFormData(prev => ({
+                                        ...prev,
+                                        referralCode: ''
+                                      }));
+                                    }
+                                  }}
                                 />
                                 <label className="form-check-label" htmlFor="enableReferral">
                                   Do you have a Referral Code?

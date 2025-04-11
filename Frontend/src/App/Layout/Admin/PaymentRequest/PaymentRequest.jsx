@@ -104,13 +104,13 @@ const PaymentRequest = () => {
         },
         {
             name: 'Available balance',
-            selector: row => <div> <IndianRupee />{row?.client_details?.wamount}</div>,
+            selector: row => <div> <IndianRupee />{(row?.client_details?.wamount).toFixed(2)}</div>,
             sortable: true,
             width: '220px',
         },
         {
             name: 'Amount',
-            selector: row => <div> <IndianRupee />{row?.amount}</div>,
+            selector: row => <div> <IndianRupee />{(row?.amount).toFixed(2)}</div>,
             sortable: true,
             width: '130px',
         },

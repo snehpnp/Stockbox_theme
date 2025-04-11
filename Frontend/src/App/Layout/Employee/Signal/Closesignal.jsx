@@ -394,7 +394,7 @@ const Closesignal = () => {
                 <div>
                     {" "}
                     <IndianRupee />
-                    {row.price}
+                    {(row.price).toFixed(2)}
                 </div>
             ),
             sortable: true,
@@ -407,7 +407,7 @@ const Closesignal = () => {
                 <div>
                     {" "}
                     <IndianRupee />
-                    {row.closeprice ? row.closeprice : "-"}
+                    {row.closeprice ? (row.closeprice).toFixed(2) : "-"}
                 </div>
             ),
             sortable: true,

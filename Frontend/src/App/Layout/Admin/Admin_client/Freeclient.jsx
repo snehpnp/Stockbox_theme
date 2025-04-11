@@ -707,7 +707,7 @@ const Freeclient = () => {
                                                                                     <div className="d-flex justify-content-between">
                                                                                         <strong>Price:</strong>
                                                                                         <span>
-                                                                                            <IndianRupee /> {item.price}
+                                                                                            <IndianRupee /> {(item.price).toFixed(2)}
                                                                                         </span>
                                                                                     </div>
                                                                                     <div className="d-flex justify-content-between">
@@ -833,7 +833,7 @@ const Freeclient = () => {
                                                                             <div className="d-flex justify-content-between">
                                                                                 <strong>Price:</strong>
                                                                                 <span>
-                                                                                    <IndianRupee /> {item.basket_price}
+                                                                                    <IndianRupee /> {(item.basket_price).toFixed(2)}
                                                                                 </span>
                                                                             </div>
                                                                             <div className="d-flex justify-content-between">
@@ -845,7 +845,7 @@ const Freeclient = () => {
                                                                                     Minimum Investment Amount:
                                                                                 </strong>
                                                                                 <span>
-                                                                                    <IndianRupee /> {item?.mininvamount}
+                                                                                    <IndianRupee /> {(item?.mininvamount).toFixed(2)}
                                                                                 </span>
                                                                             </div>
                                                                         </div>
