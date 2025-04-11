@@ -1758,6 +1758,74 @@ if (mailtemplate) {
   }
 
 
+  async getClientSignalOrders(req, res) {
+    try {
+      const { clientid, signalid } = req.body;
+  
+      if (!clientid) {
+        return res.status(400).json({ status: false, message: "clientid is required", data: [] });
+      }
+  
+      const matchStage = { clientid };
+      if (signalid) matchStage.signalid = signalid;
+  
+      const ordersWithSignals = await Order_Modal.aggregate([
+        { $match: matchStage },
+        {
+          $addFields: {
+            signalObjectId: { $toObjectId: "$signalid" }
+          }
+        },
+        {
+          $lookup: {
+            from: "signalsdatas",
+            localField: "signalObjectId",
+            foreignField: "_id",
+            as: "signalDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$signalDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $project: {
+            orderid: 1,
+            uniqueorderid: 1,
+            quantity: 1,
+            status: 1,
+            borkerid: 1,
+            data: 1,
+            ordertype: 1,
+            signalid: 1,
+            createdAt: 1,
+            signalDetails: 1
+          }
+        },
+        {
+          $sort: {
+            createdAt: -1
+          }
+        }
+      ]);
+  
+      return res.json({
+        status: true,
+        message: "Orders with signal data fetched successfully",
+        data: ordersWithSignals
+      });
+    } catch (error) {
+      console.error("Error in getClientSignalOrders:", error);
+      return res.status(500).json({
+        status: false,
+        message: "Server error",
+        data: []
+      });
+    }
+  }
+  
 
 }
 module.exports = new Clients();
