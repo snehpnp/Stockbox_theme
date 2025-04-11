@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
 import { useNavigate } from 'react-router-dom';
-import { AddClient } from '../../../Services/Admin/Admin';
+import { AddClient, GetAllStates, GetAllCities } from '../../../Services/Admin/Admin';
 import { Link } from 'react-router-dom';
 import Content from '../../../components/Contents/Content';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
-import { State, City } from "country-state-city";
+
 
 const AddUser = () => {
 
@@ -18,72 +18,8 @@ const AddUser = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const [states, setStates] = useState([]);
-  const [cities, setCities] = useState([]);
-
-
-
-  const [selectedState, setSelectedState] = useState("");
-  const [selectedCity, setSelectedCity] = useState("");
-
-
-  // console.log("selectedCity", selectedCity)
-  // console.log("cities", cities)
-
-  useEffect(() => {
-    const indianStates = State.getStatesOfCountry("IN");
-    setStates(indianStates);
-  }, []);
-
-
-
-  // useEffect(() => {
-  //   if (selectedState) {
-  //     const cityList = City.getCitiesOfState("IN", selectedState);
-  //     setCities(cityList);
-  //     setSelectedCity("");
-  //   }
-  // }, [selectedState]);
-
-
-
-
-
-
-
-  const indianStates = [
-    { name: "Andhra Pradesh" },
-    { name: "Arunachal Pradesh" },
-    { name: "Assam" },
-    { name: "Bihar" },
-    { name: "Chhattisgarh" },
-    { name: "Goa" },
-    { name: "Gujarat" },
-    { name: "Haryana" },
-    { name: "Himachal Pradesh" },
-    { name: "Jharkhand" },
-    { name: "Karnataka" },
-    { name: "Kerala" },
-    { name: "Madhya Pradesh" },
-    { name: "Maharashtra" },
-    { name: "Manipur" },
-    { name: "Meghalaya" },
-    { name: "Mizoram" },
-    { name: "Nagaland" },
-    { name: "Odisha" },
-    { name: "Punjab" },
-    { name: "Rajasthan" },
-    { name: "Sikkim" },
-    { name: "Tamil Nadu" },
-    { name: "Telangana" },
-    { name: "Tripura" },
-    { name: "Uttar Pradesh" },
-    { name: "Uttarakhand" },
-    { name: "West Bengal" }
-  ];
-
-
-
+  const [state, setState] = useState([])
+  const [city, setCity] = useState([])
 
 
   const validate = (values) => {
@@ -125,7 +61,7 @@ const AddUser = () => {
       add_by: user_id,
       freetrial: values.freetrial,
       state: values.state,
-      state: values.city
+      city: values.city
     };
 
 
@@ -219,7 +155,7 @@ const AddUser = () => {
       name: "state",
       label: "Select State",
       type: 'select',
-      options: indianStates?.map((item) => ({
+      options: state?.map((item) => ({
         label: item.name,
         value: item.name,
       })),
@@ -228,20 +164,19 @@ const AddUser = () => {
       disable: false,
       star: true
     },
-    // {
-    //   name: "city",
-    //   label: "Select City",
-    //   type: 'select',
-    //   options: cities?.map((item) => ({
-    //     label: item.name,
-    //     value: item.name,
-    //   })),
-    //   label_size: 12,
-    //   col_size: 6,
-    //   disable: false,
-    //   star: true
-    // }
+    {
+      name: "city",
+      label: "Select City",
+      type: 'select',
+      options: city?.map((item) => ({
+        label: item.city,
+        value: item.city,
+      })),
+      label_size: 12,
+      col_size: 6,
+      disable: false,
 
+    },
   ];
 
 
@@ -262,28 +197,45 @@ const AddUser = () => {
   };
 
 
+  const getStatedata = async () => {
+    try {
+      const response = await GetAllStates(token);
+      if (response) {
+        setState(response);
+
+      }
+    } catch (error) {
+      console.log("error");
+    }
+  }
 
 
-  // useEffect(() => {
-  //   if (formik.values.state) {
-  //     const cityList = City.getCitiesOfState("IN", formik.values.state);
-  //     console.log("cityList", cityList)
-  //     setCities(cityList);
-  //     setSelectedCity("");
-  //     formik.setFieldValue("city", "");
-  //   }
-  // }, [formik.values.state]);
+
+  const getCitydata = async () => {
+    try {
+      const response = await GetAllCities(formik.values.state, token);
+      if (response) {
+        setCity(response);
+        console.log("City Response:", response);
+      }
+    } catch (error) {
+      console.error("Error fetching cities:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (formik.values.state) {
+      getCitydata();
+    }
+  }, [formik.values.state]);
 
 
 
-  // useEffect(() => {
-  //   if (selectedState) {
-  //     const cityList = City.getCitiesOfState("IN", selectedState);
-  //     setCities(cityList);
-  //     setSelectedCity("");
-  //   }
-  // }, [selectedState]);
 
+
+  useEffect(() => {
+    getStatedata()
+  }, [])
 
 
   return (

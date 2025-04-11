@@ -3440,3 +3440,48 @@ export async function GetPlanexpiryCount(data, token) {
         return err;
     }
 }
+
+
+// get all states
+
+export async function GetAllStates(token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/getstates`, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+                "Content-Type": "application/json"
+            },
+        });
+
+        return res?.data;
+
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+// get all cities
+
+export async function GetAllCities(data, token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/getcitybystates/${data}`, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+                "Content-Type": "application/json"
+            },
+        });
+
+        return res?.data;
+
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+

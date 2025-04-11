@@ -365,7 +365,6 @@ const Client = () => {
         showCustomAlert("error", "There was an error processing your request.");
       }
     } else {
-      // Agar user "No" kare to switch ko original state pe wapas le aao
       event.target.checked = !originalChecked;
     }
   };
