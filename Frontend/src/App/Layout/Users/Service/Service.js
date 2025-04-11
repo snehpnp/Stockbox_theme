@@ -31,8 +31,12 @@ const Service = () => {
 
   const [category, setCategory] = useState([]);
   const [plan, setPlan] = useState([]);
+  console.log("plan", plan);
+
   const [showModal, setShowModal] = useState(false);
   const [selectedPlanDetails, setSelectedPlanDetails] = useState(null);
+  console.log("selectedPlanDetails", selectedPlanDetails);
+
 
 
 
@@ -360,10 +364,9 @@ const Service = () => {
                     <div className="col col-lg-6 mb-4" key={`${item?._id}-${index}`}>
                       <div className="card card1 mb-4 shadow h-100 mb-4 service-card">
                         <div className="card-header">
-                        <div className="d-flex justify-content-between align-items-center">
+                          <div className="d-flex justify-content-between align-items-center">
                             <div>
                               <h5 className="mb-0">{item?.title}</h5>
-
                             </div>
 
                             <span className="price-original">
@@ -382,10 +385,10 @@ const Service = () => {
                         </div>
                         <div className="card-body pb-0">
 
-                
+
                           <div className="row">
                             <div className="col-md-6">
-                              <b>Price</b>:   <IndianRupee style={{ width: '15px', margin: '0' }} /> {(plan?.price).toFixed(2)}
+                              <b>Price</b>:   <IndianRupee style={{ width: '15px', margin: '0' }} /> {(plan?.price)?.toFixed(2)}
 
 
                             </div>
@@ -470,10 +473,18 @@ const Service = () => {
             <>
 
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5> {selectedPlanDetails?.title} Plan</h5>
+                <h5>
+                  {
+                    plan.find((item) =>
+                      item.plans?.some((subPlan) => subPlan._id === selectedPlanDetails?._id)
+                    )?.title || "No Plan Found"
+                  }
+                </h5>
+
+
                 <span className="text-success fw-bold">
                   <IndianRupee style={{ width: '15%;' }} />{" "}
-                  {(selectedPlanDetails?.price).toFixed(2) || "N/A"}
+                  {(selectedPlanDetails?.price)?.toFixed(2) || "N/A"}
                 </span>
               </div>
 
@@ -668,7 +679,7 @@ const Service = () => {
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <b> Original Price:</b>
                   <span className="text-primary fw-bold">
-                    <IndianRupee style={{ width: '15%;' }} /> {(selectedPlanDetails?.price).toFixed(2)}
+                    <IndianRupee style={{ width: '15%;' }} /> {(selectedPlanDetails?.price)?.toFixed(2)}
                   </span>
                 </div>
                 {gstStatus == 1 && (
@@ -685,7 +696,7 @@ const Service = () => {
                   <div className="d-flex justify-content-between align-items-center text-danger mb-2">
                     <b> Coupon Discount:</b>
                     <span className="fw-bold">
-                      - <IndianRupee style={{ width: '15%;' }} /> {(appliedCoupon?.value).toFixed(2)}
+                      - <IndianRupee style={{ width: '15%;' }} /> {(appliedCoupon?.value)?.toFixed(2)}
                     </span>
                   </div>
                 )}
@@ -701,7 +712,7 @@ const Service = () => {
                       selectedPlanDetails?.price -
                       (appliedCoupon ? discountedPrice || 0 : 0) +
                       (gstStatus === 1 ? ((selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0)) * gstdata) / 100 : 0)
-                    ).toFixed(2)}
+                    )?.toFixed(2)}
 
 
 
