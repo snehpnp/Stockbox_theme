@@ -66,6 +66,9 @@ const EditClient = () => {
     if (!values.state) {
       errors.state = "Please Select State";
     }
+    if (!values.city) {
+      errors.city = "Please Select City";
+    }
 
     return errors;
   };
@@ -179,6 +182,7 @@ const EditClient = () => {
       label_size: 12,
       col_size: 3,
       disable: false,
+      star: true
 
     },
 

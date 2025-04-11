@@ -47,6 +47,9 @@ const AddUser = () => {
     if (!values.state) {
       errors.state = "Please Select State";
     }
+    if (!values.city) {
+      errors.city = "Please Select City";
+    }
 
     return errors;
   };
@@ -175,6 +178,7 @@ const AddUser = () => {
       label_size: 12,
       col_size: 6,
       disable: false,
+      star: true
 
     },
   ];
