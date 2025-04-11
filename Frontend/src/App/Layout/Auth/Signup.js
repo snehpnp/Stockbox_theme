@@ -3,12 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { UserSignupApi, UserOtpSubmit } from "../../Services/Auth/Login";
 import { image_baseurl } from "../../../Utils/config";
 import { Link } from "react-router-dom";
-import { basicsettinglist } from "../../Services/Admin/Admin";
+import { basicsettinglist, GetAllStates, GetAllCities } from "../../Services/Admin/Admin";
 import BgImg from "./bg-login-img.png";
 import ReusableModal from "../../components/Models/ReusableModal";
 import showCustomAlert from "../../Extracomponents/CustomAlert/CustomAlert";
 
+
+
+
 const UserSignup = () => {
+
+
+  const token = localStorage.getItem("token");
+
+
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
@@ -17,8 +25,8 @@ const UserSignup = () => {
     referralCode: "",
     password: "",
     state: "",
+    city: "",
   });
-
 
   const [otpInfo, setOtpInfo] = useState({
     "status": "",
@@ -28,36 +36,6 @@ const UserSignup = () => {
     "message": "",
   })
 
-  const indianStates = [
-    { name: "Andhra Pradesh" },
-    { name: "Arunachal Pradesh" },
-    { name: "Assam" },
-    { name: "Bihar" },
-    { name: "Chhattisgarh" },
-    { name: "Goa" },
-    { name: "Gujarat" },
-    { name: "Haryana" },
-    { name: "Himachal Pradesh" },
-    { name: "Jharkhand" },
-    { name: "Karnataka" },
-    { name: "Kerala" },
-    { name: "Madhya Pradesh" },
-    { name: "Maharashtra" },
-    { name: "Manipur" },
-    { name: "Meghalaya" },
-    { name: "Mizoram" },
-    { name: "Nagaland" },
-    { name: "Odisha" },
-    { name: "Punjab" },
-    { name: "Rajasthan" },
-    { name: "Sikkim" },
-    { name: "Tamil Nadu" },
-    { name: "Telangana" },
-    { name: "Tripura" },
-    { name: "Uttar Pradesh" },
-    { name: "Uttarakhand" },
-    { name: "West Bengal" }
-  ];
 
 
 
@@ -70,6 +48,12 @@ const UserSignup = () => {
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
 
   const [isReferralEnabled, setIsReferralEnabled] = useState(false);
+
+
+  const [state, setState] = useState([])
+  const [city, setCity] = useState([])
+
+
 
   const togglePasswordVisibility = (e) => {
     e.preventDefault();
@@ -89,7 +73,7 @@ const UserSignup = () => {
     switch (name) {
       case "email":
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          errorMsg = "Please enter a valid email address";
+          errorMsg = "Invalid email format";
         }
         break;
       case "phone":
@@ -106,13 +90,18 @@ const UserSignup = () => {
         }
         break;
       case "fullName":
-        if (value.trim() === "") {
+        if (value?.trim() === "") {
           errorMsg = "Full Name is required";
         }
         break;
       case "state":
-        if (value.trim() === "") {
+        if (value?.trim() === "") {
           errorMsg = "State is required";
+        }
+        break;
+      case "city":
+        if (value?.trim() === "") {
+          errorMsg = "City is required";
         }
         break;
       default:
@@ -124,44 +113,36 @@ const UserSignup = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    const { fullName, email, phone, referralCode, password, state } = formData;
-
-    // Validate all fields before submitting
+    const { fullName, email, phone, referralCode, password, state, city } = formData;
     validateField("fullName", fullName);
     validateField("email", email);
     validateField("phone", phone);
     validateField("password", password);
     validateField("state", state);
+    validateField("city", city);
 
-    // Check if there are any errors
     if (Object.values(errors).some((err) => err)) {
       showCustomAlert("error", "Please correct the errors before submitting")
       return;
     }
 
-    // console.log("handleSignup k aage aaya",password)
 
-    try {
+    const ResData = await UserSignupApi({
+      FullName: fullName,
+      Email: email,
+      PhoneNo: phone,
+      password,
+      state: state,
+      city: city,
+      token: referralCode,
+    });
 
-      const ResData = await UserSignupApi({
-        FullName: fullName,
-        Email: email,
-        PhoneNo: phone,
-        password,
-        state: state,
-        token: referralCode,
-      });
-
-      if (ResData.status) {
-        showCustomAlert("Success", ResData.message)
-        setIsOtpModalOpen(true)
-        setOtpInfo(ResData)
-      } else {
-        showCustomAlert("error", ResData.message);
-      }
-    } catch (error) {
-      // console.log("Signup error:", error.response.data.message);
-      showCustomAlert("error", error.response.data.message);
+    if (ResData.status) {
+      showCustomAlert("Success", ResData.message)
+      setIsOtpModalOpen(true)
+      setOtpInfo(ResData)
+    } else {
+      showCustomAlert("error", ResData.message);
     }
   };
 
@@ -192,24 +173,59 @@ const UserSignup = () => {
 
 
 
-  useEffect(() => {
-    const getSettingList = async () => {
-      try {
-        let token = "";
-        const response = await basicsettinglist(token);
-        if (response.status) {
-          localStorage.setItem("theme", JSON.stringify(response?.Theme));
-          setInformation(response.data);
-        }
-      } catch (error) {
-        console.log("error", error);
+  const getStatedata = async () => {
+    try {
+      const response = await GetAllStates(token);
+      if (response) {
+        setState(response);
+
       }
-    };
+    } catch (error) {
+      console.log("error");
+    }
+  }
+
+
+
+  const getCitydata = async () => {
+    try {
+      const response = await GetAllCities(formData.state, token);
+      if (response) {
+        setCity(response);
+
+      }
+    } catch (error) {
+      console.error("Error fetching cities:", error);
+    }
+  };
+
+
+  const getSettingList = async () => {
+    try {
+
+      const response = await basicsettinglist(token);
+      if (response.status) {
+        localStorage.setItem("theme", JSON.stringify(response?.Theme));
+        setInformation(response.data);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  useEffect(() => {
+    if (formData.state) {
+      getCitydata()
+    }
+  }, [formData.state])
+
+  useEffect(() => {
     getSettingList();
+    getStatedata()
   }, []);
 
   return (
-    <div className="main-login" style={{ backgroundImage: `url(${BgImg})`, overflowY: "auto", }}>
+    <div className="main-login" style={{ backgroundImage: `url(${BgImg})`, overflowY: "scroll" }}>
       <div className="row align-items-center h-100">
         <div className="col-lg-12 mx-auto">
           <div className="bg-login">
@@ -231,9 +247,10 @@ const UserSignup = () => {
                             {[
                               { label: "Full Name", name: "fullName", type: "text" },
                               { label: "Email", name: "email", type: "text" },
-                              { label: "Phone", name: "phone", type: "text", maxLength: 10 },
+                              { label: "Phone", name: "phone", type: "text" },
+                              { label: "State", name: "state", type: "select" },
+                              { label: "City", name: "city", type: "select" },
                               { label: "Password", name: "password", type: "password" },
-                              { label: "State", name: "state", type: "select" }, // ✅ State added inside map
                             ].map((field) => (
                               <div className="col-12 mb-3" key={field.name}>
                                 <label className="form-label">{field.label}</label>
@@ -264,12 +281,27 @@ const UserSignup = () => {
                                     onChange={handleChange}
                                   >
                                     <option value="">Select State</option>
-                                    {indianStates.map((state, index) => (
+                                    {state?.map((state, index) => (
                                       <option key={index} value={state.name}>
                                         {state.name}
                                       </option>
                                     ))}
                                   </select>
+                                ) : field.name === "city" ? (
+                                  <select
+                                    className={`form-control ${errors.city ? "is-invalid" : ""}`}
+                                    name="city"
+                                    value={formData.city}
+                                    onChange={handleChange}
+                                  >
+                                    <option value="">Select City</option>
+                                    {city?.map((city, index) => (
+                                      <option key={index} value={city.city}>
+                                        {city.city}
+                                      </option>
+                                    ))}
+                                  </select>
+
                                 ) : (
                                   <input
                                     type={field.type}
@@ -285,7 +317,7 @@ const UserSignup = () => {
                               </div>
                             ))}
 
-                            {/* ✅ Referral Code Checkbox */}
+
                             <div className="col-12 mb-3">
                               <div className="form-check">
                                 <input
@@ -301,7 +333,7 @@ const UserSignup = () => {
                               </div>
                             </div>
 
-                            {/* ✅ Referral Code Field (Only shows when checkbox is checked) */}
+
                             {isReferralEnabled && (
                               <div className="col-12 mb-3">
                                 <label className="form-label">Referral Code</label>
@@ -312,7 +344,6 @@ const UserSignup = () => {
                                   value={formData.referralCode}
                                   onChange={handleChange}
                                   placeholder="Enter Referral Code"
-                                  required
                                 />
                               </div>
                             )}
@@ -345,6 +376,10 @@ const UserSignup = () => {
           </div>
         </div>
       </div>
+
+
+
+
       {isOtpModalOpen && (
         <ReusableModal
           show={isOtpModalOpen}
@@ -361,7 +396,7 @@ const UserSignup = () => {
                     id="otp"
                     className="form-control"
                     value={enteredOtp}
-                    onChange={(e) => setEnteredOtp(e.target.value)} // ✅ Store user OTP
+                    onChange={(e) => setEnteredOtp(e.target.value)}
                   />
                 </div>
               </div>
@@ -379,7 +414,7 @@ const UserSignup = () => {
               <button
                 type="button"
                 className="btn btn-primary"
-                onClick={handleOtpSubmit} // ✅ Direct function reference diya hai
+                onClick={handleOtpSubmit}
               >
                 Submit
               </button>

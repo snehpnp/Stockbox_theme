@@ -216,7 +216,7 @@ const AddUser = () => {
       const response = await GetAllCities(formik.values.state, token);
       if (response) {
         setCity(response);
-        console.log("City Response:", response);
+
       }
     } catch (error) {
       console.error("Error fetching cities:", error);
