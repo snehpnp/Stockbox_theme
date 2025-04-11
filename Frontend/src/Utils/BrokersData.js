@@ -298,11 +298,11 @@ function BrokersData({ data, closeModal, type }) {
                                         Watch Tutorial
                                       </a>
                                     </div>
-                                    <div className="timeline-images" style={{ margin: "0", padding: "0" }}>
-                                      <img src={item.img1} alt="Angel Step 1" style={{ width: "600px", height: "80px" }} />
-                                      <img src={item.img2} alt="Angel Step 2" style={{ width: "600px", height: "150px" }} />
-                                      {/* <img src={item.img3} alt="Angel Step 3" style={{ width: "600px", height: "80px" }} /> */}
-                                    </div>
+                                    {/* <div className="timeline-images" style={{ margin: "0", padding: "0" }}> */}
+                                    {/* <img src={item.img1} alt="Angel Step 1" style={{ width: "600px", height: "80px" }} /> */}
+                                    {/* <img src={item.img2} alt="Angel Step 2" style={{ width: "600px", height: "150px" }} /> */}
+                                    {/* <img src={item.img3} alt="Angel Step 3" style={{ width: "600px", height: "80px" }} /> */}
+                                    {/* </div> */}
                                   </div>
                                 ))}
                               </div>
