@@ -60,6 +60,7 @@ class BasicSetting {
           state,
           invoicetnc,
           refersendmsg,
+          saccode,
 
         } = req.body;
 
@@ -133,6 +134,7 @@ class BasicSetting {
           state,
           invoicetnc,
           refersendmsg,
+          saccode,
         };
 
         const options = {

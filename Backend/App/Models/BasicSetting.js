@@ -271,6 +271,11 @@ const BasicSettingSchema = new Schema({
         trim: true,
         default: null
     },
+    saccode: {
+        type: String,
+        trim: true,
+        default: null
+    },
     invoice: {
         type: String,
         trim: true,

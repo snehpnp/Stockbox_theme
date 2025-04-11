@@ -341,28 +341,13 @@ const Closesignal = () => {
             : row.segment === "O"
               ? "OPTION"
               : "FUTURE";
-    
-        return (
-          <div>
-            {segmentLabel}
-            {row?.close_description && (
-              <span style={{ color: "red", marginLeft: "5px" }}>
-                (Avoid)
-                <Eye
-                  style={{ cursor: "pointer", marginLeft: "5px" }}
-                  onClick={() => {
-                    setShowModal(true);
-                    setDescription(row?.close_description);
-                  }}
-                />
-              </span>
-            )}
-          </div>
-        );
+        return row.closeprice == 0
+          ? <div>{segmentLabel}<span style={{ color: "red" }}> (Avoid)<Eye onClick={() => { setShowModal(true); setDescription(row?.close_description) }} /></span></div>
+          : segmentLabel;
       },
       sortable: true,
       width: "200px",
-    },    
+    },
     {
       name: "Symbol",
       selector: (row) => row.tradesymbol,
@@ -398,7 +383,7 @@ const Closesignal = () => {
       name: "Exit Price",
       selector: (row) => (
         <div>
-          {row?.close_description ? (
+          {row?.closeprice == 0 ? (
             "N/A"
           ) : (
             <>
@@ -414,7 +399,7 @@ const Closesignal = () => {
     {
       name: "Total P&L",
       cell: (row) => {
-        if (row.close_description) {
+        if (row?.closeprice == 0) {
           return "N/A";
         }
         let totalPL = 0;

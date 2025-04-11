@@ -721,8 +721,8 @@ if (settings.gst > 0 && settings.gststatus==1) {
          }
          else {
  
-           const senderamount = (price * settings.sender_earn) / 100;
-           const receiveramount = (price * settings.receiver_earn) / 100;
+           const senderamount = (plan.price * settings.sender_earn) / 100;
+           const receiveramount = (plan.price * settings.receiver_earn) / 100;
  
            const results = new Refer_Modal({
              token: client.token,
@@ -752,8 +752,8 @@ if (settings.gst > 0 && settings.gststatus==1) {
  
        if (refertokens.length > 0) {
          for (const refertoken of refertokens) {
-           const senderamount = (price * refertoken.senderearn) / 100;
-           const receiveramount = (price * refertoken.receiverearn) / 100;
+           const senderamount = (plan.price * refertoken.senderearn) / 100;
+           const receiveramount = (plan.price * refertoken.receiverearn) / 100;
  
            refertoken.senderamount = senderamount;
            refertoken.receiveramount = receiveramount;
@@ -1527,8 +1527,8 @@ const orderNumber = `${invoicePrefix}${formattedNumber}`;
          }
          else {
  
-           const senderamount = (price * settings.sender_earn) / 100;
-           const receiveramount = (price * settings.receiver_earn) / 100;
+           const senderamount = (plan.price * settings.sender_earn) / 100;
+           const receiveramount = (plan.price * settings.receiver_earn) / 100;
  
            const results = new Refer_Modal({
              token: client.token,
@@ -1558,8 +1558,8 @@ const orderNumber = `${invoicePrefix}${formattedNumber}`;
  
        if (refertokens.length > 0) {
          for (const refertoken of refertokens) {
-           const senderamount = (price * refertoken.senderearn) / 100;
-           const receiveramount = (price * refertoken.receiverearn) / 100;
+           const senderamount = (plan.price * refertoken.senderearn) / 100;
+           const receiveramount = (plan.price * refertoken.receiverearn) / 100;
  
            refertoken.senderamount = senderamount;
            refertoken.receiveramount = receiveramount;

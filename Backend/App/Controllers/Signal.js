@@ -1407,7 +1407,12 @@ async getPlansByService(req, res) {
       serviceIdString = "66d2c3bebf7e6dc53ed07626";
     } else if (serviceId == "O") {
       serviceIdString = "66dfeef84a88602fbbca9b79";
-    } else {
+    } else if (serviceId == "OS") {
+      serviceIdString = "67e12758a0a2be895da19550";
+    } else if (serviceId == "FS") {
+      serviceIdString = "67e1279ba0a2be895da19551";
+    } 
+    else {
       serviceIdString = "66dfede64a88602fbbca9b72";
     }
 
@@ -2285,7 +2290,6 @@ return res.status(404).json({
 async getSignalsListWithFilte(req, res) {
   try {
     let { from, to, service, stock, closestatus, search, add_by, page = 1, limit = 10 } = req.body;
-
     // ✅ Convert Page & Limit to Integers
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
@@ -2340,14 +2344,17 @@ async getSignalsListWithFilte(req, res) {
       .sort(sortCriteria)
       .populate({ path: "stock", select: "title" })
       .populate({ path: "service", select: "title" })
+      .populate({ path: "planid", select: "name" }) // <-- This line adds the plan name
       .lean();
+
+
 
     // ✅ Extract Signal IDs for Bulk Stock Query
     const signalIds = signals.map(signal => signal._id);
 
     // ✅ Fetch Stock Data in Bulk
     const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
-      .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price")
+      .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price lot lotsize")
       .lean();
 
     // ✅ Map Stocks to Signals
@@ -2361,11 +2368,27 @@ async getSignalsListWithFilte(req, res) {
     const protocol = req.protocol;
     const baseUrl = `${protocol}://${req.headers.host}`;
     // ✅ Attach Stocks to Signals
+
+
+
+
+    const planIds = [...new Set(signals.map(item => item.planid).filter(id => id))];
+
+    // Fetch plan category titles for these planIds
+    const planCategories = await Plancategory_Modal.find({ _id: { $in: planIds } }, { _id: 1, title: 1 });
+    
+    // Convert to a lookup object
+    const planCategoryMap = planCategories.reduce((acc, category) => {
+      acc[category._id.toString()] = category.title;
+      return acc;
+    }, {});
+    
+
     const finalSignals = signals.map(signal => ({
       ...signal,
       stocks: stockMap[signal._id] || [],
-      report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null // Full report URL
-
+      report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
+      plan_category_title: planCategoryMap[signal.planid] || null, 
     }));
 
     // ✅ Total Records for Pagination
@@ -2398,7 +2421,7 @@ async getSignalsListWithFilte(req, res) {
 
 async closeSignals(req, res) {
   try {
-    const { id, closeprice, closestatus, closetype, close_description } = req.body;
+    const { id, closeprice, closestatus, closetype, close_description, mtype } = req.body;
 
     if (!id) {
       return res.status(400).json({ status: false, message: "Signal ID is required" });
@@ -2442,7 +2465,8 @@ async closeSignals(req, res) {
         closeprice: finalClosePrice,
         close_status,
         close_description,
-        closedate
+        closedate,
+        mtype
       },
       { new: true, runValidators: true }
     );
@@ -2555,6 +2579,73 @@ async updateReports(req, res) {
       });
   }
 }
+
+
+
+async detailSignals(req, res) {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        status: false,
+        message: "Signal ID is required",
+      });
+    }
+
+    // Fetch the signal by ID and populate related fields
+    const signal = await Signalsdata_Modal.findById(id)
+      .populate({ path: "stock", select: "title" })
+      .populate({ path: "service", select: "title" })
+      .populate({ path: "planid", select: "name" }) // Assuming "name" in Plan model
+      .lean();
+
+    if (!signal) {
+      return res.status(404).json({
+        status: false,
+        message: "Signal not found",
+      });
+    }
+    const protocol = req.protocol;
+    const baseUrl = `${protocol}://${req.headers.host}`;
+
+    // Fetch related stock details for this signal
+    const stockDetails = await Signalstock_Modal.find({ signal_id: signal._id })
+      .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price lot lotsize")
+      .lean();
+
+    // Fetch plan category title
+    let plan_category_title = null;
+    if (signal.planid) {
+      const planCategory = await Plancategory_Modal.findById(signal.planid).select("title");
+      if (planCategory) {
+        plan_category_title = planCategory.title;
+      }
+    }
+
+    // Build final response object
+    const enrichedSignal = {
+      ...signal,
+      stocks: stockDetails || [],
+      report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
+      plan_category_title: plan_category_title,
+    };
+
+    return res.json({
+      status: true,
+      message: "Signal details fetched successfully",
+      data: enrichedSignal,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "Server error",
+      data: [],
+    });
+  }
+}
+
 
 
 

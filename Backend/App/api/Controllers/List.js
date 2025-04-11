@@ -788,8 +788,8 @@ class List {
         }
         else {
 
-          const senderamount = (price * settings.sender_earn) / 100;
-          const receiveramount = (price * settings.receiver_earn) / 100;
+          const senderamount = (plan.price * settings.sender_earn) / 100;
+          const receiveramount = (plan.price * settings.receiver_earn) / 100;
 
           const results = new Refer_Modal({
             token: client.token,
@@ -819,8 +819,8 @@ class List {
 
       if (refertokens.length > 0) {
         for (const refertoken of refertokens) {
-          const senderamount = (price * refertoken.senderearn) / 100;
-          const receiveramount = (price * refertoken.receiverearn) / 100;
+          const senderamount = (plan.price * refertoken.senderearn) / 100;
+          const receiveramount = (plan.price * refertoken.receiverearn) / 100;
 
           refertoken.senderamount = senderamount;
           refertoken.receiveramount = receiveramount;
@@ -899,14 +899,20 @@ class List {
 
 
 
-        let sgst = 0, cgst = 0, igst = 0;
+        let sgst = 0, cgst = 0, igst = 0, pergstsc = 0, pergstt = 0;
 
 if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() ==="") {
     sgst = totalgst / 2;
     cgst = totalgst / 2;
+    pergstsc = settings.gst/ 2;
 } else {
     igst = totalgst;
+    pergstt = settings.gst;
 }
+
+console.log("pergstsc",pergstsc);
+console.log("pergstt",pergstt);
+
 const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
 const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
 
@@ -941,6 +947,11 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
           .replace(/{{igst}}/g, igst.toFixed(2))
           .replace(/{{logo}}/g, logo)
           .replace(/{{simage}}/g, simage)
+          .replace(/{{pergstsc}}/g, pergstsc)
+          .replace(/{{pergstt}}/g, pergstt)
+          .replace(/{{saccode}}/g, settings.saccode)
+          .replace(/{{bstate}}/g, settings.state)
+          .replace(/{{panno}}/g, client.panno)
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
 
@@ -5844,7 +5855,9 @@ end.setHours(23, 59, 59, 999);
       const settings = await BasicSetting_Modal.findOne();
 
      let sno=0;
+     let planprice =0;
       for (const plan_id of plan_ids) {
+
        sno++;
       // orderNumber = `${orderNumbers}-${sno}`;
       const invoicePrefix = settings.invoice;
@@ -6239,7 +6252,7 @@ await sendEmail(mailOptions);
 
 }
 
-
+      planprice = planprice+plan.price;
 
     }
 
@@ -6287,8 +6300,8 @@ await sendEmail(mailOptions);
         }
         else {
 
-          const senderamount = (price * settings.sender_earn) / 100;
-          const receiveramount = (price * settings.receiver_earn) / 100;
+          const senderamount = (planprice * settings.sender_earn) / 100;
+          const receiveramount = (planprice * settings.receiver_earn) / 100;
 
           const results = new Refer_Modal({
             token: client.token,
@@ -6318,8 +6331,8 @@ await sendEmail(mailOptions);
 
       if (refertokens.length > 0) {
         for (const refertoken of refertokens) {
-          const senderamount = (price * refertoken.senderearn) / 100;
-          const receiveramount = (price * refertoken.receiverearn) / 100;
+          const senderamount = (planprice * refertoken.senderearn) / 100;
+          const receiveramount = (planprice * refertoken.receiverearn) / 100;
 
           refertoken.senderamount = senderamount;
           refertoken.receiveramount = receiveramount;
@@ -8530,7 +8543,7 @@ async SignalClientWithPlanStrategy(req, res) {
       const signalIds = lastFiveSignals.map(signal => signal._id);
 
       const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
-        .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price")
+        .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price lot lotsize")
         .lean();
 
       const stockMap = {};
@@ -8602,7 +8615,7 @@ async SignalClientWithPlanStrategy(req, res) {
 
     // 🔹 Fetch Stock Data for Existing Signals
     const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
-      .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price")
+      .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price lot lotsize")
       .lean();
 
     // 🔹 Map Stock Details to Signals
@@ -8687,6 +8700,7 @@ async SignalClientWithPlanCloseStrategy(req, res) {
       .sort({ closedate: -1 })
       .populate({ path: "stock", select: "title" })
       .populate({ path: "service", select: "title" })
+      .populate({ path: "planid", select: "name" }) // <-- This line adds the plan name
       .lean();
 
     // 🔹 Extract Signal IDs for Stock Data
@@ -8694,7 +8708,7 @@ async SignalClientWithPlanCloseStrategy(req, res) {
 
     // 🔹 Fetch Stock Data for Existing Signals
     const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
-      .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price")
+      .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price lot lotsize")
       .lean();
 
     // 🔹 Map Stock Details to Signals

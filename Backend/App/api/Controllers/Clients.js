@@ -27,7 +27,7 @@ class Clients {
     try {
 
 
-      const { FullName, Email, PhoneNo, password, token, state } = req.body;
+      const { FullName, Email, PhoneNo, password, token, state, city } = req.body;
 
       if (!FullName) {
         return res.status(400).json({ status: false, message: "Please enter fullname" });
@@ -59,6 +59,10 @@ class Clients {
       
       if (!state) {
         return res.status(400).json({ status: false, message: "Please select state" });
+      }
+
+      if (!city) {
+        return res.status(400).json({ status: false, message: "Please select city" });
       }
 
       if (token) {
@@ -121,6 +125,7 @@ class Clients {
         token: refer_tokens,
         refer_status: token ? (settings.refer_status || 0) : 0,
         state,
+        city,
         del: 0,
       });
 

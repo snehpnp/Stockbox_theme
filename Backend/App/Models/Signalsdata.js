@@ -76,6 +76,10 @@ const signalsdataModel = Schema({
         trim: true,
         default: 0
     },
+    mtype: {
+        type: Number,
+        default: 0
+    },
     del: {
         type: Number,
         enum: [1, 0],

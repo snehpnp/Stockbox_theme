@@ -31,6 +31,9 @@ const Privacy = () => {
     fetchPrivacyPolicy();
   }, []);
 
+
+  
+
   return (
     <div>
       <Content

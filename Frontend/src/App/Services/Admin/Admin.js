@@ -1873,6 +1873,7 @@ export async function Updatebasicsettings(data, token) {
     formData.append('gstin', data.gstin);
     formData.append('state', data.state);
     formData.append('invoicetnc', data.invoicetnc);
+    formData.append('saccode', data.saccode);
 
 
 
@@ -2925,6 +2926,27 @@ export async function getPlanbyUser(_id, token) {
 }
 
 
+// get basket list by id 
+
+export async function BasketListbyUser(_id, token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}basket/activebasketlistbyclient/${_id}`, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
 // get client export file 
 
 export async function getclientExportfile(data, token) {
@@ -3418,3 +3440,48 @@ export async function GetPlanexpiryCount(data, token) {
         return err;
     }
 }
+
+
+// get all states
+
+export async function GetAllStates(token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/getstates`, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+                "Content-Type": "application/json"
+            },
+        });
+
+        return res?.data;
+
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+// get all cities
+
+export async function GetAllCities(data, token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/getcitybystates/${data}`, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+                "Content-Type": "application/json"
+            },
+        });
+
+        return res?.data;
+
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+

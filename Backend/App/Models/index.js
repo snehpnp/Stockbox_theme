@@ -7,7 +7,8 @@ const db_GET_VIEW = client.db(process.env.DB_NAME);
 
 const open_position = db_GET_VIEW.collection('open_position');
 const open_position_excute = db_GET_VIEW.collection('open_position_excute');
-
+const States = db_GET_VIEW.collection('states');
+const City = db_GET_VIEW.collection('cities');
 
 
 module.exports = {
@@ -59,14 +60,8 @@ module.exports = {
 
     open_position:open_position,
     open_position_excute:open_position_excute,
-
-
-
-
-
-
-
-
+    States:States,
+    City:City,
 
 
 }

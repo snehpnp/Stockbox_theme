@@ -19,11 +19,12 @@ import {
   fDateTimeH,
   fDateTimeSuffix,
 } from "../../../../Utils/Date_formate";
-import { RefreshCcw, IndianRupee, ArrowDownToLine } from "lucide-react";
+import { RefreshCcw, Eye, IndianRupee, ArrowDownToLine } from "lucide-react";
 import { exportToCSV } from "../../../../Utils/ExportData";
 import Select from "react-select";
 import Content from "../../../components/Contents/Content";
 import { image_baseurl } from "../../../../Utils/config";
+import ReusableModal from "../../../components/Models/ReusableModal";
 
 const Viewclientdetail = () => {
 
@@ -47,6 +48,8 @@ const Viewclientdetail = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
 
+  const [showModal, setShowModal] = useState(false);
+  const [description, setDescription] = useState([])
 
 
 
@@ -350,10 +353,19 @@ const Viewclientdetail = () => {
     },
     {
       name: "Segment",
-      selector: (row) =>
-        row.segment == "C" ? "CASH" : row.segment == "O" ? "OPTION" : "FUTURE",
+      selector: (row) => {
+        const segmentLabel =
+          row.segment === "C"
+            ? "CASH"
+            : row.segment === "O"
+              ? "OPTION"
+              : "FUTURE";
+        return row.closeprice == 0
+          ? <div>{segmentLabel}<span style={{ color: "red" }}> (Avoid)<Eye onClick={() => { setShowModal(true); setDescription(row?.close_description) }} /></span></div>
+          : segmentLabel;
+      },
       sortable: true,
-      width: "132px",
+      width: "200px",
     },
 
     {
@@ -389,13 +401,21 @@ const Viewclientdetail = () => {
 
     {
       name: "Exit Price",
-      selector: (row) =>
-        <>
-          <IndianRupee /> {row.closeprice ? (row.closeprice).toFixed(2)  : "-"}
-        </>,
+      selector: (row) => (
+        <div>
+          {row?.closeprice == 0 ? (
+            "N/A"
+          ) : (
+            <>
+              <IndianRupee />
+              {row.closeprice}
+            </>
+          )}
+        </div>
+      ),
       sortable: true,
-      width: "150px",
-    }, ,
+      width: "132px",
+    },
     {
       name: "Entry Date",
       selector: (row) => fDateTimeH(row?.created_at),
@@ -598,6 +618,12 @@ const Viewclientdetail = () => {
           </div>
         </div>
       </Content>
+      <ReusableModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        title="Description"
+        body={<p>{description || "No description available."}</p>}
+      />
     </div>
   );
 };

@@ -1809,4 +1809,18 @@ ul.mb-3.border-tab.nav.nav-tabs {
   border-radius: 5px;
   cursor: pointer;
 }
-
+.service-card .card-header {
+  background-color: var(
+    --BtnPriBgCol,
+    black) !important;
+    color: var(--BtnPriTxtCol, #fff) !important; 
+    border-color: var(
+      --BtnBorderColor,
+      black
+    ) !important; 
+}
+span.price-original {
+  border: 1px solid;
+  border-radius: 5px;
+  padding: 1px 10px;
+}

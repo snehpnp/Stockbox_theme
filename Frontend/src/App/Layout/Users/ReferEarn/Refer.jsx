@@ -47,7 +47,6 @@ const Refer = () => {
     try {
       const data = { id: userid }
       const response = await ReferAndEarnData(data, token);
-      console.log("ReferAndEarnData", response);
 
       if (response.status) {
         setReferData(response.data)
