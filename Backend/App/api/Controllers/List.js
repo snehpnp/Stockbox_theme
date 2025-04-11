@@ -36,6 +36,8 @@ const Stockrating_Modal = db.Stockrating;
 const Basketghaphdata_Modal = db.Basketgraphdata;
 const Signalsdata_Modal = db.Signalsdata;
 const Signalstock_Modal = db.Signalstock;
+const States = db.States;
+const City = db.City;
 
 const { sendEmail } = require('../../Utils/emailService');
 const puppeteer = require('puppeteer');
@@ -8628,12 +8630,26 @@ async SignalClientWithPlanStrategy(req, res) {
     });
 
     // 🔹 Attach Stock Details to Signals
-    const finalSignals = signals.map(signal => ({
-      ...signal,
-      stockDetails: stockMap[signal._id] || [],
-      report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null // Full report URL
-    }));
+    // const finalSignals = signals.map(signal => ({
+    //   ...signal,
+    //   stockDetails: stockMap[signal._id] || [],
+    //   report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null // Full report URL
+    // }));
 
+
+    const finalSignals = await Promise.all(signals.map(async (signal) => {
+      const order = await Order_Modal.findOne({
+        clientid: client_id,
+        signalid: signal._id
+      }).lean();
+    
+      return {
+        ...signal,
+        stockDetails: stockMap[signal._id] || [],
+        report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
+        isPurchased: !!order // ✅ true if purchased, false if not
+      };
+    }));
     // 🔹 Return Response with Pagination
     return res.json({
       status: true,
@@ -8721,10 +8737,20 @@ async SignalClientWithPlanCloseStrategy(req, res) {
     });
 
     // 🔹 Attach Stock Details to Signals
-    const finalSignals = signals.map(signal => ({
-      ...signal,
-      stockDetails: stockMap[signal._id] || [],
-      report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null // Full report URL
+ 
+
+    const finalSignals = await Promise.all(signals.map(async (signal) => {
+      const order = await Order_Modal.findOne({
+        clientid: client_id,
+        signalid: signal._id
+      }).lean();
+    
+      return {
+        ...signal,
+        stockDetails: stockMap[signal._id] || [],
+        report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
+        isPurchased: !!order // ✅ true if purchased, false if not
+      };
     }));
 
     // 🔹 Return Response with Pagination
@@ -8746,6 +8772,28 @@ async SignalClientWithPlanCloseStrategy(req, res) {
   }
 }
 
+
+async  getAllStates(req, res) {
+  try {
+      const states = await States.find({}).toArray(); // MongoDB native driver ka use ho raha hai
+      res.status(200).json(states);
+  } catch (error) {
+      console.error("Error fetching states:", error);
+      res.status(500).json({ error: "Something went wrong" });
+  }
+}
+
+async getCityByStates(req, res) {
+  try {
+    const stateName = decodeURIComponent(req.params.stateName); // "Madhya Pradesh"
+    
+    const cities = await City.find({ state: stateName }).toArray(); // nativ
+    res.status(200).json(cities);
+  } catch (error) {
+    console.error("Error fetching cities:", error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+}
 
 
 
