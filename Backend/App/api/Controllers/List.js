@@ -1,5 +1,7 @@
 const db = require("../../Models");
 var axios = require('axios');
+const { toWords } = require('number-to-words');
+
 
 const BasicSetting_Modal = db.BasicSetting;
 const Banner_Modal = db.Banner;
@@ -954,6 +956,7 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
           .replace(/{{saccode}}/g, settings.saccode)
           .replace(/{{bstate}}/g, settings.state)
           .replace(/{{panno}}/g, client.panno)
+          .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total))
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
 
@@ -8797,6 +8800,19 @@ async getCityByStates(req, res) {
 
 
 
+}
+
+function convertAmountToWords(amount) {
+  const [whole, fraction] = amount.toString().split('.');
+
+  let words = toWords(parseInt(whole));
+  words = words.charAt(0).toUpperCase() + words.slice(1);
+
+  if (fraction && parseInt(fraction) > 0) {
+    words += ` and ${toWords(parseInt(fraction))} paise`;
+  }
+
+  return words;
 }
 
 
