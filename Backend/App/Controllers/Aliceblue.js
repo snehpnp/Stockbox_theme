@@ -1242,9 +1242,10 @@ class Aliceblue {
     }
 
     async MultipleplaceOrder(req, res) {
+
         try {
             const { id, signalid, quantity } = req.body;
-    
+
             // ✅ Client Check
             const client = await Clients_Modal.findById(id);
             if (!client) {
@@ -1276,6 +1277,7 @@ class Aliceblue {
     
             // ✅ Loop Through Stocks and Place Orders One by One
             for (let stock of stocks) {
+             
                 let optiontype, exchange, producttype;
     
                 if (stock.segment === "C") {
@@ -1287,7 +1289,8 @@ class Aliceblue {
                 }
     
                 producttype = signal.callduration === "Intraday" ? "MIS" : (stock.segment === "C" ? "CNC" : "NRML");
-    
+               
+
                 // ✅ Fetch Stock Data from DB
                 let stockData;
                 if (stock.segment === "C") {
@@ -1312,14 +1315,21 @@ class Aliceblue {
                         strike: stock.strikeprice
                     });
                 }
-    
+
                 if (!stockData) {
                     failedOrders.push({ stock: stockData.tradesymbol, message: "Stock not found" });
                     continue; // ❌ Skip this stock and move to the next
                 }
-    
+
+
+           
+                
+
+
+                
                 // ✅ Order Object
-                let orderData = {
+                var dataorder = JSON.stringify([
+                    {
                     "complexty": "regular",
                     "discqty": "0",
                     "exch": exchange,
@@ -1333,23 +1343,28 @@ class Aliceblue {
                     "transtype": stock.calltype,
                     "trigPrice": "00.00",
                     "orderTag": "order1"
-                };
-    
-                // ✅ API Request Configuration
-                let config = {
-                    method: 'post',
-                    maxBodyLength: Infinity,
-                    url: 'https://ant.aliceblueonline.com/rest/AliceBlueAPIService/api/placeOrder/executePlaceOrder',
-                    headers: {
-                        'Authorization': `Bearer ${userId} ${authToken}`,
-                        'Content-Type': 'application/json',
-                    },
-                    data: JSON.stringify(orderData)
-                };
-    
-                // ✅ Place Order API Call
+                }
+            ]);
+
+
+            let config = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: 'https://ant.aliceblueonline.com/rest/AliceBlueAPIService/api/placeOrder/executePlaceOrder',
+                headers: {
+                    'Authorization': 'Bearer ' + userId + ' ' + authToken,
+                    'Content-Type': 'application/json',
+                },
+                data: dataorder
+            };
+
+         
                 try {
                     let response = await axios(config);
+console.log("response",response);
+
+                    console.log('response',response);
+
                     let responseData = response.data;
     
                     // ✅ If Order is Placed Successfully
@@ -1464,7 +1479,6 @@ class Aliceblue {
                         strike: stock.strikeprice
                     });
                 }
-    
                 if (!stockData) {
                     return res.status(404).json({ status: false, message: `Stock not found for ${stockData.tradesymbol}` });
                 }
@@ -1493,8 +1507,14 @@ class Aliceblue {
                 let calltypes = stock.calltype === 'BUY' ? "SELL" : "BUY";
     
                 if (totalValue >= quantity) {
+
+
+                  
+    
+
                     // ✅ Order Object
-                    const orderData = {
+                    var dataorder = JSON.stringify([
+                        {
                         "complexty": "regular",
                         "discqty": "0",
                         "exch": exchange,
@@ -1508,7 +1528,8 @@ class Aliceblue {
                         "transtype": calltypes,
                         "trigPrice": "00.00",
                         "orderTag": "order1"
-                    };
+                    }
+                ]);
     
                     let config = {
                         method: 'post',
@@ -1518,7 +1539,7 @@ class Aliceblue {
                             'Authorization': 'Bearer ' + userId + ' ' + authToken,
                             'Content-Type': 'application/json',
                         },
-                        data: JSON.stringify([orderData]) // Send one order at a time
+                        data: dataorder // Send one order at a time
                     };
     
                     // Place the order and handle the response for each order

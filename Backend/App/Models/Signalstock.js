@@ -54,6 +54,11 @@ const signalstockModel = Schema({
         trim: true,
         default: null
     },
+    expirydate: {
+        type: String,
+        trim: true,
+        default: null
+    },
     lot: {
         type: String,
         default: "0"
