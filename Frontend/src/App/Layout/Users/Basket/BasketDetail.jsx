@@ -10,7 +10,6 @@ const BasketDetail = () => {
 
   const location = useLocation();
   const { item } = location?.state;
-  console.log("item",item);
   
 
 

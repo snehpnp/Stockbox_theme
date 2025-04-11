@@ -31,11 +31,9 @@ const Service = () => {
 
   const [category, setCategory] = useState([]);
   const [plan, setPlan] = useState([]);
-  console.log("plan", plan);
 
   const [showModal, setShowModal] = useState(false);
   const [selectedPlanDetails, setSelectedPlanDetails] = useState(null);
-  console.log("selectedPlanDetails", selectedPlanDetails);
 
 
 

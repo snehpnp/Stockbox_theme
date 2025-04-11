@@ -56,7 +56,6 @@ const Wallet = () => {
   const getPayoutdata = async () => {
     try {
       const response = await GetPayoutDetail(userid, token);
-      console.log("response",response)
       if (response.status) {
         setPayout(response.data);
 
@@ -88,11 +87,10 @@ const Wallet = () => {
       const response = await GetWithdrawRequest(data, token);
 
       if (response.status !==400) {
-        
+
         showCustomAlert("Success", response.data.message || 'Your withdrawal request has been processed successfully.')
         setRequest({ clientId: "", amount: "" });
       } else {
-        console.log("response data for checking 55555");
         showCustomAlert("error", response.response.data.message || 'There was an issue processing your withdrawal request.')
 
       }
