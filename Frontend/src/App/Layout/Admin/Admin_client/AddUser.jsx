@@ -6,7 +6,7 @@ import { AddClient } from '../../../Services/Admin/Admin';
 import { Link } from 'react-router-dom';
 import Content from '../../../components/Contents/Content';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
-
+import { State, City } from "country-state-city";
 
 const AddUser = () => {
 
@@ -17,6 +17,36 @@ const AddUser = () => {
   const token = localStorage.getItem("token");
 
   const [loading, setLoading] = useState(false);
+
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+
+
+
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+
+
+  // console.log("selectedCity", selectedCity)
+  // console.log("cities", cities)
+
+  useEffect(() => {
+    const indianStates = State.getStatesOfCountry("IN");
+    setStates(indianStates);
+  }, []);
+
+
+
+  // useEffect(() => {
+  //   if (selectedState) {
+  //     const cityList = City.getCitiesOfState("IN", selectedState);
+  //     setCities(cityList);
+  //     setSelectedCity("");
+  //   }
+  // }, [selectedState]);
+
+
+
 
 
 
@@ -58,12 +88,7 @@ const AddUser = () => {
 
   const validate = (values) => {
     let errors = {};
-
-    // Full Name validation: Only alphabets and one space between two words allowed
     const fullNameRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)?$/;
-
-    //this is testing comment
-
     if (!values.FullName) {
       errors.FullName = "Please Enter Full Name";
     } else if (!fullNameRegex.test(values.FullName)) {
@@ -99,7 +124,8 @@ const AddUser = () => {
       password: values.password,
       add_by: user_id,
       freetrial: values.freetrial,
-      state: values.state
+      state: values.state,
+      state: values.city
     };
 
 
@@ -129,6 +155,7 @@ const AddUser = () => {
       freetrial: 0,
       add_by: "",
       state: "",
+      city: "",
     },
     validate,
     onSubmit,
@@ -200,7 +227,21 @@ const AddUser = () => {
       col_size: 6,
       disable: false,
       star: true
-    }
+    },
+    // {
+    //   name: "city",
+    //   label: "Select City",
+    //   type: 'select',
+    //   options: cities?.map((item) => ({
+    //     label: item.name,
+    //     value: item.name,
+    //   })),
+    //   label_size: 12,
+    //   col_size: 6,
+    //   disable: false,
+    //   star: true
+    // }
+
   ];
 
 
@@ -219,6 +260,29 @@ const AddUser = () => {
       formik.setFieldValue("freetrial", currentValue);
     }
   };
+
+
+
+
+  // useEffect(() => {
+  //   if (formik.values.state) {
+  //     const cityList = City.getCitiesOfState("IN", formik.values.state);
+  //     console.log("cityList", cityList)
+  //     setCities(cityList);
+  //     setSelectedCity("");
+  //     formik.setFieldValue("city", "");
+  //   }
+  // }, [formik.values.state]);
+
+
+
+  // useEffect(() => {
+  //   if (selectedState) {
+  //     const cityList = City.getCitiesOfState("IN", selectedState);
+  //     setCities(cityList);
+  //     setSelectedCity("");
+  //   }
+  // }, [selectedState]);
 
 
 
