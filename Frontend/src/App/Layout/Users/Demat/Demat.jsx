@@ -263,8 +263,8 @@ const Demat = () => {
                       <img className="img-fluid" src={broker?.img} alt={broker?.name} />
                     </div>
                     <div className="card-content">
-                      <h5 className="mb-3 mt-4">{broker?.name}</h5>
-                      <button className="btn btn-primary" onClick={() => { handleShowModal(broker?.name); setUserDetail(broker?.id) }}>
+                      <h5 className="mb-2 mt-3">{broker?.name}</h5>
+                      <button className="btn btn-sm btn-primary" onClick={() => { handleShowModal(broker?.name); setUserDetail(broker?.id) }}>
 
                         <i className="fa fa-eye"></i>
                         View

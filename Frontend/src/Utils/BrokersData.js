@@ -271,7 +271,28 @@ function BrokersData({ data, closeModal, type }) {
                         }}
 
                       >
-
+{showModal && brokerId && (
+              <div className="modal-body mt-6 w-100">
+                <div>
+                  {fields.map((field, index) => (
+                    <div key={index} className="mb-4">
+                      <label className="block text-sm font-medium mb-2">
+                        {field.label}
+                      </label>
+                      <input
+                        type={field.type || "text"}
+                        className="form-control"
+                        value={statusInfo[field.key] || ""}
+                        onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                      />
+                    </div>
+                  ))}
+                  <button className="btn btn-primary" onClick={handleSave} disabled={loading}>
+                    {loading ? "Saving..." : "Save"}
+                  </button>
+                </div>
+              </div>
+            )}
                         <div
                           className="w-100 card-image mb-3">
 
@@ -320,28 +341,7 @@ function BrokersData({ data, closeModal, type }) {
               </div>
             ) : null}
 
-            {showModal && brokerId && (
-              <div className="modal-body mt-6">
-                <div>
-                  {fields.map((field, index) => (
-                    <div key={index} className="mb-4">
-                      <label className="block text-sm font-medium mb-2">
-                        {field.label}
-                      </label>
-                      <input
-                        type={field.type || "text"}
-                        className="form-control"
-                        value={statusInfo[field.key] || ""}
-                        onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                      />
-                    </div>
-                  ))}
-                  <button className="btn btn-primary" onClick={handleSave} disabled={loading}>
-                    {loading ? "Saving..." : "Save"}
-                  </button>
-                </div>
-              </div>
-            )}
+            
           </>
         }
       />
