@@ -4,6 +4,7 @@ import { UpdateBroker } from "../App/Services/UserService/User";
 import Swal from "sweetalert2";
 import { base_url } from "./config";
 import { brokerContentMap } from "./BrokerApiInfo";
+import { Col } from "react-bootstrap";
 
 function BrokersData({ data, closeModal, type }) {
 
@@ -41,6 +42,7 @@ function BrokersData({ data, closeModal, type }) {
       key: "apikey",
       label: "API Key",
       type: "text"
+      
     }],
     2: [
       {
@@ -230,12 +232,13 @@ function BrokersData({ data, closeModal, type }) {
         show={viewModel}
         onClose={closeModal}
         title={<span className="text-xl font-semibold">Select Broker</span>}
-        size="xl"
+        size="lg"
         body={
           <>
             {!brokerStatus ? (
+              <>
               <div className="page-content flex flex-col items-center">
-                <div className="form-control row d-flex justify-content-center">
+                <div className=" row justify-content-center">
                   {filteredBrokers.map((broker) => (
 
                     <>      <div>
@@ -273,10 +276,10 @@ function BrokersData({ data, closeModal, type }) {
                       >
 {showModal && brokerId && (
               <div className="modal-body mt-6 w-100">
-                <div>
+                <div className="row"> 
                   {fields.map((field, index) => (
-                    <div key={index} className="mb-4">
-                      <label className="block text-sm font-medium mb-2">
+                    <div key={index} className="mb-4 col-6">
+                      <label className="block fs-6 ">
                         {field.label}
                       </label>
                       <input
@@ -287,58 +290,89 @@ function BrokersData({ data, closeModal, type }) {
                       />
                     </div>
                   ))}
-                  <button className="btn btn-primary" onClick={handleSave} disabled={loading}>
+              
+                </div>
+                <button className="btn btn-primary w-auto" onClick={handleSave} disabled={loading}>
                     {loading ? "Saving..." : "Save"}
                   </button>
-                </div>
               </div>
             )}
-                        <div
-                          className="w-100 card-image mb-3">
-
-                          {brokerContent?.length > 0 && (
-                            <div className="timeline">
-
-                              <div className="timeline-container">
-                                {brokerContent?.map((item, index) => (
-                                  <div className="timeline-item" key={index}>
-                                    <div className="timeline-header">
-                                      <h2 className="timeline-title">{item.HeadingTitle}</h2>
-                                      <p className="timeline-description">{item.description}</p>
-                                    </div>
-                                    <div className="timeline-content" >
-                                      <p>{item.Apicreate}</p>
-                                      <a href={item.LinkOne} target="_blank" rel="noopener noreferrer" className="timeline-link">
-                                        Visit Angel Broking API
-                                      </a>
-                                      <a href={item.LinkTwo} target="_blank" rel="noopener noreferrer" className="timeline-link">
-                                        Generate Access Token
-                                      </a>
-                                      <p>Example: {item.link3}</p>
-                                      <a href={item.youTube} target="_blank" rel="noopener noreferrer" className="timeline-link">
-                                        Watch Tutorial
-                                      </a>
-                                    </div>
-                                    {/* <div className="timeline-images" style={{ margin: "0", padding: "0" }}> */}
-                                    {/* <img src={item.img1} alt="Angel Step 1" style={{ width: "600px", height: "80px" }} /> */}
-                                    {/* <img src={item.img2} alt="Angel Step 2" style={{ width: "600px", height: "150px" }} /> */}
-                                    {/* <img src={item.img3} alt="Angel Step 3" style={{ width: "600px", height: "80px" }} /> */}
-                                    {/* </div> */}
-                                  </div>
-                                ))}
-                              </div>
-
-                            </div>
-                          )}
-
-
-                        </div>
+                        
 
                       </div>
                     </>
                   ))}
                 </div>
               </div>
+              <div
+              className="card-image mb-3 mt-3">
+<div className="accordion" id="accordionExample">
+<div className="accordion-item">
+<h2 className="accordion-header" id="headingOne">
+<button
+className="accordion-button"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#collapseOne"
+aria-expanded="false"
+aria-controls="collapseOne"
+>
+View Process
+</button>
+</h2>
+<div
+id="collapseOne"
+className="accordion-collapse collapse "
+aria-labelledby="headingOne"
+data-bs-parent="#accordionExample"
+>
+<div className="accordion-body">
+{brokerContent?.length > 0 && (
+                <div className="timeline">
+
+                  <div className="timeline-container">
+                    {brokerContent?.map((item, index) => (
+                      <div className="timeline-item" key={index}>
+                        <div className="timeline-header">
+                          <h2 className="timeline-title">{item.HeadingTitle}</h2>
+                          <p className="timeline-description">{item.description}</p>
+                        </div>
+                        <div className="timeline-content" >
+                          <p>{item.Apicreate}</p>
+                          <a href={item.LinkOne} target="_blank" rel="noopener noreferrer" className="timeline-link">
+                            Visit Angel Broking API
+                          </a>
+                          <a href={item.LinkTwo} target="_blank" rel="noopener noreferrer" className="timeline-link">
+                            Generate Access Token
+                          </a>
+                          <p>Example: {item.link3}</p>
+                          <a href={item.youTube} target="_blank" rel="noopener noreferrer" className="timeline-link">
+                            Watch Tutorial
+                          </a>
+                        </div>
+                        {/* <div className="timeline-images" style={{ margin: "0", padding: "0" }}> */}
+                        {/* <img src={item.img1} alt="Angel Step 1" style={{ width: "600px", height: "80px" }} /> */}
+                        {/* <img src={item.img2} alt="Angel Step 2" style={{ width: "600px", height: "150px" }} /> */}
+                        {/* <img src={item.img3} alt="Angel Step 3" style={{ width: "600px", height: "80px" }} /> */}
+                        {/* </div> */}
+                      </div>
+                    ))}
+                  </div>
+
+                </div>
+              )}
+
+</div>
+</div>
+</div>
+
+
+</div>
+
+          
+
+            </div>
+            </>
             ) : null}
 
             
