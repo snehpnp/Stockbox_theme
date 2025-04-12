@@ -1829,3 +1829,128 @@ span.price-original {
   border-radius: 5px;
   padding: 1px 10px;
 }
+
+.thankyou-wrapper {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  font-family: 'Segoe UI', sans-serif;
+  position: relative;
+
+}
+
+.thankyou-wrapper .card {
+  background: #fff;
+  padding: 0px 0px 30px;
+  border-radius: 5px 5px 25px 25px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  z-index: 10;
+}
+.thankyou-wrapper .check-header 
+{
+
+    width: 100%;
+    border-radius: 100% 0% 100% 0% / 0% 50% 50% 100%;
+    border-top: 5px solid var(--BtnPriBgCol, black) !important;
+}
+.thankyou-wrapper .check-container {
+  width: 100px;
+  height: 100px;
+  margin:20px auto 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: slideInRight 1s ease-out forwards;
+  transform: translateY(200%);
+  opacity: 0;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+}
+
+.thankyou-wrapper .checkmark {
+  color: #fff;
+  font-size: 50px;
+}
+
+.thankyou-wrapper h1 {
+  font-family: 'Pacifico', cursive !important;
+  font-size: 55px;
+  background: linear-gradient(270deg, #ff6ec4, #7873f5, #4ade80, #22d3ee);
+  background-size: 600% 600%;
+  line-height: 100px;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientMove 3s ease infinite;
+  /* margin: 16px 0; */
+}
+.thankyou-wrapper p {
+  color: #555;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+
+/* Animation for tick slide-in */
+@keyframes slideInRight {
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Gradient animation */
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Confetti scoped inside wrapper */
+.thankyou-wrapper .confetti {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: red;
+  border-radius: 50%;
+  animation: fall 3s linear infinite;
+  opacity: 0.7;
+}
+
+.thankyou-wrapper .confetti:nth-child(1) {
+  left: 10%;
+  animation-delay: 0s;
+  background: #f43f5e;
+}
+.thankyou-wrapper .confetti:nth-child(2) {
+  left: 20%;
+  animation-delay: 0.5s;
+  background: #facc15;
+}
+.thankyou-wrapper .confetti:nth-child(3) {
+  left: 40%;
+  animation-delay: 1s;
+  background: #4ade80;
+}
+.thankyou-wrapper .confetti:nth-child(4) {
+  left: 60%;
+  animation-delay: 1.5s;
+  background: #60a5fa;
+}
+.thankyou-wrapper .confetti:nth-child(5) {
+  left: 75%;
+  animation-delay: 2s;
+  background: #a78bfa;
+}
+
+@keyframes fall {
+  0% {
+    top: -10px;
+    transform: rotate(0deg) scale(1);
+  }
+  100% {
+    top: 120%;
+    transform: rotate(360deg) scale(1.2);
+  }
+}
