@@ -32,8 +32,10 @@ const Service = () => {
   const [category, setCategory] = useState([]);
   const [plan, setPlan] = useState([]);
 
+
   const [showModal, setShowModal] = useState(false);
   const [selectedPlanDetails, setSelectedPlanDetails] = useState(null);
+
 
 
 
@@ -412,7 +414,7 @@ const Service = () => {
                             {/* <li>
                               <b>Validity</b>: {plan?.validity}
                             </li> */}
-                            <li>
+                            {/* <li>
                               <b>Description</b>:
                               <p>
                                 {(() => {
@@ -423,11 +425,27 @@ const Service = () => {
                                     : text;
                                 })()}
                               </p>
+                            </li> */}
+                            <li>
+                              <b>Description</b>:
+                              <p style={{ minHeight: "3em", overflow: "hidden" }}>
+                                {(() => {
+                                  const text = stripHtmlTags(plan?.description || "");
+                                  const words = text.split(" ");
+                                  if (text === "") {
+                                    return "No description available.....";
+                                  }
+                                  return words.length > 20
+                                    ? words.slice(0, 20).join(" ") + "....."
+                                    : text.padEnd(100, " "); // To give placeholder space
+                                })()}
+                              </p>
                             </li>
+
                           </ul>
                           <div className="border-top pt-3">
                             <button
-                              className="btn btn-secondary rounded-1 mt-2 mt-sm-0 me-2 me-sm-0"
+                              className="btn btn-secondary rounded-pill mt-2 mt-sm-0 me-2 me-sm-0"
                               onClick={() => {
                                 setViewModel(true);
                                 setDiscription(plan?.description);
@@ -437,7 +455,7 @@ const Service = () => {
                             </button>
 
                             <button
-                              className="btn btn-primary rounded-1 mt-2 mt-sm-0 ms-3"
+                              className="btn btn-primary rounded-pill mt-2 mt-sm-0 ms-3"
                               onClick={() => handleShowModal(plan)}
                             >
                               Subscribe Now
@@ -471,13 +489,30 @@ const Service = () => {
             <>
 
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5>
+                {/* <h5>
                   {
                     plan.find((item) =>
                       item.plans?.some((subPlan) => subPlan._id === selectedPlanDetails?._id)
                     )?.title || "No Plan Found"
                   }
+                </h5> */}
+
+                <h5>
+                  {
+                    (() => {
+                      const matchedPlan = plan.find((item) =>
+                        item.plans?.some((subPlan) => subPlan._id === selectedPlanDetails?._id)
+                      );
+
+                      if (!matchedPlan) return "No Plan Found";
+
+                      const serviceTitles = matchedPlan.services?.map((s) => s.title).join(", ");
+
+                      return `${matchedPlan.title}${serviceTitles ? ` (${serviceTitles})` : ""}`;
+                    })()
+                  }
                 </h5>
+
 
 
                 <span className="text-success fw-bold">
@@ -683,9 +718,10 @@ const Service = () => {
                 {gstStatus == 1 && (
 
                   <div className="d-flex justify-content-between align-items-center mb-2">
-                    <b>💰 GST :</b>
+                    <b>💰 GST ({gstdata}％):</b>
                     <span className="text-primary fw-bold">
-                      {/* <IndianRupee /> */}{gstdata}％
+                      {/* <IndianRupee />{gstdata}％ */}
+                      <IndianRupee style={{ width: '15%;' }} /> {(gstStatus === 1 ? ((selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0)) * gstdata) / 100 : 0).toFixed(2)}
                     </span>
                   </div>
                 )}

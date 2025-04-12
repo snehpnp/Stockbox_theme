@@ -207,7 +207,6 @@ const Profiles = () => {
       }
 
       const response = await DeleteClient(userid, token);
-      console.log("DeleteClient",response)
       // return
       if (response.status) {
         showCustomAlert("Success", "Your account has been deleted.",);
