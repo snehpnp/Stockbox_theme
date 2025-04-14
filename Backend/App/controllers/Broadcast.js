@@ -59,37 +59,52 @@ class BroadcastController {
 
             const today = new Date();
             let clients;
-if(type=="active")
-    {
-         clients = await Clients_Modal.find({
-            del: 0,
-            ActiveStatus: 1,
-            devicetoken: { $exists: true, $ne: null },
-            _id: {
-              $in: await Planmanage.find({
-                serviceid: service,  // Replace `service` with your actual service value
-                enddate: { $gte: today }
-              }).distinct('clientid')  // Assuming 'clientid' is the field linking to Clients_Modal
-            }
-          }).select('devicetoken');
-
-    }
-   else if(type=="expired")
-        {
-            
-         clients = await Clients_Modal.find({
-            del: 0,
-            ActiveStatus: 1,
-            devicetoken: { $exists: true, $ne: null },
-            _id: {
-              $in: await Planmanage.find({
-                serviceid: service,  // Replace `service` with your actual service value
-                enddate: { $lt: today }
-              }).distinct('clientid')  // Assuming 'clientid' is the field linking to Clients_Modal
-            }
-          }).select('devicetoken');
-          
-        }
+            if (type === "active") {
+                // 1) Build the Planmanage filter
+                const planFilter = {
+                  enddate: { $gte: today }
+                };
+                if (service !== "All") {
+                  planFilter.serviceid = service;
+                }
+              
+                // 2) Fetch matching client IDs
+                const clientIds = await Planmanage
+                  .find(planFilter)
+                  .distinct("clientid");
+              
+                // 3) Query Clients_Modal
+                clients = await Clients_Modal.find({
+                  del: 0,
+                  ActiveStatus: 1,
+                  devicetoken: { $exists: true, $ne: null },
+                  _id: { $in: clientIds }
+                })
+                .select("devicetoken");
+              }
+              if (type === "expired") {
+                // 1) Build Planmanage filter
+                const planFilter = {
+                  enddate: { $lt: today }
+                };
+                if (service !== "All") {
+                  planFilter.serviceid = service;
+                }
+              
+                // 2) Get all matching client IDs
+                const clientIds = await Planmanage
+                  .find(planFilter)
+                  .distinct("clientid");
+              
+                // 3) Fetch your clients
+                clients = await Clients_Modal.find({
+                  del: 0,
+                  ActiveStatus: 1,
+                  devicetoken: { $exists: true, $ne: null },
+                  _id: { $in: clientIds }
+                })
+                .select("devicetoken");
+              }
         else if(type=="nonsubscribe"){
             
          clients = await Clients_Modal.find({

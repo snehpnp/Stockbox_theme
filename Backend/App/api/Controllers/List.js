@@ -67,6 +67,8 @@ class List {
 
 
   async Bannerlist(req, res) {
+
+  
     try {
       const banners = await Banner_Modal.find({ del: false, status: true });
       const protocol = req.protocol; // Will be 'http' or 'https'
@@ -913,13 +915,23 @@ if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.
     pergstt = settings.gst;
 }
 
-console.log("pergstsc",pergstsc);
-console.log("pergstt",pergstt);
+
 
 const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
 const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+let clientstateid;
+let settingsstateid;
+if(client.state) {
+const clientstate = await States.findOne({name:client.state});
 
+ clientstateid = clientstate.id;
+}
 
+if(settings.state) {
+  const settingsstate = await States.findOne({name:settings.state});
+  
+  settingsstateid = settingsstate.id;
+  }
 
         htmlContent = htmlContent
           .replace(/{{orderNumber}}/g, `${orderNumber}`)
@@ -955,9 +967,11 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
           .replace(/{{saccode}}/g, settings.saccode)
           .replace(/{{bstate}}/g, settings.state)
           .replace(/{{panno}}/g, client.panno)
+          .replace(/{{city}}/g, client.city)
+          .replace(/{{statecode}}/g, clientstateid)
+          .replace(/{{settingstatecode}}/g, settingsstateid)
           .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total))
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
-
 
         const browser = await puppeteer.launch({
           args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -1156,19 +1170,37 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
         const templatePath = path.join(__dirname, '../../../template', 'invoice.html');
         let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
-        let sgst = 0, cgst = 0, igst = 0;
+        let sgst = 0, cgst = 0, igst = 0, pergstsc = 0, pergstt = 0;
 
         if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() === "") {
             sgst = totalgst / 2;
             cgst = totalgst / 2;
+            pergstsc = settings.gst/ 2;
         } else {
             igst = totalgst;
+            pergstt = settings.gst;
         }
 
         const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
         const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
   
-  
+        let clientstateid;
+        let settingsstateid;
+        if(client.state) {
+        const clientstate = await States.findOne({name:client.state});
+        
+         clientstateid = clientstate.id;
+        }
+        
+        if(settings.state) {
+          const settingsstate = await States.findOne({name:settings.state});
+          
+          settingsstateid = settingsstate.id;
+          }
+
+
+
+        
 
         htmlContent = htmlContent
           .replace(/{{orderNumber}}/g, `${orderNumber}`)
@@ -1199,6 +1231,15 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
           .replace(/{{igst}}/g, igst.toFixed(2))
           .replace(/{{logo}}/g, logo)
           .replace(/{{simage}}/g, simage)
+          .replace(/{{pergstsc}}/g, pergstsc)
+          .replace(/{{pergstt}}/g, pergstt)
+          .replace(/{{saccode}}/g, settings.saccode)
+          .replace(/{{bstate}}/g, settings.state)
+          .replace(/{{panno}}/g, client.panno)
+          .replace(/{{city}}/g, client.city)
+          .replace(/{{statecode}}/g, clientstateid)
+          .replace(/{{settingstatecode}}/g, settingsstateid)
+          .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total))
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.startdate));
 
 
@@ -3371,14 +3412,24 @@ end.setHours(23, 59, 59, 999);
       };
 
       if (activePlans.length > 0) {
-        // If there are active plans
+        // Active clients see:
+        //  • broadcasts for their subscribed services
+        //  • plus any broadcast tagged to service "All"
         query.$or = [
-          { type: 'active', service: { $in: activePlans } }
+          {
+            type: 'active',
+            service: { $in: [...activePlans, 'All'] }
+          }
         ];
       } else if (expiredPlans.length > 0) {
-        // If there are expired plans
+        // Expired clients see:
+        //  • broadcasts for their expired services
+        //  • plus any broadcast tagged to service "All"
         query.$or = [
-          { type: 'expired', service: { $in: expiredPlans } }
+          {
+            type: 'expired',
+            service: { $in: [...expiredPlans, 'All'] }
+          }
         ];
       } else if (allPlans.length === 0) {
         // If no plans exist
@@ -3935,10 +3986,17 @@ end.setHours(23, 59, 59, 999);
             clienttype: { $in: ['active', 'expired', 'nonsubscribe', 'All'] },
             $or: [
               // For active clients, include active plans
-              { clienttype: 'active', segmentid: { $in: activePlans } },
-              // For expired clients, include expired plans
-              { clienttype: 'expired', segmentid: { $in: expiredPlans } },
-              // For clients with no active or expired plans (no subscription)
+              {
+                clienttype: "active",
+                segmentid: { $in: [...activePlans, "All"] }
+              },
+            
+              // expired clients: their segments OR “All”
+              {
+                clienttype: "expired",
+                segmentid: { $in: [...expiredPlans, "All"] }
+              },
+            
               ...(noPlans ? [{ clienttype: 'nonsubscribe' }] : []),
               // For all clients
               { clienttype: 'All' }
