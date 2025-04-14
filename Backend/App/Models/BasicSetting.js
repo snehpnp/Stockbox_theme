@@ -329,6 +329,15 @@ const BasicSettingSchema = new Schema({
         type: String,
         default: null
     },
+    popupstatus: {
+        type: Number,
+        enum: [1, 0],
+        default: 0
+    },
+    popupcontent: {
+        type: String,
+        default: null
+    },
     
 }, {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }

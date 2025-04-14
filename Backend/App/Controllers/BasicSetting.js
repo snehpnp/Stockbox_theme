@@ -61,6 +61,8 @@ class BasicSetting {
           invoicetnc,
           refersendmsg,
           saccode,
+          popupstatus,
+          popupcontent,
 
         } = req.body;
 
@@ -135,6 +137,8 @@ class BasicSetting {
           invoicetnc,
           refersendmsg,
           saccode,
+          popupstatus,
+          popupcontent,
         };
 
         const options = {
