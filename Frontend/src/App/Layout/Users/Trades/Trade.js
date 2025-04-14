@@ -604,8 +604,10 @@ function Trade() {
           role="tablist"
         >
           {[
-            { tab: "live", icon: "bx-home", label: "Live Trade" },
-            { tab: "close", icon: "bx-user-pin", label: "Close Trade" },
+            { tab: "live", label: "Live Trade" },
+            { tab: "close",  label: "Close Trade" },
+            // { tab: "live", icon: "bx-home", label: "Live Trade" },
+            // { tab: "close", icon: "bx-user-pin", label: "Close Trade" },
           ].map(({ tab, icon, label }) => (
             <li className="nav-item" role="presentation" key={tab}>
               <a
