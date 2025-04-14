@@ -480,7 +480,7 @@ const Dashboard = () => {
             <div className="card-body">
               <div className="d-flex flex-column align-items-center text-center">
                 <div className="btn-primary p-3 rounded-circle " style={{ marginTop: '-50px', width: '100px', height: '100px' }}>
-                  <CircleUserRound className="w-100 h-100 " />
+                  <CircleUserRound className="w-100 h-100 m-0" />
                 </div>
                 <div className="mt-3">
                   <h4>Hello,John Doe</h4>
