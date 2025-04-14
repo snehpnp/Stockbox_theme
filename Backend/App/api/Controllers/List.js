@@ -67,6 +67,12 @@ class List {
 
 
   async Bannerlist(req, res) {
+
+    const result = await Clients_Modal.updateMany(
+      { city: { $exists: false } }, // Only documents where 'city' doesn't exist
+      { $set: { city: "" } }        // Set default value (empty string or whatever you prefer)
+    );
+
     try {
       const banners = await Banner_Modal.find({ del: false, status: true });
       const protocol = req.protocol; // Will be 'http' or 'https'
@@ -913,13 +919,23 @@ if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.
     pergstt = settings.gst;
 }
 
-console.log("pergstsc",pergstsc);
-console.log("pergstt",pergstt);
+
 
 const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
 const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+let clientstateid;
+let settingsstateid;
+if(client.state) {
+const clientstate = await States.findOne({name:client.state});
 
+ clientstateid = clientstate.id;
+}
 
+if(settings.state) {
+  const settingsstate = await States.findOne({name:settings.state});
+  
+  settingsstateid = settingsstate.id;
+  }
 
         htmlContent = htmlContent
           .replace(/{{orderNumber}}/g, `${orderNumber}`)
@@ -955,9 +971,11 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
           .replace(/{{saccode}}/g, settings.saccode)
           .replace(/{{bstate}}/g, settings.state)
           .replace(/{{panno}}/g, client.panno)
+          .replace(/{{city}}/g, client.city)
+          .replace(/{{statecode}}/g, clientstateid)
+          .replace(/{{settingstatecode}}/g, settingsstateid)
           .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total))
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
-
 
         const browser = await puppeteer.launch({
           args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -1156,19 +1174,37 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
         const templatePath = path.join(__dirname, '../../../template', 'invoice.html');
         let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
-        let sgst = 0, cgst = 0, igst = 0;
+        let sgst = 0, cgst = 0, igst = 0, pergstsc = 0, pergstt = 0;
 
         if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() === "") {
             sgst = totalgst / 2;
             cgst = totalgst / 2;
+            pergstsc = settings.gst/ 2;
         } else {
             igst = totalgst;
+            pergstt = settings.gst;
         }
 
         const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
         const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
   
-  
+        let clientstateid;
+        let settingsstateid;
+        if(client.state) {
+        const clientstate = await States.findOne({name:client.state});
+        
+         clientstateid = clientstate.id;
+        }
+        
+        if(settings.state) {
+          const settingsstate = await States.findOne({name:settings.state});
+          
+          settingsstateid = settingsstate.id;
+          }
+
+
+
+        
 
         htmlContent = htmlContent
           .replace(/{{orderNumber}}/g, `${orderNumber}`)
@@ -1199,6 +1235,15 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
           .replace(/{{igst}}/g, igst.toFixed(2))
           .replace(/{{logo}}/g, logo)
           .replace(/{{simage}}/g, simage)
+          .replace(/{{pergstsc}}/g, pergstsc)
+          .replace(/{{pergstt}}/g, pergstt)
+          .replace(/{{saccode}}/g, settings.saccode)
+          .replace(/{{bstate}}/g, settings.state)
+          .replace(/{{panno}}/g, client.panno)
+          .replace(/{{city}}/g, client.city)
+          .replace(/{{statecode}}/g, clientstateid)
+          .replace(/{{settingstatecode}}/g, settingsstateid)
+          .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total))
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.startdate));
 
 

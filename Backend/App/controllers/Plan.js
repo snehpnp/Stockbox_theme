@@ -11,6 +11,9 @@ const BasicSetting_Modal = db.BasicSetting;
 const Addtocart_Modal = db.Addtocart;
 const Mailtemplate_Modal = db.Mailtemplate;
 const BasketSubscription_Modal = db.BasketSubscription;
+const States = db.States;
+const City = db.City;
+
 
 const puppeteer = require('puppeteer');
 const path = require('path');
@@ -829,16 +832,33 @@ if (settings.gst > 0 && settings.gststatus==1) {
         const templatePath = path.join(__dirname, '../../template', 'invoice.html');
         let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
-        let sgst = 0, cgst = 0, igst = 0;
+        let sgst = 0, cgst = 0, igst = 0, pergstsc = 0, pergstt = 0;
 
         if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() ==="") {
             sgst = totalgst / 2;
             cgst = totalgst / 2;
+            pergstsc = settings.gst/ 2;
         } else {
             igst = totalgst;
+            pergstt = settings.gst;
         }
         const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
         const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+
+
+        let clientstateid;
+        let settingsstateid;
+        if(client.state) {
+        const clientstate = await States.findOne({name:client.state});
+        
+         clientstateid = clientstate.id;
+        }
+        
+        if(settings.state) {
+          const settingsstate = await States.findOne({name:settings.state});
+          
+          settingsstateid = settingsstate.id;
+          }
 
         
                 htmlContent = htmlContent
@@ -870,6 +890,15 @@ if (settings.gst > 0 && settings.gststatus==1) {
                   .replace(/{{igst}}/g, igst.toFixed(2))
                   .replace(/{{logo}}/g, logo)
                   .replace(/{{simage}}/g, simage)
+                  .replace(/{{pergstsc}}/g, pergstsc)
+                  .replace(/{{pergstt}}/g, pergstt)
+                  .replace(/{{saccode}}/g, settings.saccode)
+                  .replace(/{{bstate}}/g, settings.state)
+                  .replace(/{{panno}}/g, client.panno)
+                  .replace(/{{city}}/g, client.city)
+                  .replace(/{{statecode}}/g, clientstateid)
+                  .replace(/{{settingstatecode}}/g, settingsstateid)
+                  .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total))
                   .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
 
@@ -1928,6 +1957,20 @@ function formatDate(date) {
   return `${day}/${month}/${year}`;
 
 }
+function convertAmountToWords(amount) {
+  const [whole, fraction] = amount.toString().split('.');
+
+  let words = toWords(parseInt(whole));
+  words = words.charAt(0).toUpperCase() + words.slice(1);
+
+  if (fraction && parseInt(fraction) > 0) {
+    words += ` and ${toWords(parseInt(fraction))} paise`;
+  }
+
+  return words;
+}
+
+
 
 function getFinancialYear() {
   const now = new Date();
