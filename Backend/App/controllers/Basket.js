@@ -1924,7 +1924,9 @@ class Basket {
       const totalCount = basketCount + planCount;
       const invoiceNumber = invoiceStart + totalCount;
       const formattedNumber = invoiceNumber < 10 ? `0${invoiceNumber}` : `${invoiceNumber}`;
-      const orderNumber = `${invoicePrefix}${formattedNumber}`;
+      const financialYear = getFinancialYear();
+      const orderNumber = `${invoicePrefix}${financialYear}/${formattedNumber}`;
+      // const orderNumber = `${invoicePrefix}${formattedNumber}`;
 
 
       let payment_type;
@@ -2387,6 +2389,28 @@ function formatDate(date) {
   // return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
   return `${day}/${month}/${year}`;
 
+}
+
+
+function getFinancialYear() {
+  const now = new Date();
+  const month = now.getMonth() + 1; // getMonth() returns 0–11
+  const year = now.getFullYear();
+
+  let startYear, endYear;
+
+  if (month >= 4) {
+      // April or later: FY starts this year
+      startYear = year;
+      endYear = year + 1;
+  } else {
+      // Jan–March: FY started last year
+      startYear = year - 1;
+      endYear = year;
+  }
+
+  // Return in format 24-25
+  return `${startYear.toString().slice(-2)}-${endYear.toString().slice(-2)}`;
 }
 
 module.exports = new Basket();
