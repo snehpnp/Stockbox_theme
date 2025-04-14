@@ -218,7 +218,7 @@ function Basket() {
                                 : "#"
                             }
                             state={{ item }}
-                            className="btn btn-sm btn-primary w-100"
+                            className="btn btn-primary w-100"
                             style={{
                               pointerEvents:
                                 onlinePaymentStatus || offlinePaymentStatus

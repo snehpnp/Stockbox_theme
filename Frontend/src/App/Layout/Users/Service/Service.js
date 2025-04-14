@@ -16,6 +16,7 @@ import ReusableModal from "../../../components/Models/ReusableModal";
 import ShowCustomAlert from "../../../../App/Extracomponents/CustomAlert/CustomAlert"
 import showCustomAlert from "../../../../App/Extracomponents/CustomAlert/CustomAlert";
 import { useNavigate } from "react-router-dom";
+import  Kyc  from "../Profile/Kyc"
 
 
 const Service = () => {
@@ -66,6 +67,7 @@ const Service = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [viewmodel, setViewModel] = useState(false);
+  const [viewmodel2, setViewModel2] = useState(false);
 
   const [discription, setDiscription] = useState("");
 
@@ -255,7 +257,8 @@ const Service = () => {
   const handleShowModal = (item) => {
 
     if (kycStatus === 1) {
-      navigate("/user/kyc")
+      // navigate("/user/kyc")
+      setViewModel2(true)
     } else {
       setSelectedPlanDetails(item);
       setShowModal(true);
@@ -273,6 +276,10 @@ const Service = () => {
     setManualCoupon("")
     setAppliedCoupon(null)
   };
+
+  // const handleCloseModal2=()=>{
+  //   setViewModel2(false)
+  // }
 
 
 
@@ -805,6 +812,13 @@ const Service = () => {
             </div>
           </>
         }
+      />
+
+      <ReusableModal
+        show={viewmodel2}
+        onClose={() => setViewModel2(false)}
+        title={<>KYC</>}
+        body={<Kyc />}
       />
     </Content>
   );

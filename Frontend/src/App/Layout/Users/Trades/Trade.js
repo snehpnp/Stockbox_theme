@@ -764,7 +764,7 @@ function Trade() {
             </div>
             <div className="col-md-12">
               <label htmlFor="inputQuantity" className="form-label">
-                Exit Price
+              Exit Quantity
               </label>
               <input
                 disabled
