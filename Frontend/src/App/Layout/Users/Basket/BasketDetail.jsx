@@ -9,7 +9,7 @@ const BasketDetail = () => {
 
   const [activeTab, setActiveTab] = useState("rational");
   const [itemdata, setItemdata] = useState();
-   const [model, setModel] = useState(false);
+  const [model, setModel] = useState(false);
   const location = useLocation();
   const { item } = location?.state;
 
@@ -74,7 +74,7 @@ const BasketDetail = () => {
                   <b>{item?.title}</b>
                 </h5>
                 <p className="basket-description">{stripHtmlTags(item?.description)}</p>
-                <button  onClick={() => setModel(true)} className="btn btn-sm btn-secondary">Read More..</button>
+                <button onClick={() => setModel(true)} className="btn btn-sm btn-secondary">Read More..</button>
               </div>
               <div className="row">
                 <div className="col-md-7">
@@ -82,7 +82,7 @@ const BasketDetail = () => {
                     <li className="list-group-item d-flex justify-content-between align-items-center">
                       Launch Date{" "}
                       <span className="badge bg-dark rounded-pill">
-                        {fDateTime(item?.startdate)}
+                        {fDateTime(item?.created_at)}
                       </span>
                     </li>
                     <li className="list-group-item d-flex justify-content-between align-items-center">
@@ -296,26 +296,26 @@ const BasketDetail = () => {
         </Link>
       </div>
 
-       <ReusableModal
-                                                  show={model}
-                                                  onClose={() => setModel(false)}
-                                                  title={<span><b>{item?.title}</b></span>}
-                                                  body={
-                                                    <p className="">{stripHtmlTags(item?.description)}</p>
-                                                  }
-                                                  footer={
-                                                      <>
-                                                          <button
-                                                              type="button"
-                                                              className="btn btn-secondary"
-                                                              onClick={() => setModel(false)}
-                                                          >
-                                                              Close
-                                                          </button>
-                                                         
-                                                      </>
-                                                  }
-                                              />
+      <ReusableModal
+        show={model}
+        onClose={() => setModel(false)}
+        title={<span><b>{item?.title}</b></span>}
+        body={
+          <p className="">{stripHtmlTags(item?.description)}</p>
+        }
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setModel(false)}
+            >
+              Close
+            </button>
+
+          </>
+        }
+      />
     </Content>
   );
 };

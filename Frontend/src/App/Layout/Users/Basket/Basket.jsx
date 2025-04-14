@@ -144,8 +144,8 @@ function Basket() {
             {basketdata?.map((item) => (
               <div className="col-md-12 col-lg-6 mb-4" key={item?.id}>
                 <div className="card radius-10 overflow-hidden shadow"
-                style={{ minHeight: "253px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
-                onClick={() => navigate("/user/basketdetail", { state: { item } })}
+                  style={{ minHeight: "253px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+                  onClick={() => navigate("/user/basketdetail", { state: { item } })}
                 >
                   <div className="card-body pb-0">
                     <div className="d-flex ">
@@ -163,7 +163,7 @@ function Basket() {
                           {item?.isSubscribed && (
                             <span
                               className="badge bg-success"
-                              style={{ fontSize: "12px"}}
+                              style={{ fontSize: "12px" }}
                             >
                               Subscribed
                             </span>
@@ -215,7 +215,7 @@ function Basket() {
                             to={
                               onlinePaymentStatus || offlinePaymentStatus
                                 ? "/user/payment"
-                                : "#"
+                                : ""
                             }
                             state={{ item }}
                             className="btn btn-sm btn-primary w-100"
