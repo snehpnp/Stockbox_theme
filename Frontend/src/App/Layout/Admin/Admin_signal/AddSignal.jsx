@@ -295,8 +295,6 @@ const AddSignal = () => {
       col_size: 6,
       star: true
     },
-
-
     {
       name: 'expiry',
       label: 'Expiry Date',
