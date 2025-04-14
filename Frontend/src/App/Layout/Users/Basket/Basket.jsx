@@ -201,7 +201,7 @@ function Basket() {
                         <b className="">High Risk</b>
                       </li>
                       <li className="list-group-item border-bottom-0">
-                        {item?.isSubscribed || item?.isActive ? (
+                        {item?.isSubscribed && item?.isActive && (
                           <Link
                             to="/user/basketdetail"
                             state={{ item }}
@@ -209,32 +209,25 @@ function Basket() {
                           >
                             View Details
                           </Link>
-                        ) : item?.isSubscribed === false &&
-                          item?.isActive === false ? (
+                        )}
+
+                        {!item?.isSubscribed && !item?.isActive && (
                           <Link
-                            to={
-                              onlinePaymentStatus || offlinePaymentStatus
-                                ? "/user/payment"
-                                : ""
-                            }
+                            to={onlinePaymentStatus || offlinePaymentStatus ? "/user/payment" : ""}
                             state={{ item }}
                             className="btn btn-sm btn-primary w-100"
                             style={{
                               pointerEvents:
-                                onlinePaymentStatus || offlinePaymentStatus
-                                  ? "auto"
-                                  : "none",
+                                onlinePaymentStatus || offlinePaymentStatus ? "auto" : "none",
                               opacity:
-                                onlinePaymentStatus || offlinePaymentStatus
-                                  ? "1"
-                                  : "0.5",
+                                onlinePaymentStatus || offlinePaymentStatus ? "1" : "0.5",
                             }}
                           >
-                            Subscribe <del>{item?.full_price}</del>{" "}
-                            {item?.basket_price}
+                            Subscribe <del>{item?.full_price}</del> {item?.basket_price}
                           </Link>
-                        ) : item?.isSubscribed === true &&
-                          item?.isActive === false ? (
+                        )}
+
+                        {item?.isSubscribed && !item?.isActive && (
                           <Link
                             to="/user/rebalancestock"
                             state={{ item }}
@@ -242,8 +235,9 @@ function Basket() {
                           >
                             View Rebalance
                           </Link>
-                        ) : null}
+                        )}
                       </li>
+
                       {/* <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100 mb-1">
                         View Details
                       </Link> */}
