@@ -1944,13 +1944,20 @@ class Basket {
 
       const invoicePrefix = settings.invoice;
       const invoiceStart = settings.invoicestart; 
-      const basketCount = await BasketSubscription_Modal.countDocuments({});
-      const planCount = await PlanSubscription_Modal.countDocuments({});
+      const { startDate, endDate } = getFinancialYearRange();
+
+      const basketCount = await BasketSubscription_Modal.countDocuments({
+          created_at: { $gte: startDate, $lte: endDate }
+      });
+      
+      const planCount = await PlanSubscription_Modal.countDocuments({
+          created_at: { $gte: startDate, $lte: endDate }
+      });
       const totalCount = basketCount + planCount;
       const invoiceNumber = invoiceStart + totalCount;
       const formattedNumber = invoiceNumber < 10 ? `0${invoiceNumber}` : `${invoiceNumber}`;
       const financialYear = getFinancialYear();
-      const orderNumber = `${invoicePrefix}${financialYear}/${formattedNumber}`;
+      const orderNumber = `${invoicePrefix}${financialYear}-${formattedNumber}`;
       // const orderNumber = `${invoicePrefix}${formattedNumber}`;
 
 
@@ -2429,7 +2436,19 @@ function convertAmountToWords(amount) {
   return words;
 }
 
+function getFinancialYearRange() {
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const year = now.getFullYear();
 
+  const startYear = month >= 4 ? year : year - 1;
+  const endYear = startYear + 1;
+
+  const startDate = new Date(`${startYear}-04-01T00:00:00.000Z`);
+  const endDate = new Date(`${endYear}-03-31T23:59:59.999Z`);
+
+  return { startDate, endDate };
+}
 
 function getFinancialYear() {
   const now = new Date();
