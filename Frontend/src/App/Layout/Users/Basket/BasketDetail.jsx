@@ -30,13 +30,13 @@ const BasketDetail = () => {
     ],
   };
 
-  // Line Chart Data
+  
   const chartDataLine = {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
     datasets: [
       {
         label: "Performance",
-        data: [10, 25, 35, 50, 40, 60], // Sample data, API se bhi fetch kar sakte hain
+        data: [10, 25, 35, 50, 40, 60], 
         fill: false,
         borderColor: "#007bff",
         tension: 0.1,
@@ -136,7 +136,7 @@ const BasketDetail = () => {
         </div>
       </div>
 
-      {/* Line Chart Integration */}
+     
       <div className="row px-4 pt-4">
         <div className="col-md-12">
           <div className="card shadow ch">
@@ -166,7 +166,7 @@ const BasketDetail = () => {
     </li>
   </ul>
   </div>
-  {/* Tab panes */}
+
   <div className="tab-content basket-chart-data mx-auto" >
     <div id="home" className="container tab-pane active">
       <br />
