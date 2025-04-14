@@ -16,6 +16,7 @@ const Subscription = () => {
 
   const [planData, setPlanData] = useState([]);
   const [basketData, setBasketData] = useState([]);
+  
   const [activeTab, setActiveTab] = useState("plan");
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [discription, setDiscription] = useState("");
@@ -303,10 +304,11 @@ const Subscription = () => {
                 </p>
               </div>
               <p className="m-0 pe-2">
-                <span className="badge bg-primary rounded-pill">
-                  {/* {accordion?.planDetails.status} */}
+                <span className={`badge rounded-pill ${new Date(accordion?.enddate) > new Date() ? "bg-success" : "bg-danger"}`}>
+                  {new Date(accordion?.enddate) > new Date() ? "Active" : "Expired"}
                 </span>
               </p>
+
             </div>
           </button>
         </h2>
@@ -334,24 +336,28 @@ const Subscription = () => {
                 <table className="table table-bordered mb-0">
                   <tbody>
                     <tr>
-                      <td><strong>Paid Amount:</strong></td>
+                      <td><strong>Plan Duration</strong></td>
                       <td>{accordion?.validity || "--"}</td>
                     </tr>
                     <tr>
-                      <td><strong>Plan Discount:</strong></td>
+                      <td><strong>Purchased on</strong></td>
                       <td>{fDateTime(accordion?.startdate) || "--"}</td>
                     </tr>
                     <tr>
-                      <td><strong>Purchase Type:</strong></td>
+                      <td><strong>Purchase Price</strong></td>
                       <td>₹{accordion?.plan_price || "--"}</td>
                     </tr>
                     <tr>
-                      <td><strong>Plan Validity:</strong></td>
-                      <td>{fDateTime(accordion?.startdate) || "--"}</td>
+                      <td><strong>Expires On</strong></td>
+                      <td>{fDateTime(accordion?.enddate) || "--"}</td>
                     </tr>
                     <tr>
-                      <td><strong>Order Id:</strong></td>
-                      <td>₹{accordion?.basketDetails?.mininvamount || "--"}</td>
+                      <td><strong>Plan Price</strong></td>
+                      <td>₹{accordion?.total || "--"}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Discount Price</strong></td>
+                      <td>₹{accordion?.coupon || "0"}</td>
                     </tr>
                   </tbody>
                 </table>

@@ -268,7 +268,7 @@ function Trade() {
         search: "",
       };
       const response = await GetCloseSignalClient(data, token);
-   
+
 
       if (response.status) {
         setTradeData((prev) => ({ ...prev, close: response.data }));
@@ -360,9 +360,8 @@ function Trade() {
 
   const renderTradeCard = (item) => (
     <div className="row" key={item._id}>
-    <div className="col-md-12">
+      <div className="col-md-12">
         <div className="trade-card shadow" style={{ backgroundColor: "#dcedf2" }}>
-      
           <div className="row mb-3">
             <div className="col-lg-3">
               <span className="date-btn">
@@ -406,7 +405,27 @@ function Trade() {
 
                 <div className="mb-3">
                   <span className="trade-type">
-                    Hold Duration : <br />
+                    Hold Duration :{" "}
+                    <span className="trade-type1">
+                      {service?.find((srv) => srv?._id === item?.service)?.title}
+                    </span>
+                    <span style={{ color: "red" }}>
+
+                      {item?.close_description && <>
+                        {" (Avoid) "}
+                        <Eye
+                          onClick={() => {
+                            setShowModal(true);
+                            setAvoidDescription(item?.close_description
+
+                            );
+                          }}
+                          style={{ cursor: "pointer", marginLeft: "5px" }}
+                        />
+                      </>}
+
+                    </span>
+                    <br />
                     {
                       item?.callduration === "Intraday" ? "Intraday" :
                         item?.callduration === "Short Term" ? "(15-30 days)" :
@@ -416,7 +435,7 @@ function Trade() {
                   </span>
                 </div>
 
-                <div>
+                {/* <div>
                   <span className="trade-type1">
                     {service?.find((srv) => srv?._id === item?.service)?.title}
                   </span>
@@ -437,7 +456,7 @@ function Trade() {
                  
                   </span>
 
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -576,11 +595,11 @@ function Trade() {
 
 
   return (
-    <Content Page_title="Trade" button_title="Add Trade" button_status={false}>
+    <Content Page_title="Trades" button_title="Add Trade" button_status={false}>
       <div className="page-content">
         <div>
           <label htmlFor="planSelect" className="mb-1">
-            Plans For You
+            Trades for you
           </label>
           <div className="col-lg-4 d-flex">
             <select
@@ -747,7 +766,7 @@ function Trade() {
             </div>
             <div className="col-md-12">
               <label htmlFor="inputQuantity" className="form-label">
-                Exit Price
+              Exit Quantity
               </label>
               <input
                 disabled
@@ -866,12 +885,12 @@ function Trade() {
       />
 
 
-       <ReusableModal
-              show={showModal}
-              onClose={() => setShowModal(false)}
-              title="Description"
-              body={<p>{avoidDescription || "No description available."}</p>}
-            />
+      <ReusableModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        title="Description"
+        body={<p>{avoidDescription || "No description available."}</p>}
+      />
     </Content>
   );
 }
