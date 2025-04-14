@@ -68,11 +68,7 @@ class List {
 
   async Bannerlist(req, res) {
 
-    const result = await Clients_Modal.updateMany(
-      { city: { $exists: false } }, // Only documents where 'city' doesn't exist
-      { $set: { city: "" } }        // Set default value (empty string or whatever you prefer)
-    );
-
+  
     try {
       const banners = await Banner_Modal.find({ del: false, status: true });
       const protocol = req.protocol; // Will be 'http' or 'https'
