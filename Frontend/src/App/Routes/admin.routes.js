@@ -161,6 +161,7 @@ export default function App() {
       <Route path="/emailtemplate" element={<Emailtemplate />} />
       <Route path="/referandearn" element={<ReferAndEarn />} />
       <Route path="/autosquareoff" element={<Autosquareoff />} />
+      <Route path="/popupdescription" element={<PopupDescription />} />
 
       <Route path="/bankdetail" element={<Bankdetail />} />
       <Route path="/addbankdetail" element={<Addbankdetail />} />
@@ -189,7 +190,7 @@ export default function App() {
 
       <Route path="/planexpiry" element={<Planexpiry />} />
       <Route path="/planexpirymonth" element={<Planexpirymonth />} />
-      <Route path="/planExpirymonthDetail" element={<PlanExpirymonthDetail/>} />
+      <Route path="/planExpirymonthDetail" element={<PlanExpirymonthDetail />} />
 
 
 

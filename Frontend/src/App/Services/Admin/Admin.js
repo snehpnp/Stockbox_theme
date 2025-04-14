@@ -3485,3 +3485,46 @@ export async function GetAllCities(data, token) {
 }
 
 
+
+
+// pop up stataus update 
+
+export async function PopUpstatusdata(data, token) {
+    const formData = new FormData();
+    formData.append('popupstatus', data.popupstatus);
+    try {
+        const res = await axios.post(`${Config.base_url}basicsetting/add`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+// update pop up description 
+
+
+export async function popupdescription(data, token) {
+    const formData = new FormData();
+    formData.append('popupcontent', data.popupcontent);
+    try {
+        const res = await axios.post(`${Config.base_url}basicsetting/add`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
