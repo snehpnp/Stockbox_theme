@@ -635,10 +635,10 @@ const Dashboard = () => {
                   onSlideChange={() => console.log('slide change')}
                   onSwiper={(swiper) => console.log(swiper)}
                 >
-                  <SwiperSlide><img src="https://t4.ftcdn.net/jpg/04/90/96/67/360_F_490966788_JwojaHa1G7eEfguq1omUaCNSM6BgYHhI.jpg" style={{height:'300px',width:'100%'}}/></SwiperSlide>
-                  <SwiperSlide><img src="https://img.freepik.com/free-vector/modern-sale-banner-with-text-space-area_1017-27331.jpg" style={{height:'300px',width:'100%'}}/></SwiperSlide>
-                  <SwiperSlide><img src="https://www.shutterstock.com/image-vector/sale-banner-template-big-special-260nw-2373695365.jpg" style={{height:'300px',width:'100%'}}/></SwiperSlide>
-                  <SwiperSlide><img src="https://img.freepik.com/premium-vector/special-offer-final-sale-banner-red-background-illustration_275806-121.jpg" style={{height:'300px',width:'100%'}}/></SwiperSlide>
+                  <SwiperSlide><img src="https://t4.ftcdn.net/jpg/04/90/96/67/360_F_490966788_JwojaHa1G7eEfguq1omUaCNSM6BgYHhI.jpg" style={{ height: '300px', width: '100%' }} /></SwiperSlide>
+                  <SwiperSlide><img src="https://img.freepik.com/free-vector/modern-sale-banner-with-text-space-area_1017-27331.jpg" style={{ height: '300px', width: '100%' }} /></SwiperSlide>
+                  <SwiperSlide><img src="https://www.shutterstock.com/image-vector/sale-banner-template-big-special-260nw-2373695365.jpg" style={{ height: '300px', width: '100%' }} /></SwiperSlide>
+                  <SwiperSlide><img src="https://img.freepik.com/premium-vector/special-offer-final-sale-banner-red-background-illustration_275806-121.jpg" style={{ height: '300px', width: '100%' }} /></SwiperSlide>
                 </Swiper>
 
               </div>
@@ -729,234 +729,234 @@ const Dashboard = () => {
       </div>
       <div className="row mt-4">
         <div className="col-lg-6">
-        <div className="card radius-10 w-100">
-  <div className="card-header">
-    <div className="d-flex align-items-center">
-      <div>
-        <h5 className="mb-1">News</h5>
-      </div>
-     
-    </div>
-  </div>
-  <div className="product-list p-3 mb-3 ps ps--active-y">
-    <div className="d-flex flex-column gap-3">
-      <div className="d-flex align-items-center justify-content-between gap-3 p-2 border radius-10">
-        <div className="">
-          <img src="https://codervent.com/rukada/demo/vertical/ltr/assets/images/icons/idea.png" width={50} alt="" />
-        </div>
-        <div className="flex-grow-1">
-          <h6 className="mb-0">Yellow Tshirt</h6>
-        
-        </div>
-        <div className="">
-        <small className="text-muted" style={{ fontSize: 12 }}>1/30/2025</small>
+          <div className="card radius-10 w-100">
+            <div className="card-header">
+              <div className="d-flex align-items-center">
+                <div>
+                  <h5 className="mb-1">News</h5>
+                </div>
+
+              </div>
+            </div>
+            <div className="product-list p-3 mb-3 ps ps--active-y">
+              <div className="d-flex flex-column gap-3">
+                <div className="d-flex align-items-center justify-content-between gap-3 p-2 border radius-10">
+                  <div className="">
+                    <img src="https://codervent.com/rukada/demo/vertical/ltr/assets/images/icons/idea.png" width={50} alt="" />
+                  </div>
+                  <div className="flex-grow-1">
+                    <h6 className="mb-0">Yellow Tshirt</h6>
+
+                  </div>
+                  <div className="">
+                    <small className="text-muted" style={{ fontSize: 12 }}>1/30/2025</small>
+
+                  </div>
+                </div>
+                <div className="d-flex align-items-center justify-content-between gap-3 p-2 border radius-10">
+                  <div className="">
+                    <img src="https://codervent.com/rukada/demo/vertical/ltr/assets/images/icons/idea.png" width={50} alt="" />
+                  </div>
+                  <div className="flex-grow-1">
+                    <h6 className="mb-0">Titan Watch </h6>
+
+                  </div>
+                  <div className="">
+                    <small className="text-muted" style={{ fontSize: 12 }}>1/30/2025</small>
+
+                  </div>
+                </div>
+
+                <div className="d-flex align-items-center justify-content-between gap-3 p-2 border radius-10">
+                  <div className="">
+                    <img src="https://codervent.com/rukada/demo/vertical/ltr/assets/images/icons/idea.png" width={50} alt="" />
+                  </div>
+                  <div className="flex-grow-1">
+                    <h6 className="mb-0">Titan Watch </h6>
+
+                  </div>
+                  <div className="">
+                    <small className="text-muted" style={{ fontSize: 12 }}>1/30/2025</small>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+
 
         </div>
-      </div>
-      <div className="d-flex align-items-center justify-content-between gap-3 p-2 border radius-10">
-        <div className="">
-          <img src="https://codervent.com/rukada/demo/vertical/ltr/assets/images/icons/idea.png" width={50} alt="" />
-        </div>
-        <div className="flex-grow-1">
-          <h6 className="mb-0">Titan Watch </h6>
-      
-        </div>
-        <div className="">
-        <small   className="text-muted" style={{ fontSize: 12 }}>1/30/2025</small>
-
-        </div>
-      </div>
-    
-      <div className="d-flex align-items-center justify-content-between gap-3 p-2 border radius-10">
-        <div className="">
-          <img src="https://codervent.com/rukada/demo/vertical/ltr/assets/images/icons/idea.png" width={50} alt="" />
-        </div>
-        <div className="flex-grow-1">
-          <h6 className="mb-0">Titan Watch </h6>
-      
-        </div>
-        <div className="">
-        <small   className="text-muted" style={{ fontSize: 12 }}>1/30/2025</small>
-
-        </div>
-      </div>
-  </div>
-</div>
-
-          
-        </div>
-      
-
-      </div>
-      <div className="col-lg-6">
+        <div className="col-lg-6">
           <div className="card">
-          <div className="card-header">
-    <div className="d-flex align-items-center">
-      <div>
-        <h5 className="mb-1">Blogs</h5>
-      </div>
-     
-    </div>
-    </div>
+            <div className="card-header">
+              <div className="d-flex align-items-center">
+                <div>
+                  <h5 className="mb-1">Blogs</h5>
+                </div>
+
+              </div>
+            </div>
             <div className="card-body">
-             
+
               <ul className="list-unstyled" style={{ margin: 0, padding: 0 }}>
 
-  <li
-    className="d-md-flex align-items-center border-bottom py-2"
-    style={{
-      alignItems: "center",
-      borderBottom: "1px solid rgb(221, 221, 221)",
-      padding: "10px 0px"
-    }}
-  >
-    <div
-      className="rounded-circle mb-3 mb-md-0 p-1 border d-flex align-items-center justify-content-center btn-primary"
-      style={{
-        width: 50,
-        height: 50,
-        textAlign: "center",
-        backgroundColor: "rgb(0, 123, 255)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
-      }}
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width={24}
-        height={24}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="lucide lucide-message-circle-more"
-      >
-        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
-        <path d="M8 12h.01" />
-        <path d="M12 12h.01" />
-        <path d="M16 12h.01" />
-      </svg>
-    </div>
-    <div className="flex-grow-1 ms-sm-3">
-     
-      <p className="mt-0 mb-1" style={{ marginTop: 0 }}>
-        Broadcast Message
-      </p>
-      <p
-        className="mt-0 text-muted"
-        style={{ color: "rgb(108, 117, 125)", marginTop: 0 }}
-      >
-        <small>2025-04-08T12:29:19.182Z</small>
-      </p>
-    </div>
-  </li>
-  <li
-    className="d-md-flex align-items-center border-bottom py-2"
-    style={{
-      alignItems: "center",
-      borderBottom: "1px solid rgb(221, 221, 221)",
-      padding: "10px 0px"
-    }}
-  >
-    <div
-      className="rounded-circle mb-3 mb-md-0 p-1 border d-flex align-items-center justify-content-center btn-primary"
-      style={{
-        width: 50,
-        height: 50,
-        textAlign: "center",
-        backgroundColor: "rgb(0, 123, 255)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
-      }}
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width={24}
-        height={24}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="lucide lucide-message-circle-more"
-      >
-        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
-        <path d="M8 12h.01" />
-        <path d="M12 12h.01" />
-        <path d="M16 12h.01" />
-      </svg>
-    </div>
-    <div className="flex-grow-1 ms-sm-3">
-      
-      <p className="mt-0 mb-1" style={{ marginTop: 0 }}>
-        demo gggg
-      </p>
-      <p
-        className="mt-0 text-muted"
-        style={{ color: "rgb(108, 117, 125)", marginTop: 0 }}
-      >
-        <small>2025-04-08T12:15:44.486Z</small>
-      </p>
-    </div>
-  </li>
-  <li
-    className="d-md-flex align-items-center border-bottom py-2"
-    style={{
-      alignItems: "center",
-      borderBottom: "1px solid rgb(221, 221, 221)",
-      padding: "10px 0px"
-    }}
-  >
-    <div
-      className="rounded-circle mb-3 mb-md-0 p-1 border d-flex align-items-center justify-content-center btn-primary"
-      style={{
-        width: 50,
-        height: 50,
-        textAlign: "center",
-        backgroundColor: "rgb(0, 123, 255)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
-      }}
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width={24}
-        height={24}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="lucide lucide-message-circle-more"
-      >
-        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
-        <path d="M8 12h.01" />
-        <path d="M12 12h.01" />
-        <path d="M16 12h.01" />
-      </svg>
-    </div>
-    <div className="flex-grow-1 ms-sm-3">
-    
-      <p className="mt-0 mb-1" style={{ marginTop: 0 }}>
-        demo
-      </p>
-      <p
-        className="mt-0 text-muted"
-        style={{ color: "rgb(108, 117, 125)", marginTop: 0 }}
-      >
-        <small>2025-04-07T05:37:54.069Z</small>
-      </p>
-    </div>
-  </li>
+                <li
+                  className="d-md-flex align-items-center border-bottom py-2"
+                  style={{
+                    alignItems: "center",
+                    borderBottom: "1px solid rgb(221, 221, 221)",
+                    padding: "10px 0px"
+                  }}
+                >
+                  <div
+                    className="rounded-circle mb-3 mb-md-0 p-1 border d-flex align-items-center justify-content-center btn-primary"
+                    style={{
+                      width: 50,
+                      height: 50,
+                      textAlign: "center",
+                      backgroundColor: "rgb(0, 123, 255)",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center"
+                    }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={24}
+                      height={24}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="lucide lucide-message-circle-more"
+                    >
+                      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+                      <path d="M8 12h.01" />
+                      <path d="M12 12h.01" />
+                      <path d="M16 12h.01" />
+                    </svg>
+                  </div>
+                  <div className="flex-grow-1 ms-sm-3">
 
-</ul>
+                    <p className="mt-0 mb-1" style={{ marginTop: 0 }}>
+                      Broadcast Message
+                    </p>
+                    <p
+                      className="mt-0 text-muted"
+                      style={{ color: "rgb(108, 117, 125)", marginTop: 0 }}
+                    >
+                      <small>2025-04-08T12:29:19.182Z</small>
+                    </p>
+                  </div>
+                </li>
+                <li
+                  className="d-md-flex align-items-center border-bottom py-2"
+                  style={{
+                    alignItems: "center",
+                    borderBottom: "1px solid rgb(221, 221, 221)",
+                    padding: "10px 0px"
+                  }}
+                >
+                  <div
+                    className="rounded-circle mb-3 mb-md-0 p-1 border d-flex align-items-center justify-content-center btn-primary"
+                    style={{
+                      width: 50,
+                      height: 50,
+                      textAlign: "center",
+                      backgroundColor: "rgb(0, 123, 255)",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center"
+                    }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={24}
+                      height={24}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="lucide lucide-message-circle-more"
+                    >
+                      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+                      <path d="M8 12h.01" />
+                      <path d="M12 12h.01" />
+                      <path d="M16 12h.01" />
+                    </svg>
+                  </div>
+                  <div className="flex-grow-1 ms-sm-3">
+
+                    <p className="mt-0 mb-1" style={{ marginTop: 0 }}>
+                      demo gggg
+                    </p>
+                    <p
+                      className="mt-0 text-muted"
+                      style={{ color: "rgb(108, 117, 125)", marginTop: 0 }}
+                    >
+                      <small>2025-04-08T12:15:44.486Z</small>
+                    </p>
+                  </div>
+                </li>
+                <li
+                  className="d-md-flex align-items-center border-bottom py-2"
+                  style={{
+                    alignItems: "center",
+                    borderBottom: "1px solid rgb(221, 221, 221)",
+                    padding: "10px 0px"
+                  }}
+                >
+                  <div
+                    className="rounded-circle mb-3 mb-md-0 p-1 border d-flex align-items-center justify-content-center btn-primary"
+                    style={{
+                      width: 50,
+                      height: 50,
+                      textAlign: "center",
+                      backgroundColor: "rgb(0, 123, 255)",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center"
+                    }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={24}
+                      height={24}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="lucide lucide-message-circle-more"
+                    >
+                      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+                      <path d="M8 12h.01" />
+                      <path d="M12 12h.01" />
+                      <path d="M16 12h.01" />
+                    </svg>
+                  </div>
+                  <div className="flex-grow-1 ms-sm-3">
+
+                    <p className="mt-0 mb-1" style={{ marginTop: 0 }}>
+                      demo
+                    </p>
+                    <p
+                      className="mt-0 text-muted"
+                      style={{ color: "rgb(108, 117, 125)", marginTop: 0 }}
+                    >
+                      <small>2025-04-07T05:37:54.069Z</small>
+                    </p>
+                  </div>
+                </li>
+
+              </ul>
 
             </div>
           </div>
@@ -964,7 +964,7 @@ const Dashboard = () => {
 
 
 
-</div>
+      </div>
     </div>
 
 
