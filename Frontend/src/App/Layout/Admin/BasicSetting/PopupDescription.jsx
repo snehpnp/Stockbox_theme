@@ -6,6 +6,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
 const PopupDescription = () => {
+    
     const token = localStorage.getItem('token');
     const [clients, setClients] = useState(null);
     const [description, setDescription] = useState("");
