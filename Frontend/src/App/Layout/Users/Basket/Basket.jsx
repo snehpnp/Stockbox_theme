@@ -205,7 +205,7 @@ function Basket() {
                           <Link
                             to="/user/basketdetail"
                             state={{ item }}
-                            className="btn btn-primary w-100"
+                            className="btn btn-sm btn-primary w-100"
                           >
                             View Details
                           </Link>
@@ -238,7 +238,7 @@ function Basket() {
                           <Link
                             to="/user/rebalancestock"
                             state={{ item }}
-                            className="btn btn-primary w-100"
+                            className="btn btn-sm btn-primary w-100"
                           >
                             View Rebalance
                           </Link>

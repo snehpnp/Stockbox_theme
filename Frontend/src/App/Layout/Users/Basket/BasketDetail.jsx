@@ -3,11 +3,12 @@ import { Doughnut, Line } from "react-chartjs-2"; // Line chart import kiya
 import Content from "../../../components/Contents/Content";
 import { Link, useLocation } from "react-router-dom";
 import { fDateTime } from "../../../../Utils/Date_formate";
+import ReusableModal from '../../../components/Models/ReusableModal';
 
 const BasketDetail = () => {
   const [activeTab, setActiveTab] = useState("rational");
   const [itemdata, setItemdata] = useState();
-
+   const [model, setModel] = useState(false);
   const location = useLocation();
   const { item } = location?.state;
   
@@ -70,7 +71,8 @@ const BasketDetail = () => {
                 <h5 className="mb-0">
                   <b>{item?.title}</b>
                 </h5>
-                <p>{stripHtmlTags(item?.description)}</p>
+                <p className="basket-description">{stripHtmlTags(item?.description)}</p>
+                <button  onClick={() => setModel(true)} className="btn btn-sm btn-secondary">Read More..</button>
               </div>
               <div className="row">
                 <div className="col-md-7">
@@ -293,6 +295,27 @@ const BasketDetail = () => {
           View Detail
         </Link>
       </div>
+
+       <ReusableModal
+                                                  show={model}
+                                                  onClose={() => setModel(false)}
+                                                  title={<span><b>{item?.title}</b></span>}
+                                                  body={
+                                                    <p className="">{stripHtmlTags(item?.description)}</p>
+                                                  }
+                                                  footer={
+                                                      <>
+                                                          <button
+                                                              type="button"
+                                                              className="btn btn-secondary"
+                                                              onClick={() => setModel(false)}
+                                                          >
+                                                              Close
+                                                          </button>
+                                                         
+                                                      </>
+                                                  }
+                                              />
     </Content>
   );
 };
