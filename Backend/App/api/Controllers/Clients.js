@@ -893,6 +893,18 @@ class Clients {
       let pdf_footer = settings.pdf_footer || '';
 
 
+      let state;
+      let city;
+      
+      if(client.state)
+      {
+        state = client.state;
+      }
+      
+      if(client.city)
+        {
+          city = client.city;
+        }
 
 
       // Replace placeholders with actual values
@@ -904,6 +916,8 @@ class Clients {
         .replace(/{{datetime}}/g, datetime)
         .replace(/{{company_name}}/g, company_name)
         .replace(/{{company_address}}/g, company_address)
+        .replace(/{{state}}/g, state)
+        .replace(/{{city}}/g, city)
         .replace(/{{aadhaarno}}/g, aadhaarno);
 
       // const browser = await puppeteer.launch();
