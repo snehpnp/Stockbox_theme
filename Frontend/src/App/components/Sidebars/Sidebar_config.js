@@ -396,13 +396,13 @@ const User = [
   //   link: "/user/payment-history",
   //   children: [],
   // },
-  {
-    name: "PastPerformance",
-    label: "Past Performance",
-    icon: "ScatterChart",
-    link: "/user/past-performance",
-    children: [],
-  },
+  // {
+  //   name: "PastPerformance",
+  //   label: "Past Performance",
+  //   icon: "ScatterChart",
+  //   link: "/user/past-performance",
+  //   children: [],
+  // },
   {
     label: "Our Policy",
     icon: "Handshake",
