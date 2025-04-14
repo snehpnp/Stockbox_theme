@@ -4,9 +4,112 @@ import ApexCharts from "react-apexcharts";
 import Content from "../../../components/Contents/Content";
 import { Link } from "react-router-dom";
 import { House, Tally1 } from "lucide-react";
-import { CircleUserRound, ShoppingCart, History, Shield, CreditCard } from 'lucide-react'
-
+import { Bar } from "react-chartjs-2";
+import { CircleUserRound, ShoppingCart, History, Shield, CreditCard, Puzzle } from 'lucide-react'
+import { getpastperformaceCashdata, getpastperformaceFuturedata, getpastperformaceOptiondata } from "../../../Services/UserService/User";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 const Dashboard = () => {
+
+
+  const [cashpastdata, setCashPastdata] = useState([]);
+  const [futurepastdata, setFuturePastdata] = useState([]);
+  const [optionpastdata, setOptionPastdata] = useState([]);
+  const [cashAvgProfit, setCashAvgProfit] = useState(0);
+  const [futureAvgProfit, setFutureAvgProfit] = useState(0);
+  const [optionAvgProfit, setOptionAvgProfit] = useState(0);
+  const [months, setMonths] = useState([]);
+
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    getCashpastdata();
+    getFuturepastdata();
+    getOptionpastdata();
+  }, []);
+
+
+
+  const formatMonth = (key) => {
+    const [year, month] = key.split("-");
+    return new Date(year, month - 1).toLocaleString("en-US", { month: "long" });
+  };
+
+
+
+  const getCashpastdata = async () => {
+    try {
+      const response = await getpastperformaceCashdata({ id: "66d2c3bebf7e6dc53ed07626" }, token);
+      if (response?.status) {
+        const { months, avgMonthlyProfit } = response.data["6_months"];
+        setMonths(Object.keys(months).map(formatMonth));
+        setCashPastdata(Object.values(months).map(m => m.netProfit));
+        setCashAvgProfit(avgMonthlyProfit);
+      }
+    } catch (error) {
+      console.error("Error fetching Cash data:", error);
+    }
+  };
+
+
+
+
+
+  const getFuturepastdata = async () => {
+    try {
+      const response = await getpastperformaceFuturedata({ id: "66dfede64a88602fbbca9b72" }, token);
+      if (response?.status) {
+        const { months, avgMonthlyProfit } = response.data["6_months"];
+        setFuturePastdata(Object.values(months).map(m => m.netProfit));
+        setFutureAvgProfit(avgMonthlyProfit);
+      }
+    } catch (error) {
+      console.error("Error fetching Future data:", error);
+    }
+  };
+
+
+
+
+  const getOptionpastdata = async () => {
+    try {
+      const response = await getpastperformaceOptiondata({ id: "66dfeef84a88602fbbca9b79" }, token);
+      if (response?.status) {
+        const { months, avgMonthlyProfit } = response.data["6_months"];
+        setOptionPastdata(Object.values(months).map(m => m.netProfit));
+        setOptionAvgProfit(avgMonthlyProfit);
+      }
+    } catch (error) {
+      console.error("Error fetching Option data:", error);
+    }
+  };
+
+
+
+
+  const chartData = {
+    labels: months,
+    datasets: [
+      {
+        label: "Cash",
+        data: cashpastdata,
+        backgroundColor: "rgba(75, 192, 192, 0.6)",
+      },
+      {
+        label: "Future",
+        data: futurepastdata,
+        backgroundColor: "rgba(153, 102, 255, 0.6)",
+      },
+      {
+        label: "Option",
+        data: optionpastdata,
+        backgroundColor: "rgba(255, 159, 64, 0.6)",
+      },
+    ],
+  };
   const [chartColumnData, setChartColumnData] = useState([]);
   const [chartLineData, setChartLineData] = useState([]);
   const [chartCircleData, setChartCircleData] = useState([]);
@@ -382,11 +485,9 @@ const Dashboard = () => {
                 <div className="mt-3">
                   <h4>Hello,John Doe</h4>
                   <hr />
-                  <h3 class="h6 fw-semibold">Total Balance</h3>
+                  <h3 class="h6 fw-semibold">Wallet Balance</h3>
                   <p class="h3 font-weight-bold">$<span id="totalBalance">10,457.00</span></p>
-                  <p class="text-success">
-                    +$<span id="balanceChange">1,169.28</span> (<span id="balanceChangePercent">12.4</span>%)
-                  </p>
+
 
                 </div>
               </div>
@@ -394,7 +495,7 @@ const Dashboard = () => {
 
               <ul className="list-group list-group-flush">
                 <li className="list-group-item">
-                  <Link to="">
+                  <Link to="/user/subscription">
                     <CreditCard className="me-2" /> My Subscription
                   </Link>
                 </li>
@@ -409,15 +510,20 @@ const Dashboard = () => {
                   </Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="">
+                  <Link to="/user/basket">
                     <ShoppingCart className="me-2" /> My Basket Subscription
                   </Link>
 
                 </li>
-
                 <li className="list-group-item">
-                  <button className="btn btn-primary mt-3 w-100">View Proflie</button>
+                  <Link to="/user/refer-earn">
+                    <Puzzle className="me-2" /> Refer & Earn
+                  </Link>
+
                 </li>
+                {/* <li className="list-group-item">
+                  <button className="btn btn-primary mt-3 w-100">View Proflie</button>
+                </li> */}
               </ul>
 
             </div>
@@ -426,222 +532,439 @@ const Dashboard = () => {
         <div class="col-lg-8 col-md-8">
           <div className="card h-100 activity-card">
             <div className="card-body">
+              <div className="row row-cols-1 row-cols-md-2 row-cols-xl-3">
+                <div className="col">
+                  <div className="card radius-10 bg-gradient-deepblue">
+                    <div className="card-body">
+                      <div className="d-flex align-items-center">
+                        <h5 className="mb-0 text-white">9526</h5>
+                        <div className="ms-auto">
+                          <i className="bx bx-cart fs-3 text-white" />
+                        </div>
+                      </div>
+                      <div
+                        className="progress my-2 bg-opacity-25 bg-white"
+                        style={{ height: 4 }}
+                      >
+                        <div
+                          className="progress-bar bg-white"
+                          role="progressbar"
+                          style={{ width: "55%" }}
+                          aria-valuenow={25}
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                        />
+                      </div>
+                      <div className="d-flex align-items-center text-white">
+                        <p className="mb-0 text-white">Live Trade</p>
 
-              <div className="row ">
-                <div class="col-md-6">
-                  <h3>Activity</h3>
-                </div>
-                <div class="col-md-6">
-                  <div class="d-flex justify-content-end align-items-center mb-3">
-
-                    <div class="time-selector d-flex gap-2 ">
-                      <button class="btn btn-secondary active" data-period="1D">1D</button>
-                      <button class="btn btn-secondary" data-period="1W">1W</button>
-                      <button class="btn btn-secondary" data-period="1M">1M</button>
-                      <button class="btn btn-secondary" data-period="1Y">1Y</button>
-                      <button class="btn btn-secondary" data-period="ALL">ALL</button>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <div className="col">
+                  <div className="card radius-10 bg-gradient-ohhappiness">
+                    <div className="card-body">
+                      <div className="d-flex align-items-center">
+                        <h5 className="mb-0 text-white">$8323</h5>
+                        <div className="ms-auto">
+                          <i className="bx bx-dollar fs-3 text-white" />
+                        </div>
+                      </div>
+                      <div
+                        className="progress my-2 bg-opacity-25 bg-white"
+                        style={{ height: 4 }}
+                      >
+                        <div
+                          className="progress-bar bg-white"
+                          role="progressbar"
+                          style={{ width: "55%" }}
+                          aria-valuenow={25}
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                        />
+                      </div>
+                      <div className="d-flex align-items-center text-white">
+                        <p className="mb-0  text-white">Close Trade</p>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col">
+                  <div className="card radius-10 bg-gradient-ibiza">
+                    <div className="card-body">
+                      <div className="d-flex align-items-center">
+                        <h5 className="mb-0 text-white">6200</h5>
+                        <div className="ms-auto">
+                          <i className="bx bx-group fs-3 text-white" />
+                        </div>
+                      </div>
+                      <div
+                        className="progress my-2 bg-opacity-25 bg-white"
+                        style={{ height: 4 }}
+                      >
+                        <div
+                          className="progress-bar bg-white"
+                          role="progressbar"
+                          style={{ width: "55%" }}
+                          aria-valuenow={25}
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                        />
+                      </div>
+                      <div className="d-flex align-items-center text-white">
+                        <p className="mb-0  text-white">Strategy Trade</p>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
-              <>
-                <div className="my-4">
-                  <label className="fw-semibold">Trades</label>
-                  <div className="progress ">
+              <div className="row mt-3">
 
-                    <div
-                      className="progress-bar progress-bar-striped"
-                      role="progressbar"
-                      style={{ width: "10%" }}
-                      aria-valuenow={10}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </div>
-                <div className="my-4">
-                  <label className="fw-semibold">Past Performance</label>
-                  <div className="progress ">
 
-                    <div
-                      className="progress-bar progress-bar-striped bg-success"
-                      role="progressbar"
-                      style={{ width: "25%" }}
-                      aria-valuenow={25}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </div>
-                <div className="my-4">
-                  <label className="fw-semibold">Basket</label>
-                  <div className="progress ">
-                    <div
-                      className="progress-bar progress-bar-striped bg-info"
-                      role="progressbar"
-                      style={{ width: "50%" }}
-                      aria-valuenow={50}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </div>
-                <div className="my-4">
-                  <label className="fw-semibold">Subscription</label>
-                  <div className="progress " >
-                    <div
-                      className="progress-bar progress-bar-striped bg-warning"
-                      role="progressbar"
-                      style={{ width: "75%" }}
-                      aria-valuenow={75}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </div>
-                <div className="my-4">
-                  <label className="fw-semibold">Coupon</label>
-                  <div className="progress ">
-                    <div
-                      className="progress-bar progress-bar-striped bg-danger"
-                      role="progressbar"
-                      style={{ width: "100%" }}
-                      aria-valuenow={100}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </div>
-              </>
+                <Swiper
+                  spaceBetween={50}
+                  slidesPerView={1}
+                  autoplay={{ delay: 3000, disableOnInteraction: false }}
+                  navigation
+                  pagination={{ clickable: true }}
+                  modules={[Autoplay, Navigation, Pagination]}
+                  onSlideChange={() => console.log('slide change')}
+                  onSwiper={(swiper) => console.log(swiper)}
+                >
+                  <SwiperSlide><img src="https://t4.ftcdn.net/jpg/04/90/96/67/360_F_490966788_JwojaHa1G7eEfguq1omUaCNSM6BgYHhI.jpg" style={{height:'300px',width:'100%'}}/></SwiperSlide>
+                  <SwiperSlide><img src="https://img.freepik.com/free-vector/modern-sale-banner-with-text-space-area_1017-27331.jpg" style={{height:'300px',width:'100%'}}/></SwiperSlide>
+                  <SwiperSlide><img src="https://www.shutterstock.com/image-vector/sale-banner-template-big-special-260nw-2373695365.jpg" style={{height:'300px',width:'100%'}}/></SwiperSlide>
+                  <SwiperSlide><img src="https://img.freepik.com/premium-vector/special-offer-final-sale-banner-red-background-illustration_275806-121.jpg" style={{height:'300px',width:'100%'}}/></SwiperSlide>
+                </Swiper>
+
+              </div>
+
+
 
 
 
             </div>
           </div>
+
         </div>
 
       </div>
-
       <div className="row mt-4">
-        <div className="col-lg-4">
+        <div className="col-md-4">
           <div className="card">
             <div className="card-body">
-              <h3 class="h6 fw-semibold mb-2">Sales Statistic</h3>
-              <p class="h4 font-weight-bold">$<span id="salesValue">1,062.56</span></p>
-              <p class="text-success">Today (+<span id="salesChangePercent">40.8</span>%)</p>
-              {/* <ApexCharts
-                options={optionsLine}
-                series={optionsLine.series}
-                type="line"
-                height={350}
-              /> */}
-              <ApexCharts
-                options={optionsColumn}
-                series={optionsColumn.series}
-                type="bar"
-                height={350}
-              />
+              <h5>
+                <Link to="/user/past-performance/cash" className="text-decoration-none text-dark">
+                  Cash
+                </Link>
+              </h5>
+              <Bar data={{ labels: months, datasets: [chartData.datasets[0]] }} />
+              <hr />
+              <div className="row">
+                <div className="col-md-2 pe-0 border-right">
+                  <h6>
+                    <i className="bx bx-rupee fs-1 text-success"></i>
+                  </h6>
+                </div>
+                <div className="col-md-6">
+                  <h6>Average Profit</h6>
+                  <h4>{cashAvgProfit.toFixed(2)}</h4>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div className="col-lg-4">
+        <div className="col-md-4">
           <div className="card">
             <div className="card-body">
-              <h3 class="h6 fw-semibold mb-2">Exchange Offer</h3>
-              <p class="h4 font-weight-bold">$<span id="exchangeValue">491.20</span></p>
-              <p class="text-success">Today (+<span id="exchangeChangePercent">19.5</span>%)</p>
-              <ApexCharts
-                options={optionsColumn}
-                series={optionsColumn.series}
-                type="bar"
-                height={350}
-              />
+              <h5>
+                <Link to="/user/past-performance/future" className="text-decoration-none text-dark">
+                  Future
+                </Link>
+              </h5>
+              <Bar data={{ labels: months, datasets: [chartData.datasets[1]] }} />
+              <hr />
+              <div className="row">
+                <div className="col-md-2 pe-0 border-right">
+                  <h6>
+                    <i className="bx bx-rupee fs-1 text-success"></i>
+                  </h6>
+                </div>
+                <div className="col-md-6">
+                  <h6>Average Profit</h6>
+                  <h4>{futureAvgProfit.toFixed(2)}</h4>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div className="col-lg-4">
-          <div className="card h-100">
+        <div className="col-md-4">
+          <div className="card">
             <div className="card-body">
-              <h3 class="h6 fw-semibold mb-2">Greed Index</h3>
-              <ApexCharts
-                options={optionsCircle}
-                series={optionsCircle.series}
-                type="radialBar"
-                height={250}
-              />
-              <p class="text-center mt-3">
-                <span class="h4 font-weight-bold"><span id="greedIndexValue">75</span>%</span>
-                <span class="text-success ms-2"><span id="greedIndexChange">+10.30%</span></span>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="dashboard-page" class="page-content">
-
-        <div class="card p-4 mt-3">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="h5 fw-semibold">Tokens</h3>
-            <div>
-              <button class="btn btn-secondary me-2">Filter</button>
-              <button class="btn btn-secondary">Customize</button>
-            </div>
-          </div>
-          <div class="table-responsive">
-            <table class="table table-bordered table-striped token-table">
-              <thead>
-                <tr>
-                  <th class="text-start pb-2">Name</th>
-                  <th class="text-end pb-2">Price</th>
-                  <th class="text-end pb-2">Balance</th>
-                  <th class="text-end pb-2">Market Cap</th>
-                  <th class="text-end pb-2">Volume (24H)</th>
-                  <th class="text-end pb-2">Circ Supply</th>
-                </tr>
-              </thead>
-              <tbody id="tokenTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <div id="swap-page" class="page-content d-none">
-        <div class="card p-4">
-          <h2 class="h4 fw-semibold mb-4">Swap Tokens</h2>
-          <div class="max-w-md mx-auto">
-            <div class="mb-3">
-              <label class="form-label" for="swapFullInput">You Pay</label>
-              <div class="d-flex align-items-center">
-                <input type="number" class="form-control flex-grow-1 me-2" id="swapFullInput" />
-                <select class="form-select w-auto" id="swapFullInputCurrency">
-                  <option value="bnb">BNB</option>
-                  <option value="eth">ETH</option>
-                  <option value="btc">BTC</option>
-                </select>
+              <h5>
+                <Link to="/user/past-performance/option" className="text-decoration-none text-dark">
+                  Option
+                </Link>
+              </h5>
+              <Bar data={{ labels: months, datasets: [chartData.datasets[2]] }} />
+              <hr />
+              <div className="row">
+                <div className="col-md-2 pe-0 border-right">
+                  <h6>
+                    <i className="bx bx-rupee fs-1 text-success"></i>
+                  </h6>
+                </div>
+                <div className="col-md-6">
+                  <h6>Average Profit</h6>
+                  <h4>{optionAvgProfit.toFixed(2)}</h4>
+                </div>
               </div>
             </div>
-            <div class="swap-icon d-flex justify-content-center align-items-center my-3">
-              <button id="swapFullButton" class="btn btn-primary rounded-circle p-2">
-                <i class="fas fa-exchange-alt"></i>
-              </button>
-            </div>
-            <div class="mb-4">
-              <label class="form-label" for="swapFullOutput">You Receive</label>
-              <div class="d-flex align-items-center">
-                <input type="number" class="form-control flex-grow-1 me-2" id="swapFullOutput" readonly />
-                <select class="form-select w-auto" id="swapFullOutputCurrency">
-                  <option value="eth">ETH</option>
-                  <option value="bnb">BNB</option>
-                  <option value="btc">BTC</option>
-                </select>
-              </div>
-            </div>
-            <button id="performFullSwapButton" class="btn btn-gradient w-100">Swap Tokens</button>
           </div>
         </div>
       </div>
+      <div className="row mt-4">
+        <div className="col-lg-6">
+        <div className="card radius-10 w-100">
+  <div className="card-header">
+    <div className="d-flex align-items-center">
+      <div>
+        <h5 className="mb-1">News</h5>
+      </div>
+     
+    </div>
+  </div>
+  <div className="product-list p-3 mb-3 ps ps--active-y">
+    <div className="d-flex flex-column gap-3">
+      <div className="d-flex align-items-center justify-content-between gap-3 p-2 border radius-10">
+        <div className="">
+          <img src="https://codervent.com/rukada/demo/vertical/ltr/assets/images/icons/idea.png" width={50} alt="" />
+        </div>
+        <div className="flex-grow-1">
+          <h6 className="mb-0">Yellow Tshirt</h6>
+        
+        </div>
+        <div className="">
+        <small className="text-muted" style={{ fontSize: 12 }}>1/30/2025</small>
+
+        </div>
+      </div>
+      <div className="d-flex align-items-center justify-content-between gap-3 p-2 border radius-10">
+        <div className="">
+          <img src="https://codervent.com/rukada/demo/vertical/ltr/assets/images/icons/idea.png" width={50} alt="" />
+        </div>
+        <div className="flex-grow-1">
+          <h6 className="mb-0">Titan Watch </h6>
+      
+        </div>
+        <div className="">
+        <small   className="text-muted" style={{ fontSize: 12 }}>1/30/2025</small>
+
+        </div>
+      </div>
+    
+      <div className="d-flex align-items-center justify-content-between gap-3 p-2 border radius-10">
+        <div className="">
+          <img src="https://codervent.com/rukada/demo/vertical/ltr/assets/images/icons/idea.png" width={50} alt="" />
+        </div>
+        <div className="flex-grow-1">
+          <h6 className="mb-0">Titan Watch </h6>
+      
+        </div>
+        <div className="">
+        <small   className="text-muted" style={{ fontSize: 12 }}>1/30/2025</small>
+
+        </div>
+      </div>
+  </div>
+</div>
+
+          
+        </div>
+      
+
+      </div>
+      <div className="col-lg-6">
+          <div className="card">
+          <div className="card-header">
+    <div className="d-flex align-items-center">
+      <div>
+        <h5 className="mb-1">Blogs</h5>
+      </div>
+     
+    </div>
+    </div>
+            <div className="card-body">
+             
+              <ul className="list-unstyled" style={{ margin: 0, padding: 0 }}>
+
+  <li
+    className="d-md-flex align-items-center border-bottom py-2"
+    style={{
+      alignItems: "center",
+      borderBottom: "1px solid rgb(221, 221, 221)",
+      padding: "10px 0px"
+    }}
+  >
+    <div
+      className="rounded-circle mb-3 mb-md-0 p-1 border d-flex align-items-center justify-content-center btn-primary"
+      style={{
+        width: 50,
+        height: 50,
+        textAlign: "center",
+        backgroundColor: "rgb(0, 123, 255)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
+      }}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={24}
+        height={24}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="lucide lucide-message-circle-more"
+      >
+        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+        <path d="M8 12h.01" />
+        <path d="M12 12h.01" />
+        <path d="M16 12h.01" />
+      </svg>
+    </div>
+    <div className="flex-grow-1 ms-sm-3">
+     
+      <p className="mt-0 mb-1" style={{ marginTop: 0 }}>
+        Broadcast Message
+      </p>
+      <p
+        className="mt-0 text-muted"
+        style={{ color: "rgb(108, 117, 125)", marginTop: 0 }}
+      >
+        <small>2025-04-08T12:29:19.182Z</small>
+      </p>
+    </div>
+  </li>
+  <li
+    className="d-md-flex align-items-center border-bottom py-2"
+    style={{
+      alignItems: "center",
+      borderBottom: "1px solid rgb(221, 221, 221)",
+      padding: "10px 0px"
+    }}
+  >
+    <div
+      className="rounded-circle mb-3 mb-md-0 p-1 border d-flex align-items-center justify-content-center btn-primary"
+      style={{
+        width: 50,
+        height: 50,
+        textAlign: "center",
+        backgroundColor: "rgb(0, 123, 255)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
+      }}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={24}
+        height={24}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="lucide lucide-message-circle-more"
+      >
+        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+        <path d="M8 12h.01" />
+        <path d="M12 12h.01" />
+        <path d="M16 12h.01" />
+      </svg>
+    </div>
+    <div className="flex-grow-1 ms-sm-3">
+      
+      <p className="mt-0 mb-1" style={{ marginTop: 0 }}>
+        demo gggg
+      </p>
+      <p
+        className="mt-0 text-muted"
+        style={{ color: "rgb(108, 117, 125)", marginTop: 0 }}
+      >
+        <small>2025-04-08T12:15:44.486Z</small>
+      </p>
+    </div>
+  </li>
+  <li
+    className="d-md-flex align-items-center border-bottom py-2"
+    style={{
+      alignItems: "center",
+      borderBottom: "1px solid rgb(221, 221, 221)",
+      padding: "10px 0px"
+    }}
+  >
+    <div
+      className="rounded-circle mb-3 mb-md-0 p-1 border d-flex align-items-center justify-content-center btn-primary"
+      style={{
+        width: 50,
+        height: 50,
+        textAlign: "center",
+        backgroundColor: "rgb(0, 123, 255)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
+      }}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={24}
+        height={24}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="lucide lucide-message-circle-more"
+      >
+        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+        <path d="M8 12h.01" />
+        <path d="M12 12h.01" />
+        <path d="M16 12h.01" />
+      </svg>
+    </div>
+    <div className="flex-grow-1 ms-sm-3">
+    
+      <p className="mt-0 mb-1" style={{ marginTop: 0 }}>
+        demo
+      </p>
+      <p
+        className="mt-0 text-muted"
+        style={{ color: "rgb(108, 117, 125)", marginTop: 0 }}
+      >
+        <small>2025-04-07T05:37:54.069Z</small>
+      </p>
+    </div>
+  </li>
+
+</ul>
+
+            </div>
+          </div>
+        </div>
 
 
+
+</div>
     </div>
 
 
