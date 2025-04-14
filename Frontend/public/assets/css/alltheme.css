@@ -1956,3 +1956,9 @@ span.price-original {
   background: -webkit-linear-gradient(45deg, #ee0979, #ff6a00) !important;
   background: linear-gradient(45deg, #ee0979, #ff6a00) !important;
 }
+.faq-content .accordion-item {
+  border: 1px solid  !important;
+  margin: 10px 0;
+  border-radius: 2px !important;
+  border-color: var(--BtnSecBorderColor, black) !important;
+}

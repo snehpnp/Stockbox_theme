@@ -43,9 +43,13 @@ const Faq = () => {
       >
         <div className="page-content">
 
+<div className="row faq-content">
+  <div className="col-lg-5">
+<img src="assets/images/faq.webp" className="w-100"/>
+  </div>
+  <div className="col-lg-7">
 
-
-          {isLoading ? <Loader /> : <div className="accordion accordion-flush" id="accordionExample2">
+  {isLoading ? <Loader /> : <div className="accordion accordion-flush" id="accordionExample2">
             {faq && faq.length > 0 ? (
 
               faq.map((item, index) => (
@@ -59,7 +63,7 @@ const Faq = () => {
                       aria-expanded={index === 0 ? "true" : "false"}
                       aria-controls={`collapse${index}`}
                     >
-                      {item.title}
+                     <strong>{item.title}</strong> 
                     </button>
                   </h2>
                   <div
@@ -84,6 +88,10 @@ const Faq = () => {
             )}
 
           </div>}
+  </div>
+</div>
+
+      
 
         </div>
 
