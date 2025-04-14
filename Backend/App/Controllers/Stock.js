@@ -151,7 +151,7 @@ class Stock {
       const raw = await Stock_Modal.aggregate([
         {
           $match: {
-            symbol: { $regex: symbol, $options: 'i' },
+            symbol: symbol,
             segment: segment,
             expiry_month_year: { $in: expiryMonths }
           }
@@ -208,7 +208,7 @@ class Stock {
       if (segment === "O") {
         matchStage = {
           $match: {
-            symbol: { $regex: symbol, $options: 'i' },
+            symbol: symbol,
             segment: segment,
             expiry: expiry,
             option_type: optiontype
@@ -217,7 +217,7 @@ class Stock {
       } else {
         matchStage = {
           $match: {
-            symbol: { $regex: symbol, $options: 'i' },
+            symbol: symbol,
             segment: segment,
             expiry: expiry
           }
