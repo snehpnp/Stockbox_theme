@@ -3412,14 +3412,24 @@ end.setHours(23, 59, 59, 999);
       };
 
       if (activePlans.length > 0) {
-        // If there are active plans
+        // Active clients see:
+        //  • broadcasts for their subscribed services
+        //  • plus any broadcast tagged to service "All"
         query.$or = [
-          { type: 'active', service: { $in: activePlans } }
+          {
+            type: 'active',
+            service: { $in: [...activePlans, 'All'] }
+          }
         ];
       } else if (expiredPlans.length > 0) {
-        // If there are expired plans
+        // Expired clients see:
+        //  • broadcasts for their expired services
+        //  • plus any broadcast tagged to service "All"
         query.$or = [
-          { type: 'expired', service: { $in: expiredPlans } }
+          {
+            type: 'expired',
+            service: { $in: [...expiredPlans, 'All'] }
+          }
         ];
       } else if (allPlans.length === 0) {
         // If no plans exist
@@ -3976,10 +3986,17 @@ end.setHours(23, 59, 59, 999);
             clienttype: { $in: ['active', 'expired', 'nonsubscribe', 'All'] },
             $or: [
               // For active clients, include active plans
-              { clienttype: 'active', segmentid: { $in: activePlans } },
-              // For expired clients, include expired plans
-              { clienttype: 'expired', segmentid: { $in: expiredPlans } },
-              // For clients with no active or expired plans (no subscription)
+              {
+                clienttype: "active",
+                segmentid: { $in: [...activePlans, "All"] }
+              },
+            
+              // expired clients: their segments OR “All”
+              {
+                clienttype: "expired",
+                segmentid: { $in: [...expiredPlans, "All"] }
+              },
+            
               ...(noPlans ? [{ clienttype: 'nonsubscribe' }] : []),
               // For all clients
               { clienttype: 'All' }
