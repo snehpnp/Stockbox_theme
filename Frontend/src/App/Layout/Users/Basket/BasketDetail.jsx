@@ -135,9 +135,12 @@ const BasketDetail = () => {
           </div>
         </div>
       </div>
-
-     
-      <div className="row px-4 pt-4">
+      <div className="alert alert-warning" role="alert">
+  Minimum Investment Amount:
+  <strong>23242</strong>
+</div>
+      {/* Line Chart Integration */}
+      <div className="row  ">
         <div className="col-md-12">
           <div className="card shadow ch">
             <div className="card-body">
@@ -166,7 +169,11 @@ const BasketDetail = () => {
     </li>
   </ul>
   </div>
+  <div>
+ 
+  </div>
 
+  {/* Tab panes */}
   <div className="tab-content basket-chart-data mx-auto" >
     <div id="home" className="container tab-pane active">
       <br />
@@ -226,7 +233,7 @@ const BasketDetail = () => {
       </div>
 
       {/* Tabs Section */}
-      <div className="row px-4 pt-3 align-items-center ">
+      <div className="row  pt-3 align-items-center ">
       <div className="col-md-12 ">
         <div className="card">
           <div className="card-body">
