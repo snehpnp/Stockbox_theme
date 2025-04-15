@@ -411,7 +411,7 @@ class Clients {
 
       if (req.headers.host === 'app.rmpro.in') {
 
-        await sendSMS(result.PhoneNo,resetToken);
+        await sendSMS(client.PhoneNo,resetToken);
 
 
   return res.json({
