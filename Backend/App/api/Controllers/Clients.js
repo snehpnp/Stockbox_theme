@@ -208,6 +208,7 @@ class Clients {
     otp: resetToken,
     otpmobile: otpmobile,
     email: Email,
+    PhoneNo: PhoneNo,
     message: "OTP has been sent to your mobile/email. Please check your mobile/email.",
   });
 
@@ -219,6 +220,7 @@ class Clients {
         otp: resetToken,
         otpmobile: otpmobile,
         email: Email,
+        PhoneNo: PhoneNo,
         message: "OTP has been sent to your email. Please check your email.",
       });
     }
