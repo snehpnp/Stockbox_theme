@@ -138,7 +138,7 @@ const BrokerResponse = () => {
                                   style={{ color: "green", fontSize: "16px", marginLeft: "-12px" }}
                                 >
                                   {/* ✅ {data?.data?.data?.status || "-"} */}
-                                  {(data?.data?.data?.status).toUpperCase() || "-"}
+                                  {(data?.data?.data?.status)?.toUpperCase() || "-"}
                                 </span>
                               ) : (
                                 <span
@@ -146,7 +146,7 @@ const BrokerResponse = () => {
                                   style={{ color: "red", fontSize: "16px", marginLeft: "-12px" }}
                                 >
                                   {/* ❌ {data?.data?.data?.status || "UNKNOWN"} */}
-                                  {(data?.data?.data?.status).toUpperCase() || "UNKNOWN"}
+                                  {(data?.data?.data?.status)?.toUpperCase() || "UNKNOWN"}
                                 </span>
                               )}
                             </td>

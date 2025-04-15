@@ -37,7 +37,6 @@ function Trade() {
   const [service, setService] = useState([]);
 
   const [tradeData, setTradeData] = useState({ live: [], close: [] });
-  console.log("tradeData",tradeData.live)
   const [showModal, setShowModal] = useState(false);
   const [description, setDescription] = useState("");
   const [avoidDescription, setAvoidDescription] = useState("");
@@ -376,8 +375,6 @@ function Trade() {
                 <b>{fDateTimeH(item?.created_at)}</b>
               </span>
             </div>
-            {console.log("item",item)}
-
             {selectedTab === "live" && <div className="col-lg-3">
               <button className="btn btn-secondary" style={{ borderRadius: "20px", padding: "0px 10px", fontSize: "15px" }}>
                 Sugg. Qty : {item?.lot}
