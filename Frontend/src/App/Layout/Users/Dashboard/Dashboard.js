@@ -47,7 +47,7 @@ const [newslist, setNewslist] = useState([]);
       try {
         const response = await getbannerlist(token); // just pass the token
         setBannerimg(response.data);
-        console.log(response.data, "bannerimg"); // log the response directly
+       
       } catch (error) {
         console.error("Error fetching banner list:", error);
       }
@@ -61,7 +61,7 @@ const getNewslist = async ()=>
   try{
     const response= await GetNewsData(token); // just pass the token
     setNewslist(response.data);
-    console.log(response.data, "newslist"); // log the response directly
+  
   }
   catch(error)
   {
@@ -76,7 +76,7 @@ getNewslist();
       try{
         const response= await getblogslist(token); // just pass the token
         setBlogslist(response.data);
-        console.log(response.data, "blogslist"); // log the response directly
+        
       }
       catch(error)
       {
