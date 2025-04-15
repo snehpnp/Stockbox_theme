@@ -8,6 +8,7 @@ const multer = require('multer');
 
 const puppeteer = require('puppeteer');
 const fs = require('fs');
+const { toWords } = require('number-to-words');
 
 
 const Basket_Modal = db.Basket;
@@ -1752,7 +1753,7 @@ class Basket {
           .replace(/{{pergstt}}/g, pergstt)
           .replace(/{{saccode}}/g, settings.saccode)
           .replace(/{{bstate}}/g, settings.state)
-          .replace(/{{panno}}/g, client.panno)
+          .replace(/{{panno}}/g, client.panno ?? 'NA')
           .replace(/{{city}}/g, client.city)
           .replace(/{{statecode}}/g, clientstateid)
           .replace(/{{settingstatecode}}/g, settingsstateid)
