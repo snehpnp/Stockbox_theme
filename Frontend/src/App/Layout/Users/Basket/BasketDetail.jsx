@@ -13,7 +13,6 @@ const BasketDetail = () => {
   const location = useLocation();
   const { item } = location?.state;
 
-  console.log("item", item)
 
 
   const stripHtmlTags = (input) => {
@@ -22,12 +21,33 @@ const BasketDetail = () => {
   };
 
 
+  function calculateTypeWeightages(stockDetails) {
+    const typeWeightages = {};
+    
+    stockDetails.forEach(item => {
+      const { type, weightage } = item;
+      typeWeightages[type] = (typeWeightages[type] || 0) + weightage;
+    });
+    
+    const labels = [];
+    const values = [];
+    
+    for (const type in typeWeightages) {
+      labels.push(`${type} (${typeWeightages[type]}%)`);
+      values.push(typeWeightages[type]);
+    }
+    
+    return { labels, values };
+  }
+  
+  const typeData = calculateTypeWeightages(item.stock_details);
+  
   const chartData = {
-    labels: ["Hit Ratio", "Miss Ratio"],
+    labels: typeData.labels,
     datasets: [
       {
-        data: [80, 20],
-        backgroundColor: ["#4CAF50", "#FF5252"],
+        data: typeData.values, 
+        backgroundColor: ["#4CAF50", "#FF5252"], 
         hoverBackgroundColor: ["#66BB6A", "#FF867F"],
       },
     ],
