@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { House, Tally1 } from "lucide-react";
 import { Bar } from "react-chartjs-2";
 import { CircleUserRound, ShoppingCart, History, Shield, CreditCard, Puzzle } from 'lucide-react'
-import { getpastperformaceCashdata, getpastperformaceFuturedata, getpastperformaceOptiondata } from "../../../Services/UserService/User";
+import { getpastperformaceCashdata, getpastperformaceFuturedata, getpastperformaceOptiondata, GetUserData } from "../../../Services/UserService/User";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
@@ -23,7 +23,11 @@ const Dashboard = () => {
   const [optionAvgProfit, setOptionAvgProfit] = useState(0);
   const [months, setMonths] = useState([]);
 
+  const [userDetail, setUserDetail] = useState({});
+
   const token = localStorage.getItem("token");
+  const userid = localStorage.getItem("id");
+
 
   useEffect(() => {
     getCashpastdata();
@@ -37,6 +41,22 @@ const Dashboard = () => {
     const [year, month] = key.split("-");
     return new Date(year, month - 1).toLocaleString("en-US", { month: "long" });
   };
+
+  const getuserdetail = async () => {
+    try {
+      const response = await GetUserData(userid, token);
+
+      if (response.status) {
+        setUserDetail(response.data);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  useEffect(() => {
+    getuserdetail();
+  }, []);
 
 
 
@@ -483,10 +503,10 @@ const Dashboard = () => {
                   <CircleUserRound className="w-100 h-100 m-0" />
                 </div>
                 <div className="mt-3">
-                  <h4>Hello,John Doe</h4>
+                  <h4>Hello,{userDetail?.FullName}</h4>
                   <hr />
                   <h3 class="h6 fw-semibold">Wallet Balance</h3>
-                  <p class="h3 font-weight-bold">$<span id="totalBalance">10,457.00</span></p>
+                  <p class="h3 font-weight-bold">₹<span id="totalBalance">{userDetail?.wamount}</span></p>
 
 
                 </div>
@@ -632,8 +652,8 @@ const Dashboard = () => {
                   navigation
                   pagination={{ clickable: true }}
                   modules={[Autoplay, Navigation, Pagination]}
-                  onSlideChange={() => console.log('slide change')}
-                  onSwiper={(swiper) => console.log(swiper)}
+                  // onSlideChange={() => console.log('slide change')}
+                  // onSwiper={(swiper) => console.log(swiper)}
                 >
                   <SwiperSlide><img src="https://t4.ftcdn.net/jpg/04/90/96/67/360_F_490966788_JwojaHa1G7eEfguq1omUaCNSM6BgYHhI.jpg" style={{ height: '300px', width: '100%' }} /></SwiperSlide>
                   <SwiperSlide><img src="https://img.freepik.com/free-vector/modern-sale-banner-with-text-space-area_1017-27331.jpg" style={{ height: '300px', width: '100%' }} /></SwiperSlide>
