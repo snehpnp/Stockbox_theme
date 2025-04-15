@@ -174,22 +174,31 @@ const Perform = () => {
         },
         {
             name: 'Entry price',
-            selector: row => <div> <IndianRupee />{row?.price != null ? row?.price.toFixed(2) : '-' || ""}</div>,
+            selector: row => (
+                <div>
+                    <IndianRupee />
+                    {typeof row?.price === 'number' ? row.price.toFixed(2) : '-'}
+                </div>
+            ),
             sortable: true,
             width: '200px',
         },
 
         {
             name: 'Exit Price',
-            selector: row => (
-                <div>
-                    <IndianRupee />
-                    {row?.closeprice != null ? row.closeprice.toFixed(2) : '—'}
-                </div>
-            ),
+            selector: row => {
+                const price = Number(row?.closeprice);
+                return (
+                    <div>
+                        <IndianRupee />
+                        {!isNaN(price) ? price.toFixed(2) : '—'}
+                    </div>
+                );
+            },
             sortable: true,
             width: '200px',
         },
+
         {
             name: 'Total P&L (%)',
             cell: row => {
