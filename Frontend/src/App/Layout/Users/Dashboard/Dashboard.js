@@ -691,7 +691,7 @@ getNewslist();
         return (
           <SwiperSlide key={index}>
             <img
-              src={`${image_baseurl}${item.image}`}
+              src={`${image_baseurl}uploads/banner/${item.image}`}
               style={{ height: '300px', width: '100%' }}
               alt={`banner-${index}`}
             />
