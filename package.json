@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "number-to-words": "^1.2.4"
+    "number-to-words": "^1.2.4",
+    "swiper": "^11.2.6"
   }
 }

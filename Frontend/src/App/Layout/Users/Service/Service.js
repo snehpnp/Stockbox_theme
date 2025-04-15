@@ -185,6 +185,7 @@ const Service = () => {
   const getPlan = async () => {
     try {
       const response = await GetPlanByCategory(token);
+      // console.log("response",response)
       if (response.status) {
         setPlan(response?.data);
         setCategory(response?.data.sort((a, b) => b._id.localeCompare(a._id)));

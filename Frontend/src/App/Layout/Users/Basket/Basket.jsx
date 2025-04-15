@@ -152,7 +152,6 @@ function Basket() {
           <Loader />
         ) : basketdata?.length > 0 ? (
           <div className="row">
-            {console.log("basketdata", basketdata)}
             {basketdata?.map((item) => (
 
               <div className="col-md-12 col-lg-6 mb-4" key={item?.id}>

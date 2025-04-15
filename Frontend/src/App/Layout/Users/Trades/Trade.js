@@ -355,6 +355,12 @@ function Trade() {
 
   };
 
+  const formatTradeSymbol = (symbol) => {
+    if (!symbol) return "Trade Symbol";
+    return symbol.replace(/^([A-Z]+)(\d{2}[A-Z]{3}\d{2})([A-Z]+)$/, '$1 $2 $3');
+  };
+  
+
 
 
 
@@ -369,7 +375,6 @@ function Trade() {
                 <b>{fDateTimeH(item?.created_at)}</b>
               </span>
             </div>
-
             {selectedTab === "live" && <div className="col-lg-3">
               <button className="btn btn-secondary" style={{ borderRadius: "20px", padding: "0px 10px", fontSize: "15px" }}>
                 Sugg. Qty : {item?.lot}
@@ -463,8 +468,9 @@ function Trade() {
             <div className="col-md-12 col-lg-7">
               <div className="trade-content">
                 <div className="d-sm-flex justify-content-between tradehead mb-3">
-                  <h3>{item.tradesymbol || "Trade Symbol"}</h3>
-                  {/* <span>{item?.stock}</span> */}
+                  {/* <h3>{item.tradesymbol || "Trade Symbol"}</h3> */}
+                  <h3>{formatTradeSymbol(item.tradesymbol)}</h3>
+
                   {selectedTab !== "live" && (
                     <span><b>Entry Type</b>: {item?.calltype} {item?.entrytype}</span>)}
                 </div>
@@ -515,6 +521,10 @@ function Trade() {
                       item?.purchased === false || new Date(item?.created_at) > new Date()
                     }
                     onClick={() => {
+                      if(brokerstatus===0){
+                        showCustomAlert("error", "Client Broker Not Login, Please Login With Broker.");
+                        return;
+                      }
                       UpdateExitdata(item);
                       setCalltypedata(item);
                     }}
@@ -528,6 +538,10 @@ function Trade() {
                   <button
                     className="btn w-100 my-1"
                     onClick={() => {
+                      if(brokerstatus===0){
+                        showCustomAlert("error", "Client Broker Not Login, Please Login With Broker.");
+                        return;
+                        }
                       setCalltypedata(item);
                       UpdateData(item)
                     }}

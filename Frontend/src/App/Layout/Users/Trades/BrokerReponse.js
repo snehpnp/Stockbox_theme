@@ -130,25 +130,31 @@ const BrokerResponse = () => {
                           </tr>
                           <tr>
                             <td>Order Status</td>
+                            {/* {console.log("data.data",data)} */}
                             <td>
-                              {["Success", "Done", "Ok"].includes(
-                                data.data?.data?.at(-1)?.Status
-                              ) ? (
-                                <span className="badge bg-success badgespan">
-                                  ✅ {data.data.data.map((item) => item?.status).at(-1) || "-"}
+                              {["Success", "Done", "Ok", "open"].includes(data.data?.data?.status) ? (
+                                <span
+                                  className="badge"
+                                  style={{ color: "green", fontSize: "16px", marginLeft: "-12px" }}
+                                >
+                                  {/* ✅ {data?.data?.data?.status || "-"} */}
+                                  {(data?.data?.data?.status)?.toUpperCase() || "-"}
                                 </span>
                               ) : (
                                 <span
                                   className="badge"
-                                  style={{ color: "red", fontSize: "0.9rem" }}
+                                  style={{ color: "red", fontSize: "16px", marginLeft: "-12px" }}
                                 >
-                                  ❌ {data.data.data.map((item) => item?.status).at(-1) || "UNKNOWN"}
+                                  {/* ❌ {data?.data?.data?.status || "UNKNOWN"} */}
+                                  {(data?.data?.data?.status)?.toUpperCase() || "UNKNOWN"}
                                 </span>
                               )}
                             </td>
+                            {/* {data?.data?.data?.status || "N/A"} */}
+
                           </tr>
                           <tr>
-                            {["Success", "Done", "Ok"].includes(data.data[0]?.Status) ? (
+                            {["Success", "Done", "Ok"].includes(data?.data?.data?.Status) ? (
                               <td>Order Detail </td>
                             ) : (
                               <td>Reject Reason </td>
@@ -160,7 +166,7 @@ const BrokerResponse = () => {
                                 maxWidth: "200px",
                               }}
                             >
-                              {data.data.data.map((item) => item?.status_message).at(-1) || "N/A"}
+                              {data?.data?.data?.text || "N/A"}
                             </td>
                           </tr>
                         </tbody>
