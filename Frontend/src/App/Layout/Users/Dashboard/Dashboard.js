@@ -841,7 +841,7 @@ getNewslist();
   return (  
     <li key={index} className="d-flex my-2 align-items-center justify-content-between gap-3 p-2 border radius-10">
       <div className="">
-        <img src={`${image_baseurl}${item.image}`} width={50} alt={item.title} />
+        <img src={`${image_baseurl}uploads/blogs/${item.image}`} width={50} alt={item.title} />
       </div>
       <div className="flex-grow-1">
         <h6 className="mb-0">{item.title}</h6>
