@@ -15,7 +15,10 @@ import 'swiper/css/pagination';
 import ReusableModal from '../../../components/Models/ReusableModal';
 import {
   getbannerlist,} from "../../../Services/Admin/Admin";
+  import { getblogslist } from "../../../Services/Admin/Admin";
+  import { GetNewsData } from "../../../Services/UserService/User";
 import { image_baseurl } from "../../../../Utils/config";
+
 
 const Dashboard = () => {
 
@@ -28,6 +31,8 @@ const Dashboard = () => {
   const [optionAvgProfit, setOptionAvgProfit] = useState(0);
   const [months, setMonths] = useState([]);
 const [bannerimg, setBannerimg] = useState([]);
+const [blogslist, setBlogslist] = useState([]);
+const [newslist, setNewslist] = useState([]);
 
   const token = localStorage.getItem("token");
 
@@ -50,8 +55,36 @@ const [bannerimg, setBannerimg] = useState([]);
   
     getBannerList();
   }, []);
-  
-
+   useEffect(()=>{
+const getNewslist = async ()=>
+{
+  try{
+    const response= await GetNewsData(token); // just pass the token
+    setNewslist(response.data);
+    console.log(response.data, "newslist"); // log the response directly
+  }
+  catch(error)
+  {
+    console.error("Error fetching blog list:", error);
+  }
+};
+getNewslist();
+   },[])
+   useEffect(()=>{
+    const getBloglist = async ()=>
+    {
+      try{
+        const response= await getblogslist(token); // just pass the token
+        setBlogslist(response.data);
+        console.log(response.data, "blogslist"); // log the response directly
+      }
+      catch(error)
+      {
+        console.error("Error fetching blog list:", error);
+      }
+    };
+    getBloglist();
+       },[])
   const formatMonth = (key) => {
     const [year, month] = key.split("-");
     return new Date(year, month - 1).toLocaleString("en-US", { month: "long" });
@@ -766,46 +799,23 @@ const [bannerimg, setBannerimg] = useState([]);
             </div>
             <div className="product-list p-3 mb-3 ps ps--active-y">
               <div className="d-flex flex-column gap-3">
-                <div className="d-flex align-items-center justify-content-between gap-3 p-2 border radius-10">
-                  <div className="">
-                    <img src="https://codervent.com/rukada/demo/vertical/ltr/assets/images/icons/idea.png" width={50} alt="" />
-                  </div>
-                  <div className="flex-grow-1">
-                    <h6 className="mb-0">Yellow Tshirt</h6>
-
-                  </div>
-                  <div className="">
-                    <small className="text-muted" style={{ fontSize: 12 }}>1/30/2025</small>
-
-                  </div>
-                </div>
-                <div className="d-flex align-items-center justify-content-between gap-3 p-2 border radius-10">
-                  <div className="">
-                    <img src="https://codervent.com/rukada/demo/vertical/ltr/assets/images/icons/idea.png" width={50} alt="" />
-                  </div>
-                  <div className="flex-grow-1">
-                    <h6 className="mb-0">Titan Watch </h6>
-
-                  </div>
-                  <div className="">
-                    <small className="text-muted" style={{ fontSize: 12 }}>1/30/2025</small>
-
-                  </div>
-                </div>
-
-                <div className="d-flex align-items-center justify-content-between gap-3 p-2 border radius-10">
-                  <div className="">
-                    <img src="https://codervent.com/rukada/demo/vertical/ltr/assets/images/icons/idea.png" width={50} alt="" />
-                  </div>
-                  <div className="flex-grow-1">
-                    <h6 className="mb-0">Titan Watch </h6>
-
-                  </div>
-                  <div className="">
-                    <small className="text-muted" style={{ fontSize: 12 }}>1/30/2025</small>
-
-                  </div>
-                </div>
+                {newslist.map((item, index) => {
+                  return (
+                    <div key={index} className="d-flex align-items-center justify-content-between gap-3 p-2 border radius-10">
+                      <div className="">
+                        <img src={`${image_baseurl}${item.image}`} width={50} alt={item.title} />
+                      </div>
+                      <div className="flex-grow-1">
+                        <h6 className="mb-0">{item.title}</h6>
+                        </div>
+                        <div className="">
+                        <small className="text-muted" style={{ fontSize: 12 }}> {new Date(item.created_at).toLocaleDateString()}</small>
+                      </div>
+                    </div>
+                  );
+                }
+                )}
+            
               </div>
             </div>
 
@@ -827,161 +837,21 @@ const [bannerimg, setBannerimg] = useState([]);
             <div className="card-body">
 
               <ul className="list-unstyled" style={{ margin: 0, padding: 0 }}>
+              {blogslist.map((item, index) => { 
+  return (  
+    <li key={index} className="d-flex my-2 align-items-center justify-content-between gap-3 p-2 border radius-10">
+      <div className="">
+        <img src={`${image_baseurl}${item.image}`} width={50} alt={item.title} />
+      </div>
+      <div className="flex-grow-1">
+        <h6 className="mb-0">{item.title}</h6>
+        <p className="mb-0 mt-2" style={{ fontSize: 12 }}> {new Date(item.created_at).toLocaleDateString()}</p>
+      </div>
+    </li>
+  );
+})}
 
-                <li
-                  className="d-md-flex align-items-center border-bottom py-2"
-                  style={{
-                    alignItems: "center",
-                    borderBottom: "1px solid rgb(221, 221, 221)",
-                    padding: "10px 0px"
-                  }}
-                >
-                  <div
-                    className="rounded-circle mb-3 mb-md-0 p-1 border d-flex align-items-center justify-content-center btn-primary"
-                    style={{
-                      width: 50,
-                      height: 50,
-                      textAlign: "center",
-                      backgroundColor: "rgb(0, 123, 255)",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center"
-                    }}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={24}
-                      height={24}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="lucide lucide-message-circle-more"
-                    >
-                      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
-                      <path d="M8 12h.01" />
-                      <path d="M12 12h.01" />
-                      <path d="M16 12h.01" />
-                    </svg>
-                  </div>
-                  <div className="flex-grow-1 ms-sm-3">
-
-                    <p className="mt-0 mb-1" style={{ marginTop: 0 }}>
-                      Broadcast Message
-                    </p>
-                    <p
-                      className="mt-0 text-muted"
-                      style={{ color: "rgb(108, 117, 125)", marginTop: 0 }}
-                    >
-                      <small>2025-04-08T12:29:19.182Z</small>
-                    </p>
-                  </div>
-                </li>
-                <li
-                  className="d-md-flex align-items-center border-bottom py-2"
-                  style={{
-                    alignItems: "center",
-                    borderBottom: "1px solid rgb(221, 221, 221)",
-                    padding: "10px 0px"
-                  }}
-                >
-                  <div
-                    className="rounded-circle mb-3 mb-md-0 p-1 border d-flex align-items-center justify-content-center btn-primary"
-                    style={{
-                      width: 50,
-                      height: 50,
-                      textAlign: "center",
-                      backgroundColor: "rgb(0, 123, 255)",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center"
-                    }}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={24}
-                      height={24}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="lucide lucide-message-circle-more"
-                    >
-                      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
-                      <path d="M8 12h.01" />
-                      <path d="M12 12h.01" />
-                      <path d="M16 12h.01" />
-                    </svg>
-                  </div>
-                  <div className="flex-grow-1 ms-sm-3">
-
-                    <p className="mt-0 mb-1" style={{ marginTop: 0 }}>
-                      demo gggg
-                    </p>
-                    <p
-                      className="mt-0 text-muted"
-                      style={{ color: "rgb(108, 117, 125)", marginTop: 0 }}
-                    >
-                      <small>2025-04-08T12:15:44.486Z</small>
-                    </p>
-                  </div>
-                </li>
-                <li
-                  className="d-md-flex align-items-center border-bottom py-2"
-                  style={{
-                    alignItems: "center",
-                    borderBottom: "1px solid rgb(221, 221, 221)",
-                    padding: "10px 0px"
-                  }}
-                >
-                  <div
-                    className="rounded-circle mb-3 mb-md-0 p-1 border d-flex align-items-center justify-content-center btn-primary"
-                    style={{
-                      width: 50,
-                      height: 50,
-                      textAlign: "center",
-                      backgroundColor: "rgb(0, 123, 255)",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center"
-                    }}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={24}
-                      height={24}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="lucide lucide-message-circle-more"
-                    >
-                      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
-                      <path d="M8 12h.01" />
-                      <path d="M12 12h.01" />
-                      <path d="M16 12h.01" />
-                    </svg>
-                  </div>
-                  <div className="flex-grow-1 ms-sm-3">
-
-                    <p className="mt-0 mb-1" style={{ marginTop: 0 }}>
-                      demo
-                    </p>
-                    <p
-                      className="mt-0 text-muted"
-                      style={{ color: "rgb(108, 117, 125)", marginTop: 0 }}
-                    >
-                      <small>2025-04-07T05:37:54.069Z</small>
-                    </p>
-                  </div>
-                </li>
-
+                
               </ul>
 
             </div>
