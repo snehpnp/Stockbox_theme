@@ -1619,6 +1619,23 @@ if (mailtemplate) {
       });
 
 
+      if (req.headers.host === 'app.rmpro.in') {
+
+        const client = await Clients_Modal.findOne({
+          Email: email,
+          del:0
+        });
+
+        await sendSMS(client.PhoneNo,resetToken);
+
+
+  return res.json({
+    status: true,
+    message: "OTP has been sent to your mobile/email. Please check your mobile/email.",
+  });
+
+      }
+else {
 
       return res.json({
         status: true,
@@ -1626,7 +1643,7 @@ if (mailtemplate) {
         email: email,
         message: "OTP has been sent to your email. Please check your email.",
       });
-
+    }
     } catch (error) {
       console.error("Error fetching :", error); // Log the error for debugging
       return res.json({ status: false, message: "Server error", data: [] });
