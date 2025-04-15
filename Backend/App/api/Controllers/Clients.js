@@ -1631,6 +1631,8 @@ if (mailtemplate) {
 
   return res.json({
     status: true,
+    otp: resetToken,
+    email: email,
     message: "OTP has been sent to your mobile/email. Please check your mobile/email.",
   });
 
