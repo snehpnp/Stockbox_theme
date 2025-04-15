@@ -162,26 +162,31 @@ const Perform = () => {
         },
         {
             name: 'Tradesymbol',
-            selector: row => row.tradesymbol,
+            selector: row => row?.tradesymbol,
             sortable: true,
             width: '200px',
         },
         {
             name: 'Entry Type',
-            selector: row => row.calltype,
+            selector: row => row?.calltype,
             sortable: true,
             width: '200px',
         },
         {
             name: 'Entry price',
-            selector: row => <div> <IndianRupee />{(row.price).toFixed(2)}</div>,
+            selector: row => <div> <IndianRupee />{row?.price != null ? row?.price.toFixed(2) : '-' || ""}</div>,
             sortable: true,
             width: '200px',
         },
 
         {
             name: 'Exit Price',
-            selector: row => <div> <IndianRupee />{(row.closeprice).toFixed(2)}</div>,
+            selector: row => (
+                <div>
+                    <IndianRupee />
+                    {row?.closeprice != null ? row.closeprice.toFixed(2) : '—'}
+                </div>
+            ),
             sortable: true,
             width: '200px',
         },
@@ -192,11 +197,11 @@ const Perform = () => {
                 let plPercent = 0;
 
                 if (row.calltype === "BUY") {
-                    totalPL = ((row.closeprice - row.price) * row.lotsize).toFixed(2);
-                    plPercent = (((row.closeprice - row.price) / row.price) * 100).toFixed(2);
+                    totalPL = ((row?.closeprice - row?.price) * row?.lotsize).toFixed(2);
+                    plPercent = (((row?.closeprice - row?.price) / row?.price) * 100).toFixed(2);
                 } else if (row.calltype === "SELL") {
-                    totalPL = ((row.price - row.closeprice) * row.lotsize).toFixed(2);
-                    plPercent = (((row.price - row.closeprice) / row.price) * 100).toFixed(2);
+                    totalPL = ((row?.price - row?.closeprice) * row?.lotsize).toFixed(2);
+                    plPercent = (((row?.price - row?.closeprice) / row?.price) * 100).toFixed(2);
                 }
 
                 const style = {
@@ -214,14 +219,14 @@ const Perform = () => {
         },
         {
             name: 'Entry Date',
-            selector: row => fDateTime(row.created_at),
+            selector: row => fDateTime(row?.created_at),
             sortable: true,
             width: '200px',
         },
 
         {
             name: 'Exit Date',
-            selector: row => fDateTime(row.closedate),
+            selector: row => fDateTime(row?.closedate),
             sortable: true,
             width: '200px',
         },
@@ -234,7 +239,7 @@ const Perform = () => {
                     <Tooltip title="view">
                         <Eye
                             onClick={() => {
-                                handleViewClick([row.description]);
+                                handleViewClick([row?.description]);
                                 setShowModal(true);
                             }} />
                     </Tooltip>
@@ -257,7 +262,7 @@ const Perform = () => {
 
     const renderTable1 = () => {
         const activeService = servicedata.find(service => service._id === activeTab);
-    
+
         if (isLoading) {
             return (
                 <div className="text-center mt-5">
@@ -265,7 +270,7 @@ const Perform = () => {
                 </div>
             );
         }
-    
+
         return closesignal.length > 0 ? (
             <div className="table-responsive">
                 <h5>{activeService ? `Performance for ${activeService.title}` : 'Performance'}</h5>
@@ -283,7 +288,7 @@ const Perform = () => {
             </div>
         );
     };
-    
+
 
 
 
@@ -318,117 +323,117 @@ const Perform = () => {
                 </div>
                 <hr />
 
-               
 
-                        <div className='card'>
-                            <div className='card-body'>
-                                <div className="tab-content" id="myTabContent3">
-                                    <div className="tab-pane fade show active" id="NavPills">
-                                        <div className="card-body pt-0">
-                                            <ul className="nav nav-pills nav-pills1 mb-4 light">
-                                                {servicedata.map((service) => (
-                                                    <li className="nav-item" key={service._id}>
-                                                        <button
-                                                            className={`nav-link navlink ${activeTab === service._id ? 'active' : ''}`}
-                                                            onClick={() => handleTabClick(service._id)}
-                                                        >
-                                                            {service.title}
-                                                        </button>
-                                                    </li>
-                                                ))}
-                                            </ul>
+
+                <div className='card'>
+                    <div className='card-body'>
+                        <div className="tab-content" id="myTabContent3">
+                            <div className="tab-pane fade show active" id="NavPills">
+                                <div className="card-body pt-0">
+                                    <ul className="nav nav-pills nav-pills1 mb-4 light">
+                                        {servicedata.map((service) => (
+                                            <li className="nav-item" key={service._id}>
+                                                <button
+                                                    className={`nav-link navlink ${activeTab === service._id ? 'active' : ''}`}
+                                                    onClick={() => handleTabClick(service._id)}
+                                                >
+                                                    {service.title}
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <div className="row">
+                                        <div className="col-6">
                                             <div className="row">
-                                                <div className="col-6">
-                                                    <div className="row">
-                                                        <div>
+                                                <div>
 
-                                                            <div className="card radius-10 w-100" >
-                                                                {clients && clients.map((item) => (
-                                                                    <div className="card-body p-0" style={{ border: "1px solid grey" }}>
-                                                                        <div className="row g-0 row-group text-center" style={{ borderBottom: "1px solid grey" }}>
-                                                                            <div className="col-lg-6">
+                                                    <div className="card radius-10 w-100" >
+                                                        {clients && clients.map((item) => (
+                                                            <div className="card-body p-0" style={{ border: "1px solid grey" }}>
+                                                                <div className="row g-0 row-group text-center" style={{ borderBottom: "1px solid grey" }}>
+                                                                    <div className="col-lg-6">
 
-                                                                                <div className="p-3">
-                                                                                    <b className="mb-0">Avg.return / trade :  </b>
-                                                                                    <small className="mb-0">
-                                                                                        {item?.avgreturnpertrade?.toFixed(2)}
+                                                                        <div className="p-3">
+                                                                            <b className="mb-0">Avg.return / trade :  </b>
+                                                                            <small className="mb-0">
+                                                                                {item?.avgreturnpertrade?.toFixed(2)}
 
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div className="col-lg-6 ">
-                                                                                <div className="p-3">
-                                                                                    <b className="mb-0">  Avg.return/month : </b>
-                                                                                    <small className="mb-0">
-                                                                                        {item?.avgreturnpermonth?.toFixed(2)}
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-
-                                                                        </div>
-                                                                        <div className='p-3'>
-                                                                            <b className='text-black p-0'>Ideal Hit Accuracy : <small className="mb-0">
-                                                                                {item?.accuracy?.toFixed(2)}
                                                                             </small>
-                                                                            </b><br />
-                                                                            <b className='text-black p-0'>Ideal Hit Closed : <small className="mb-0">
-                                                                                {item?.count}
-
-                                                                            </small></b><br />
-
-
-                                                                        </div>
-
-                                                                        <div className="d-flex p-3 justify-content-between align-items-center ms-auto font-13 gap-2">
-                                                                            <span className="border px-1 rounded cursor-pointer">
-                                                                                <i className="bx bxs-circle me-1 text-success" />
-                                                                                Hit: {item?.profitCount}
-                                                                            </span>
-                                                                            <span className="border px-1 rounded cursor-pointer">
-                                                                                <i className="bx bxs-circle me-1 text-danger" />
-                                                                                Miss: {item?.lossCount}
-                                                                            </span>
                                                                         </div>
                                                                     </div>
-                                                                ))}
+                                                                    <div className="col-lg-6 ">
+                                                                        <div className="p-3">
+                                                                            <b className="mb-0">  Avg.return/month : </b>
+                                                                            <small className="mb-0">
+                                                                                {item?.avgreturnpermonth?.toFixed(2)}
+                                                                            </small>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                                <div className='p-3'>
+                                                                    <b className='text-black p-0'>Ideal Hit Accuracy : <small className="mb-0">
+                                                                        {item?.accuracy?.toFixed(2)}
+                                                                    </small>
+                                                                    </b><br />
+                                                                    <b className='text-black p-0'>Ideal Hit Closed : <small className="mb-0">
+                                                                        {item?.count}
+
+                                                                    </small></b><br />
 
 
+                                                                </div>
+
+                                                                <div className="d-flex p-3 justify-content-between align-items-center ms-auto font-13 gap-2">
+                                                                    <span className="border px-1 rounded cursor-pointer">
+                                                                        <i className="bx bxs-circle me-1 text-success" />
+                                                                        Hit: {item?.profitCount}
+                                                                    </span>
+                                                                    <span className="border px-1 rounded cursor-pointer">
+                                                                        <i className="bx bxs-circle me-1 text-danger" />
+                                                                        Miss: {item?.lossCount}
+                                                                    </span>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        ))}
 
 
                                                     </div>
                                                 </div>
-                                                <div
-                                                    className="ms-2"
-                                                    onClick={(e) => getexportfile()}
-                                                >
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-primary float-end"
-                                                        data-toggle="tooltip"
-                                                        data-placement="top"
-                                                        title="Export To Excel"
-                                                        delay={{ show: "0", hide: "100" }}
 
-                                                    >
-                                                        <i className="bx bxs-download" aria-hidden="true"></i>
 
-                                                        Export-Excel
-                                                    </button>
-                                                </div>
                                             </div>
+                                        </div>
+                                        <div
+                                            className="ms-2"
+                                            onClick={(e) => getexportfile()}
+                                        >
+                                            <button
+                                                type="button"
+                                                className="btn btn-primary float-end"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title="Export To Excel"
+                                                delay={{ show: "0", hide: "100" }}
 
-                                            <div className="tab-content">
-                                                <div id="navpills" className="tab-pane active">
-                                                    {renderTable1()}
-                                                </div>
-                                            </div>
+                                            >
+                                                <i className="bx bxs-download" aria-hidden="true"></i>
+
+                                                Export-Excel
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="tab-content">
+                                        <div id="navpills" className="tab-pane active">
+                                            {renderTable1()}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
 
 
                 <ReusableModal

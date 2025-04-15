@@ -141,7 +141,9 @@ function Basket() {
           <Loader />
         ) : basketdata?.length > 0 ? (
           <div className="row">
+            {console.log("basketdata", basketdata)}
             {basketdata?.map((item) => (
+
               <div className="col-md-12 col-lg-6 mb-4" key={item?.id}>
                 <div className="card radius-10 overflow-hidden shadow"
                   style={{ minHeight: "253px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
@@ -201,43 +203,49 @@ function Basket() {
                         <b className="">High Risk</b>
                       </li>
                       <li className="list-group-item border-bottom-0">
-                        {item?.isSubscribed && item?.isActive && (
+                        {item?.isSubscribed === true || item?.isActive === true ? (
                           <Link
                             to="/user/basketdetail"
                             state={{ item }}
-                            className="btn btn-sm btn-primary w-100"
+                            className="btn btn-primary w-100"
                           >
                             View Details
                           </Link>
-                        )}
-
-                        {!item?.isSubscribed && !item?.isActive && (
+                        ) : item?.isSubscribed === false &&
+                          item?.isActive === false ? (
                           <Link
-                            to={onlinePaymentStatus || offlinePaymentStatus ? "/user/payment" : ""}
+                            to={
+                              onlinePaymentStatus || offlinePaymentStatus
+                                ? "/user/payment"
+                                : ""
+                            }
                             state={{ item }}
                             className="btn btn-primary w-100"
                             style={{
                               pointerEvents:
-                                onlinePaymentStatus || offlinePaymentStatus ? "auto" : "none",
+                                onlinePaymentStatus || offlinePaymentStatus
+                                  ? "auto"
+                                  : "none",
                               opacity:
-                                onlinePaymentStatus || offlinePaymentStatus ? "1" : "0.5",
+                                onlinePaymentStatus || offlinePaymentStatus
+                                  ? "1"
+                                  : "0.5",
                             }}
                           >
-                            Subscribe <del>{item?.full_price}</del> {item?.basket_price}
+                            Subscribe <del>{item?.full_price}</del>{" "}
+                            {item?.basket_price}
                           </Link>
-                        )}
-
-                        {item?.isSubscribed && !item?.isActive && (
+                        ) : item?.isSubscribed === true &&
+                          item?.isActive === false ? (
                           <Link
                             to="/user/rebalancestock"
                             state={{ item }}
-                            className="btn btn-sm btn-primary w-100"
+                            className="btn btn-primary w-100"
                           >
                             View Rebalance
                           </Link>
-                        )}
+                        ) : null}
                       </li>
-
                       {/* <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100 mb-1">
                         View Details
                       </Link> */}
