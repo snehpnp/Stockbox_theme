@@ -12,6 +12,11 @@ import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import ReusableModal from '../../../components/Models/ReusableModal';
+import {
+  getbannerlist,} from "../../../Services/Admin/Admin";
+import { image_baseurl } from "../../../../Utils/config";
+
 const Dashboard = () => {
 
 
@@ -22,6 +27,7 @@ const Dashboard = () => {
   const [futureAvgProfit, setFutureAvgProfit] = useState(0);
   const [optionAvgProfit, setOptionAvgProfit] = useState(0);
   const [months, setMonths] = useState([]);
+const [bannerimg, setBannerimg] = useState([]);
 
   const token = localStorage.getItem("token");
 
@@ -31,7 +37,20 @@ const Dashboard = () => {
     getOptionpastdata();
   }, []);
 
-
+  useEffect(() => { 
+    const getBannerList = async () => {
+      try {
+        const response = await getbannerlist(token); // just pass the token
+        setBannerimg(response.data);
+        console.log(response.data, "bannerimg"); // log the response directly
+      } catch (error) {
+        console.error("Error fetching banner list:", error);
+      }
+    };
+  
+    getBannerList();
+  }, []);
+  
 
   const formatMonth = (key) => {
     const [year, month] = key.split("-");
@@ -625,21 +644,28 @@ const Dashboard = () => {
               <div className="row mt-3">
 
 
-                <Swiper
-                  spaceBetween={50}
-                  slidesPerView={1}
-                  autoplay={{ delay: 3000, disableOnInteraction: false }}
-                  navigation
-                  pagination={{ clickable: true }}
-                  modules={[Autoplay, Navigation, Pagination]}
-                  onSlideChange={() => console.log('slide change')}
-                  onSwiper={(swiper) => console.log(swiper)}
-                >
-                  <SwiperSlide><img src="https://t4.ftcdn.net/jpg/04/90/96/67/360_F_490966788_JwojaHa1G7eEfguq1omUaCNSM6BgYHhI.jpg" style={{ height: '300px', width: '100%' }} /></SwiperSlide>
-                  <SwiperSlide><img src="https://img.freepik.com/free-vector/modern-sale-banner-with-text-space-area_1017-27331.jpg" style={{ height: '300px', width: '100%' }} /></SwiperSlide>
-                  <SwiperSlide><img src="https://www.shutterstock.com/image-vector/sale-banner-template-big-special-260nw-2373695365.jpg" style={{ height: '300px', width: '100%' }} /></SwiperSlide>
-                  <SwiperSlide><img src="https://img.freepik.com/premium-vector/special-offer-final-sale-banner-red-background-illustration_275806-121.jpg" style={{ height: '300px', width: '100%' }} /></SwiperSlide>
-                </Swiper>
+              <Swiper
+      spaceBetween={50}
+      slidesPerView={1}
+      autoplay={{ delay: 3000, disableOnInteraction: false }}
+      navigation
+      pagination={{ clickable: true }}
+      modules={[Autoplay, Navigation, Pagination]}
+      onSlideChange={() => console.log('slide change')}
+      onSwiper={(swiper) => console.log(swiper)}
+    >
+      {bannerimg.map((item, index) => {
+        return (
+          <SwiperSlide key={index}>
+            <img
+              src={`${image_baseurl}${item.image}`}
+              style={{ height: '300px', width: '100%' }}
+              alt={`banner-${index}`}
+            />
+          </SwiperSlide>
+        );
+      })}
+    </Swiper>
 
               </div>
 
