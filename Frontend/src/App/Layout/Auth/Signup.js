@@ -70,46 +70,60 @@ const UserSignup = () => {
   const validateField = (name, value) => {
     let errorMsg = "";
 
-    switch (name) {
-      case "email":
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          errorMsg = "Invalid email format";
-        }
-        break;
-      case "phone":
-        if (!/^\d{10}$/.test(value)) {
-          errorMsg = "Phone number must be 10 digits";
-        }
-        break;
-      case "password":
-        if (
-          !/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value)
-        ) {
-          errorMsg =
-            "Password must be at least 8 characters, include a number, an uppercase letter, and a special character";
-        }
-        break;
-      case "fullName":
-        if (value?.trim() === "") {
+    // General blank field check first
+    if (value?.trim() === "") {
+      switch (name) {
+        case "email":
+          errorMsg = "Email is required";
+          break;
+        case "phone":
+          errorMsg = "Phone number is required";
+          break;
+        case "password":
+          errorMsg = "Password is required";
+          break;
+        case "fullName":
           errorMsg = "Full Name is required";
-        }
-        break;
-      case "state":
-        if (value?.trim() === "") {
+          break;
+        case "state":
           errorMsg = "State is required";
-        }
-        break;
-      case "city":
-        if (value?.trim() === "") {
+          break;
+        case "city":
           errorMsg = "City is required";
-        }
-        break;
-      default:
-        break;
+          break;
+        default:
+          errorMsg = "This field is required";
+          break;
+      }
+    } else {
+      // Field-specific validation only if not blank
+      switch (name) {
+        case "email":
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            errorMsg = "Please Enter Valid Email";
+          }
+          break;
+        case "phone":
+          if (!/^\d{10}$/.test(value)) {
+            errorMsg = "Phone number must be 10 digits";
+          }
+          break;
+        case "password":
+          if (
+            !/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value)
+          ) {
+            errorMsg =
+              "Password must be at least 8 characters, include a number, an uppercase letter, and a special character";
+          }
+          break;
+        default:
+          break;
+      }
     }
 
     setErrors((prevErrors) => ({ ...prevErrors, [name]: errorMsg }));
   };
+
 
   const handleSignup = async (e) => {
     e.preventDefault();
