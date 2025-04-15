@@ -69,7 +69,11 @@ class Zerodha {
                    
                     if (response.data.status == "success") {
                         const brokerlink = await Clients_Modal.findOneAndUpdate(
-                            { Email: keystr },
+                            {
+                                Email: keystr,
+                                del: 0,
+                                ActiveStatus: 1  // or use 1 if that's how it's stored in DB
+                              },
                             {
                                 authtoken: response.data.data.access_token,  // Update authtoken
                                 dlinkstatus: 1,         // Update dlinkstatus

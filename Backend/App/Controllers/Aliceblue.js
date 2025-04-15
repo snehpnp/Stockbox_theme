@@ -23,7 +23,7 @@ class Aliceblue {
 
         try {
             const alice_userid = req.query.userId;
-            const client = await Clients_Modal.findOne({ alice_userid });
+            const client = await Clients_Modal.findOne({ alice_userid:alice_userid,ActiveStatus:1,del:0 });
 
             // Check if the client exists
             if (!client) {
@@ -62,7 +62,7 @@ class Aliceblue {
                     // If userSession exists, update the client's data
                     if (response.data.userSession) {
                         const brokerlink = await Clients_Modal.findOneAndUpdate(
-                            { alice_userid }, // Find by alice_userid
+                            { alice_userid:alice_userid,ActiveStatus:1,del:0 }, // Find by alice_userid
                             {
                                 authtoken: response.data.userSession,  // Update authtoken
                                 dlinkstatus: 1,         // Update dlinkstatus

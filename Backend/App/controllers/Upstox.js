@@ -58,7 +58,11 @@ class Upstox {
                    const auth_token = response.data.access_token;
 
                    const brokerlink = await Clients_Modal.findOneAndUpdate(
-                    { Email: email }, // Find by email
+                    {
+                        Email: email,
+                        del: 0,
+                        ActiveStatus: 1  
+                      },
                     {
                         authtoken: auth_token,  // Update authtoken
                         dlinkstatus: 1,         // Update dlinkstatus
