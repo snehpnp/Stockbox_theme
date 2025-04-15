@@ -894,7 +894,7 @@ if (settings.gst > 0 && settings.gststatus==1) {
                   .replace(/{{pergstt}}/g, pergstt)
                   .replace(/{{saccode}}/g, settings.saccode)
                   .replace(/{{bstate}}/g, settings.state)
-                  .replace(/{{panno}}/g, client.panno)
+                  .replace(/{{panno}}/g, client.panno ?? 'NA')
                   .replace(/{{city}}/g, client.city)
                   .replace(/{{statecode}}/g, clientstateid)
                   .replace(/{{settingstatecode}}/g, settingsstateid)
