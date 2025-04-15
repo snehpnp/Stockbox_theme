@@ -35,9 +35,15 @@ const Userlogin = () => {
     setIsLoading(false);
 
     if (ResData.status) {
+
       localStorage.setItem("token", ResData.data?.token);
       localStorage.setItem("id", ResData.data?.id);
       localStorage.setItem("Role", "USER");
+      localStorage.setItem("aliceredirecturl", ResData.data?.aliceredirecturl);
+      localStorage.setItem("angleredirecturl", ResData.data?.angleredirecturl);
+      localStorage.setItem("upstoxredirecturl", ResData.data?.upstoxredirecturl);
+      localStorage.setItem("zerodharedirecturl", ResData.data?.zerodharedirecturl);
+
       showCustomAlert("success", "Login successful!", navigate, "/user/dashboard")
     } else {
       showCustomAlert("error", ResData.message, navigate, null)
@@ -75,14 +81,10 @@ const Userlogin = () => {
       });
 
       if (ResData.status) {
-        console.log("ResData", ResData.data)
+
         localStorage.setItem("token", ResData.data?.token);
         localStorage.setItem("id", ResData.data?.id);
         localStorage.setItem("Role", "USER");
-        localStorage.setItem("aliceredirecturl", ResData.data?.aliceredirecturl);
-        localStorage.setItem("angleredirecturl", ResData.data?.angleredirecturl);
-        localStorage.setItem("upstoxredirecturl", ResData.data?.upstoxredirecturl);
-        localStorage.setItem("zerodharedirecturl", ResData.data?.zerodharedirecturl);
 
         localStorage.setItem("email", email);
         showCustomAlert("success", "Login successful!", navigate, "/user/dashboard")

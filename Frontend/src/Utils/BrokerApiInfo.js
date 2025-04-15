@@ -1,7 +1,14 @@
 import { base_url } from "./config";
+const angleredirecturl = localStorage.getItem("angleredirecturl");
+const aliceredirecturl = localStorage.getItem("aliceredirecturl");
+const upstoxredirecturl = localStorage.getItem("upstoxredirecturl");
+const zerodharedirecturl = localStorage.getItem("zerodharedirecturl");
 
 
 export const brokerContentMap = {
+
+
+
     1: [
         {
             HeadingTitle: "Angel",
@@ -11,8 +18,8 @@ export const brokerContentMap = {
             describtion:
                 "Kindly follow these steps to link your demat account with this Algo Software.",
             LinkOne: "https://smartapi.angelbroking.com/",
-            LinkTwo: `${base_url}angelbroking/access_token?email=YOUR_PANEL_EMAIL`,
-            link3: `e.g - ${base_url}angelbroking/access_token?email=ss@gmail.com`,
+            LinkTwo: angleredirecturl,
+            link3: angleredirecturl,
             Apicreate:
                 "You will get API Secret Key and APP code, please Update them on your Profile in this software.",
             youTube: "https://www.youtube.com/watch?v=zI7FX-yUgyw",
@@ -30,8 +37,8 @@ export const brokerContentMap = {
             describtion:
                 "Kindly follow these steps to link your demat account with this Algo Software.",
             LinkOne: "https://ant.aliceblueonline.com/?appcode=G9EOSWCEIF9ARCB",
-            LinkTwo: `${base_url}AliceBlue`,
-            link3: `${base_url}aliceblue/access_token?email=ss@gmail.com`,
+            LinkTwo: aliceredirecturl,
+            link3: aliceredirecturl,
             Apicreate:
                 "You will get APP code and Secret Key, please Update them on your Profile in this software.",
             youTube: "https://www.youtube.com/watch?v=DEKgwveZ9eM",
@@ -79,7 +86,7 @@ export const brokerContentMap = {
                 "Kindly follow these steps to link your demat account with this Algo Software.",
             LinkOne: " https://kite.trade/",
             LinkTwo: `${base_url}zerodha/access_token?email=YOUR_PANEL_EMAIL`,
-            link3: `e.g - ${base_url}zerodha/access_token?email=ss@gmail.com`,
+            link3: zerodharedirecturl,
             Apicreate:
                 "You will get API Secret Key and APP code and Update them on your Profile in this software.",
         },
@@ -92,7 +99,7 @@ export const brokerContentMap = {
             disc3: "",
             describtion: `Click below link to generate API KEY and SECRET KEY after login to below page you will see New App button click on that button and put your Redirect URL in url field and continue after this process you will get your API and SECRET Keys`,
             LinkOne: "https://account.upstox.com/developer/apps",
-            LinkTwo: `${base_url}upstox/access_token`,
+            link3: upstoxredirecturl,
             img1: "http://app.smartalgo.in/assets/dist/img/upstox/upstoxgenerateapikeyandsecretkey.png",
             img2: "http://app.smartalgo.in/assets/dist/img/upstox/upstoxredirecturl.png",
         },
