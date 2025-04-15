@@ -174,15 +174,20 @@ const Perform = () => {
         },
         {
             name: 'Entry price',
-            selector: row => (
-                <div>
-                    <IndianRupee />
-                    {typeof row?.price === 'number' ? row.price.toFixed(2) : '-'}
-                </div>
-            ),
+            selector: row => Number(row?.price) || 0, // Sorting ke liye number
+            cell: row => {
+                const price = Number(row?.price);
+                return (
+                    <div>
+                        <IndianRupee />
+                        {isNaN(price) ? '-' : price.toFixed(2)}
+                    </div>
+                );
+            },
             sortable: true,
             width: '200px',
         },
+
 
         {
             name: 'Exit Price',
