@@ -3,9 +3,12 @@ import { Formik, Form, Field } from "formik";
 import { Row, Col, Button } from "react-bootstrap";
 import { SketchPicker } from "react-color";
 import { AddThemeApi } from "../../Services/Themes/Theme";
-
 import Swal from "sweetalert2";
+
+
+
 export default function Setting_sidebar() {
+
   const [isGradient, setIsGradient] = useState({
     sidebar: false,
     navbar: false,
@@ -43,6 +46,8 @@ export default function Setting_sidebar() {
     wrapperGradientStart: "#13fbe0",
   });
 
+
+  
   const [isOpen, setIsOpen] = useState(false);
   const sidebarRef = useRef(null);
   const RoleData = localStorage.getItem("Role");
