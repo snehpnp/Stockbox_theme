@@ -114,6 +114,7 @@ const Profiles = () => {
       if (response.status) {
         setUserDetail(response.data);
         setDemateStatus(response?.data?.dlinkstatus)
+        
       }
     } catch (error) {
       console.log("error", error);

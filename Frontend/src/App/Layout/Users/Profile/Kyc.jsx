@@ -59,9 +59,7 @@ function Kyc() {
       backForword={true}>
       <div className="container mt-4">
         <div className="card shadow-sm">
-          {/* <div className="card-header bg-primary text-white">
-            <h5 className="mb-0">KYC Verification Form</h5>
-          </div> */}
+          
           <div className="card-body">
             <form onSubmit={handleSubmit}>
               <div className="mb-3">

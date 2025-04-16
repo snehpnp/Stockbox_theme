@@ -12,11 +12,15 @@ import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import { clientKycAndAgreement } from "../../../Services/UserService/User"
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import Loader from "../../../../Utils/Loader";
 import ReusableModal from '../../../components/Models/ReusableModal';
 import {
   getbannerlist,} from "../../../Services/Admin/Admin";
   import { getblogslist } from "../../../Services/Admin/Admin";
   import { GetNewsData } from "../../../Services/UserService/User";
+  import {GetUserData} from "../../../Services/UserService/User";
 import { image_baseurl } from "../../../../Utils/config";
 
 
@@ -30,18 +34,66 @@ const Dashboard = () => {
   const [futureAvgProfit, setFutureAvgProfit] = useState(0);
   const [optionAvgProfit, setOptionAvgProfit] = useState(0);
   const [months, setMonths] = useState([]);
+   const [model, setModel] = useState(false);
 const [bannerimg, setBannerimg] = useState([]);
 const [blogslist, setBlogslist] = useState([]);
 const [newslist, setNewslist] = useState([]);
-
+const[ userdata,setUserdata]=useState([])
+const userid = localStorage.getItem("id");
   const token = localStorage.getItem("token");
+   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getCashpastdata();
     getFuturepastdata();
     getOptionpastdata();
   }, []);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    aadhar: "",
+    panno: "PAN",
+  });
 
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    setFormData({
+      ...formData,
+      [name]: files ? files[0] : value,
+    });
+  };
+
+  const handleKycSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true)
+
+    const data = new FormData();
+    data.append('email', formData.email);
+    data.append('name', formData.fullName);
+    data.append('phone', formData.phone);
+    data.append('panno', formData.panno);
+    data.append('aadhaarno', formData.aadhar);
+    data.append('id', userid);
+
+    try {
+      const token = localStorage.getItem('token');
+      const result = await clientKycAndAgreement(data, token);
+      showCustomAlert("success", "KYC form submitted successfully!");
+    } catch (err) {
+      console.error('KYC Failed:', err);
+      showCustomAlert("error", "KYC submission failed. Please try again.");
+    }
+    setLoading(false)
+  };
+
+
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    alert("KYC form submitted successfully!");
+  };
   useEffect(() => { 
     const getBannerList = async () => {
       try {
@@ -90,6 +142,24 @@ getNewslist();
     return new Date(year, month - 1).toLocaleString("en-US", { month: "long" });
   };
 
+  useEffect(() => {
+    const getuserdetail = async () => {
+      try {
+        const response = await GetUserData(userid, token);
+  
+        if (response.status) {
+          setUserdata(response.data);
+          console.log("User data:", response.data);
+          
+        }
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+  
+    getuserdetail(); 
+  }, []); 
+  
 
 
   const getCashpastdata = async () => {
@@ -535,10 +605,10 @@ getNewslist();
                   <CircleUserRound className="w-100 h-100 m-0" />
                 </div>
                 <div className="mt-3">
-                  <h4>Hello,John Doe</h4>
+                  <h4>{userdata.FullName}</h4>
                   <hr />
                   <h3 class="h6 fw-semibold">Wallet Balance</h3>
-                  <p class="h3 font-weight-bold">$<span id="totalBalance">10,457.00</span></p>
+                  <p class="h3 font-weight-bold"><span id="totalBalance">{userdata.wamount}</span></p>
 
 
                 </div>
@@ -552,7 +622,7 @@ getNewslist();
                   </Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="">
+                  <Link   onClick={() => setModel(true)}>
                     <Shield className="me-2" /> KYC Pending
                   </Link>
                 </li>
@@ -861,6 +931,129 @@ getNewslist();
 
 
       </div>
+
+      <ReusableModal
+                                                  show={model}
+                                                  onClose={() => setModel(false)}
+                                                  title={<span><b>KYC Details</b></span>}
+                                                  body={
+                                                    <form onSubmit={handleSubmit}>
+                                                    <div className="mb-3">
+                                                      <label htmlFor="fullName" className="form-label">
+                                                        Name
+                                                      </label>
+                                                      <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="fullName"
+                                                        name="fullName"
+                                                        placeholder="Enter your full name"
+                                                        value={formData.fullName}
+                                                        onChange={handleChange}
+                                                        required
+                                                      />
+                                                    </div>
+                                      
+                                                    <div className="mb-3">
+                                                      <label htmlFor="email" className="form-label">
+                                                        Email
+                                                      </label>
+                                                      <input
+                                                        type="email"
+                                                        className="form-control"
+                                                        id="email"
+                                                        name="email"
+                                                        placeholder="Enter your email"
+                                                        value={formData.email}
+                                                        onChange={handleChange}
+                                                        required
+                                                      />
+                                                    </div>
+                                      
+                                                    <div className="mb-3">
+                                                      <label htmlFor="phone" className="form-label">
+                                                        Mobile No.
+                                                      </label>
+                                                      <input
+                                                        type="tel"
+                                                        className="form-control"
+                                                        id="phone"
+                                                        name="phone"
+                                                        placeholder="Enter your phone number"
+                                                        value={formData.phone}
+                                                        onChange={handleChange}
+                                                        required
+                                                      />
+                                                    </div>
+                                      
+                                                    <div className="mb-3">
+                                                      <label htmlFor="aadhar" className="form-label">
+                                                        {/* Address */}
+                                                        Aadhar No.
+                                                      </label>
+                                                      <input
+                                                        type="number"
+                                                        className="form-control"
+                                                        id="aadhar"
+                                                        name="aadhar"
+                                                        placeholder="Enter your aadhar"
+                                                        value={formData.aadhar}
+                                                        onChange={handleChange}
+                                                        rows="3"
+                                                        required
+                                                      />
+                                                    </div>
+                                      
+                                                    <div className="mb-3">
+                                                      <label htmlFor="panno" className="form-label">
+                                                        {/* Address */}
+                                                        PAN No.
+                                                      </label>
+                                                      <input
+                                                        type="number"
+                                                        className="form-control"
+                                                        id="panno"
+                                                        name="panno"
+                                                        placeholder="Enter your Pan No"
+                                                        value={formData.panno}
+                                                        onChange={handleChange}
+                                                        rows="3"
+                                                        required
+                                                      />
+                                                    </div>
+                                                    <div className="d-grid">
+                                                      <button
+                                                        type="submit"
+                                                        className="btn btn-primary"
+                                                        onClick={handleKycSubmit}
+                                                        disabled={loading}
+                                                      >
+                                                        {loading ? (
+                                                          <>
+                                                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                                            Submitting...
+                                                          </>
+                                                        ) : (
+                                                          "Submit"
+                                                        )}
+                                                      </button>
+                                                    </div>
+                                      
+                                                  </form>
+                                                  }
+                                                  footer={
+                                                      <>
+                                                          <button
+                                                              type="button"
+                                                              className="btn btn-secondary"
+                                                              onClick={() => setModel(false)}
+                                                          >
+                                                              Close
+                                                          </button>
+                                                         
+                                                      </>
+                                                  }
+                                              />
     </div>
 
 
