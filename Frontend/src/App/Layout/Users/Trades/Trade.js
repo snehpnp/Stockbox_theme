@@ -85,7 +85,6 @@ function Trade() {
 
 
   const UpdateData = (item) => {
-    console.log("item", item)
     setModel(true);
     setOrderdata({
       ...item,

@@ -654,11 +654,14 @@ export async function GetBroadcastData(id, token) {
 
 export async function GetNotificationData(data, token) {
     try {
-        const res = await axios.get(`${Config.base_url}api/list/notification/${data.user_id}?${data.page}`, {
-            headers: {
-                Authorization: ` ${token}`,
-            },
-        });
+        const res = await axios.get(
+            `${Config.base_url}api/list/notification/${data.user_id}?page=${data.page}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
 
         return res?.data;
     } catch (err) {
