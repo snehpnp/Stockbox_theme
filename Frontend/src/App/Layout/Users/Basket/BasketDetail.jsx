@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Doughnut, Line } from "react-chartjs-2";
 import Content from "../../../components/Contents/Content";
+import { getChatLineData } from "../../../Services/UserService/User"
 import { Link, useLocation } from "react-router-dom";
 import { fDateTime } from "../../../../Utils/Date_formate";
 import ReusableModal from '../../../components/Models/ReusableModal';
@@ -13,6 +14,14 @@ const BasketDetail = () => {
   const location = useLocation();
   const { item } = location?.state;
 
+  const [newChartData, setNewChartData] = useState()
+
+  const [limitData, setLimitData] = useState(5);
+
+
+  const token = localStorage.getItem("token");
+
+
 
 
   const stripHtmlTags = (input) => {
@@ -23,31 +32,31 @@ const BasketDetail = () => {
 
   function calculateTypeWeightages(stockDetails) {
     const typeWeightages = {};
-    
+
     stockDetails.forEach(item => {
       const { type, weightage } = item;
       typeWeightages[type] = (typeWeightages[type] || 0) + weightage;
     });
-    
+
     const labels = [];
     const values = [];
-    
+
     for (const type in typeWeightages) {
       labels.push(`${type} (${typeWeightages[type]}%)`);
       values.push(typeWeightages[type]);
     }
-    
+
     return { labels, values };
   }
-  
+
   const typeData = calculateTypeWeightages(item.stock_details);
-  
+
   const chartData = {
     labels: typeData.labels,
     datasets: [
       {
-        data: typeData.values, 
-        backgroundColor: ["#4CAF50", "#FF5252"], 
+        data: typeData.values,
+        backgroundColor: ["#4CAF50", "#FF5252"],
         hoverBackgroundColor: ["#66BB6A", "#FF867F"],
       },
     ],
@@ -55,17 +64,36 @@ const BasketDetail = () => {
 
 
   const chartDataLine = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+    labels: newChartData?.map(item => item.stockname),
     datasets: [
       {
         label: "Performance",
-        data: [10, 25, 35, 50, 40, 60],
+        data: newChartData?.map(item => item.profitloss),
         fill: false,
         borderColor: "#007bff",
         tension: 0.1,
       },
     ],
   };
+  
+
+  const chartLineData = async () => {
+    try {
+      const data = {
+        basket_id: item._id,
+        limit: limitData
+      };
+      const response = await getChatLineData(data, token)
+      console.log("response", response)
+      if (response.status) {
+        setNewChartData(response.data)
+      }
+    } catch (error) {
+      console.log("error", error)
+    }
+  }
+
+  useEffect(() => { chartLineData() }, [limitData])
 
   useEffect(() => {
     setItemdata(item);
@@ -94,7 +122,7 @@ const BasketDetail = () => {
                   <b>{item?.title}</b>
                 </h5>
                 <p className="basket-description">{stripHtmlTags(item?.description)}</p>
-                {item?.description.length>350 && (<button onClick={() => setModel(true)} className="btn btn-sm btn-secondary">Read More..</button>)}
+                {item?.description.length > 350 && (<button onClick={() => setModel(true)} className="btn btn-sm btn-secondary">Read More..</button>)}
               </div>
               <div className="row">
                 <div className="col-md-7">
@@ -141,12 +169,6 @@ const BasketDetail = () => {
                         {item?.next_rebalance_date}
                       </span>
                     </li>
-                    {/* <li className="list-group-item d-flex justify-content-between align-items-center">
-                      Minimum Investment Amount{" "}
-                      <span className="badge bg-warning rounded-pill">
-                        {item?.mininvamount}
-                      </span>
-                    </li> */}
                   </ul>
                 </div>
                 <div className="col-md-5">
@@ -172,22 +194,22 @@ const BasketDetail = () => {
                 <div className="chart-tab">
                   <ul className="nav nav-pills justify-content-end " role="tablist">
                     <li className="nav-item">
-                      <a className="nav-link active" data-bs-toggle="pill" href="#home">
+                      <a className="nav-link active" data-bs-toggle="pill" onClick={() => setLimitData(5)}>
                         5D
                       </a>
                     </li>
                     <li className="nav-item">
-                      <a className="nav-link" data-bs-toggle="pill" href="#menu1">
+                      <a className="nav-link" data-bs-toggle="pill" onClick={() => setLimitData(30)}>
                         1M
                       </a>
                     </li>
                     <li className="nav-item">
-                      <a className="nav-link" data-bs-toggle="pill" href="#menu2">
+                      <a className="nav-link" data-bs-toggle="pill" onClick={() => setLimitData(183)}>
                         6M
                       </a>
                     </li>
                     <li className="nav-item">
-                      <a className="nav-link" data-bs-toggle="pill" href="#max">
+                      <a className="nav-link" data-bs-toggle="pill" onClick={() => setLimitData(100000)}>
                         Max
                       </a>
                     </li>
@@ -220,32 +242,9 @@ const BasketDetail = () => {
                     </div>
 
 
-                    <Line data={chartDataLine} />
+                  <Line data={chartDataLine} />
                   </div>
-                  <div id="menu1" className="container tab-pane fade">
-                    <br />
-                    <h3>Menu 1</h3>
-                    <p>
-                      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
-                      ut aliquip ex ea commodo consequat.
-                    </p>
-                  </div>
-                  <div id="menu2" className="container tab-pane fade">
-                    <br />
-                    <h3>Menu 2</h3>
-                    <p>
-                      Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                      accusantium doloremque laudantium, totam rem aperiam.
-                    </p>
-                  </div>
-                  <div id="max" className="container tab-pane fade">
-                    <br />
-                    <h3>MAX</h3>
-                    <p>
-                      Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                      accusantium doloremque laudantium, totam rem aperiam.
-                    </p>
-                  </div>
+                 
                 </div>
                 <hr />
 
