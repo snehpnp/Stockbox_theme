@@ -47,7 +47,7 @@ const Disclaimer = () => {
                         {termsCondition.length > 0 ? <div className="card">
                             {isLoading ? <Loader /> : <div className="card-body">
 
-                                <div
+                                <div className='privacy-data'
                                     dangerouslySetInnerHTML={{ __html: termsCondition }}
                                 />
                             </div>}

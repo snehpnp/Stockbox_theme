@@ -1215,7 +1215,7 @@ li.fs-14 {
   fill: var(--BtnPriBgCol, red); /* Default color red */
 }
 
-.privacy-data p img {
+.privacy-data p img ,.privacy-data  img {
   width: 100%;
 }
 

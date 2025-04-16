@@ -58,7 +58,7 @@ const Terms = () => {
                                              }
                                          `}
                                     </style>
-                                    <div dangerouslySetInnerHTML={{ __html: termsCondition }} />
+                                    <div className='privacy-data' dangerouslySetInnerHTML={{ __html: termsCondition }} />
                                 </div>
 
                             }
