@@ -392,7 +392,7 @@ const Viewclientdetail = () => {
         <div>
           {" "}
           <IndianRupee />
-          {(row.price).toFixed(2)}
+          {row.price}
         </div>
       ),
       sortable: true,

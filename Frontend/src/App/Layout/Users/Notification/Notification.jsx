@@ -11,6 +11,7 @@ const Notification = () => {
   const [notificationData, setNotificationData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  console.log("totalPages",totalPages)
   const [isLoading, setIsLoading] = useState(true);
 
   const token = localStorage.getItem("token");
