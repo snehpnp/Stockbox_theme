@@ -21,7 +21,7 @@ import {
 import { getblogslist } from "../../../Services/Admin/Admin";
 import { GetNewsData } from "../../../Services/UserService/User";
 import { image_baseurl } from "../../../../Utils/config";
-
+import { Getdashboardata} from "../../../Services/UserService/User";
 
 const Dashboard = () => {
 
@@ -41,7 +41,7 @@ const Dashboard = () => {
  const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
-
+const [dashboard, setDashboard] = useState({});
 
   useEffect(() => {
     getCashpastdata();
@@ -51,6 +51,7 @@ const Dashboard = () => {
     getNewslist();
     getBloglist();
     getuserdetail();
+    getdashboardata();
   }, []);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -265,6 +266,19 @@ const Dashboard = () => {
     }
   };
 
+  const getdashboardata = async () => {
+    try {
+      const response = await Getdashboardata(token);
+  
+      if (response.status) {
+        setDashboard(response.data);
+        console.log("Dashboard data:", response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    }
+  };
+  
 
 
   const formatMonth = (key) => {
