@@ -24,22 +24,22 @@ const Broadcast = () => {
 
 
   const GetBrodcast = async () => {
-    setIsLoading(true); 
+    setIsLoading(true);
     try {
       const response = await GetBroadcastData(userid, token);
       if (response.status) {
-        setBroadcastData(response.data); 
+        setBroadcastData(response.data);
       } else {
         showCustomAlert("error", response.message || "Failed to fetch broadcast data");
       }
     } catch (error) {
-      console.log("API Error:", error);
+
       showCustomAlert("error", "Something went wrong while fetching broadcast data!");
     }
-  
+
     setIsLoading(false);
   };
-  
+
 
 
 
