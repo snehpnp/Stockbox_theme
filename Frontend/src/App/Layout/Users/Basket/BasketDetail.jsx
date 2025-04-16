@@ -1,39 +1,51 @@
 import React, { useEffect, useState } from "react";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+} from "chart.js";
 import { Doughnut, Line } from "react-chartjs-2";
 import Content from "../../../components/Contents/Content";
-import { getChatLineData } from "../../../Services/UserService/User"
+import { getChatLineData } from "../../../Services/UserService/User";
 import { Link, useLocation } from "react-router-dom";
 import { fDateTime } from "../../../../Utils/Date_formate";
 import ReusableModal from '../../../components/Models/ReusableModal';
 
-const BasketDetail = () => {
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement
+);
 
+const BasketDetail = () => {
   const [activeTab, setActiveTab] = useState("rational");
   const [itemdata, setItemdata] = useState();
   const [model, setModel] = useState(false);
   const location = useLocation();
   const { item } = location?.state;
 
-  const [newChartData, setNewChartData] = useState()
-
+  const [newChartData, setNewChartData] = useState();
   const [limitData, setLimitData] = useState(5);
-
-
   const token = localStorage.getItem("token");
-
-
-
 
   const stripHtmlTags = (input) => {
     if (!input) return "";
     return input.replace(/<\/?[^>]+(>|$)/g, "");
   };
 
-
   function calculateTypeWeightages(stockDetails) {
     const typeWeightages = {};
 
-    stockDetails.forEach(item => {
+    stockDetails.forEach((item) => {
       const { type, weightage } = item;
       typeWeightages[type] = (typeWeightages[type] || 0) + weightage;
     });
@@ -62,38 +74,40 @@ const BasketDetail = () => {
     ],
   };
 
-
   const chartDataLine = {
-    labels: newChartData?.map(item => item.stockname),
+    labels: newChartData?.map((item) =>
+      new Date(item.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short" })
+    ),
     datasets: [
       {
         label: "Performance",
-        data: newChartData?.map(item => item.profitloss),
+        data: newChartData?.map((item) => item.profitloss),
         fill: false,
         borderColor: "#007bff",
         tension: 0.1,
       },
     ],
   };
-  
+
 
   const chartLineData = async () => {
     try {
       const data = {
         basket_id: item._id,
-        limit: limitData
+        limit: limitData,
       };
-      const response = await getChatLineData(data, token)
-      console.log("response", response)
+      const response = await getChatLineData(data, token);
       if (response.status) {
-        setNewChartData(response.data)
+        setNewChartData(response.data);
       }
     } catch (error) {
-      console.log("error", error)
+      console.log("error", error);
     }
-  }
+  };
 
-  useEffect(() => { chartLineData() }, [limitData])
+  useEffect(() => {
+    chartLineData();
+  }, [limitData]);
 
   useEffect(() => {
     setItemdata(item);
@@ -106,27 +120,36 @@ const BasketDetail = () => {
       backbutton_status={true}
       backbutton_title="Back"
     >
-      <div className=" pb-3">
-        <div className="card ">
+      <div className="pb-3">
+        <div className="card">
           <div className="card-body">
             <div className="row">
               <div className="col-md-2">
                 <img
                   src="https://stockboxpnp.pnpuniverse.com/uploads/blogs/image-1742206277154-910627492.png"
                   alt="Basket"
-                  className=" img-fluid mb-3"
+                  className="img-fluid mb-3"
                 />
               </div>
               <div className="col-md-10">
                 <h5 className="mb-0">
                   <b>{item?.title}</b>
                 </h5>
-                <p className="basket-description">{stripHtmlTags(item?.description)}</p>
-                {item?.description.length > 350 && (<button onClick={() => setModel(true)} className="btn btn-sm btn-secondary">Read More..</button>)}
+                <p className="basket-description">
+                  {stripHtmlTags(item?.description)}
+                </p>
+                {item?.description.length > 350 && (
+                  <button
+                    onClick={() => setModel(true)}
+                    className="btn btn-sm btn-secondary"
+                  >
+                    Read More..
+                  </button>
+                )}
               </div>
               <div className="row">
                 <div className="col-md-7">
-                  <ul className="list-group list-group-flush list  mt-4">
+                  <ul className="list-group list-group-flush list mt-4">
                     <li className="list-group-item d-flex justify-content-between align-items-center">
                       Launch Date{" "}
                       <span className="badge bg-dark rounded-pill">
@@ -172,92 +195,106 @@ const BasketDetail = () => {
                   </ul>
                 </div>
                 <div className="col-md-5">
-                  <div className="">
-                    <Doughnut data={chartData} className="mx-auto" />
-                  </div>
+                  <Doughnut data={chartData} className="mx-auto" />
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
       <div className="alert alert-warning" role="alert">
-        Minimum Investment Amount:
-        <strong>{item?.mininvamount}</strong>
+        Minimum Investment Amount: <strong>{item?.mininvamount}</strong>
       </div>
 
-      <div className="row  ">
+      <div className="row">
         <div className="col-md-12">
           <div className="card shadow ch">
             <div className="card-body">
-              <>
-                <div className="chart-tab">
-                  <ul className="nav nav-pills justify-content-end " role="tablist">
-                    <li className="nav-item">
-                      <a className="nav-link active" data-bs-toggle="pill" onClick={() => setLimitData(5)}>
-                        5D
-                      </a>
-                    </li>
-                    <li className="nav-item">
-                      <a className="nav-link" data-bs-toggle="pill" onClick={() => setLimitData(30)}>
-                        1M
-                      </a>
-                    </li>
-                    <li className="nav-item">
-                      <a className="nav-link" data-bs-toggle="pill" onClick={() => setLimitData(183)}>
-                        6M
-                      </a>
-                    </li>
-                    <li className="nav-item">
-                      <a className="nav-link" data-bs-toggle="pill" onClick={() => setLimitData(100000)}>
-                        Max
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-                <div>
+              <div className="chart-tab">
+                <ul className="nav nav-pills justify-content-end " role="tablist">
 
-                </div>
+                  <li className="nav-item">
 
+                    <a className="nav-link active" data-bs-toggle="pill" onClick={() => setLimitData(5)}>
 
-                <div className="tab-content basket-chart-data mx-auto" >
-                  <div id="home" className="container tab-pane active">
-                    <br />
-                    <h4>Live Performance Vs<span className="text-primary"> Equity large Cap</span></h4>
-                    <hr />
+                      5D
 
-                    <div className="row mb-4 mt-4">
-                      <div className="col-md-4">
-                        <h6 className="text-muted">Current value of <b>₹100</b> invested once
-                          <br /><u>3 year</u> ago would be</h6>
-                      </div>
-                      <div className="col-md-4">
-                        <li className="text-primary">Equity & Gold assets </li>
-                        <p className="ms-4 text-muted"> ₹5142</p>
-                      </div>
-                      <div className="col-md-4">
-                        <li className="text-warning">Equity Large Cap </li>
-                        <p className="ms-4 text-muted"> ₹5142</p>
-                      </div>
+                    </a>
+
+                  </li>
+
+                  <li className="nav-item">
+
+                    <a className="nav-link" data-bs-toggle="pill" onClick={() => setLimitData(30)}>
+
+                      1M
+
+                    </a>
+
+                  </li>
+
+                  <li className="nav-item">
+
+                    <a className="nav-link" data-bs-toggle="pill" onClick={() => setLimitData(183)}>
+
+                      6M
+
+                    </a>
+
+                  </li>
+
+                  <li className="nav-item">
+
+                    <a className="nav-link" data-bs-toggle="pill" onClick={() => setLimitData(100000)}>
+
+                      Max
+
+                    </a>
+
+                  </li>
+
+                </ul>
+              </div>
+
+              <div className="tab-content basket-chart-data mx-auto">
+                <div id="home" className="container tab-pane active">
+                  <br />
+                  <h4>
+                    Live Performance {" "}
+                    {/* <span className="text-primary">Equity large Cap</span> */}
+                  </h4>
+                  <hr />
+
+                  <div className="row mb-4 mt-4">
+                    <div className="col-md-4">
+                      <h6 className="text-muted">
+                        {/* Current value of <b>₹100</b> invested once */}
+                        <br />
+                        {/* <u>3 year</u> ago would be */}
+                      </h6>
                     </div>
-
+                    <div className="col-md-4">
+                      {/* <li className="text-primary">Equity & Gold assets </li> */}
+                      {/* <p className="ms-4 text-muted"> ₹5142</p> */}
+                    </div>
+                    <div className="col-md-4">
+                      {/* <li className="text-warning">Equity Large Cap </li> */}
+                      {/* <p className="ms-4 text-muted"> ₹5142</p> */}
+                    </div>
+                  </div>
 
                   <Line data={chartDataLine} />
-                  </div>
-                 
                 </div>
-                <hr />
-
-              </>
-
+              </div>
+              <hr />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Tabs Section */}
-      <div className="row  pt-3 align-items-center ">
-        <div className="col-md-12 ">
+      <div className="row pt-3 align-items-center">
+        <div className="col-md-12">
           <div className="card">
             <div className="card-body">
               <ul className="nav nav-pills mb-3 justify-content-center">
@@ -282,7 +319,6 @@ const BasketDetail = () => {
                 </li>
               </ul>
 
-
               <div>
                 {activeTab === "rational" && (
                   <div className="row">
@@ -304,7 +340,6 @@ const BasketDetail = () => {
         </div>
       </div>
 
-      {/* Footer Button */}
       <div className="card-footer mt-3 text-center">
         <Link
           to="/user/basketstocklist"
@@ -319,20 +354,15 @@ const BasketDetail = () => {
         show={model}
         onClose={() => setModel(false)}
         title={<span><b>{item?.title}</b></span>}
-        body={
-          <p className="">{stripHtmlTags(item?.description)}</p>
-        }
+        body={<p>{stripHtmlTags(item?.description)}</p>}
         footer={
-          <>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => setModel(false)}
-            >
-              Close
-            </button>
-
-          </>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => setModel(false)}
+          >
+            Close
+          </button>
         }
       />
     </Content>
