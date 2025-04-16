@@ -1120,3 +1120,24 @@ export async function clientKycAndAgreement(data, token) {
         throw error.response?.data || { message: 'Something went wrong!' };
     }
 }
+
+// chat line data
+
+export async function getChatLineData(data, token) {
+    try {
+        const response = await axios.post(`${Config.base_url}api/list/getbasketgraphdata`,data, {
+            
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+            }
+        );
+
+        return response.data;
+
+    } catch (error) {
+        console.error('Error in clientKycAndAgreement API:', error.message);
+        throw error.response?.data || { message: 'Something went wrong!' };
+    }
+}
