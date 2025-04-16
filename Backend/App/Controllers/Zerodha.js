@@ -29,7 +29,10 @@ class Zerodha {
         try {
 
                 var keystr = req.query.key;
-                const key = keystr.split('?request_token=')[0];
+               // const key = keystr.split('?request_token=')[0];
+                let key = decodeURIComponent(keystr.split('?request_token=')[0] || "");
+                key = key.replace(/\s/g, "+"); 
+                
                 const request_token = req.query.request_token;
 
 
