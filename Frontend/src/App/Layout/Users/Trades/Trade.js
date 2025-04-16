@@ -58,7 +58,8 @@ function Trade() {
     tsprice: "",
     tsstatus: "",
     slprice: "",
-    exitquantity: ""
+    exitquantity: "",
+    lotsize: ""
   })
 
 
@@ -73,6 +74,8 @@ function Trade() {
   })
 
 
+
+
   const UpdateExitdata = (item) => {
     setExitModel(true)
     setExitOrderdata({
@@ -84,21 +87,19 @@ function Trade() {
 
 
 
-
-
   const UpdateData = (item) => {
+    console.log("item", item)
     setModel(true);
     setOrderdata({
       ...item,
       price: item.price,
       tsprice: Math.max(item.tag1 || 0, item.tag2 || 0, item.tag3 || 0),
       slprice: item.stoploss,
-      quantity: item.order_quantity,
-      exitquantity: item.order_quantity
+      quantity: item.order_quantity == 0 ? "" : item.order_quantity,
+      exitquantity: item.order_quantity,
+      lotsize: item.lotsize
     });
   };
-
-
 
 
 
@@ -111,6 +112,10 @@ function Trade() {
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+
+
+
 
   useEffect(() => {
     fetchServiceData();
@@ -151,7 +156,6 @@ function Trade() {
 
 
 
-
   const fetchServiceData = async () => {
     try {
       const response = await GetServicedata(token);
@@ -161,6 +165,8 @@ function Trade() {
       console.error("Error fetching services:", error);
     }
   };
+
+
 
 
   const getnsedata = async () => {
@@ -198,7 +204,7 @@ function Trade() {
       const data = {
         id: userid,
         signalid: calltypedata?._id,
-        quantity: orderdata?.quantity,
+        quantity: orderdata.segment === "C" ? orderdata?.quantity : orderdata?.quantity * orderdata?.lotsize,
         price: orderdata?.price,
         tsprice: orderdata?.tsprice,
         tsstatus: targetEnabled,
@@ -368,7 +374,7 @@ function Trade() {
     if (!symbol) return "Trade Symbol";
     return symbol.replace(/^([A-Z]+)(\d{2}[A-Z]{3}\d{2})([A-Z]+)$/, '$1 $2 $3');
   };
-  
+
 
 
 
@@ -530,7 +536,7 @@ function Trade() {
                       item?.purchased === false || new Date(item?.created_at) > new Date()
                     }
                     onClick={() => {
-                      if(brokerstatus===0){
+                      if (brokerstatus === 0) {
                         showCustomAlert("error", "Client Broker Not Login, Please Login With Broker.");
                         return;
                       }
@@ -547,10 +553,10 @@ function Trade() {
                   <button
                     className="btn w-100 my-1"
                     onClick={() => {
-                      if(brokerstatus===0){
+                      if (brokerstatus === 0) {
                         showCustomAlert("error", "Client Broker Not Login, Please Login With Broker.");
                         return;
-                        }
+                      }
                       setCalltypedata(item);
                       UpdateData(item)
                     }}
@@ -647,7 +653,7 @@ function Trade() {
         >
           {[
             { tab: "live", label: "Live Trade" },
-            { tab: "close",  label: "Close Trade" },
+            { tab: "close", label: "Close Trade" },
             // { tab: "live", icon: "bx-home", label: "Live Trade" },
             // { tab: "close", icon: "bx-user-pin", label: "Close Trade" },
           ].map(({ tab, icon, label }) => (
@@ -732,7 +738,7 @@ function Trade() {
                 }}
               />
             </div>
-            <div className="col-md-12">
+            {orderdata?.segment === "C" && <div className="col-md-12">
               <label htmlFor="inputQuantity" className="form-label">
                 Quantity
               </label>
@@ -746,7 +752,47 @@ function Trade() {
                   setOrderdata({ ...orderdata, quantity: e.target.value });
                 }}
               />
-            </div>
+            </div>}
+
+            {orderdata?.segment !== "C" && (
+              <div className="col-md-6">
+                <label htmlFor="inputLotsize" className="form-label">
+                  Quantity (LotSize : {orderdata?.lotsize})
+                </label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="inputLotsize"
+                  placeholder="Lot Size"
+                  value={orderdata?.lotsize}
+                  disabled
+                />
+              </div>
+            )}
+
+
+            {orderdata?.segment != "C" &&
+              <div className="col-md-1 d-flex align-items-end justify-content-center">
+                <span style={{ fontSize: "1.5rem" }}>*</span>
+              </div>}
+
+            {orderdata?.segment != "C" &&
+              <div className="col-md-5">
+                <label htmlFor="inputQuantity" className="form-label">
+
+                </label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="inputQuantity"
+                  placeholder="Quantity"
+                  value={orderdata?.quantity}
+                  onChange={(e) =>
+                    setOrderdata({ ...orderdata, quantity: e.target.value })
+                  }
+                />
+              </div>}
+
 
             <div className="col-md-12">
               <div className="row">
@@ -801,7 +847,7 @@ function Trade() {
             </div>
             <div className="col-md-12">
               <label htmlFor="inputQuantity" className="form-label">
-              Exit Quantity
+                Exit Quantity
               </label>
               <input
                 disabled
@@ -809,7 +855,7 @@ function Trade() {
                 className="form-control"
                 id="inputQuantity"
                 placeholder="Quantity"
-                value={orderdata?.quantity}
+                value={orderdata?.segment == "C" ? orderdata?.quantity : ""}
                 onChange={(e) => {
                   setOrderdata({ ...orderdata, quantity: e.target.value });
                 }}
