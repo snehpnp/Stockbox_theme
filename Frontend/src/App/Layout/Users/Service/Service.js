@@ -448,18 +448,24 @@ const Service = () => {
                                     : text.padEnd(100, " "); // To give placeholder space
                                 })()}
                               </p>
-                            </li>
-
-                          </ul>
-                          <div className="border-top pt-3">
-                            <button
-                              className="btn btn-secondary rounded-pill mt-2 mt-sm-0 me-2 me-sm-0"
+                              <button
+                              className="btn btn-sm border-0 text-decoration-underline btn-secondary rounded-pill mt-2 mt-sm-0 me-2 me-sm-0"
                               onClick={() => {
                                 setViewModel(true);
                                 setDiscription(plan?.description);
                               }}
                             >
-                              Know More
+                              Know More...
+                            </button>
+                            </li>
+
+                          </ul>
+                          <div className="border-top pt-3">
+                            <button
+                              className="btn btn-secondary  rounded-pill mt-2 mt-sm-0 me-2 me-sm-0"
+                            
+                            >
+                              Add to cart
                             </button>
 
                             <button

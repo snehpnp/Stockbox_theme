@@ -37,7 +37,23 @@ export async function GetPrivacyPolicy(token) {
         throw err;
     }
 }
+export async function Getdashboardata(token) {
+    try {
+        const res = await axios.get(
+            `${Config.base_url}api/list/countsignalstatus`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
 
+        return res?.data;
+    } catch (err) {
+        console.log("Error fetching dashboard count data:", err);
+        throw err;
+    }
+}
 export async function getTermsCondition(token) {
     try {
         const res = await axios.get(

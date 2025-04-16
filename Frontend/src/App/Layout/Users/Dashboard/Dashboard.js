@@ -11,6 +11,9 @@ import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import { clientKycAndAgreement } from "../../../Services/UserService/User"
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import Loader from "../../../../Utils/Loader";
 import ReusableModal from '../../../components/Models/ReusableModal';
 import {
   getbannerlist,
@@ -18,7 +21,7 @@ import {
 import { getblogslist } from "../../../Services/Admin/Admin";
 import { GetNewsData } from "../../../Services/UserService/User";
 import { image_baseurl } from "../../../../Utils/config";
-
+import { Getdashboardata} from "../../../Services/UserService/User";
 
 const Dashboard = () => {
 
@@ -33,12 +36,12 @@ const Dashboard = () => {
   const [bannerimg, setBannerimg] = useState([]);
   const [blogslist, setBlogslist] = useState([]);
   const [newslist, setNewslist] = useState([]);
-
+  const [model, setModel] = useState(false);
   const [userDetail, setUserDetail] = useState({});
-
+ const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
-
+const [dashboard, setDashboard] = useState({});
 
   useEffect(() => {
     getCashpastdata();
@@ -48,8 +51,185 @@ const Dashboard = () => {
     getNewslist();
     getBloglist();
     getuserdetail();
+    getdashboardata();
   }, []);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    aadhar: "",
+    panno: "PAN",
+  });
 
+
+
+
+  const [touched, setTouched] = useState({
+    fullName: false,
+    email: false,
+    phone: false,
+    aadhar: false,
+    panno: false,
+  });
+
+  const [errors, setErrors] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    aadhar: "",
+    panno: "",
+  });
+
+  const validateField = (name, value) => {
+    let errorMessage = "";
+
+    switch (name) {
+      case "fullName":
+        if (!value.trim()) {
+          errorMessage = "Name is required";
+        } else if (value.trim().length < 3) {
+          errorMessage = "Name must be at least 3 characters";
+        } else if (!/^[A-Za-z\s]+$/.test(value)) {
+          errorMessage = "Name should contain only letters and spaces";
+        }
+        break;
+
+      case "email":
+        if (!value) {
+          errorMessage = "Email is required";
+        } else if (!/^\S+@\S+\.\S+$/.test(value)) {
+          errorMessage = "Please enter a valid email address";
+        }
+        break;
+
+      case "phone":
+        if (!value) {
+          errorMessage = "Phone number is required";
+        } else if (!/^[6-9]\d{9}$/.test(value)) {
+          errorMessage = "Please enter a valid 10-digit Indian mobile number";
+        }
+        break;
+
+      case "aadhar":
+        if (!value) {
+          errorMessage = "Aadhar number is required";
+        } else if (!/^\d{12}$/.test(value)) {
+          errorMessage = "Aadhar number must be 12 digits";
+        }
+        break;
+
+      case "panno":
+        if (!value) {
+          errorMessage = "PAN number is required";
+        } else if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value)) {
+          errorMessage = "PAN must be in valid format (e.g., ABCDE1234F)";
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    return errorMessage;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+
+    if (touched[name]) {
+      const errorMessage = validateField(name, value);
+      setErrors(prev => ({
+        ...prev,
+        [name]: errorMessage
+      }));
+    }
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+
+    setTouched(prev => ({
+      ...prev,
+      [name]: true
+    }));
+
+    const errorMessage = validateField(name, value);
+    setErrors(prev => ({
+      ...prev,
+      [name]: errorMessage
+    }));
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {};
+    const newTouched = {};
+
+    // Mark all fields as touched and validate
+    Object.keys(formData).forEach(key => {
+      newTouched[key] = true;
+      const errorMessage = validateField(key, formData[key]);
+      newErrors[key] = errorMessage;
+      if (errorMessage) {
+        isValid = false;
+      }
+    });
+
+    setTouched(newTouched);
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleKycSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validate all fields before submitting
+    if (!validateForm()) {
+      showCustomAlert("error", "Please fix the errors in the form");
+      return;
+    }
+
+    setLoading(true);
+
+    const data = new FormData();
+    data.append('email', formData.email);
+    data.append('name', formData.fullName);
+    data.append('phone', formData.phone);
+    data.append('panno', formData.panno);
+    data.append('aadhaarno', formData.aadhar);
+    data.append('id', userid);
+
+    try {
+      const token = localStorage.getItem('token');
+      const result = await clientKycAndAgreement(data, token);
+      console.log("result",result)
+      showCustomAlert("success", "KYC form submitted successfully!");
+      // Reset form after successful submission
+      setFormData({
+        fullName: "",
+        email: "",
+        phone: "",
+        aadhar: "",
+        panno: "",
+      });
+      setTouched({
+        fullName: false,
+        email: false,
+        phone: false,
+        aadhar: false,
+        panno: false,
+      });
+    } catch (err) {
+      console.error('KYC Failed:', err);
+      showCustomAlert("error", "KYC submission failed. Please try again.");
+    }
+    setLoading(false);
+  };
 
 
   const getBannerList = async () => {
@@ -86,6 +266,19 @@ const Dashboard = () => {
     }
   };
 
+  const getdashboardata = async () => {
+    try {
+      const response = await Getdashboardata(token);
+  
+      if (response.status) {
+        setDashboard(response.data);
+        console.log("Dashboard data:", response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    }
+  };
+  
 
 
   const formatMonth = (key) => {
@@ -232,28 +425,30 @@ const Dashboard = () => {
 
               <ul className="list-group list-group-flush">
                 <li className="list-group-item">
-                  <Link to="/user/subscription">
+                  <Link to="/user/subscription" className="text-dark">
                     <CreditCard className="me-2" /> My Subscription
                   </Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="">
+                  <Link onClick={() => setModel(true)} className="text-dark">
                     <Shield className="me-2" /> KYC Pending
                   </Link>
                 </li>
-                <li className="list-group-item">
-                  <Link to="">
+                <li className="list-group-item" >
+                  <Link to="/user/subscription" className="text-dark">
                     <History className="me-2" /> Payment History
                   </Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="/user/basket">
+                  <Link to="/user/basket"
+                    state={{ activeTab: 'basket' }}
+                   className="text-dark">
                     <ShoppingCart className="me-2" /> My Basket Subscription
                   </Link>
 
                 </li>
                 <li className="list-group-item">
-                  <Link to="/user/refer-earn">
+                  <Link to="/user/refer-earn" className="text-dark">
                     <Puzzle className="me-2" /> Refer & Earn
                   </Link>
 
@@ -537,6 +732,152 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      <ReusableModal
+        show={model}
+        onClose={() => setModel(false)}
+        title={<span><b>KYC Details</b></span>}
+        body={
+          <form onSubmit={handleKycSubmit}>
+              <div className="mb-3">
+                <label htmlFor="fullName" className="form-label">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="fullName"
+                  name="fullName"
+                  placeholder="Enter your full name"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                {touched.fullName && errors.fullName && (
+                  <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
+                    {errors.fullName}
+                  </div>
+                )}
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="email" className="form-label">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  className="form-control"
+                  id="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                {touched.email && errors.email && (
+                  <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
+                    {errors.email}
+                  </div>
+                )}
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="phone" className="form-label">
+                  Mobile No.
+                </label>
+                <input
+                  type="tel"
+                  className="form-control"
+                  id="phone"
+                  name="phone"
+                  placeholder="Enter your 10-digit mobile number"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  maxLength="10"
+                />
+                {touched.phone && errors.phone && (
+                  <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
+                    {errors.phone}
+                  </div>
+                )}
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="aadhar" className="form-label">
+                  Aadhar No.
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="aadhar"
+                  name="aadhar"
+                  placeholder="Enter your 12-digit Aadhar number"
+                  value={formData.aadhar}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  maxLength="12"
+                />
+                {touched.aadhar && errors.aadhar && (
+                  <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
+                    {errors.aadhar}
+                  </div>
+                )}
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="panno" className="form-label">
+                  PAN No.
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="panno"
+                  name="panno"
+                  placeholder="Enter your PAN (e.g., ABCDE1234F)"
+                  value={formData.panno}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  maxLength="10"
+                />
+                {touched.panno && errors.panno && (
+                  <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
+                    {errors.panno}
+                  </div>
+                )}
+              </div>
+
+              <div className="d-grid">
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Submitting...
+                    </>
+                  ) : (
+                    "Submit"
+                  )}
+                </button>
+              </div>
+            </form>
+        }
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setModel(false)}
+            >
+              Close
+            </button>
+
+          </>
+        }
+      />
     </div>
 
 
