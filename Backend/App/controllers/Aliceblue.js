@@ -27,10 +27,24 @@ class Aliceblue {
 
             // Check if the client exists
             if (!client) {
-                return res.status(404).json({
-                    status: false,
-                    message: "Client not found"
-                });
+
+
+                if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                    return res.status(404).json({
+                        status: false,
+                        message: "Client not found"
+                    });
+                } else {
+                    // Web request
+                    const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                    return res.redirect(dynamicUrl);
+                }
+
+
+                // return res.status(404).json({
+                //     status: false,
+                //     message: "Client not found"
+                // });
             }
 
             // Check for authCode in the request
@@ -71,21 +85,64 @@ class Aliceblue {
                             { new: true }  // Return the updated document
                         );
 
-                        return res.json({
-                            status: true,
-                            message: "Broker login successfully",
-                        });
+                        // return res.json({
+                        //     status: true,
+                        //     message: "Broker login successfully",
+                        // });
+
+                        if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                            return res.json({
+                                status: true,
+                                message: "Broker login successfully",
+                            });
+                        } else {
+                            // Web request
+                            const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                            return res.redirect(dynamicUrl);
+                        }
+
+
+
                     }
 
                 } catch (error) {
-                    return res.status(500).json({ status: false, message: "Server error" });
+
+
+                    if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                        return res.status(500).json({ status: false, message: "Server error" });
+                    } else {
+                        // Web request
+                        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                        return res.redirect(dynamicUrl);
+                    }
+
+                    //return res.status(500).json({ status: false, message: "Server error" });
                 }
 
             } else {
-                return res.status(400).json({ status: false, message: "authCode is required" });
+
+                if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                    return res.status(400).json({ status: false, message: "authCode is required" });
+                } else {
+                    // Web request
+                    const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                    return res.redirect(dynamicUrl);
+                }
+
+               // return res.status(400).json({ status: false, message: "authCode is required" });
             }
         } catch (error) {
-            return res.status(500).json({ status: false, message: error.message || "Server error" });
+
+            if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                return res.status(500).json({ status: false, message: error.message || "Server error" });
+            } else {
+                // Web request
+                const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                return res.redirect(dynamicUrl);
+            }
+
+
+          //  return res.status(500).json({ status: false, message: error.message || "Server error" });
         }
     }
 

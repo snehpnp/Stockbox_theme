@@ -924,13 +924,17 @@ class List {
       if (client.state) {
         const clientstate = await States.findOne({ name: client.state });
 
-        clientstateid = clientstate.id;
+        if (clientstate) {
+          clientstateid = clientstate.id;
+        }
       }
 
       if (settings.state) {
         const settingsstate = await States.findOne({ name: settings.state });
 
-        settingsstateid = settingsstate.id;
+        if (settingsstate) {
+          settingsstateid = settingsstate.id;
+        }
       }
 
       htmlContent = htmlContent
@@ -1189,13 +1193,17 @@ class List {
       if (client.state) {
         const clientstate = await States.findOne({ name: client.state });
 
-        clientstateid = clientstate.id;
+        if (clientstate) {
+          clientstateid = clientstate.id;
+        }
       }
 
       if (settings.state) {
         const settingsstate = await States.findOne({ name: settings.state });
 
-        settingsstateid = settingsstate.id;
+        if (settingsstate) {
+          settingsstateid = settingsstate.id;
+        }
       }
 
 
@@ -3516,7 +3524,7 @@ class List {
 
 
       const result = await BasicSetting_Modal.findOne()
-        .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst gststatus base_url color1 color2 color3 color4 popupstatus popupcontent')
+        .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst gststatus base_url color1 color2 color3 color4 popupstatus popupcontent refersendmsg')
         .exec();
 
       if (result) {
@@ -3912,8 +3920,6 @@ class List {
       const { page = 1 } = req.query; // Default values for page and limit
       const limit = 10;
       const today = new Date();
-
-      console.log("req.query", req.query)
 
       // Fetch the client's creation date
       const client = await Clients_Modal.findById(id).select('createdAt');
@@ -5010,9 +5016,33 @@ class List {
   }
 
   async Refer(req, res) {
-    return res.status(200).json({
-      status: true,
-    });
+    if (req.headers.host === 'app.rmpro.in') {
+      const referralCode = req.query.ref;
+
+      return res.send(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Redirecting...</title>
+          <script>
+            setTimeout(function () {
+              window.location = "https://play.google.com/store/apps/details?id=com.researchmart.rm_pro";
+            }, 2000);
+            window.location = "rmpro://referral?code=${referralCode}";
+          </script>
+        </head>
+        <body>
+          <p>Redirecting to the app...</p>
+        </body>
+      </html>
+    `);
+    } else {
+
+      return res.status(200).json({
+        status: true,
+      });
+
+    }
   }
 
   async getLivePrice(req, res) {
@@ -8872,6 +8902,23 @@ class List {
     }
   }
 
+
+  async countSignalStatus(req, res) {
+    try {
+      const openCount = await Signal_Modal.countDocuments({ close_status: false });
+      const closeCount = await Signal_Modal.countDocuments({ close_status: true });
+      const openCountstrategy = await Signalsdata_Modal.countDocuments({ close_status: false });
+
+      res.status(200).json({
+        open: openCount,
+        closed: closeCount,
+        openstrategy: openCountstrategy,
+      });
+    } catch (error) {
+      console.error("Error fetching signal counts:", error);
+      res.status(500).json({ error: "Something went wrong" });
+    }
+  }
 
 
 }

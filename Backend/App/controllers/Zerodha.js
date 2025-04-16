@@ -39,10 +39,16 @@ class Zerodha {
 
             // Check if the client exists
             if (!client) {
-                return res.status(404).json({
-                    status: false,
-                    message: "Client not found"
-                });
+                if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                                      return res.status(404).json({
+                                          status: false,
+                                          message: "Client not found"
+                                      });
+                                 } else {
+                                     // Web request
+                                     const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                                     return res.redirect(dynamicUrl);
+                                 }
             }
 
             if (req.query.request_token) {
@@ -83,26 +89,71 @@ class Zerodha {
                             { new: true }  // Return the updated document
                         );
 
-                        return res.json({
-                            status: true,
-                            message: "Broker login successfully",
-                        });
+
+
+                        if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                            return res.json({
+                                status: true,
+                                message: "Broker login successfully",
+                            });
+                       } else {
+                           // Web request
+                           const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                           return res.redirect(dynamicUrl);
+                       }
+
+                      
                     }
                     else
                     {
-                        return res.status(500).json({ status: false, message: response.data });
+
+                        if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                            return res.status(500).json({ status: false, message: response.data });
+                       } else {
+                           // Web request
+                           const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                           return res.redirect(dynamicUrl);
+                       }
+                       
 
                     }
 
                 } catch (error) {
-                    return res.status(500).json({ status: false, message: "Server error" });
+
+                    if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                        return res.status(500).json({ status: false, message: "Server error" });
+                   } else {
+                       // Web request
+                       const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                       return res.redirect(dynamicUrl);
+                   }
+
+                    
                 }
 
             } else {
-                return res.status(400).json({ status: false, message: "Request Token is required" });
+                if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                    return res.status(400).json({ status: false, message: "Request Token is required" });
+               } else {
+                   // Web request
+                   const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                   return res.redirect(dynamicUrl);
+               }
+
+
+                
             }
         } catch (error) {
-            return res.status(500).json({ status: false, message: error.message || "Server error" });
+
+            if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                return res.status(500).json({ status: false, message: error.message || "Server error" });
+
+           } else {
+               // Web request
+               const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+               return res.redirect(dynamicUrl);
+           }
+
         }
     }
 
