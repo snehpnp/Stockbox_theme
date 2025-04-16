@@ -203,7 +203,7 @@ const Userlogin = () => {
 
                                 <div className="col-md-6 ">
                                   <p className="mb-0">
-                                    <Link to="/forget">Forgot Password?</Link>
+                                    <Link to="/forget-user">Forgot Password?</Link>
                                   </p>
                                 </div>
 

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import Swal from 'sweetalert2';
-import { ForgetPasswordApi } from '../../Services/Admin/Admin';
+import { ForgetClientPasswordApi } from '../../Services/Admin/Admin';
 import showCustomAlert from '../../Extracomponents/CustomAlert/CustomAlert';
 
 const Forgetpassworduser = () => {
@@ -19,7 +19,7 @@ const Forgetpassworduser = () => {
             const data = {
                 Email: values.Email,
             };
-            const response = await ForgetPasswordApi(data, token);
+            const response = await ForgetClientPasswordApi(data, token);
             if (response && response.status) {
                 showCustomAlert("Success", response.message, null, null)
                 resetForm();
