@@ -74,7 +74,6 @@ const Addbroadcast = () => {
 
         try {
             const response = await SendBroadCast(req, token);
-            console.log("response", response)
             if (response.status) {
                 showCustomAlert("Success", response.message, navigate, "/admin/message")
             } else {
