@@ -6,7 +6,7 @@ import Loader from "../../../../Utils/Loader";
 import { useNavigate } from "react-router-dom";
 
 const Notification = () => {
-
+  const navigate = useNavigate();
 
   const [notificationData, setNotificationData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,7 +33,7 @@ const Notification = () => {
     setIsLoading(false);
   };
 
-  console.log("currentPage", currentPage)
+  // console.log("currentPage", currentPage)
 
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const Notification = () => {
     if (notification?.type === "open signal") {
       navigate("/user/trades")
     } else if (notification?.type === "close signal") {
-      navigate("/user/trades",{state:{type:"closeSignal"}})
+      navigate("/user/trades", { state: { type: "closeSignal" } })
     }
   };
 
@@ -76,7 +76,12 @@ const Notification = () => {
         ) : (
           <div className="notifications-list">
             {notificationData.map((notification, index) => (
-              <div key={index} className="notification-item d-flex align-items-center border-bottom py-3">
+              <div
+                key={index}
+                className="notification-item d-flex align-items-center border-bottom py-3"
+                onClick={() => handleNotificationClick(notification)}
+                style={{ cursor: "pointer" }}
+              >
                 <div
                   className="rounded-circle p-2 border d-flex align-items-center justify-content-center btn-primary"
                   style={{ width: "50px", height: "50px", textAlign: "center" }}
