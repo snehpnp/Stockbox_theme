@@ -1710,13 +1710,17 @@ class Basket {
         if(client.state) {
         const clientstate = await States.findOne({name:client.state});
         
-         clientstateid = clientstate.id;
+        if(clientstate) {
+          clientstateid = clientstate.id;
+         }
         }
         
         if(settings.state) {
           const settingsstate = await States.findOne({name:settings.state});
           
-          settingsstateid = settingsstate.id;
+          if(settingsstate) {
+            settingsstateid = settingsstate.id;
+            }
           }
 
 

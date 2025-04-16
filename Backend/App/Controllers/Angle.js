@@ -25,19 +25,39 @@ class Angle {
                 const client = await Clients_Modal.findById(key);
 
                 if (!client) {
-                    return res.status(404).json({
-                        status: false,
-                        message: "Client not found"
-                    });
+                    if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                        return res.status(404).json({
+                            status: false,
+                            message: "Client not found"
+                        });
+                    } else {
+                        // Web request
+                        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                        return res.redirect(dynamicUrl);
+                    }
+    
                 }
 
                 var auth_token = keystr.split('?auth_token=')[1];
 
                 if (!auth_token) {
-                    return res.status(404).json({
+
+                    if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                         return res.status(404).json({
                         status: false,
                         message: "Auth Token is required"
-                    });
+                         });
+                    } else {
+                        // Web request
+                        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                        return res.redirect(dynamicUrl);
+                    }
+    
+
+                    // return res.status(404).json({
+                    //     status: false,
+                    //     message: "Auth Token is required"
+                    // });
                 }
 
                 const brokerlink = await Clients_Modal.findByIdAndUpdate(
@@ -61,10 +81,26 @@ class Angle {
 
             } else {
 
-                return res.status(500).json({ status: false, message: "Server error" });
+
+                if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                    return res.status(500).json({ status: false, message: "Server error" });
+               } else {
+                   // Web request
+                   const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                   return res.redirect(dynamicUrl);
+               }
+
+                
             }
         } catch (error) {
-            return res.status(500).json({ status: false, message: error.message });
+            if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                return res.status(500).json({ status: false, message: error.message });
+           } else {
+               // Web request
+               const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+               return res.redirect(dynamicUrl);
+           }
+        
 
         }
 
