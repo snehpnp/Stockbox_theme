@@ -45,7 +45,7 @@ function Trade() {
   const [avoidDescription, setAvoidDescription] = useState("");
 
   const [brokerstatus, setBrokerstatus] = useState([])
-  const [targetEnabled, setTargetEnabled] = useState(false);
+  const [targetEnabled, setTargetEnabled] = useState(1);
   const [checkdata, setCheckdata] = useState([])
 
 
@@ -707,7 +707,7 @@ function Trade() {
       <ReusableModal
         show={model}
         onClose={() => setModel(false)}
-        title={<span>{calltypedata?.stock}</span>}
+        title={<span>{calltypedata?.tradesymbol}</span>}
         // title={
         //   <span>
         //     {calltypedata?.segment === "C"
