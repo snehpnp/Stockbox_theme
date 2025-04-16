@@ -52,7 +52,7 @@ const Dashboard = () => {
       try {
         const response = await getbannerlist(token); // just pass the token
         setBannerimg(response.data);
-        console.log(response.data, "bannerimg"); // log the response directly
+        // console.log(response.data, "bannerimg");
       } catch (error) {
         console.error("Error fetching banner list:", error);
       }
@@ -65,7 +65,7 @@ const Dashboard = () => {
       try {
         const response = await GetNewsData(token); // just pass the token
         setNewslist(response.data);
-        console.log(response.data, "newslist"); // log the response directly
+        // console.log(response.data, "newslist"); // log the response directly
       }
       catch (error) {
         console.error("Error fetching blog list:", error);
@@ -78,7 +78,7 @@ const Dashboard = () => {
       try {
         const response = await getblogslist(token); // just pass the token
         setBlogslist(response.data);
-        console.log(response.data, "blogslist"); // log the response directly
+        // console.log(response.data, "blogslist"); // log the response directly
       }
       catch (error) {
         console.error("Error fetching blog list:", error);
@@ -701,8 +701,8 @@ const Dashboard = () => {
                   navigation
                   pagination={{ clickable: true }}
                   modules={[Autoplay, Navigation, Pagination]}
-                  onSlideChange={() => console.log('slide change')}
-                  onSwiper={(swiper) => console.log(swiper)}
+                  // onSlideChange={() => console.log('slide change')}
+                  // onSwiper={(swiper) => console.log(swiper)}
                 >
                   {bannerimg.map((item, index) => {
                     return (

@@ -3,8 +3,10 @@ import { Bell } from "lucide-react";
 import { GetNotificationData } from "../../../Services/UserService/User";
 import Content from '../../../components/Contents/Content';
 import Loader from "../../../../Utils/Loader";
+import { useNavigate } from "react-router-dom";
 
 const Notification = () => {
+  const navigate = useNavigate();
   const [notificationData, setNotificationData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [notificationsPerPage] = useState(10);
@@ -46,6 +48,15 @@ const Notification = () => {
   const nextPage = () => setCurrentPage((prevPage) => prevPage + 1);
   const prevPage = () => setCurrentPage((prevPage) => prevPage - 1);
 
+  const handleNotificationClick = (notification) => {
+    if (notification?.type === "open signal") {
+      navigate("/user/trades")
+    } else if (notification?.type === "close signal") {
+      navigate("/user/trades",{state:{type:"closeSignal"}})
+    }
+  };
+
+
 
 
   return (
@@ -69,7 +80,12 @@ const Notification = () => {
         ) : (
           <div className="notifications-list">
             {currentNotifications.map((notification, index) => (
-              <div key={index} className="notification-item d-flex align-items-center border-bottom py-3">
+              <div
+                key={index}
+                className="notification-item d-flex align-items-center border-bottom py-3"
+                onClick={() => handleNotificationClick(notification)}
+                style={{ cursor: "pointer" }} // Optional: visual feedback ke liye
+              >
                 <div
                   className="rounded-circle p-2 border d-flex align-items-center justify-content-center btn-primary"
                   style={{ width: "50px", height: "50px", textAlign: "center" }}
