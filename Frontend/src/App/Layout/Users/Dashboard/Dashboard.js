@@ -226,7 +226,6 @@ const Dashboard = () => {
         panno: false,
       });
     } catch (err) {
-      console.error('KYC Failed:', err);
       showCustomAlert("error", "KYC submission failed. Please try again.");
     }
     setLoading(false);
@@ -273,7 +272,6 @@ const Dashboard = () => {
 
       if (response) {
         setDashboard(response);
-        console.log("Dashboard data:", response);
       }
     } catch (error) {
       console.error("Error fetching dashboard data:", error);

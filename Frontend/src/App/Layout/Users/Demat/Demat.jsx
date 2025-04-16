@@ -235,7 +235,7 @@ const Demat = () => {
     setViewModel(false);
   };
 
-
+  console.log("brokerData", brokerData)
 
   return (
     <div>
@@ -264,12 +264,12 @@ const Demat = () => {
                     </div>
                     <div className="card-content">
                       <h5 className="mb-2 mt-3">{broker?.name}</h5>
-                      <button className="btn btn-sm btn-primary" onClick={() => { handleShowModal(broker?.name); setUserDetail(broker?.id) }}>
+                      {brokerData?.dlinkstatus == 0 && <button className="btn btn-sm btn-primary" onClick={() => { handleShowModal(broker?.name); setUserDetail(broker?.id) }}>
 
                         <i className="fa fa-eye"></i>
                         View
 
-                      </button>
+                      </button>}
                     </div>
                   </div>
                 </div >
