@@ -694,28 +694,28 @@ const Dashboard = () => {
               <div className="row mt-3">
 
 
-              <Swiper
-      spaceBetween={50}
-      slidesPerView={1}
-      autoplay={{ delay: 3000, disableOnInteraction: false }}
-      navigation
-      pagination={{ clickable: true }}
-      modules={[Autoplay, Navigation, Pagination]}
-      onSlideChange={() => console.log('slide change')}
-      onSwiper={(swiper) => console.log(swiper)}
-    >
-      {bannerimg.map((item, index) => {
-        return (
-          <SwiperSlide key={index}>
-            <img
-              src={`${image_baseurl}uploads/banner/${item.image}`}
-              style={{ height: '300px', width: '100%' }}
-              alt={`banner-${index}`}
-            />
-          </SwiperSlide>
-        );
-      })}
-    </Swiper>
+                <Swiper
+                  spaceBetween={50}
+                  slidesPerView={1}
+                  autoplay={{ delay: 3000, disableOnInteraction: false }}
+                  navigation
+                  pagination={{ clickable: true }}
+                  modules={[Autoplay, Navigation, Pagination]}
+                  onSlideChange={() => console.log('slide change')}
+                  onSwiper={(swiper) => console.log(swiper)}
+                >
+                  {bannerimg.map((item, index) => {
+                    return (
+                      <SwiperSlide key={index}>
+                        <img
+                          src={`${image_baseurl}uploads/banner/${item.image}`}
+                          style={{ height: '300px', width: '100%' }}
+                          alt={`banner-${index}`}
+                        />
+                      </SwiperSlide>
+                    );
+                  })}
+                </Swiper>
 
               </div>
 
@@ -816,7 +816,7 @@ const Dashboard = () => {
             </div>
             <div className="product-list p-3 mb-3 ps ps--active-y">
               <div className="d-flex flex-column gap-3">
-                {newslist.map((item, index) => {
+                {newslist.slice(0, 5).map((item, index) => {
                   return (
                     <div key={index} className="d-flex align-items-center justify-content-between gap-3 p-2 border radius-10">
                       <div className="">
@@ -854,19 +854,19 @@ const Dashboard = () => {
             <div className="card-body">
 
               <ul className="list-unstyled" style={{ margin: 0, padding: 0 }}>
-              {blogslist.map((item, index) => { 
-  return (  
-    <li key={index} className="d-flex my-2 align-items-center justify-content-between gap-3 p-2 border radius-10">
-      <div className="">
-        <img src={`${image_baseurl}uploads/blogs/${item.image}`} width={50} alt={item.title} />
-      </div>
-      <div className="flex-grow-1">
-        <h6 className="mb-0">{item.title}</h6>
-        <p className="mb-0 mt-2" style={{ fontSize: 12 }}> {new Date(item.created_at).toLocaleDateString()}</p>
-      </div>
-    </li>
-  );
-})}
+                {blogslist.slice(0,5).map((item, index) => {
+                  return (
+                    <li key={index} className="d-flex my-2 align-items-center justify-content-between gap-3 p-2 border radius-10">
+                      <div className="">
+                        <img src={`${image_baseurl}uploads/blogs/${item.image}`} width={50} alt={item.title} />
+                      </div>
+                      <div className="flex-grow-1">
+                        <h6 className="mb-0">{item.title}</h6>
+                        <p className="mb-0 mt-2" style={{ fontSize: 12 }}> {new Date(item.created_at).toLocaleDateString()}</p>
+                      </div>
+                    </li>
+                  );
+                })}
 
               </ul>
 
