@@ -17,10 +17,11 @@ import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import Loader from "../../../../Utils/Loader";
 import ReusableModal from '../../../components/Models/ReusableModal';
 import {
-  getbannerlist,} from "../../../Services/Admin/Admin";
-  import { getblogslist } from "../../../Services/Admin/Admin";
-  import { GetNewsData } from "../../../Services/UserService/User";
-  import {GetUserData} from "../../../Services/UserService/User";
+  getbannerlist,
+} from "../../../Services/Admin/Admin";
+import { getblogslist } from "../../../Services/Admin/Admin";
+import { GetNewsData } from "../../../Services/UserService/User";
+import { GetUserData } from "../../../Services/UserService/User";
 import { image_baseurl } from "../../../../Utils/config";
 
 
@@ -34,14 +35,14 @@ const Dashboard = () => {
   const [futureAvgProfit, setFutureAvgProfit] = useState(0);
   const [optionAvgProfit, setOptionAvgProfit] = useState(0);
   const [months, setMonths] = useState([]);
-   const [model, setModel] = useState(false);
-const [bannerimg, setBannerimg] = useState([]);
-const [blogslist, setBlogslist] = useState([]);
-const [newslist, setNewslist] = useState([]);
-const[ userdata,setUserdata]=useState([])
-const userid = localStorage.getItem("id");
+  const [model, setModel] = useState(false);
+  const [bannerimg, setBannerimg] = useState([]);
+  const [blogslist, setBlogslist] = useState([]);
+  const [newslist, setNewslist] = useState([]);
+  const [userdata, setUserdata] = useState([])
+  const userid = localStorage.getItem("id");
   const token = localStorage.getItem("token");
-   const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getCashpastdata();
@@ -94,49 +95,45 @@ const userid = localStorage.getItem("id");
 
     alert("KYC form submitted successfully!");
   };
-  useEffect(() => { 
+  useEffect(() => {
     const getBannerList = async () => {
       try {
         const response = await getbannerlist(token); // just pass the token
         setBannerimg(response.data);
-       
+
       } catch (error) {
         console.error("Error fetching banner list:", error);
       }
     };
-  
+
     getBannerList();
   }, []);
-   useEffect(()=>{
-const getNewslist = async ()=>
-{
-  try{
-    const response= await GetNewsData(token); // just pass the token
-    setNewslist(response.data);
-  
-  }
-  catch(error)
-  {
-    console.error("Error fetching blog list:", error);
-  }
-};
-getNewslist();
-   },[])
-   useEffect(()=>{
-    const getBloglist = async ()=>
-    {
-      try{
-        const response= await getblogslist(token); // just pass the token
-        setBlogslist(response.data);
-        
+  useEffect(() => {
+    const getNewslist = async () => {
+      try {
+        const response = await GetNewsData(token); // just pass the token
+        setNewslist(response.data);
+
       }
-      catch(error)
-      {
+      catch (error) {
+        console.error("Error fetching blog list:", error);
+      }
+    };
+    getNewslist();
+  }, [])
+  useEffect(() => {
+    const getBloglist = async () => {
+      try {
+        const response = await getblogslist(token); // just pass the token
+        setBlogslist(response.data);
+
+      }
+      catch (error) {
         console.error("Error fetching blog list:", error);
       }
     };
     getBloglist();
-       },[])
+  }, [])
   const formatMonth = (key) => {
     const [year, month] = key.split("-");
     return new Date(year, month - 1).toLocaleString("en-US", { month: "long" });
@@ -146,20 +143,20 @@ getNewslist();
     const getuserdetail = async () => {
       try {
         const response = await GetUserData(userid, token);
-  
+
         if (response.status) {
           setUserdata(response.data);
-          console.log("User data:", response.data);
-          
+          //console.log("User data:", response.data);
+
         }
       } catch (error) {
         console.log("error", error);
       }
     };
-  
-    getuserdetail(); 
-  }, []); 
-  
+
+    getuserdetail();
+  }, []);
+
 
 
   const getCashpastdata = async () => {
@@ -617,28 +614,30 @@ getNewslist();
 
               <ul className="list-group list-group-flush">
                 <li className="list-group-item">
-                  <Link to="/user/subscription">
+                  <Link to="/user/subscription" className="text-dark">
                     <CreditCard className="me-2" /> My Subscription
                   </Link>
                 </li>
                 <li className="list-group-item">
-                  <Link   onClick={() => setModel(true)}>
+                  <Link onClick={() => setModel(true)} className="text-dark">
                     <Shield className="me-2" /> KYC Pending
                   </Link>
                 </li>
-                <li className="list-group-item">
-                  <Link to="">
+                <li className="list-group-item" >
+                  <Link to="/user/subscription" className="text-dark">
                     <History className="me-2" /> Payment History
                   </Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="/user/basket">
+                  <Link to="/user/basket"
+                    state={{ activeTab: 'basket' }}
+                   className="text-dark">
                     <ShoppingCart className="me-2" /> My Basket Subscription
                   </Link>
 
                 </li>
                 <li className="list-group-item">
-                  <Link to="/user/refer-earn">
+                  <Link to="/user/refer-earn" className="text-dark">
                     <Puzzle className="me-2" /> Refer & Earn
                   </Link>
 
@@ -747,28 +746,28 @@ getNewslist();
               <div className="row mt-3">
 
 
-              <Swiper
-      spaceBetween={50}
-      slidesPerView={1}
-      autoplay={{ delay: 3000, disableOnInteraction: false }}
-      navigation
-      pagination={{ clickable: true }}
-      modules={[Autoplay, Navigation, Pagination]}
-      onSlideChange={() => console.log('slide change')}
-      onSwiper={(swiper) => console.log(swiper)}
-    >
-      {bannerimg.map((item, index) => {
-        return (
-          <SwiperSlide key={index}>
-            <img
-              src={`${image_baseurl}uploads/banner/${item.image}`}
-              style={{ height: '300px', width: '100%' }}
-              alt={`banner-${index}`}
-            />
-          </SwiperSlide>
-        );
-      })}
-    </Swiper>
+                <Swiper
+                  spaceBetween={50}
+                  slidesPerView={1}
+                  autoplay={{ delay: 3000, disableOnInteraction: false }}
+                  navigation
+                  pagination={{ clickable: true }}
+                  modules={[Autoplay, Navigation, Pagination]}
+                  onSlideChange={() => console.log('slide change')}
+                  onSwiper={(swiper) => console.log(swiper)}
+                >
+                  {bannerimg.map((item, index) => {
+                    return (
+                      <SwiperSlide key={index}>
+                        <img
+                          src={`${image_baseurl}uploads/banner/${item.image}`}
+                          style={{ height: '300px', width: '100%' }}
+                          alt={`banner-${index}`}
+                        />
+                      </SwiperSlide>
+                    );
+                  })}
+                </Swiper>
 
               </div>
 
@@ -877,15 +876,15 @@ getNewslist();
                       </div>
                       <div className="flex-grow-1">
                         <h6 className="mb-0">{item.title}</h6>
-                        </div>
-                        <div className="">
+                      </div>
+                      <div className="">
                         <small className="text-muted" style={{ fontSize: 12 }}> {new Date(item.created_at).toLocaleDateString()}</small>
                       </div>
                     </div>
                   );
                 }
                 )}
-            
+
               </div>
             </div>
 
@@ -907,21 +906,21 @@ getNewslist();
             <div className="card-body">
 
               <ul className="list-unstyled" style={{ margin: 0, padding: 0 }}>
-              {blogslist.map((item, index) => { 
-  return (  
-    <li key={index} className="d-flex my-2 align-items-center justify-content-between gap-3 p-2 border radius-10">
-      <div className="">
-        <img src={`${image_baseurl}uploads/blogs/${item.image}`} width={50} alt={item.title} />
-      </div>
-      <div className="flex-grow-1">
-        <h6 className="mb-0">{item.title}</h6>
-        <p className="mb-0 mt-2" style={{ fontSize: 12 }}> {new Date(item.created_at).toLocaleDateString()}</p>
-      </div>
-    </li>
-  );
-})}
+                {blogslist.map((item, index) => {
+                  return (
+                    <li key={index} className="d-flex my-2 align-items-center justify-content-between gap-3 p-2 border radius-10">
+                      <div className="">
+                        <img src={`${image_baseurl}uploads/blogs/${item.image}`} width={50} alt={item.title} />
+                      </div>
+                      <div className="flex-grow-1">
+                        <h6 className="mb-0">{item.title}</h6>
+                        <p className="mb-0 mt-2" style={{ fontSize: 12 }}> {new Date(item.created_at).toLocaleDateString()}</p>
+                      </div>
+                    </li>
+                  );
+                })}
 
-                
+
               </ul>
 
             </div>
@@ -933,127 +932,127 @@ getNewslist();
       </div>
 
       <ReusableModal
-                                                  show={model}
-                                                  onClose={() => setModel(false)}
-                                                  title={<span><b>KYC Details</b></span>}
-                                                  body={
-                                                    <form onSubmit={handleSubmit}>
-                                                    <div className="mb-3">
-                                                      <label htmlFor="fullName" className="form-label">
-                                                        Name
-                                                      </label>
-                                                      <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        id="fullName"
-                                                        name="fullName"
-                                                        placeholder="Enter your full name"
-                                                        value={formData.fullName}
-                                                        onChange={handleChange}
-                                                        required
-                                                      />
-                                                    </div>
-                                      
-                                                    <div className="mb-3">
-                                                      <label htmlFor="email" className="form-label">
-                                                        Email
-                                                      </label>
-                                                      <input
-                                                        type="email"
-                                                        className="form-control"
-                                                        id="email"
-                                                        name="email"
-                                                        placeholder="Enter your email"
-                                                        value={formData.email}
-                                                        onChange={handleChange}
-                                                        required
-                                                      />
-                                                    </div>
-                                      
-                                                    <div className="mb-3">
-                                                      <label htmlFor="phone" className="form-label">
-                                                        Mobile No.
-                                                      </label>
-                                                      <input
-                                                        type="tel"
-                                                        className="form-control"
-                                                        id="phone"
-                                                        name="phone"
-                                                        placeholder="Enter your phone number"
-                                                        value={formData.phone}
-                                                        onChange={handleChange}
-                                                        required
-                                                      />
-                                                    </div>
-                                      
-                                                    <div className="mb-3">
-                                                      <label htmlFor="aadhar" className="form-label">
-                                                        {/* Address */}
-                                                        Aadhar No.
-                                                      </label>
-                                                      <input
-                                                        type="number"
-                                                        className="form-control"
-                                                        id="aadhar"
-                                                        name="aadhar"
-                                                        placeholder="Enter your aadhar"
-                                                        value={formData.aadhar}
-                                                        onChange={handleChange}
-                                                        rows="3"
-                                                        required
-                                                      />
-                                                    </div>
-                                      
-                                                    <div className="mb-3">
-                                                      <label htmlFor="panno" className="form-label">
-                                                        {/* Address */}
-                                                        PAN No.
-                                                      </label>
-                                                      <input
-                                                        type="number"
-                                                        className="form-control"
-                                                        id="panno"
-                                                        name="panno"
-                                                        placeholder="Enter your Pan No"
-                                                        value={formData.panno}
-                                                        onChange={handleChange}
-                                                        rows="3"
-                                                        required
-                                                      />
-                                                    </div>
-                                                    <div className="d-grid">
-                                                      <button
-                                                        type="submit"
-                                                        className="btn btn-primary"
-                                                        onClick={handleKycSubmit}
-                                                        disabled={loading}
-                                                      >
-                                                        {loading ? (
-                                                          <>
-                                                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                                            Submitting...
-                                                          </>
-                                                        ) : (
-                                                          "Submit"
-                                                        )}
-                                                      </button>
-                                                    </div>
-                                      
-                                                  </form>
-                                                  }
-                                                  footer={
-                                                      <>
-                                                          <button
-                                                              type="button"
-                                                              className="btn btn-secondary"
-                                                              onClick={() => setModel(false)}
-                                                          >
-                                                              Close
-                                                          </button>
-                                                         
-                                                      </>
-                                                  }
-                                              />
+        show={model}
+        onClose={() => setModel(false)}
+        title={<span><b>KYC Details</b></span>}
+        body={
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label htmlFor="fullName" className="form-label">
+                Name
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="fullName"
+                name="fullName"
+                placeholder="Enter your full name"
+                value={formData.fullName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="email" className="form-label">
+                Email
+              </label>
+              <input
+                type="email"
+                className="form-control"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="phone" className="form-label">
+                Mobile No.
+              </label>
+              <input
+                type="tel"
+                className="form-control"
+                id="phone"
+                name="phone"
+                placeholder="Enter your phone number"
+                value={formData.phone}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="aadhar" className="form-label">
+                {/* Address */}
+                Aadhar No.
+              </label>
+              <input
+                type="number"
+                className="form-control"
+                id="aadhar"
+                name="aadhar"
+                placeholder="Enter your aadhar"
+                value={formData.aadhar}
+                onChange={handleChange}
+                rows="3"
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="panno" className="form-label">
+                {/* Address */}
+                PAN No.
+              </label>
+              <input
+                type="number"
+                className="form-control"
+                id="panno"
+                name="panno"
+                placeholder="Enter your Pan No"
+                value={formData.panno}
+                onChange={handleChange}
+                rows="3"
+                required
+              />
+            </div>
+            <div className="d-grid">
+              <button
+                type="submit"
+                className="btn btn-primary"
+                onClick={handleKycSubmit}
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Submitting...
+                  </>
+                ) : (
+                  "Submit"
+                )}
+              </button>
+            </div>
+
+          </form>
+        }
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setModel(false)}
+            >
+              Close
+            </button>
+
+          </>
+        }
+      />
     </div>
 
 
