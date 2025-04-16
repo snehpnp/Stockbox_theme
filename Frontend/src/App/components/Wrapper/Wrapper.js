@@ -5,6 +5,8 @@ import Sidebar from "../Sidebars/Sidebar";
 import Setting_sidebar from "../Sidebars/Setting_sidebar";
 
 export default function App() {
+
+  
   const savedTheme = localStorage.getItem("theme");
 
   useEffect(() => {

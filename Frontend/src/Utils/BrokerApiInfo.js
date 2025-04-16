@@ -4,7 +4,7 @@ const aliceredirecturl = localStorage.getItem("aliceredirecturl");
 const upstoxredirecturl = localStorage.getItem("upstoxredirecturl");
 const zerodharedirecturl = localStorage.getItem("zerodharedirecturl");
 
-console.log("angleredirecturl", angleredirecturl)
+
 
 
 export const brokerContentMap = {
