@@ -23,7 +23,8 @@ class Upstox {
     async GetAccessToken(req, res) {
         try {
             var tokenCode = req.query.code;
-            var email = req.query.state;
+            let email = decodeURIComponent(req.query.state || "");
+            email = email.replace(/\s/g, "+"); 
             if (tokenCode != undefined) {
 
                 const client = await Clients_Modal.findOne({ Email: email,ActiveStatus:1,del:0 });
