@@ -128,20 +128,38 @@ const PaymentRequest = () => {
         },
         {
             name: 'Status',
-            selector: row => {
+            selector: row => row.status,
+            cell: row => {
+                let statusText = '';
+                let color = '';
+
                 switch (row.status) {
                     case 0:
-                        return "Pending";
+                        statusText = 'Pending';
+                        color = 'orange';
+                        break;
                     case 1:
-                        return "Completed";
+                        statusText = 'Completed';
+                        color = 'green';
+                        break;
                     case 2:
-                        return "Rejected";
+                        statusText = 'Rejected';
+                        color = 'red';
+                        break;
                     default:
-                        return "Unknown";
+                        statusText = 'Unknown';
+                        color = 'gray';
                 }
+
+                return (
+                    <span style={{ color: color, fontWeight: 'bold' }}>
+                        {statusText}
+                    </span>
+                );
             },
             sortable: true,
         }
+
     ];
 
 
@@ -210,13 +228,13 @@ const PaymentRequest = () => {
 
     const renderTable = (status) => {
         const filteredData = filterDataByStatus(status);
-    
+
         return (
             <div className="table-responsive">
                 <h5>{activeTab} Transactions</h5>
-    
+
                 {isLoading ? (
-                    <Loader/>
+                    <Loader />
                 ) : filteredData.length > 0 ? (
                     <Table columns={columns} data={filteredData} />
                 ) : (
@@ -227,7 +245,7 @@ const PaymentRequest = () => {
             </div>
         );
     };
-    
+
 
 
 
@@ -265,14 +283,14 @@ const PaymentRequest = () => {
 
 
 
-                       
+
 
 
                         <div className="tab-content" id="myTabContent3">
                             <div className="tab-pane fade show active" id="NavPills">
                                 <div className="card-body pt-0">
                                     <div className="d-lg-flex align-items-center mb-4 gap-3">
-                                       
+
                                     </div>
 
                                     <ul className="nav nav-pills border-bottom nav-pills1 mb-4 light justify-content-center" id="pills-tab" role="tablist">
