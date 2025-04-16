@@ -31,8 +31,9 @@ const Profiles = () => {
     newPassword: false,
     confirmPassword: false,
   });
+  
 
-  const [dmateStatus, setDemateStatus] = useState(0);
+  // const [dmateStatus, setDemateStatus] = useState(0);
 
 
 
@@ -109,12 +110,11 @@ const Profiles = () => {
 
   const getuserdetail = async () => {
     try {
-      const response = await GetUserData(userid, token);
+      const response = await GetUserData(userid, token);      
 
       if (response.status) {
         setUserDetail(response.data);
-        setDemateStatus(response?.data?.dlinkstatus)
-        
+        // setDemateStatus(response?.data?.dlinkstatus)
       }
     } catch (error) {
       console.log("error", error);
@@ -208,7 +208,6 @@ const Profiles = () => {
       }
 
       const response = await DeleteClient(userid, token);
-      console.log("DeleteClient",response)
       // return
       if (response.status) {
         showCustomAlert("Success", "Your account has been deleted.",);
@@ -296,7 +295,7 @@ const Profiles = () => {
                 <li className="list-group-item">
                   <Link to="/user/kyc">User Kyc</Link>
                 </li>
-                {dmateStatus === 1 &&
+                {userDetail?.dlinkstatus === 1 &&
                   <li className="list-group-item">
                     <Link to="" onClick={(e) => DeleteDematAccountApi()}
                       className="btn btn-secondary w-100">

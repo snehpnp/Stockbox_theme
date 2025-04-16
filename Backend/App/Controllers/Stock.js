@@ -125,37 +125,33 @@ class Stock {
     }
   }
 
+  
   async getStocksByExpiry(req, res) {
     try {
       const { segment, symbol } = req.body;
 
-      // Current date to get the month
+      // ─── 1) Build expiryMonths (current + next 2) ───
       const currentDate = new Date();
-      const currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0'); // Get current month in 'MM' format
-      const currentYear = String(currentDate.getFullYear()); // Get last two digits of the current year
+      const currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0'); // "01".."12"
+      const currentYear = String(currentDate.getFullYear());                   // "2025"
 
-      // Create the expiry months dynamically for the next two months
       const expiryMonths = [];
-      for (let i = 0; i < 3; i++) { // Current month + next 2 months
-        const month = (parseInt(currentMonth) + i) % 12 || 12; // Adjust month to wrap around after December
-        const year = month < currentMonth ? (parseInt(currentYear) + 1) : currentYear; // Increment year if wrapped
-        expiryMonths.push(`${String(month).padStart(2, '0')}${year}`);
-      }
-      let option_type;
-      if (segment == "F") {
-        option_type = "UT";
-      }
-      else if (segment == "C") {
-        option_type = "EQ";
-      }
-      else {
-        option_type = "PE";
+      for (let i = 0; i < 3; i++) {
+        // wrap month around after December
+        const month = ((parseInt(currentMonth, 10) + i - 1) % 12) + 1;
+        const mm = String(month).padStart(2, '0');
+        // if we wrapped past December, increment year
+        const yyyy = (month < parseInt(currentMonth, 10))
+          ? String(parseInt(currentYear, 10) + 1)
+          : currentYear;
+        expiryMonths.push(`${mm}${yyyy}`); // e.g. "042025"
       }
 
-      const pipeline = [
+      // ─── 2) Pull raw grouped expiries ───
+      const raw = await Stock_Modal.aggregate([
         {
           $match: {
-            symbol: { $regex: symbol, $options: 'i' },
+            symbol: symbol,
             segment: segment,
             expiry_month_year: { $in: expiryMonths }
           }
@@ -172,25 +168,36 @@ class Stock {
             stock: 1,
             _id: 0
           }
-        },
-        {
-          $sort: { expiry: 1 }
         }
-      ];
+      ]);
 
-      const result = await Stock_Modal.aggregate(pipeline);
+      // ─── 3) Sort in JS by parsing "DDMMYYYY" to Date ───
+      const sorted = raw.sort((a, b) => {
+        const parseDDMMYYYY = s => {
+          const dd = s.slice(0, 2);
+          const mm = s.slice(2, 4);
+          const yyyy = s.slice(4);
+          return new Date(`${yyyy}-${mm}-${dd}`);
+        };
+        return parseDDMMYYYY(a.expiry) - parseDDMMYYYY(b.expiry);
+      });
 
-
+      // ─── 4) Return ───
       return res.json({
         status: true,
         message: "Stocks retrieved successfully",
-        data: result
+        data: sorted
       });
 
     } catch (error) {
-      return res.json({ status: false, message: "Server error", data: [] });
+      console.error("Error in getStocksByExpiry:", error);
+      return res
+        .status(500)
+        .json({ status: false, message: error.message, data: [] });
     }
   }
+
+
 
   async getStocksByExpiryByStrike(req, res) {
     try {
@@ -201,7 +208,7 @@ class Stock {
       if (segment === "O") {
         matchStage = {
           $match: {
-            symbol: { $regex: symbol, $options: 'i' },
+            symbol: symbol,
             segment: segment,
             expiry: expiry,
             option_type: optiontype
@@ -210,7 +217,7 @@ class Stock {
       } else {
         matchStage = {
           $match: {
-            symbol: { $regex: symbol, $options: 'i' },
+            symbol: symbol,
             segment: segment,
             expiry: expiry
           }

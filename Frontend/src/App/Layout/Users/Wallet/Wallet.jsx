@@ -86,7 +86,7 @@ const Wallet = () => {
       const data = { clientId: userid, amount: request.amount };
       const response = await GetWithdrawRequest(data, token);
 
-      if (response.status !==400) {
+      if (response.status !== 400) {
 
         showCustomAlert("Success", response.data.message || 'Your withdrawal request has been processed successfully.')
         setRequest({ clientId: "", amount: "" });
@@ -105,7 +105,7 @@ const Wallet = () => {
   //   try {
   //     const data = { clientId: userid, amount: request.amount };
   //     const response = await GetWithdrawRequest(data, token);
-      
+
   //     // yahan pahucha matlab status 2xx hi hai
   //     if (response.status) {
   //       console.log("response for ceck")
@@ -118,7 +118,7 @@ const Wallet = () => {
   //     showCustomAlert("error", message);
   //   }
   // };
-  
+
 
 
   return (
@@ -218,7 +218,7 @@ const Wallet = () => {
                               <td>{item.status ? "Completed" : "Pending"}</td>
 
                               <td>{fDateTime(item.created_at)}</td>
-                              
+
                             </tr>
                           ))
                         ) : (
@@ -234,19 +234,31 @@ const Wallet = () => {
                     <table className="table table-striped">
                       <thead className="table-light">
                         <tr>
-                          <th>Transaction ID</th>
-                          <th>Amount</th>
+                          <th>Price</th>
+                          <th>Transaction</th>
+                          <th>Status</th>
                           <th>Date</th>
                         </tr>
                       </thead>
                       <tbody>
                         {payout.length > 0 ? (
-                        <tr>
-                          <td>{payout.transaction_id}</td>
-                          <td>{payout.amount}</td>
-                          <td>{payout.date}</td>
-                        </tr>
-                        ):(
+                          payout.map((item, index) => (
+
+                            <tr>
+                              <td>₹{item.amount}</td>
+                              <td>{item.transaction ? item.transaction : "-"}</td>
+                              <td>
+                                {item.status === 0
+                                  ? "Pending"
+                                  : item.status === 1
+                                    ? "Success"
+                                    : "Reject"}
+                              </td>
+
+                              <td>{fDateTime(item.created_at)}</td>
+                            </tr>
+                          ))
+                        ) : (
                           <tr>
                             <td colSpan="5">No Data Found</td>
                           </tr>

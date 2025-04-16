@@ -11,7 +11,10 @@ const BasicSetting_Modal = db.BasicSetting;
 const Addtocart_Modal = db.Addtocart;
 const Mailtemplate_Modal = db.Mailtemplate;
 const BasketSubscription_Modal = db.BasketSubscription;
+const States = db.States;
+const City = db.City;
 
+const { toWords } = require('number-to-words');
 const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs');
@@ -829,16 +832,33 @@ if (settings.gst > 0 && settings.gststatus==1) {
         const templatePath = path.join(__dirname, '../../template', 'invoice.html');
         let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
-        let sgst = 0, cgst = 0, igst = 0;
+        let sgst = 0, cgst = 0, igst = 0, pergstsc = 0, pergstt = 0;
 
         if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() ==="") {
             sgst = totalgst / 2;
             cgst = totalgst / 2;
+            pergstsc = settings.gst/ 2;
         } else {
             igst = totalgst;
+            pergstt = settings.gst;
         }
         const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
         const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+
+
+        let clientstateid;
+        let settingsstateid;
+        if(client.state) {
+        const clientstate = await States.findOne({name:client.state});
+        
+         clientstateid = clientstate.id;
+        }
+        
+        if(settings.state) {
+          const settingsstate = await States.findOne({name:settings.state});
+          
+          settingsstateid = settingsstate.id;
+          }
 
         
                 htmlContent = htmlContent
@@ -870,6 +890,15 @@ if (settings.gst > 0 && settings.gststatus==1) {
                   .replace(/{{igst}}/g, igst.toFixed(2))
                   .replace(/{{logo}}/g, logo)
                   .replace(/{{simage}}/g, simage)
+                  .replace(/{{pergstsc}}/g, pergstsc)
+                  .replace(/{{pergstt}}/g, pergstt)
+                  .replace(/{{saccode}}/g, settings.saccode)
+                  .replace(/{{bstate}}/g, settings.state)
+                  .replace(/{{panno}}/g, client.panno ?? 'NA')
+                  .replace(/{{city}}/g, client.city)
+                  .replace(/{{statecode}}/g, clientstateid)
+                  .replace(/{{settingstatecode}}/g, settingsstateid)
+                  .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total))
                   .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
 
@@ -1480,12 +1509,21 @@ if (settings.gst > 0 && settings.gststatus==1) {
 
 const invoicePrefix = settings.invoice;
 const invoiceStart = settings.invoicestart; 
-const basketCount = await BasketSubscription_Modal.countDocuments({});
-const planCount = await PlanSubscription_Modal.countDocuments({});
+const { startDate, endDate } = getFinancialYearRange();
+
+const basketCount = await BasketSubscription_Modal.countDocuments({
+    created_at: { $gte: startDate, $lte: endDate }
+});
+
+const planCount = await PlanSubscription_Modal.countDocuments({
+    created_at: { $gte: startDate, $lte: endDate }
+});
 const totalCount = basketCount + planCount;
 const invoiceNumber = invoiceStart + totalCount;
 const formattedNumber = invoiceNumber < 10 ? `0${invoiceNumber}` : `${invoiceNumber}`;
-const orderNumber = `${invoicePrefix}${formattedNumber}`;
+const financialYear = getFinancialYear();
+const orderNumber = `${invoicePrefix}${financialYear}-${formattedNumber}`;
+// const orderNumber = `${invoicePrefix}${formattedNumber}`;
 
 
       // Create a new plan subscription record
@@ -1926,5 +1964,53 @@ function formatDate(date) {
   return `${day}/${month}/${year}`;
 
 }
+function convertAmountToWords(amount) {
+  const [whole, fraction] = amount.toString().split('.');
+
+  let words = toWords(parseInt(whole));
+  words = words.charAt(0).toUpperCase() + words.slice(1);
+
+  if (fraction && parseInt(fraction) > 0) {
+    words += ` and ${toWords(parseInt(fraction))} paise`;
+  }
+
+  return words;
+}
+
+function getFinancialYearRange() {
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const year = now.getFullYear();
+
+  const startYear = month >= 4 ? year : year - 1;
+  const endYear = startYear + 1;
+
+  const startDate = new Date(`${startYear}-04-01T00:00:00.000Z`);
+  const endDate = new Date(`${endYear}-03-31T23:59:59.999Z`);
+
+  return { startDate, endDate };
+}
+
+function getFinancialYear() {
+  const now = new Date();
+  const month = now.getMonth() + 1; // getMonth() returns 0–11
+  const year = now.getFullYear();
+
+  let startYear, endYear;
+
+  if (month >= 4) {
+      // April or later: FY starts this year
+      startYear = year;
+      endYear = year + 1;
+  } else {
+      // Jan–March: FY started last year
+      startYear = year - 1;
+      endYear = year;
+  }
+
+  // Return in format 24-25
+  return `${startYear.toString().slice(-2)}-${endYear.toString().slice(-2)}`;
+}
+
 
 module.exports = new Plan();

@@ -1941,17 +1941,17 @@ span.price-original {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
-.bg-gradient-deepblue {
+.user-card .bg-gradient-deepblue {
   background: #6a11cb;
   background: -webkit-linear-gradient(45deg, #6a11cb, #2575fc) !important;
   background: linear-gradient(45deg, #6a11cb, #2575fc) !important;
 }
-.bg-gradient-ohhappiness {
+.user-card .bg-gradient-ohhappiness {
   background: #00b09b;
   background: -webkit-linear-gradient(45deg, #00b09b, #96c93d) !important;
   background: linear-gradient(45deg, #00b09b, #96c93d) !important;
 }
-.bg-gradient-ibiza {
+.user-card .bg-gradient-ibiza {
   background: #ee0979;
   background: -webkit-linear-gradient(45deg, #ee0979, #ff6a00) !important;
   background: linear-gradient(45deg, #ee0979, #ff6a00) !important;

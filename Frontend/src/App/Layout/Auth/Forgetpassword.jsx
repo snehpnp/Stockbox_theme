@@ -80,7 +80,7 @@ const Forgetpassword = () => {
                                                         {isSubmitting ? 'Sending...' : 'Send'}
                                                     </button>
                                                     <Link
-                                                        to="/login"
+                                                        to="/user-login"
 
 
                                                     >

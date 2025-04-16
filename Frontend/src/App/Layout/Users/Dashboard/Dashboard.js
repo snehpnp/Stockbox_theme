@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import ApexCharts from "react-apexcharts";
-// import moment from "moment";
 import Content from "../../../components/Contents/Content";
 import { Link } from "react-router-dom";
 import { House, Tally1 } from "lucide-react";
 import { Bar } from "react-chartjs-2";
 import { CircleUserRound, ShoppingCart, History, Shield, CreditCard, Puzzle } from 'lucide-react'
-import { getpastperformaceCashdata, getpastperformaceFuturedata, getpastperformaceOptiondata } from "../../../Services/UserService/User";
+import { getpastperformaceCashdata, getpastperformaceFuturedata, getpastperformaceOptiondata, GetUserData } from "../../../Services/UserService/User";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
@@ -21,7 +20,6 @@ import {
 } from "../../../Services/Admin/Admin";
 import { getblogslist } from "../../../Services/Admin/Admin";
 import { GetNewsData } from "../../../Services/UserService/User";
-import { GetUserData } from "../../../Services/UserService/User";
 import { image_baseurl } from "../../../../Utils/config";
 
 
@@ -35,19 +33,24 @@ const Dashboard = () => {
   const [futureAvgProfit, setFutureAvgProfit] = useState(0);
   const [optionAvgProfit, setOptionAvgProfit] = useState(0);
   const [months, setMonths] = useState([]);
-  const [model, setModel] = useState(false);
   const [bannerimg, setBannerimg] = useState([]);
   const [blogslist, setBlogslist] = useState([]);
   const [newslist, setNewslist] = useState([]);
-  const [userdata, setUserdata] = useState([])
-  const userid = localStorage.getItem("id");
+
+  const [userDetail, setUserDetail] = useState({});
+
   const token = localStorage.getItem("token");
-  const [loading, setLoading] = useState(false);
+  const userid = localStorage.getItem("id");
+
 
   useEffect(() => {
     getCashpastdata();
     getFuturepastdata();
     getOptionpastdata();
+    getBannerList();
+    getNewslist();
+    getBloglist();
+    getuserdetail();
   }, []);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -57,105 +60,61 @@ const Dashboard = () => {
     panno: "PAN",
   });
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    setFormData({
-      ...formData,
-      [name]: files ? files[0] : value,
-    });
-  };
 
-  const handleKycSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true)
 
-    const data = new FormData();
-    data.append('email', formData.email);
-    data.append('name', formData.fullName);
-    data.append('phone', formData.phone);
-    data.append('panno', formData.panno);
-    data.append('aadhaarno', formData.aadhar);
-    data.append('id', userid);
-
+  const getBannerList = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const result = await clientKycAndAgreement(data, token);
-      showCustomAlert("success", "KYC form submitted successfully!");
-    } catch (err) {
-      console.error('KYC Failed:', err);
-      showCustomAlert("error", "KYC submission failed. Please try again.");
+      const response = await getbannerlist(token);
+      setBannerimg(response.data);
+    } catch (error) {
+      console.error("Error fetching banner list:", error);
     }
-    setLoading(false)
   };
 
 
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const getNewslist = async () => {
+    try {
+      const response = await GetNewsData(token);
+      setNewslist(response.data);
+    }
+    catch (error) {
+      console.error("Error fetching blog list:", error);
+    }
 
-    alert("KYC form submitted successfully!");
   };
-  useEffect(() => {
-    const getBannerList = async () => {
-      try {
-        const response = await getbannerlist(token); // just pass the token
-        setBannerimg(response.data);
 
-      } catch (error) {
-        console.error("Error fetching banner list:", error);
-      }
-    };
 
-    getBannerList();
-  }, []);
-  useEffect(() => {
-    const getNewslist = async () => {
-      try {
-        const response = await GetNewsData(token); // just pass the token
-        setNewslist(response.data);
+  const getBloglist = async () => {
+    try {
+      const response = await getblogslist(token);
+      setBlogslist(response.data);
 
-      }
-      catch (error) {
-        console.error("Error fetching blog list:", error);
-      }
-    };
-    getNewslist();
-  }, [])
-  useEffect(() => {
-    const getBloglist = async () => {
-      try {
-        const response = await getblogslist(token); // just pass the token
-        setBlogslist(response.data);
+    }
+    catch (error) {
+      console.error("Error fetching blog list:", error);
+    }
+  };
 
-      }
-      catch (error) {
-        console.error("Error fetching blog list:", error);
-      }
-    };
-    getBloglist();
-  }, [])
+
+
   const formatMonth = (key) => {
     const [year, month] = key.split("-");
     return new Date(year, month - 1).toLocaleString("en-US", { month: "long" });
   };
 
-  useEffect(() => {
-    const getuserdetail = async () => {
-      try {
-        const response = await GetUserData(userid, token);
+  const getuserdetail = async () => {
+    try {
+      const response = await GetUserData(userid, token);
 
-        if (response.status) {
-          setUserdata(response.data);
-          //console.log("User data:", response.data);
-
-        }
-      } catch (error) {
-        console.log("error", error);
+      if (response.status) {
+        setUserDetail(response.data);
       }
-    };
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
-    getuserdetail();
-  }, []);
 
 
 
@@ -229,339 +188,8 @@ const Dashboard = () => {
       },
     ],
   };
-  const [chartColumnData, setChartColumnData] = useState([]);
-  const [chartLineData, setChartLineData] = useState([]);
-  const [chartCircleData, setChartCircleData] = useState([]);
-  const [chartProgress1Data, setChartProgress1Data] = useState(44);
-  const [chartProgress2Data, setChartProgress2Data] = useState(80);
-  const [chartProgress3Data, setChartProgress3Data] = useState(74);
 
-  const getRandom = () => {
-    return (
-      (Math.sin(iteration / trigoStrength) * (iteration / trigoStrength) +
-        iteration / trigoStrength +
-        1) *
-      (trigoStrength * 2)
-    );
-  };
 
-  const getRangeRandom = (yrange) => {
-    return Math.floor(Math.random() * (yrange.max - yrange.min + 1)) + yrange.min;
-  };
-
-  const generateMinuteWiseTimeSeries = (baseval, count, yrange) => {
-    let series = [];
-    let i = 0;
-    while (i < count) {
-      let x = baseval;
-      let y =
-        (Math.sin(i / trigoStrength) * (i / trigoStrength) +
-          i / trigoStrength +
-          1) *
-        (trigoStrength * 2);
-      series.push([x, y]);
-      baseval += 300000;
-      i++;
-    }
-    return series;
-  };
-
-  const trigoStrength = 3;
-  const iteration = 11;
-
-  const optionsColumn = {
-    chart: {
-      height: 350,
-      type: "bar",
-      animations: {
-        enabled: false,
-      },
-      events: {
-        animationEnd: (chartCtx) => {
-          const newData = chartCtx.w.config.series[0].data.slice();
-          newData.shift();
-          window.setTimeout(() => {
-            chartCtx.updateOptions(
-              {
-                series: [{ data: newData }],
-                xaxis: {
-                  min: chartCtx.minX,
-                  max: chartCtx.maxX,
-                },
-                subtitle: {
-                  text: parseInt(getRangeRandom({ min: 1, max: 20 })).toString() + "%",
-                },
-              },
-              false,
-              false
-            );
-          }, 300);
-        },
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      width: 0,
-    },
-    series: [
-      {
-        name: "Load Average",
-        data: generateMinuteWiseTimeSeries(
-          new Date("12/12/2016 00:20:00").getTime(),
-          12,
-          {
-            min: 10,
-            max: 110,
-          }
-        ),
-      },
-    ],
-    title: {
-      text: "Load Average",
-      align: "left",
-      style: {
-        fontSize: "12px",
-      },
-    },
-    subtitle: {
-      // text: "20%",
-      floating: true,
-      align: "right",
-      offsetY: 0,
-      style: {
-        fontSize: "22px",
-      },
-    },
-    fill: {
-      type: "gradient",
-      gradient: {
-        shade: "dark",
-        type: "vertical",
-        shadeIntensity: 0.5,
-        inverseColors: false,
-        opacityFrom: 1,
-        opacityTo: 0.8,
-        stops: [0, 100],
-      },
-    },
-    xaxis: {
-      type: "datetime",
-      range: 2700000,
-    },
-    legend: {
-      show: true,
-    },
-  };
-
-  const optionsLine = {
-    chart: {
-      height: 350,
-      type: "line",
-      stacked: true,
-      animations: {
-        enabled: true,
-        easing: "linear",
-        dynamicAnimation: {
-          speed: 1000,
-        },
-      },
-      dropShadow: {
-        enabled: true,
-        opacity: 0.3,
-        blur: 5,
-        left: -7,
-        top: 22,
-      },
-      events: {
-        animationEnd: (chartCtx) => {
-          const newData1 = chartCtx.w.config.series[0].data.slice();
-          newData1.shift();
-          const newData2 = chartCtx.w.config.series[1].data.slice();
-          newData2.shift();
-          window?.setTimeout(() => {
-            chartCtx?.updateOptions(
-              {
-                series: [
-                  { data: newData1 },
-                  { data: newData2 },
-                ],
-                subtitle: {
-                  text: parseInt(getRandom() * Math.random()).toString(),
-                },
-              },
-              false,
-              false
-            );
-          }, 300);
-        },
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: "straight",
-      width: 5,
-    },
-    series: [
-      {
-        name: "Running",
-        data: generateMinuteWiseTimeSeries(
-          new Date("12/12/2016 00:20:00").getTime(),
-          12,
-          {
-            min: 30,
-            max: 110,
-          }
-        ),
-      },
-      {
-        name: "Waiting",
-        data: generateMinuteWiseTimeSeries(
-          new Date("12/12/2016 00:20:00").getTime(),
-          12,
-          {
-            min: 30,
-            max: 110,
-          }
-        ),
-      },
-    ],
-    xaxis: {
-      type: "datetime",
-      range: 2700000,
-    },
-    title: {
-      text: "Processes",
-      align: "left",
-      style: {
-        fontSize: "12px",
-      },
-    },
-    subtitle: {
-      text: "20",
-      floating: true,
-      align: "right",
-      offsetY: 0,
-      style: {
-        fontSize: "22px",
-      },
-    },
-    legend: {
-      show: true,
-      floating: true,
-      horizontalAlign: "left",
-      onItemClick: {
-        toggleDataSeries: false,
-      },
-      position: "top",
-      offsetY: -33,
-      offsetX: 60,
-    },
-  };
-
-  const optionsCircle = {
-    chart: {
-      type: "radialBar",
-      height: 250,
-      offsetX: 0,
-    },
-    plotOptions: {
-      radialBar: {
-        inverseOrder: false,
-        hollow: {
-          margin: 5,
-          size: "48%",
-          background: "transparent",
-        },
-        track: {
-          show: true,
-          background: "#40475D",
-          strokeWidth: "10%",
-          opacity: 1,
-          margin: 3,
-        },
-      },
-    },
-    series: [71, 63],
-    labels: ["Device 1", "Device 2"],
-    legend: {
-      show: true,
-      position: "left",
-      offsetX: -30,
-      offsetY: -10,
-      formatter: function (val, opts) {
-        return val + " - " + opts.w.globals.series[opts.seriesIndex] + "%";
-      },
-    },
-    fill: {
-      type: "gradient",
-      gradient: {
-        shade: "dark",
-        type: "horizontal",
-        shadeIntensity: 0.5,
-        inverseColors: true,
-        opacityFrom: 1,
-        opacityTo: 1,
-        stops: [0, 100],
-      },
-    },
-  };
-
-  const optionsProgress1 = {
-    chart: {
-      height: 70,
-      type: "bar",
-      stacked: true,
-      sparkline: {
-        enabled: true,
-      },
-    },
-    plotOptions: {
-      bar: {
-        horizontal: true,
-        barHeight: "20%",
-        colors: {
-          backgroundBarColors: ["#40475D"],
-        },
-      },
-    },
-    series: [
-      {
-        name: "Process 1",
-        data: [chartProgress1Data],
-      },
-    ],
-    title: {
-      floating: true,
-      offsetX: -10,
-      offsetY: 5,
-      text: "Process 1",
-    },
-    subtitle: {
-      floating: true,
-      align: "right",
-      offsetY: 0,
-      text: chartProgress1Data + "%",
-      style: {
-        fontSize: "20px",
-      },
-    },
-    tooltip: {
-      enabled: false,
-    },
-    xaxis: {
-      categories: ["Process 1"],
-    },
-    yaxis: {
-      max: 100,
-    },
-    fill: {
-      opacity: 1,
-    },
-  };
 
   // Other chart progress configurations follow similarly
 
@@ -602,10 +230,10 @@ const Dashboard = () => {
                   <CircleUserRound className="w-100 h-100 m-0" />
                 </div>
                 <div className="mt-3">
-                  <h4>{userdata.FullName}</h4>
+                  <h4>Hello,{userDetail?.FullName}</h4>
                   <hr />
                   <h3 class="h6 fw-semibold">Wallet Balance</h3>
-                  <p class="h3 font-weight-bold"><span id="totalBalance">{userdata.wamount}</span></p>
+                  <p class="h3 font-weight-bold">₹<span id="totalBalance">{userDetail?.wamount}</span></p>
 
 
                 </div>
@@ -651,7 +279,7 @@ const Dashboard = () => {
           </div>
         </div>
         <div class="col-lg-8 col-md-8">
-          <div className="card h-100 activity-card">
+          <div className="card h-100 user-card">
             <div className="card-body">
               <div className="row row-cols-1 row-cols-md-2 row-cols-xl-3">
                 <div className="col">
@@ -753,10 +381,10 @@ const Dashboard = () => {
                   navigation
                   pagination={{ clickable: true }}
                   modules={[Autoplay, Navigation, Pagination]}
-                  onSlideChange={() => console.log('slide change')}
-                  onSwiper={(swiper) => console.log(swiper)}
+                // onSlideChange={() => console.log('slide change')}
+                // onSwiper={(swiper) => console.log(swiper)}
                 >
-                  {bannerimg.map((item, index) => {
+                  {bannerimg?.map((item, index) => {
                     return (
                       <SwiperSlide key={index}>
                         <img
@@ -770,11 +398,6 @@ const Dashboard = () => {
                 </Swiper>
 
               </div>
-
-
-
-
-
             </div>
           </div>
 
@@ -790,7 +413,7 @@ const Dashboard = () => {
                   Cash
                 </Link>
               </h5>
-              <Bar data={{ labels: months, datasets: [chartData.datasets[0]] }} />
+              <Bar data={{ labels: months, datasets: [chartData?.datasets[0]] }} />
               <hr />
               <div className="row">
                 <div className="col-md-2 pe-0 border-right">
@@ -868,11 +491,11 @@ const Dashboard = () => {
             </div>
             <div className="product-list p-3 mb-3 ps ps--active-y">
               <div className="d-flex flex-column gap-3">
-                {newslist.map((item, index) => {
+                {newslist?.slice(0, 5).map((item, index) => {
                   return (
                     <div key={index} className="d-flex align-items-center justify-content-between gap-3 p-2 border radius-10">
                       <div className="">
-                        <img src={`${image_baseurl}${item.image}`} width={50} alt={item.title} />
+                        <img src={`${item.image}`} width={50} alt={item.title} />
                       </div>
                       <div className="flex-grow-1">
                         <h6 className="mb-0">{item.title}</h6>
@@ -906,7 +529,7 @@ const Dashboard = () => {
             <div className="card-body">
 
               <ul className="list-unstyled" style={{ margin: 0, padding: 0 }}>
-                {blogslist.map((item, index) => {
+                {blogslist?.slice(0, 5)?.map((item, index) => {
                   return (
                     <li key={index} className="d-flex my-2 align-items-center justify-content-between gap-3 p-2 border radius-10">
                       <div className="">
@@ -920,15 +543,11 @@ const Dashboard = () => {
                   );
                 })}
 
-
               </ul>
 
             </div>
           </div>
         </div>
-
-
-
       </div>
 
       <ReusableModal

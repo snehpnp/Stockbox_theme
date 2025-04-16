@@ -7,14 +7,21 @@ import Signup from "./App/Layout/Auth/Signup";
 import Forgetpassword from "./App/Layout/Auth/Forgetpassword";
 import Forgetpassworduser from "./App/Layout/Auth/Forgetpassworduser";
 
+
+
 const App = () => {
+
   const navigate = useNavigate();
   const location = useLocation();
 
   const Token = localStorage.getItem("token");
   const Role = localStorage.getItem("Role");
 
+
+
   useEffect(() => {
+
+
     if (!Token) {
       if (location.pathname === "/register") {
         navigate("/register");
@@ -85,7 +92,7 @@ const App = () => {
 
         <Route path="/forget" element={<Forgetpassword />} />
         <Route path="/forget-user" element={<Forgetpassworduser />} />
-        <Route path="/signup/*" element={<div>Signup Page</div>} />
+
       </Routes>
     </div>
   );

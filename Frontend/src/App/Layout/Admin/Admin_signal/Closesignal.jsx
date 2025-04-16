@@ -4,6 +4,7 @@ import axios from "axios";
 import { GetClient } from "../../../Services/Admin/Admin";
 import Table from "../../../Extracomponents/Table1";
 import {
+
   Eye,
   RefreshCcw,
   Trash2,
@@ -114,12 +115,12 @@ const Closesignal = () => {
             let profitAndLoss = 0;
             if (item.calltype === "BUY") {
               profitAndLoss = (
-                (item.closeprice - item.price) *
+                (item?.closeprice - item?.price) *
                 item.lotsize
               ).toFixed(2);
             } else if (item.calltype === "SELL") {
               profitAndLoss = (
-                (item.price - item.closeprice) *
+                (item?.price - item?.closeprice) *
                 item.lotsize
               ).toFixed(2);
             }
@@ -168,14 +169,14 @@ const Closesignal = () => {
           );
           const csvArr = filterdata.map((item) => {
             let profitAndLossPercentage = 0;
-            if (item.calltype === "BUY") {
+            if (item?.calltype === "BUY") {
               profitAndLossPercentage = (
-                ((item.closeprice - item.price) / item.price) *
+                ((item?.closeprice - item?.price) / item.price) *
                 100
               ).toFixed(2);
             } else if (item.calltype === "SELL") {
               profitAndLossPercentage = (
-                ((item.price - item.closeprice) / item.price) *
+                ((item?.price - item?.closeprice) / item.price) *
                 100
               ).toFixed(2);
             }
@@ -341,7 +342,7 @@ const Closesignal = () => {
             : row.segment === "O"
               ? "OPTION"
               : "FUTURE";
-        return row.closeprice == 0
+        return row?.closeprice == 0
           ? <div>{segmentLabel}<span style={{ color: "red" }}> (Avoid)<Eye onClick={() => { setShowModal(true); setDescription(row?.close_description) }} /></span></div>
           : segmentLabel;
       },
@@ -372,7 +373,7 @@ const Closesignal = () => {
         <div>
           {" "}
           <IndianRupee />
-          {(row.price).toFixed(2)}
+          {(row?.price)}
         </div>
       ),
       sortable: true,
@@ -388,7 +389,7 @@ const Closesignal = () => {
           ) : (
             <>
               <IndianRupee />
-              {(row.closeprice).toFixed(2)}
+              {(row?.closeprice)}
             </>
           )}
         </div>
@@ -404,9 +405,9 @@ const Closesignal = () => {
         }
         let totalPL = 0;
         if (row.calltype === "BUY") {
-          totalPL = ((row.closeprice - row.price) * row.lotsize).toFixed(2);
+          totalPL = ((row?.closeprice - row?.price) * row.lotsize).toFixed(2);
         } else if (row.calltype === "SELL") {
-          totalPL = ((row.price - row.closeprice) * row.lotsize).toFixed(2);
+          totalPL = ((row?.price - row?.closeprice) * row.lotsize).toFixed(2);
         }
         const style = {
           color: totalPL < 0 ? "red" : "green",
@@ -710,9 +711,9 @@ const Closesignal = () => {
                               {(() => {
                                 let totalPL = 0;
                                 if (client.calltype === "BUY") {
-                                  totalPL = ((client.closeprice - client.price) * client.lotsize).toFixed(2);
+                                  totalPL = ((client?.closeprice - client?.price) * client.lotsize).toFixed(2);
                                 } else if (client.calltype === "SELL") {
-                                  totalPL = ((client.price - client.closeprice) * client.lotsize).toFixed(2);
+                                  totalPL = ((client?.price - client?.closeprice) * client.lotsize).toFixed(2);
                                 }
 
                                 const style = {
@@ -720,7 +721,7 @@ const Closesignal = () => {
                                 };
 
 
-                                const plPercentage = ((totalPL / (client.price * client.lotsize)) * 100).toFixed(2);
+                                const plPercentage = ((totalPL / (client?.price * client?.lotsize)) * 100).toFixed(2);
                                 return (
                                   <p className="mb-1">
                                     <b>

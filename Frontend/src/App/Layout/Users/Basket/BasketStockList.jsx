@@ -47,6 +47,7 @@ const BasketStockList = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+
   const [isConfirming, setIsConfirming] = useState(false);
   const [purchasedata, setPurchasedata] = useState([]);
   const [inputdata, setInputdata] = useState({});
@@ -542,7 +543,7 @@ const BasketStockList = () => {
               />
 
               <button
-                className="btn btn-primary"
+                className="btn btn-primary mt-2"
                 onClick={() => {
                   setIsConfirming(true);
                   BUYstockdata(0);
@@ -561,7 +562,8 @@ const BasketStockList = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => BUYstockdata(1)}
-                disabled={isPlacingOrder}
+                // disabled={isPlacingOrder}
+                disabled={!isConfirming}
               >
                 Place Order
               </button>

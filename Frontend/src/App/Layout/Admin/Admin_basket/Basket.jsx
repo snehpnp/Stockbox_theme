@@ -13,6 +13,7 @@ import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 const Basket = () => {
 
 
+
   const navigate = useNavigate();
   const [clients, setClients] = useState([]);
   const token = localStorage.getItem("token");
@@ -24,7 +25,6 @@ const Basket = () => {
   const [totalRows, setTotalRows] = useState(0);
 
   const [isLoading, setIsLoading] = useState(true)
-
 
 
 
@@ -103,6 +103,7 @@ const Basket = () => {
 
 
 
+
   const handleSwitchChange = async (event, id) => {
     const originalChecked = true;
     const user_active_status = originalChecked
@@ -122,6 +123,7 @@ const Basket = () => {
       showCustomAlert("error", "There was an error processing your request.")
     }
   };
+
 
 
 
@@ -227,8 +229,6 @@ const Basket = () => {
       wrap: true,
       width: '200px',
     },
-
-
     {
       name: "Validity",
       selector: (row) => row.validity,
@@ -253,8 +253,7 @@ const Basket = () => {
       sortable: true,
       width: '250px',
     },
-
-    {
+   {
       name: "Actions",
       cell: (row) => (
         <div className="w-100">

@@ -67,8 +67,9 @@ class List {
 
 
   async Bannerlist(req, res) {
-    try {
 
+  
+    try {
       const banners = await Banner_Modal.find({ del: false, status: true });
       const protocol = req.protocol; // Will be 'http' or 'https'
       const baseUrl = `https://${req.headers.host}`;
@@ -914,13 +915,23 @@ if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.
     pergstt = settings.gst;
 }
 
-console.log("pergstsc",pergstsc);
-console.log("pergstt",pergstt);
+
 
 const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
 const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+let clientstateid;
+let settingsstateid;
+if(client.state) {
+const clientstate = await States.findOne({name:client.state});
 
+ clientstateid = clientstate.id;
+}
 
+if(settings.state) {
+  const settingsstate = await States.findOne({name:settings.state});
+  
+  settingsstateid = settingsstate.id;
+  }
 
         htmlContent = htmlContent
           .replace(/{{orderNumber}}/g, `${orderNumber}`)
@@ -955,10 +966,12 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
           .replace(/{{pergstt}}/g, pergstt)
           .replace(/{{saccode}}/g, settings.saccode)
           .replace(/{{bstate}}/g, settings.state)
-          .replace(/{{panno}}/g, client.panno)
+          .replace(/{{panno}}/g, client.panno ?? 'NA')
+          .replace(/{{city}}/g, client.city)
+          .replace(/{{statecode}}/g, clientstateid)
+          .replace(/{{settingstatecode}}/g, settingsstateid)
           .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total))
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
-
 
         const browser = await puppeteer.launch({
           args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -1157,19 +1170,37 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
         const templatePath = path.join(__dirname, '../../../template', 'invoice.html');
         let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
-        let sgst = 0, cgst = 0, igst = 0;
+        let sgst = 0, cgst = 0, igst = 0, pergstsc = 0, pergstt = 0;
 
         if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() === "") {
             sgst = totalgst / 2;
             cgst = totalgst / 2;
+            pergstsc = settings.gst/ 2;
         } else {
             igst = totalgst;
+            pergstt = settings.gst;
         }
 
         const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
         const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
   
-  
+        let clientstateid;
+        let settingsstateid;
+        if(client.state) {
+        const clientstate = await States.findOne({name:client.state});
+        
+         clientstateid = clientstate.id;
+        }
+        
+        if(settings.state) {
+          const settingsstate = await States.findOne({name:settings.state});
+          
+          settingsstateid = settingsstate.id;
+          }
+
+
+
+        
 
         htmlContent = htmlContent
           .replace(/{{orderNumber}}/g, `${orderNumber}`)
@@ -1200,6 +1231,15 @@ const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.sima
           .replace(/{{igst}}/g, igst.toFixed(2))
           .replace(/{{logo}}/g, logo)
           .replace(/{{simage}}/g, simage)
+          .replace(/{{pergstsc}}/g, pergstsc)
+          .replace(/{{pergstt}}/g, pergstt)
+          .replace(/{{saccode}}/g, settings.saccode)
+          .replace(/{{bstate}}/g, settings.state)
+          .replace(/{{panno}}/g, client.panno ?? 'NA')
+          .replace(/{{city}}/g, client.city)
+          .replace(/{{statecode}}/g, clientstateid)
+          .replace(/{{settingstatecode}}/g, settingsstateid)
+          .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total))
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.startdate));
 
 
@@ -3372,14 +3412,24 @@ end.setHours(23, 59, 59, 999);
       };
 
       if (activePlans.length > 0) {
-        // If there are active plans
+        // Active clients see:
+        //  • broadcasts for their subscribed services
+        //  • plus any broadcast tagged to service "All"
         query.$or = [
-          { type: 'active', service: { $in: activePlans } }
+          {
+            type: 'active',
+            service: { $in: [...activePlans, 'All'] }
+          }
         ];
       } else if (expiredPlans.length > 0) {
-        // If there are expired plans
+        // Expired clients see:
+        //  • broadcasts for their expired services
+        //  • plus any broadcast tagged to service "All"
         query.$or = [
-          { type: 'expired', service: { $in: expiredPlans } }
+          {
+            type: 'expired',
+            service: { $in: [...expiredPlans, 'All'] }
+          }
         ];
       } else if (allPlans.length === 0) {
         // If no plans exist
@@ -3466,7 +3516,7 @@ end.setHours(23, 59, 59, 999);
 
 
    const result = await BasicSetting_Modal.findOne()
-  .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst gststatus base_url color1 color2 color3 color4')
+  .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst gststatus base_url color1 color2 color3 color4 popupstatus popupcontent')
   .exec();
 
    if (result) {  
@@ -3936,10 +3986,17 @@ end.setHours(23, 59, 59, 999);
             clienttype: { $in: ['active', 'expired', 'nonsubscribe', 'All'] },
             $or: [
               // For active clients, include active plans
-              { clienttype: 'active', segmentid: { $in: activePlans } },
-              // For expired clients, include expired plans
-              { clienttype: 'expired', segmentid: { $in: expiredPlans } },
-              // For clients with no active or expired plans (no subscription)
+              {
+                clienttype: "active",
+                segmentid: { $in: [...activePlans, "All"] }
+              },
+            
+              // expired clients: their segments OR “All”
+              {
+                clienttype: "expired",
+                segmentid: { $in: [...expiredPlans, "All"] }
+              },
+            
               ...(noPlans ? [{ clienttype: 'nonsubscribe' }] : []),
               // For all clients
               { clienttype: 'All' }
@@ -5867,12 +5924,21 @@ end.setHours(23, 59, 59, 999);
       // orderNumber = `${orderNumbers}-${sno}`;
       const invoicePrefix = settings.invoice;
       const invoiceStart = settings.invoicestart; 
-      const basketCount = await BasketSubscription_Modal.countDocuments({});
-      const planCount = await PlanSubscription_Modal.countDocuments({});
+      const { startDate, endDate } = getFinancialYearRange();
+
+      const basketCount = await BasketSubscription_Modal.countDocuments({
+          created_at: { $gte: startDate, $lte: endDate }
+      });
+      
+      const planCount = await PlanSubscription_Modal.countDocuments({
+          created_at: { $gte: startDate, $lte: endDate }
+      });
       const totalCount = basketCount + planCount;
       const invoiceNumber = invoiceStart + totalCount;
       const formattedNumber = invoiceNumber < 10 ? `0${invoiceNumber}` : `${invoiceNumber}`;
-      const orderNumber = `${invoicePrefix}${formattedNumber}`;
+      const financialYear = getFinancialYear();
+      const orderNumber = `${invoicePrefix}${financialYear}-${formattedNumber}`;
+     // const orderNumber = `${invoicePrefix}${formattedNumber}`;
 
 
 
@@ -7100,12 +7166,21 @@ await sendEmail(mailOptions);
 
       const invoicePrefix = settings.invoice;
       const invoiceStart = settings.invoicestart; 
-      const basketCount = await BasketSubscription_Modal.countDocuments({});
-      const planCount = await PlanSubscription_Modal.countDocuments({});
+      const { startDate, endDate } = getFinancialYearRange();
+
+      const basketCount = await BasketSubscription_Modal.countDocuments({
+          created_at: { $gte: startDate, $lte: endDate }
+      });
+      
+      const planCount = await PlanSubscription_Modal.countDocuments({
+          created_at: { $gte: startDate, $lte: endDate }
+      });
       const totalCount = basketCount + planCount;
       const invoiceNumber = invoiceStart + totalCount;
       const formattedNumber = invoiceNumber < 10 ? `0${invoiceNumber}` : `${invoiceNumber}`;
-      const orderNumber = `${invoicePrefix}${formattedNumber}`;
+      const financialYear = getFinancialYear();
+      const orderNumber = `${invoicePrefix}${financialYear}-${formattedNumber}`;
+      //const orderNumber = `${invoicePrefix}${formattedNumber}`;
 
         const basket = await Basket_Modal.findOne({
           _id: basket_id,
@@ -8829,11 +8904,42 @@ function formatDate(date) {
 
 }
 
+function getFinancialYearRange() {
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const year = now.getFullYear();
 
+  const startYear = month >= 4 ? year : year - 1;
+  const endYear = startYear + 1;
+
+  const startDate = new Date(`${startYear}-04-01T00:00:00.000Z`);
+  const endDate = new Date(`${endYear}-03-31T23:59:59.999Z`);
+
+  return { startDate, endDate };
+}
 
  
 
+function getFinancialYear() {
+  const now = new Date();
+  const month = now.getMonth() + 1; // getMonth() returns 0–11
+  const year = now.getFullYear();
 
+  let startYear, endYear;
+
+  if (month >= 4) {
+      // April or later: FY starts this year
+      startYear = year;
+      endYear = year + 1;
+  } else {
+      // Jan–March: FY started last year
+      startYear = year - 1;
+      endYear = year;
+  }
+
+  // Return in format 24-25
+  return `${startYear.toString().slice(-2)}-${endYear.toString().slice(-2)}`;
+}
 
 
 

@@ -107,6 +107,17 @@ function Basket() {
     description: "Mid Cap",
   };
 
+  const handelRedirect = (item) => {
+    if (item?.isSubscribed && item?.isActive) {
+      navigate("/user/basketdetail", { state: { item } });
+    } else if (!item?.isSubscribed && !item?.isActive && (onlinePaymentStatus || offlinePaymentStatus)) {
+      navigate("/user/payment", { state: { item } });
+    } else if (item?.isSubscribed && !item?.isActive) {
+      navigate("/user/rebalancestock", { state: { item } });
+    }
+  };
+  
+
   return (
     <Content
       Page_title="Basket"
@@ -142,10 +153,11 @@ function Basket() {
         ) : basketdata?.length > 0 ? (
           <div className="row">
             {basketdata?.map((item) => (
+
               <div className="col-md-12 col-lg-6 mb-4" key={item?.id}>
                 <div className="card radius-10 overflow-hidden shadow"
-                style={{ minHeight: "253px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
-                onClick={() => navigate("/user/basketdetail", { state: { item } })}
+                  style={{ minHeight: "253px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+                  onClick={() => handelRedirect(item)}
                 >
                   <div className="card-body pb-0">
                     <div className="d-flex ">
@@ -163,7 +175,7 @@ function Basket() {
                           {item?.isSubscribed && (
                             <span
                               className="badge bg-success"
-                              style={{ fontSize: "12px"}}
+                              style={{ fontSize: "12px" }}
                             >
                               Subscribed
                             </span>
@@ -201,11 +213,11 @@ function Basket() {
                         <b className="">High Risk</b>
                       </li>
                       <li className="list-group-item border-bottom-0">
-                        {item?.isSubscribed || item?.isActive ? (
+                        {item?.isSubscribed === true || item?.isActive === true ? (
                           <Link
                             to="/user/basketdetail"
                             state={{ item }}
-                            className="btn btn-sm btn-primary w-100"
+                            className="btn btn-primary w-100"
                           >
                             View Details
                           </Link>
@@ -215,10 +227,10 @@ function Basket() {
                             to={
                               onlinePaymentStatus || offlinePaymentStatus
                                 ? "/user/payment"
-                                : "#"
+                                : ""
                             }
                             state={{ item }}
-                            className="btn btn-sm btn-primary w-100"
+                            className="btn btn-primary w-100"
                             style={{
                               pointerEvents:
                                 onlinePaymentStatus || offlinePaymentStatus
@@ -238,7 +250,7 @@ function Basket() {
                           <Link
                             to="/user/rebalancestock"
                             state={{ item }}
-                            className="btn btn-sm btn-primary w-100"
+                            className="btn btn-primary w-100"
                           >
                             View Rebalance
                           </Link>

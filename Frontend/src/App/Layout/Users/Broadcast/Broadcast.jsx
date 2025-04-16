@@ -6,6 +6,8 @@ import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 const Broadcast = () => {
+
+
   const [broadcastData, setBroadcastData] = useState([]);
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
@@ -19,9 +21,10 @@ const Broadcast = () => {
   }, []);
 
 
+
+
   const GetBrodcast = async () => {
     setIsLoading(true); 
-  
     try {
       const response = await GetBroadcastData(userid, token);
       if (response.status) {
@@ -49,7 +52,6 @@ const Broadcast = () => {
         backbutton_status={false}
       >
         <div className="page-content">
-          {/* Dynamically rendered list of broadcast messages */}
           {isLoading ? <Loader /> : <div className="page-content" style={{ padding: "20px" }}>
             <ul className="list-unstyled" style={{ margin: "0", padding: "0" }}>
               {broadcastData.length < 0 ? (

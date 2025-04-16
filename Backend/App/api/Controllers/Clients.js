@@ -19,6 +19,9 @@ const Adminnotification_Modal = db.Adminnotification;
 const Basketorder_Modal = db.Basketorder;
 
 
+const { sendSMS } = require('../../Utils/smsHelper');
+
+
 class Clients {
 
 
@@ -195,31 +198,32 @@ class Clients {
         await sendEmail(mailOptions);
       });
 
+      if (req.headers.host === 'app.rmpro.in') {
 
-      // const apiUrl = "http://smsjust.com/sms/user/urlsms.php";
-      // const params = {
-      //   username: "Esign",         // API Key provided by the SMS gateway
-      //   pass: "Esign@2024",             // Recipient's phone number
-      //   senderid: "OTPPNP", // Message content
-      //   message: `One Time Password is ${otpmobile} This is usable once and expire in 10 minutes. Please do not share this with anyone. Infotech`,        // Optional: Sender ID (if supported)
-      //   dest_mobileno:result.PhoneNo,
-      //   msgtype:"TXT",
-      //   response:"Y",
-      //   dlttempid:"1507166333401681654"
-      // };
+        await sendSMS(result.PhoneNo,resetToken);
 
-      // const response = await axios.get(apiUrl, { params });
-      // console.log(response.data); 
 
+  return res.json({
+    status: true,
+    otp: resetToken,
+    otpmobile: otpmobile,
+    email: Email,
+    PhoneNo: PhoneNo,
+    message: "OTP has been sent to your mobile/email. Please check your mobile/email.",
+  });
+
+      }
+      else {
 
       return res.json({
         status: true,
         otp: resetToken,
         otpmobile: otpmobile,
         email: Email,
+        PhoneNo: PhoneNo,
         message: "OTP has been sent to your email. Please check your email.",
       });
-
+    }
     } catch (error) {
 
       return res.json({
@@ -323,9 +327,9 @@ class Clients {
           id: client.id,
           token: token,
           angleredirecturl: `https://${req.headers.host}/backend/angle/getaccesstoken?key=${client._id}`,
-          aliceredirecturl: `https://${req.headers.host}/backend/aliceblue/getaccesstoken}`,
+          aliceredirecturl: `https://${req.headers.host}/backend/aliceblue/getaccesstoken`,
           zerodharedirecturl : `https://${req.headers.host}/backend/zerodha/getaccesstoken?key=${client.Email}`,
-          upstoxredirecturl : `https://${req.headers.host}/backend/upstox/getaccesstoken&state=${client.Email}`
+          upstoxredirecturl : `https://${req.headers.host}/backend/upstox/getaccesstoken`
         },
       });
     } catch (error) {
@@ -407,6 +411,18 @@ class Clients {
         await sendEmail(mailOptions);
       });
 
+      if (req.headers.host === 'app.rmpro.in') {
+
+        await sendSMS(client.PhoneNo,resetToken);
+
+
+  return res.json({
+    status: true,
+    message: "OTP has been sent to your mobile/email. Please check your mobile/email.",
+  });
+
+      }
+      else {
 
 
 
@@ -414,7 +430,7 @@ class Clients {
         status: true,
         message: 'OTP has been sent to your email. Please check your email.',
       });
-
+    }
     } catch (error) {
       return res.status(500).json({
         status: false,
@@ -893,6 +909,18 @@ class Clients {
       let pdf_footer = settings.pdf_footer || '';
 
 
+      let state;
+      let city;
+      
+      if(client.state)
+      {
+        state = client.state;
+      }
+      
+      if(client.city)
+        {
+          city = client.city;
+        }
 
 
       // Replace placeholders with actual values
@@ -904,6 +932,8 @@ class Clients {
         .replace(/{{datetime}}/g, datetime)
         .replace(/{{company_name}}/g, company_name)
         .replace(/{{company_address}}/g, company_address)
+        .replace(/{{state}}/g, state)
+        .replace(/{{city}}/g, city)
         .replace(/{{aadhaarno}}/g, aadhaarno);
 
       // const browser = await puppeteer.launch();
@@ -1589,6 +1619,25 @@ if (mailtemplate) {
       });
 
 
+      if (req.headers.host === 'app.rmpro.in') {
+
+        const client = await Clients_Modal.findOne({
+          Email: email,
+          del:0
+        });
+
+        await sendSMS(client.PhoneNo,resetToken);
+
+
+  return res.json({
+    status: true,
+    otp: resetToken,
+    email: email,
+    message: "OTP has been sent to your mobile/email. Please check your mobile/email.",
+  });
+
+      }
+else {
 
       return res.json({
         status: true,
@@ -1596,7 +1645,7 @@ if (mailtemplate) {
         email: email,
         message: "OTP has been sent to your email. Please check your email.",
       });
-
+    }
     } catch (error) {
       console.error("Error fetching :", error); // Log the error for debugging
       return res.json({ status: false, message: "Server error", data: [] });

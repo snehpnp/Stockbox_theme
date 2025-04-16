@@ -149,6 +149,12 @@ const PaymentHistory = () => {
       width: '200px',
     },
     {
+      name: 'Date',
+      selector: row => fDateTime(row?.plan_start),
+      sortable: true,
+      width: '150px',
+    },
+    {
       name: 'Paid Amount',
       selector: row => <div> <IndianRupee />{(row.total).toFixed(2)}</div>,
       sortable: true,
@@ -175,6 +181,12 @@ const PaymentHistory = () => {
      {
       name: 'Order Id',
       selector: row => row.orderid ? row.orderid : "null",
+      sortable: true,
+      width: '200px',
+    },
+    {
+      name: 'User Coupon',
+      selector: row => row.coupon ? row.coupon : "0",
       sortable: true,
       width: '200px',
     },

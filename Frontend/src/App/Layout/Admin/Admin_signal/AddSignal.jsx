@@ -295,8 +295,6 @@ const AddSignal = () => {
       col_size: 6,
       star: true
     },
-
-
     {
       name: 'expiry',
       label: 'Expiry Date',
@@ -304,12 +302,26 @@ const AddSignal = () => {
       label_size: 12,
       col_size: 6,
       star: true,
-      options: expirydate.map((item) => ({
-        label: item.expiry,
-        value: item.expiry,
-      })),
+      options: expirydate.map((item) => {
+        const raw = item.expiry;
+        const day = raw.substring(0, 2);
+        const month = raw.substring(2, 4);
+        const year = raw.substring(4, 8);
+
+        const monthNames = [
+          "January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December"
+        ];
+        const formattedLabel = `${day} ${monthNames[parseInt(month, 10) - 1]} ${year}`;
+
+        return {
+          label: formattedLabel,
+          value: raw,
+        };
+      }),
       showWhen: (values) => values.segment !== "C",
     },
+
     {
       name: 'optiontype',
       label: 'Option Type',

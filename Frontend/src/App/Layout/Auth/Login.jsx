@@ -39,6 +39,7 @@ const Login = () => {
       localStorage.setItem("token", ResData.data?.token);
       localStorage.setItem("id", ResData.data?.id);
 
+
       const roleMap = {
         0: "SUPERADMIN",
         1: "ADMIN",

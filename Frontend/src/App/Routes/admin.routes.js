@@ -83,6 +83,7 @@ import Changepass from "../Layout/Auth/Changepass";
 import ReferAndEarnlist from "../Layout/Admin/BasicSetting/ReferAndEarnlist";
 import PlanExpirymonthDetail from "../Layout/Admin/PlanExpiryMonth/PlanExpirymonthDetail";
 import SignalStrategy from "../Layout/Admin/Admin_signal/SignalStrategy";
+import PopupDescription from "../Layout/Admin/BasicSetting/PopupDescription";
 
 
 
@@ -161,6 +162,7 @@ export default function App() {
       <Route path="/emailtemplate" element={<Emailtemplate />} />
       <Route path="/referandearn" element={<ReferAndEarn />} />
       <Route path="/autosquareoff" element={<Autosquareoff />} />
+      <Route path="/popupdescription" element={<PopupDescription />} />
 
       <Route path="/bankdetail" element={<Bankdetail />} />
       <Route path="/addbankdetail" element={<Addbankdetail />} />
@@ -189,7 +191,7 @@ export default function App() {
 
       <Route path="/planexpiry" element={<Planexpiry />} />
       <Route path="/planexpirymonth" element={<Planexpirymonth />} />
-      <Route path="/planExpirymonthDetail" element={<PlanExpirymonthDetail/>} />
+      <Route path="/planExpirymonthDetail" element={<PlanExpirymonthDetail />} />
 
 
 

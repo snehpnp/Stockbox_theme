@@ -55,7 +55,8 @@ function Trade() {
     tsprice: "",
     tsstatus: "",
     slprice: "",
-    exitquantity: ""
+    exitquantity: "",
+    lotsize: ""
   })
 
 
@@ -70,6 +71,8 @@ function Trade() {
   })
 
 
+
+
   const UpdateExitdata = (item) => {
     setExitModel(true)
     setExitOrderdata({
@@ -81,21 +84,19 @@ function Trade() {
 
 
 
-
-
   const UpdateData = (item) => {
+    console.log("item", item)
     setModel(true);
     setOrderdata({
       ...item,
       price: item.price,
       tsprice: Math.max(item.tag1 || 0, item.tag2 || 0, item.tag3 || 0),
       slprice: item.stoploss,
-      quantity: item.order_quantity,
-      exitquantity: item.order_quantity
+      quantity: item.order_quantity == 0 ? "" : item.order_quantity,
+      exitquantity: item.order_quantity,
+      lotsize: item.lotsize
     });
   };
-
-
 
 
 
@@ -108,6 +109,10 @@ function Trade() {
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+
+
+
 
   useEffect(() => {
     fetchServiceData();
@@ -142,7 +147,6 @@ function Trade() {
 
 
 
-
   const fetchServiceData = async () => {
     try {
       const response = await GetServicedata(token);
@@ -152,6 +156,8 @@ function Trade() {
       console.error("Error fetching services:", error);
     }
   };
+
+
 
 
   const getnsedata = async () => {
@@ -189,7 +195,7 @@ function Trade() {
       const data = {
         id: userid,
         signalid: calltypedata?._id,
-        quantity: orderdata?.quantity,
+        quantity: orderdata.segment === "C" ? orderdata?.quantity : orderdata?.quantity * orderdata?.lotsize,
         price: orderdata?.price,
         tsprice: orderdata?.tsprice,
         tsstatus: targetEnabled,
@@ -268,7 +274,7 @@ function Trade() {
         search: "",
       };
       const response = await GetCloseSignalClient(data, token);
-   
+
 
       if (response.status) {
         setTradeData((prev) => ({ ...prev, close: response.data }));
@@ -355,14 +361,19 @@ function Trade() {
 
   };
 
+  const formatTradeSymbol = (symbol) => {
+    if (!symbol) return "Trade Symbol";
+    return symbol.replace(/^([A-Z]+)(\d{2}[A-Z]{3}\d{2})([A-Z]+)$/, '$1 $2 $3');
+  };
+
+
 
 
 
   const renderTradeCard = (item) => (
     <div className="row" key={item._id}>
-    <div className="col-md-12">
+      <div className="col-md-12">
         <div className="trade-card shadow" style={{ backgroundColor: "#dcedf2" }}>
-      
           <div className="row mb-3">
             <div className="col-lg-3">
               <span className="date-btn">
@@ -370,7 +381,6 @@ function Trade() {
                 <b>{fDateTimeH(item?.created_at)}</b>
               </span>
             </div>
-
             {selectedTab === "live" && <div className="col-lg-3">
               <button className="btn btn-secondary" style={{ borderRadius: "20px", padding: "0px 10px", fontSize: "15px" }}>
                 Sugg. Qty : {item?.lot}
@@ -406,7 +416,27 @@ function Trade() {
 
                 <div className="mb-3">
                   <span className="trade-type">
-                    Hold Duration : <br />
+                    Hold Duration :{" "}
+                    <span className="trade-type1">
+                      {service?.find((srv) => srv?._id === item?.service)?.title}
+                    </span>
+                    <span style={{ color: "red" }}>
+
+                      {item?.close_description && <>
+                        {" (Avoid) "}
+                        <Eye
+                          onClick={() => {
+                            setShowModal(true);
+                            setAvoidDescription(item?.close_description
+
+                            );
+                          }}
+                          style={{ cursor: "pointer", marginLeft: "5px" }}
+                        />
+                      </>}
+
+                    </span>
+                    <br />
                     {
                       item?.callduration === "Intraday" ? "Intraday" :
                         item?.callduration === "Short Term" ? "(15-30 days)" :
@@ -416,7 +446,7 @@ function Trade() {
                   </span>
                 </div>
 
-                <div>
+                {/* <div>
                   <span className="trade-type1">
                     {service?.find((srv) => srv?._id === item?.service)?.title}
                   </span>
@@ -437,15 +467,16 @@ function Trade() {
                  
                   </span>
 
-                </div>
+                </div> */}
               </div>
             </div>
 
             <div className="col-md-12 col-lg-7">
               <div className="trade-content">
                 <div className="d-sm-flex justify-content-between tradehead mb-3">
-                  <h3>{item.tradesymbol || "Trade Symbol"}</h3>
-                  {/* <span>{item?.stock}</span> */}
+                  {/* <h3>{item.tradesymbol || "Trade Symbol"}</h3> */}
+                  <h3>{formatTradeSymbol(item.tradesymbol)}</h3>
+
                   {selectedTab !== "live" && (
                     <span><b>Entry Type</b>: {item?.calltype} {item?.entrytype}</span>)}
                 </div>
@@ -496,6 +527,10 @@ function Trade() {
                       item?.purchased === false || new Date(item?.created_at) > new Date()
                     }
                     onClick={() => {
+                      if (brokerstatus === 0) {
+                        showCustomAlert("error", "Client Broker Not Login, Please Login With Broker.");
+                        return;
+                      }
                       UpdateExitdata(item);
                       setCalltypedata(item);
                     }}
@@ -509,6 +544,10 @@ function Trade() {
                   <button
                     className="btn w-100 my-1"
                     onClick={() => {
+                      if (brokerstatus === 0) {
+                        showCustomAlert("error", "Client Broker Not Login, Please Login With Broker.");
+                        return;
+                      }
                       setCalltypedata(item);
                       UpdateData(item)
                     }}
@@ -576,11 +615,11 @@ function Trade() {
 
 
   return (
-    <Content Page_title="Trade" button_title="Add Trade" button_status={false}>
+    <Content Page_title="Trades" button_title="Add Trade" button_status={false}>
       <div className="page-content">
         <div>
           <label htmlFor="planSelect" className="mb-1">
-            Plans For You
+            Trades for you
           </label>
           <div className="col-lg-4 d-flex">
             <select
@@ -605,7 +644,7 @@ function Trade() {
         >
           {[
             { tab: "live", label: "Live Trade" },
-            { tab: "close",  label: "Close Trade" },
+            { tab: "close", label: "Close Trade" },
             // { tab: "live", icon: "bx-home", label: "Live Trade" },
             // { tab: "close", icon: "bx-user-pin", label: "Close Trade" },
           ].map(({ tab, icon, label }) => (
@@ -678,7 +717,7 @@ function Trade() {
                 }}
               />
             </div>
-            <div className="col-md-12">
+            {orderdata?.segment === "C" && <div className="col-md-12">
               <label htmlFor="inputQuantity" className="form-label">
                 Quantity
               </label>
@@ -692,7 +731,47 @@ function Trade() {
                   setOrderdata({ ...orderdata, quantity: e.target.value });
                 }}
               />
-            </div>
+            </div>}
+
+            {orderdata?.segment !== "C" && (
+              <div className="col-md-6">
+                <label htmlFor="inputLotsize" className="form-label">
+                  Quantity (LotSize : {orderdata?.lotsize})
+                </label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="inputLotsize"
+                  placeholder="Lot Size"
+                  value={orderdata?.lotsize}
+                  disabled
+                />
+              </div>
+            )}
+
+
+            {orderdata?.segment != "C" &&
+              <div className="col-md-1 d-flex align-items-end justify-content-center">
+                <span style={{ fontSize: "1.5rem" }}>*</span>
+              </div>}
+
+            {orderdata?.segment != "C" &&
+              <div className="col-md-5">
+                <label htmlFor="inputQuantity" className="form-label">
+
+                </label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="inputQuantity"
+                  placeholder="Quantity"
+                  value={orderdata?.quantity}
+                  onChange={(e) =>
+                    setOrderdata({ ...orderdata, quantity: e.target.value })
+                  }
+                />
+              </div>}
+
 
             <div className="col-md-12">
               <div className="row">
@@ -747,7 +826,7 @@ function Trade() {
             </div>
             <div className="col-md-12">
               <label htmlFor="inputQuantity" className="form-label">
-                Exit Price
+                Exit Quantity
               </label>
               <input
                 disabled
@@ -755,7 +834,7 @@ function Trade() {
                 className="form-control"
                 id="inputQuantity"
                 placeholder="Quantity"
-                value={orderdata?.quantity}
+                value={orderdata?.segment == "C" ? orderdata?.quantity : ""}
                 onChange={(e) => {
                   setOrderdata({ ...orderdata, quantity: e.target.value });
                 }}
@@ -866,12 +945,12 @@ function Trade() {
       />
 
 
-       <ReusableModal
-              show={showModal}
-              onClose={() => setShowModal(false)}
-              title="Description"
-              body={<p>{avoidDescription || "No description available."}</p>}
-            />
+      <ReusableModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        title="Description"
+        body={<p>{avoidDescription || "No description available."}</p>}
+      />
     </Content>
   );
 }

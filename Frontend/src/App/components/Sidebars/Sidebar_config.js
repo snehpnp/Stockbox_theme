@@ -199,6 +199,12 @@ const Admin = [
         link: "/admin/QRdetails",
         name: "QRDetail"
       },
+      {
+        label: "Description",
+        icon: "Wrench",
+        link: "/admin/popupdescription",
+        name: "Description"
+      },
     ],
     name: "BasicSettings",
   },

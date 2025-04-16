@@ -16,6 +16,7 @@ import ReusableModal from "../../../components/Models/ReusableModal";
 import ShowCustomAlert from "../../../../App/Extracomponents/CustomAlert/CustomAlert"
 import showCustomAlert from "../../../../App/Extracomponents/CustomAlert/CustomAlert";
 import { useNavigate } from "react-router-dom";
+import  Kyc  from "../Profile/Kyc"
 
 
 const Service = () => {
@@ -32,8 +33,10 @@ const Service = () => {
   const [category, setCategory] = useState([]);
   const [plan, setPlan] = useState([]);
 
+
   const [showModal, setShowModal] = useState(false);
   const [selectedPlanDetails, setSelectedPlanDetails] = useState(null);
+
 
 
 
@@ -64,6 +67,7 @@ const Service = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [viewmodel, setViewModel] = useState(false);
+  const [viewmodel2, setViewModel2] = useState(false);
 
   const [discription, setDiscription] = useState("");
 
@@ -181,6 +185,7 @@ const Service = () => {
   const getPlan = async () => {
     try {
       const response = await GetPlanByCategory(token);
+      // console.log("response",response)
       if (response.status) {
         setPlan(response?.data);
         setCategory(response?.data.sort((a, b) => b._id.localeCompare(a._id)));
@@ -253,7 +258,8 @@ const Service = () => {
   const handleShowModal = (item) => {
 
     if (kycStatus === 1) {
-      navigate("/user/kyc")
+      // navigate("/user/kyc")
+      setViewModel2(true)
     } else {
       setSelectedPlanDetails(item);
       setShowModal(true);
@@ -271,6 +277,10 @@ const Service = () => {
     setManualCoupon("")
     setAppliedCoupon(null)
   };
+
+  // const handleCloseModal2=()=>{
+  //   setViewModel2(false)
+  // }
 
 
 
@@ -412,7 +422,7 @@ const Service = () => {
                             {/* <li>
                               <b>Validity</b>: {plan?.validity}
                             </li> */}
-                            <li>
+                            {/* <li>
                               <b>Description</b>:
                               <p>
                                 {(() => {
@@ -423,11 +433,27 @@ const Service = () => {
                                     : text;
                                 })()}
                               </p>
+                            </li> */}
+                            <li>
+                              <b>Description</b>:
+                              <p style={{ minHeight: "3em", overflow: "hidden" }}>
+                                {(() => {
+                                  const text = stripHtmlTags(plan?.description || "");
+                                  const words = text.split(" ");
+                                  if (text === "") {
+                                    return "No description available.....";
+                                  }
+                                  return words.length > 20
+                                    ? words.slice(0, 20).join(" ") + "....."
+                                    : text.padEnd(100, " "); // To give placeholder space
+                                })()}
+                              </p>
                             </li>
+
                           </ul>
                           <div className="border-top pt-3">
                             <button
-                              className="btn btn-secondary rounded-1 mt-2 mt-sm-0 me-2 me-sm-0"
+                              className="btn btn-secondary rounded-pill mt-2 mt-sm-0 me-2 me-sm-0"
                               onClick={() => {
                                 setViewModel(true);
                                 setDiscription(plan?.description);
@@ -437,7 +463,7 @@ const Service = () => {
                             </button>
 
                             <button
-                              className="btn btn-primary rounded-1 mt-2 mt-sm-0 ms-3"
+                              className="btn btn-primary rounded-pill mt-2 mt-sm-0 ms-3"
                               onClick={() => handleShowModal(plan)}
                             >
                               Subscribe Now
@@ -471,13 +497,30 @@ const Service = () => {
             <>
 
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5>
+                {/* <h5>
                   {
                     plan.find((item) =>
                       item.plans?.some((subPlan) => subPlan._id === selectedPlanDetails?._id)
                     )?.title || "No Plan Found"
                   }
+                </h5> */}
+
+                <h5>
+                  {
+                    (() => {
+                      const matchedPlan = plan.find((item) =>
+                        item.plans?.some((subPlan) => subPlan._id === selectedPlanDetails?._id)
+                      );
+
+                      if (!matchedPlan) return "No Plan Found";
+
+                      const serviceTitles = matchedPlan.services?.map((s) => s.title).join(", ");
+
+                      return `${matchedPlan.title}${serviceTitles ? ` (${serviceTitles})` : ""}`;
+                    })()
+                  }
                 </h5>
+
 
 
                 <span className="text-success fw-bold">
@@ -683,9 +726,10 @@ const Service = () => {
                 {gstStatus == 1 && (
 
                   <div className="d-flex justify-content-between align-items-center mb-2">
-                    <b>💰 GST :</b>
+                    <b>💰 GST ({gstdata}％):</b>
                     <span className="text-primary fw-bold">
-                      {/* <IndianRupee /> */}{gstdata}％
+                      {/* <IndianRupee />{gstdata}％ */}
+                      <IndianRupee style={{ width: '15%;' }} /> {(gstStatus === 1 ? ((selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0)) * gstdata) / 100 : 0).toFixed(2)}
                     </span>
                   </div>
                 )}
@@ -769,6 +813,13 @@ const Service = () => {
             </div>
           </>
         }
+      />
+
+      <ReusableModal
+        show={viewmodel2}
+        onClose={() => setViewModel2(false)}
+        title={<>KYC</>}
+        body={<Kyc />}
       />
     </Content>
   );

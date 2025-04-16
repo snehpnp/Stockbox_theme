@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Doughnut, Line } from "react-chartjs-2"; // Line chart import kiya
+import { Doughnut, Line } from "react-chartjs-2";
 import Content from "../../../components/Contents/Content";
 import { Link, useLocation } from "react-router-dom";
 import { fDateTime } from "../../../../Utils/Date_formate";
 import ReusableModal from '../../../components/Models/ReusableModal';
 
 const BasketDetail = () => {
+
   const [activeTab, setActiveTab] = useState("rational");
   const [itemdata, setItemdata] = useState();
-   const [model, setModel] = useState(false);
+  const [model, setModel] = useState(false);
   const location = useLocation();
   const { item } = location?.state;
-  
+
 
 
   const stripHtmlTags = (input) => {
@@ -19,25 +20,46 @@ const BasketDetail = () => {
     return input.replace(/<\/?[^>]+(>|$)/g, "");
   };
 
-  // Doughnut Chart Data
+
+  function calculateTypeWeightages(stockDetails) {
+    const typeWeightages = {};
+    
+    stockDetails.forEach(item => {
+      const { type, weightage } = item;
+      typeWeightages[type] = (typeWeightages[type] || 0) + weightage;
+    });
+    
+    const labels = [];
+    const values = [];
+    
+    for (const type in typeWeightages) {
+      labels.push(`${type} (${typeWeightages[type]}%)`);
+      values.push(typeWeightages[type]);
+    }
+    
+    return { labels, values };
+  }
+  
+  const typeData = calculateTypeWeightages(item.stock_details);
+  
   const chartData = {
-    labels: ["Hit Ratio", "Miss Ratio"],
+    labels: typeData.labels,
     datasets: [
       {
-        data: [80, 20],
-        backgroundColor: ["#4CAF50", "#FF5252"],
+        data: typeData.values, 
+        backgroundColor: ["#4CAF50", "#FF5252"], 
         hoverBackgroundColor: ["#66BB6A", "#FF867F"],
       },
     ],
   };
 
-  // Line Chart Data
+
   const chartDataLine = {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
     datasets: [
       {
         label: "Performance",
-        data: [10, 25, 35, 50, 40, 60], // Sample data, API se bhi fetch kar sakte hain
+        data: [10, 25, 35, 50, 40, 60],
         fill: false,
         borderColor: "#007bff",
         tension: 0.1,
@@ -72,7 +94,7 @@ const BasketDetail = () => {
                   <b>{item?.title}</b>
                 </h5>
                 <p className="basket-description">{stripHtmlTags(item?.description)}</p>
-                <button  onClick={() => setModel(true)} className="btn btn-sm btn-secondary">Read More..</button>
+                <button onClick={() => setModel(true)} className="btn btn-sm btn-secondary">Read More..</button>
               </div>
               <div className="row">
                 <div className="col-md-7">
@@ -80,7 +102,7 @@ const BasketDetail = () => {
                     <li className="list-group-item d-flex justify-content-between align-items-center">
                       Launch Date{" "}
                       <span className="badge bg-dark rounded-pill">
-                        {fDateTime(item?.startdate)}
+                        {fDateTime(item?.created_at)}
                       </span>
                     </li>
                     <li className="list-group-item d-flex justify-content-between align-items-center">
@@ -138,96 +160,96 @@ const BasketDetail = () => {
         </div>
       </div>
       <div className="alert alert-warning" role="alert">
-  Minimum Investment Amount:
-  <strong>23242</strong>
-</div>
-      {/* Line Chart Integration */}
+        Minimum Investment Amount:
+        <strong>{item?.mininvamount}</strong>
+      </div>
+
       <div className="row  ">
         <div className="col-md-12">
           <div className="card shadow ch">
             <div className="card-body">
-            <>
-            <div className="chart-tab">
-            <ul className="nav nav-pills justify-content-end " role="tablist">     
-    <li className="nav-item">
-      <a className="nav-link active" data-bs-toggle="pill" href="#home">
-        5D
-      </a>
-    </li>
-    <li className="nav-item">
-      <a className="nav-link" data-bs-toggle="pill" href="#menu1">
-        1M
-      </a>
-    </li>
-    <li className="nav-item">
-      <a className="nav-link" data-bs-toggle="pill" href="#menu2">
-     6M
-      </a>
-    </li>
-    <li className="nav-item">
-      <a className="nav-link" data-bs-toggle="pill" href="#max">
-     Max
-      </a>
-    </li>
-  </ul>
-  </div>
-  <div>
- 
-  </div>
+              <>
+                <div className="chart-tab">
+                  <ul className="nav nav-pills justify-content-end " role="tablist">
+                    <li className="nav-item">
+                      <a className="nav-link active" data-bs-toggle="pill" href="#home">
+                        5D
+                      </a>
+                    </li>
+                    <li className="nav-item">
+                      <a className="nav-link" data-bs-toggle="pill" href="#menu1">
+                        1M
+                      </a>
+                    </li>
+                    <li className="nav-item">
+                      <a className="nav-link" data-bs-toggle="pill" href="#menu2">
+                        6M
+                      </a>
+                    </li>
+                    <li className="nav-item">
+                      <a className="nav-link" data-bs-toggle="pill" href="#max">
+                        Max
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                <div>
 
-  {/* Tab panes */}
-  <div className="tab-content basket-chart-data mx-auto" >
-    <div id="home" className="container tab-pane active">
-      <br />
-      <h4>Live Performance Vs<span className="text-primary"> Equity large Cap</span></h4>
-        <hr/>
+                </div>
 
-        <div className="row mb-4 mt-4">
-          <div className="col-md-4">
-            <h6 className="text-muted">Current value of <b>₹100</b> invested once
-          <br/><u>3 year</u> ago would be</h6>
-          </div>
-          <div className="col-md-4">
-            <li className="text-primary">Equity & Gold assets </li>
-           <p className="ms-4 text-muted"> ₹5142</p> 
-          </div>
-          <div className="col-md-4">
-            <li className="text-warning">Equity Large Cap </li>
-           <p className="ms-4 text-muted"> ₹5142</p> 
-          </div>
-        </div>
-      
-   
-      <Line data={chartDataLine} />
-    </div>
-    <div id="menu1" className="container tab-pane fade">
-      <br />
-      <h3>Menu 1</h3>
-      <p>
-        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
-        ut aliquip ex ea commodo consequat.
-      </p>
-    </div>
-    <div id="menu2" className="container tab-pane fade">
-      <br />
-      <h3>Menu 2</h3>
-      <p>
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-        accusantium doloremque laudantium, totam rem aperiam.
-      </p>
-    </div>
-    <div id="max" className="container tab-pane fade">
-      <br />
-      <h3>MAX</h3>
-      <p>
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-        accusantium doloremque laudantium, totam rem aperiam.
-      </p>
-    </div>
-  </div>
-  <hr/>
-  
-</>
+
+                <div className="tab-content basket-chart-data mx-auto" >
+                  <div id="home" className="container tab-pane active">
+                    <br />
+                    <h4>Live Performance Vs<span className="text-primary"> Equity large Cap</span></h4>
+                    <hr />
+
+                    <div className="row mb-4 mt-4">
+                      <div className="col-md-4">
+                        <h6 className="text-muted">Current value of <b>₹100</b> invested once
+                          <br /><u>3 year</u> ago would be</h6>
+                      </div>
+                      <div className="col-md-4">
+                        <li className="text-primary">Equity & Gold assets </li>
+                        <p className="ms-4 text-muted"> ₹5142</p>
+                      </div>
+                      <div className="col-md-4">
+                        <li className="text-warning">Equity Large Cap </li>
+                        <p className="ms-4 text-muted"> ₹5142</p>
+                      </div>
+                    </div>
+
+
+                    <Line data={chartDataLine} />
+                  </div>
+                  <div id="menu1" className="container tab-pane fade">
+                    <br />
+                    <h3>Menu 1</h3>
+                    <p>
+                      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
+                      ut aliquip ex ea commodo consequat.
+                    </p>
+                  </div>
+                  <div id="menu2" className="container tab-pane fade">
+                    <br />
+                    <h3>Menu 2</h3>
+                    <p>
+                      Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+                      accusantium doloremque laudantium, totam rem aperiam.
+                    </p>
+                  </div>
+                  <div id="max" className="container tab-pane fade">
+                    <br />
+                    <h3>MAX</h3>
+                    <p>
+                      Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+                      accusantium doloremque laudantium, totam rem aperiam.
+                    </p>
+                  </div>
+                </div>
+                <hr />
+
+              </>
 
             </div>
           </div>
@@ -236,54 +258,52 @@ const BasketDetail = () => {
 
       {/* Tabs Section */}
       <div className="row  pt-3 align-items-center ">
-      <div className="col-md-12 ">
-        <div className="card">
-          <div className="card-body">
-        <ul className="nav nav-pills mb-3 justify-content-center">
-          <li className="nav-item">
-            <button
-              className={`nav-link ${
-                activeTab === "rational" ? "active btn-primary" : ""
-              }`}
-              onClick={() => setActiveTab("rational")}
-            >
-              Rational
-            </button>
-          </li>
-          <hr />
-          <li className="nav-item">
-            <button
-              className={`nav-link ${
-                activeTab === "methodology" ? "active btn-primary" : ""
-              }`}
-              onClick={() => setActiveTab("methodology")}
-            >
-              Methodology
-            </button>
-          </li>
-        </ul>
-      
+        <div className="col-md-12 ">
+          <div className="card">
+            <div className="card-body">
+              <ul className="nav nav-pills mb-3 justify-content-center">
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${activeTab === "rational" ? "active btn-primary" : ""
+                      }`}
+                    onClick={() => setActiveTab("rational")}
+                  >
+                    Rational
+                  </button>
+                </li>
+                <hr />
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${activeTab === "methodology" ? "active btn-primary" : ""
+                      }`}
+                    onClick={() => setActiveTab("methodology")}
+                  >
+                    Methodology
+                  </button>
+                </li>
+              </ul>
 
-      <div>
-        {activeTab === "rational" && (
-          <div className="row">
-            <div className="col-md-12">
-              <div dangerouslySetInnerHTML={{ __html: item?.rationale }} />
+
+              <div>
+                {activeTab === "rational" && (
+                  <div className="row">
+                    <div className="col-md-12">
+                      <div dangerouslySetInnerHTML={{ __html: item?.rationale }} />
+                    </div>
+                  </div>
+                )}
+                {activeTab === "methodology" && (
+                  <div className="row">
+                    <div className="col-md-12">
+                      <div dangerouslySetInnerHTML={{ __html: item?.methodology }} />
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        )}
-        {activeTab === "methodology" && (
-          <div className="row">
-            <div className="col-md-12">
-              <div dangerouslySetInnerHTML={{ __html: item?.methodology }} />
-            </div>
-          </div>
-        )}
         </div>
       </div>
-      </div>
-      </div>
-    </div>
 
       {/* Footer Button */}
       <div className="card-footer mt-3 text-center">
@@ -296,26 +316,26 @@ const BasketDetail = () => {
         </Link>
       </div>
 
-       <ReusableModal
-                                                  show={model}
-                                                  onClose={() => setModel(false)}
-                                                  title={<span><b>{item?.title}</b></span>}
-                                                  body={
-                                                    <p className="">{stripHtmlTags(item?.description)}</p>
-                                                  }
-                                                  footer={
-                                                      <>
-                                                          <button
-                                                              type="button"
-                                                              className="btn btn-secondary"
-                                                              onClick={() => setModel(false)}
-                                                          >
-                                                              Close
-                                                          </button>
-                                                         
-                                                      </>
-                                                  }
-                                              />
+      <ReusableModal
+        show={model}
+        onClose={() => setModel(false)}
+        title={<span><b>{item?.title}</b></span>}
+        body={
+          <p className="">{stripHtmlTags(item?.description)}</p>
+        }
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setModel(false)}
+            >
+              Close
+            </button>
+
+          </>
+        }
+      />
     </Content>
   );
 };
