@@ -2209,6 +2209,26 @@ export async function ForgetPasswordApi(data, token) {
 }
 
 
+// // for client  forget api 
+
+export async function ForgetClientPasswordApi(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/forgot-password`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
 // get dasboard api 
 
 export async function getDashboarddetail(token) {
