@@ -733,6 +733,8 @@ ul.breadcrumb-links li a {
   --accent-color: #54a5b3;
   --base-color: white;
   --text-color: #2e2b41;
+    --swiper-navigation-size: 25px !important;
+
   --input-color: #f3f0ff;
 }
 .glass-container form {
@@ -1961,4 +1963,7 @@ span.price-original {
   margin: 10px 0;
   border-radius: 2px !important;
   border-color: var(--BtnSecBorderColor, black) !important;
+}
+.dynamic-content {
+  font-size: 14px;
 }
