@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import {
   GetSignalClient,
@@ -27,6 +27,9 @@ function Trade() {
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
+
+  const location = useLocation();
+  const signalType = location.state?.type;
 
   const [isLoading, setIsLoading] = useState(true)
 
@@ -85,7 +88,6 @@ function Trade() {
 
 
   const UpdateData = (item) => {
-    console.log("item", item)
     setModel(true);
     setOrderdata({
       ...item,
@@ -120,6 +122,12 @@ function Trade() {
     fetchuserDetail()
     getnsedata()
   }, [selectedService]);
+
+  useEffect(()=>{
+    if(signalType){
+      setSelectedTab("close")
+    }
+  },[])
 
 
 
@@ -699,7 +707,19 @@ function Trade() {
       <ReusableModal
         show={model}
         onClose={() => setModel(false)}
-        title={<span>{calltypedata?.calltype}</span>}
+        title={<span>{calltypedata?.stock}</span>}
+        // title={
+        //   <span>
+        //     {calltypedata?.segment === "C"
+        //       ? "CASH"
+        //       : calltypedata?.segment === "O"
+        //       ? "OPTION"
+        //       : calltypedata?.segment === "F"
+        //       ? "FUTURE"
+        //       : ""}
+        //   </span>
+        // }
+        
         body={
           <form className="row g-3">
             <div className="col-md-12">

@@ -29,10 +29,19 @@ class Upstox {
                 const client = await Clients_Modal.findOne({ Email: email,ActiveStatus:1,del:0 });
 
                 if (!client) {
-                    return res.status(404).json({
-                        status: false,
-                        message: "Client not found"
-                    });
+
+                    if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                        return res.status(404).json({
+                            status: false,
+                            message: "Client not found"
+                        });
+                   } else {
+                       // Web request
+                       const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                       return res.redirect(dynamicUrl);
+                   }
+
+                  
                 }
 
 
@@ -74,21 +83,55 @@ class Upstox {
                     }
                 );
 
-                return res.json({
-                    status: true,
-                    message: "Broker login successfully",
-                });
+
+                if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                    return res.json({
+                        status: true,
+                        message: "Broker login successfully",
+                    });
+               } else {
+                   // Web request
+                   const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                   return res.redirect(dynamicUrl);
+               }
+
+               
             }
             else {
-                return res.status(500).json({ status: false, message: response.data });
+
+                if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                    return res.status(500).json({ status: false, message: response.data });
+               } else {
+                   // Web request
+                   const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                   return res.redirect(dynamicUrl);
+               }
+
+               
             }
 
             } else {
 
-                return res.status(500).json({ status: false, message: "Server error" });
+                if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                    return res.status(500).json({ status: false, message: "Server error" });
+               } else {
+                   // Web request
+                   const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                   return res.redirect(dynamicUrl);
+               }
+
+               
             }
         } catch (error) {
-            return res.status(500).json({ status: false, message: error });
+
+            if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                return res.status(500).json({ status: false, message: error });
+
+           } else {
+               // Web request
+               const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+               return res.redirect(dynamicUrl);
+           }
 
         }
 

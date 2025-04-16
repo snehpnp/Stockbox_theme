@@ -94,7 +94,7 @@ const BasketDetail = () => {
                   <b>{item?.title}</b>
                 </h5>
                 <p className="basket-description">{stripHtmlTags(item?.description)}</p>
-                <button onClick={() => setModel(true)} className="btn btn-sm btn-secondary">Read More..</button>
+                {item?.description.length>350 && (<button onClick={() => setModel(true)} className="btn btn-sm btn-secondary">Read More..</button>)}
               </div>
               <div className="row">
                 <div className="col-md-7">

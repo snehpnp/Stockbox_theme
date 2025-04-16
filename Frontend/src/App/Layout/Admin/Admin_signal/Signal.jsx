@@ -568,7 +568,6 @@ const Signal = () => {
 
 
             const response = await SignalCloseApi(data, token);
-            console.log("SignalCloseApi", response);
 
 
             if (response && response.status) {
