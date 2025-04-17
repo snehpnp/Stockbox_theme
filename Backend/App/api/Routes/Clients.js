@@ -1,6 +1,6 @@
 const router = require("express").Router()
 
-const {AddClient,detailClient,loginClient,forgotPassword,resetPassword,changePassword,updateProfile,deleteClient,otpSubmit,aadhaarVerification,aadhaarOtpSubmit,clientKycAndAgreement,uploadDocument,downloadDocument,requestPayout,payoutList,referEarn,brokerLink,deleteBrokerLink,addHelpDesk,helpdeskList,resend,orderList,orderListDetail,basketOrderList,getClientSignalOrders} = require('../Controllers/Clients')
+const {AddClient,detailClient,loginClient,forgotPassword,resetPassword,changePassword,updateProfile,deleteClient,otpSubmit,aadhaarVerification,aadhaarOtpSubmit,clientKycAndAgreement,uploadDocument,downloadDocument,requestPayout,payoutList,referEarn,brokerLink,deleteBrokerLink,addHelpDesk,helpdeskList,resend,orderList,orderListDetail,basketOrderList,getClientSignalOrders,clientDelete} = require('../Controllers/Clients')
 
 
 
@@ -12,6 +12,8 @@ router.post('/api/client/reset-password', resetPassword);
 router.post('/api/client/change-password', changePassword);
 router.post('/api/client/update-profile', updateProfile);
 router.get('/api/client/deleteclient/:id', deleteClient);
+router.get('/api/client/clientdelete', clientDelete);
+
 router.post('/api/client/otp_submit', otpSubmit);
 router.post('/api/client/aadhaarverification', aadhaarVerification);
 router.post('/api/client/aadhaarotpsubmit', aadhaarOtpSubmit);
