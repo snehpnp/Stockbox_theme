@@ -66,54 +66,36 @@ const Viewclientdetail = () => {
   };
 
   useEffect(() => {
-    getPlanDetail();
-    getClientDetail();
-    getclientservice();
-    fetchAdminServices();
-    getCategoryTitle();
-  }, []);
-
-
-
-  const getCategoryTitle = async () => {
-    try {
-      const response = await getcategoryplan(token);
-      if (response.status) {
-        console.log("response.data", response.data)
-        setTilename(response.data)
-      }
-    } catch (error) {
-      console.error("Error fetching category title:", error);
+    if (viewMode === "signal") {
+      getclientservice();
+      fetchAdminServices();
     }
-    return "-";
-  };
+    fetchAllClientData()
+  }, [viewMode]);
 
 
 
-
-  const getPlanDetail = async () => {
+  const fetchAllClientData = async () => {
     try {
-      const response = await clientplandatabyid(id, token);
-      if (response.status) {
-        setData(response.data);
+
+      const categoryResponse = await getcategoryplan(token);
+      if (categoryResponse.status) {
+        setTilename(categoryResponse.data);
+      }
+
+
+      const planResponse = await clientplandatabyid(id, token);
+      if (planResponse.status) {
+        setData(planResponse.data);
+      }
+
+
+      const clientResponse = await clientdetailbyid(id, token);
+      if (clientResponse.status) {
+        setClient([clientResponse.data]);
       }
     } catch (error) {
-      console.error("Error fetching plan details:", error);
-    }
-  };
-
-
-
-
-  const getClientDetail = async () => {
-    try {
-      const response = await clientdetailbyid(id, token);
-
-      if (response.status) {
-        setClient([response.data]);
-      }
-    } catch (error) {
-      console.error("Error fetching client details:", error);
+      console.error("Error fetching all client data:", error);
     }
   };
 
