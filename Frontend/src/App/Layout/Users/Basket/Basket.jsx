@@ -116,7 +116,7 @@ function Basket() {
       navigate("/user/rebalancestock", { state: { item } });
     }
   };
-  
+
 
   return (
     <Content
@@ -214,21 +214,21 @@ function Basket() {
                       </li>
                       <li className="list-group-item border-bottom-0">
                         {item?.isSubscribed === true || item?.isActive === true ? (
-                          <Link
-                            to="/user/basketdetail"
+                          <button
+                            // to="/user/basketdetail"
                             state={{ item }}
                             className="btn btn-primary w-100"
                           >
                             View Details
-                          </Link>
+                          </button>
                         ) : item?.isSubscribed === false &&
                           item?.isActive === false ? (
-                          <Link
-                            to={
-                              onlinePaymentStatus || offlinePaymentStatus
-                                ? "/user/payment"
-                                : ""
-                            }
+                          <button
+                            // to={
+                            //   onlinePaymentStatus || offlinePaymentStatus
+                            //     ? "/user/payment"
+                            //     : ""
+                            // }
                             state={{ item }}
                             className="btn btn-primary w-100"
                             style={{
@@ -244,16 +244,16 @@ function Basket() {
                           >
                             Subscribe <del>{item?.full_price}</del>{" "}
                             {item?.basket_price}
-                          </Link>
+                          </button>
                         ) : item?.isSubscribed === true &&
                           item?.isActive === false ? (
-                          <Link
-                            to="/user/rebalancestock"
+                          <button
+                            // to="/user/rebalancestock"
                             state={{ item }}
                             className="btn btn-primary w-100"
                           >
                             View Rebalance
-                          </Link>
+                          </button>
                         ) : null}
                       </li>
                       {/* <Link to="/user/basketdetail" state={{ item }} className="btn btn-primary w-100 mb-1">

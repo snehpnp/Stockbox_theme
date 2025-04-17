@@ -63,6 +63,7 @@ class BasicSetting {
           saccode,
           popupstatus,
           popupcontent,
+          wh_number,
 
         } = req.body;
 
@@ -139,6 +140,7 @@ class BasicSetting {
           saccode,
           popupstatus,
           popupcontent,
+          wh_number,
         };
 
         const options = {
