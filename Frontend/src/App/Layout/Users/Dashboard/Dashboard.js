@@ -209,8 +209,7 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem('token');
       const result = await clientKycAndAgreement(data, token);
-      showCustomAlert("success", "KYC form submitted successfully!");
-      // Reset form after successful submission
+      showCustomAlert("success", "KYC form submitted successfully!")
       setFormData({
         fullName: "",
         email: "",
