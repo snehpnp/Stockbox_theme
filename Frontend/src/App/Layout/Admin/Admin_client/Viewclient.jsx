@@ -67,9 +67,10 @@ const Viewclientdetail = () => {
 
   useEffect(() => {
     if (viewMode === "signal") {
-      getclientservice();
+
       fetchAdminServices();
     }
+    getclientservice();
     fetchAllClientData()
   }, [viewMode]);
 
