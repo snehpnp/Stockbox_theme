@@ -287,7 +287,7 @@ const Viewclientdetail = () => {
     },
     {
       name: "Amount",
-      selector: (row) => <>  <IndianRupee style={{width:"16px"}}/>  {(row.plan_price).toFixed(2) ?? "-"} </>,
+      selector: (row) => <>  <IndianRupee style={{ width: "16px" }} />  {(row.plan_price).toFixed(2) ?? "-"} </>,
       width: "189px",
     },
     {
@@ -382,7 +382,7 @@ const Viewclientdetail = () => {
     },
     {
       name: "Quantity/Lot",
-      selector: (row) => row.lot?row.lot:"-",
+      selector: (row) => row.lot ? row.lot : "-",
       sortable: true,
       width: "200px",
     },
@@ -391,7 +391,7 @@ const Viewclientdetail = () => {
       selector: (row) => (
         <div>
           {" "}
-          <IndianRupee style={{width:"16px"}}/>
+          <IndianRupee style={{ width: "16px" }} />
           {row.price}
         </div>
       ),
@@ -405,7 +405,7 @@ const Viewclientdetail = () => {
         <div>
           {row?.closeprice ? (
             <>
-              <IndianRupee style={{width:"16px"}}/>
+              <IndianRupee style={{ width: "16px" }} />
               {row.closeprice}
             </>
           ) : (
@@ -415,7 +415,7 @@ const Viewclientdetail = () => {
       ),
       sortable: true,
       width: "132px",
-    },    
+    },
     {
       name: "Entry Date",
       selector: (row) => fDateTimeH(row?.created_at),

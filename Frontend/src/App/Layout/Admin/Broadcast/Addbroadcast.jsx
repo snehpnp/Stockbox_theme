@@ -43,9 +43,10 @@ const Addbroadcast = () => {
         let errors = {};
         console.log("error", errors);
 
-        if (values.type !== "nonsubscribe" && !values.service) {
+        if (values.type !== "nonsubscribe" && values.type !== "All" && !values.service) {
             errors.service = "Please Select Service";
         }
+
 
         if (!values.subject) {
             errors.subject = "Please Enter Subject";

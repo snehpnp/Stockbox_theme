@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Content from '../../../components/Contents/Content';
 import { getSMSProvider, UpdateSMSProvider, UpdateSMSProviderStatus } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table';
 import { fDateTime } from '../../../../Utils/Date_formate';
@@ -132,30 +133,26 @@ const SMSProvider = () => {
 
 
     return (
-        <div>
+        <Content
+            Page_title='SMS Provider'
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}>
             <div className="page-content">
-                <div className="page-breadcrumb  d-flex align-items-center mb-3">
-                    <div className="breadcrumb-title pe-3">SMS Provider</div>
-                    <div className="ps-3">
-                        <nav aria-label="breadcrumb">
-                            <ol className="breadcrumb mb-0 p-0">
-                                <li className="breadcrumb-item">
-                                    <Link to="/admin/dashboard">
-                                        <i className="bx bx-home-alt" />
-                                    </Link>
-                                </li>
-                            </ol>
-                        </nav>
-                    </div>
-                </div>
-                <hr />
+
                 <div className="row">
                     {clients.map((client, index) => (
                         <div className="col-md-6 col-lg-4" key={index}>
                             <div className="card mb-4">
                                 <div className="card-body p-4 position-relative">
-                                    <div className="col-md-1 d-flex justify-content-end">
+                                    <div className="col-md-5 d-flex ">
                                         <div className="form-check form-switch form-check-info">
+                                            <label
+                                                htmlFor={`rating_${client?._id}`}
+                                                className="checktoggle checkbox-bg"
+                                            >
+                                                Active Status
+                                            </label>
                                             <input
                                                 id={`rating_${client?._id}`}
                                                 className="form-check-input toggleswitch"
@@ -164,10 +161,7 @@ const SMSProvider = () => {
                                                 onChange={() => handleSwitchChange(client)}
 
                                             />
-                                            <label
-                                                htmlFor={`rating_${client?._id}`}
-                                                className="checktoggle checkbox-bg"
-                                            ></label>
+
                                         </div>
 
                                     </div>
@@ -185,6 +179,7 @@ const SMSProvider = () => {
                                     >
                                         <SquarePen />
                                     </button>
+                                    <hr />
                                     <form className="row g-3">
                                         <div className="col-md-12">
                                             <label htmlFor={`name${index}`} className="form-label">
@@ -413,7 +408,7 @@ const SMSProvider = () => {
                 }
             />
 
-        </div>
+        </Content>
     );
 };
 
