@@ -338,6 +338,16 @@ const BasicSettingSchema = new Schema({
         type: String,
         default: null
     },
+    wh_number: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    smsprovider: {
+        type: String,
+        trim: true,
+        default: null
+    },
     
 }, {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }

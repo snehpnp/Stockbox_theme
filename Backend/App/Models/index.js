@@ -57,6 +57,8 @@ module.exports = {
     Basketgraphdata :require("./Basketgraphdata"),
     Signalsdata :require("./Signalsdata"),
     Signalstock :require("./Signalstock"),
+    Smstemplate: require("./Smstemplate"),
+
 
     open_position:open_position,
     open_position_excute:open_position_excute,

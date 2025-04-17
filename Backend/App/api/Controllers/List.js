@@ -3524,7 +3524,7 @@ end.setHours(23, 59, 59, 999);
 
 
    const result = await BasicSetting_Modal.findOne()
-  .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst gststatus base_url color1 color2 color3 color4 popupstatus popupcontent refersendmsg')
+  .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst gststatus base_url color1 color2 color3 color4 popupstatus popupcontent refersendmsg wh_number')
   .exec();
 
    if (result) {  
