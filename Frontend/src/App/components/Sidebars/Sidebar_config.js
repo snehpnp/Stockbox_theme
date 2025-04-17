@@ -182,6 +182,12 @@ const Admin = [
         name: "SMS Template"
       },
       {
+        label: "SMS Provider",
+        icon: "CircleFadingArrowUp",
+        link: "/admin/smsprovider",
+        name: "SMS Provider"
+      },
+      {
         label: "Refer And Earn",
         icon: "HelpingHand",
         link: "/admin/referandearn",

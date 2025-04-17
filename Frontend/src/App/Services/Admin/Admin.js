@@ -1874,7 +1874,7 @@ export async function Updatebasicsettings(data, token) {
     formData.append('state', data.state);
     formData.append('invoicetnc', data.invoicetnc);
     formData.append('saccode', data.saccode);
-    formData.append('wh_number',data.wh_number);
+    formData.append('wh_number', data.wh_number);
 
 
 
@@ -3589,5 +3589,24 @@ export async function UpdateSMSTemplate(data, token) {
     } catch (err) {
 
         return err.response?.data || err.message;
+    }
+}
+
+
+
+// get sms Provider
+
+
+export async function getSMSProvider(token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}smsprovider/list`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return { error: err.response?.data || err.message };
     }
 }

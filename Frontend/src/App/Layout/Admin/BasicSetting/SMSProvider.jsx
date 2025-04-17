@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getSMStemplate, UpdateSMSTemplate } from '../../../Services/Admin/Admin';
+import { getSMSProvider, UpdateSMSTemplate } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import { image_baseurl } from '../../../../Utils/config';
@@ -8,7 +8,7 @@ import { SquarePen, Trash2, PanelBottomOpen } from 'lucide-react';
 import ReusableModal from '../../../components/Models/ReusableModal';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
-const SmsTemplate = () => {
+const SMSProvider = () => {
 
 
     const navigate = useNavigate();
@@ -29,9 +29,9 @@ const SmsTemplate = () => {
     });
 
 
-    const gettemplatelist = async () => {
+    const getProvider = async () => {
         try {
-            const response = await getSMStemplate(token);
+            const response = await getSMSProvider(token);
             if (response.status) {
                 const filterdata = response.data.filter((item) =>
                     searchInput === "" || item.title.toLowerCase().includes(searchInput.toLowerCase())
@@ -44,7 +44,7 @@ const SmsTemplate = () => {
     };
 
     useEffect(() => {
-        gettemplatelist();
+        getProvider();
     }, [searchInput]);
 
 
@@ -57,7 +57,7 @@ const SmsTemplate = () => {
             if (response && response.status) {
                 showCustomAlert("Success", 'Template updated successfully.')
                 setUpdatetitle({ title: "", id: "" });
-                gettemplatelist();
+                getProvider();
                 setModel(false);
             } else {
                 showCustomAlert("error", 'There was an error updating the Template.')
@@ -234,4 +234,4 @@ const SmsTemplate = () => {
     );
 };
 
-export default SmsTemplate;
+export default SMSProvider;
