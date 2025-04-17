@@ -36,6 +36,7 @@ const Viewclientdetail = () => {
   const [service, setService] = useState([]);
   const [clients, setClients] = useState([]);
 
+
   const [viewMode, setViewMode] = useState("plan");
 
   const [serviceList, setServiceList] = useState([]);
@@ -50,7 +51,7 @@ const Viewclientdetail = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [description, setDescription] = useState([])
-
+  const [titename, setTilename] = useState([])
 
 
   const [filters, setFilters] = useState({
@@ -69,16 +70,17 @@ const Viewclientdetail = () => {
     getClientDetail();
     getclientservice();
     fetchAdminServices();
+    getCategoryTitle();
   }, []);
 
 
 
-  const getCategoryTitle = async (categoryId) => {
+  const getCategoryTitle = async () => {
     try {
       const response = await getcategoryplan(token);
       if (response.status) {
-        const category = response.data.find((item) => item._id === categoryId);
-        return category ? category.title : "-";
+        console.log("response.data", response.data)
+        setTilename(response.data)
       }
     } catch (error) {
       console.error("Error fetching category title:", error);
@@ -93,18 +95,7 @@ const Viewclientdetail = () => {
     try {
       const response = await clientplandatabyid(id, token);
       if (response.status) {
-        const plansWithTitles = await Promise.all(
-          response.data.map(async (plan) => {
-            const categoryId = plan.planDetails?.category;
-            if (categoryId) {
-              const categoryTitle = await getCategoryTitle(categoryId);
-              return { ...plan, categoryTitle };
-            }
-            return plan;
-          })
-        );
-
-        setData(plansWithTitles);
+        setData(response.data);
       }
     } catch (error) {
       console.error("Error fetching plan details:", error);
@@ -257,8 +248,11 @@ const Viewclientdetail = () => {
   };
 
   useEffect(() => {
-    getAllSignal();
-  }, [filters, searchInput, searchstock, currentPage]);
+    if (viewMode === "signal") {
+      getAllSignal();
+    }
+
+  }, [filters, viewMode, searchInput, searchstock, currentPage]);
 
 
 
@@ -282,12 +276,16 @@ const Viewclientdetail = () => {
     },
     {
       name: "Plan Name",
-      selector: (row) => row.categoryTitle || "-",
+      selector: (row) => {
+        const matchedItem = titename.find((item) => item._id === row?.planDetails?.category);
+        return matchedItem ? matchedItem.title : "-";
+      },
       width: "180px",
     },
+
     {
       name: "Amount",
-      selector: (row) => <>  <IndianRupee style={{ width: "16px" }} />  {(row.plan_price).toFixed(2) ?? "-"} </>,
+      selector: (row) => <>  <IndianRupee style={{ width: "16px" }} />  {(row.plan_price)?.toFixed(2) ?? "-"} </>,
       width: "189px",
     },
     {
