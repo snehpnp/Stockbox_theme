@@ -176,6 +176,12 @@ const Admin = [
         name: "EmailTemplate"
       },
       {
+        label: "SMS Template",
+        icon: "MessageCircle",
+        link: "/admin/smstemplate",
+        name: "SMS Template"
+      },
+      {
         label: "Refer And Earn",
         icon: "HelpingHand",
         link: "/admin/referandearn",
