@@ -425,12 +425,12 @@ const Service = () => {
         </ul>
         
         <div className="border-top pt-3">
-                            <button
+                            <Link to="/user/cart"
                               className="btn btn-secondary  rounded-pill mt-2 mt-sm-0 me-2 me-sm-0"
                             
                             >
                               Add to cart
-                            </button>
+                            </Link>
 
                             <button
                               className="btn btn-primary rounded-pill mt-2 mt-sm-0 ms-3"
@@ -555,124 +555,7 @@ const Service = () => {
   </div> */}
 </div>
 
-            <div className="row row-cols-1 row-cols-md-1 row-cols-lg-2 row-cols-xl-2">
-              {getFilteredPlans?.map((item) =>
-                item?.plans?.length > 0 ? (
-                  item?.plans?.map((plan, index) => (
-                    <div className="col col-lg-6 mb-4" key={`${item?._id}-${index}`}>
-                      <div className="card card1 mb-4 shadow h-100 mb-4 service-card">
-                        <div className="card-header">
-                          <div className="d-flex justify-content-between align-items-center">
-                            <div>
-                              <h5 className="mb-0">{item?.title}</h5>
-                            </div>
-
-                            <span className="price-original">
-                              {Array.isArray(item?.services) && item?.services?.length > 0
-                                ? item.services
-                                  .map((service) =>
-                                    typeof service.title === "string"
-                                      ? service.title.split(/(?=[A-Z])/).join(" + ")
-                                      : "N/A"
-                                  )
-                                  .join(" + ")
-                                : "N/A"}
-                            </span>
-
-                          </div>
-                        </div>
-                        <div className="card-body pb-0">
-
-
-                          <div className="row">
-                            <div className="col-md-6">
-                              <b>Price</b>:   <IndianRupee style={{ width: '15px', margin: '0' }} /> {(plan?.price)?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-
-
-                            </div>
-                            <div className="col-md-6">
-
-                              <b>Validity</b>: {plan?.validity}
-
-                            </div>
-
-                          </div>
-
-                          {/* <div className="d-flex align-items-center justify-content-between">
-                            <div>
-                              <b>Price:</b>
-                            </div>
-                            <div className="price">
-                              <span className="price-current">
-                                <IndianRupee /> {plan?.price}
-                              </span>
-                            </div>
-                          </div> */}
-                          <ul className="features">
-                            {/* <li>
-                              <b>Validity</b>: {plan?.validity}
-                            </li> */}
-                            {/* <li>
-                              <b>Description</b>:
-                              <p>
-                                {(() => {
-                                  const text = stripHtmlTags(plan?.description || "");
-                                  const words = text.split(" ");
-                                  return words.length > 20
-                                    ? words.slice(0, 20).join(" ") + "....."
-                                    : text;
-                                })()}
-                              </p>
-                            </li> */}
-                            <li>
-                              <b>Description</b>:
-                              <p style={{ minHeight: "3em", overflow: "hidden" }}>
-                                {(() => {
-                                  const text = stripHtmlTags(plan?.description || "");
-                                  const words = text.split(" ");
-                                  if (text === "") {
-                                    return "No description available.....";
-                                  }
-                                  return words.length > 20
-                                    ? words.slice(0, 20).join(" ") + "....."
-                                    : text.padEnd(100, " "); // To give placeholder space
-                                })()}
-                              </p>
-                              <button
-                              className="btn btn-sm border-0 text-decoration-underline btn-secondary rounded-pill mt-2 mt-sm-0 me-2 me-sm-0"
-                              onClick={() => {
-                                setViewModel(true);
-                                setDiscription(plan?.description);
-                              }}
-                            >
-                              Know More...
-                            </button>
-                            </li>
-
-                          </ul>
-                          <div className="border-top pt-3">
-                            <button
-                              className="btn btn-secondary  rounded-pill mt-2 mt-sm-0 me-2 me-sm-0"
-                            
-                            >
-                              Add to cart
-                            </button>
-
-                            <button
-                              className="btn btn-primary rounded-pill mt-2 mt-sm-0 ms-3"
-                              onClick={() => handleShowModal(plan)}
-                            >
-                              Subscribe Now
-                            </button>
-                          </div>
-
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : null
-              )}
-            </div>
+          
           </div>
         ) : (
           <div className="text-center mt-4">

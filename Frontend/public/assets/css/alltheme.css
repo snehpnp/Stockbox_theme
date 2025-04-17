@@ -1977,7 +1977,7 @@ span.price-original {
   transition: all 0.2s;
 
   -webkit-border-radius: 15px;
-height: 100%;
+  height: 100%;
   border-radius: 15px;
 }
 
@@ -2005,7 +2005,6 @@ height: 100%;
 .pricing-table .card .card-title {
   font-size: 1rem;
 
- 
   font-weight: 500;
 }
 
@@ -2023,4 +2022,20 @@ height: 100%;
   color: #3b3b3b;
 
   font-size: 16px;
+}
+.cart-table 
+{
+  border-collapse: separate;
+  border-spacing: 0 15px; /* Horizontal 0, Vertical 15px */
+}
+.cart-table tbody tr{
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+
+
+}
+.cart-table tbody tr td{
+  vertical-align: middle;
+}
+svg.lucide.lucide-x.text-danger {
+  stroke: #dc3545;
 }
