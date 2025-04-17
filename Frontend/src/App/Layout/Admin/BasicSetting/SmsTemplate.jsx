@@ -19,7 +19,6 @@ const SmsTemplate = () => {
     const token = localStorage.getItem('token');
     const userid = localStorage.getItem('id');
 
-    const [templateid, setTemplateid] = useState({})
 
     const [updatetitle, setUpdatetitle] = useState({
         id: "",
@@ -51,7 +50,7 @@ const SmsTemplate = () => {
 
     const updateemaitemplate = async () => {
         try {
-            const data = { id: updatetitle.id, templateid: templateid, sms_body: updatetitle.sms_body };
+            const data = { id: updatetitle.id, templateid: updatetitle.templateid, sms_body: updatetitle.sms_body };
 
             const response = await UpdateSMSTemplate(data, token);
 
@@ -132,35 +131,34 @@ const SmsTemplate = () => {
                                         onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                                         onClick={() => {
                                             setModel(true);
-                                            setTemplateid(client.templateid);
-                                            setUpdatetitle({ id: client._id, sms_body: client.sms_body, });
+                                            setUpdatetitle({ templateid: client.templateid, id: client._id, sms_body: client.sms_body, });
                                         }}
                                     >
                                         <SquarePen />
                                     </button>
                                     <form className="row g-3">
                                         <div className="col-md-12">
-                                            <label htmlFor={`mailType${index}`} className="form-label">
+                                            <label htmlFor={`smsType${index}`} className="form-label">
                                                 SMS Type
                                             </label>
                                             <input
                                                 type="text"
                                                 className="form-control"
-                                                id={`mailType${index}`}
+                                                id={`smsType${index}`}
                                                 value={client.sms_type}
                                             />
                                         </div>
-                                        {/* <div className="col-md-12">
-                                            <label htmlFor={`subject${index}`} className="form-label">
-                                                Subject
+                                        <div className="col-md-12">
+                                            <label htmlFor={`templateid${index}`} className="form-label">
+                                                Template ID
                                             </label>
                                             <input
                                                 type="text"
                                                 className="form-control"
-                                                id={`subject${index}`}
-                                                value={client.mail_subject}
+                                                id={`templateid${index}`}
+                                                value={client.templateid}
                                             />
-                                        </div> */}
+                                        </div>
 
                                         <div className="col-md-12">
                                             <label htmlFor={`mailContent${index}`} className="form-label">
@@ -189,19 +187,19 @@ const SmsTemplate = () => {
                     <div className="modal-body">
                         <form className="row g-3">
 
-                            {/* <div className="col-md-12">
+                            <div className="col-md-12">
                                 <label htmlFor="subject" className="form-label">
-                                    Subject
+                                    Template ID
                                 </label>
                                 <input
                                     type="text"
                                     className="form-control"
-                                    id="subject"
-                                    value={updatetitle.mail_subject}
-                                    onChange={(e) => updateServiceTitle({ mail_subject: e.target.value })}
+                                    id="templateid"
+                                    value={updatetitle.templateid}
+                                    onChange={(e) => updateServiceTitle({ templateid: e.target.value })}
 
                                 />
-                            </div> */}
+                            </div>
 
                             <div className="col-md-12">
                                 <label htmlFor="mailContent" className="form-label">

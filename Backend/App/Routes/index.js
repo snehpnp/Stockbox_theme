@@ -36,6 +36,7 @@ module.exports = function (app) {
     app.use(require("./Zerodha"))
     app.use(require("./Dhan"))
     app.use(require("./Smstemplate"))
+    app.use(require("./Smsprovider"))
 
 
 

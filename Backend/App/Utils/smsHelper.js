@@ -1,22 +1,43 @@
 const axios = require('axios');
+const db = require("../Models");
 
-const sendSMS = async (mobile, token) => {
+const Smsprovider_Modal = db.Smsprovider;
 
- const authKey = '96b7e05297b4f4f4f416c9bc1c8f42b2'; // your real auth key
-  const sender = 'RESLTD';
-  const route = 'B';
+
+const sendSMS = async (mobile, message, templateId) => {
+
+
+  const activeProvider = await Smsprovider_Modal.findOne({ status: 1 });
+
+  const authKey = activeProvider.apikey; 
+  const sender = activeProvider.sender;
+  const route = activeProvider.route;
+  const urls = activeProvider.url;
+  const username = activeProvider.username; 
+  const password = activeProvider.password;
+  const entity_id = activeProvider.entity_id;
+  const name = activeProvider.name; 
+
+
   const coding = '1';
-  const templateId = '1407174471217960479'; // your real template ID
-  const message = `${token} is your OTP to login into the RM Pro App. Do not share this with anyone. Link - https://bit.ly/3G88mN0`;
+let config;
+const encodedMessage = encodeURIComponent(message);
 
+if(name=="bulksmsservice")
+{
+  config = `authkey=${authKey}&sender=${sender}&mobiles=${mobile}&route=${route}&coding=${coding}&Template_ID=${templateId}&message=${encodedMessage}`;
+}else if(name=="pushsms")
+{
+  config = `user=${username}&key=${authKey}&sender=${sender}&mobile=${mobile}&text=${encodedMessage}&entityid=${entity_id}&templateid=${templateId}`;
+ 
+}
 
-  // encodeURIComponent ensures special characters are URL-safe
-  const encodedMessage = encodeURIComponent(message);
-
-  const url = `http://sms.bulksmsserviceproviders.com/api/send_http.php?authkey=${authKey}&sender=${sender}&mobiles=${mobile}&route=${route}&coding=${coding}&Template_ID=${templateId}&message=${encodedMessage}`;
-
+  const url = `${urls}?${config}`;
+     console.log("url",url);
   try {
     const response = await axios.get(url);
+
+    console.log("response",response.data);
     return response.data;
   } catch (error) {
     console.error('SMS Send Error:', error.response?.data || error.message);
