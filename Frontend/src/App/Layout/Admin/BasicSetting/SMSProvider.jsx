@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getSMSProvider, UpdateSMSProvider } from '../../../Services/Admin/Admin';
+import { getSMSProvider, UpdateSMSProvider, UpdateSMSProviderStatus } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import { image_baseurl } from '../../../../Utils/config';
 import { SquarePen, Trash2, PanelBottomOpen } from 'lucide-react';
 import ReusableModal from '../../../components/Models/ReusableModal';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+
+
 
 const SMSProvider = () => {
 
@@ -103,13 +105,37 @@ const SMSProvider = () => {
 
 
 
+    const handleSwitchChange = async (client) => {
+        const data = { providerId: client._id };
+
+        const result = await showCustomAlert("confirm", "Do you want to change the status?");
+        if (!result.isConfirmed) {
+            return getProvider();
+        }
+
+        try {
+            const response = await UpdateSMSProviderStatus(data, token);
+            if (response.status) {
+                await showCustomAlert("Success", "Status changed successfully!");
+                getProvider();
+            }
+        } catch (error) {
+            showCustomAlert("error", "There was an error processing your request.");
+        }
+    };
+
+
+
+
+
+
 
 
     return (
         <div>
             <div className="page-content">
                 <div className="page-breadcrumb  d-flex align-items-center mb-3">
-                    <div className="breadcrumb-title pe-3">SMS Template</div>
+                    <div className="breadcrumb-title pe-3">SMS Provider</div>
                     <div className="ps-3">
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb mb-0 p-0">
@@ -128,6 +154,23 @@ const SMSProvider = () => {
                         <div className="col-md-6 col-lg-4" key={index}>
                             <div className="card mb-4">
                                 <div className="card-body p-4 position-relative">
+                                    <div className="col-md-1 d-flex justify-content-end">
+                                        <div className="form-check form-switch form-check-info">
+                                            <input
+                                                id={`rating_${client?._id}`}
+                                                className="form-check-input toggleswitch"
+                                                type="checkbox"
+                                                checked={client?.status == 1}
+                                                onChange={() => handleSwitchChange(client)}
+
+                                            />
+                                            <label
+                                                htmlFor={`rating_${client?._id}`}
+                                                className="checktoggle checkbox-bg"
+                                            ></label>
+                                        </div>
+
+                                    </div>
                                     <button
                                         style={buttonStyle}
                                         onMouseOver={(e) => e.currentTarget.style.backgroundColor = buttonHoverStyle.backgroundColor}

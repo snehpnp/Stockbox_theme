@@ -3631,3 +3631,23 @@ export async function UpdateSMSProvider(data, token) {
         return err.response?.data || err.message;
     }
 }
+
+
+
+// provide status 
+
+export async function UpdateSMSProviderStatus(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}smsprovider/changestatus`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
