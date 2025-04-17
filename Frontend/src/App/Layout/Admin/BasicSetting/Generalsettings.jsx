@@ -111,6 +111,7 @@ const Generalsettings = () => {
                                 state: clients[0].state || '',
                                 invoicetnc: clients[0].invoicetnc || '',
                                 saccode: clients[0].saccode || '',
+                                wh_number:clients[0].wh_number || '',
 
                             }}
                             onSubmit={async (values, { resetForm }) => {
@@ -129,6 +130,7 @@ const Generalsettings = () => {
                                     saccode: values.saccode,
                                     invoicetnc: getTermandCon,
                                     id: user_id,
+                                    wh_number: values.wh_number,
 
                                 };
 
@@ -397,6 +399,24 @@ const Generalsettings = () => {
                                         </div>
 
                                         <div className="row mb-3 align-items-center">
+                                            <label htmlFor="wh_number" className="col-sm-3 col-form-label">
+                                                <b> WhatsApp No</b>
+                                            </label>
+                                            <div className="col-sm-9">
+                                                <div className="input-group">
+                                                    <span className="input-group-text">
+                                                        <i className="fadeIn animated bx bx-phone" />
+                                                    </span>
+                                                    <Field name="wh_number"
+                                                        type="text" className="form-control"
+                                                        placeholder="WhatsApp No"
+
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="row mb-3 align-items-center">
                                             <label htmlFor="invoicetnc" className="col-sm-3 col-form-label">
                                                 <b> T&C Message</b>
                                             </label>
@@ -423,6 +443,8 @@ const Generalsettings = () => {
 
                                             </div>
 
+                                            
+
                                             <div className="row">
                                                 <label className="col-sm-3 col-form-label" />
                                                 <div className="col-sm-9">
@@ -434,6 +456,8 @@ const Generalsettings = () => {
                                                 </div>
                                             </div>
                                         </div>
+
+                                        
                                     </Form>
                                 </>
                             )}
