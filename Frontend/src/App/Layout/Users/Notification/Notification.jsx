@@ -24,6 +24,7 @@ const Notification = () => {
     try {
       const data = { user_id: userid, page: currentPage };
       const response = await GetNotificationData(data, token);
+      console.log("response",response)
       if (response.status) {
         setNotificationData(response.data);
         setTotalPages(response.pagination.totalPages);
@@ -54,6 +55,8 @@ const Notification = () => {
       navigate("/user/trades")
     } else if (notification?.type === "close signal") {
       navigate("/user/trades", { state: { type: "closeSignal" } })
+    }else if(notification?.type === "add broadcast") {
+      navigate("/user/broadcast");
     }
   };
 
