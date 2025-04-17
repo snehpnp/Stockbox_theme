@@ -733,7 +733,7 @@ ul.breadcrumb-links li a {
   --accent-color: #54a5b3;
   --base-color: white;
   --text-color: #2e2b41;
-    --swiper-navigation-size: 25px !important;
+  --swiper-navigation-size: 25px !important;
 
   --input-color: #f3f0ff;
 }
@@ -1217,7 +1217,8 @@ li.fs-14 {
   fill: var(--BtnPriBgCol, red); /* Default color red */
 }
 
-.privacy-data p img ,.privacy-data  img {
+.privacy-data p img,
+.privacy-data img {
   width: 100%;
 }
 
@@ -1959,11 +1960,67 @@ span.price-original {
   background: linear-gradient(45deg, #ee0979, #ff6a00) !important;
 }
 .faq-content .accordion-item {
-  border: 1px solid  !important;
+  border: 1px solid !important;
   margin: 10px 0;
   border-radius: 2px !important;
   border-color: var(--BtnSecBorderColor, black) !important;
 }
 .dynamic-content {
   font-size: 14px;
+}
+
+.pricing-table .card {
+  -webkit-transition: all 0.2s;
+
+  -o-transition: all 0.2s;
+
+  transition: all 0.2s;
+
+  -webkit-border-radius: 15px;
+height: 100%;
+  border-radius: 15px;
+}
+
+.pricing-table .card .card-header {
+  border-top-left-radius: 15px;
+
+  border-top-right-radius: 15px;
+  background-color: var(--BtnPriBgCol, black) !important;
+  color: var(--BtnPriTxtCol, #fff) !important;
+  border-color: var(--BtnBorderColor, black) !important;
+}
+
+@media (min-width: 992px) {
+  .pricing-table .card:hover {
+    margin-top: -0.25rem;
+
+    margin-bottom: 0.25rem;
+
+    -webkit-box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.3);
+
+    box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.3);
+  }
+}
+
+.pricing-table .card .card-title {
+  font-size: 1rem;
+
+ 
+  font-weight: 500;
+}
+
+.pricing-table .card .card-price {
+  font-size: 2rem;
+}
+
+.pricing-table .card .card-price .term {
+  font-size: 0.875rem;
+}
+
+.pricing-table .card ul li.list-group-item {
+  border-bottom: 1px solid rgb(0 0 0 / 0%);
+
+  color: #3b3b3b;
+
+  font-size: 16px;
 }
