@@ -17,6 +17,7 @@ const Order_Modal = db.Order;
 const Signal_Modal = db.Signal;
 const Adminnotification_Modal = db.Adminnotification;
 const Basketorder_Modal = db.Basketorder;
+const Smstemplate_Modal = db.Smstemplate;
 
 
 const { sendSMS } = require('../../Utils/smsHelper');
@@ -198,9 +199,13 @@ class Clients {
         await sendEmail(mailOptions);
       });
 
-      if (req.headers.host === 'app.rmpro.in') {
+      if(settings.smsprovider =='1')
+      {
 
-        await sendSMS(result.PhoneNo,resetToken);
+        const smstemplate = await Smstemplate_Modal.findOne({ sms_type: "otp" });
+        let message = smstemplate.sms_body.replace(/{#var#}/g, resetToken);
+        let templateId = smstemplate.templateid;
+        await sendSMS(result.PhoneNo,message,templateId);
 
 
   return res.json({
@@ -411,9 +416,15 @@ class Clients {
         await sendEmail(mailOptions);
       });
 
-      if (req.headers.host === 'app.rmpro.in') {
 
-        await sendSMS(client.PhoneNo,resetToken);
+        if(settings.smsprovider =='1')
+          {
+    
+            const smstemplate = await Smstemplate_Modal.findOne({ sms_type: "otp" });
+            let message = smstemplate.sms_body.replace(/{#var#}/g, resetToken);
+            let templateId = smstemplate.templateid;
+            await sendSMS(client.PhoneNo,message,templateId);
+    
 
 
   return res.json({
@@ -1619,15 +1630,20 @@ if (mailtemplate) {
       });
 
 
-      if (req.headers.host === 'app.rmpro.in') {
+      if(settings.smsprovider =='1')
+        {
+          const client = await Clients_Modal.findOne({
+            Email: email,
+            del:0
+          });
 
-        const client = await Clients_Modal.findOne({
-          Email: email,
-          del:0
-        });
-
-        await sendSMS(client.PhoneNo,resetToken);
-
+          
+          const smstemplate = await Smstemplate_Modal.findOne({ sms_type: "otp" });
+          let message = smstemplate.sms_body.replace(/{#var#}/g, resetToken);
+          let templateId = smstemplate.templateid;
+          await sendSMS(client.PhoneNo,message,templateId);
+  
+    
 
   return res.json({
     status: true,

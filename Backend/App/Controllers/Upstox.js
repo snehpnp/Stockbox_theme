@@ -20,123 +20,121 @@ const fs = require('fs');
 
 class Upstox {
 
-    async GetAccessToken(req, res) {
-        try {
-            var tokenCode = req.query.code;
-            let email = decodeURIComponent(req.query.state || "");
-            email = email.replace(/\s/g, "+"); 
-            if (tokenCode != undefined) {
-
-                const client = await Clients_Modal.findOne({ Email: email,ActiveStatus:1,del:0 });
-
-                if (!client) {
-
-                    if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
-                        return res.status(404).json({
-                            status: false,
-                            message: "Client not found"
-                        });
-                   } else {
-                       // Web request
-                       const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                       return res.redirect(dynamicUrl);
+     async GetAccessToken(req, res) {
+           try {
+               var tokenCode = req.query.code;
+               let email = decodeURIComponent(req.query.state || "");
+               email = email.replace(/\s/g, "+"); 
+               if (tokenCode != undefined) {
+   
+                   const client = await Clients_Modal.findOne({ Email: email,ActiveStatus:1,del:0 });
+   
+                   if (!client) {
+   
+                    //   if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                           return res.status(404).json({
+                               status: false,
+                               message: "Client not found"
+                           });
+                   //    } else {
+                   //        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                   //        return res.redirect(dynamicUrl);
+                   //    }
+   
+                     
                    }
-
+   
+   
+                   var hosts = req.headers.host;
+   
+                   const requestData = new URLSearchParams();
+                   requestData.append("code", tokenCode);
+                   requestData.append("client_id", client.apikey);
+                   requestData.append("client_secret", client.apisecret);
+                   requestData.append("redirect_uri", `https://${hosts}/backend/upstox/getaccesstoken`); 
+                   requestData.append("grant_type", "authorization_code");
+                   const url = "https://api-v2.upstox.com/login/authorization/token";
+                   const headers = {
+                       Accept: "application/json",
+                       "Api-Version": "2.0",
+                       "Content-Type": "application/x-www-form-urlencoded",
+                   };
+           
+                   // Make the POST request
+                   const response = await axios.post(url, requestData.toString(), { headers });
+   
+                   if (response.data && response.data.access_token) {
+                      const auth_token = response.data.access_token;
+   
+                      const brokerlink = await Clients_Modal.findOneAndUpdate(
+                       {
+                           Email: email,
+                           del: 0,
+                           ActiveStatus: 1  
+                         },
+                       {
+                           authtoken: auth_token,  // Update authtoken
+                           dlinkstatus: 1,         // Update dlinkstatus
+                           tradingstatus: 1        // Update tradingstatus
+                       },
+                       {
+                           new: true,  // Return the updated document
+                           useFindAndModify: false // Prevent deprecation warning
+                       }
+                   );
+   
+   
+                  // if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                       return res.json({
+                           status: true,
+                           message: "Broker login successfully",
+                       });
+               //    } else {
+               //        // Web request
+               //        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+               //        return res.redirect(dynamicUrl);
+               //    }
+   
                   
-                }
-
-
-                var hosts = req.headers.host;
-
-                const requestData = new URLSearchParams();
-                requestData.append("code", tokenCode);
-                requestData.append("client_id", client.apikey);
-                requestData.append("client_secret", client.apisecret);
-                requestData.append("redirect_uri", `https://${hosts}/backend/upstox/getaccesstoken`); 
-                requestData.append("grant_type", "authorization_code");
-                const url = "https://api-v2.upstox.com/login/authorization/token";
-                const headers = {
-                    Accept: "application/json",
-                    "Api-Version": "2.0",
-                    "Content-Type": "application/x-www-form-urlencoded",
-                };
-        
-                // Make the POST request
-                const response = await axios.post(url, requestData.toString(), { headers });
-
-                if (response.data && response.data.access_token) {
-                   const auth_token = response.data.access_token;
-
-                   const brokerlink = await Clients_Modal.findOneAndUpdate(
-                    {
-                        Email: email,
-                        del: 0,
-                        ActiveStatus: 1  
-                      },
-                    {
-                        authtoken: auth_token,  // Update authtoken
-                        dlinkstatus: 1,         // Update dlinkstatus
-                        tradingstatus: 1        // Update tradingstatus
-                    },
-                    {
-                        new: true,  // Return the updated document
-                        useFindAndModify: false // Prevent deprecation warning
-                    }
-                );
-
-
-                if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
-                    return res.json({
-                        status: true,
-                        message: "Broker login successfully",
-                    });
-               } else {
-                   // Web request
-                   const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                   return res.redirect(dynamicUrl);
                }
-
-               
-            }
-            else {
-
-                if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
-                    return res.status(500).json({ status: false, message: response.data });
-               } else {
-                   // Web request
-                   const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                   return res.redirect(dynamicUrl);
+               else {
+   
+                 //  if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                       return res.status(500).json({ status: false, message: response.data });
+               //    } else {
+               //        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+               //        return res.redirect(dynamicUrl);
+               //    }
+   
+                  
                }
-
-               
-            }
-
-            } else {
-
-                if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
-                    return res.status(500).json({ status: false, message: "Server error" });
+   
                } else {
-                   // Web request
-                   const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                   return res.redirect(dynamicUrl);
+   
+                 //  if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                       return res.status(500).json({ status: false, message: "Server error" });
+               //    } else {
+               //        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+               //        return res.redirect(dynamicUrl);
+               //    }
+   
+                  
                }
-
-               
-            }
-        } catch (error) {
-
-            if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
-                return res.status(500).json({ status: false, message: error });
-
-           } else {
-               // Web request
-               const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-               return res.redirect(dynamicUrl);
+           } catch (error) {
+   
+             //  if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                   return res.status(500).json({ status: false, message: error });
+   
+           //    } else {
+           //        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+           //        return res.redirect(dynamicUrl);
+           //    }
+   
            }
-
-        }
-
-    }
+   
+       }
+   
+   
 
 
 
