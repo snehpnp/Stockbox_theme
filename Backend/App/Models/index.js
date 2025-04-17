@@ -58,6 +58,7 @@ module.exports = {
     Signalsdata :require("./Signalsdata"),
     Signalstock :require("./Signalstock"),
     Smstemplate: require("./Smstemplate"),
+    Smsprovider: require("./Smsprovider"),
 
 
     open_position:open_position,
