@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getSMSProvider, UpdateSMSTemplate } from '../../../Services/Admin/Admin';
+import { getSMSProvider, UpdateSMSProvider } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import { image_baseurl } from '../../../../Utils/config';
@@ -48,11 +48,14 @@ const SMSProvider = () => {
     }, [searchInput]);
 
 
-    const updateemaitemplate = async () => {
+    const updateemaiProvider = async () => {
         try {
-            const data = { id: updatetitle.id, templateid: updatetitle.templateid, sms_body: updatetitle.sms_body };
+            const data = {
+                id: updatetitle.id, name: updatetitle.name, username: updatetitle.username, password: updatetitle.password,
+                route: updatetitle.route, entity_id: updatetitle.entity_id, sender: updatetitle.sender, url: updatetitle.url, apikey: updatetitle.apikey
+            };
 
-            const response = await UpdateSMSTemplate(data, token);
+            const response = await UpdateSMSProvider(data, token);
 
             if (response && response.status) {
                 showCustomAlert("Success", 'Template updated successfully.')
@@ -131,46 +134,103 @@ const SMSProvider = () => {
                                         onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                                         onClick={() => {
                                             setModel(true);
-                                            setUpdatetitle({ templateid: client.templateid, id: client._id, sms_body: client.sms_body, });
+                                            setUpdatetitle({
+                                                apikey: client.apikey, id: client._id, name: client.name, username: client.username, password: client.password,
+                                                sender: client.sender, url: client.url, entity_id: client.entity_id, route: client.route
+                                            });
                                         }}
                                     >
                                         <SquarePen />
                                     </button>
                                     <form className="row g-3">
                                         <div className="col-md-12">
-                                            <label htmlFor={`smsType${index}`} className="form-label">
-                                                SMS Type
+                                            <label htmlFor={`name${index}`} className="form-label">
+                                                Name
                                             </label>
                                             <input
                                                 type="text"
                                                 className="form-control"
-                                                id={`smsType${index}`}
-                                                value={client.sms_type}
+                                                id={`name${index}`}
+                                                value={client.name}
                                             />
                                         </div>
-                                        <div className="col-md-12">
-                                            <label htmlFor={`templateid${index}`} className="form-label">
-                                                Template ID
+                                        {client.name === "pushsms" && <div className="col-md-12">
+                                            <label htmlFor={`username${index}`} className="form-label">
+                                                User Name
                                             </label>
                                             <input
                                                 type="text"
                                                 className="form-control"
-                                                id={`templateid${index}`}
-                                                value={client.templateid}
+                                                id={`username${index}`}
+                                                value={client.username}
                                             />
-                                        </div>
-
-                                        <div className="col-md-12">
-                                            <label htmlFor={`mailContent${index}`} className="form-label">
-                                                Mail
+                                        </div>}
+                                        {/* <div className="col-md-12">
+                                            <label htmlFor={`password${index}`} className="form-label">
+                                                Password
                                             </label>
-                                            <textarea
+                                            <input
+                                                type="text"
                                                 className="form-control"
-                                                id={`mailContent${index}`}
-                                                value={client.sms_body}
-                                                rows={3}
+                                                id={`password${index}`}
+                                                value={client.password}
+                                            />
+                                        </div> */}
+                                        <div className="col-md-12">
+                                            <label htmlFor={`apikey${index}`} className="form-label">
+                                                Auth Key
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id={`apikey${index}`}
+                                                value={client.apikey}
                                             />
                                         </div>
+                                        <div className="col-md-12">
+                                            <label htmlFor={`sender${index}`} className="form-label">
+                                                Sender
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id={`sender${index}`}
+                                                value={client.sender}
+                                            />
+                                        </div>
+                                        <div className="col-md-12">
+                                            <label htmlFor={`url${index}`} className="form-label">
+                                                Url
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id={`url${index}`}
+                                                value={client.url}
+                                            />
+                                        </div>
+                                        {client.name === "pushsms" && <div className="col-md-12">
+                                            <label htmlFor={`entity_id${index}`} className="form-label">
+                                                Entity Id
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id={`entity_id${index}`}
+                                                value={client.entity_id}
+                                            />
+                                        </div>}
+                                        {client.name !== "pushsms" && <div className="col-md-12">
+                                            <label htmlFor={`route${index}`} className="form-label">
+                                                Route
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id={`route${index}`}
+                                                value={client.route}
+                                            />
+                                        </div>}
                                     </form>
                                 </div>
                             </div>
@@ -186,33 +246,113 @@ const SMSProvider = () => {
                 body={
                     <div className="modal-body">
                         <form className="row g-3">
-
                             <div className="col-md-12">
-                                <label htmlFor="subject" className="form-label">
-                                    Template ID
+                                <label htmlFor="name" className="form-label">
+                                    Name
                                 </label>
                                 <input
                                     type="text"
                                     className="form-control"
-                                    id="templateid"
-                                    value={updatetitle.templateid}
-                                    onChange={(e) => updateServiceTitle({ templateid: e.target.value })}
+                                    id="name"
+                                    value={updatetitle.name}
+                                    disabled
+                                    onChange={(e) => updateServiceTitle({ name: e.target.value })}
 
                                 />
                             </div>
-
-                            <div className="col-md-12">
-                                <label htmlFor="mailContent" className="form-label">
-                                    SMS
+                            {updatetitle.name === "pushsms" && <div className="col-md-12">
+                                <label htmlFor="username" className="form-label">
+                                    User Name
                                 </label>
-                                <textarea
+                                <input
+                                    type="text"
                                     className="form-control"
-                                    id="mailContent"
-                                    rows={3}
-                                    value={updatetitle.sms_body}
-                                    onChange={(e) => updateServiceTitle({ sms_body: e.target.value })}
+                                    id="username"
+                                    value={updatetitle.username}
+                                    onChange={(e) => updateServiceTitle({ username: e.target.value })}
+
+                                />
+                            </div>}
+                            {/* <div className="col-md-12">
+                                <label htmlFor="password" className="form-label">
+                                    Password
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    id="password"
+                                    value={updatetitle.password}
+                                    onChange={(e) => updateServiceTitle({ password: e.target.value })}
+
+                                />
+                            </div> */}
+                            <div className="col-md-12">
+                                <label htmlFor="apikey" className="form-label">
+                                    Api Key
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    id="apikey"
+                                    value={updatetitle.apikey}
+                                    onChange={(e) => updateServiceTitle({ apikey: e.target.value })}
+
                                 />
                             </div>
+                            <div className="col-md-12">
+                                <label htmlFor="sender" className="form-label">
+                                    Sender
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    id="sender"
+                                    value={updatetitle.sender}
+                                    onChange={(e) => updateServiceTitle({ sender: e.target.value })}
+
+                                />
+                            </div>
+                            <div className="col-md-12">
+                                <label htmlFor="url" className="form-label">
+                                    Url
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    id="url"
+                                    value={updatetitle.url}
+                                    onChange={(e) => updateServiceTitle({ url: e.target.value })}
+
+                                />
+                            </div>
+                            {updatetitle.name === "pushsms" && <div className="col-md-12">
+                                <label htmlFor="entity_id" className="form-label">
+                                    Entity ID
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    id="entity_id"
+                                    value={updatetitle.entity_id}
+                                    onChange={(e) => updateServiceTitle({ entity_id: e.target.value })}
+
+                                />
+                            </div>}
+                            {updatetitle.name !== "pushsms" && <div className="col-md-12">
+                                <label htmlFor="entity_id" className="form-label">
+                                    Route
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    id="route"
+                                    value={updatetitle.route}
+                                    onChange={(e) => updateServiceTitle({ route: e.target.value })}
+
+                                />
+                            </div>}
+
+
                         </form>
 
 
@@ -223,7 +363,7 @@ const SMSProvider = () => {
                         <button type="button" className="btn btn-secondary" onClick={() => setModel(false)}>
                             Close
                         </button>
-                        <button type="button" className="btn btn-primary" onClick={updateemaitemplate}>
+                        <button type="button" className="btn btn-primary" onClick={updateemaiProvider}>
                             Update Temaplate
                         </button>
                     </>

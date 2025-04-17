@@ -3610,3 +3610,24 @@ export async function getSMSProvider(token) {
         return { error: err.response?.data || err.message };
     }
 }
+
+
+
+//  update Provider
+
+
+export async function UpdateSMSProvider(data, token) {
+    try {
+        const res = await axios.put(`${Config.base_url}smsprovider/update`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
