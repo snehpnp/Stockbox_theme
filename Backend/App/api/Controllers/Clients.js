@@ -689,6 +689,24 @@ class Clients {
     }
   }
 
+  
+  async clientDelete(req, res) {
+    try {
+     
+
+      return res.json({
+        status: true,
+        message: "Client deleted successfully",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: false,
+        message: "Server error",
+        error: error.message,
+      });
+    }
+  }
+
   async otpSubmit(req, res) {
     try {
       const { otp, email } = req.body;
@@ -1637,7 +1655,7 @@ if (mailtemplate) {
             del:0
           });
 
-          
+
           const smstemplate = await Smstemplate_Modal.findOne({ sms_type: "otp" });
           let message = smstemplate.sms_body.replace(/{#var#}/g, resetToken);
           let templateId = smstemplate.templateid;
