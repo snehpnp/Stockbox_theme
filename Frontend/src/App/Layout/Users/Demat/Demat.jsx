@@ -235,7 +235,6 @@ const Demat = () => {
     setViewModel(false);
   };
 
-  console.log("brokerData", brokerData)
 
   return (
     <div>

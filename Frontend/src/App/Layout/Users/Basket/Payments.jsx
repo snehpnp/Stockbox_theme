@@ -12,31 +12,13 @@ const Payments = () => {
 
     const token = localStorage.getItem("token");
     const userid = localStorage.getItem("id");
-
     const navigate = useNavigate();
-
-
     const location = useLocation();
-
     const key = location?.state?.key;
-
-
     const { state } = useLocation()
     const item = state?.item
-
     const [activeTab, setActiveTab] = useState("online");
-
-    const [gstStatus, setGstStatus] = useState()
-    const [onlinePaymentStatus, setOnlinePaymentStatus] = useState()
-    const [offlinePaymentStatus, setOfflinePaymentStatus] = useState()
-
-
-
-
-
-    const [getkey, setGetkey] = useState([]);
-    const [company, setCompany] = useState([]);
-    const [gstdata, setGstdata] = useState([]);
+    const [allKey, setAllKey] = useState([])
     const [bankdetail, setBankdetail] = useState([]);
     const [qrdata, setQrdata] = useState([]);
 
@@ -84,16 +66,9 @@ const Payments = () => {
     const getkeybydata = async () => {
         try {
             const response = await basicsettinglist();
-            // console.log("response.data[0]",response.data[0].razorpay_key);
 
             if (response.status) {
-                setGetkey(response?.data[0]?.razorpay_key);
-                setCompany(response?.data[0]?.from_name);
-                setGstdata(response?.data[0]?.gst);
-                setGstStatus(response.data[0].gststatus)
-                setOnlinePaymentStatus(response.data[0].paymentstatus)
-                setOfflinePaymentStatus(response.data[0].officepaymenystatus)
-
+                setAllKey(response.data[0])
             }
         } catch (error) {
             console.error("Error fetching coupons:", error);
@@ -109,12 +84,12 @@ const Payments = () => {
             }
 
             const price = item?.basket_price;
-            const finalAmount = Math.round(price * (1 + gstdata / 100) * 100);
+            const finalAmount = Math.round(price * (1 + allKey?.gst / 100) * 100);
 
             const options = {
-                key: getkey,
+                key: allKey.razorpay_key,
                 amount: finalAmount,
-                name: company,
+                name: allKey.from_name,
                 currency: "INR",
                 title: item?.title || "Subscription Basket",
                 handler: async function (response1) {
@@ -124,7 +99,7 @@ const Payments = () => {
                         price: finalAmount,
                         discount: 0,
                         orderid: response1?.razorpay_order_id || "",
-                        coupon:"",
+                        coupon: "",
                     };
 
                     try {
@@ -151,10 +126,10 @@ const Payments = () => {
     };
 
     useEffect(() => {
-        if (onlinePaymentStatus === 0 && activeTab === "online") {
+        if (allKey?.paymentstatus === 0 && activeTab === "online") {
             setActiveTab("offline");
         }
-    }, [onlinePaymentStatus, activeTab]);
+    }, [allKey?.paymentstatus, activeTab]);
 
 
     return (
@@ -168,7 +143,7 @@ const Payments = () => {
         >
             <ul className="nav nav-pills mb-3 justify-content-center border-bottom">
 
-                {!key && onlinePaymentStatus === 1 && (
+                {!key && allKey?.paymentstatus === 1 && (
                     <li className="nav-item">
                         <button
                             className={`nav-link ${activeTab === "online" ? "active btn-primary" : ""}`}
@@ -180,7 +155,7 @@ const Payments = () => {
                 )}
 
 
-                {offlinePaymentStatus === 1 && (
+                {allKey?.officepaymenystatus === 1 && (
                     <li className="nav-item">
                         <button
                             className={`nav-link ${activeTab === "offline" ? "active btn-primary" : ""}`}
@@ -192,7 +167,7 @@ const Payments = () => {
                 )}
             </ul>
 
-            {!key && activeTab === "online" && onlinePaymentStatus === 1 && (
+            {!key && activeTab === "online" && allKey?.paymentstatus === 1 && (
                 <div className="row justify-content-center mt-4">
                     <div className="col-md-6">
                         <div className="card">
@@ -202,21 +177,18 @@ const Payments = () => {
                                     <h6 className="card-title mb-0"><strong>Validity</strong></h6>
                                     <h6 className="card-title mb-0"><strong>{item?.validity} Month</strong></h6>
                                 </div>
-                                {/* <div className="d-md-flex justify-content-between">
-                                    <h6 className="card-title mb-0"><strong>{item?.title}</strong></h6>
-                                    <h6 className="card-title mb-0"><strong>₹  {item?.basket_price}</strong></h6>
-                                </div> */}
+                               
                                 <div className="d-md-flex justify-content-between py-2">
-                                    <h6 className="card-title mb-0"><strong>GST ({gstdata}%)</strong></h6>
-                                    <h6 className="card-title mb-0"><strong>₹ {(((item?.basket_price) * gstdata) / 100).toFixed(2)}</strong></h6>
+                                    <h6 className="card-title mb-0"><strong>GST ({allKey?.gst}%)</strong></h6>
+                                    <h6 className="card-title mb-0"><strong>₹ {(((item?.basket_price) * allKey?.gst) / 100).toFixed(2)}</strong></h6>
                                 </div>
                                 <div className="d-md-flex justify-content-between py-2 pb-3">
                                     <h6 className="card-title mb-0"><strong>Grand Total</strong></h6>
                                     <h6 className="card-title mb-0">
                                         <strong>
                                             ₹ {(
-                                                gstStatus === 1
-                                                    ? item?.basket_price + (item?.basket_price * gstdata) / 100
+                                                allKey?.gststatus === 1
+                                                    ? item?.basket_price + (item?.basket_price * allKey?.gst) / 100
                                                     : item?.basket_price
                                             ).toFixed(2)}
                                         </strong>
@@ -231,8 +203,8 @@ const Payments = () => {
                                     <span className="text-decoration-line-through text-light small mx-2">
                                         ₹ {item?.full_price}
                                     </span>
-                                    ₹ {(gstStatus === 1
-                                        ? (item?.basket_price + (item?.basket_price * gstdata) / 100)
+                                    ₹ {(allKey?.gstStatus === 1
+                                        ? (item?.basket_price + (item?.basket_price * allKey?.gst) / 100)
                                         : item?.basket_price
                                     ).toFixed(2)}
                                 </button>
@@ -243,7 +215,7 @@ const Payments = () => {
             )}
 
 
-            {offlinePaymentStatus === 1 && activeTab === "offline" && (
+            {allKey?.officepaymenystatus === 1 && activeTab === "offline" && (
                 <div className="row justify-content-center">
                     <div className="col-md-6">
                         <div className="card">
