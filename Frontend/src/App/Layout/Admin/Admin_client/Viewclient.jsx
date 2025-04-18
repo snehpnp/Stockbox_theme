@@ -14,7 +14,6 @@ import {
   GetService,
 } from "../../../Services/Admin/Admin";
 import {
-  fDate,
   fDateTime,
   fDateTimeH,
   fDateTimeSuffix,
@@ -41,7 +40,7 @@ const Viewclientdetail = () => {
 
   const [serviceList, setServiceList] = useState([]);
   const [searchstock, setSearchstock] = useState("");
-  const [ForGetCSV, setForGetCSV] = useState([]);
+  // const [ForGetCSV, setForGetCSV] = useState([]);
 
   const [searchInput, setSearchInput] = useState("");
   const [stockList, setStockList] = useState([]);

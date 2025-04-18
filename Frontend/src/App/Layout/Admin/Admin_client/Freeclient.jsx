@@ -92,7 +92,7 @@ const Freeclient = () => {
 
             }
         } catch (error) {
-            console.log("error")
+            console.log("error",error)
         }
         setIsLoading(false)
     }

@@ -58,11 +58,11 @@ const Dashbord = () => {
     try {
       const response = await GetClient(token);
       if (response.status) {
-        const topClients = response.data.slice(0, 5);
+        const topClients = response.data?.slice(0, 5);
         setClients(topClients);
       }
     } catch (error) {
-      console.log("error");
+      console.log("error",error);
     }
     setLoading(false)
   };

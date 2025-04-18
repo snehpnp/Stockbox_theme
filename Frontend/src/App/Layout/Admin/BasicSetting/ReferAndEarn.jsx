@@ -31,12 +31,16 @@ const ReferAndEarn = () => {
     getsettinglist();
   }, []);
 
-  const handleFieldChange = (fieldName, value, setFieldValue) => {
+const handleFieldChange = (fieldName, value, setFieldValue) => {
+  if (fieldName === "sender_earn" || fieldName === "receiver_earn") {
     if (value === "" || (Number(value) <= 100 && !isNaN(value))) {
       setFieldValue(fieldName, value);
     }
-    setIsChanged(true);
-  };
+  } else {
+    setFieldValue(fieldName, value);
+  }
+  setIsChanged(true);
+};
 
   if (!clients) {
     return <div><Loader /></div>;

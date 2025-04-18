@@ -373,7 +373,7 @@ const Staff = () => {
 
                                 {isLoading ? (
                                     <Loader />
-                                ) : clients.length > 0 ? (
+                                ) : clients?.length > 0 ? (
                                     <Table
                                         columns={columns}
                                         data={clients}
