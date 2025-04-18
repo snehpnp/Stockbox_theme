@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import Content from "../../../components/Contents/Content";
 import { Modal, Accordion, Form } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import {
   GetCategorylist,
   GetPlanByCategory,
@@ -315,7 +316,7 @@ const Service = () => {
 
   return (
     <Content Page_title="Service" button_title="Back" button_status={false}>
-      <div className="">
+      <div className="pricing-table">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <div className="row w-100">
 
@@ -365,20 +366,22 @@ const Service = () => {
           <Loader />
         ) : getFilteredPlans?.length > 0 ? (
           <div className="pricing-container price1 mt-4">
-            <div className="row row-cols-1 row-cols-md-1 row-cols-lg-2 row-cols-xl-2">
+
+<div className="row row-cols-1 row-cols-lg-3">
+  {/* Free Tier */}
+
               {getFilteredPlans?.map((item) =>
                 item?.plans?.length > 0 ? (
                   item?.plans?.map((plan, index) => (
-                    <div className="col col-lg-6 mb-4" key={`${item?._id}-${index}`}>
-                      <div className="card card1 mb-4 shadow h-100 mb-4 service-card">
-                        <div className="card-header">
-                          <div className="d-flex justify-content-between align-items-center">
-                            <div>
-                              <h5 className="mb-0">{item?.title}</h5>
-                            </div>
-
-                            <span className="price-original">
-                              {Array.isArray(item?.services) && item?.services?.length > 0
+  <div className="col mb-3" key={`${item?._id}-${index}`}>
+    <div className="card mb-5 mb-lg-0">
+      <div className="card-header  py-3">
+        <h5 className="card-title text-white text-uppercase text-center">
+        {item?.title}
+        </h5>
+        <h6 className="card-price text-white text-center">
+        {(plan?.price)?.toFixed(2)}
+       <span className="term"> {Array.isArray(item?.services) && item?.services?.length > 0
                                 ? item.services
                                   .map((service) =>
                                     typeof service.title === "string"
@@ -386,57 +389,18 @@ const Service = () => {
                                       : "N/A"
                                   )
                                   .join(" + ")
-                                : "N/A"}
-                            </span>
-
-                          </div>
-                        </div>
-                        <div className="card-body pb-0">
-
-
-                          <div className="row">
-                            <div className="col-md-6">
-                              <b>Price</b>:   <IndianRupee style={{ width: '15px', margin: '0' }} /> {(plan?.price)?.toFixed(2)}
-
-
-                            </div>
-                            <div className="col-md-6">
-
-                              <b>Validity</b>: {plan?.validity}
-
-                            </div>
-
-                          </div>
-
-                          {/* <div className="d-flex align-items-center justify-content-between">
-                            <div>
-                              <b>Price:</b>
-                            </div>
-                            <div className="price">
-                              <span className="price-current">
-                                <IndianRupee /> {plan?.price}
-                              </span>
-                            </div>
-                          </div> */}
-                          <ul className="features">
-                            {/* <li>
-                              <b>Validity</b>: {plan?.validity}
-                            </li> */}
-                            {/* <li>
-                              <b>Description</b>:
-                              <p>
-                                {(() => {
-                                  const text = stripHtmlTags(plan?.description || "");
-                                  const words = text.split(" ");
-                                  return words.length > 20
-                                    ? words.slice(0, 20).join(" ") + "....."
-                                    : text;
-                                })()}
-                              </p>
-                            </li> */}
-                            <li>
-                              <b>Description</b>:
-                              <p style={{ minHeight: "3em", overflow: "hidden" }}>
+                                : "N/A"}</span>
+        </h6>
+      </div>
+      <div className="card-body">
+        <ul className="list-group list-group-flush">
+          <li className="list-group-item">
+            <i className="bx bx-check me-2 font-18" />
+           Validity: {plan?.validity}
+          </li>
+    
+          <li className="list-group-item text-secondary">
+          <p style={{ minHeight: "3em", overflow: "hidden" }}>
                                 {(() => {
                                   const text = stripHtmlTags(plan?.description || "");
                                   const words = text.split(" ");
@@ -448,25 +412,25 @@ const Service = () => {
                                     : text.padEnd(100, " "); // To give placeholder space
                                 })()}
                               </p>
-                              <button
-                              className="btn btn-sm border-0 text-decoration-underline btn-secondary rounded-pill mt-2 mt-sm-0 me-2 me-sm-0"
+                              <Link
+                              className=" text-decoration-underline  "
                               onClick={() => {
                                 setViewModel(true);
                                 setDiscription(plan?.description);
                               }}
                             >
                               Know More...
-                            </button>
-                            </li>
-
-                          </ul>
-                          <div className="border-top pt-3">
-                            <button
+                            </Link>
+          </li>
+        </ul>
+        
+        <div className="border-top pt-3">
+                            <Link to="/user/cart"
                               className="btn btn-secondary  rounded-pill mt-2 mt-sm-0 me-2 me-sm-0"
                             
                             >
                               Add to cart
-                            </button>
+                            </Link>
 
                             <button
                               className="btn btn-primary rounded-pill mt-2 mt-sm-0 ms-3"
@@ -475,14 +439,123 @@ const Service = () => {
                               Subscribe Now
                             </button>
                           </div>
+      </div>
+    </div>
+  </div>
+   ))
+  ) : null
+)}
+  {/* Plus Tier */}
+  {/* <div className="col">
+    <div className="card mb-5 mb-lg-0">
+      <div className="card-header bg-primary py-3">
+        <h5 className="card-title text-white text-uppercase text-center">
+          Plus
+        </h5>
+        <h6 className="card-price text-white text-center">
+          $9<span className="term">/month</span>
+        </h6>
+      </div>
+      <div className="card-body">
+        <ul className="list-group list-group-flush">
+          <li className="list-group-item">
+            <i className="bx bx-check me-2 font-18" />
+            Single User
+          </li>
+          <li className="list-group-item">
+            <i className="bx bx-check me-2 font-18" />
+            5GB Storage
+          </li>
+          <li className="list-group-item">
+            <i className="bx bx-check me-2 font-18" />
+            Unlimited Public Projects
+          </li>
+          <li className="list-group-item">
+            <i className="bx bx-check me-2 font-18" />
+            Community Access
+          </li>
+          <li className="list-group-item">
+            <i className="bx bx-check me-2 font-18" />
+            Unlimited Private Projects
+          </li>
+          <li className="list-group-item">
+            <i className="bx bx-check me-2 font-18" />
+            Dedicated Phone Support
+          </li>
+          <li className="list-group-item">
+            <i className="bx bx-check me-2 font-18" />
+            Free Subdomain
+          </li>
+          <li className="list-group-item text-secondary">
+            <i className="bx bx-x me-2 font-18" />
+            Monthly Status Reports
+          </li>
+        </ul>
+        <div className="d-grid">
+          {" "}
+          <a href="#" className="btn btn-primary my-2 radius-30">
+            Order Now
+          </a>
+        </div>
+      </div>
+    </div>
+  </div> */}
+  {/* Pro Tier */}
+  {/* <div className="col">
+    <div className="card">
+      <div className="card-header bg-warning py-3">
+        <h5 className="card-title text-dark text-uppercase text-center">Pro</h5>
+        <h6 className="card-price text-center">
+          $49<span className="term">/month</span>
+        </h6>
+      </div>
+      <div className="card-body">
+        <ul className="list-group list-group-flush">
+          <li className="list-group-item">
+            <i className="bx bx-check me-2 font-18" />
+            Single User
+          </li>
+          <li className="list-group-item">
+            <i className="bx bx-check me-2 font-18" />
+            5GB Storage
+          </li>
+          <li className="list-group-item">
+            <i className="bx bx-check me-2 font-18" />
+            Unlimited Public Projects
+          </li>
+          <li className="list-group-item">
+            <i className="bx bx-check me-2 font-18" />
+            Community Access
+          </li>
+          <li className="list-group-item">
+            <i className="bx bx-check me-2 font-18" />
+            Unlimited Private Projects
+          </li>
+          <li className="list-group-item">
+            <i className="bx bx-check me-2 font-18" />
+            Dedicated Phone Support
+          </li>
+          <li className="list-group-item">
+            <i className="bx bx-check me-2 font-18" />
+            Free Subdomain
+          </li>
+          <li className="list-group-item">
+            <i className="bx bx-check me-2 font-18" />
+            Monthly Status Reports
+          </li>
+        </ul>
+        <div className="d-grid">
+          {" "}
+          <a href="#" className="btn btn-warning my-2 radius-30">
+            Order Now
+          </a>
+        </div>
+      </div>
+    </div>
+  </div> */}
+</div>
 
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : null
-              )}
-            </div>
+          
           </div>
         ) : (
           <div className="text-center mt-4">
