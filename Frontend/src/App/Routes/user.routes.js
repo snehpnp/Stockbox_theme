@@ -37,6 +37,7 @@ import Disclaimer from "../Layout/Users/Discliamer/Disclaimer";
 import BlogDetail from "../Layout/Users/Blogs/BlogDetail";
 import ThankYou from "../Layout/Users/Basket/ThankYou";
 import Strategy from "../Layout/Users/Strategy/Strategy";
+import Cart from "../Layout/Users/Cart/Cart";
 
 export default function App() {
   return (
@@ -78,6 +79,7 @@ export default function App() {
       <Route path="/disclaimer" element={<Disclaimer />} />
       <Route path="/strategy" element={<Strategy />} />
       <Route path="/thankyou" element={<ThankYou />} />
+      <Route path="/cart" element={<Cart />} />
     </Routes>
   );
 }

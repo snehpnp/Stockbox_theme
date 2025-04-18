@@ -123,11 +123,11 @@ function Trade() {
     getnsedata()
   }, [selectedService]);
 
-  useEffect(()=>{
-    if(signalType){
+  useEffect(() => {
+    if (signalType) {
       setSelectedTab("close")
     }
-  },[])
+  }, [])
 
 
 
@@ -719,7 +719,7 @@ function Trade() {
         //       : ""}
         //   </span>
         // }
-        
+
         body={
           <form className="row g-3">
             <div className="col-md-12">

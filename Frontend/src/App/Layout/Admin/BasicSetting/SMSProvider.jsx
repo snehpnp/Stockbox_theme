@@ -157,6 +157,7 @@ const SMSProvider = () => {
                                                 id={`rating_${client?._id}`}
                                                 className="form-check-input toggleswitch"
                                                 type="checkbox"
+                                                disabled={client?.status == 1}
                                                 checked={client?.status == 1}
                                                 onChange={() => handleSwitchChange(client)}
 
