@@ -1721,6 +1721,7 @@ ul.mb-3.border-tab.nav.nav-tabs {
 }
 .basket-chart-data canvas {
   height: 350px !important;
+  width: 1150px !important;
 }
 .chart-tab {
   /* width: 245px; */
