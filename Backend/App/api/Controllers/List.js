@@ -3182,6 +3182,10 @@ class List {
       let profitCount = 0;
       let lossCount = 0;
       let avgreturnpermonth = 0;
+      let totalpercentagecountavarage = 0;
+      let totalpercentagecount = 0;
+      let signalper = 0;
+      let totalDaysOfAllSignals = 0; // ✅ Declare outside the loop
 
       const [firstSignal, lastSignal] = await Promise.all([
         Signal_Modal.findOne({
@@ -3252,7 +3256,37 @@ class List {
             lossCount++;
           }
         }
+
+
+        if (signal.created_at && signal.closedate) { // ✅ Ensure correct field name
+          const createdDate = new Date(signal.created_at);
+          const closeDate = new Date(signal.closedate); // ✅ Corrected field name
+        
+          let signalDays = Math.ceil((closeDate - createdDate) / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+        
+          if (isNaN(signalDays) || signalDays < 1) {
+            signalDays = 1; // ✅ Ensure at least 1 day is counted
+          }
+        
+          totalDaysOfAllSignals += signalDays; // ✅ Accumulate instead of resetting
+        
+        if(signal.calltype=="BUY")
+          {
+           signalper = (signal.closeprice - signal.price) / signal.price * 100;
+           
+          }
+          else{
+            signalper = (signal.price - signal.closeprice) / signal.price * 100;
+          
+          }
+          totalpercentagecount = signalper + totalpercentagecount;
+        }
+
+
       });
+
+      totalpercentagecountavarage = totalpercentagecount / count;
+
 
       const accuracy = (profitCount / count) * 100;
       const avgreturnpertrade = (totalProfit - totalLoss) / count;
@@ -3263,6 +3297,10 @@ class List {
         avgreturnpermonth = totalProfit - totalLoss;
       }
 
+
+      const avgDaysPerSignal = count > 0 
+  ? Math.round(totalDaysOfAllSignals / count) 
+  : 1;  
 
       return res.json({
         status: true,
@@ -3275,7 +3313,10 @@ class List {
           lossCount: lossCount || 0,
           accuracy: accuracy || 0,
           avgreturnpertrade: avgreturnpertrade || 0,
-          avgreturnpermonth: avgreturnpermonth || 0
+          avgreturnpermonth: avgreturnpermonth || 0,
+          totalpercentagecountavarage,
+          avgDaysPerSignal,
+
         }
       });
     } catch (error) {
@@ -3523,9 +3564,9 @@ class List {
 
 
 
-      const result = await BasicSetting_Modal.findOne()
-        .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst gststatus base_url color1 color2 color3 color4 popupstatus popupcontent refersendmsg')
-        .exec();
+   const result = await BasicSetting_Modal.findOne()
+  .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst gststatus base_url color1 color2 color3 color4 popupstatus popupcontent refersendmsg wh_number')
+  .exec();
 
       if (result) {
         result.logo = `${baseUrl}/uploads/basicsetting/${result.logo}`;

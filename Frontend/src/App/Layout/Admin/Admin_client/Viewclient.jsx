@@ -36,6 +36,7 @@ const Viewclientdetail = () => {
   const [service, setService] = useState([]);
   const [clients, setClients] = useState([]);
 
+
   const [viewMode, setViewMode] = useState("plan");
 
   const [serviceList, setServiceList] = useState([]);
@@ -50,7 +51,7 @@ const Viewclientdetail = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [description, setDescription] = useState([])
-
+  const [titename, setTilename] = useState([])
 
 
   const [filters, setFilters] = useState({
@@ -65,64 +66,37 @@ const Viewclientdetail = () => {
   };
 
   useEffect(() => {
-    getPlanDetail();
-    getClientDetail();
+    if (viewMode === "signal") {
+
+      fetchAdminServices();
+    }
     getclientservice();
-    fetchAdminServices();
-  }, []);
+    fetchAllClientData()
+  }, [viewMode]);
 
 
 
-  const getCategoryTitle = async (categoryId) => {
+  const fetchAllClientData = async () => {
     try {
-      const response = await getcategoryplan(token);
-      if (response.status) {
-        const category = response.data.find((item) => item._id === categoryId);
-        return category ? category.title : "-";
+
+      const categoryResponse = await getcategoryplan(token);
+      if (categoryResponse.status) {
+        setTilename(categoryResponse.data);
+      }
+
+
+      const planResponse = await clientplandatabyid(id, token);
+      if (planResponse.status) {
+        setData(planResponse.data);
+      }
+
+
+      const clientResponse = await clientdetailbyid(id, token);
+      if (clientResponse.status) {
+        setClient([clientResponse.data]);
       }
     } catch (error) {
-      console.error("Error fetching category title:", error);
-    }
-    return "-";
-  };
-
-
-
-
-  const getPlanDetail = async () => {
-    try {
-      const response = await clientplandatabyid(id, token);
-      if (response.status) {
-        const plansWithTitles = await Promise.all(
-          response.data.map(async (plan) => {
-            const categoryId = plan.planDetails?.category;
-            if (categoryId) {
-              const categoryTitle = await getCategoryTitle(categoryId);
-              return { ...plan, categoryTitle };
-            }
-            return plan;
-          })
-        );
-
-        setData(plansWithTitles);
-      }
-    } catch (error) {
-      console.error("Error fetching plan details:", error);
-    }
-  };
-
-
-
-
-  const getClientDetail = async () => {
-    try {
-      const response = await clientdetailbyid(id, token);
-
-      if (response.status) {
-        setClient([response.data]);
-      }
-    } catch (error) {
-      console.error("Error fetching client details:", error);
+      console.error("Error fetching all client data:", error);
     }
   };
 
@@ -257,8 +231,11 @@ const Viewclientdetail = () => {
   };
 
   useEffect(() => {
-    getAllSignal();
-  }, [filters, searchInput, searchstock, currentPage]);
+    if (viewMode === "signal") {
+      getAllSignal();
+    }
+
+  }, [filters, viewMode, searchInput, searchstock, currentPage]);
 
 
 
@@ -282,12 +259,16 @@ const Viewclientdetail = () => {
     },
     {
       name: "Plan Name",
-      selector: (row) => row.categoryTitle || "-",
+      selector: (row) => {
+        const matchedItem = titename.find((item) => item._id === row?.planDetails?.category);
+        return matchedItem ? matchedItem.title : "-";
+      },
       width: "180px",
     },
+
     {
       name: "Amount",
-      selector: (row) => <>  <IndianRupee style={{width:"16px"}}/>  {(row.plan_price).toFixed(2) ?? "-"} </>,
+      selector: (row) => <>  <IndianRupee style={{ width: "16px" }} />  {(row.plan_price)?.toFixed(2) ?? "-"} </>,
       width: "189px",
     },
     {
@@ -382,7 +363,7 @@ const Viewclientdetail = () => {
     },
     {
       name: "Quantity/Lot",
-      selector: (row) => row.lot?row.lot:"-",
+      selector: (row) => row.lot ? row.lot : "-",
       sortable: true,
       width: "200px",
     },
@@ -391,7 +372,7 @@ const Viewclientdetail = () => {
       selector: (row) => (
         <div>
           {" "}
-          <IndianRupee style={{width:"16px"}}/>
+          <IndianRupee style={{ width: "16px" }} />
           {row.price}
         </div>
       ),
@@ -405,7 +386,7 @@ const Viewclientdetail = () => {
         <div>
           {row?.closeprice ? (
             <>
-              <IndianRupee style={{width:"16px"}}/>
+              <IndianRupee style={{ width: "16px" }} />
               {row.closeprice}
             </>
           ) : (
@@ -415,7 +396,7 @@ const Viewclientdetail = () => {
       ),
       sortable: true,
       width: "132px",
-    },    
+    },
     {
       name: "Entry Date",
       selector: (row) => fDateTimeH(row?.created_at),

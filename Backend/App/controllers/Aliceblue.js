@@ -29,22 +29,17 @@ class Aliceblue {
             if (!client) {
 
 
-                if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+             //   if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
                     return res.status(404).json({
                         status: false,
                         message: "Client not found"
                     });
-                } else {
-                    // Web request
-                    const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                    return res.redirect(dynamicUrl);
-                }
+                // } else {
+                //     const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                //     return res.redirect(dynamicUrl);
+                // }
 
 
-                // return res.status(404).json({
-                //     status: false,
-                //     message: "Client not found"
-                // });
             }
 
             // Check for authCode in the request
@@ -70,7 +65,13 @@ class Aliceblue {
                     const response = await axios(config);
                     // Check if the response status is not OK
                     if (response.data.stat === "Not_ok") {
+
+                    //  if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
                         return res.status(500).json({ status: false, message: response.data.emsg });
+                         // } else {
+                        //     const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                        //     return res.redirect(dynamicUrl);
+                        // }
                     }
 
                     // If userSession exists, update the client's data
@@ -85,21 +86,16 @@ class Aliceblue {
                             { new: true }  // Return the updated document
                         );
 
-                        // return res.json({
-                        //     status: true,
-                        //     message: "Broker login successfully",
-                        // });
-
-                        if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                       
+                       // if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
                             return res.json({
                                 status: true,
                                 message: "Broker login successfully",
                             });
-                        } else {
-                            // Web request
-                            const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                            return res.redirect(dynamicUrl);
-                        }
+                        // } else {
+                        //     const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                        //     return res.redirect(dynamicUrl);
+                        // }
 
 
 
@@ -108,41 +104,35 @@ class Aliceblue {
                 } catch (error) {
 
 
-                    if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                  //  if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
                         return res.status(500).json({ status: false, message: "Server error" });
-                    } else {
-                        // Web request
-                        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                        return res.redirect(dynamicUrl);
-                    }
+                    // } else {
+                    //     const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                    //     return res.redirect(dynamicUrl);
+                    // }
 
-                    //return res.status(500).json({ status: false, message: "Server error" });
                 }
 
             } else {
 
-                if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+              //  if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
                     return res.status(400).json({ status: false, message: "authCode is required" });
-                } else {
-                    // Web request
-                    const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                    return res.redirect(dynamicUrl);
-                }
+                // } else {
+                //     const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                //     return res.redirect(dynamicUrl);
+                // }
 
-               // return res.status(400).json({ status: false, message: "authCode is required" });
             }
         } catch (error) {
 
-            if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+         //   if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
                 return res.status(500).json({ status: false, message: error.message || "Server error" });
-            } else {
-                // Web request
-                const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                return res.redirect(dynamicUrl);
-            }
+            // } else {
+            //     const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+            //     return res.redirect(dynamicUrl);
+            // }
 
 
-          //  return res.status(500).json({ status: false, message: error.message || "Server error" });
         }
     }
 

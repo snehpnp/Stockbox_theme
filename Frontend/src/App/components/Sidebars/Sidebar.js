@@ -44,7 +44,9 @@ import {
   Puzzle,
   Handshake,
   ClipboardX,
-  GitCompare
+  GitCompare,
+  MessageCircle,
+  CircleFadingArrowUp
 } from "lucide-react";
 
 import { Link, useLocation } from "react-router-dom";
@@ -336,7 +338,9 @@ const IconComponent = ({ icon }) => {
     Puzzle,
     Handshake,
     ClipboardX,
-    GitCompare
+    GitCompare,
+    MessageCircle,
+    CircleFadingArrowUp
 
   };
 

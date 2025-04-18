@@ -84,6 +84,8 @@ import ReferAndEarnlist from "../Layout/Admin/BasicSetting/ReferAndEarnlist";
 import PlanExpirymonthDetail from "../Layout/Admin/PlanExpiryMonth/PlanExpirymonthDetail";
 import SignalStrategy from "../Layout/Admin/Admin_signal/SignalStrategy";
 import PopupDescription from "../Layout/Admin/BasicSetting/PopupDescription";
+import SmsTemplate from "../Layout/Admin/BasicSetting/SmsTemplate";
+import SMSProvider from "../Layout/Admin/BasicSetting/SMSProvider";
 
 
 
@@ -160,6 +162,8 @@ export default function App() {
       <Route path="/paymentgeteway" element={<Payementgateway />} />
       <Route path="/emailsetting" element={<Emailsettings />} />
       <Route path="/emailtemplate" element={<Emailtemplate />} />
+      <Route path="/smstemplate" element={<SmsTemplate />} />
+      <Route path="/smsprovider" element={<SMSProvider />} />
       <Route path="/referandearn" element={<ReferAndEarn />} />
       <Route path="/autosquareoff" element={<Autosquareoff />} />
       <Route path="/popupdescription" element={<PopupDescription />} />

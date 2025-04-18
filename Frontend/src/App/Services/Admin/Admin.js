@@ -1874,6 +1874,7 @@ export async function Updatebasicsettings(data, token) {
     formData.append('state', data.state);
     formData.append('invoicetnc', data.invoicetnc);
     formData.append('saccode', data.saccode);
+    formData.append('wh_number', data.wh_number);
 
 
 
@@ -3538,6 +3539,108 @@ export async function popupdescription(data, token) {
         const res = await axios.post(`${Config.base_url}basicsetting/add`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// get sms template 
+
+
+export async function getSMStemplate(token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}smstemplate/list`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return { error: err.response?.data || err.message };
+    }
+}
+
+
+
+// update SMS template 
+
+//  update template 
+
+
+export async function UpdateSMSTemplate(data, token) {
+    try {
+        const res = await axios.put(`${Config.base_url}smstemplate/update`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// get sms Provider
+
+
+export async function getSMSProvider(token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}smsprovider/list`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return { error: err.response?.data || err.message };
+    }
+}
+
+
+
+//  update Provider
+
+
+export async function UpdateSMSProvider(data, token) {
+    try {
+        const res = await axios.put(`${Config.base_url}smsprovider/update`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// provide status 
+
+export async function UpdateSMSProviderStatus(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}smsprovider/changestatus`, data, {
+            headers: {
+                data: {},
                 'Authorization': `${token}`,
             },
         });

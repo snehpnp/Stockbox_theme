@@ -213,47 +213,26 @@ const BasketDetail = () => {
             <div className="card-body">
               <div className="chart-tab">
                 <ul className="nav nav-pills justify-content-end " role="tablist">
-
                   <li className="nav-item">
-
                     <a className="nav-link active" data-bs-toggle="pill" onClick={() => setLimitData(5)}>
-
                       5D
-
                     </a>
-
                   </li>
-
                   <li className="nav-item">
-
                     <a className="nav-link" data-bs-toggle="pill" onClick={() => setLimitData(30)}>
-
                       1M
-
                     </a>
-
                   </li>
-
                   <li className="nav-item">
-
                     <a className="nav-link" data-bs-toggle="pill" onClick={() => setLimitData(183)}>
-
                       6M
-
                     </a>
-
                   </li>
-
                   <li className="nav-item">
-
                     <a className="nav-link" data-bs-toggle="pill" onClick={() => setLimitData(100000)}>
-
                       Max
-
                     </a>
-
                   </li>
-
                 </ul>
               </div>
 
