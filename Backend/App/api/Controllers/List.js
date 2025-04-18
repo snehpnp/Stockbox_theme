@@ -8963,6 +8963,202 @@ async countSignalStatus(req, res) {
     res.status(500).json({ error: "Something went wrong" });
   }
 }
+async PlanExpire(req, res) {
+  try {
+    const { client_id } = req.body;
+    if (!client_id) {
+      return res.status(400).json({ message: "client_id is required" });
+    }
+
+    // 1) Normalize to UTC-midnight
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+
+    // 2) Build yesterday, today, +3 days ranges
+    const yesterday = new Date(currentDate);
+    yesterday.setDate(currentDate.getDate() - 1);
+    const today = new Date(currentDate);
+    const day3 = new Date(currentDate);
+    day3.setDate(currentDate.getDate() + 3);
+
+    const ranges = [
+      { diff: -1, start: new Date(yesterday), end: new Date(yesterday.setHours(23, 59, 59, 999)) },
+      { diff:  0, start: new Date(today),     end: new Date(today.setHours(23, 59, 59, 999)) },
+      { diff:  3, start: new Date(day3),      end: new Date(day3.setHours(23, 59, 59, 999)) }
+    ];
+
+    // 3) Fetch matching plans
+    const orConds = ranges.map(r => ({
+      clientid: client_id,
+      enddate:  { $gte: r.start, $lte: r.end }
+    }));
+    const plans = await Planmanage.find({ $or: orConds });
+    if (!plans.length) {
+      return res.json({ message: "No plans expiring yesterday, today, or in 3 days.",status: false  });
+    }
+
+    // 4) Fetch client
+    const client = await Clients_Modal.findById(client_id);
+    if (!client) {
+      return res.status(404).json({ message: "Client not found",status: false  });
+    }
+
+    // 5) Group service names by diffInDays
+    const groups = {}; // diff => Set(serviceName)
+    for (const plan of plans) {
+      const endMid = new Date(plan.enddate);
+      endMid.setHours(0, 0, 0, 0);
+      const diff = Math.floor((endMid - currentDate) / (1000 * 60 * 60 * 24));
+
+      let svc = "UNKNOWN";
+      if (plan.serviceid === "66d2c3bebf7e6dc53ed07626") svc = "CASH";
+      else if (plan.serviceid === "66dfeef84a88602fbbca9b79") svc = "OPTION";
+      else svc = "FUTURE";
+
+      groups[diff] = groups[diff] || new Set();
+      groups[diff].add(svc);
+    }
+
+    // helper to join ["A","B","C"] => "A, B, and C"
+    const joinNames = arr => {
+      if (arr.length === 1) return arr[0];
+      if (arr.length === 2) return `${arr[0]} and ${arr[1]}`;
+      const last = arr.pop();
+      return `${arr.join(', ')}, and ${last}`;
+    };
+
+    // 6) Build messages
+    const reminders = [];
+    for (const diffKey of Object.keys(groups)) {
+      const diff = Number(diffKey);
+      const names = Array.from(groups[diff]);
+      const combo = joinNames([...names]);
+      const plural = names.length > 1;
+
+      let msg = "";
+      if (diff === 3) {
+        msg = plural
+          ? `Only 3 days left! Your ${combo} Segment plans are about to expire. Renew now to avoid any disruption.`
+          : `Only 3 days left! Your ${combo} Segment plan is about to expire. Renew now to avoid any disruption.`;
+      } else if (diff === 0) {
+        msg = plural
+          ? `Your ${combo} Segment plans expire today. Don’t miss out—renew now to continue enjoying uninterrupted access!`
+          : `Your ${combo} Segment plan expires today. Don’t miss out—renew now to continue enjoying uninterrupted access!`;
+      } else if (diff === -1) {
+        msg = plural
+          ? `Oops! ${combo} Segment plans expired yesterday. Let’s get you back on track—renew now and stay connected.`
+          : `Oops! ${combo} Segment plan expired yesterday. Let’s get you back on track—renew now and stay connected.`;
+      }
+
+      if (msg) reminders.push(msg);
+    }
+
+    // 7) Return
+    return res.json({ reminders,status: true });
+
+  } catch (error) {
+    console.error("PlanExpire error:", error);
+    return res.status(500).json({ message: "Server Error", error,status: false });
+  }
+}
+
+// Required imports
+
+async PlanSubscriptionExpire(req, res) {
+  try {
+    const { client_id } = req.body;
+    if (!client_id) {
+      return res.status(400).json({ message: "client_id is required",status: false });
+    }
+
+    const clientObjectId = new ObjectId(client_id);
+
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+
+    const yesterday = new Date(currentDate);
+    yesterday.setDate(currentDate.getDate() - 1);
+
+    const today = new Date(currentDate);
+
+    const day3 = new Date(currentDate);
+    day3.setDate(currentDate.getDate() + 3);
+
+    const dateRanges = [
+      { label: "yesterday", start: new Date(yesterday), end: new Date(yesterday.setHours(23, 59, 59, 999)) },
+      { label: "today",     start: new Date(today),     end: new Date(today.setHours(23, 59, 59, 999)) },
+      { label: "day3",      start: new Date(day3),      end: new Date(day3.setHours(23, 59, 59, 999)) }
+    ];
+
+    const orConditions = dateRanges.map(range => ({
+      client_id: clientObjectId,
+      plan_end: { $gte: range.start, $lte: range.end }
+    }));
+
+    const subs = await PlanSubscription_Modal.find({ $or: orConditions });
+    if (!subs.length) {
+      return res.json({ message: "No subscriptions expiring in the given range.",status: false });
+    }
+
+    const client = await Clients_Modal.findById(clientObjectId);
+    if (!client) {
+      return res.status(404).json({ message: "Client not found",status: false });
+    }
+
+    // Group plans by diffInDays
+    const groupedPlans = {
+      "-1": [],
+      "0": [],
+      "3": []
+    };
+
+    for (const plan of subs) {
+      const planEndMid = new Date(plan.plan_end);
+      planEndMid.setHours(0, 0, 0, 0);
+
+      const diffInDays = Math.floor((planEndMid - currentDate) / (1000 * 60 * 60 * 24));
+
+      const cat = await Plancategory_Modal.findById(plan.plan_category_id);
+      const planName = cat ? cat.title.toUpperCase() : "Unknown";
+
+      if (["-1", "0", "3"].includes(diffInDays.toString())) {
+        groupedPlans[diffInDays].push(planName);
+      }
+    }
+
+    const reminders = [];
+
+    const formatPlans = (plans) => {
+      if (plans.length === 1) return plans[0];
+      if (plans.length === 2) return `${plans[0]} and ${plans[1]}`;
+      return `${plans.slice(0, -1).join(", ")}, and ${plans[plans.length - 1]}`;
+    };
+
+    if (groupedPlans["3"].length > 0) {
+      const plans = formatPlans(groupedPlans["3"]);
+      reminders.push(`Only 3 days left! Your ${plans} plan${groupedPlans["3"].length > 1 ? "s" : ""} are about to expire. Renew now to avoid any disruption.`);
+    }
+
+    if (groupedPlans["0"].length > 0) {
+      const plans = formatPlans(groupedPlans["0"]);
+      reminders.push(`Your ${plans} plan${groupedPlans["0"].length > 1 ? "s" : ""} expire today. Don’t miss out—renew now to continue enjoying uninterrupted access!`);
+    }
+
+    if (groupedPlans["-1"].length > 0) {
+      const plans = formatPlans(groupedPlans["-1"]);
+      reminders.push(`Oops! Your ${plans} plan${groupedPlans["-1"].length > 1 ? "s" : ""} expired yesterday. Let’s get you back on track—renew now and stay connected.`);
+    }
+
+    return res.json({ reminders,status: false });
+
+  } catch (err) {
+    console.error("PlanSubscriptionExpire error:", err);
+    return res.status(500).json({ message: "Server Error", error: err.message,status: false });
+  }
+}
+
+
+
 
 
 }
