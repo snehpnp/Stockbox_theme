@@ -482,8 +482,14 @@ function Trade() {
             <div className="col-md-12 col-lg-7">
               <div className="trade-content">
                 <div className="d-sm-flex justify-content-between tradehead mb-3">
-                  {/* <h3>{item.tradesymbol || "Trade Symbol"}</h3> */}
                   <h3>{formatTradeSymbol(item.tradesymbol)}</h3>
+                  <h5>
+                    Closed Target :{" "}
+                    {item.targethit3 === "1" ? item.targetprice3
+                      : item.targethit2 === "1" ? item.targetprice2
+                        : item.targethit1 === "1" ? item.targetprice1
+                          : "--"}
+                  </h5>
 
                   {selectedTab !== "live" && (
                     <span><b>Entry Type</b>: {item?.calltype} {item?.entrytype}</span>)}
@@ -785,7 +791,7 @@ function Trade() {
                   className="form-control"
                   id="inputQuantity"
                   placeholder="Quantity"
-                  value={orderdata?.quantity}
+                  // value={orderdata?.quantity}
                   onChange={(e) =>
                     setOrderdata({ ...orderdata, quantity: e.target.value })
                   }
