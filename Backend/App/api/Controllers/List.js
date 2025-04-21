@@ -904,7 +904,7 @@ class List {
 
 
 
-        let sgst = 0, cgst = 0, igst = 0, pergstsc = 0, pergstt = 0;
+        let sgst = 0, cgst = 0, igst = 0, pergstsc = settings.gst/2, pergstt = settings.gst;
 
 if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() ==="") {
     sgst = totalgst / 2;
@@ -946,9 +946,9 @@ if(settings.state) {
           .replace(/{{PhoneNo}}/g, client.PhoneNo)
           .replace(/{{validity}}/g, savedSubscription.validity)
           .replace(/{{plan_end}}/g, formatDate(savedSubscription.plan_end))
-          .replace(/{{plan_price}}/g, savedSubscription.plan_price)
-          .replace(/{{total}}/g, savedSubscription.total)
-          .replace(/{{discount}}/g, savedSubscription.discount)
+          .replace(/{{plan_price}}/g, savedSubscription.plan_price.toFixed(2))
+          .replace(/{{total}}/g, savedSubscription.total.toFixed(2))
+          .replace(/{{discount}}/g, savedSubscription.discount.toFixed(2))
           .replace(/{{orderid}}/g, savedSubscription.orderid)
           .replace(/{{planname}}/g, plan.category.title)
           .replace(/{{plantype}}/g, "Plan")
@@ -958,7 +958,7 @@ if(settings.state) {
           .replace(/{{company_website_title}}/g, settings.website_title)
           .replace(/{{invoicetnc}}/g, settings.invoicetnc)
           .replace(/{{gstin}}/g, settings.gstin)
-          .replace(/{{gstamount}}/g, totalgst)
+          .replace(/{{gstamount}}/g, totalgst.toFixed(2))
           .replace(/{{state}}/g, client.state)
           .replace(/{{gst}}/g, settings.gst)
           .replace(/{{sgst}}/g, sgst.toFixed(2))
@@ -974,7 +974,8 @@ if(settings.state) {
           .replace(/{{city}}/g, client.city)
           .replace(/{{statecode}}/g, clientstateid)
           .replace(/{{settingstatecode}}/g, settingsstateid)
-          .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total))
+          .replace(/{{ttotal}}/g, plan.price-discount.toFixed(2))
+          .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total.toFixed(2)))
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
         const browser = await puppeteer.launch({
@@ -1219,9 +1220,9 @@ if(settings.state) {
           .replace(/{{PhoneNo}}/g, client.PhoneNo)
           .replace(/{{validity}}/g, savedSubscription.validity)
           .replace(/{{plan_end}}/g, formatDate(savedSubscription.enddate))
-          .replace(/{{plan_price}}/g, savedSubscription.plan_price)
-          .replace(/{{total}}/g, savedSubscription.total)
-          .replace(/{{discount}}/g, savedSubscription.discount)
+          .replace(/{{plan_price}}/g, savedSubscription.plan_price.toFixed(2))
+          .replace(/{{total}}/g, savedSubscription.total.toFixed(2))
+          .replace(/{{discount}}/g, savedSubscription.discount.toFixed(2))
           .replace(/{{orderid}}/g, savedSubscription.orderid)
           .replace(/{{planname}}/g, basket.title)
           .replace(/{{plantype}}/g, "Basket")
@@ -1231,7 +1232,7 @@ if(settings.state) {
           .replace(/{{company_website_title}}/g, settings.website_title)
           .replace(/{{invoicetnc}}/g, settings.invoicetnc)
           .replace(/{{gstin}}/g, settings.gstin)
-          .replace(/{{gstamount}}/g, totalgst)
+          .replace(/{{gstamount}}/g, totalgst.toFixed(2))
           .replace(/{{state}}/g, client.state)
           .replace(/{{gst}}/g, settings.gst)
           .replace(/{{sgst}}/g, sgst.toFixed(2))
@@ -1247,7 +1248,8 @@ if(settings.state) {
           .replace(/{{city}}/g, client.city)
           .replace(/{{statecode}}/g, clientstateid)
           .replace(/{{settingstatecode}}/g, settingsstateid)
-          .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total))
+          .replace(/{{ttotal}}/g, basket.basket_price-discount.toFixed(2))
+          .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total.toFixed(2)))
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.startdate));
 
 
@@ -6287,12 +6289,12 @@ planDetailsHtml += `
    <td style="border: 1px solid black; padding: 10px; text-align: center;height: 100px;">1</td>
    <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.category.title}</td>
    <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
-   <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.price}</td>
-   <td style="border: 1px solid black; padding: 10px; text-align: center;">${discountPerPlan}</td>
-   <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst}</td>
-   <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst}</td>
-   <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst}</td>
-   <td style="border: 1px solid black; padding: 10px; text-align: center;">${total}</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.price.toFixed(2)}</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${discountPerPlan.toFixed(2)}</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst.toFixed(2)}</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst.toFixed(2)}</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst.toFixed(2)}</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${total.toFixed(2)}</td>
 </tr>`;
 
 
@@ -6320,9 +6322,9 @@ htmlContent = htmlContent
 .replace(/{{state}}/g, client.state)
 .replace(/{{logo}}/g, logo)
 .replace(/{{simage}}/g, simage)
-.replace(/{{total}}/g, total)
+.replace(/{{total}}/g, total.toFixed(2))
 .replace(/{{plantype}}/g, "Plan")
-.replace(/{{discount}}/g, discount);
+.replace(/{{discount}}/g, discount.toFixed(2));
 
 
 const browser = await puppeteer.launch({
@@ -7350,12 +7352,12 @@ await sendEmail(mailOptions);
            <td style="border: 1px solid black; padding: 10px; text-align: center;height: 100px;">${sno}</td>
            <td style="border: 1px solid black; padding: 10px; text-align: center;">${basket.title}</td>
            <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
-           <td style="border: 1px solid black; padding: 10px; text-align: center;">${basket.basket_price}</td>
-           <td style="border: 1px solid black; padding: 10px; text-align: center;">${discountPerPlan}</td>
-           <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst}</td>
-           <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst}</td>
-           <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst}</td>
-           <td style="border: 1px solid black; padding: 10px; text-align: center;">${total}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${basket.basket_price.toFixed(2)}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${discountPerPlan.toFixed(2)}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst.toFixed(2)}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst.toFixed(2)}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst.toFixed(2)}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${total.toFixed(2)}</td>
         </tr>`;
 
         sno++;
@@ -7377,8 +7379,8 @@ await sendEmail(mailOptions);
        .replace(/{{clientname}}/g, client.FullName)
        .replace(/{{email}}/g, client.Email)
        .replace(/{{PhoneNo}}/g, client.PhoneNo)
-       .replace(/{{total}}/g, total)
-       .replace(/{{discount}}/g, discount)
+       .replace(/{{total}}/g, total.toFixed(2))
+       .replace(/{{discount}}/g, discount.toFixed(2))
        .replace(/{{plan_details}}/g, planDetailsHtml)
        .replace(/{{company_email}}/g, settings.email_address)
        .replace(/{{company_phone}}/g, settings.contact_number)

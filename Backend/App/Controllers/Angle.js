@@ -25,15 +25,15 @@ class Angle {
                 const client = await Clients_Modal.findById(key);
 
                 if (!client) {
-                  //  if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                    if (client.devicetoken) {
                         return res.status(404).json({
                             status: false,
                             message: "Client not found"
                         });
-                    // } else {
-                    //     const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                    //     return res.redirect(dynamicUrl);
-                    // }
+                    } else {
+                        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                        return res.redirect(dynamicUrl);
+                    }
     
                 }
 
@@ -41,15 +41,15 @@ class Angle {
 
                 if (!auth_token) {
 
-                 //   if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                    if (client.devicetoken) {
                          return res.status(404).json({
                         status: false,
                         message: "Auth Token is required"
                          });
-                    // } else {
-                    //     const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                    //     return res.redirect(dynamicUrl);
-                    // }
+                    } else {
+                        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                        return res.redirect(dynamicUrl);
+                    }
     
 
                   
@@ -67,35 +67,35 @@ class Angle {
                         useFindAndModify: false // Prevent deprecation warning (optional)
                     }
                 );
-  //  if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                if (client.devicetoken) {
                 return res.json({
                     status: true,
                     message: "Broker login successfully",
                 });
-   //    } else {
-            //        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-            //        return res.redirect(dynamicUrl);
-            //    }
+      } else {
+                   const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                   return res.redirect(dynamicUrl);
+               }
 
             } else {
 
 
-              //  if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                if (client.devicetoken) {
                     return res.status(500).json({ status: false, message: "Server error" });
-            //    } else {
-            //        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-            //        return res.redirect(dynamicUrl);
-            //    }
+               } else {
+                   const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                   return res.redirect(dynamicUrl);
+               }
 
                 
             }
         } catch (error) {
-           // if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+            if (client.devicetoken) {
                 return res.status(500).json({ status: false, message: error.message });
-        //    } else {
-        //        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-        //        return res.redirect(dynamicUrl);
-        //    }
+           } else {
+               const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+               return res.redirect(dynamicUrl);
+           }
         
 
         }

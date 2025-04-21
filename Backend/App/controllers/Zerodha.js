@@ -42,15 +42,15 @@ class Zerodha {
 
             // Check if the client exists
             if (!client) {
-             //   if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                if (client.devicetoken) {
                                       return res.status(404).json({
                                           status: false,
                                           message: "Client not found"
                                       });
-                                //  } else {
-                                //      const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                                //      return res.redirect(dynamicUrl);
-                                //  }
+                                 } else {
+                                     const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                                     return res.redirect(dynamicUrl);
+                                 }
             }
 
             if (req.query.request_token) {
@@ -93,63 +93,63 @@ class Zerodha {
 
 
 
-                     //   if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                        if (client.devicetoken) {
                             return res.json({
                                 status: true,
                                 message: "Broker login successfully",
                             });
-                    //    } else {
-                    //        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                    //        return res.redirect(dynamicUrl);
-                    //    }
+                       } else {
+                           const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                           return res.redirect(dynamicUrl);
+                       }
 
                       
                     }
                     else
                     {
 
-                     //   if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                        if (client.devicetoken) {
                             return res.status(500).json({ status: false, message: response.data });
-                    //    } else {
-                    //        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                    //        return res.redirect(dynamicUrl);
-                    //    }
+                       } else {
+                           const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                           return res.redirect(dynamicUrl);
+                       }
                        
 
                     }
 
                 } catch (error) {
 
-                  //  if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                    if (client.devicetoken) {
                         return res.status(500).json({ status: false, message: "Server error" });
-                //    } else {
-                //        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                //        return res.redirect(dynamicUrl);
-                //    }
+                   } else {
+                       const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                       return res.redirect(dynamicUrl);
+                   }
 
                     
                 }
 
             } else {
-             //   if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                if (client.devicetoken) {
                     return res.status(400).json({ status: false, message: "Request Token is required" });
-            //    } else {
-            //        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-            //        return res.redirect(dynamicUrl);
-            //    }
+               } else {
+                   const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                   return res.redirect(dynamicUrl);
+               }
 
 
                 
             }
         } catch (error) {
 
-           // if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+            if (client.devicetoken) {
                 return res.status(500).json({ status: false, message: error.message || "Server error" });
 
-        //    } else {
-        //        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-        //        return res.redirect(dynamicUrl);
-        //    }
+           } else {
+               const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+               return res.redirect(dynamicUrl);
+           }
 
         }
     }

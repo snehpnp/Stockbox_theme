@@ -280,7 +280,7 @@ class Clients {
 
   async loginClient(req, res) {
     try {
-      const { UserName, password, devicetoken } = req.body;  // Extract password here
+      const { UserName, password, devicetoken="" } = req.body;  // Extract password here
 
       if (!UserName) {
         return res.json({ status: false, message: "Please enter Email/phone number" });
