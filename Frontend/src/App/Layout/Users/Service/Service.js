@@ -782,7 +782,7 @@ const Service = () => {
                             <button
                               onClick={() => handleCouponSelect(coupon)}
                               className={`btn ${manualCoupon === coupon.code ? "btn-success" : "btn-secondary"}`}
-                              disabled={manualCoupon === coupon.code} // Already selected coupon ko disable kar diya
+                              disabled={manualCoupon === coupon.code}
                             >
                               {manualCoupon === coupon.code ? "Selected" : "Select"}
                             </button>

@@ -246,12 +246,15 @@ class Upstox {
                 console.error("Error reading file:", err);
             }
             
-            
+            let quantitys = quantity; // Declare quantitys outside the blocks
+            if(stock.segment !== "C") {
+                quantitys=  quantitys*stock.lotsize;
+            }
 
 
 
 var data = JSON.stringify({
-    "quantity": quantity,
+    "quantity": quantitys,
     "product": producttype,
     "validity": "DAY",
     "price": 0,
@@ -499,10 +502,13 @@ let config = {
             if (totalValue >= quantity) {
 
 
-
+                let quantitys = quantity; // Declare quantitys outside the blocks
+                if(stock.segment !== "C") {
+                    quantitys=  quantitys*stock.lotsize;
+                }
 
                 var data = JSON.stringify({
-                    "quantity": quantity,
+                    "quantity": quantitys,
                     "product": producttype,
                     "validity": "DAY",
                     "price": 0,
@@ -853,10 +859,13 @@ let config = {
 
             if (totalValue >= exitquantity) {
               
-              
+                let quantitys = quantity; // Declare quantitys outside the blocks
+                if(stock.segment !== "C") {
+                    quantitys=  quantitys*stock.lotsize;
+                }
               
                 var data = JSON.stringify({
-                    "quantity": quantity,
+                    "quantity": quantitys,
                     "product": producttype,
                     "validity": "DAY",
                     "price": 0,
@@ -1062,11 +1071,16 @@ let config = {
             }
 
 
+            let quantitys = quantity; // Declare quantitys outside the blocks
+            if(stock.segment !== "C") {
+                quantitys=  quantitys*stock.lotsize;
+            }
+          
 
 
               
             var data = JSON.stringify({
-                "quantity": quantity,
+                "quantity": quantitys,
                 "product": producttype,
                 "validity": "DAY",
                 "price": 0,
@@ -1327,11 +1341,18 @@ async  MultipleplaceOrder(req, res) {
                 console.error(`Error reading file: ${err.message}`);
             }
 
-            tradingsymbol = tradingsymbol || stockData.symbol;
+
+
+            let quantitys = quantity; // Declare quantitys outside the blocks
+            if(stock.segment !== "C") {
+                quantitys=  quantitys*stockData.lotsize;
+            }
+          
+
 
             // ✅ Order Data
-            let orderData = {
-                "quantity": parseInt(quantity),
+            let orderData =  JSON.stringify({
+                "quantity": parseInt(quantitys),
                 "product": producttype,
                 "validity": "DAY",
                 "price": 0,
@@ -1342,7 +1363,7 @@ async  MultipleplaceOrder(req, res) {
                 "disclosed_quantity": 0,
                 "trigger_price": 0,
                 "is_amo": false
-            };
+            });
 
             let config = {
                 method: 'post',
@@ -1494,8 +1515,16 @@ async MultipleExitplaceOrder(req, res) {
             let calltypes = signal.calltype === "BUY" ? "SELL" : "BUY";
 
             if (totalValue >= quantity) {
-                let orderData = {
-                    quantity: quantity,
+
+                let quantitys = quantity; // Declare quantitys outside the blocks
+                if(stock.segment !== "C") {
+                    quantitys=  quantitys*stockData.lotsize;
+                }
+
+
+
+                let orderData =  JSON.stringify({
+                    quantity: quantitys,
                     product: producttype,
                     validity: "DAY",
                     price: 0,
@@ -1506,7 +1535,7 @@ async MultipleExitplaceOrder(req, res) {
                     disclosed_quantity: 0,
                     trigger_price: 0,
                     is_amo: false
-                };
+                });
 
                 let config = {
                     method: "post",
