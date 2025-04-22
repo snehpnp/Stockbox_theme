@@ -61,6 +61,20 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
 
 
+  useEffect(() => {
+    if (
+      UserDetail?.devicetoken !== "" &&
+      UserDetail?.devicetoken !== null &&
+      UserDetail?.devicetoken !== undefined
+    ) {
+      localStorage.clear();
+      window.location.href = "/user-login";
+    }
+  }, [UserDetail?.devicetoken]);
+
+
+
+
   const Logout = () => {
     localStorage.clear();
     if (Role === "USER") {
