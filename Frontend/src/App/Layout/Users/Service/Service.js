@@ -17,7 +17,7 @@ import ReusableModal from "../../../components/Models/ReusableModal";
 import ShowCustomAlert from "../../../../App/Extracomponents/CustomAlert/CustomAlert"
 import showCustomAlert from "../../../../App/Extracomponents/CustomAlert/CustomAlert";
 import { useNavigate } from "react-router-dom";
-import  Kyc  from "../Profile/Kyc"
+import Kyc from "../Profile/Kyc"
 
 
 const Service = () => {
@@ -367,40 +367,40 @@ const Service = () => {
         ) : getFilteredPlans?.length > 0 ? (
           <div className="pricing-container price1 mt-4">
 
-<div className="row row-cols-1 row-cols-lg-3">
-  {/* Free Tier */}
+            <div className="row row-cols-1 row-cols-lg-3">
+              {/* Free Tier */}
 
               {getFilteredPlans?.map((item) =>
                 item?.plans?.length > 0 ? (
                   item?.plans?.map((plan, index) => (
-  <div className="col mb-3" key={`${item?._id}-${index}`}>
-    <div className="card mb-5 mb-lg-0">
-      <div className="card-header  py-3">
-        <h5 className="card-title text-white text-uppercase text-center">
-        {item?.title}
-        </h5>
-        <h6 className="card-price text-white text-center">
-        {(plan?.price)?.toFixed(2)}
-       <span className="term"> {Array.isArray(item?.services) && item?.services?.length > 0
-                                ? item.services
-                                  .map((service) =>
-                                    typeof service.title === "string"
-                                      ? service.title.split(/(?=[A-Z])/).join(" + ")
-                                      : "N/A"
-                                  )
-                                  .join(" + ")
-                                : "N/A"}</span>
-        </h6>
-      </div>
-      <div className="card-body">
-        <ul className="list-group list-group-flush">
-          <li className="list-group-item">
-            <i className="bx bx-check me-2 font-18" />
-           Validity: {plan?.validity}
-          </li>
-    
-          <li className="list-group-item text-secondary">
-          <p style={{ minHeight: "3em", overflow: "hidden" }}>
+                    <div className="col mb-3" key={`${item?._id}-${index}`}>
+                      <div className="card mb-5 mb-lg-0">
+                        <div className="card-header  py-3">
+                          <h5 className="card-title text-white text-uppercase text-center">
+                            {item?.title}
+                          </h5>
+                          <h6 className="card-price text-white text-center">
+                            {(plan?.price)?.toFixed(2)}
+                            <span className="term"> {Array.isArray(item?.services) && item?.services?.length > 0
+                              ? item.services
+                                .map((service) =>
+                                  typeof service.title === "string"
+                                    ? service.title.split(/(?=[A-Z])/).join(" + ")
+                                    : "N/A"
+                                )
+                                .join(" + ")
+                              : "N/A"}</span>
+                          </h6>
+                        </div>
+                        <div className="card-body">
+                          <ul className="list-group list-group-flush">
+                            <li className="list-group-item">
+                              <i className="bx bx-check me-2 font-18" />
+                              Validity: {plan?.validity}
+                            </li>
+
+                            <li className="list-group-item text-secondary">
+                              <p style={{ minHeight: "3em", overflow: "hidden" }}>
                                 {(() => {
                                   const text = stripHtmlTags(plan?.description || "");
                                   const words = text.split(" ");
@@ -413,21 +413,21 @@ const Service = () => {
                                 })()}
                               </p>
                               <Link
-                              className=" text-decoration-underline  "
-                              onClick={() => {
-                                setViewModel(true);
-                                setDiscription(plan?.description);
-                              }}
-                            >
-                              Know More...
-                            </Link>
-          </li>
-        </ul>
-        
-        <div className="border-top pt-3">
+                                className=" text-decoration-underline  "
+                                onClick={() => {
+                                  setViewModel(true);
+                                  setDiscription(plan?.description);
+                                }}
+                              >
+                                Know More...
+                              </Link>
+                            </li>
+                          </ul>
+
+                          <div className="border-top pt-3">
                             <Link to="/user/cart"
                               className="btn btn-secondary  rounded-pill mt-2 mt-sm-0 me-2 me-sm-0"
-                            
+
                             >
                               Add to cart
                             </Link>
@@ -439,14 +439,14 @@ const Service = () => {
                               Subscribe Now
                             </button>
                           </div>
-      </div>
-    </div>
-  </div>
-   ))
-  ) : null
-)}
-  {/* Plus Tier */}
-  {/* <div className="col">
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : null
+              )}
+              {/* Plus Tier */}
+              {/* <div className="col">
     <div className="card mb-5 mb-lg-0">
       <div className="card-header bg-primary py-3">
         <h5 className="card-title text-white text-uppercase text-center">
@@ -500,8 +500,8 @@ const Service = () => {
       </div>
     </div>
   </div> */}
-  {/* Pro Tier */}
-  {/* <div className="col">
+              {/* Pro Tier */}
+              {/* <div className="col">
     <div className="card">
       <div className="card-header bg-warning py-3">
         <h5 className="card-title text-dark text-uppercase text-center">Pro</h5>
@@ -553,9 +553,9 @@ const Service = () => {
       </div>
     </div>
   </div> */}
-</div>
+            </div>
 
-          
+
           </div>
         ) : (
           <div className="text-center mt-4">
