@@ -6,6 +6,8 @@ import { Tabs, Tab } from 'react-bootstrap';
 import { SendHelpRequest, GetHelpMessage } from '../../../Services/UserService/User';
 import Loader from '../../../../Utils/Loader';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+import Table from '../../../Extracomponents/Table';
+import { Eye } from 'lucide-react';
 
 const HelpDesk = () => {
 
@@ -110,6 +112,49 @@ const HelpDesk = () => {
         },
     ];
 
+
+    const columns = [
+        {
+          name: 'Subject',
+          selector: row => row.subject,
+        },
+        {
+          name: 'Description',
+          selector: row => row.description,
+          width: '300px',
+        },
+        {
+          name: 'Status',
+          cell: (row) => (
+            <div>
+              <button className="btn btn-primary btn-sm">Pending</button>
+            </div>
+          ),
+        },
+        {
+            name: 'Action',
+            cell: (row) => (
+              <div>
+                <button className="btn btn-secondary btn-sm p-0"> <Eye width="15px" /></button>
+              </div>
+            ),
+          },
+      ];
+      
+      const data = [
+        {
+          id: 1,
+          subject: 'Beetlejuice',
+          description: 'Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development.',
+        },
+        {
+          id: 2,
+          subject: 'Ghostbusters',
+          description: 'Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development.',
+        },
+      ];
+      
+
     return (
         <Content Page_title="Help Desk" button_status={false}>
             <Tabs activeKey={key} onSelect={(k) => setKey(k)} className="mb-3 border-tab">
@@ -117,7 +162,14 @@ const HelpDesk = () => {
                     <FormicForm fieldtype={fieldtype} formik={formik} ButtonName="Submit" BtnStatus={true} />
                 </Tab>
                 <Tab eventKey="viewMessages" title="View Messages">
-                    {isLoading ? <Loader /> : <div>
+                    <div className="table-responsive">
+                                      <Table
+                                        columns={columns}
+                                        data={data}
+                                      
+                                      />
+                                    </div>
+                    {/* {isLoading ? <Loader /> : <div>
                         {messages?.length > 0 ? (
                             messages?.map((msg, index) => (
                                 <div key={index} className="p-3 border mb-2">
@@ -133,7 +185,7 @@ const HelpDesk = () => {
                                 />
                             </div>
                         )}
-                    </div>}
+                    </div>} */}
                 </Tab>
             </Tabs>
         </Content>
