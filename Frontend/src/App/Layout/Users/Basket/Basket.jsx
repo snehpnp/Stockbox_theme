@@ -217,7 +217,7 @@ function Basket() {
                           <button
                             // to="/user/basketdetail"
                             state={{ item }}
-                            className="btn btn-primary w-100"
+                            className="btn btn-sm btn-primary w-100"
                           >
                             View Details
                           </button>
@@ -230,7 +230,7 @@ function Basket() {
                             //     : ""
                             // }
                             state={{ item }}
-                            className="btn btn-primary w-100"
+                            className="btn btn-sm btn-primary w-100"
                             style={{
                               pointerEvents:
                                 onlinePaymentStatus || offlinePaymentStatus
@@ -250,7 +250,7 @@ function Basket() {
                           <button
                             // to="/user/rebalancestock"
                             state={{ item }}
-                            className="btn btn-primary w-100"
+                            className="btn btn-sm btn-primary w-100"
                           >
                             View Rebalance
                           </button>
@@ -330,7 +330,7 @@ function Basket() {
                         <Link
                           to="/user/basketdetail"
                           state={{ item }}
-                          className="btn btn-primary w-100"
+                          className="btn btn-sm btn-primary w-100"
                         >
                           View Details
                         </Link>
