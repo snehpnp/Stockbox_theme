@@ -506,7 +506,7 @@ function Trade() {
                     { label: "Target2", value: item?.tag2 || "--" },
                     { label: "Target3", value: item?.tag3 || "--" },
 
-                  ].map((detail, idx) => (
+                  ]?.map((detail, idx) => (
                     <div
                       className={`col-md-${idx < 2 ? 4 : 4} d-flex justify-content-md-${idx < 2 ? "start" : "start"
                         }`}
@@ -642,7 +642,7 @@ function Trade() {
               value={selectedService}
               onChange={(e) => setSelectedService(e.target.value)}
             >
-              {service.map((item) => (
+              {service?.map((item) => (
 
                 <option key={item._id} value={item._id}>
                   {item?.title}
@@ -661,7 +661,7 @@ function Trade() {
             { tab: "close", label: "Close Trade" },
             // { tab: "live", icon: "bx-home", label: "Live Trade" },
             // { tab: "close", icon: "bx-user-pin", label: "Close Trade" },
-          ].map(({ tab, icon, label }) => (
+          ]?.map(({ tab, icon, label }) => (
             <li className="nav-item" role="presentation" key={tab}>
               <a
                 className={`nav-link ${selectedTab === tab ? "btn-primary active" : ""
