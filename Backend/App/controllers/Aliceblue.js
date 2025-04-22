@@ -220,7 +220,10 @@ class Aliceblue {
                     message: "Stock not found"
                 });
             }
-
+            let quantitys = quantity; // Declare quantitys outside the blocks
+            if(stock.segment !== "C") {
+                quantitys=  quantitys*quantitys.lotsize;
+            }
             var data = JSON.stringify([
                 {
                     "complexty": "regular",
@@ -229,7 +232,7 @@ class Aliceblue {
                     "pCode": producttype,
                     "prctyp": "MKT",
                     "price": price,
-                    "qty": quantity,
+                    "qty": quantitys,
                     "ret": "DAY",
                     "symbol_id": stock.instrument_token,
                     "trading_symbol": stock.tradesymbol,
@@ -444,6 +447,13 @@ class Aliceblue {
             if (totalValue >= quantity) {
 
 
+                let quantitys = quantity; // Declare quantitys outside the blocks
+                if(stock.segment !== "C") {
+                    quantitys=  quantitys*stock.lotsize;
+                }
+
+
+
                 var data = JSON.stringify([
                     {
                         "complexty": "regular",
@@ -452,7 +462,7 @@ class Aliceblue {
                         "pCode": producttype,
                         "prctyp": "MKT",
                         "price": price,
-                        "qty": quantity,
+                        "qty": quantitys,
                         "ret": "DAY",
                         "symbol_id": stock.instrument_token,
                         "trading_symbol": stock.tradesymbol,
@@ -905,7 +915,7 @@ class Aliceblue {
             }
 
             if (totalValue >= exitquantity) {
-
+              
 
                 var data = JSON.stringify([
                     {
@@ -1087,6 +1097,9 @@ class Aliceblue {
                 }
     
             }
+
+
+           
           
             var data = JSON.stringify([
                 {
@@ -1372,7 +1385,10 @@ class Aliceblue {
            
                 
 
-
+                let quantitys = quantity; // Declare quantitys outside the blocks
+                if(stock.segment !== "C") {
+                    quantitys=  quantitys*stockData.lotsize;
+                }
                 
                 // ✅ Order Object
                 var dataorder = JSON.stringify([
@@ -1383,7 +1399,7 @@ class Aliceblue {
                     "pCode": producttype,
                     "prctyp": "MKT",
                     "price": stock.price,
-                    "qty": quantity,
+                    "qty": quantitys,
                     "ret": "DAY",
                     "symbol_id": stockData.instrument_token,
                     "trading_symbol": stockData.tradesymbol,
@@ -1408,9 +1424,7 @@ class Aliceblue {
          
                 try {
                     let response = await axios(config);
-console.log("response",response);
 
-                    console.log('response',response);
 
                     let responseData = response.data;
     
@@ -1558,7 +1572,11 @@ console.log("response",response);
 
                   
     
-
+                    let quantitys = quantity; // Declare quantitys outside the blocks
+                    if(stock.segment !== "C") {
+                        quantitys=  quantitys*stockData.lotsize;
+                    }
+                    
                     // ✅ Order Object
                     var dataorder = JSON.stringify([
                         {
@@ -1568,7 +1586,7 @@ console.log("response",response);
                         "pCode": producttype,
                         "prctyp": "MKT",
                         "price": stock.price,
-                        "qty": quantity,
+                        "qty": quantitys,
                         "ret": "DAY",
                         "symbol_id": stockData.instrument_token,
                         "trading_symbol": stockData.tradesymbol,
