@@ -174,7 +174,7 @@ const Perform = () => {
         },
         {
             name: 'Entry price',
-            selector: row => Number(row?.price) || 0, // Sorting ke liye number
+            selector: row => Number(row?.price) || 0,
             cell: row => {
                 const price = Number(row?.price);
                 return (

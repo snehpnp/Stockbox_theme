@@ -19,8 +19,12 @@ const Cash = () => {
   const [cashPastData, setCashPastdata] = useState(new Array(12).fill(0));
   const [monthaverg, setMonthaverg] = useState({});
 
-  const [month, setMonth] = useState("01");
-  const [year, setYear] = useState("2025");
+  const today = new Date();
+  const currentMonth = String(today.getMonth() + 1).padStart(2, '0');
+  const currentYear = today.getFullYear();
+
+  const [month, setMonth] = useState(currentMonth);
+  const [year, setYear] = useState(currentYear);
   const [chartData1, setChartData1] = useState(null);
   const [doughnutData1, setDoughnutData1] = useState(null);
   const [dailydata, setDailydata] = useState([])
@@ -41,6 +45,9 @@ const Cash = () => {
     { name: "Nov", value: "11" },
     { name: "Dec", value: "12" },
   ];
+
+
+
 
 
   useEffect(() => {
