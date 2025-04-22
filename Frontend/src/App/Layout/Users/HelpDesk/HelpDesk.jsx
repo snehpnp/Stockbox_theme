@@ -6,6 +6,7 @@ import { Tabs, Tab } from 'react-bootstrap';
 import { SendHelpRequest, GetHelpMessage } from '../../../Services/UserService/User';
 import Loader from '../../../../Utils/Loader';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
 
 const HelpDesk = () => {
 
@@ -120,9 +121,10 @@ const HelpDesk = () => {
                     {isLoading ? <Loader /> : <div>
                         {messages?.length > 0 ? (
                             messages?.map((msg, index) => (
-                                <div key={index} className="p-3 border mb-2">
+                                <div key={index} className="p-3 border mb-2 relative">
                                     <h6><strong>Subject:</strong> {msg.subject}</h6>
                                     <p><strong>Message:</strong> {msg.message}</p>
+                                    <p><strong>Date:</strong> {fDateTime(msg.created_at)}</p>
                                 </div>
                             ))
                         ) : (
