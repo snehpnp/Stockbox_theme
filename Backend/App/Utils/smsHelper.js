@@ -33,15 +33,13 @@ if(name=="bulksmsservice")
 }
 
   const url = `${urls}?${config}`;
-     console.log("url",url);
   try {
     const response = await axios.get(url);
 
-    console.log("response",response.data);
     return response.data;
   } catch (error) {
-    console.error('SMS Send Error:', error.response?.data || error.message);
-    throw error;
+    // console.error('SMS Send Error:', error.response?.data || error.message);
+    return error.message;
   }
 
 

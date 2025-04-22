@@ -874,9 +874,10 @@ if (settings.gst > 0 && settings.gststatus==1) {
                   .replace(/{{PhoneNo}}/g, client.PhoneNo)
                   .replace(/{{validity}}/g, savedSubscription.validity)
                   .replace(/{{plan_end}}/g, formatDate(savedSubscription.plan_end))
-                  .replace(/{{plan_price}}/g, savedSubscription.plan_price)
-                  .replace(/{{total}}/g, savedSubscription.total)
-                  .replace(/{{discount}}/g, savedSubscription.discount)
+                  .replace(/{{plan_price}}/g, savedSubscription.plan_price.toFixed(2))
+                  .replace(/{{ttotal}}/g, savedSubscription.plan_price.toFixed(2))
+                  .replace(/{{total}}/g, savedSubscription.total.toFixed(2))
+                  .replace(/{{discount}}/g, savedSubscription.discount.toFixed(2))
                   .replace(/{{orderid}}/g, savedSubscription.orderid)
                   .replace(/{{planname}}/g, plan.category.title)
                   .replace(/{{plantype}}/g, "Plan")
@@ -886,7 +887,7 @@ if (settings.gst > 0 && settings.gststatus==1) {
                   .replace(/{{company_website_title}}/g, settings.website_title)
                   .replace(/{{invoicetnc}}/g, settings.invoicetnc)
                   .replace(/{{gstin}}/g, settings.gstin)
-                  .replace(/{{gstamount}}/g, totalgst)
+                  .replace(/{{gstamount}}/g, totalgst.toFixed(2))
                   .replace(/{{state}}/g, client.state)
                   .replace(/{{gst}}/g, settings.gst)
                   .replace(/{{sgst}}/g, sgst.toFixed(2))
@@ -902,7 +903,7 @@ if (settings.gst > 0 && settings.gststatus==1) {
                   .replace(/{{city}}/g, client.city)
                   .replace(/{{statecode}}/g, clientstateid)
                   .replace(/{{settingstatecode}}/g, settingsstateid)
-                  .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total))
+                  .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total.toFixed(2)))
                   .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
 
@@ -1676,12 +1677,12 @@ const orderNumber = `${invoicePrefix}${financialYear}-${formattedNumber}`;
                 <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
                 <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.category.title}</td>
                 <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.price}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.price.toFixed(2)}</td>
                 <td style="border: 1px solid black; padding: 10px; text-align: center;">0</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">${total}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst.toFixed(2)}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst.toFixed(2)}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst.toFixed(2)}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">${total.toFixed(2)}</td>
              </tr>`;
  
          
@@ -1712,7 +1713,7 @@ const orderNumber = `${invoicePrefix}${financialYear}-${formattedNumber}`;
           .replace(/{{state}}/g, client.state)
           .replace(/{{logo}}/g, logo)
           .replace(/{{simage}}/g, simage)
-          .replace(/{{total}}/g, total)
+          .replace(/{{total}}/g, total.toFixed(2))
           .replace(/{{plantype}}/g, "Plan")
           .replace(/{{discount}}/g, 0);
 

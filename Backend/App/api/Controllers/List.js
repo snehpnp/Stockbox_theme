@@ -904,7 +904,7 @@ class List {
 
 
 
-      let sgst = 0, cgst = 0, igst = 0, pergstsc = 0, pergstt = 0;
+      let sgst = 0, cgst = 0, igst = 0, pergstsc = settings.gst / 2, pergstt = settings.gst;
 
       if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() === "") {
         sgst = totalgst / 2;
@@ -946,9 +946,9 @@ class List {
         .replace(/{{PhoneNo}}/g, client.PhoneNo)
         .replace(/{{validity}}/g, savedSubscription.validity)
         .replace(/{{plan_end}}/g, formatDate(savedSubscription.plan_end))
-        .replace(/{{plan_price}}/g, savedSubscription.plan_price)
-        .replace(/{{total}}/g, savedSubscription.total)
-        .replace(/{{discount}}/g, savedSubscription.discount)
+        .replace(/{{plan_price}}/g, savedSubscription.plan_price.toFixed(2))
+        .replace(/{{total}}/g, savedSubscription.total.toFixed(2))
+        .replace(/{{discount}}/g, savedSubscription.discount.toFixed(2))
         .replace(/{{orderid}}/g, savedSubscription.orderid)
         .replace(/{{planname}}/g, plan.category.title)
         .replace(/{{plantype}}/g, "Plan")
@@ -958,7 +958,7 @@ class List {
         .replace(/{{company_website_title}}/g, settings.website_title)
         .replace(/{{invoicetnc}}/g, settings.invoicetnc)
         .replace(/{{gstin}}/g, settings.gstin)
-        .replace(/{{gstamount}}/g, totalgst)
+        .replace(/{{gstamount}}/g, totalgst.toFixed(2))
         .replace(/{{state}}/g, client.state)
         .replace(/{{gst}}/g, settings.gst)
         .replace(/{{sgst}}/g, sgst.toFixed(2))
@@ -974,7 +974,8 @@ class List {
         .replace(/{{city}}/g, client.city)
         .replace(/{{statecode}}/g, clientstateid)
         .replace(/{{settingstatecode}}/g, settingsstateid)
-        .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total))
+        .replace(/{{ttotal}}/g, (plan.price - discount).toFixed(2))
+        .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total.toFixed(2)))
         .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
       const browser = await puppeteer.launch({
@@ -1219,9 +1220,9 @@ class List {
         .replace(/{{PhoneNo}}/g, client.PhoneNo)
         .replace(/{{validity}}/g, savedSubscription.validity)
         .replace(/{{plan_end}}/g, formatDate(savedSubscription.enddate))
-        .replace(/{{plan_price}}/g, savedSubscription.plan_price)
-        .replace(/{{total}}/g, savedSubscription.total)
-        .replace(/{{discount}}/g, savedSubscription.discount)
+        .replace(/{{plan_price}}/g, savedSubscription.plan_price.toFixed(2))
+        .replace(/{{total}}/g, savedSubscription.total.toFixed(2))
+        .replace(/{{discount}}/g, savedSubscription.discount.toFixed(2))
         .replace(/{{orderid}}/g, savedSubscription.orderid)
         .replace(/{{planname}}/g, basket.title)
         .replace(/{{plantype}}/g, "Basket")
@@ -1231,7 +1232,7 @@ class List {
         .replace(/{{company_website_title}}/g, settings.website_title)
         .replace(/{{invoicetnc}}/g, settings.invoicetnc)
         .replace(/{{gstin}}/g, settings.gstin)
-        .replace(/{{gstamount}}/g, totalgst)
+        .replace(/{{gstamount}}/g, totalgst.toFixed(2))
         .replace(/{{state}}/g, client.state)
         .replace(/{{gst}}/g, settings.gst)
         .replace(/{{sgst}}/g, sgst.toFixed(2))
@@ -1247,7 +1248,8 @@ class List {
         .replace(/{{city}}/g, client.city)
         .replace(/{{statecode}}/g, clientstateid)
         .replace(/{{settingstatecode}}/g, settingsstateid)
-        .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total))
+        .replace(/{{ttotal}}/g, (basket.basket_price - discount).toFixed(2))
+        .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total.toFixed(2)))
         .replace(/{{plan_start}}/g, formatDate(savedSubscription.startdate));
 
 
@@ -3261,23 +3263,22 @@ class List {
         if (signal.created_at && signal.closedate) { // ✅ Ensure correct field name
           const createdDate = new Date(signal.created_at);
           const closeDate = new Date(signal.closedate); // ✅ Corrected field name
-        
+
           let signalDays = Math.ceil((closeDate - createdDate) / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
-        
+
           if (isNaN(signalDays) || signalDays < 1) {
             signalDays = 1; // ✅ Ensure at least 1 day is counted
           }
-        
+
           totalDaysOfAllSignals += signalDays; // ✅ Accumulate instead of resetting
-        
-        if(signal.calltype=="BUY")
-          {
-           signalper = (signal.closeprice - signal.price) / signal.price * 100;
-           
+
+          if (signal.calltype == "BUY") {
+            signalper = (signal.closeprice - signal.price) / signal.price * 100;
+
           }
-          else{
+          else {
             signalper = (signal.price - signal.closeprice) / signal.price * 100;
-          
+
           }
           totalpercentagecount = signalper + totalpercentagecount;
         }
@@ -3298,9 +3299,9 @@ class List {
       }
 
 
-      const avgDaysPerSignal = count > 0 
-  ? Math.round(totalDaysOfAllSignals / count) 
-  : 1;  
+      const avgDaysPerSignal = count > 0
+        ? Math.round(totalDaysOfAllSignals / count)
+        : 1;
 
       return res.json({
         status: true,
@@ -3564,9 +3565,9 @@ class List {
 
 
 
-   const result = await BasicSetting_Modal.findOne()
-  .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst gststatus base_url color1 color2 color3 color4 popupstatus popupcontent refersendmsg wh_number')
-  .exec();
+      const result = await BasicSetting_Modal.findOne()
+        .select('freetrial website_title logo contact_number address refer_image receiver_earn refer_title sender_earn refer_description razorpay_key razorpay_secret kyc paymentstatus officepaymenystatus facebook instagram twitter youtube offer_image gst gststatus base_url color1 color2 color3 color4 popupstatus popupcontent refersendmsg wh_number')
+        .exec();
 
       if (result) {
         result.logo = `${baseUrl}/uploads/basicsetting/${result.logo}`;
@@ -6286,12 +6287,12 @@ class List {
    <td style="border: 1px solid black; padding: 10px; text-align: center;height: 100px;">1</td>
    <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.category.title}</td>
    <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
-   <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.price}</td>
-   <td style="border: 1px solid black; padding: 10px; text-align: center;">${discountPerPlan}</td>
-   <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst}</td>
-   <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst}</td>
-   <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst}</td>
-   <td style="border: 1px solid black; padding: 10px; text-align: center;">${total}</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.price.toFixed(2)}</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${discountPerPlan.toFixed(2)}</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst.toFixed(2)}</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst.toFixed(2)}</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst.toFixed(2)}</td>
+   <td style="border: 1px solid black; padding: 10px; text-align: center;">${total.toFixed(2)}</td>
 </tr>`;
 
 
@@ -6319,9 +6320,9 @@ class List {
           .replace(/{{state}}/g, client.state)
           .replace(/{{logo}}/g, logo)
           .replace(/{{simage}}/g, simage)
-          .replace(/{{total}}/g, total)
+          .replace(/{{total}}/g, total.toFixed(2))
           .replace(/{{plantype}}/g, "Plan")
-          .replace(/{{discount}}/g, discount);
+          .replace(/{{discount}}/g, discount.toFixed(2));
 
 
         const browser = await puppeteer.launch({
@@ -7349,12 +7350,12 @@ class List {
            <td style="border: 1px solid black; padding: 10px; text-align: center;height: 100px;">${sno}</td>
            <td style="border: 1px solid black; padding: 10px; text-align: center;">${basket.title}</td>
            <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
-           <td style="border: 1px solid black; padding: 10px; text-align: center;">${basket.basket_price}</td>
-           <td style="border: 1px solid black; padding: 10px; text-align: center;">${discountPerPlan}</td>
-           <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst}</td>
-           <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst}</td>
-           <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst}</td>
-           <td style="border: 1px solid black; padding: 10px; text-align: center;">${total}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${basket.basket_price.toFixed(2)}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${discountPerPlan.toFixed(2)}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst.toFixed(2)}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst.toFixed(2)}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst.toFixed(2)}</td>
+           <td style="border: 1px solid black; padding: 10px; text-align: center;">${total.toFixed(2)}</td>
         </tr>`;
 
         sno++;
@@ -7376,8 +7377,8 @@ class List {
           .replace(/{{clientname}}/g, client.FullName)
           .replace(/{{email}}/g, client.Email)
           .replace(/{{PhoneNo}}/g, client.PhoneNo)
-          .replace(/{{total}}/g, total)
-          .replace(/{{discount}}/g, discount)
+          .replace(/{{total}}/g, total.toFixed(2))
+          .replace(/{{discount}}/g, discount.toFixed(2))
           .replace(/{{plan_details}}/g, planDetailsHtml)
           .replace(/{{company_email}}/g, settings.email_address)
           .replace(/{{company_phone}}/g, settings.contact_number)
@@ -8960,204 +8961,205 @@ class List {
       res.status(500).json({ error: "Something went wrong" });
     }
   }
-
-
-async PlanExpire(req, res) {
-  try {
-    const { client_id } = req.body;
-    if (!client_id) {
-      return res.status(400).json({ message: "client_id is required" });
-    }
-
-    // 1) Normalize to UTC-midnight
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
-
-    // 2) Build yesterday, today, +3 days ranges
-    const yesterday = new Date(currentDate);
-    yesterday.setDate(currentDate.getDate() - 1);
-    const today = new Date(currentDate);
-    const day3 = new Date(currentDate);
-    day3.setDate(currentDate.getDate() + 3);
-
-    const ranges = [
-      { diff: -1, start: new Date(yesterday), end: new Date(yesterday.setHours(23, 59, 59, 999)) },
-      { diff:  0, start: new Date(today),     end: new Date(today.setHours(23, 59, 59, 999)) },
-      { diff:  3, start: new Date(day3),      end: new Date(day3.setHours(23, 59, 59, 999)) }
-    ];
-
-    // 3) Fetch matching plans
-    const orConds = ranges.map(r => ({
-      clientid: client_id,
-      enddate:  { $gte: r.start, $lte: r.end }
-    }));
-    const plans = await Planmanage.find({ $or: orConds });
-    if (!plans.length) {
-      return res.json({ message: "No plans expiring yesterday, today, or in 3 days.",status: false  });
-    }
-
-    // 4) Fetch client
-    const client = await Clients_Modal.findById(client_id);
-    if (!client) {
-      return res.status(404).json({ message: "Client not found",status: false  });
-    }
-
-    // 5) Group service names by diffInDays
-    const groups = {}; // diff => Set(serviceName)
-    for (const plan of plans) {
-      const endMid = new Date(plan.enddate);
-      endMid.setHours(0, 0, 0, 0);
-      const diff = Math.floor((endMid - currentDate) / (1000 * 60 * 60 * 24));
-
-      let svc = "UNKNOWN";
-      if (plan.serviceid === "66d2c3bebf7e6dc53ed07626") svc = "CASH";
-      else if (plan.serviceid === "66dfeef84a88602fbbca9b79") svc = "OPTION";
-      else svc = "FUTURE";
-
-      groups[diff] = groups[diff] || new Set();
-      groups[diff].add(svc);
-    }
-
-    // helper to join ["A","B","C"] => "A, B, and C"
-    const joinNames = arr => {
-      if (arr.length === 1) return arr[0];
-      if (arr.length === 2) return `${arr[0]} and ${arr[1]}`;
-      const last = arr.pop();
-      return `${arr.join(', ')}, and ${last}`;
-    };
-
-    // 6) Build messages
-    const reminders = [];
-    for (const diffKey of Object.keys(groups)) {
-      const diff = Number(diffKey);
-      const names = Array.from(groups[diff]);
-      const combo = joinNames([...names]);
-      const plural = names.length > 1;
-
-      let msg = "";
-      if (diff === 3) {
-        msg = plural
-          ? `Only 3 days left! Your ${combo} Segment plans are about to expire. Renew now to avoid any disruption.`
-          : `Only 3 days left! Your ${combo} Segment plan is about to expire. Renew now to avoid any disruption.`;
-      } else if (diff === 0) {
-        msg = plural
-          ? `Your ${combo} Segment plans expire today. Don’t miss out—renew now to continue enjoying uninterrupted access!`
-          : `Your ${combo} Segment plan expires today. Don’t miss out—renew now to continue enjoying uninterrupted access!`;
-      } else if (diff === -1) {
-        msg = plural
-          ? `Oops! ${combo} Segment plans expired yesterday. Let’s get you back on track—renew now and stay connected.`
-          : `Oops! ${combo} Segment plan expired yesterday. Let’s get you back on track—renew now and stay connected.`;
+  async PlanExpire(req, res) {
+    try {
+      const { client_id } = req.body;
+      if (!client_id) {
+        return res.status(400).json({ message: "client_id is required" });
       }
 
-      if (msg) reminders.push(msg);
-    }
+      // 1) Normalize to UTC-midnight
+      const currentDate = new Date();
+      currentDate.setHours(0, 0, 0, 0);
 
-    // 7) Return
-    return res.json({ reminders,status: true });
+      // 2) Build yesterday, today, +3 days ranges
+      const yesterday = new Date(currentDate);
+      yesterday.setDate(currentDate.getDate() - 1);
+      const today = new Date(currentDate);
+      const day3 = new Date(currentDate);
+      day3.setDate(currentDate.getDate() + 3);
 
-  } catch (error) {
-    console.error("PlanExpire error:", error);
-    return res.status(500).json({ message: "Server Error", error,status: false });
-  }
-}
+      const ranges = [
+        { diff: -1, start: new Date(yesterday), end: new Date(yesterday.setHours(23, 59, 59, 999)) },
+        { diff: 0, start: new Date(today), end: new Date(today.setHours(23, 59, 59, 999)) },
+        { diff: 3, start: new Date(day3), end: new Date(day3.setHours(23, 59, 59, 999)) }
+      ];
 
-// Required imports
-
-async PlanSubscriptionExpire(req, res) {
-  try {
-    const { client_id } = req.body;
-    if (!client_id) {
-      return res.status(400).json({ message: "client_id is required",status: false });
-    }
-
-    const clientObjectId = new ObjectId(client_id);
-
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
-
-    const yesterday = new Date(currentDate);
-    yesterday.setDate(currentDate.getDate() - 1);
-
-    const today = new Date(currentDate);
-
-    const day3 = new Date(currentDate);
-    day3.setDate(currentDate.getDate() + 3);
-
-    const dateRanges = [
-      { label: "yesterday", start: new Date(yesterday), end: new Date(yesterday.setHours(23, 59, 59, 999)) },
-      { label: "today",     start: new Date(today),     end: new Date(today.setHours(23, 59, 59, 999)) },
-      { label: "day3",      start: new Date(day3),      end: new Date(day3.setHours(23, 59, 59, 999)) }
-    ];
-
-    const orConditions = dateRanges.map(range => ({
-      client_id: clientObjectId,
-      plan_end: { $gte: range.start, $lte: range.end }
-    }));
-
-    const subs = await PlanSubscription_Modal.find({ $or: orConditions });
-    if (!subs.length) {
-      return res.json({ message: "No subscriptions expiring in the given range.",status: false });
-    }
-
-    const client = await Clients_Modal.findById(clientObjectId);
-    if (!client) {
-      return res.status(404).json({ message: "Client not found",status: false });
-    }
-
-    // Group plans by diffInDays
-    const groupedPlans = {
-      "-1": [],
-      "0": [],
-      "3": []
-    };
-
-    for (const plan of subs) {
-      const planEndMid = new Date(plan.plan_end);
-      planEndMid.setHours(0, 0, 0, 0);
-
-      const diffInDays = Math.floor((planEndMid - currentDate) / (1000 * 60 * 60 * 24));
-
-      const cat = await Plancategory_Modal.findById(plan.plan_category_id);
-      const planName = cat ? cat.title.toUpperCase() : "Unknown";
-
-      if (["-1", "0", "3"].includes(diffInDays.toString())) {
-        groupedPlans[diffInDays].push(planName);
+      // 3) Fetch matching plans
+      const orConds = ranges.map(r => ({
+        clientid: client_id,
+        enddate: { $gte: r.start, $lte: r.end }
+      }));
+      const plans = await Planmanage.find({ $or: orConds });
+      if (!plans.length) {
+        return res.json({ message: "No plans expiring yesterday, today, or in 3 days.", status: false });
       }
+
+      // 4) Fetch client
+      const client = await Clients_Modal.findById(client_id);
+      if (!client) {
+        return res.status(404).json({ message: "Client not found", status: false });
+      }
+
+      // 5) Group service names by diffInDays
+      const groups = {}; // diff => Set(serviceName)
+      for (const plan of plans) {
+        const endMid = new Date(plan.enddate);
+        endMid.setHours(0, 0, 0, 0);
+        const diff = Math.floor((endMid - currentDate) / (1000 * 60 * 60 * 24));
+
+        let svc = "UNKNOWN";
+        if (plan.serviceid === "66d2c3bebf7e6dc53ed07626") svc = "CASH";
+        else if (plan.serviceid === "66dfeef84a88602fbbca9b79") svc = "OPTION";
+        else svc = "FUTURE";
+
+        groups[diff] = groups[diff] || new Set();
+        groups[diff].add(svc);
+      }
+
+      // helper to join ["A","B","C"] => "A, B, and C"
+      const joinNames = arr => {
+        if (arr.length === 1) return arr[0];
+        if (arr.length === 2) return `${arr[0]} and ${arr[1]}`;
+        const last = arr.pop();
+        return `${arr.join(', ')}, and ${last}`;
+      };
+
+      // 6) Build messages
+      const reminders = [];
+      for (const diffKey of Object.keys(groups)) {
+        const diff = Number(diffKey);
+        const names = Array.from(groups[diff]);
+        const combo = joinNames([...names]);
+        const plural = names.length > 1;
+
+        let msg = "";
+        if (diff === 3) {
+          msg = plural
+            ? `Only 3 days left! Your ${combo} Segment plans are about to expire. Renew now to avoid any disruption.`
+            : `Only 3 days left! Your ${combo} Segment plan is about to expire. Renew now to avoid any disruption.`;
+        } else if (diff === 0) {
+          msg = plural
+            ? `Your ${combo} Segment plans expire today. Don’t miss out—renew now to continue enjoying uninterrupted access!`
+            : `Your ${combo} Segment plan expires today. Don’t miss out—renew now to continue enjoying uninterrupted access!`;
+        } else if (diff === -1) {
+          msg = plural
+            ? `Oops! ${combo} Segment plans expired yesterday. Let’s get you back on track—renew now and stay connected.`
+            : `Oops! ${combo} Segment plan expired yesterday. Let’s get you back on track—renew now and stay connected.`;
+        }
+
+        if (msg) reminders.push(msg);
+      }
+
+      // 7) Return
+      return res.json({ reminders, status: true });
+
+    } catch (error) {
+      console.error("PlanExpire error:", error);
+      return res.status(500).json({ message: "Server Error", error, status: false });
     }
-
-    const reminders = [];
-
-    const formatPlans = (plans) => {
-      if (plans.length === 1) return plans[0];
-      if (plans.length === 2) return `${plans[0]} and ${plans[1]}`;
-      return `${plans.slice(0, -1).join(", ")}, and ${plans[plans.length - 1]}`;
-    };
-
-    if (groupedPlans["3"].length > 0) {
-      const plans = formatPlans(groupedPlans["3"]);
-      reminders.push(`Only 3 days left! Your ${plans} plan${groupedPlans["3"].length > 1 ? "s" : ""} are about to expire. Renew now to avoid any disruption.`);
-    }
-
-    if (groupedPlans["0"].length > 0) {
-      const plans = formatPlans(groupedPlans["0"]);
-      reminders.push(`Your ${plans} plan${groupedPlans["0"].length > 1 ? "s" : ""} expire today. Don’t miss out—renew now to continue enjoying uninterrupted access!`);
-    }
-
-    if (groupedPlans["-1"].length > 0) {
-      const plans = formatPlans(groupedPlans["-1"]);
-      reminders.push(`Oops! Your ${plans} plan${groupedPlans["-1"].length > 1 ? "s" : ""} expired yesterday. Let’s get you back on track—renew now and stay connected.`);
-    }
-
-    return res.json({ reminders,status: false });
-
-  } catch (err) {
-    console.error("PlanSubscriptionExpire error:", err);
-    return res.status(500).json({ message: "Server Error", error: err.message,status: false });
   }
-}
+
+  // Required imports
+
+  async PlanSubscriptionExpire(req, res) {
+    try {
+      const { client_id } = req.body;
+      if (!client_id) {
+        return res.status(400).json({ message: "client_id is required", status: false });
+      }
+
+      const clientObjectId = new ObjectId(client_id);
+
+      const currentDate = new Date();
+      currentDate.setHours(0, 0, 0, 0);
+
+      const yesterday = new Date(currentDate);
+      yesterday.setDate(currentDate.getDate() - 1);
+
+      const today = new Date(currentDate);
+
+      const day3 = new Date(currentDate);
+      day3.setDate(currentDate.getDate() + 3);
+
+      const dateRanges = [
+        { label: "yesterday", start: new Date(yesterday), end: new Date(yesterday.setHours(23, 59, 59, 999)) },
+        { label: "today", start: new Date(today), end: new Date(today.setHours(23, 59, 59, 999)) },
+        { label: "day3", start: new Date(day3), end: new Date(day3.setHours(23, 59, 59, 999)) }
+      ];
+
+      const orConditions = dateRanges.map(range => ({
+        client_id: clientObjectId,
+        plan_end: { $gte: range.start, $lte: range.end }
+      }));
+
+      const subs = await PlanSubscription_Modal.find({ $or: orConditions });
+      if (!subs.length) {
+        return res.json({ message: "No subscriptions expiring in the given range.", status: false });
+      }
+
+      const client = await Clients_Modal.findById(clientObjectId);
+      if (!client) {
+        return res.status(404).json({ message: "Client not found", status: false });
+      }
+
+      // Group plans by diffInDays
+      const groupedPlans = {
+        "-1": [],
+        "0": [],
+        "3": []
+      };
+
+      for (const plan of subs) {
+        const planEndMid = new Date(plan.plan_end);
+        planEndMid.setHours(0, 0, 0, 0);
+
+        const diffInDays = Math.floor((planEndMid - currentDate) / (1000 * 60 * 60 * 24));
+
+        const cat = await Plancategory_Modal.findById(plan.plan_category_id);
+        const planName = cat ? cat.title.toUpperCase() : "Unknown";
+
+        if (["-1", "0", "3"].includes(diffInDays.toString())) {
+          groupedPlans[diffInDays].push(planName);
+        }
+      }
+
+      const reminders = [];
+
+      const formatPlans = (plans) => {
+        if (plans.length === 1) return plans[0];
+        if (plans.length === 2) return `${plans[0]} and ${plans[1]}`;
+        return `${plans.slice(0, -1).join(", ")}, and ${plans[plans.length - 1]}`;
+      };
+
+      if (groupedPlans["3"].length > 0) {
+        const plans = formatPlans(groupedPlans["3"]);
+        reminders.push(`Only 3 days left! Your ${plans} plan${groupedPlans["3"].length > 1 ? "s" : ""} are about to expire. Renew now to avoid any disruption.`);
+      }
+
+      if (groupedPlans["0"].length > 0) {
+        const plans = formatPlans(groupedPlans["0"]);
+        reminders.push(`Your ${plans} plan${groupedPlans["0"].length > 1 ? "s" : ""} expire today. Don’t miss out—renew now to continue enjoying uninterrupted access!`);
+      }
+
+      if (groupedPlans["-1"].length > 0) {
+        const plans = formatPlans(groupedPlans["-1"]);
+        reminders.push(`Oops! Your ${plans} plan${groupedPlans["-1"].length > 1 ? "s" : ""} expired yesterday. Let’s get you back on track—renew now and stay connected.`);
+      }
+
+      return res.json({ reminders, status: false });
+
+    } catch (err) {
+      console.error("PlanSubscriptionExpire error:", err);
+      return res.status(500).json({ message: "Server Error", error: err.message, status: false });
+    }
+  }
+
+
+
+
 
 }
-
 
 function convertAmountToWords(amount) {
   const [whole, fraction] = amount.toString().split('.');

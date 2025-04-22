@@ -29,15 +29,15 @@ class Aliceblue {
             if (!client) {
 
 
-             //   if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+               if (client.devicetoken) {
                     return res.status(404).json({
                         status: false,
                         message: "Client not found"
                     });
-                // } else {
-                //     const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                //     return res.redirect(dynamicUrl);
-                // }
+                } else {
+                    const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                    return res.redirect(dynamicUrl);
+                }
 
 
             }
@@ -66,12 +66,12 @@ class Aliceblue {
                     // Check if the response status is not OK
                     if (response.data.stat === "Not_ok") {
 
-                    //  if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                        if (client.devicetoken) {
                         return res.status(500).json({ status: false, message: response.data.emsg });
-                         // } else {
-                        //     const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                        //     return res.redirect(dynamicUrl);
-                        // }
+                         } else {
+                            const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                            return res.redirect(dynamicUrl);
+                        }
                     }
 
                     // If userSession exists, update the client's data
@@ -87,15 +87,15 @@ class Aliceblue {
                         );
 
                        
-                       // if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                        if (client.devicetoken) {
                             return res.json({
                                 status: true,
                                 message: "Broker login successfully",
                             });
-                        // } else {
-                        //     const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                        //     return res.redirect(dynamicUrl);
-                        // }
+                        } else {
+                            const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                            return res.redirect(dynamicUrl);
+                        }
 
 
 
@@ -104,33 +104,33 @@ class Aliceblue {
                 } catch (error) {
 
 
-                  //  if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                    if (client.devicetoken) {
                         return res.status(500).json({ status: false, message: "Server error" });
-                    // } else {
-                    //     const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                    //     return res.redirect(dynamicUrl);
-                    // }
+                    } else {
+                        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                        return res.redirect(dynamicUrl);
+                    }
 
                 }
 
             } else {
 
-              //  if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                if (client.devicetoken) {
                     return res.status(400).json({ status: false, message: "authCode is required" });
-                // } else {
-                //     const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                //     return res.redirect(dynamicUrl);
-                // }
+                } else {
+                    const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                    return res.redirect(dynamicUrl);
+                }
 
             }
         } catch (error) {
 
-         //   if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+            if (client.devicetoken) {
                 return res.status(500).json({ status: false, message: error.message || "Server error" });
-            // } else {
-            //     const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-            //     return res.redirect(dynamicUrl);
-            // }
+            } else {
+                const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                return res.redirect(dynamicUrl);
+            }
 
 
         }

@@ -31,15 +31,15 @@ class Upstox {
    
                    if (!client) {
    
-                    //   if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                    if (client.devicetoken) {
                            return res.status(404).json({
                                status: false,
                                message: "Client not found"
                            });
-                   //    } else {
-                   //        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-                   //        return res.redirect(dynamicUrl);
-                   //    }
+                      } else {
+                          const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                          return res.redirect(dynamicUrl);
+                      }
    
                      
                    }
@@ -84,51 +84,51 @@ class Upstox {
                    );
    
    
-                  // if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                   if (client.devicetoken) {
                        return res.json({
                            status: true,
                            message: "Broker login successfully",
                        });
-               //    } else {
-               //        // Web request
-               //        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-               //        return res.redirect(dynamicUrl);
-               //    }
+                  } else {
+                      // Web request
+                      const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                      return res.redirect(dynamicUrl);
+                  }
    
                   
                }
                else {
    
-                 //  if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                if (client.devicetoken) {
                        return res.status(500).json({ status: false, message: response.data });
-               //    } else {
-               //        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-               //        return res.redirect(dynamicUrl);
-               //    }
+                  } else {
+                      const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                      return res.redirect(dynamicUrl);
+                  }
    
                   
                }
    
                } else {
    
-                 //  if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+                if (client.devicetoken) {
                        return res.status(500).json({ status: false, message: "Server error" });
-               //    } else {
-               //        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-               //        return res.redirect(dynamicUrl);
-               //    }
+                  } else {
+                      const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                      return res.redirect(dynamicUrl);
+                  }
    
                   
                }
            } catch (error) {
    
-             //  if (req.headers['user-agent'] && req.headers['user-agent'].includes('okhttp')) {
+            if (client.devicetoken) {
                    return res.status(500).json({ status: false, message: error });
    
-           //    } else {
-           //        const dynamicUrl = `${req.protocol}://${req.headers.host}`;
-           //        return res.redirect(dynamicUrl);
-           //    }
+              } else {
+                  const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                  return res.redirect(dynamicUrl);
+              }
    
            }
    
