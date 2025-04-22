@@ -71,10 +71,9 @@ const Client = () => {
   const [totalRows, setTotalRows] = useState(0);
   const [getBasket, setGetBasket] = useState({});
 
-  //state for loading
+
   const [isLoading, setIsLoading] = useState(true);
 
-  //this state for button disable
 
   const [loading, setLoading] = useState(false);
 
@@ -517,7 +516,7 @@ const Client = () => {
         </>
       ),
       sortable: true,
-      width: "200px",
+      width: "400px",
     },
 
     // {
