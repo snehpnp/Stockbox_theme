@@ -3633,6 +3633,8 @@ end.setHours(23, 59, 59, 999);
         }
 
         let totalProfit = 0;
+        let totalProfitpercent = 0;
+        let totalLosspercent = 0;
         let totalLoss = 0;
         let profitCount = 0;
         let lossCount = 0;
@@ -3673,10 +3675,14 @@ end.setHours(23, 59, 59, 999);
           if (!isNaN(entryPrice) && !isNaN(exitPrice)) {
             // const profitOrLoss = exitPrice - entryPrice;
             let profitOrLoss;
+            let profitOrLosspercent;
             if (callType === "BUY") {
               profitOrLoss = exitPrice - entryPrice; // Profit when exit is greater
+
+              profitOrLosspercent = ((exitPrice - entryPrice)*100) / entryPrice; // Profit percentage when exit is greater
             } else if (callType === "SELL") {
-              profitOrLoss = entryPrice - exitPrice; // Profit when exit is less
+              profitOrLoss = entryPrice - exitPrice;
+              profitOrLosspercent = ((entryPrice - exitPrice)*100) / entryPrice; // Profit percentage when exit is less
             }
 
 
@@ -3684,17 +3690,21 @@ end.setHours(23, 59, 59, 999);
 
               if (serviceId == "66dfede64a88602fbbca9b72" || serviceId == "66dfeef84a88602fbbca9b79") {
                 totalProfit += profitOrLoss * signal.lotsize;
+                totalProfitpercent += profitOrLosspercent * signal.lotsize;
               }
               else {
                 totalProfit += profitOrLoss;
+                totalProfitpercent += profitOrLosspercent;
               }
               profitCount++;
             } else {
               if (serviceId == "66dfede64a88602fbbca9b72" || serviceId == "66dfeef84a88602fbbca9b79") {
                 totalLoss += Math.abs(profitOrLoss) * signal.lotsize;
+                totalLosspercent += Math.abs(profitOrLosspercent) * signal.lotsize;
               }
               else {
                 totalLoss += Math.abs(profitOrLoss);
+                totalLosspercent += Math.abs(profitOrLosspercent);
               }
               lossCount++;
             }
@@ -3710,11 +3720,15 @@ end.setHours(23, 59, 59, 999);
         avgreturnpertrade = (totalProfit - totalLoss) / count;
 
 
-
+let avgreturnpermonthpercent = 0;
         if (monthsBetween > 0) {
           avgreturnpermonth = (totalProfit - totalLoss) / monthsBetween;
+          avgreturnpermonthpercent = (totalProfitpercent - totalLosspercent) / monthsBetween;
+
         } else {
           avgreturnpermonth = totalProfit - totalLoss;
+          avgreturnpermonthpercent = totalProfitpercent - totalLosspercent;
+
         }
 
         results[serviceIdStr] = {
@@ -3728,7 +3742,8 @@ end.setHours(23, 59, 59, 999);
             lossCount,
             accuracy,
             avgreturnpertrade,
-            avgreturnpermonth
+            avgreturnpermonth,
+            avgreturnpermonthpercent
           }
         };
       }

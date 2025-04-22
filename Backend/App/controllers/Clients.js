@@ -554,6 +554,24 @@ class Clients {
                             ]
                           },
                           then: "Option" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e12758a0a2be895da19550" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Option Strategy" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "66bc8b0c3fb6f1724c02bfec" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Future Strategy" // If serviceid matches, return "Option"
                         }
                       ],
                       default: "Unknown Service" // Default value if no match
