@@ -974,7 +974,7 @@ if(settings.state) {
           .replace(/{{city}}/g, client.city)
           .replace(/{{statecode}}/g, clientstateid)
           .replace(/{{settingstatecode}}/g, settingsstateid)
-          .replace(/{{ttotal}}/g, plan.price-discount.toFixed(2))
+          .replace(/{{ttotal}}/g, (plan.price - discount).toFixed(2))
           .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total.toFixed(2)))
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
@@ -1248,7 +1248,7 @@ if(settings.state) {
           .replace(/{{city}}/g, client.city)
           .replace(/{{statecode}}/g, clientstateid)
           .replace(/{{settingstatecode}}/g, settingsstateid)
-          .replace(/{{ttotal}}/g, basket.basket_price-discount.toFixed(2))
+          .replace(/{{ttotal}}/g, (basket.basket_price - discount).toFixed(2))
           .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total.toFixed(2)))
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.startdate));
 
