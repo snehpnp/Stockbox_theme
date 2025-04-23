@@ -170,6 +170,12 @@ const Condition = () => {
                                     </div>
                                 </div>
                             ))}
+                            <style jsx>{`
+    .col-md-12 span img {
+        width: 100%;
+        height: auto;
+    }
+`}</style>
                         </>
                     ) : (
                         <div className="text-center mt-5">

@@ -16,6 +16,8 @@ const ReferAndEarn = () => {
 
   const [isChanged, setIsChanged] = useState(false);
 
+  const [refreshData, setRefreshData] = useState(false);
+
   const getsettinglist = async () => {
     try {
       const response = await basicsettinglist(token);
@@ -29,7 +31,7 @@ const ReferAndEarn = () => {
 
   useEffect(() => {
     getsettinglist();
-  }, []);
+  }, [refreshData]);
 
 const handleFieldChange = (fieldName, value, setFieldValue) => {
   if (fieldName === "sender_earn" || fieldName === "receiver_earn") {
@@ -103,6 +105,7 @@ const handleFieldChange = (fieldName, value, setFieldValue) => {
 
                   if (response.status) {
                     showCustomAlert("Success", "Refer and Earn Updated Successfully")
+                    setRefreshData(prev => !prev);
                   } else {
                     showCustomAlert("error", response.message)
                   }

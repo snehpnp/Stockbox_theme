@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BrokerResponsedata } from "../../../Services/UserService/User";
 import Content from "../../../components/Contents/Content";
-import { fDate, fDateTimeH } from "../../../../Utils/Date_formate";
+import { fDate, fDateTime, fDateTimeH } from "../../../../Utils/Date_formate";
 import Loader from "../../../../Utils/Loader";
 
 const BrokerResponse = () => {
@@ -13,7 +13,7 @@ const BrokerResponse = () => {
   const userid = localStorage.getItem("id");
 
 
-  const [responsedata, setResponseData] = useState([]);
+  const [responsedata, setResponseData] = useState([]); 
 
   const [isLoading, setIsLoading] = useState(true)
 
@@ -112,6 +112,10 @@ const BrokerResponse = () => {
                           </tr>
                         </thead>
                         <tbody>
+                        <tr>
+                            <td>Created At</td>
+                            <td>{fDateTime(data.signalDetails.created_at) || "N/A"}</td>
+                          </tr>
                           <tr>
                             <td>Symbol</td>
                             <td>{data.signalDetails.tradesymbol || "N/A"}</td>
@@ -154,10 +158,15 @@ const BrokerResponse = () => {
 
                           </tr>
                           <tr>
-                            {["Success", "Done", "Ok"].includes(data?.data?.data?.Status) ? (
+                            {/* {["Success", "Done", "Ok"].includes(data?.data?.data?.Status) ? (
                               <td>Order Detail </td>
                             ) : (
                               <td>Reject Reason </td>
+                            )} */}
+                             {["Success", "Done", "Ok"].includes(data?.data?.data?.Status) ? (
+                              <td>Reject Reason </td>
+                            ) : (
+                              <td>Order Detail </td>
                             )}
                             <td
                               style={{
