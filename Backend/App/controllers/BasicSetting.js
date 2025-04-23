@@ -64,6 +64,7 @@ class BasicSetting {
           popupstatus,
           popupcontent,
           wh_number,
+          email_cc,
 
         } = req.body;
 
@@ -141,6 +142,8 @@ class BasicSetting {
           popupstatus,
           popupcontent,
           wh_number,
+          email_cc,
+
         };
 
         const options = {
