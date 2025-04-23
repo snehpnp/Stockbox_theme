@@ -4,9 +4,9 @@ const { Schema, model } = require('mongoose');
 
 const TicketSchema = new Schema({
     client_id: {
-            type: Schema.Types.ObjectId,
-            ref: 'Client', // Assuming there's a 'Client' model to reference
-            required: true
+        type: Schema.Types.ObjectId,
+        ref: 'CLIENTS', // Assuming there's a 'Client' model to reference
+        required: true
         },
     subject: {
         type: String,

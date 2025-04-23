@@ -1157,7 +1157,7 @@ class Clients {
       });
 
     } catch (error) {
-      console.error('Error uploading document:', error.response ? error.response.data : error.message);
+      // console.error('Error uploading document:', error.response ? error.response.data : error.message);
       return res.status(400).json({ error: 'Error uploading document to Digio' });
     }
   }
@@ -1258,7 +1258,7 @@ if (mailtemplate) {
         message: 'Document downloaded and saved successfully'
       });
     } catch (error) {
-      console.error('Error downloading the document:', error);
+      // console.error('Error downloading the document:', error);
       return res.status(500).json({
         status: false,
         message: 'Failed to download the document',
@@ -1332,7 +1332,7 @@ if (mailtemplate) {
       });
 
     } catch (error) {
-      console.error('Error processing payout request:', error);
+      // console.error('Error processing payout request:', error);
       return res.status(500).json({ status: false, message: 'Server error while processing payout request.' });
     }
   }
@@ -1589,7 +1589,7 @@ if (mailtemplate) {
       });
 
     } catch (error) {
-      console.error("Error fetching helpdesk:", error); // Log the error for debugging
+      // console.error("Error fetching helpdesk:", error); // Log the error for debugging
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -1623,7 +1623,7 @@ if (mailtemplate) {
 
       fs.readFile(templatePath, 'utf8', async (err, htmlTemplate) => {
         if (err) {
-          console.error('Error reading HTML template:', err);
+          // console.error('Error reading HTML template:', err);
           return;
         }
 
@@ -1682,7 +1682,7 @@ else {
       });
     }
     } catch (error) {
-      console.error("Error fetching :", error); // Log the error for debugging
+      // console.error("Error fetching :", error); // Log the error for debugging
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -1901,7 +1901,7 @@ else {
         data: ordersWithSignals
       });
     } catch (error) {
-      console.error("Error in getClientSignalOrders:", error);
+    //  console.error("Error in getClientSignalOrders:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -1932,7 +1932,7 @@ else {
       });
   
       // Fetch paginated tickets
-      const tickets = await Ticket_Modal.find({
+      let tickets = await Ticket_Modal.find({
         client_id: clientId,
         del: false
       })
@@ -1940,6 +1940,15 @@ else {
         .skip(skip)
         .limit(limit)
         .lean();
+
+        const BASE_URL = `https://${req.headers.host}/uploads/ticket/`; // Construct the base URL
+
+        tickets = tickets.map(ticket => {
+          if (ticket.attachment) {
+            ticket.attachment = BASE_URL + ticket.attachment;
+          }
+          return ticket;
+        });
   
       return res.json({
         status: true,
@@ -1952,7 +1961,7 @@ else {
       });
   
     } catch (error) {
-      console.error("getClientTickets error:", error);
+   //   console.error("getClientTickets error:", error);
       return res.status(500).json({
         status: false,
         message: "Server Error",
@@ -1971,24 +1980,33 @@ else {
           message: "ticketid is required",
         });
       }
-  
-      // Fetch ticket details
-      const ticket = await Ticket_Modal.findOne({ _id: ticketid, del: false })
-        .populate("client_id", "name email phone")
-        .lean();
-  
+      let ticket = await Ticket_Modal.findOne({ _id: ticketid, del: false }).lean();
+
       if (!ticket) {
         return res.status(404).json({
           status: false,
           message: "Ticket not found",
         });
       }
-  
+      
+      const BASE_URL = `https://${req.headers.host}/uploads/ticket/`;
+      
+      if (ticket.attachment) {
+        ticket.attachment = BASE_URL + ticket.attachment;
+      }
+      
       // Fetch related messages
-      const messages = await Ticketmessage_Modal.find({ ticket_id: ticketid, del: false })
-        .populate("client_id", "name email phone")
+      let messages = await Ticketmessage_Modal.find({ ticket_id: ticketid, del: false })
         .sort({ created_at: 1 }) // oldest to newest
         .lean();
+      
+      messages = messages.map(message => {
+        if (message.attachment) {
+          message.attachment = BASE_URL + message.attachment;
+        }
+        return message;
+      });
+    
   
       return res.json({
         status: true,
@@ -1999,7 +2017,7 @@ else {
       });
   
     } catch (error) {
-      console.error("getTicketDetailById error:", error);
+   //   console.error("getTicketDetailById error:", error);
       return res.status(500).json({
         status: false,
         message: "Server Error",
@@ -2086,6 +2104,21 @@ else {
               message: "Subject, Message, and Client ID are required"
             });
           }
+
+
+          const existingOpenTicket = await Ticket_Modal.findOne({
+            client_id,
+            status: false, // assuming 'true' means ticket is open
+            del: false
+          });
+      
+          if (existingOpenTicket) {
+            return res.status(409).json({
+              status: false,
+              message: "An open ticket already exists. Please wait for a response before creating a new one.",
+              ticket_id: existingOpenTicket.ticketnumber
+            });
+          }
       
           const attachment = req.files && req.files['attachment']
             ? req.files['attachment'][0].filename
@@ -2115,7 +2148,7 @@ else {
           });
       
         } catch (error) {
-          console.error("Add Ticket Error:", error);
+      //    console.error("Add Ticket Error:", error);
           return res.status(500).json({
             status: false,
             message: "Server error",
