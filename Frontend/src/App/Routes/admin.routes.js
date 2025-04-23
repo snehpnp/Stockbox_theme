@@ -86,7 +86,7 @@ import SignalStrategy from "../Layout/Admin/Admin_signal/SignalStrategy";
 import PopupDescription from "../Layout/Admin/BasicSetting/PopupDescription";
 import SmsTemplate from "../Layout/Admin/BasicSetting/SmsTemplate";
 import SMSProvider from "../Layout/Admin/BasicSetting/SMSProvider";
-
+import Tickets from "../Layout/Admin/Tickets/Tickets";
 
 
 
@@ -219,6 +219,9 @@ export default function App() {
 
       <Route path="/orderlist" element={<ClientOrderlist />} />
       <Route path="/referAndEarnlist" element={<ReferAndEarnlist />} />
+
+
+      <Route path="/tickets" element={<Tickets />} />
 
     </Routes>
   );

@@ -935,7 +935,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
               <div className="modal-dialog">
                 <div className="modal-content">
                   <div className="modal-header">
-                    <h5 className="modal-title" id="exampleModalLabel">
+                    <h5 className="modal-title heading-color" id="exampleModalLabel" >
                       Login with API
                     </h5>
                     <button

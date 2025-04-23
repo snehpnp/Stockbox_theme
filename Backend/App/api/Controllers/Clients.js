@@ -18,10 +18,11 @@ const Signal_Modal = db.Signal;
 const Adminnotification_Modal = db.Adminnotification;
 const Basketorder_Modal = db.Basketorder;
 const Smstemplate_Modal = db.Smstemplate;
-
+const Ticket_Modal = db.Ticket;
+const Ticketmessage_Modal = db.Ticketmessage;
 
 const { sendSMS } = require('../../Utils/smsHelper');
-
+const upload = require('../../Utils/multerHelper'); 
 
 class Clients {
 
@@ -1156,7 +1157,7 @@ class Clients {
       });
 
     } catch (error) {
-      console.error('Error uploading document:', error.response ? error.response.data : error.message);
+      // console.error('Error uploading document:', error.response ? error.response.data : error.message);
       return res.status(400).json({ error: 'Error uploading document to Digio' });
     }
   }
@@ -1257,7 +1258,7 @@ if (mailtemplate) {
         message: 'Document downloaded and saved successfully'
       });
     } catch (error) {
-      console.error('Error downloading the document:', error);
+      // console.error('Error downloading the document:', error);
       return res.status(500).json({
         status: false,
         message: 'Failed to download the document',
@@ -1331,7 +1332,7 @@ if (mailtemplate) {
       });
 
     } catch (error) {
-      console.error('Error processing payout request:', error);
+      // console.error('Error processing payout request:', error);
       return res.status(500).json({ status: false, message: 'Server error while processing payout request.' });
     }
   }
@@ -1588,7 +1589,7 @@ if (mailtemplate) {
       });
 
     } catch (error) {
-      console.error("Error fetching helpdesk:", error); // Log the error for debugging
+      // console.error("Error fetching helpdesk:", error); // Log the error for debugging
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -1622,7 +1623,7 @@ if (mailtemplate) {
 
       fs.readFile(templatePath, 'utf8', async (err, htmlTemplate) => {
         if (err) {
-          console.error('Error reading HTML template:', err);
+          // console.error('Error reading HTML template:', err);
           return;
         }
 
@@ -1681,7 +1682,7 @@ else {
       });
     }
     } catch (error) {
-      console.error("Error fetching :", error); // Log the error for debugging
+      // console.error("Error fetching :", error); // Log the error for debugging
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -1900,7 +1901,7 @@ else {
         data: ordersWithSignals
       });
     } catch (error) {
-      console.error("Error in getClientSignalOrders:", error);
+    //  console.error("Error in getClientSignalOrders:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -1908,7 +1909,255 @@ else {
       });
     }
   }
+
+
+  async getTickets(req, res) {
+    try {
+      const { page = 1, clientId } = req.body;
+      const limit = 10;
+      const skip = (parseInt(page) - 1) * limit;
   
+  
+      if (!clientId) {
+        return res.status(401).json({
+          status: false,
+          message: "Unauthorized. Client not found.",
+        });
+      }
+  
+      // Total count for pagination
+      const total = await Ticket_Modal.countDocuments({
+        client_id: clientId,
+        del: false
+      });
+  
+      // Fetch paginated tickets
+      let tickets = await Ticket_Modal.find({
+        client_id: clientId,
+        del: false
+      })
+        .sort({ created_at: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean();
+
+        const BASE_URL = `https://${req.headers.host}/uploads/ticket/`; // Construct the base URL
+
+        tickets = tickets.map(ticket => {
+          if (ticket.attachment) {
+            ticket.attachment = BASE_URL + ticket.attachment;
+          }
+          return ticket;
+        });
+  
+      return res.json({
+        status: true,
+        data: tickets,
+        pagination: {
+          total,
+          page: parseInt(page),
+          pages: Math.ceil(total / limit)
+        }
+      });
+  
+    } catch (error) {
+   //   console.error("getClientTickets error:", error);
+      return res.status(500).json({
+        status: false,
+        message: "Server Error",
+        error: error.message
+      });
+    }
+  }
+  
+  async  detailTicket(req, res) {
+    try {
+      const { ticketid } = req.params;
+  
+      if (!ticketid) {
+        return res.status(400).json({
+          status: false,
+          message: "ticketid is required",
+        });
+      }
+      let ticket = await Ticket_Modal.findOne({ _id: ticketid, del: false }).lean();
+
+      if (!ticket) {
+        return res.status(404).json({
+          status: false,
+          message: "Ticket not found",
+        });
+      }
+      
+      const BASE_URL = `https://${req.headers.host}/uploads/ticket/`;
+      
+      if (ticket.attachment) {
+        ticket.attachment = BASE_URL + ticket.attachment;
+      }
+      
+      // Fetch related messages
+      let messages = await Ticketmessage_Modal.find({ ticket_id: ticketid, del: false })
+        .sort({ created_at: 1 }) // oldest to newest
+        .lean();
+      
+      messages = messages.map(message => {
+        if (message.attachment) {
+          message.attachment = BASE_URL + message.attachment;
+        }
+        return message;
+      });
+    
+  
+      return res.json({
+        status: true,
+        data: {
+          ticket,
+          messages
+        }
+      });
+  
+    } catch (error) {
+   //   console.error("getTicketDetailById error:", error);
+      return res.status(500).json({
+        status: false,
+        message: "Server Error",
+        error: error.message
+      });
+    }
+  }
+
+    async rePly(req, res) {
+          try {
+              
+              // Handle the image upload
+              await new Promise((resolve, reject) => {
+                  upload('ticket').fields([{ name: 'attachment', maxCount: 1 }])(req, res, (err) => {
+                      if (err) {
+                          // console.log('File upload error:', err);
+                          return reject(err);
+                      }
+  
+                      if (!req.files || !req.files['attachment']) {
+                         
+                          return res.status(400).json({ status: false, message: "No file uploaded." });
+                        }
+  
+  
+                      resolve();
+                  });
+              });
+      
+              // After the upload is successful, proceed with the rest of the logic
+              const { ticket_id, message, client_id } = req.body;
+  
+              if (!ticket_id) {
+                  return res.status(400).json({ status: false, message: "Ticket Id is required" });
+                }
+                if (!message) {
+                  return res.status(400).json({ status: false, message: "Message is required" });
+                }
+                if (!client_id) {
+                  return res.status(400).json({ status: false, message: "Client Id is required" });
+                }
+  
+              const attachment = req.files['attachment'] ? req.files['attachment'][0].filename : null;
+      
+              // Create a new News record
+              const result = new Ticketmessage_Modal({
+                  ticket_id: ticket_id,
+                  client_id: client_id,
+                  message: message,
+                  attachment: attachment,
+              });
+              
+              // Save the result to the database
+              await result.save();
+  
+  
+              return res.json({
+                  status: true,
+                  message: "reply successfully",
+              });
+      
+          } catch (error) {
+              // console.log("Server error:", error);
+              return res.status(500).json({ status: false, message: "Server error", data: [] });
+          }
+      }
+  
+      
+      async addTicket(req, res) {
+        try {
+          // File upload
+          await new Promise((resolve, reject) => {
+            upload('ticket').fields([{ name: 'attachment', maxCount: 1 }])(req, res, (err) => {
+              if (err) return reject(err);
+              resolve();
+            });
+          });
+      
+          const { subject, message, client_id } = req.body;
+      
+          if (!subject || !message || !client_id) {
+            return res.status(400).json({
+              status: false,
+              message: "Subject, Message, and Client ID are required"
+            });
+          }
+
+
+          const existingOpenTicket = await Ticket_Modal.findOne({
+            client_id,
+            status: false, // assuming 'true' means ticket is open
+            del: false
+          });
+      
+          if (existingOpenTicket) {
+            return res.status(409).json({
+              status: false,
+              message: "An open ticket already exists. Please wait for a response before creating a new one.",
+              ticket_id: existingOpenTicket.ticketnumber
+            });
+          }
+      
+          const attachment = req.files && req.files['attachment']
+            ? req.files['attachment'][0].filename
+            : null;
+      
+          // Generate ticket number
+          const prefix = "TKT";
+          const timestamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 12);
+          const randomStr = Math.random().toString(36).substr(2, 5).toUpperCase();
+          const ticketnumber = `${prefix}-${timestamp}-${randomStr}`;
+      
+          // Create ticket
+          const newTicket = new Ticket_Modal({
+            client_id,
+            subject,
+            message,
+            attachment,
+            ticketnumber
+          });
+      
+          await newTicket.save();
+      
+          return res.json({
+            status: true,
+            message: "Ticket added successfully",
+            data: newTicket
+          });
+      
+        } catch (error) {
+      //    console.error("Add Ticket Error:", error);
+          return res.status(500).json({
+            status: false,
+            message: "Server error",
+            error: error.message
+          });
+        }
+      }
+      
+
   
 
 }

@@ -59,6 +59,8 @@ module.exports = {
     Signalstock :require("./Signalstock"),
     Smstemplate: require("./Smstemplate"),
     Smsprovider: require("./Smsprovider"),
+    Ticket: require("./Ticket"),
+    Ticketmessage: require("./Ticketmessage"),
 
 
     open_position:open_position,
