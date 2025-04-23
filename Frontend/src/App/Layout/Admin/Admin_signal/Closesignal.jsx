@@ -446,6 +446,7 @@ const Closesignal = () => {
       allowOverflow: true,
       button: true,
     },
+
     {
       name: "Upload Report",
       cell: (row) => (

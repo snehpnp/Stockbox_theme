@@ -291,7 +291,7 @@ const Generalsettings = () => {
 
                                         </div>
 
-                                        <div className="row mb-3 align-items-center">
+                                        {/* <div className="row mb-3 align-items-center">
                                             <label htmlFor="simage" className="col-sm-3 col-form-label">
                                                 <b>Signature Image</b>
                                             </label>
@@ -313,7 +313,7 @@ const Generalsettings = () => {
                                                 )}
                                             </div>
 
-                                        </div>
+                                        </div> */}
 
                                         <div className="row mb-3 align-items-center">
                                             <label htmlFor="address" className="col-sm-3 col-form-label">
