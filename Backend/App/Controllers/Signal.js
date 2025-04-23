@@ -2647,6 +2647,165 @@ async detailSignals(req, res) {
 }
 
 
+async SendSignalNotification(req, res) {
+  try {
+    const { signalid, message } = req.body;
+
+    if (!signalid || !message) {
+      return res.status(400).json({
+        status: false,
+        message: "signalid and message are required",
+      });
+    }
+
+    const signal = await Signal_Modal.findById(signalid);
+    if (!signal) {
+      return res.status(404).json({
+        status: false,
+        message: "Signal not found",
+      });
+    }
+
+    let serviceName;
+    if (signal.segment === 'C') {
+      serviceName = "Cash";
+    } else if (signal.segment === 'O') {
+      serviceName = "Option";
+    } else {
+      serviceName = "Future";
+    }
+
+    const today = new Date();
+    const clients = await Clients_Modal.find({
+      del: 0,
+      ActiveStatus: 1,
+      devicetoken: { $exists: true, $ne: null },
+      _id: {
+        $in: await Planmanage.find({
+          serviceid: signal.service,
+          enddate: { $gte: today },
+        }).distinct('clientid'),
+      }
+    }).select('devicetoken');
+
+    const tokens = clients.map(client => client.devicetoken);
+
+    if (tokens.length > 0) {
+      const notificationTitle = "Important Update";
+      const notificationBody = message;
+
+      const notification = new Notification_Modal({
+        segmentid: signal.service,
+        type: "open signal",
+        title: notificationTitle,
+        message: notificationBody,
+      });
+
+      await notification.save();
+
+      try {
+        await sendFCMNotification(notificationTitle, notificationBody, tokens, "open signal", serviceName);
+      } catch (fcmError) {
+        console.error("FCM Error:", fcmError.message);
+      }
+    }
+
+    return res.json({
+      status: true,
+      message: "Notification sent successfully"
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+}
+
+
+async SendSignalNotificationWithPlan(req, res) {
+  try {
+    const { signalid, message } = req.body;
+
+    if (!signalid || !message) {
+      return res.status(400).json({
+        status: false,
+        message: "signalid and message are required",
+      });
+    }
+
+    const signal = await Signal_Modal.findById(signalid);
+    if (!signal) {
+      return res.status(404).json({
+        status: false,
+        message: "Signal not found",
+      });
+    }
+
+    let serviceName;
+    if (signal.segment === 'C') {
+      serviceName = "Cash";
+    } else if (signal.segment === 'O') {
+      serviceName = "Option";
+    } else {
+      serviceName = "Future";
+    }
+
+    const planIds = Array.isArray(signal.planid)
+      ? signal.planid
+      : signal.planid?.split(',') || [];
+
+    const today = new Date();
+    const clients = await Clients_Modal.find({
+      del: 0,
+      ActiveStatus: 1,
+      devicetoken: { $exists: true, $ne: null },
+      _id: {
+        $in: await PlanSubscription_Modal.find({
+          client_id: { $ne: null },
+          plan_category_id: { $in: planIds },
+          plan_end: { $gte: today },
+          del: false,
+        }).distinct('client_id'),
+      },
+    }).select('devicetoken');
+
+    const tokens = clients.map(client => client.devicetoken);
+    if (tokens.length > 0) {
+      const notificationTitle = 'Important Update';
+      const notificationBody = message;
+
+      const resultn = new Notification_Modal({
+        segmentid: signal.planid,
+        type: 'open signal',
+        title: notificationTitle,
+        message: notificationBody,
+      });
+      await resultn.save();
+
+      try {
+        await sendFCMNotification(notificationTitle, notificationBody, tokens, "open signal");
+      } catch (error) {
+        console.error("FCM notification error:", error);
+      }
+    }
+
+    return res.json({
+      status: true,
+      message: "Notification sent successfully"
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+}
+
 
 
 }
