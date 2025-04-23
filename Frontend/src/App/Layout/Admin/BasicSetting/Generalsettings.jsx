@@ -111,7 +111,8 @@ const Generalsettings = () => {
                                 state: clients[0].state || '',
                                 invoicetnc: clients[0].invoicetnc || '',
                                 saccode: clients[0].saccode || '',
-                                wh_number:clients[0].wh_number || '',
+                                wh_number: clients[0].wh_number || '',
+                                email_cc: clients[0].email_cc || '',
 
                             }}
                             onSubmit={async (values, { resetForm }) => {
@@ -131,6 +132,7 @@ const Generalsettings = () => {
                                     invoicetnc: getTermandCon,
                                     id: user_id,
                                     wh_number: values.wh_number,
+                                    email_cc: values.email_cc,
 
                                 };
 
@@ -243,7 +245,7 @@ const Generalsettings = () => {
 
                                         <div className="row mb-3 align-items-center">
                                             <label htmlFor="logo" className="col-sm-3 col-form-label">
-                                                <b> Logo</b>
+                                                <b>Logo</b>
                                             </label>
                                             <div className="col-sm-8">
                                                 <input
@@ -290,28 +292,28 @@ const Generalsettings = () => {
                                         </div>
 
                                         <div className="row mb-3 align-items-center">
-                                                <label htmlFor="simage" className="col-sm-3 col-form-label">
-                                                    <b>Signature Image</b>
-                                                </label>
-                                                <div className="col-sm-8">
-                                                    <input
-                                                        name="simage"
-                                                        type="file"
-                                                        accept="image/*"
-                                                        className="form-control"
-                                                        onChange={(event) => setFieldValue("simage", event.currentTarget.files[0])}
+                                            <label htmlFor="simage" className="col-sm-3 col-form-label">
+                                                <b>Signature Image</b>
+                                            </label>
+                                            <div className="col-sm-8">
+                                                <input
+                                                    name="simage"
+                                                    type="file"
+                                                    accept="image/*"
+                                                    className="form-control"
+                                                    onChange={(event) => setFieldValue("simage", event.currentTarget.files[0])}
 
-                                                    />
-                                                </div>
-                                                <div className="col-sm-1">
-                                                    {clients[0].simage && (
-                                                        <div className="file-preview">
-                                                            <img src={`${image_baseurl}uploads/basicsetting/${clients[0].simage}`} alt="simage Preview" className="image-preview" />
-                                                        </div>
-                                                    )}
-                                                </div>
-
+                                                />
                                             </div>
+                                            <div className="col-sm-1">
+                                                {clients[0].simage && (
+                                                    <div className="file-preview">
+                                                        <img src={`${image_baseurl}uploads/basicsetting/${clients[0].simage}`} alt="simage Preview" className="image-preview" />
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                        </div>
 
                                         <div className="row mb-3 align-items-center">
                                             <label htmlFor="address" className="col-sm-3 col-form-label">
@@ -417,6 +419,24 @@ const Generalsettings = () => {
                                         </div>
 
                                         <div className="row mb-3 align-items-center">
+                                            <label htmlFor="wh_number" className="col-sm-3 col-form-label">
+                                                <b>Email CC</b>
+                                            </label>
+                                            <div className="col-sm-9">
+                                                <div className="input-group">
+                                                    <span className="input-group-text">
+                                                        <i className="bx bx-envelope" />
+                                                    </span>
+                                                    <Field name="email_cc"
+                                                        type="text" className="form-control"
+                                                        placeholder="email_cc"
+
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="row mb-3 align-items-center">
                                             <label htmlFor="invoicetnc" className="col-sm-3 col-form-label">
                                                 <b> T&C Message</b>
                                             </label>
@@ -443,7 +463,7 @@ const Generalsettings = () => {
 
                                             </div>
 
-                                            
+
 
                                             <div className="row">
                                                 <label className="col-sm-3 col-form-label" />
@@ -457,7 +477,7 @@ const Generalsettings = () => {
                                             </div>
                                         </div>
 
-                                        
+
                                     </Form>
                                 </>
                             )}

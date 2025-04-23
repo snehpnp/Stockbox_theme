@@ -1875,6 +1875,7 @@ export async function Updatebasicsettings(data, token) {
     formData.append('invoicetnc', data.invoicetnc);
     formData.append('saccode', data.saccode);
     formData.append('wh_number', data.wh_number);
+    formData.append('email_cc', data.email_cc);
 
 
 
