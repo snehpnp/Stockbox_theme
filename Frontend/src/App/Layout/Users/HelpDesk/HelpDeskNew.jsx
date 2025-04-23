@@ -168,86 +168,116 @@ const HelpDesk = () => {
           </div>
         </Tab>
         <Tab eventKey="viewMessages" title="View Messages">
+        <div className="row row-cols-1 row-cols-lg-1 mb-3">
+        <div className="col">
+            <div className="card shadow-lg border-0">
+              <div className="card-body">
+                <div className="card-header border-bottom bg-transparent p-3">
+                    <div className="card-title">
+                      <h5 className="mb-0">Messages</h5>    
+                      </div>
+                      <p>Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development.
+                      </p>
+                </div>
+                
+                <button className="btn btn-primary btn-sm mt-3">open</button>
+                </div>
+                </div>
+            </div>
+            </div>
           <div className="row row-cols-2 row-cols-lg-2 ">
             <div className="col">
-                <div className="card shadow-lg border-0">
+              <div className="card  border-0">
                 <div className="card radius-10 w-100">
-  <div className="card-header border-bottom bg-transparent">
-    <div className="d-flex align-items-center">
-      <div>
-        <h5 className="mb-0">Replies</h5>
-      </div>
-    
-    </div>
-  </div>
-  <ul className="list-group list-group-flush review-list">
-    <li className="list-group-item bg-transparent">
-      <div className="d-flex align-items-center">
-        <img
-          src="assets/images/avatar/1.png"
-          alt="user avatar"
-          className="rounded-circle"
-          width={55}
-          height={55}
-        />
-        <div className="ms-3">
-          <h6 className="mb-0">
-            iPhone X <small className="ms-4">08.34 AM</small>
-          </h6>
-          <p className="mb-0 small-font">
-            Sara Jhon : This is svery Nice phone in low budget.
-          </p>
-        </div>
-       
-      </div>
-    </li>
-   
-    <li className="list-group-item bg-transparent">
-      <div className="d-flex align-items-center">
-        <img
-          src="assets/images/avatar/1.png"
-          alt="user avatar"
-          className="rounded-circle"
-          width={55}
-          height={55}
-        />
-        <div className="ms-3">
-          <h6 className="mb-0">
-            Mackbook <small className="ml-4"></small>
-          </h6>
-          <p className="mb-0 small-font">
-            Michle : The brand apple is original !
-          </p>
-        </div>
-       
-      </div>
-    </li>
-    <li className="list-group-item bg-transparent">
-      <div className="d-flex align-items-center">
-        <img
-          src="assets/images/avatar/1.png"
-          alt="user avatar"
-          className="rounded-circle"
-          width={55}
-          height={55}
-        />
-        <div className="ms-3">
-          <h6 className="mb-0">
-            Air Pod <small className="ml-4"></small>
-          </h6>
-          <p className="mb-0 small-font">
-            Danish Josh : The brand apple is original !
-          </p>
-        </div>
-    
-      </div>
-    </li>
-  </ul>
-</div>
+                  <div className="card-header border-bottom bg-transparent">
+                    <div className="d-flex align-items-center">
+                      <div>
+                        <h5 className="mb-0">Replies</h5>
+                      </div>
+                    </div>
+                  </div>
+                  <ul className="list-group list-group-flush review-list">
+                    <li className="list-group-item bg-transparent">
+                      <div className="d-flex align-items-center">
+                        <img
+                          src="assets/images/avatar/1.png"
+                          alt="user avatar"
+                          className="rounded-circle"
+                          width={55}
+                          height={55}
+                        />
+                        <div className="ms-3">
+                          <h6 className="mb-0">
+                            iPhone X <small className="ms-4">08.34 AM</small>
+                          </h6>
+                          <p className="mb-0 small-font">
+                            Sara Jhon : This is svery Nice phone in low budget.
+                          </p>
+                        </div>
+                      </div>
+                    </li>
 
+                    <li className="list-group-item bg-transparent">
+                      <div className="d-flex align-items-center">
+                        <img
+                          src="assets/images/avatar/1.png"
+                          alt="user avatar"
+                          className="rounded-circle"
+                          width={55}
+                          height={55}
+                        />
+                        <div className="ms-3">
+                          <h6 className="mb-0">
+                            Mackbook <small className="ml-4">08.34 AM</small>
+                          </h6>
+                          <p className="mb-0 small-font">
+                            Michle : The brand apple is original !
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                    <li className="list-group-item bg-transparent">
+                      <div className="d-flex align-items-center">
+                        <img
+                          src="assets/images/avatar/1.png"
+                          alt="user avatar"
+                          className="rounded-circle"
+                          width={55}
+                          height={55}
+                        />
+                        <div className="ms-3">
+                          <h6 className="mb-0">
+                            Air Pod <small className="ml-4">08.34 AM</small>
+                          </h6>
+                          <p className="mb-0 small-font">
+                            Danish Josh : The brand apple is original !
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className="col">
+                <div className="card shadow-lg border-0">
+                <div className="card-header border-bottom bg-transparent p-3">
+                    <div className="d-flex align-items-center">
+                      <div>
+                        <h5 className="mb-0">Reply To Ticket</h5>
+                      </div>
+                    </div>
+                  </div>
+                    <div className="card-body px-3">
+            <FormicForm
+            fieldtype={fieldtype}
+            formik={formik}
+            ButtonName="Submit"
+            BtnStatus={true}
+          />
+          </div>
             </div>
             </div>
-            <div className="col"></div>
           </div>
 
           {/* {isLoading ? <Loader /> : <div>
