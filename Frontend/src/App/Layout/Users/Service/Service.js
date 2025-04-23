@@ -217,6 +217,8 @@ const Service = () => {
         name: company,
         currency: "INR",
         title: item?.title || "Subscription Plan",
+
+
         handler: async function (response1) {
           const data = {
             plan_id: item?._id,
@@ -230,7 +232,6 @@ const Service = () => {
           try {
             const response2 = await AddplanSubscription(data, token);
             if (response2?.status) {
-              // setShowModal(false);
               navigate("/user/thankyou");
 
             }
@@ -445,114 +446,7 @@ const Service = () => {
                   ))
                 ) : null
               )}
-              {/* Plus Tier */}
-              {/* <div className="col">
-    <div className="card mb-5 mb-lg-0">
-      <div className="card-header bg-primary py-3">
-        <h5 className="card-title text-white text-uppercase text-center">
-          Plus
-        </h5>
-        <h6 className="card-price text-white text-center">
-          $9<span className="term">/month</span>
-        </h6>
-      </div>
-      <div className="card-body">
-        <ul className="list-group list-group-flush">
-          <li className="list-group-item">
-            <i className="bx bx-check me-2 font-18" />
-            Single User
-          </li>
-          <li className="list-group-item">
-            <i className="bx bx-check me-2 font-18" />
-            5GB Storage
-          </li>
-          <li className="list-group-item">
-            <i className="bx bx-check me-2 font-18" />
-            Unlimited Public Projects
-          </li>
-          <li className="list-group-item">
-            <i className="bx bx-check me-2 font-18" />
-            Community Access
-          </li>
-          <li className="list-group-item">
-            <i className="bx bx-check me-2 font-18" />
-            Unlimited Private Projects
-          </li>
-          <li className="list-group-item">
-            <i className="bx bx-check me-2 font-18" />
-            Dedicated Phone Support
-          </li>
-          <li className="list-group-item">
-            <i className="bx bx-check me-2 font-18" />
-            Free Subdomain
-          </li>
-          <li className="list-group-item text-secondary">
-            <i className="bx bx-x me-2 font-18" />
-            Monthly Status Reports
-          </li>
-        </ul>
-        <div className="d-grid">
-          {" "}
-          <a href="#" className="btn btn-primary my-2 radius-30">
-            Order Now
-          </a>
-        </div>
-      </div>
-    </div>
-  </div> */}
-              {/* Pro Tier */}
-              {/* <div className="col">
-    <div className="card">
-      <div className="card-header bg-warning py-3">
-        <h5 className="card-title text-dark text-uppercase text-center">Pro</h5>
-        <h6 className="card-price text-center">
-          $49<span className="term">/month</span>
-        </h6>
-      </div>
-      <div className="card-body">
-        <ul className="list-group list-group-flush">
-          <li className="list-group-item">
-            <i className="bx bx-check me-2 font-18" />
-            Single User
-          </li>
-          <li className="list-group-item">
-            <i className="bx bx-check me-2 font-18" />
-            5GB Storage
-          </li>
-          <li className="list-group-item">
-            <i className="bx bx-check me-2 font-18" />
-            Unlimited Public Projects
-          </li>
-          <li className="list-group-item">
-            <i className="bx bx-check me-2 font-18" />
-            Community Access
-          </li>
-          <li className="list-group-item">
-            <i className="bx bx-check me-2 font-18" />
-            Unlimited Private Projects
-          </li>
-          <li className="list-group-item">
-            <i className="bx bx-check me-2 font-18" />
-            Dedicated Phone Support
-          </li>
-          <li className="list-group-item">
-            <i className="bx bx-check me-2 font-18" />
-            Free Subdomain
-          </li>
-          <li className="list-group-item">
-            <i className="bx bx-check me-2 font-18" />
-            Monthly Status Reports
-          </li>
-        </ul>
-        <div className="d-grid">
-          {" "}
-          <a href="#" className="btn btn-warning my-2 radius-30">
-            Order Now
-          </a>
-        </div>
-      </div>
-    </div>
-  </div> */}
+
             </div>
 
 
