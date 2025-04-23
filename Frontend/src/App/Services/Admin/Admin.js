@@ -3652,3 +3652,22 @@ export async function UpdateSMSProviderStatus(data, token) {
         return err.response?.data || err.message;
     }
 }
+
+
+// sSend notification signal 
+
+export async function SendSignalNotification(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/sendsignalnotification`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
