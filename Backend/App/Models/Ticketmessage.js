@@ -5,7 +5,7 @@ const { Schema, model } = require('mongoose');
 const TicketmessageSchema = new Schema({
    client_id: {
            type: Schema.Types.ObjectId,
-           ref: 'Client', 
+           ref: 'Clients', 
            default: null
        },
     message: {

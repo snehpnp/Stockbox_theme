@@ -67,7 +67,7 @@ class TicketController {
 
     async  getTicketWithFilter(req, res) {
       try {
-        const { page = 1, from, to, status, search } = req.query;
+        const { page = 1, from, to, status, search } = req.body;
         const limit = 10;
         const skip = (parseInt(page) - 1) * parseInt(limit);
     
@@ -113,9 +113,9 @@ class TicketController {
           pipeline.push({
             $match: {
               $or: [
-                { "client.name": { $regex: regex } },
-                { "client.email": { $regex: regex } },
-                { "client.phone": { $regex: regex } }
+                { "client.FullName": { $regex: regex } },
+                { "client.Email": { $regex: regex } },
+                { "client.PhoneNo": { $regex: regex } }
               ]
             }
           });
@@ -131,8 +131,18 @@ class TicketController {
         pipeline.push({ $skip: skip });
         pipeline.push({ $limit: parseInt(limit) });
     
-        const tickets = await Ticket_Modal.aggregate(pipeline);
+        let tickets = await Ticket_Modal.aggregate(pipeline);
     
+        const BASE_URL = `https://${req.headers.host}/uploads/ticket/`;
+
+        tickets = tickets.map(ticket => {
+          if (ticket.attachment) {
+            ticket.attachment = BASE_URL + ticket.attachment;
+          }
+          return ticket;
+        });
+
+
         return res.json({
           status: true,
           data: tickets,
@@ -164,22 +174,37 @@ class TicketController {
           }
       
           // Fetch ticket details
-          const ticket = await Ticket_Modal.findOne({ _id: ticketid, del: false })
-            .populate("client_id", "name email phone")
-            .lean();
+          const ticket = await Ticket_Modal.findById(ticketid)
+          .populate("client_id", "FullName Email PhoneNo")
+          .lean();
       
+
+
+          
           if (!ticket) {
             return res.status(404).json({
               status: false,
               message: "Ticket not found",
             });
           }
+         
+         
+          const BASE_URL = `https://${req.headers.host}/uploads/ticket/`;
       
+          if (ticket.attachment) {
+            ticket.attachment = BASE_URL + ticket.attachment;
+          }
           // Fetch related messages
-          const messages = await Ticketmessage_Modal.find({ ticket_id: ticketid, del: false })
-            .populate("client_id", "name email phone")
+          let messages = await Ticketmessage_Modal.find({ ticket_id: ticketid, del: false })
             .sort({ created_at: 1 }) // oldest to newest
             .lean();
+
+            messages = messages.map(message => {
+                if (message.attachment) {
+                  message.attachment = BASE_URL + message.attachment;
+                }
+                return message;
+              });
       
           return res.json({
             status: true,

@@ -2691,7 +2691,7 @@ async SendSignalNotification(req, res) {
     const tokens = clients.map(client => client.devicetoken);
 
     if (tokens.length > 0) {
-      const notificationTitle = "Important Update";
+      const notificationTitle = `${signal.stock} POSITION UPDATE`;
       const notificationBody = message;
 
       const notification = new Notification_Modal({
@@ -2774,7 +2774,7 @@ async SendSignalNotificationWithPlan(req, res) {
 
     const tokens = clients.map(client => client.devicetoken);
     if (tokens.length > 0) {
-      const notificationTitle = 'Important Update';
+      const notificationTitle = `${signal.stock} POSITION UPDATE`;
       const notificationBody = message;
 
       const resultn = new Notification_Modal({

@@ -1932,7 +1932,7 @@ else {
       });
   
       // Fetch paginated tickets
-      const tickets = await Ticket_Modal.find({
+      let tickets = await Ticket_Modal.find({
         client_id: clientId,
         del: false
       })
@@ -1940,6 +1940,15 @@ else {
         .skip(skip)
         .limit(limit)
         .lean();
+
+        const BASE_URL = `https://${req.headers.host}/uploads/ticket/`; // Construct the base URL
+
+        tickets = tickets.map(ticket => {
+          if (ticket.attachment) {
+            ticket.attachment = BASE_URL + ticket.attachment;
+          }
+          return ticket;
+        });
   
       return res.json({
         status: true,
@@ -1971,24 +1980,33 @@ else {
           message: "ticketid is required",
         });
       }
-  
-      // Fetch ticket details
-      const ticket = await Ticket_Modal.findOne({ _id: ticketid, del: false })
-        .populate("client_id", "name email phone")
-        .lean();
-  
+      let ticket = await Ticket_Modal.findOne({ _id: ticketid, del: false }).lean();
+
       if (!ticket) {
         return res.status(404).json({
           status: false,
           message: "Ticket not found",
         });
       }
-  
+      
+      const BASE_URL = `https://${req.headers.host}/uploads/ticket/`;
+      
+      if (ticket.attachment) {
+        ticket.attachment = BASE_URL + ticket.attachment;
+      }
+      
       // Fetch related messages
-      const messages = await Ticketmessage_Modal.find({ ticket_id: ticketid, del: false })
-        .populate("client_id", "name email phone")
+      let messages = await Ticketmessage_Modal.find({ ticket_id: ticketid, del: false })
         .sort({ created_at: 1 }) // oldest to newest
         .lean();
+      
+      messages = messages.map(message => {
+        if (message.attachment) {
+          message.attachment = BASE_URL + message.attachment;
+        }
+        return message;
+      });
+    
   
       return res.json({
         status: true,
