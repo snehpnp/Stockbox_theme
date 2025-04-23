@@ -2104,6 +2104,21 @@ else {
               message: "Subject, Message, and Client ID are required"
             });
           }
+
+
+          const existingOpenTicket = await Ticket_Modal.findOne({
+            client_id,
+            status: false, // assuming 'true' means ticket is open
+            del: false
+          });
+      
+          if (existingOpenTicket) {
+            return res.status(409).json({
+              status: false,
+              message: "An open ticket already exists. Please wait for a response before creating a new one.",
+              ticket_id: existingOpenTicket.ticketnumber
+            });
+          }
       
           const attachment = req.files && req.files['attachment']
             ? req.files['attachment'][0].filename
