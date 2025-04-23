@@ -115,45 +115,34 @@ const HelpDesk = () => {
 
     const columns = [
         {
-          name: 'Subject',
-          selector: row => row.subject,
+            name: 'Subject',
+            selector: row => row.subject,
         },
         {
-          name: 'Description',
-          selector: row => row.description,
-          width: '300px',
+            name: 'Description',
+            selector: row => row.message,
+            width: '300px',
         },
         {
-          name: 'Status',
-          cell: (row) => (
-            <div>
-              <button className="btn btn-primary btn-sm">Pending</button>
-            </div>
-          ),
+            name: 'Status',
+            cell: (row) => (
+                <div>
+                    <button className="btn btn-primary btn-sm">Pending</button>
+                </div>
+            ),
         },
         {
             name: 'Action',
             cell: (row) => (
-              <div>
-                <button className="btn btn-secondary btn-sm p-0"> <Eye width="15px" /></button>
-              </div>
+                <div>
+                    <button className="btn btn-secondary btn-sm p-0"> <Eye width="15px" /></button>
+                </div>
             ),
-          },
-      ];
-      
-      const data = [
-        {
-          id: 1,
-          subject: 'Beetlejuice',
-          description: 'Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development.',
         },
-        {
-          id: 2,
-          subject: 'Ghostbusters',
-          description: 'Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development.',
-        },
-      ];
-      
+    ];
+
+
+
 
     return (
         <Content Page_title="Help Desk" button_status={false}>
@@ -163,12 +152,12 @@ const HelpDesk = () => {
                 </Tab>
                 <Tab eventKey="viewMessages" title="View Messages">
                     <div className="table-responsive">
-                                      <Table
-                                        columns={columns}
-                                        data={data}
-                                      
-                                      />
-                                    </div>
+                        <Table
+                            columns={columns}
+                            data={messages}
+
+                        />
+                    </div>
                     {/* {isLoading ? <Loader /> : <div>
                         {messages?.length > 0 ? (
                             messages?.map((msg, index) => (
