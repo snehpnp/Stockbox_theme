@@ -1157,7 +1157,7 @@ class Clients {
       });
 
     } catch (error) {
-      console.error('Error uploading document:', error.response ? error.response.data : error.message);
+      // console.error('Error uploading document:', error.response ? error.response.data : error.message);
       return res.status(400).json({ error: 'Error uploading document to Digio' });
     }
   }
@@ -1258,7 +1258,7 @@ if (mailtemplate) {
         message: 'Document downloaded and saved successfully'
       });
     } catch (error) {
-      console.error('Error downloading the document:', error);
+      // console.error('Error downloading the document:', error);
       return res.status(500).json({
         status: false,
         message: 'Failed to download the document',
@@ -1332,7 +1332,7 @@ if (mailtemplate) {
       });
 
     } catch (error) {
-      console.error('Error processing payout request:', error);
+      // console.error('Error processing payout request:', error);
       return res.status(500).json({ status: false, message: 'Server error while processing payout request.' });
     }
   }
@@ -1589,7 +1589,7 @@ if (mailtemplate) {
       });
 
     } catch (error) {
-      console.error("Error fetching helpdesk:", error); // Log the error for debugging
+      // console.error("Error fetching helpdesk:", error); // Log the error for debugging
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -1623,7 +1623,7 @@ if (mailtemplate) {
 
       fs.readFile(templatePath, 'utf8', async (err, htmlTemplate) => {
         if (err) {
-          console.error('Error reading HTML template:', err);
+          // console.error('Error reading HTML template:', err);
           return;
         }
 
@@ -1682,7 +1682,7 @@ else {
       });
     }
     } catch (error) {
-      console.error("Error fetching :", error); // Log the error for debugging
+      // console.error("Error fetching :", error); // Log the error for debugging
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -1901,7 +1901,7 @@ else {
         data: ordersWithSignals
       });
     } catch (error) {
-      console.error("Error in getClientSignalOrders:", error);
+    //  console.error("Error in getClientSignalOrders:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -1961,7 +1961,7 @@ else {
       });
   
     } catch (error) {
-      console.error("getClientTickets error:", error);
+   //   console.error("getClientTickets error:", error);
       return res.status(500).json({
         status: false,
         message: "Server Error",
@@ -2017,7 +2017,7 @@ else {
       });
   
     } catch (error) {
-      console.error("getTicketDetailById error:", error);
+   //   console.error("getTicketDetailById error:", error);
       return res.status(500).json({
         status: false,
         message: "Server Error",
@@ -2133,7 +2133,7 @@ else {
           });
       
         } catch (error) {
-          console.error("Add Ticket Error:", error);
+      //    console.error("Add Ticket Error:", error);
           return res.status(500).json({
             status: false,
             message: "Server error",

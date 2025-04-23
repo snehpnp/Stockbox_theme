@@ -153,7 +153,7 @@ class TicketController {
           }
         });
       } catch (error) {
-        console.error("getTickets error:", error);
+      //  console.error("getTickets error:", error);
         return res.status(500).json({
           status: false,
           message: "Server Error",
@@ -215,7 +215,7 @@ class TicketController {
           });
       
         } catch (error) {
-          console.error("getTicketDetailById error:", error);
+        //  console.error("getTicketDetailById error:", error);
           return res.status(500).json({
             status: false,
             message: "Server Error",
