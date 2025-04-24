@@ -35,6 +35,8 @@ import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import Loader from "../../../../Utils/Loader";
 
 const Closesignal = () => {
+
+  
   const [activeTab, setActiveTab] = useState("table");
   const token = localStorage.getItem("token");
   const [searchInput, setSearchInput] = useState("");
