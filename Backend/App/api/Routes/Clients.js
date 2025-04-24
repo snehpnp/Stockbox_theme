@@ -1,6 +1,6 @@
 const router = require("express").Router()
 
-const {AddClient,detailClient,loginClient,forgotPassword,resetPassword,changePassword,updateProfile,deleteClient,otpSubmit,aadhaarVerification,aadhaarOtpSubmit,clientKycAndAgreement,uploadDocument,downloadDocument,requestPayout,payoutList,referEarn,brokerLink,deleteBrokerLink,addHelpDesk,helpdeskList,resend,orderList,orderListDetail,basketOrderList,getClientSignalOrders,clientDelete} = require('../Controllers/Clients')
+const {AddClient,detailClient,loginClient,forgotPassword,resetPassword,changePassword,updateProfile,deleteClient,otpSubmit,aadhaarVerification,aadhaarOtpSubmit,clientKycAndAgreement,uploadDocument,downloadDocument,requestPayout,payoutList,referEarn,brokerLink,deleteBrokerLink,addHelpDesk,helpdeskList,resend,orderList,orderListDetail,basketOrderList,getClientSignalOrders,clientDelete,getTickets,detailTicket,rePly,addTicket} = require('../Controllers/Clients')
 
 
 
@@ -32,9 +32,10 @@ router.post('/api/client/orderlist', orderList);
 router.post('/api/client/orderlistdetail', orderListDetail);
 router.post('/api/client/basketorderlist', basketOrderList);
 router.post('/api/client/orderliststrategy', getClientSignalOrders);
-
-
-
+router.post('/api/client/gettickets', getTickets);
+router.get('/api/client/ticketdetail/:ticketid', detailTicket);
+router.post('/api/client/ticketreply', rePly);
+router.post('/api/client/addticket', addTicket);
 
 
 

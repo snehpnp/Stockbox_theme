@@ -2040,3 +2040,7 @@ span.price-original {
 svg.lucide.lucide-x.text-danger {
   stroke: #dc3545;
 }
+.small-font {
+  font-size: 12px;
+  color: #505050 !important;
+}

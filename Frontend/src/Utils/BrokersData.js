@@ -42,7 +42,7 @@ function BrokersData({ data, closeModal, type }) {
       key: "apikey",
       label: "API Key",
       type: "text"
-      
+
     }],
     2: [
       {
@@ -237,145 +237,154 @@ function BrokersData({ data, closeModal, type }) {
           <>
             {!brokerStatus ? (
               <>
-              <div className="page-content flex flex-col items-center">
-                <div className=" row justify-content-center">
-                  {filteredBrokers.map((broker) => (
+                <div className="page-content flex flex-col items-center">
+                  <div className=" row justify-content-center">
+                    {filteredBrokers.map((broker) => (
 
-                    <>      <div>
-                      <img
-                        src={broker.img}
-                        alt={broker.name}
-                        style={{
-                          height: "50px",
-                          width: "50px",
-                          objectFit: "cover",
-                          borderRadius: "50%",
-                          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.2)",
-                        }}
-                      />
-                      <h5 className=" font-weight-bold mt-2">{broker.name}</h5>
-                    </div>
-
-                      <div
-                        key={broker.id}
-                        className="col-lg-2 card card-body d-flex flex-column align-items-center justify-content-center m-2"
-                        onClick={() => {
-                          setBrokerId(broker.id);
-                          setShowModal(true);
-                        }}
-                        style={{
-                          cursor: "pointer",
-                          transition: "transform 0.3s ease-in-out",
-
-                          borderRadius: "15px",
-                          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                          padding: "20px",
-                          marginBottom: "20px",
-                        }}
-
-                      >
-{showModal && brokerId && (
-              <div className="modal-body mt-6 w-100">
-                <div className="row"> 
-                  {fields.map((field, index) => (
-                    <div key={index} className="mb-4 col-6">
-                      <label className="block fs-6 ">
-                        {field.label}
-                      </label>
-                      <input
-                        type={field.type || "text"}
-                        className="form-control"
-                        value={statusInfo[field.key] || ""}
-                        onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                      />
-                    </div>
-                  ))}
-              
-                </div>
-                <button className="btn btn-primary w-auto" onClick={handleSave} disabled={loading}>
-                    {loading ? "Saving..." : "Save"}
-                  </button>
-              </div>
-            )}
-                        
-
+                      <>      <div>
+                        <img
+                          src={broker.img}
+                          alt={broker.name}
+                          style={{
+                            height: "50px",
+                            width: "50px",
+                            objectFit: "cover",
+                            borderRadius: "50%",
+                            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.2)",
+                          }}
+                        />
+                        <h5 className=" font-weight-bold mt-2">{broker.name}</h5>
                       </div>
-                    </>
-                  ))}
-                </div>
-              </div>
-              <div
-              className="card-image mb-3 mt-3">
-<div className="accordion" id="accordionExample">
-<div className="accordion-item">
-<h2 className="accordion-header" id="headingOne">
-<button
-className="accordion-button"
-type="button"
-data-bs-toggle="collapse"
-data-bs-target="#collapseOne"
-aria-expanded="false"
-aria-controls="collapseOne"
->
-View Process
-</button>
-</h2>
-<div
-id="collapseOne"
-className="accordion-collapse collapse "
-aria-labelledby="headingOne"
-data-bs-parent="#accordionExample"
->
-<div className="accordion-body">
-{brokerContent?.length > 0 && (
-                <div className="timeline">
 
-                  <div className="timeline-container">
-                    {brokerContent?.map((item, index) => (
-                      <div className="timeline-item" key={index}>
-                        <div className="timeline-header">
-                          <h2 className="timeline-title">{item.HeadingTitle}</h2>
-                          <p className="timeline-description">{item.description}</p>
+                        <div
+                          key={broker.id}
+                          className="col-lg-2 card card-body d-flex flex-column align-items-center justify-content-center m-2"
+                          onClick={() => {
+                            setBrokerId(broker.id);
+                            setShowModal(true);
+                          }}
+                          style={{
+                            cursor: "pointer",
+                            transition: "transform 0.3s ease-in-out",
+
+                            borderRadius: "15px",
+                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                            padding: "20px",
+                            marginBottom: "20px",
+                          }}
+
+                        >
+                          {showModal && brokerId && (
+                            <div className="modal-body mt-6 w-100">
+                              <div className="row">
+                                {fields.map((field, index) => (
+                                  <div key={index} className="mb-4 col-6">
+                                    <label className="block fs-6 ">
+                                      {field.label}
+                                    </label>
+                                    <input
+                                      type={field.type || "text"}
+                                      className="form-control"
+                                      value={statusInfo[field.key] || ""}
+                                      onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                                    />
+                                  </div>
+                                ))}
+
+                              </div>
+                              <button className="btn btn-primary w-auto" onClick={handleSave} disabled={loading}>
+                                {loading ? "Saving..." : "Save"}
+                              </button>
+                            </div>
+                          )}
+
+
                         </div>
-                        <div className="timeline-content" >
-                          <p>{item.Apicreate}</p>
-                          <a href={item.LinkOne} target="_blank" rel="noopener noreferrer" className="timeline-link">
-                            Visit Angel Broking API
-                          </a>
-                          <a href={item.LinkTwo} target="_blank" rel="noopener noreferrer" className="timeline-link">
-                            Generate Access Token
-                          </a>
-                          <p>Example: {item.link3}</p>
-                          <a href={item.youTube} target="_blank" rel="noopener noreferrer" className="timeline-link">
-                            Watch Tutorial
-                          </a>
-                        </div>
-                        {/* <div className="timeline-images" style={{ margin: "0", padding: "0" }}> */}
-                        {/* <img src={item.img1} alt="Angel Step 1" style={{ width: "600px", height: "80px" }} /> */}
-                        {/* <img src={item.img2} alt="Angel Step 2" style={{ width: "600px", height: "150px" }} /> */}
-                        {/* <img src={item.img3} alt="Angel Step 3" style={{ width: "600px", height: "80px" }} /> */}
-                        {/* </div> */}
-                      </div>
+                      </>
                     ))}
                   </div>
+                </div>
+                <div
+                  className="card-image mb-3 mt-3">
+                  <div className="accordion" id="accordionExample">
+                    <div className="accordion-item">
+                      <h2 className="accordion-header" id="headingOne">
+                        <button
+                          className="accordion-button"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#collapseOne"
+                          aria-expanded="false"
+                          aria-controls="collapseOne"
+                        >
+                          View Process
+                        </button>
+                      </h2>
+                      <div
+                        id="collapseOne"
+                        className="accordion-collapse collapse "
+                        aria-labelledby="headingOne"
+                        data-bs-parent="#accordionExample"
+                      >
+                        <div className="accordion-body">
+                          {brokerContent?.length > 0 && (
+                            <div className="timeline">
+
+                              <div className="timeline-container">
+                                {brokerContent?.map((item, index) => (
+                                  <div className="timeline-item" key={index}>
+                                    <div className="timeline-header">
+                                      <h2 className="timeline-title">{item.HeadingTitle}</h2>
+
+                                    </div>
+                                    <div className="timeline-content">
+                                      <li className="timeline-title">{item.header}</li>
+
+                                      <p>{item.step1}</p>
+                                      {item.LinkOne && (
+                                        <a
+                                          href={item.LinkOne}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="timeline-link"
+                                        >
+                                          {item.LinkOne}
+                                        </a>
+                                      )}
+                                      <p>{item.step2}</p>
+                                      {item.redirectUrl && (
+                                        <a
+                                          href={item.redirectUrl}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="timeline-link"
+                                        >
+                                          {item.redirectUrl}
+                                        </a>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+
+                              </div>
+
+                            </div>
+                          )}
+
+                        </div>
+                      </div>
+                    </div>
+
+
+                  </div>
+
+
 
                 </div>
-              )}
-
-</div>
-</div>
-</div>
-
-
-</div>
-
-          
-
-            </div>
-            </>
+              </>
             ) : null}
 
-            
+
           </>
         }
       />

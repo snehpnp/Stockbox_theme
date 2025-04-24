@@ -6,7 +6,7 @@ import { Tabs, Tab } from 'react-bootstrap';
 import { SendHelpRequest, GetHelpMessage } from '../../../Services/UserService/User';
 import Loader from '../../../../Utils/Loader';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
-import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
+import { fDateTime } from '../../../../Utils/Date_formate'
 
 const HelpDesk = () => {
 
@@ -111,6 +111,9 @@ const HelpDesk = () => {
         },
     ];
 
+
+
+
     return (
         <Content Page_title="Help Desk" button_status={false}>
             <Tabs activeKey={key} onSelect={(k) => setKey(k)} className="mb-3 border-tab">
@@ -118,6 +121,7 @@ const HelpDesk = () => {
                     <FormicForm fieldtype={fieldtype} formik={formik} ButtonName="Submit" BtnStatus={true} />
                 </Tab>
                 <Tab eventKey="viewMessages" title="View Messages">
+
                     {isLoading ? <Loader /> : <div>
                         {messages?.length > 0 ? (
                             messages?.map((msg, index) => (

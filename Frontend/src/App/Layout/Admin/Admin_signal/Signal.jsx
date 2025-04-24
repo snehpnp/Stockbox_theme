@@ -3,8 +3,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { GetClient } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table1';
-import { Eye, Trash2, RefreshCcw, SquarePen, IndianRupee, ArrowDownToLine } from 'lucide-react';
-import { GetSignallist, GetSignallistWithFilter, DeleteSignal, SignalCloseApi, GetService, GetStockDetail, UpdatesignalReport } from '../../../Services/Admin/Admin';
+import { Eye, Trash2, RefreshCcw, SquarePen, IndianRupee, ArrowDownToLine, MessageCircle } from 'lucide-react';
+import { GetSignallist, GetSignallistWithFilter, DeleteSignal, SignalCloseApi, GetService, GetStockDetail, UpdatesignalReport, SendSignalNotification } from '../../../Services/Admin/Admin';
 import { fDateTimeH } from '../../../../Utils/Date_formate'
 import { exportToCSV, exportToCSV1 } from '../../../../Utils/ExportData';
 import Select from 'react-select';
@@ -30,6 +30,11 @@ const Signal = () => {
         description: ""
     });
 
+
+    const [signalnotification, setSignalnotification] = useState({
+        signalid: "",
+        message: "",
+    });
 
 
 
@@ -64,6 +69,7 @@ const Signal = () => {
     const [clients, setClients] = useState([]);
     const [model, setModel] = useState(false);
     const [model1, setModel1] = useState(false);
+    const [model2, setModel2] = useState(false);
     const [serviceid, setServiceid] = useState({});
 
 
@@ -335,9 +341,6 @@ const Signal = () => {
     useEffect(() => {
         getAllSignal();
     }, [filters, searchInput, searchstock, currentPage]);
-
-
-
 
 
 
@@ -702,6 +705,33 @@ const Signal = () => {
 
         },
         {
+            name: 'Send Message',
+            className: 'text-end',
+            cell: row => (
+                <>
+
+                    <div className='d-flex  justify-content-center' style={{ width: "150px" }}>
+                        <Tooltip placement="top" overlay="Update">
+                            <MessageCircle
+                                style={{ color: "red" }}
+                                onClick={() => {
+                                    setModel2(true);
+                                    setServiceid(row._id);
+                                    setSignalnotification({ message: row.message });
+                                }}
+                            />
+                        </Tooltip>
+                    </div>
+
+                </>
+            ),
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            width: '200px',
+
+        },
+        {
             name: 'Upload Report',
             className: 'text-end',
             cell: row => (
@@ -735,6 +765,7 @@ const Signal = () => {
             width: '200px',
 
         },
+
 
 
     ];
@@ -773,6 +804,30 @@ const Signal = () => {
                 showCustomAlert("Success", response.message)
                 setUpdatetitle({ report: "", id: "", description: "" });
                 setModel1(false);
+                getAllSignal();
+            } else {
+                showCustomAlert("error", response.message)
+            }
+        } catch (error) {
+            showCustomAlert("error", error.message)
+
+        }
+    };
+
+
+    // send signal notification 
+
+    // Update service
+    const SendSignaldata = async () => {
+
+        try {
+            const data = { signalid: serviceid, message: signalnotification.message };
+            const response = await SendSignalNotification(data, token);
+
+            if (response && response.status) {
+                showCustomAlert("Success", response.message)
+                setSignalnotification({ signalid: "", message: "" });
+                setModel2(false);
                 getAllSignal();
             } else {
                 showCustomAlert("error", response.message)
@@ -1510,6 +1565,41 @@ const Signal = () => {
                 }
             />
 
+
+            <ReusableModal
+                show={model2}
+
+                onClose={() => setModel2(false)}
+                title="Send Message"
+                body={
+                    <form>
+                        <div className="row">
+                            <div className="col-md-12">
+                                <label htmlFor="message">Message</label>
+                                <textarea
+                                    className="form-control mb-2"
+                                    placeholder="write message"
+                                    value={signalnotification.message}
+                                    onChange={(e) => setSignalnotification({ message: e.target.value })}
+                                    rows={2}
+                                >
+
+                                </textarea>
+                            </div>
+                        </div>
+                    </form>
+                }
+                footer={
+                    <>
+                        <button type="button" className="btn btn-secondary" onClick={() => setModel2(false)}>
+                            Close
+                        </button>
+                        <button type="button" className="btn btn-primary" onClick={(e) => { SendSignaldata(e) }}>
+                            Send
+                        </button>
+                    </>
+                }
+            />
 
 
         </div>

@@ -1875,6 +1875,7 @@ export async function Updatebasicsettings(data, token) {
     formData.append('invoicetnc', data.invoicetnc);
     formData.append('saccode', data.saccode);
     formData.append('wh_number', data.wh_number);
+    formData.append('email_cc', data.email_cc);
 
 
 
@@ -3639,6 +3640,25 @@ export async function UpdateSMSProvider(data, token) {
 export async function UpdateSMSProviderStatus(data, token) {
     try {
         const res = await axios.post(`${Config.base_url}smsprovider/changestatus`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+// sSend notification signal 
+
+export async function SendSignalNotification(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/sendsignalnotification`, data, {
             headers: {
                 data: {},
                 'Authorization': `${token}`,
