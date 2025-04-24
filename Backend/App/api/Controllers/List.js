@@ -6339,7 +6339,7 @@ htmlContent = htmlContent
 .replace(/{{simage}}/g, simage)
 .replace(/{{total}}/g, total.toFixed(2))
 .replace(/{{plantype}}/g, "Plan")
-.replace(/{{discount}}/g, discount.toFixed(2));
+.replace(/{{discount}}/g, discountPerPlan.toFixed(2));
 
 
 const browser = await puppeteer.launch({
@@ -7395,7 +7395,7 @@ await sendEmail(mailOptions);
        .replace(/{{email}}/g, client.Email)
        .replace(/{{PhoneNo}}/g, client.PhoneNo)
        .replace(/{{total}}/g, total.toFixed(2))
-       .replace(/{{discount}}/g, discount.toFixed(2))
+       .replace(/{{discount}}/g, discountPerPlan.toFixed(2))
        .replace(/{{plan_details}}/g, planDetailsHtml)
        .replace(/{{company_email}}/g, settings.email_address)
        .replace(/{{company_phone}}/g, settings.contact_number)
