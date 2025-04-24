@@ -815,8 +815,6 @@ const Signal = () => {
     };
 
 
-    // send signal notification 
-
     // Update service
     const SendSignaldata = async () => {
 
