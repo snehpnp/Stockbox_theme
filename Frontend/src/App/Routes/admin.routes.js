@@ -87,7 +87,7 @@ import PopupDescription from "../Layout/Admin/BasicSetting/PopupDescription";
 import SmsTemplate from "../Layout/Admin/BasicSetting/SmsTemplate";
 import SMSProvider from "../Layout/Admin/BasicSetting/SMSProvider";
 import Tickets from "../Layout/Admin/Tickets/Tickets";
-
+import ViewTicket from "../Layout/Admin/Tickets/ViewTicket";
 
 
 export default function App() {
@@ -222,6 +222,7 @@ export default function App() {
 
 
       <Route path="/tickets" element={<Tickets />} />
+      <Route path="/viewticket" element={<ViewTicket />} />
 
     </Routes>
   );
