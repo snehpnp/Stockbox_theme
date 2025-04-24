@@ -16,6 +16,8 @@ import { Link, useLocation } from "react-router-dom";
 import { fDateTime } from "../../../../Utils/Date_formate";
 import ReusableModal from '../../../components/Models/ReusableModal';
 
+
+
 ChartJS.register(
   ArcElement,
   Tooltip,
@@ -25,6 +27,10 @@ ChartJS.register(
   PointElement,
   LineElement
 );
+
+
+
+
 
 const BasketDetail = () => {
 
@@ -131,6 +137,8 @@ const BasketDetail = () => {
     setItemdata(item);
   }, [item]);
 
+
+  
   return (
     <Content
       Page_title="Basket Detail"

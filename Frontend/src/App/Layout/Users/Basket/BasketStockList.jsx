@@ -25,7 +25,6 @@ const BasketStockList = () => {
     getbasketpurchasedata();
     getuserdetail();
     getportfolio();
-    // getlivepricedata();
   }, []);
 
 
@@ -59,26 +58,6 @@ const BasketStockList = () => {
   const totalInvestment = portfolio.reduce((acc, curr) => acc + curr.price * curr.totalQuantity, 0);
   const totalInvestment1 = purchasedata.reduce((acc, curr) => acc + curr.price * curr.quantity, 0);
 
-
-
-  // const getlivepricedata = async () => {
-  //   try {
-  //     const response = await GetLivePricedata(userid, token);
-  //     if (response.status) {
-  //       const getlive = purchasedata.map((purchase) => {
-  //         return response?.data
-  //           .filter((item) => item.token == purchase.instrument_token)
-  //           .map((item) => item.lp);
-  //       });
-
-  //       setLiveprice(getlive);
-  //       // console.log(getlive);
-  //       // console.log("response?.data", response?.data);
-  //     }
-  //   } catch (error) {
-  //     console.log("error", error);
-  //   }
-  // };
 
 
 
