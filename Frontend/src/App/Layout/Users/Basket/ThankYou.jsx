@@ -1,13 +1,18 @@
 import React from 'react'
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 
 const ThankYou = () => {
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const {state} = location;
+
+  const isStateAvailable = state !== null;
 
   const handleGoBack = () => {
-    navigate('/user/service')
+    // navigate('/user/service')
+    navigate('/user/subscription')
   }
   return (
     <div>
@@ -23,8 +28,8 @@ const ThankYou = () => {
             </div>
           </div>
           <h1>Thank You!</h1>
-          <p>You have successfully subscribed<br /> the basket.</p>
-          <button className="btn btn-primary mt-4 w-50 mx-auto" onClick={handleGoBack}>Go Back</button>
+          <p>You have successfully subscribed<br />the {isStateAvailable ? "Service" : "Basket"}.</p>
+          <button className="btn btn-primary mt-4 w-50 mx-auto" onClick={handleGoBack}>Go to Subscription</button>
         </div>
       </div>
 
