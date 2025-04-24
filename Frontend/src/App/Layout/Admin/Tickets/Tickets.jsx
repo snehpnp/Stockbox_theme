@@ -69,7 +69,7 @@ const Ticket = () => {
       name: "Action",
       cell: (row) => (
         <div>
-          <Link to='/user/help-desk-view' className="btn btn-secondary btn-sm p-0">
+          <Link to='/admin/viewticket' className="btn btn-secondary btn-sm p-0">
            
             <Eye width="15px" />
           </Link>
@@ -81,12 +81,17 @@ const Ticket = () => {
   const data = [
     {
       id: 1,
+      ticket: "123456",
+      email: "test@gmail.com",
       subject: "Beetlejuice",
       description:
         "Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development.",
     },
+    
     {
       id: 2,
+      ticket: "123456",
+      email: "test@gmail.com",
       subject: "Ghostbusters",
       description:
         "Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development.",
