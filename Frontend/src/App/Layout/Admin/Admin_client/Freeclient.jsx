@@ -91,7 +91,6 @@ const Freeclient = () => {
             if (response.status) {
                 setTotalRows(response.pagination.total)
                 setClients(response.data);
-
             }
         } catch (error) {
             console.log("error", error)
