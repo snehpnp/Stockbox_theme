@@ -4,7 +4,7 @@ import FormicForm from "../../../Extracomponents/Newformicform";
 import { useFormik } from "formik";
 import { Tabs, Tab } from "react-bootstrap";
 import {
-  SendHelpRequest,
+  GetTicketForhelp,
   GetHelpMessage,
 } from "../../../Services/UserService/User";
 import Loader from "../../../../Utils/Loader";
@@ -13,7 +13,11 @@ import Table from "../../../Extracomponents/Table";
 import { Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 
+
+
 const HelpDesk = () => {
+
+
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
@@ -21,25 +25,25 @@ const HelpDesk = () => {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    FetchMessage();
-  }, []);
+  // useEffect(() => {
+  //   FetchMessage();
+  // }, []);
 
-  const FetchMessage = async () => {
-    try {
-      const response = await GetHelpMessage(userid, token);
-      if (response.status) {
-        setMessages(response.data);
-      }
-    } catch (error) {
-      console.error("Error fetching trade data:", error);
-    }
-    setIsLoading(false);
-  };
+  // const FetchMessage = async () => {
+  //   try {
+  //     const response = await GetHelpMessage(userid, token);
+  //     if (response.status) {
+  //       setMessages(response.data);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching trade data:", error);
+  //   }
+  //   setIsLoading(false);
+  // };
 
   const Sendmessagedata = async (data) => {
     try {
-      const response = await SendHelpRequest(data, token);
+      const response = await GetTicketForhelp(data, token);
       if (response.status) {
         showCustomAlert("Success", "Your message has been sent successfully!");
       } else {
@@ -57,7 +61,7 @@ const HelpDesk = () => {
     initialValues: {
       subject: "",
       message: "",
-      file:'',
+      file: '',
     },
     validate: (values) => {
       const errors = {};
@@ -80,7 +84,7 @@ const HelpDesk = () => {
         client_id: userid,
         subject: values.subject,
         message: values.message,
-        file: values.file,
+        attachment: values.file,
       };
 
       await Sendmessagedata(data);
@@ -111,15 +115,15 @@ const HelpDesk = () => {
       disable: false,
     },
     {
-type:"file",
-name:"file",
-label:"Upload File",
-placeholder:"Upload File",
-required:false,
-label_size:5,
-col_size:12,
-disable:false,
-accept:"image/*",
+      type: "file",
+      name: "file",
+      label: "Upload File",
+      placeholder: "Upload File",
+      required: false,
+      label_size: 5,
+      col_size: 12,
+      disable: false,
+      accept: "image/*",
 
 
     },
@@ -148,7 +152,7 @@ accept:"image/*",
       cell: (row) => (
         <div>
           <Link to='/user/help-desk-view' className="btn btn-secondary btn-sm p-0">
-           
+
             <Eye width="15px" />
           </Link>
         </div>
@@ -172,18 +176,19 @@ accept:"image/*",
   ];
 
   return (
-    <Content Page_title="Help Desk" button_status={true}>
-    
-          <FormicForm
-            fieldtype={fieldtype}
-            formik={formik}
-            ButtonName="Submit"
-            BtnStatus={true}
-          />
-          <div className="table-responsive">
-            <Table columns={columns} data={data} />
-          </div>
-       
+    <Content Page_title="Help Desk"
+      button_status={false}>
+
+      <FormicForm
+        fieldtype={fieldtype}
+        formik={formik}
+        ButtonName="Submit"
+        BtnStatus={true}
+      />
+      <div className="table-responsive">
+        <Table columns={columns} data={data} />
+      </div>
+
     </Content>
   );
 };

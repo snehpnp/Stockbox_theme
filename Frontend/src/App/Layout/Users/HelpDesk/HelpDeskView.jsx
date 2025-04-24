@@ -122,7 +122,13 @@ const HelpDesk = () => {
   ];
 
   return (
-    <Content Page_title="Help Desk" button_status={true}>
+    <Content
+      Page_title="Help Desk"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+
+    >
       <div className="row row-cols-1 row-cols-lg-1 mb-3">
         <div className="col">
           <div className="card shadow-lg border-0">
