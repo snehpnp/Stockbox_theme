@@ -3671,3 +3671,23 @@ export async function SendSignalNotification(data, token) {
         return err.response?.data || err.message;
     }
 }
+
+
+
+// get notification data list 
+
+export async function GetSignalNotificationdata(signalid, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}signal/getnotificationsbysignal/${signalid}`, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}

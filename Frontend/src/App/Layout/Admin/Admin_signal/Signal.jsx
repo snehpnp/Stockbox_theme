@@ -4,7 +4,7 @@ import axios from 'axios';
 import { GetClient } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table1';
 import { Eye, Trash2, RefreshCcw, SquarePen, IndianRupee, ArrowDownToLine, MessageCircle } from 'lucide-react';
-import { GetSignallist, GetSignallistWithFilter, DeleteSignal, SignalCloseApi, GetService, GetStockDetail, UpdatesignalReport, SendSignalNotification } from '../../../Services/Admin/Admin';
+import { GetSignallist, GetSignallistWithFilter, DeleteSignal, SignalCloseApi, GetService, GetStockDetail, UpdatesignalReport, SendSignalNotification, GetSignalNotificationdata } from '../../../Services/Admin/Admin';
 import { fDateTimeH } from '../../../../Utils/Date_formate'
 import { exportToCSV, exportToCSV1 } from '../../../../Utils/ExportData';
 import Select from 'react-select';
@@ -36,7 +36,7 @@ const Signal = () => {
         message: "",
     });
 
-
+    const [signalmessage, setSignalmessage] = useState([])
 
     const location = useLocation();
     const clientStatus = location?.state?.clientStatus;
@@ -606,6 +606,24 @@ const Signal = () => {
 
 
 
+    // for signal message 
+
+
+    const getsignalmessage = async (signalid) => {
+        try {
+            const response = await GetSignalNotificationdata(signalid, token);
+
+            if (response.status) {
+                setSignalmessage(response.notifications)
+                console.log("response", response.notifications)
+            }
+        } catch (error) {
+            console.log('Error fetching stock list:', error);
+        }
+    };
+
+
+
 
     // colums
     let columns = [
@@ -717,6 +735,7 @@ const Signal = () => {
                                 onClick={() => {
                                     setModel2(true);
                                     setServiceid(row._id);
+                                    getsignalmessage(row._id);
                                     setSignalnotification({ message: row.message });
                                 }}
                             />
