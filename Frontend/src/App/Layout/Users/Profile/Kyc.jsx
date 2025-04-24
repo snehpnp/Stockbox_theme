@@ -434,6 +434,7 @@ function Kyc() {
                 value={formData.email}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                disabled
               />
               {touched.email && errors.email && (
                 <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
@@ -456,6 +457,7 @@ function Kyc() {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 maxLength="10"
+                disabled
               />
               {touched.phone && errors.phone && (
                 <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
