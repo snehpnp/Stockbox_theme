@@ -10,6 +10,7 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const { toWords } = require('number-to-words');
 
+const { sendEmail } = require('../Utils/emailService');
 
 const Basket_Modal = db.Basket;
 const Basketstock_Modal = db.Basketstock;
