@@ -1075,7 +1075,7 @@ const Signal = () => {
                                     </div>
                                 )
                             ) : (
-                                // **Strategy Content**
+
                                 <div className="strategy-content mt-4">
                                     <div className='card py-3'>
                                         <div className='row w-100 mx-auto'>
@@ -1496,6 +1496,7 @@ const Signal = () => {
                                     <button type="submit" className='btn btn-primary mt-2' onClick={(e) => closeSignalperUser(3, e)}>Submit</button>
                                 </form>
                             )}
+
                             {checkedIndex === 4 && (
                                 <form className='card-body'>
 
@@ -1525,8 +1526,6 @@ const Signal = () => {
                 }
 
             />
-
-
 
 
             <ReusableModal
