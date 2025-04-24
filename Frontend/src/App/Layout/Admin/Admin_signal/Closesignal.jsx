@@ -292,7 +292,7 @@ const Closesignal = () => {
 
       if (response.status) {
         setSignalmessage(response.notifications);
-        console.log("response", response.notifications);
+
       }
     } catch (error) {
       console.log("Error fetching stock list:", error);

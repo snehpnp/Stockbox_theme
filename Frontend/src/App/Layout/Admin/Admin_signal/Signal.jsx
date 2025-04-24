@@ -33,6 +33,7 @@ import ReusableModal from "../../../components/Models/ReusableModal";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 const Signal = () => {
+
     const [viewMode, setViewMode] = useState("table");
     const token = localStorage.getItem("token");
     const [searchInput, setSearchInput] = useState("");
@@ -321,23 +322,34 @@ const Signal = () => {
         }
     };
 
+
+
     useEffect(() => {
         fetchAdminServices();
         fetchStockList();
     }, [filters]);
 
+
+
+
     useEffect(() => {
         getAllSignal();
     }, [filters, searchInput, searchstock, currentPage]);
+
+
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilters((prev) => ({ ...prev, [name]: value }));
     };
 
+
+
     const Signaldetail = async (_id) => {
         navigate(`/admin/signaldetaile/${_id}`);
     };
+
+
 
     const DeleteSignals = async (_id) => {
         try {
@@ -381,6 +393,9 @@ const Signal = () => {
         });
     };
 
+
+
+
     useEffect(() => {
         if (closedata.targetprice3) {
             setClosedata((prevState) => ({
@@ -394,6 +409,9 @@ const Signal = () => {
             }));
         }
     }, [closedata.targetprice3]);
+
+
+
 
     const closeSignalperUser = async (index, e) => {
         try {
@@ -620,7 +638,6 @@ const Signal = () => {
 
             if (response.status) {
                 setSignalmessage(response.notifications);
-                console.log("response", response.notifications);
             }
         } catch (error) {
             console.log("Error fetching stock list:", error);
@@ -1655,7 +1672,7 @@ const Signal = () => {
                 body={
                     <form>
                         <div className="row">
-                            {/* Message Input */}
+
                             <div className="col-md-12 mb-4">
                                 <label htmlFor="message" className="form-label fw-semibold">
                                     Message
@@ -1671,7 +1688,6 @@ const Signal = () => {
                                 ></textarea>
                             </div>
 
-                            {/* Previous Messages */}
                             <div className="col-md-12">
                                 <label className="form-label fw-semibold">Previous Messages</label>
                                 <div
