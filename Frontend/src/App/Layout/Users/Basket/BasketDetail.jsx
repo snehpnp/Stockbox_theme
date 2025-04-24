@@ -101,7 +101,7 @@ const BasketDetail = () => {
       const response = await getChatLineData(data, token);
       if (response.status) {
         setNewChartData(response.data);
-        console.log("response.data", response.data)
+
       }
     } catch (error) {
       console.log("error", error);
