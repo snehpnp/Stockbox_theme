@@ -105,8 +105,8 @@ const Payments = () => {
                     try {
                         const response2 = await AddBasketsubscription(data, token);
                         if (response2?.status) {
-                            navigate("/user/basket")
-                            window.location.reload();
+                            navigate("/user/thankyou")
+                            // window.location.reload();
                         }
                     } catch (error) {
                         console.error("Error while adding plan subscription:", error);

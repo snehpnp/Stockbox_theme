@@ -52,35 +52,50 @@ const BasketDetail = () => {
 
   function calculateTypeWeightages(stockDetails) {
     const typeWeightages = {};
-
+  
     stockDetails.forEach((item) => {
       const { type, weightage } = item;
       typeWeightages[type] = (typeWeightages[type] || 0) + weightage;
     });
-
+  
     const labels = [];
     const values = [];
-
+    const backgroundColor = [];
+    const hoverBackgroundColor = [];
+  
+    // 🎨 Define fixed color mapping
+    const colorMap = {
+      "Small Cap": { base: "#FF5252", hover: "#FF867F" },   // Red
+      "Mid Cap": { base: "#FF9800", hover: "#FFB74D" },     // Orange
+      "Large Cap": { base: "#4CAF50", hover: "#66BB6A" },   // Green
+    };
+  
     for (const type in typeWeightages) {
       labels.push(`${type} (${typeWeightages[type]}%)`);
       values.push(typeWeightages[type]);
+  
+      // Push correct color based on type
+      const color = colorMap[type] || { base: "#9E9E9E", hover: "#BDBDBD" }; // Default grey if unknown
+      backgroundColor.push(color.base);
+      hoverBackgroundColor.push(color.hover);
     }
-
-    return { labels, values };
+  
+    return { labels, values, backgroundColor, hoverBackgroundColor };
   }
-
+  
   const typeData = calculateTypeWeightages(item.stock_details);
-
+  
   const chartData = {
     labels: typeData.labels,
     datasets: [
       {
         data: typeData.values,
-        backgroundColor: ["#4CAF50", "#FF5252"],
-        hoverBackgroundColor: ["#66BB6A", "#FF867F"],
+        backgroundColor: typeData.backgroundColor,
+        hoverBackgroundColor: typeData.hoverBackgroundColor,
       },
     ],
   };
+  
 
   const chartDataLine = {
     labels: newChartData?.map((item) =>
@@ -163,7 +178,7 @@ const BasketDetail = () => {
                   <ul className="list-group list-group-flush list mt-4">
                     <li className="list-group-item d-flex justify-content-between align-items-center">
                       Launch Date{" "}
-                      <span className="badge bg-dark rounded-pill">
+                      <span className="badge bg-dark text-white rounded-pill">
                         {fDateTime(item?.created_at)}
                       </span>
                     </li>
