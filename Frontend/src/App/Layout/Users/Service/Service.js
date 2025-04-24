@@ -232,7 +232,11 @@ const Service = () => {
           try {
             const response2 = await AddplanSubscription(data, token);
             if (response2?.status) {
-              navigate("/user/thankyou");
+              navigate("/user/thankyou", {
+                state: {
+                  planType: data,
+                }
+              });
 
             }
           } catch (error) {
@@ -394,7 +398,7 @@ const Service = () => {
                           </h6>
                         </div>
                         <div className="card-body">
-                          <ul className="list-group list-group-flush">
+                          <ul className="list-group list-group-flush" style={{minHeight:"200px"}}>
                             <li className="list-group-item">
                               <i className="bx bx-check me-2 font-18" />
                               Validity: {plan?.validity}
@@ -426,12 +430,12 @@ const Service = () => {
                           </ul>
 
                           <div className="border-top pt-3">
-                            <Link to="/user/cart"
+                            {/* <Link to="/user/cart"
                               className="btn btn-secondary  rounded-pill mt-2 mt-sm-0 me-2 me-sm-0"
 
                             >
                               Add to cart
-                            </Link>
+                            </Link> */}
 
                             <button
                               className="btn btn-primary rounded-pill mt-2 mt-sm-0 ms-3"
