@@ -27,6 +27,8 @@ ChartJS.register(
 );
 
 const BasketDetail = () => {
+
+
   const [activeTab, setActiveTab] = useState("rational");
   const [itemdata, setItemdata] = useState();
   const [model, setModel] = useState(false);
@@ -99,6 +101,7 @@ const BasketDetail = () => {
       const response = await getChatLineData(data, token);
       if (response.status) {
         setNewChartData(response.data);
+        console.log("response.data", response.data)
       }
     } catch (error) {
       console.log("error", error);
@@ -245,7 +248,7 @@ const BasketDetail = () => {
                   </h4>
                   <hr />
 
-                  {/* <div className="row mb-4 mt-4">
+                  <div className="row mb-4 mt-4">
                     <div className="col-md-4">
                       <h6 className="text-muted">
                         Current value of <b>₹100</b> invested once
@@ -261,7 +264,7 @@ const BasketDetail = () => {
                       <li className="text-warning">Equity Large Cap </li>
                       <p className="ms-4 text-muted"> ₹5142</p>
                     </div>
-                  </div> */}
+                  </div>
 
                   <Line data={chartDataLine} />
                 </div>
