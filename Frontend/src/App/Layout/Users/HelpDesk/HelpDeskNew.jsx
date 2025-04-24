@@ -5,7 +5,7 @@ import { useFormik } from "formik";
 import { Tabs, Tab } from "react-bootstrap";
 import {
   GetTicketForhelp,
-  GetHelpMessage,
+  GetAllTicketData,
 } from "../../../Services/UserService/User";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
@@ -25,21 +25,25 @@ const HelpDesk = () => {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // useEffect(() => {
-  //   FetchMessage();
-  // }, []);
+  useEffect(() => {
+    FetchMessage();
+  }, []);
 
-  // const FetchMessage = async () => {
-  //   try {
-  //     const response = await GetHelpMessage(userid, token);
-  //     if (response.status) {
-  //       setMessages(response.data);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching trade data:", error);
-  //   }
-  //   setIsLoading(false);
-  // };
+  const FetchMessage = async () => {
+
+    try {
+      const data= {page: '1', clientId:userid}
+      const response = await GetAllTicketData(data, token);
+      if (response.status) {
+        setMessages(response.data);
+        console.log("response", response.data);
+        
+      }
+    } catch (error) {
+      console.error("Error fetching trade data:", error);
+    }
+    setIsLoading(false);
+  };
 
 
 

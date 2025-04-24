@@ -1181,3 +1181,22 @@ export async function GetTicketForhelp(data, token) {
         throw error.response?.data || { message: 'Something went wrong!' };
     }
 }
+
+export async function GetAllTicketData(data, token) {
+    try {
+        const response = await axios.post(`${Config.base_url}api/client/gettickets`, data, {
+
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+        }
+        );
+
+        return response.data;
+
+    } catch (error) {
+        console.error('Error in clientKycAndAgreement API:', error.message);
+        throw error.response?.data || { message: 'Something went wrong!' };
+    }
+}
