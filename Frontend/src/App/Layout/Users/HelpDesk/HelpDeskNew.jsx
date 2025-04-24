@@ -56,6 +56,7 @@ const HelpDesk = () => {
     initialValues: {
       subject: "",
       message: "",
+      file:'',
     },
     validate: (values) => {
       const errors = {};
@@ -65,6 +66,12 @@ const HelpDesk = () => {
       if (!values.message) {
         errors.message = "Please Enter Message";
       }
+      if (!values.file) {
+        errors.file = "Please Upload File";
+      }
+      if (values.file && values.file.size > 2 * 1024 * 1024) {
+        errors.file = "File size should be less than 2MB";
+      }
       return errors;
     },
     onSubmit: async (values, { resetForm }) => {
@@ -72,6 +79,7 @@ const HelpDesk = () => {
         client_id: userid,
         subject: values.subject,
         message: values.message,
+        file: values.file,
       };
 
       await Sendmessagedata(data);
@@ -100,6 +108,19 @@ const HelpDesk = () => {
       label_size: 5,
       col_size: 12,
       disable: false,
+    },
+    {
+type:"file",
+name:"file",
+label:"Upload File",
+placeholder:"Upload File",
+required:false,
+label_size:5,
+col_size:12,
+disable:false,
+accept:"image/*",
+
+
     },
   ];
 
@@ -150,7 +171,7 @@ const HelpDesk = () => {
   ];
 
   return (
-    <Content Page_title="Help Desk" button_status={false}>
+    <Content Page_title="Help Desk" button_status={true}>
       <Tabs
         activeKey={key}
         onSelect={(k) => setKey(k)}

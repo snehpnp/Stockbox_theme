@@ -1683,7 +1683,8 @@ const Signal = () => {
                     <li className="d-flex my-2 align-items-center justify-content-between  p-2 border radius-10">
                       <div className=""></div>
                       <div className="flex-grow-1">
-                        <p className="mb-0 mt-2" style={{ fontSize: 12 }}>
+                      <p className="mb-0 mt-2 text-muted" style={{ fontSize: 12 }}> 1/13/2025</p>
+                        <p className="mb-0 mt-1" style={{ fontSize: 12 }}>
                           Others who use this device won’t see your activity, so
                           you can browse more privately. This won't change how
                           data is collected by websites you visit and the
@@ -1695,37 +1696,38 @@ const Signal = () => {
                     <li className="d-flex my-2 align-items-center justify-content-between  p-2 border radius-10">
                       <div className=""></div>
                       <div className="flex-grow-1">
-                        <p className="mb-0 mt-2" style={{ fontSize: 12 }}>
+                      <p className="mb-0 mt-2 text-muted" style={{ fontSize: 12 }}> 1/13/2025</p>
+                        <p className="mb-0 mt-1" style={{ fontSize: 12 }}>
                           Others who use this device won’t see your activity, so
                           you can browse more privately. This won't change how
                           data is collected by websites you visit and the
                           services they use, including Google. Downloads,
-                          bookmarks and reading list items will be saved
-                        </p>
+                          bookmarks and readin</p>
                       </div>
                     </li>
                     <li className="d-flex my-2 align-items-center justify-content-between  p-2 border radius-10">
                       <div className=""></div>
                       <div className="flex-grow-1">
-                        <p className="mb-0 mt-2" style={{ fontSize: 12 }}>
+                      <p className="mb-0 mt-2 text-muted" style={{ fontSize: 12 }}> 1/13/2025</p>
+                        <p className="mb-0 mt-1" style={{ fontSize: 12 }}>
                           Others who use this device won’t see your activity, so
                           you can browse more privately. This won't change how
                           data is collected by websites you visit and the
                           services they use, including Google. Downloads,
-                          bookmarks and reading list items will be saved
-                        </p>
+                          bookmarks and readin</p>
                       </div>
                     </li>
                     <li className="d-flex my-2 align-items-center justify-content-between  p-2 border radius-10">
                       <div className=""></div>
                       <div className="flex-grow-1">
-                        <p className="mb-0 mt-2" style={{ fontSize: 12 }}>
+                      <p className="mb-0 mt-2 text-muted" style={{ fontSize: 12 }}> 1/13/2025</p>
+                        <p className="mb-0 mt-1" style={{ fontSize: 12 }}>
                           Others who use this device won’t see your activity, so
                           you can browse more privately. This won't change how
                           data is collected by websites you visit and the
                           services they use, including Google. Downloads,
-                          bookmarks and reading list items will be saved
-                        </p>
+                          bookmarks and readin</p>
+                        
                       </div>
                     </li>
                   </ul>
