@@ -250,12 +250,12 @@ const Admin = [
     link: "/admin/termsandcondtion",
     name: "Policy"
   },
-  {
-    label: "Ticket",
-    icon: "Ticket",
-    link: "/admin/tickets",
-    name: "Ticket"
-  },
+  // {
+  //   label: "Ticket",
+  //   icon: "Ticket",
+  //   link: "/admin/tickets",
+  //   name: "Ticket"
+  // },
 ];
 
 
