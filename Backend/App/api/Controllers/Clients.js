@@ -1019,17 +1019,25 @@ class Clients {
       });
 
       // Make the POST request to Digio API using Axios
-      const response = await axios.post(
-        'https://api.digio.in/client/kyc/v2/request/with_template',
-        payload,
-        {
-          headers: {
-            'Authorization': `Basic ${authToken}`,
-            'Content-Type': 'application/json'
-          },
-          timeout: 300000,
-        }
-      );
+      try {
+        const response = await axios.post(
+          'https://api.digio.in/client/kyc/v2/request/with_template',
+          payload,
+          {
+            headers: {
+              'Authorization': `Basic ${authToken}`,
+              'Content-Type': 'application/json'
+            },
+            timeout: 300000,
+          }
+        );
+      
+      } catch (error) {
+        return res.status(400).json({
+          status: false,
+          message: error.response.data.message,
+        });
+      }
 
 
       const resData = response.data;
