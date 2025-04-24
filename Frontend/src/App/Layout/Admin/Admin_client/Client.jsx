@@ -496,7 +496,7 @@ const Client = () => {
         if (!Array.isArray(row?.plansStatus) || row.plansStatus.length === 0) {
           return <span>N/A</span>;
         }
-    
+
         return (
           <div style={{ display: "flex", flexWrap: "wrap" }}>
             {row.plansStatus.map((item, index) => (
@@ -508,8 +508,8 @@ const Client = () => {
                     item.status === "active"
                       ? "green"
                       : item.status === "expired"
-                      ? "red"
-                      : "inherit",
+                        ? "red"
+                        : "inherit",
                 }}
               >
                 {item.serviceName || "N/A"}{" , "}
@@ -520,7 +520,7 @@ const Client = () => {
       },
       sortable: true,
       width: "200px",
-    },   
+    },
 
     // {
     //   name: "Phone No",
@@ -1013,7 +1013,7 @@ const Client = () => {
                                   checked={selectedPlanId === item._id}
                                   onClick={() => {
                                     if (item?.client_status === "active") {
-                                      showCustomAlert("error", "The Plan is Already Active")
+                                      showCustomAlert("error", "The Basket is Already Active")
                                       return;
                                     }
                                     setSelectedPlanId(item._id);
