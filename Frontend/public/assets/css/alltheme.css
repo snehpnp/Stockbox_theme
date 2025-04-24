@@ -2044,3 +2044,7 @@ svg.lucide.lucide-x.text-danger {
   font-size: 12px;
   color: #505050 !important;
 }
+.signal-message-list {
+  height: 220px;
+  overflow-y: auto;
+}
