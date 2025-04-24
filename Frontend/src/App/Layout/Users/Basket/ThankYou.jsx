@@ -25,7 +25,7 @@ const ThankYou = () => {
           </div>
           <h1>Thank You!</h1>
           <p>You have successfully subscribed<br /> the basket.</p>
-          <button className="btn btn-primary mt-4 w-50 mx-auto" onClick={handleGoBack}>Go Back</button>
+          <button className="btn btn-primary mt-4 w-50 mx-auto" onClick={handleGoBack}>Go to Subscription</button>
         </div>
       </div>
 
