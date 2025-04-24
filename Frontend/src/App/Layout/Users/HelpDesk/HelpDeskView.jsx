@@ -133,16 +133,29 @@ accept:"image/*",
         <div className="row row-cols-1 row-cols-lg-1 mb-3">
         <div className="col">
             <div className="card shadow-lg border-0">
+              <div className="card-header border-bottom bg-transparent p-3">
+                <div className="d-flex align-items-center">
+                  <div>
+                    <h5 className="mb-0">Ticket Details:#qw232334</h5>
+                  </div>
+                  <div className="ms-auto">
+                  <small className="pe-3">08.34 AM</small>
+                    <button className="btn btn-primary btn-sm">Pending</button>
+                </div>
+              </div>
+              </div>
               <div className="card-body">
                 <div className="card-header border-bottom bg-transparent p-3">
                     <div className="card-title">
-                      <h5 className="mb-0">Messages</h5>    
+                   
+                      <h6 className="mb-0">Messages</h6>    
                       </div>
-                      <p>Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development.
+                     
+                      <p className="text-muted">Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development.
                       </p>
                 </div>
                 
-                <button className="btn btn-primary btn-sm mt-3">open</button>
+               
                 </div>
                 </div>
             </div>
