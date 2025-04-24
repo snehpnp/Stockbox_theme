@@ -212,7 +212,7 @@ function Kyc() {
   const fetchUserData = async () => {
     try {
       const userData = await GetUserData(userid, token);
-      console.log("userData", userData)
+      // console.log("userData", userData)
 
       // Check if userData and required properties exist
       if (userData && userData.data) {
