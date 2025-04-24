@@ -1141,13 +1141,37 @@ export async function clientKycAndAgreement(data, token) {
 
 export async function getChatLineData(data, token) {
     try {
-        const response = await axios.post(`${Config.base_url}api/list/getbasketgraphdata`,data, {
-            
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-            }
+        const response = await axios.post(`${Config.base_url}api/list/getbasketgraphdata`, data, {
+
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+        }
+        );
+
+        return response.data;
+
+    } catch (error) {
+        console.error('Error in clientKycAndAgreement API:', error.message);
+        throw error.response?.data || { message: 'Something went wrong!' };
+    }
+}
+
+
+
+// ticket for help 
+
+
+export async function GetTicketForhelp(data, token) {
+    try {
+        const response = await axios.post(`${Config.base_url}api/client/addticket`, data, {
+
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+        }
         );
 
         return response.data;

@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Table from '../../../Extracomponents/Table1';
 import { Settings2, Eye, SquarePen, Trash2, Download, ArrowDownToLine } from 'lucide-react';
-import { FreeClientList, FreeClientListWithFilter, PlanSubscription, BasketSubscription, DeleteFreeClient, getcategoryplan, getplanlist, getPlanbyUser, BasketAllActiveList } from '../../../Services/Admin/Admin';
+import { FreeClientList, FreeClientListWithFilter, PlanSubscription, BasketSubscription, DeleteFreeClient, getcategoryplan, getplanlist, getPlanbyUser, BasketAllActiveList, BasketListbyUser } from '../../../Services/Admin/Admin';
 import { Tooltip } from 'antd';
 import { image_baseurl } from '../../../../Utils/config';
 import { fDate, fDateTime } from '../../../../Utils/Date_formate';
@@ -40,8 +40,10 @@ const Freeclient = () => {
     const [totalRows, setTotalRows] = useState(0);
 
 
+
     //state for loading
     const [isLoading, setIsLoading] = useState(true)
+    const [loading, setLoading] = useState(false);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -76,7 +78,7 @@ const Freeclient = () => {
     useEffect(() => {
         // getdemoclient();
         getcategoryplanlist()
-        getActiveBasketdetail()
+        // getActiveBasketdetail()
     }, []);
 
 
@@ -85,14 +87,13 @@ const Freeclient = () => {
     const getdemoclient = async () => {
         try {
             const data = { page: currentPage, search: searchInput, freestatus: clientStatus || "" }
-            const response = await FreeClientListWithFilter(data, token);          
+            const response = await FreeClientListWithFilter(data, token);
             if (response.status) {
                 setTotalRows(response.pagination.total)
                 setClients(response.data);
-
             }
         } catch (error) {
-            console.log("error",error)
+            console.log("error", error)
         }
         setIsLoading(false)
     }
@@ -105,9 +106,10 @@ const Freeclient = () => {
 
 
 
-    const getActiveBasketdetail = async () => {
+
+    const getActiveBasketdetail = async (_id) => {
         try {
-            const response = await BasketAllActiveList(token);
+            const response = await BasketListbyUser(_id, token);
             if (response.status) {
                 setGetBasket(response.data);
 
@@ -291,7 +293,7 @@ const Freeclient = () => {
 
     // Update service
     const Updateplansubscription = async () => {
-
+        setLoading(true);
         try {
             const data = { plan_id: updatetitle.plan_id, client_id: client.clientid, price: updatetitle.price };
             const response = await PlanSubscription(data, token);
@@ -308,6 +310,7 @@ const Freeclient = () => {
         } catch (error) {
             showCustomAlert("error", 'Server error');
         }
+        setLoading(false);
     };
 
 
@@ -433,7 +436,13 @@ const Freeclient = () => {
 
                     </Tooltip> */}
                     <Tooltip placement="top" overlay="Package Assign">
-                        <span onClick={(e) => { showModal(true); setClientid(row); getplanlistassinstatus(row._id) }} style={{ cursor: 'pointer' }}>
+                        <span onClick={(e) => {
+                            showModal(true);
+                            setClientid(row);
+                            getplanlistassinstatus(row._id);
+                            getActiveBasketdetail(row._id);
+                        }}
+                            style={{ cursor: 'pointer' }}>
                             <Settings2 style={{ color: "orange" }} />
                         </span>
                     </Tooltip>
@@ -582,7 +591,7 @@ const Freeclient = () => {
                                                         <input
                                                             style={{
                                                                 border: "1px solid #ddd",
-                                                                margin: "0 8px",
+                                                                margin: "0 8px 1px",
                                                             }}
                                                             className="form-check-input"
                                                             type="radio"
@@ -681,7 +690,7 @@ const Freeclient = () => {
                                                                                 >
                                                                                     <div className="d-flex justify-content-between w-100">
                                                                                         <div>
-                                                                                            <strong className="text-secondary m-2">
+                                                                                            <strong className=" heading-color  m-2">
                                                                                                 Detail
                                                                                             </strong>
                                                                                             <strong className="text-success m-2 activestrong">
@@ -706,8 +715,8 @@ const Freeclient = () => {
                                                                                 <div className="accordion-body">
                                                                                     <div className="d-flex justify-content-between">
                                                                                         <strong>Price:</strong>
-                                                                                        <span>
-                                                                                            <IndianRupee style={{width:"20px",marginRight: "-5px"}}/> {(item.price).toFixed(2)}
+                                                                                        <span style={{ display: "flex", alignItems: "center" }}>
+                                                                                            <IndianRupee style={{ width: "15px", height: "15px" }} /> {item.price}
                                                                                         </span>
                                                                                     </div>
                                                                                     <div className="d-flex justify-content-between">
@@ -765,6 +774,10 @@ const Freeclient = () => {
                                                                     id={`input-plan-${index}`}
                                                                     checked={selectedPlanId === item._id}
                                                                     onClick={() => {
+                                                                        if (item?.client_status === "active") {
+                                                                            showCustomAlert("error", "The Basket is Already Active")
+                                                                            return;
+                                                                        }
                                                                         setSelectedPlanId(item._id);
                                                                         setBasketdetail({
                                                                             basket_id: item._id,
@@ -809,11 +822,11 @@ const Freeclient = () => {
                                                                         >
                                                                             <div className="d-flex justify-content-between w-100">
                                                                                 <div>
-                                                                                    <strong className="text-secondary m-2">
+                                                                                    <strong className="m-2 heading-color">
                                                                                         Detail
                                                                                     </strong>
                                                                                     <strong className="text-success m-2 activestrong">
-                                                                                        {item?.subscription?.status ===
+                                                                                        {item?.client_status ===
                                                                                             "active"
                                                                                             ? "Active"
                                                                                             : ""}
@@ -832,8 +845,8 @@ const Freeclient = () => {
                                                                         <div className="accordion-body">
                                                                             <div className="d-flex justify-content-between">
                                                                                 <strong>Price:</strong>
-                                                                                <span>
-                                                                                <IndianRupee style={{width:"20px",marginRight: "-5px"}}/> {(item.basket_price).toFixed(2)}
+                                                                                <span style={{ display: "flex", alignItems: "center" }}>
+                                                                                    <IndianRupee style={{ width: "15px", height: "15px" }} /> {item.basket_price}
                                                                                 </span>
                                                                             </div>
                                                                             <div className="d-flex justify-content-between">
@@ -844,8 +857,8 @@ const Freeclient = () => {
                                                                                 <strong>
                                                                                     Minimum Investment Amount:
                                                                                 </strong>
-                                                                                <span>
-                                                                                <IndianRupee style={{width:"20px",marginRight: "-5px"}}/> {(item?.mininvamount).toFixed(2)}
+                                                                                <span style={{ display: "flex", alignItems: "center" }}>
+                                                                                    <IndianRupee style={{ width: "15px", height: "15px" }} /> {item?.mininvamount}
                                                                                 </span>
                                                                             </div>
                                                                         </div>
@@ -876,8 +889,9 @@ const Freeclient = () => {
                                 type="button"
                                 className="btn btn-primary"
                                 onClick={() => Updateplansubscription()}
+                                disabled={loading}
                             >
-                                Save Plan
+                                {loading ? "Saving..." : "Save Plan"}
                             </button>
                         )}
                         {checkedIndex === 1 && (
@@ -885,8 +899,9 @@ const Freeclient = () => {
                                 type="button"
                                 className="btn btn-primary"
                                 onClick={() => UpdateBasketservice()}
+                                disabled={loading}
                             >
-                                Save Plan
+                                {loading ? "Saving..." : "Save Plan"}
                             </button>
                         )}
                     </>
