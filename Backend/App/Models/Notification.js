@@ -42,6 +42,11 @@ const Notification = Schema({
         type: Date,
         default: null
     },
+    signalid: {
+        type: String,
+        trim: true,
+        default: null
+    },
     createdAt: {
         type: Date,
         default: Date.now

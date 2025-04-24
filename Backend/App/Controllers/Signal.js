@@ -177,7 +177,8 @@ if (!stocks) {
                 segmentid:service,
                 type:'open signal',
                 title: notificationTitle,
-                message: notificationBody
+                message: notificationBody,
+                signalid:result._id,
             });
     
             await resultn.save();
@@ -691,6 +692,7 @@ async getSignalWithFilter(req, res) {
         title: notificationTitle,
         message: notificationBody,
         signalcreatedate: signalCreatedAt,
+        signalid:id,
     });
     
 
@@ -1324,7 +1326,7 @@ return res.status(404).json({
     });
     
     // Save all entries in one go
-    await Signal_Modal.insertMany(signalEntries);
+    const insertedSignals = await Signal_Modal.insertMany(signalEntries);
 
 
 
@@ -1349,17 +1351,20 @@ return res.status(404).json({
       
       if (tokens.length > 0) {
 
-
-      const notificationTitle = 'Important Update';
-      const notificationBody =`${serviceName} ${stock} ${calltype} AT ${price} OPEN`;
-        const resultn = new Notification_Modal({
-          segmentid:planid,
-          type:'open signal',
-          title: notificationTitle,
-          message: notificationBody
-      });
-
-      await resultn.save();
+        for (const signal of insertedSignals) {
+          const notificationTitle = 'Important Update';
+          const notificationBody = `${serviceName} ${stock} ${calltype} AT ${price} OPEN`;
+        
+          const resultn = new Notification_Modal({
+            segmentid: planid,
+            type: 'open signal',
+            title: notificationTitle,
+            message: notificationBody,
+            signalid: signal._id,
+          });
+        
+          await resultn.save();
+        }
 
 
       try {
@@ -1812,7 +1817,9 @@ async closeSignalwithplan(req, res) {
         segmentid: Signal.planid,
         type: close_status == "true" ? "close signal" : "open signal",
         title: notificationTitle,
-        message: notificationBody
+        message: notificationBody,
+        signalid: Signal._id,
+
     });
     
     await resultn.save();
@@ -2258,13 +2265,19 @@ return res.status(404).json({
     if (tokens.length > 0) {
       const notificationTitle = 'Important Update';
       const notificationBody = `New STRATEGY:- ${strategy_name}, Symbol ${stock} OPEN`;
+
+      for (const signal of insertedSignals) {
+
       const resultn = new Notification_Modal({
         segmentid: planid,
         type: 'open signal',
         title: notificationTitle,
         message: notificationBody,
+        signalid: signal._id,
       });
       await resultn.save();
+
+    }
 
       try {
         await sendFCMNotification(notificationTitle, notificationBody, tokens, "open signal");
@@ -2496,7 +2509,8 @@ async closeSignals(req, res) {
       type: close_status ? "close signal" : "open signal",
       title: notificationTitle,
       message: notificationBody,
-      signalcreatedate: signalCreatedAt
+      signalcreatedate: signalCreatedAt,
+      signalid: Signal._id,
     });
 
     await resultn.save();
@@ -2699,6 +2713,7 @@ async SendSignalNotification(req, res) {
         type: "open signal",
         title: notificationTitle,
         message: notificationBody,
+        signalid: signal._id,
       });
 
       await notification.save();
@@ -2782,6 +2797,7 @@ async SendSignalNotificationWithPlan(req, res) {
         type: 'open signal',
         title: notificationTitle,
         message: notificationBody,
+        signalid: signal._id,
       });
       await resultn.save();
 
@@ -2805,6 +2821,32 @@ async SendSignalNotificationWithPlan(req, res) {
     });
   }
 }
+
+async getNotificationsBySignal(req, res) {
+
+  try {
+    const { signalid } = req.params;
+
+    const notifications = await Notification_Modal.find({ signalid }).sort({ createdAt: -1 });
+
+    if (!notifications.length) {
+      return res.status(404).json({ message: 'No notifications found for this signal ID' });
+    }
+    return res.json({
+      status: true,
+      notifications: notifications,
+      message: "Notification get successfully"
+    });
+
+  } catch (error) {
+    res.status(500).json({ 
+      status: false,
+      message: "Server error",
+      error: error.message,
+     });
+  }
+};
+
 
 
 
