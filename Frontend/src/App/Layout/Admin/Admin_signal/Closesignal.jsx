@@ -11,7 +11,8 @@ import {
   SquarePen,
   IndianRupee,
   ArrowDownToLine,
-  CircleX
+  CircleX,
+  MessageCircle
 } from "lucide-react";
 import {
   GetSignallist,
@@ -21,6 +22,7 @@ import {
   GetService,
   GetStockDetail,
   UpdatesignalReport,
+  GetSignalNotificationdata
 } from "../../../Services/Admin/Admin";
 import { fDateTimeSuffix, fDateTimeH } from "../../../../Utils/Date_formate";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
@@ -33,6 +35,8 @@ import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import Loader from "../../../../Utils/Loader";
 
 const Closesignal = () => {
+
+  
   const [activeTab, setActiveTab] = useState("table");
   const token = localStorage.getItem("token");
   const [searchInput, setSearchInput] = useState("");
@@ -41,6 +45,7 @@ const Closesignal = () => {
   const [header, setheader] = useState("Close Signal");
   const [showModal, setShowModal] = useState(false);
   const [description, setDescription] = useState([])
+  const [signalmessage, setSignalmessage] = useState([]);
   const [updatetitle, setUpdatetitle] = useState({
     report: "",
     id: "",
@@ -71,6 +76,7 @@ const Closesignal = () => {
   const [searchstock, setSearchstock] = useState("");
   const [ForGetCSV, setForGetCSV] = useState([]);
   const [model1, setModel1] = useState(false);
+  const [model2, setModel2] = useState(false);
   const [serviceid, setServiceid] = useState({});
   const navigate = useNavigate();
   const [clients, setClients] = useState([]);
@@ -213,6 +219,9 @@ const Closesignal = () => {
     }
   };
 
+
+
+
   const getAllSignal = async () => {
     try {
       const data = {
@@ -251,6 +260,9 @@ const Closesignal = () => {
 
   };
 
+
+
+
   const fetchAdminServices = async () => {
     try {
       const response = await GetService(token);
@@ -272,6 +284,25 @@ const Closesignal = () => {
       console.log("Error fetching stock list:", error);
     }
   };
+
+
+  // for signal message
+
+  const getsignalmessage = async (signalid) => {
+    try {
+      const response = await GetSignalNotificationdata(signalid, token);
+
+      if (response.status) {
+        setSignalmessage(response.notifications);
+
+      }
+    } catch (error) {
+      console.log("Error fetching stock list:", error);
+    }
+  };
+
+
+
 
   useEffect(() => {
     fetchAdminServices();
@@ -445,6 +476,33 @@ const Closesignal = () => {
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
+    },
+    {
+      name: "Message",
+      className: "text-end",
+      cell: (row) => (
+        <>
+          <div
+            className="d-flex  justify-content-center"
+            style={{ width: "150px" }}
+          >
+            <Tooltip placement="top" overlay="Update">
+              <MessageCircle
+                style={{ color: "red" }}
+                onClick={() => {
+                  setModel2(true);
+                  getsignalmessage(row._id);
+
+                }}
+              />
+            </Tooltip>
+          </div>
+        </>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+      width: "200px",
     },
 
     {
@@ -815,6 +873,62 @@ const Closesignal = () => {
           </>
         }
       />
+
+
+
+      <ReusableModal
+        show={model2}
+        onClose={() => setModel2(false)}
+        title="Message"
+        body={
+          <form>
+            <div className="row">
+              <div className="col-md-12">
+                <div
+                  className="border p-3 rounded shadow-sm"
+                  style={{
+                    backgroundColor: "#fdfdfd",
+                    maxHeight: "300px",
+                    overflowY: "auto",
+                  }}
+                >
+                  {signalmessage?.length > 0 ? (
+                    signalmessage.map((item, index) => (
+                      <div key={index} className="mb-4">
+                        <p className="mb-1" style={{ fontSize: "14px" }}>
+                          {item?.message}
+                        </p>
+                        <div
+                          className="text-end text-muted"
+                          style={{ fontWeight: "bold", fontSize: "12px" }}
+                        >
+                          {fDateTimeH(item?.createdAt)}
+                        </div>
+                        <hr className="mt-2 mb-0" />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-muted text-center">No messages found.</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </form>
+        }
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setModel2(false)}
+            >
+              Close
+            </button>
+          </>
+        }
+      />
+
+
 
 
       <ReusableModal
