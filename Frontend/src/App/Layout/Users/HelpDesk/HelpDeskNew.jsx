@@ -41,13 +41,16 @@ const HelpDesk = () => {
   //   setIsLoading(false);
   // };
 
+
+
   const Sendmessagedata = async (data) => {
     try {
       const response = await GetTicketForhelp(data, token);
+      console.log("response", response)
       if (response.status) {
-        showCustomAlert("Success", "Your message has been sent successfully!");
+        showCustomAlert("Success", response.message);
       } else {
-        showCustomAlert("error", "Message Failed. Please try again.");
+        showCustomAlert("error", response.message);
       }
     } catch (error) {
       showCustomAlert(
@@ -73,9 +76,6 @@ const HelpDesk = () => {
       }
       if (!values.file) {
         errors.file = "Please Upload File";
-      }
-      if (values.file && values.file.size > 2 * 1024 * 1024) {
-        errors.file = "File size should be less than 2MB";
       }
       return errors;
     },
@@ -123,9 +123,6 @@ const HelpDesk = () => {
       label_size: 5,
       col_size: 12,
       disable: false,
-      accept: "image/*",
-
-
     },
   ];
 
@@ -186,7 +183,9 @@ const HelpDesk = () => {
         BtnStatus={true}
       />
       <div className="table-responsive">
-        <Table columns={columns} data={data} />
+        <Table
+          columns={columns}
+          data={data} />
       </div>
 
     </Content>
