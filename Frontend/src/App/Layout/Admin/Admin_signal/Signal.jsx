@@ -704,33 +704,33 @@ const Signal = () => {
             button: true,
 
         },
-        // {
-        //     name: 'Send Message',
-        //     className: 'text-end',
-        //     cell: row => (
-        //         <>
+        {
+            name: 'Send Message',
+            className: 'text-end',
+            cell: row => (
+                <>
 
-        //             <div className='d-flex  justify-content-center' style={{ width: "150px" }}>
-        //                 <Tooltip placement="top" overlay="Update">
-        //                     <MessageCircle
-        //                         style={{ color: "red" }}
-        //                         onClick={() => {
-        //                             setModel2(true);
-        //                             setServiceid(row._id);
-        //                             setSignalnotification({ message: row.message });
-        //                         }}
-        //                     />
-        //                 </Tooltip>
-        //             </div>
+                    <div className='d-flex  justify-content-center' style={{ width: "150px" }}>
+                        <Tooltip placement="top" overlay="Update">
+                            <MessageCircle
+                                style={{ color: "red" }}
+                                onClick={() => {
+                                    setModel2(true);
+                                    setServiceid(row._id);
+                                    setSignalnotification({ message: row.message });
+                                }}
+                            />
+                        </Tooltip>
+                    </div>
 
-        //         </>
-        //     ),
-        //     ignoreRowClick: true,
-        //     allowOverflow: true,
-        //     button: true,
-        //     width: '200px',
+                </>
+            ),
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            width: '200px',
 
-        // },
+        },
         {
             name: 'Upload Report',
             className: 'text-end',
