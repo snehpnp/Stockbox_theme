@@ -39,7 +39,7 @@ const HelpDesk = () => {
       if (response.status) {
         setMessagedata(response.data);
         console.log("response", response.data);
-        
+        console.log("id", response.data[0]._id);
       }
     } catch (error) {
       console.error("Error fetching trade data:", error);
