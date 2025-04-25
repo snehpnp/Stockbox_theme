@@ -23,6 +23,7 @@ const HelpDesk = () => {
 
   const [key, setKey] = useState("sendMessage");
   const [messages, setMessages] = useState([]);
+  const [messagedata, setMessagedata] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -35,7 +36,7 @@ const HelpDesk = () => {
       const data= {page: '1', clientId:userid}
       const response = await GetAllTicketData(data, token);
       if (response.status) {
-        setMessages(response.data);
+        setMessagedata(response.data);
         console.log("response", response.data);
         
       }
@@ -132,21 +133,31 @@ const HelpDesk = () => {
 
   const columns = [
     {
+      name: "Ticket No.",
+      selector: (row) => row.ticketnumber,
+    },
+    {
       name: "Subject",
       selector: (row) => row.subject,
     },
+    
     {
       name: "Description",
-      selector: (row) => row.description,
+      selector: (row) => row.message,
       width: "300px",
     },
     {
       name: "Status",
       cell: (row) => (
         <div>
-          <button className="btn btn-primary btn-sm">Pending</button>
-        </div>
-      ),
+        {row.status === true ? (
+          <button className="btn btn-outline-success btn-sm transition-0" >Open</button>
+         
+        ) : (
+          <button className="btn btn-outline-warning btn-sm transition-0" >In Progress</button>
+        )}
+      </div>
+      )
     },
     {
       name: "Action",
@@ -161,20 +172,7 @@ const HelpDesk = () => {
     },
   ];
 
-  const data = [
-    {
-      id: 1,
-      subject: "Beetlejuice",
-      description:
-        "Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development.",
-    },
-    {
-      id: 2,
-      subject: "Ghostbusters",
-      description:
-        "Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development.",
-    },
-  ];
+
 
   return (
     <Content Page_title="Help Desk"
@@ -189,7 +187,7 @@ const HelpDesk = () => {
       <div className="table-responsive">
         <Table
           columns={columns}
-          data={data} />
+          data={messagedata} />
       </div>
 
     </Content>
