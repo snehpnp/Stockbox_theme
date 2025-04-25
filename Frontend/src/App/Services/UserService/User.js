@@ -1200,3 +1200,41 @@ export async function GetAllTicketData(data, token) {
         throw error.response?.data || { message: 'Something went wrong!' };
     }
 }
+
+export async function GetReplyTicketData(data, token) {
+    try {
+        const response = await axios.post(`${Config.base_url}api/client/ticketreply`, data, {
+
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+        }
+        );
+
+        return response.data;
+
+    } catch (error) {
+        console.error('Error in getreplyticket API:', error.message);
+        throw error.response?.data || { message: 'Something went wrong!' };
+    }
+}
+
+export async function GetTicketDetaildata(data, token) {
+    try {
+        const response = await axios.get(`${Config.base_url}api/client/ticketdetail/:ticketId`, data, {
+
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+        }
+        );
+
+        return response.data;
+
+    } catch (error) {
+        console.error('Error in getreplyticket API:', error.message);
+        throw error.response?.data || { message: 'Something went wrong!' };
+    }
+}

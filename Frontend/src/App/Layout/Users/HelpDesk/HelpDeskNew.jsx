@@ -20,7 +20,8 @@ const HelpDesk = () => {
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
-
+ console.log("userid", userid)
+ const ticketid = localStorage.getItem("ticketid")
   const [key, setKey] = useState("sendMessage");
   const [messages, setMessages] = useState([]);
   const [messagedata, setMessagedata] = useState([]);
