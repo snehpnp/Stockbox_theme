@@ -171,10 +171,10 @@ const HelpDesk = () => {
             name: "Action",
             cell: (row) => (
                 <div>
-                    <Link to='/user/help-desk-view' className="btn btn-secondary btn-sm p-0">
-
+                    <Link to={`/user/help-desk-view/${row._id}`} className="btn btn-secondary btn-sm p-0">
                         <Eye width="15px" />
                     </Link>
+
                 </div>
             ),
         },

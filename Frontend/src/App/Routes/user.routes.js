@@ -81,7 +81,7 @@ export default function App() {
       <Route path="/strategy" element={<Strategy />} />
       <Route path="/thankyou" element={<ThankYou />} />
       <Route path="/cart" element={<Cart />} />
-      <Route path="/help-desk-view" element={<HelpDeskView />} />
+      <Route path="/help-desk-view/:id" element={<HelpDeskView />} />
 
     </Routes>
   );

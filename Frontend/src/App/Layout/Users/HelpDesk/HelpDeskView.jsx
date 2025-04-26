@@ -5,11 +5,12 @@ import { useFormik } from "formik";
 import { Tabs, Tab } from "react-bootstrap";
 import {
   SendHelpRequest,
-  GetHelpMessage,
+  GetTicketDetaildata,
 } from "../../../Services/UserService/User";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import Table from "../../../Extracomponents/Table";
+import { useParams } from "react-router-dom";
 
 
 const HelpDesk = () => {
@@ -21,9 +22,10 @@ const HelpDesk = () => {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const { id } = useParams()
 
+  console.log("id", id)
 
-  
   useEffect(() => {
     FetchMessage();
   }, []);
@@ -33,9 +35,10 @@ const HelpDesk = () => {
 
   const FetchMessage = async () => {
     try {
-      const response = await GetHelpMessage(userid, token);
+      const response = await GetTicketDetaildata(id, token);
       if (response.status) {
         setMessages(response.data);
+        console.log("response", response.data)
       }
     } catch (error) {
       console.error("Error fetching trade data:", error);
