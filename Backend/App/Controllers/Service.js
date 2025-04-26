@@ -65,6 +65,30 @@ class Service {
     }
   }
 
+  async getServiceCFO(req, res) {
+    try {
+
+     
+      const { } = req.body;
+
+      const result = await Service_Modal.find({ del: false })
+      .sort({ createdAt: 1 }) 
+      .limit(3);
+
+
+      return res.json({
+        status: true,
+        message: "get",
+        data:result
+      });
+
+    } catch (error) {
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
+
+
+
 
 
   
@@ -75,8 +99,9 @@ class Service {
       const { } = req.body;
 
       const result = await Service_Modal.find({ del: false })
-      .sort({ created_at: -1 })  // Descending order (latest first)
-      .limit(2);  // Get only 2 records
+      .sort({ createdAt: 1 }) // ascending order
+      .skip(3); // skip first 3
+
 
       return res.json({
         status: true,

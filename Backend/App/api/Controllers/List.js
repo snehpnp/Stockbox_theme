@@ -1580,6 +1580,12 @@ class List {
         } else if (results.service == "66dfede64a88602fbbca9b72") {
           serviceName = "Future";
         }
+        else if (results.service == "67e12758a0a2be895da19550") {
+          serviceName = "Strategy";
+        }
+        else if (results.service == "67e1279ba0a2be895da19551") {
+          serviceName = "Future Strategy";
+        }
         else {
           serviceName = "All";
         }
@@ -9047,6 +9053,8 @@ class List {
         let svc = "UNKNOWN";
         if (plan.serviceid === "66d2c3bebf7e6dc53ed07626") svc = "CASH";
         else if (plan.serviceid === "66dfeef84a88602fbbca9b79") svc = "OPTION";
+        else if (plan.serviceid === "67e12758a0a2be895da19550") svc = "Strategy";
+        else if (plan.serviceid === "67e1279ba0a2be895da19551") svc = "Future Strategy";
         else svc = "FUTURE";
 
         groups[diff] = groups[diff] || new Set();
@@ -9190,6 +9198,9 @@ class List {
       return res.status(500).json({ message: "Server Error", error: err.message, status: false });
     }
   }
+
+
+
 
 
 }
