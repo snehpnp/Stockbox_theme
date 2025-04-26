@@ -1587,7 +1587,11 @@ if (mailtemplate) {
     try {
 
       const { id } = req.params; // Extract client_id from query parameters
+      const client = await Clients_Modal.findOne({ _id: id, del: 0, ActiveStatus: 1 });
 
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+      }
       // Step 1: Fetch helpdesk entries for the specified client_id
       const result = await Helpdesk_Modal.find({ client_id: id });
 
@@ -1710,6 +1714,13 @@ else {
 
       const { clientid } = req.body;
 
+
+      const client = await Clients_Modal.findOne({ _id: clientid, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+      }
+
       const todayStart = new Date();
       todayStart.setHours(0, 0, 0, 0);
 
@@ -1789,6 +1800,13 @@ else {
 
       const { clientid, signalid } = req.body;
 
+      const client = await Clients_Modal.findOne({ _id: clientid, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+      }
+
+
       const result = await Order_Modal.aggregate([
         {
           $match: {
@@ -1847,6 +1865,13 @@ else {
     try {
 
       const { clientid } = req.body;
+
+      const client = await Clients_Modal.findOne({ _id: clientid, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+      }
+
       const result = await Basketorder_Modal.find({ clientid: clientid });
 
       return res.json({
@@ -1863,11 +1888,19 @@ else {
   async getClientSignalOrders(req, res) {
     try {
       const { clientid, signalid } = req.body;
+
+
   
       if (!clientid) {
         return res.status(400).json({ status: false, message: "clientid is required", data: [] });
       }
   
+      const client = await Clients_Modal.findOne({ _id: clientid, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+      }
+
       const matchStage = { clientid };
       if (signalid) matchStage.signalid = signalid;
   
@@ -1941,6 +1974,12 @@ else {
           status: false,
           message: "Unauthorized. Client not found.",
         });
+      }
+
+      const client = await Clients_Modal.findOne({ _id: clientid, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
       }
   
       // Total count for pagination
@@ -2077,6 +2116,13 @@ else {
                 if (!client_id) {
                   return res.status(400).json({ status: false, message: "Client Id is required" });
                 }
+                const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+                if (!client) {
+                  return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+                }
+
+
   
               const attachment = req.files['attachment'] ? req.files['attachment'][0].filename : null;
       
@@ -2122,7 +2168,12 @@ else {
               message: "Subject, Message, and Client ID are required"
             });
           }
+          
+          const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
 
+          if (!client) {
+            return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+          }
 
           const existingOpenTicket = await Ticket_Modal.findOne({
             client_id,
