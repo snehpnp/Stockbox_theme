@@ -9192,9 +9192,6 @@ class List {
   }
 
 
-
-
-
 }
 
 function convertAmountToWords(amount) {
