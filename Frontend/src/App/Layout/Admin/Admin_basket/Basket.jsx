@@ -42,7 +42,7 @@ const Basket = () => {
 
       if (response.status) {
         setClients(response.data);
-        setTotalRows(response.pagination.total);
+        setTotalRows(response.pagination.totalRecords);
       }
     } catch (error) {
       console.log("error");
@@ -156,23 +156,23 @@ const Basket = () => {
 
   const Deletebasket = async (_id) => {
     try {
-        const result = await showCustomAlert("confirm", "Do you want to delete this item? This action cannot be undone.");
-        
-        if (!result.isConfirmed) return; 
-        
-        const response = await deletebasket(_id, token);
-        
-        if (response?.status) {
-            showCustomAlert("success", "The item has been successfully deleted.");
-            getbasketlist(); 
-        } else {
-            showCustomAlert("error", response?.message || "Failed to delete item.");
-        }
+      const result = await showCustomAlert("confirm", "Do you want to delete this item? This action cannot be undone.");
+
+      if (!result.isConfirmed) return;
+
+      const response = await deletebasket(_id, token);
+
+      if (response?.status) {
+        showCustomAlert("success", "The item has been successfully deleted.");
+        getbasketlist();
+      } else {
+        showCustomAlert("error", response?.message || "Failed to delete item.");
+      }
     } catch (error) {
-        console.error("Delete error:", error);
-        showCustomAlert("error", "There was an error deleting the item.");
+      console.error("Delete error:", error);
+      showCustomAlert("error", "There was an error deleting the item.");
     }
-};
+  };
 
 
 
@@ -253,7 +253,7 @@ const Basket = () => {
       sortable: true,
       width: '250px',
     },
-   {
+    {
       name: "Actions",
       cell: (row) => (
         <div className="w-100">

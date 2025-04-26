@@ -39,7 +39,7 @@ const BasketStockPublish = () => {
       const data = { page: currentPage, search: searchInput || "" }
       const response = await BasketAllActiveListbyfilter(data, token);
       if (response.status) {
-        setTotalRows(response.pagination.total);
+        setTotalRows(response.pagination.totalRecords);
         setClients(response.data);
       }
     } catch (error) {
@@ -201,7 +201,7 @@ const BasketStockPublish = () => {
           WebkitBoxOrient: 'vertical',
           maxWidth: '200px',
           textAlign: 'left',
-          whiteSpace: 'normal', 
+          whiteSpace: 'normal',
         }}>
           {stripHtml(row.description)}
         </div>
