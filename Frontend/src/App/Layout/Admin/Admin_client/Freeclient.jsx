@@ -40,6 +40,7 @@ const Freeclient = () => {
     const [totalRows, setTotalRows] = useState(0);
 
 
+    console.log("client", client.clientid)
 
     //state for loading
     const [isLoading, setIsLoading] = useState(true)
@@ -298,7 +299,6 @@ const Freeclient = () => {
             const data = { plan_id: updatetitle.plan_id, client_id: client.clientid, price: updatetitle.price };
             const response = await PlanSubscription(data, token);
 
-
             if (response && response.status) {
                 showCustomAlert("Success", response.message);
                 setUpdatetitle({ plan_id: "", client_id: "", price: "" });
@@ -317,7 +317,8 @@ const Freeclient = () => {
     // assign basket 
     const UpdateBasketservice = async () => {
         try {
-            const data = { basket_id: basketdetail.basket_id, client_id: client._id, price: basketdetail.price, };
+            const data = { basket_id: basketdetail.basket_id, client_id: client.clientid, price: basketdetail.price, };
+
             const response = await BasketSubscription(data, token);
             if (response && response.status) {
                 showCustomAlert("Success", 'Basket service updated successfully')
@@ -773,6 +774,7 @@ const Freeclient = () => {
                                                                     name="planSelection"
                                                                     id={`input-plan-${index}`}
                                                                     checked={selectedPlanId === item._id}
+
                                                                     onClick={() => {
                                                                         if (item?.client_status === "active") {
                                                                             showCustomAlert("error", "The Basket is Already Active")
