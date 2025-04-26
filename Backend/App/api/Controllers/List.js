@@ -3678,10 +3678,10 @@ class List {
             if (callType === "BUY") {
               profitOrLoss = exitPrice - entryPrice; // Profit when exit is greater
 
-              profitOrLosspercent = ((exitPrice - entryPrice)*100) / entryPrice; // Profit percentage when exit is greater
+              profitOrLosspercent = ((exitPrice - entryPrice) * 100) / entryPrice; // Profit percentage when exit is greater
             } else if (callType === "SELL") {
               profitOrLoss = entryPrice - exitPrice;
-              profitOrLosspercent = ((entryPrice - exitPrice)*100) / entryPrice; // Profit percentage when exit is less
+              profitOrLosspercent = ((entryPrice - exitPrice) * 100) / entryPrice; // Profit percentage when exit is less
             }
 
 
@@ -3719,7 +3719,7 @@ class List {
         avgreturnpertrade = (totalProfit - totalLoss) / count;
 
 
-let avgreturnpermonthpercent = 0;
+        let avgreturnpermonthpercent = 0;
         if (monthsBetween > 0) {
           avgreturnpermonth = (totalProfit - totalLoss) / monthsBetween;
           avgreturnpermonthpercent = (totalProfitpercent - totalLosspercent) / monthsBetween;
@@ -6337,7 +6337,7 @@ let avgreturnpermonthpercent = 0;
           .replace(/{{simage}}/g, simage)
           .replace(/{{total}}/g, total.toFixed(2))
           .replace(/{{plantype}}/g, "Plan")
-          .replace(/{{discount}}/g, discount.toFixed(2));
+          .replace(/{{discount}}/g, discountPerPlan.toFixed(2));
 
 
         const browser = await puppeteer.launch({
@@ -7393,7 +7393,7 @@ let avgreturnpermonthpercent = 0;
           .replace(/{{email}}/g, client.Email)
           .replace(/{{PhoneNo}}/g, client.PhoneNo)
           .replace(/{{total}}/g, total.toFixed(2))
-          .replace(/{{discount}}/g, discount.toFixed(2))
+          .replace(/{{discount}}/g, discountPerPlan.toFixed(2))
           .replace(/{{plan_details}}/g, planDetailsHtml)
           .replace(/{{company_email}}/g, settings.email_address)
           .replace(/{{company_phone}}/g, settings.contact_number)
@@ -9169,6 +9169,10 @@ let avgreturnpermonthpercent = 0;
       return res.status(500).json({ message: "Server Error", error: err.message, status: false });
     }
   }
+
+
+
+
 
 }
 
