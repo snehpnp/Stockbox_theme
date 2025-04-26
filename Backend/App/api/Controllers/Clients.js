@@ -2052,7 +2052,7 @@ class Clients {
 
           if (!req.files || !req.files['attachment']) {
 
-            return res.status(400).json({ status: false, message: "No file uploaded." });
+            return res.json({ status: false, message: "No file uploaded." });
           }
           resolve();
         });
@@ -2064,13 +2064,13 @@ class Clients {
 
 
       if (!ticket_id) {
-        return res.status(400).json({ status: false, message: "Ticket Id is required" });
+        return res.json({ status: false, message: "Ticket Id is required" });
       }
       if (!message) {
-        return res.status(400).json({ status: false, message: "Message is required" });
+        return res.json({ status: false, message: "Message is required" });
       }
       if (!client_id) {
-        return res.status(400).json({ status: false, message: "Client Id is required" });
+        return res.json({ status: false, message: "Client Id is required" });
       }
 
       const attachment = req.files['attachment'] ? req.files['attachment'][0].filename : null;
@@ -2094,7 +2094,7 @@ class Clients {
 
     } catch (error) {
       // console.log("Server error:", error);
-      return res.status(500).json({ status: false, message: "Server error", data: [] });
+      return res.json({ status: false, message: "Server error", data: [] });
     }
   }
 

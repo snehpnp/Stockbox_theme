@@ -59,7 +59,7 @@ const HelpDesk = () => {
     const Sendmessagedata = async (data) => {
         try {
             const response = await GetTicketForhelp(data, token);
-            console.log("response", response)
+
             if (response.status) {
                 showCustomAlert("Success", response.message);
             } else {

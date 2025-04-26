@@ -19,7 +19,7 @@ const HelpDesk = () => {
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
-  const [key, setKey] = useState("sendMessage");
+
   const [messages, setMessages] = useState([]);
   const [messagedata, setMessagedata] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -53,7 +53,6 @@ const HelpDesk = () => {
   const Sendmessagedata = async (data) => {
     try {
       const response = await GetReplyTicketData(data, token);
-      console.log("data", data)
       if (response.status) {
         showCustomAlert("Success", response.message);
       } else {
@@ -69,11 +68,8 @@ const HelpDesk = () => {
 
   const formik = useFormik({
     initialValues: {
-
       message: "",
-      client_id: "",
-      ticket_id: "",
-      file: "",
+      file: '',
     },
     validate: (values) => {
       const errors = {};
@@ -84,15 +80,13 @@ const HelpDesk = () => {
       if (!values.file) {
         errors.file = "Please Upload File";
       }
-
       return errors;
     },
     onSubmit: async (values, { resetForm }) => {
       const data = {
         client_id: userid,
         message: values.message,
-        ticket_id: id,
-        attachment: values.file
+        attachment: values.file,
       };
 
       await Sendmessagedata(data);
@@ -100,6 +94,7 @@ const HelpDesk = () => {
       resetForm();
     },
   });
+
 
   let fieldtype = [
 
@@ -122,7 +117,6 @@ const HelpDesk = () => {
       label_size: 5,
       col_size: 12,
       disable: false,
-      accept: "image/*",
     },
   ];
 
@@ -287,24 +281,7 @@ const HelpDesk = () => {
         </div>
       </div>
 
-      {/* {isLoading ? <Loader /> : <div>
-                        {messages?.length > 0 ? (
-                            messages?.map((msg, index) => (
-                                <div key={index} className="p-3 border mb-2 relative">
-                                    <h6><strong>Subject:</strong> {msg.subject}</h6>
-                                    <p><strong>Message:</strong> {msg.message}</p>
-                                    <p><strong>Date:</strong> {fDateTime(msg.created_at)}</p>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="text-center mt-5">
-                                <img
-                                    src="/assets/images/norecordfound.png"
-                                    alt="No Records Found"
-                                />
-                            </div>
-                        )}
-                    </div>} */}
+
     </Content>
   );
 };
