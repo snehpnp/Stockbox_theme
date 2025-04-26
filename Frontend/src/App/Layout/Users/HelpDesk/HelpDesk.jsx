@@ -1,63 +1,83 @@
-import React, { useEffect, useState } from 'react';
-import Content from '../../../components/Contents/Content';
-import FormicForm from '../../../Extracomponents/Newformicform';
-import { useFormik } from 'formik';
-import { Tabs, Tab } from 'react-bootstrap';
-import { SendHelpRequest, GetHelpMessage } from '../../../Services/UserService/User';
-import Loader from '../../../../Utils/Loader';
-import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
-import { fDateTime } from '../../../../Utils/Date_formate'
+import React, { useEffect, useState } from "react";
+import Content from "../../../components/Contents/Content";
+import FormicForm from "../../../Extracomponents/Newformicform";
+import { useFormik } from "formik";
+import { Tabs, Tab } from "react-bootstrap";
+import {
+    GetTicketForhelp,
+    GetAllTicketData,
+} from "../../../Services/UserService/User";
+import Loader from "../../../../Utils/Loader";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import Table from "../../../Extracomponents/Table1";
+import { Eye } from "lucide-react";
+import { Link } from "react-router-dom";
+
+
 
 const HelpDesk = () => {
 
 
     const token = localStorage.getItem("token");
     const userid = localStorage.getItem("id");
-
-    const [key, setKey] = useState('sendMessage');
+    const [key, setKey] = useState("sendMessage");
     const [messages, setMessages] = useState([]);
-    const [isLoading, setIsLoading] = useState(true)
-
+    const [messagedata, setMessagedata] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalRows, setTotalRows] = useState(0);
 
     useEffect(() => {
-        FetchMessage()
-    }, [])
+        FetchMessage();
+    }, [currentPage]);
+
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+
 
     const FetchMessage = async () => {
+
         try {
-            const response = await GetHelpMessage(userid, token);
+            const data = { page: currentPage, clientId: userid }
+            const response = await GetAllTicketData(data, token);
             if (response.status) {
-                setMessages(response.data)
+                setMessagedata(response.data);
+                setTotalRows(response.pagination.total);
+
             }
         } catch (error) {
             console.error("Error fetching trade data:", error);
         }
-        setIsLoading(false)
+        setIsLoading(false);
     };
-
 
 
 
     const Sendmessagedata = async (data) => {
         try {
-            const response = await SendHelpRequest(data, token);
+            const response = await GetTicketForhelp(data, token);
+            console.log("response", response)
             if (response.status) {
-                showCustomAlert("Success", "Your message has been sent successfully!")
+                showCustomAlert("Success", response.message);
             } else {
-                showCustomAlert("error", "Message Failed. Please try again.")
+                showCustomAlert("error", response.message);
             }
         } catch (error) {
-            showCustomAlert("error", "An error occurred while sending the message. Please check your network or try again later.")
+            showCustomAlert(
+                "error",
+                "An error occurred while sending the message. Please check your network or try again later."
+            );
         }
     };
-
-
-
 
     const formik = useFormik({
         initialValues: {
             subject: "",
             message: "",
+            file: '',
         },
         validate: (values) => {
             const errors = {};
@@ -67,26 +87,24 @@ const HelpDesk = () => {
             if (!values.message) {
                 errors.message = "Please Enter Message";
             }
+            if (!values.file) {
+                errors.file = "Please Upload File";
+            }
             return errors;
         },
         onSubmit: async (values, { resetForm }) => {
             const data = {
                 client_id: userid,
                 subject: values.subject,
-                message: values.message
+                message: values.message,
+                attachment: values.file,
             };
 
             await Sendmessagedata(data);
             setMessages([...messages, values]);
             resetForm();
-        }
+        },
     });
-
-
-
-
-
-
 
     let fieldtype = [
         {
@@ -109,39 +127,81 @@ const HelpDesk = () => {
             col_size: 12,
             disable: false,
         },
+        {
+            type: "file",
+            name: "file",
+            label: "Upload File",
+            placeholder: "Upload File",
+            required: false,
+            label_size: 5,
+            col_size: 12,
+            disable: false,
+        },
+    ];
+
+    const columns = [
+        {
+            name: "Ticket No.",
+            selector: (row) => row.ticketnumber,
+        },
+        {
+            name: "Subject",
+            selector: (row) => row.subject,
+        },
+
+        {
+            name: "Description",
+            selector: (row) => row.message,
+            width: "300px",
+        },
+        {
+            name: "Status",
+            cell: (row) => (
+                <div>
+                    {row.status === true ? (
+                        <button className="btn btn-outline-success btn-sm transition-0" >Open</button>
+
+                    ) : (
+                        <button className="btn btn-outline-warning btn-sm transition-0" >In Progress</button>
+                    )}
+                </div>
+            )
+        },
+        {
+            name: "Action",
+            cell: (row) => (
+                <div>
+                    <Link to='/user/help-desk-view' className="btn btn-secondary btn-sm p-0">
+
+                        <Eye width="15px" />
+                    </Link>
+                </div>
+            ),
+        },
     ];
 
 
 
-
     return (
-        <Content Page_title="Help Desk" button_status={false}>
-            <Tabs activeKey={key} onSelect={(k) => setKey(k)} className="mb-3 border-tab">
-                <Tab eventKey="sendMessage" title="Send Message">
-                    <FormicForm fieldtype={fieldtype} formik={formik} ButtonName="Submit" BtnStatus={true} />
-                </Tab>
-                <Tab eventKey="viewMessages" title="View Messages">
+        <Content Page_title="Help Desk"
+            button_status={false}>
 
-                    {isLoading ? <Loader /> : <div>
-                        {messages?.length > 0 ? (
-                            messages?.map((msg, index) => (
-                                <div key={index} className="p-3 border mb-2 relative">
-                                    <h6><strong>Subject:</strong> {msg.subject}</h6>
-                                    <p><strong>Message:</strong> {msg.message}</p>
-                                    <p><strong>Date:</strong> {fDateTime(msg.created_at)}</p>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="text-center mt-5">
-                                <img
-                                    src="/assets/images/norecordfound.png"
-                                    alt="No Records Found"
-                                />
-                            </div>
-                        )}
-                    </div>}
-                </Tab>
-            </Tabs>
+            <FormicForm
+                fieldtype={fieldtype}
+                formik={formik}
+                ButtonName="Submit"
+                BtnStatus={true}
+            />
+            <div className="table-responsive">
+                <Table
+                    columns={columns}
+                    data={messagedata}
+                    totalRows={totalRows}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
+                />
+            </div>
+
         </Content>
     );
 };

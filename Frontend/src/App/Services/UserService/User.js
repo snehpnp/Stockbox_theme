@@ -1238,3 +1238,5 @@ export async function GetTicketDetaildata(data, token) {
         throw error.response?.data || { message: 'Something went wrong!' };
     }
 }
+
+
