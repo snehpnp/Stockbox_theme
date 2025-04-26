@@ -6,6 +6,7 @@ import { Tabs, Tab } from "react-bootstrap";
 import {
   SendHelpRequest,
   GetTicketDetaildata,
+  GetReplyTicketData,
 } from "../../../Services/UserService/User";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
@@ -20,6 +21,7 @@ const HelpDesk = () => {
 
   const [key, setKey] = useState("sendMessage");
   const [messages, setMessages] = useState([]);
+  const [messagedata, setMessagedata] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const { id } = useParams()
@@ -37,8 +39,8 @@ const HelpDesk = () => {
     try {
       const response = await GetTicketDetaildata(id, token);
       if (response.status) {
-        setMessages(response.data);
-        console.log("response", response.data)
+        setMessagedata(response.data.ticket);
+        console.log("Messagedata", response.data.ticket)
       }
     } catch (error) {
       console.error("Error fetching trade data:", error);
@@ -48,31 +50,30 @@ const HelpDesk = () => {
 
   const Sendmessagedata = async (data) => {
     try {
-      const response = await SendHelpRequest(data, token);
-      if (response.status) {
-        showCustomAlert("Success", "Your message has been sent successfully!");
-      } else {
-        showCustomAlert("error", "Message Failed. Please try again.");
-      }
+        const response = await GetReplyTicketData(data, token);
+        console.log("response", response)
+        if (response.status) {
+            showCustomAlert("Success", response.message);
+        } else {
+            showCustomAlert("error", response.message);
+        }
     } catch (error) {
-      showCustomAlert(
-        "error",
-        "An error occurred while sending the message. Please check your network or try again later."
-      );
+        showCustomAlert(
+            "error",
+            "An error occurred while sending the message. Please check your network or try again later."
+        );
     }
-  };
+};
 
   const formik = useFormik({
     initialValues: {
-      subject: "",
+
       message: "",
       file: "",
     },
     validate: (values) => {
       const errors = {};
-      if (!values.subject) {
-        errors.subject = "Please Enter Subject";
-      }
+      
       if (!values.message) {
         errors.message = "Please Enter Message";
       }
@@ -87,7 +88,7 @@ const HelpDesk = () => {
     onSubmit: async (values, { resetForm }) => {
       const data = {
         client_id: userid,
-        subject: values.subject,
+        
         message: values.message,
         file: values.file,
       };
@@ -99,16 +100,7 @@ const HelpDesk = () => {
   });
 
   let fieldtype = [
-    {
-      type: "text",
-      name: "subject",
-      label: "Subject",
-      placeholder: "Enter Subject",
-      required: true,
-      label_size: 5,
-      col_size: 12,
-      disable: false,
-    },
+
     {
       type: "textarea",
       name: "message",
@@ -146,10 +138,11 @@ const HelpDesk = () => {
             <div className="card-header border-bottom bg-transparent p-3">
               <div className="d-flex align-items-center">
                 <div>
-                  <h5 className="mb-0">Ticket Details:#qw232334</h5>
+                <h5 className="mb-0">Ticket Details: #{messagedata.ticketnumber}</h5>
+
                 </div>
                 <div className="ms-auto">
-                  <small className="pe-3">08.34 AM</small>
+                  <small className="pe-3">{messagedata.created_at}</small>
                   <button className="btn btn-primary btn-sm">Pending</button>
                 </div>
               </div>
@@ -157,12 +150,11 @@ const HelpDesk = () => {
             <div className="card-body">
               <div className="card-header border-bottom bg-transparent p-3">
                 <div className="card-title">
-                  <h6 className="mb-0">Messages</h6>
+                  <h6 className="mb-0">{messagedata.subject}</h6>
                 </div>
 
                 <p className="text-muted">
-                  Lorem ipsum is a dummy or placeholder text commonly used in
-                  graphic design, publishing, and web development.
+                {messagedata.message}
                 </p>
               </div>
             </div>
@@ -180,6 +172,35 @@ const HelpDesk = () => {
                   </div>
                 </div>
               </div>
+
+              <ul className="list-group list-group-flush review-list">
+  {messagedata.length > 0 ? (
+    messagedata.map((msg, index) => (
+      <li key={index} className="list-group-item bg-transparent">
+        <div className="d-flex align-items-center">
+          <img
+            src="assets/images/avatar/1.png"
+            alt="user avatar"
+            className="rounded-circle"
+            width={55}
+            height={55}
+          />
+          <div className="ms-3">
+            <h6 className="mb-0">
+              {msg.subject || "No Subject"} <small className="ms-4">{msg.created_at || ""}</small>
+            </h6>
+            <p className="mb-0 small-font">{msg.message}</p>
+          </div>
+        </div>
+      </li>
+    ))
+  ) : (
+    <li className="list-group-item bg-transparent text-center">
+      No messages found
+    </li>
+  )}
+</ul>
+
               <ul className="list-group list-group-flush review-list">
                 <li className="list-group-item bg-transparent">
                   <div className="d-flex align-items-center">
