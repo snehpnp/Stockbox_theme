@@ -81,8 +81,8 @@ class Angle {
 
 
                 if (client.devicetoken) {
-                    return res.status(500).json({ status: false, message: "Server error" });
-               } else {
+                    return res.status(500).json({ status: false, message: error.message || "Server error" });
+                } else {
                    const dynamicUrl = `${req.protocol}://${req.headers.host}`;
                    return res.redirect(dynamicUrl);
                }
@@ -91,8 +91,8 @@ class Angle {
             }
         } catch (error) {
             if (client.devicetoken) {
-                return res.status(500).json({ status: false, message: error.message });
-           } else {
+                return res.status(500).json({ status: false, message: error.message || "Server error" });
+            } else {
                const dynamicUrl = `${req.protocol}://${req.headers.host}`;
                return res.redirect(dynamicUrl);
            }

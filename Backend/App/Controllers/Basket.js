@@ -1693,7 +1693,7 @@ class Basket {
         let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
 
-        let sgst = 0, cgst = 0, igst = 0, pergstsc = 0, pergstt = 0;
+        let sgst = 0, cgst = 0, igst = 0, pergstsc = settings.gst/2, pergstt = settings.gst;
 
         if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() ==="") {
             sgst = totalgst / 2;
@@ -1768,6 +1768,7 @@ class Basket {
 
 
         const browser = await puppeteer.launch({
+          headless: 'new',
           args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
         const page = await browser.newPage();
@@ -1964,19 +1965,21 @@ class Basket {
       const invoiceNumber = invoiceStart + totalCount;
       const formattedNumber = invoiceNumber < 10 ? `0${invoiceNumber}` : `${invoiceNumber}`;
       const financialYear = getFinancialYear();
-      const orderNumber = `${invoicePrefix}${financialYear}-${formattedNumber}`;
+      const orderNumber = `${invoicePrefix}-${financialYear}-${formattedNumber}`;
+      const orderNumberName = `${invoicePrefix}/${financialYear}/${formattedNumber}`;
+
       // const orderNumber = `${invoicePrefix}${formattedNumber}`;
 
 
       let payment_type;
         payment_type = "Offline";
 
-      
+        let planDetailsHtml = '';
 
-      const templatePath = path.join(__dirname, '../../template', 'invoice.html');
+      const templatePath = path.join(__dirname, '../../template', 'invoicenew.html');
       let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
-      let sgst = 0, cgst = 0, igst = 0;
+      let sgst = 0, cgst = 0, igst = 0, pergstsc = settings.gst/2, pergstt = settings.gst;
 
       if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() ==="") {
           sgst = totalgst / 2;
@@ -1984,13 +1987,64 @@ class Basket {
       } else {
           igst = totalgst;
       }
+
+
+      planDetailsHtml += `
+      <tr>
+          <td style="border: 1px solid black; padding: 10px; text-align: center;height: 100px;">1</td>
+          <td style="border: 1px solid black; padding: 10px; text-align: center;">${basket.title}</td>
+          <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
+          <td style="border: 1px solid black; padding: 10px; text-align: center;">${basket.basket_price.toFixed(2)}</td>
+          <td style="border: 1px solid black; padding: 10px; text-align: center;">0.00</td>
+          <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst.toFixed(2)}</td>
+          <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst.toFixed(2)}</td>
+          <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst.toFixed(2)}</td>
+          <td style="border: 1px solid black; padding: 10px; text-align: center;">${total.toFixed(2)}</td>
+       </tr>`;
+
+      
+      
+   
+ 
+
+
+    const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+    const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+
+    const todays = new Date(); 
+
+    htmlContent = htmlContent
+      .replace(/{{orderNumber}}/g, `${orderNumberName}`)
+      .replace(/{{created_at}}/g, formatDate(todays))
+      .replace(/{{payment_type}}/g, payment_type)
+      .replace(/{{clientname}}/g, client.FullName)
+      .replace(/{{email}}/g, client.Email)
+      .replace(/{{PhoneNo}}/g, client.PhoneNo)
+      .replace(/{{total}}/g, total.toFixed(2))
+      .replace(/{{discount}}/g, 0.00)
+      .replace(/{{plan_details}}/g, planDetailsHtml)
+      .replace(/{{company_email}}/g, settings.email_address)
+      .replace(/{{company_phone}}/g, settings.contact_number)
+      .replace(/{{company_address}}/g, settings.address)
+      .replace(/{{company_website_title}}/g, settings.website_title)
+      .replace(/{{invoicetnc}}/g, settings.invoicetnc)
+      .replace(/{{gstin}}/g, settings.gstin)
+      .replace(/{{state}}/g, client.state)
+      .replace(/{{logo}}/g, logo)
+      .replace(/{{simage}}/g, simage)
+      .replace(/{{pergstsc}}/g, pergstsc)
+      .replace(/{{pergstt}}/g, pergstt)
+      .replace(/{{plantype}}/g, "Basket");
+
+
+      /*
       const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
       const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
 
 
 
       htmlContent = htmlContent
-        .replace(/{{orderNumber}}/g, `${orderNumber}`)
+        .replace(/{{orderNumber}}/g, `${orderNumberName}`)
         .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
         .replace(/{{payment_type}}/g, payment_type)
         .replace(/{{clientname}}/g, client.FullName)
@@ -2018,10 +2072,13 @@ class Basket {
         .replace(/{{igst}}/g, igst.toFixed(2))
         .replace(/{{logo}}/g, logo)
         .replace(/{{simage}}/g, simage)
+        .replace(/{{pergstsc}}/g, pergstsc)
+        .replace(/{{pergstt}}/g, pergstt)
         .replace(/{{plan_start}}/g, formatDate(savedSubscription.startdate));
 
-
+*/
       const browser = await puppeteer.launch({
+        headless: 'new',
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
       const page = await browser.newPage();
@@ -2046,7 +2103,7 @@ class Basket {
 
       await browser.close();
 
-      savedSubscription.ordernumber = `${orderNumber}`;
+      savedSubscription.ordernumber = `${orderNumberName}`;
       savedSubscription.invoice = `${orderNumber}.pdf`;
       const updatedSubscription = await savedSubscription.save();
 

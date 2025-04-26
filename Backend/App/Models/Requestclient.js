@@ -10,11 +10,13 @@ const RequestclientSchema = new Schema({
     },
     type: {
         type: String,
-        trim: true
+        trim: true,
+        default: null
     },
     id: {
         type: Schema.Types.ObjectId,
-        trim: true
+        trim: true,
+        default: null
     },
     status: {
         type: Number,

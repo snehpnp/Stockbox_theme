@@ -832,7 +832,7 @@ if (settings.gst > 0 && settings.gststatus==1) {
         const templatePath = path.join(__dirname, '../../template', 'invoice.html');
         let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
-        let sgst = 0, cgst = 0, igst = 0, pergstsc = 0, pergstt = 0;
+        let sgst = 0, cgst = 0, igst = 0, pergstsc = settings.gst/2, pergstt = settings.gst;
 
         if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() ==="") {
             sgst = totalgst / 2;
@@ -908,6 +908,7 @@ if (settings.gst > 0 && settings.gststatus==1) {
 
 
         const browser = await puppeteer.launch({
+          headless: 'new',
           args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
         const page = await browser.newPage();
@@ -1527,7 +1528,9 @@ const totalCount = basketCount + planCount;
 const invoiceNumber = invoiceStart + totalCount;
 const formattedNumber = invoiceNumber < 10 ? `0${invoiceNumber}` : `${invoiceNumber}`;
 const financialYear = getFinancialYear();
-const orderNumber = `${invoicePrefix}${financialYear}-${formattedNumber}`;
+const orderNumber = `${invoicePrefix}-${financialYear}-${formattedNumber}`;
+const orderNumberName = `${invoicePrefix}/${financialYear}/${formattedNumber}`;
+
 // const orderNumber = `${invoicePrefix}${formattedNumber}`;
 
 
@@ -1543,7 +1546,7 @@ const orderNumber = `${invoicePrefix}${financialYear}-${formattedNumber}`;
         plan_start: start,
         plan_end: end,
         validity: plan.validity,
-        ordernumber:`${orderNumber}`,
+        ordernumber:`${orderNumberName}`,
         invoice:`${orderNumber}.pdf`,
       });
   
@@ -1662,7 +1665,7 @@ const orderNumber = `${invoicePrefix}${financialYear}-${formattedNumber}`;
 
 
       
-            let sgst = 0, cgst = 0, igst = 0;
+            let sgst = 0, cgst = 0, igst = 0, pergstsc = settings.gst/2, pergstt = settings.gst;
 
             if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() === "") {
                 sgst = totalgst / 2;
@@ -1697,7 +1700,7 @@ const orderNumber = `${invoicePrefix}${financialYear}-${formattedNumber}`;
 
 
           htmlContent = htmlContent
-          .replace(/{{orderNumber}}/g, `${orderNumber}`)
+          .replace(/{{orderNumber}}/g, `${orderNumberName}`)
           .replace(/{{created_at}}/g, formatDate(todays))
           .replace(/{{payment_type}}/g, payment_type)
           .replace(/{{clientname}}/g, client.FullName)
@@ -1715,12 +1718,15 @@ const orderNumber = `${invoicePrefix}${financialYear}-${formattedNumber}`;
           .replace(/{{simage}}/g, simage)
           .replace(/{{total}}/g, total.toFixed(2))
           .replace(/{{plantype}}/g, "Plan")
-          .replace(/{{discount}}/g, 0);
+          .replace(/{{pergstsc}}/g, pergstsc)
+          .replace(/{{pergstt}}/g, pergstt)
+          .replace(/{{discount}}/g, 0.00);
 
 
 
 
         const browser = await puppeteer.launch({
+          headless: 'new',
           args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
         const page = await browser.newPage();
