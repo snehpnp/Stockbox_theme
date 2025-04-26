@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import { AddSignalByAdmin, GetService, getstockbyservice, getexpirydate, getstockStrickprice } from '../../../Services/Admin/Admin';
+import { AddSignalByAdmin, GetService, GetSegmentList, getstockbyservice, getexpirydate, getstockStrickprice } from '../../../Services/Admin/Admin';
 import { useNavigate } from 'react-router-dom';
 import Content from '../../../components/Contents/Content';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
@@ -31,6 +31,7 @@ const AddSignal = () => {
 
   useEffect(() => {
     fetchAdminServices();
+    fetchAdminSegment();
   }, []);
 
 
@@ -45,6 +46,20 @@ const AddSignal = () => {
       console.log('Error fetching services:', error);
     }
   };
+
+
+
+  const fetchAdminSegment = async () => {
+    try {
+      const response = await GetSegmentList(token);
+      if (response.status) {
+        setServiceList(response.data);
+      }
+    } catch (error) {
+      console.log('Error fetching services:', error);
+    }
+  };
+
 
 
 
