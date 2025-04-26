@@ -2122,6 +2122,12 @@ else {
                   return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
                 }
 
+                const ticket = await Ticket_Modal.findOne({ _id: ticket_id, del: false });
+
+                if (!ticket) {
+                  return res.status(404).json({ status: false, message: 'Ticket not found' });
+                }
+      
 
   
               const attachment = req.files['attachment'] ? req.files['attachment'][0].filename : null;
@@ -2175,6 +2181,8 @@ else {
             return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
           }
 
+
+         
           const existingOpenTicket = await Ticket_Modal.findOne({
             client_id,
             status: false, // assuming 'true' means ticket is open
