@@ -414,7 +414,7 @@ class Clients {
         };
         // Send email
         await sendEmail(mailOptions);
-       
+
       });
 
 
@@ -1018,17 +1018,17 @@ class Clients {
 
       // Make the POST request to Digio API using Axios
       const response = await axios.post(
-               'https://api.digio.in/client/kyc/v2/request/with_template',
-               payload,
-               {
-                 headers: {
-                   'Authorization': `Basic ${authToken}`,
-                   'Content-Type': 'application/json'
-                 },
-                 timeout: 300000,
-               }
-             );
-            
+        'https://api.digio.in/client/kyc/v2/request/with_template',
+        payload,
+        {
+          headers: {
+            'Authorization': `Basic ${authToken}`,
+            'Content-Type': 'application/json'
+          },
+          timeout: 300000,
+        }
+      );
+
 
       const resData = response.data;
 
@@ -1053,7 +1053,7 @@ class Clients {
         error: 'Error during PDF generation or API request',
         message: error?.response?.data?.message || error?.message || 'Unknown error',
       });
-  }
+    }
 
   }
 
@@ -1108,7 +1108,7 @@ class Clients {
     signCoordinates[client.PhoneNo] = {}; // Initialize the phone number key
 
     for (let i = 1; i <= noof_pdf_pages; i++) {
-        signCoordinates[client.PhoneNo][i] = [{ llx: 290, lly: 190, urx: 520, ury: 90 }];
+      signCoordinates[client.PhoneNo][i] = [{ llx: 290, lly: 190, urx: 520, ury: 90 }];
     }
 
     const requestBody = {
@@ -1164,7 +1164,7 @@ class Clients {
         error: 'Error during PDF generation or API request',
         message: error?.response?.data?.message || error?.message || 'Unknown error',
       });
-   
+
     }
   }
   async downloadDocument(req, res) {
@@ -1264,7 +1264,7 @@ class Clients {
         message: 'Document downloaded and saved successfully'
       });
     } catch (error) {
-      
+
       return res.status(500).json({
         status: false,
         message: error?.response?.data?.message || error?.message || 'Unknown error',
@@ -1609,7 +1609,7 @@ class Clients {
 
       const client = await Clients_Modal.findOne({
         Email: email,
-        del:0
+        del: 0
       });
 
       if (!client) {
@@ -1621,7 +1621,7 @@ class Clients {
 
       const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'client_verification_mail' }); // Use findOne if you expect a single document
       if (!mailtemplate || !mailtemplate.mail_body) {
-     //   throw new Error('Mail template not found');
+        //   throw new Error('Mail template not found');
         return res.status(404).json({ status: false, message: 'Mail template not found' });
       }
 
@@ -1667,9 +1667,8 @@ class Clients {
       });
 
 
-      if(settings.smsprovider =='1')
-        {
-         
+      if (settings.smsprovider == '1') {
+
 
         const smstemplate = await Smstemplate_Modal.findOne({ sms_type: "otp" });
         let message = smstemplate.sms_body.replace(/{#var#}/g, resetToken);
@@ -2042,7 +2041,7 @@ class Clients {
 
   async rePly(req, res) {
     try {
-
+      console.log("req.body", req.body)
       // Handle the image upload
       await new Promise((resolve, reject) => {
         upload('ticket').fields([{ name: 'attachment', maxCount: 1 }])(req, res, (err) => {
@@ -2055,14 +2054,14 @@ class Clients {
 
             return res.status(400).json({ status: false, message: "No file uploaded." });
           }
-
-
           resolve();
         });
       });
 
       // After the upload is successful, proceed with the rest of the logic
       const { ticket_id, message, client_id } = req.body;
+
+
 
       if (!ticket_id) {
         return res.status(400).json({ status: false, message: "Ticket Id is required" });

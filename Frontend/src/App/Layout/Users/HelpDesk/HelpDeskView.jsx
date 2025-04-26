@@ -26,7 +26,7 @@ const HelpDesk = () => {
 
   const { id } = useParams()
 
-  console.log("id", id)
+
 
   useEffect(() => {
     FetchMessage();
@@ -40,7 +40,7 @@ const HelpDesk = () => {
       const response = await GetTicketDetaildata(id, token);
       if (response.status) {
         setMessagedata(response.data.ticket);
-        console.log("Messagedata", response.data.ticket)
+
       }
     } catch (error) {
       console.error("Error fetching trade data:", error);
@@ -48,49 +48,51 @@ const HelpDesk = () => {
     setIsLoading(false);
   };
 
+
+
   const Sendmessagedata = async (data) => {
     try {
-        const response = await GetReplyTicketData(data, token);
-        console.log("response", response)
-        if (response.status) {
-            showCustomAlert("Success", response.message);
-        } else {
-            showCustomAlert("error", response.message);
-        }
+      const response = await GetReplyTicketData(data, token);
+      console.log("data", data)
+      if (response.status) {
+        showCustomAlert("Success", response.message);
+      } else {
+        showCustomAlert("error", response.message);
+      }
     } catch (error) {
-        showCustomAlert(
-            "error",
-            "An error occurred while sending the message. Please check your network or try again later."
-        );
+      showCustomAlert(
+        "error",
+        "An error occurred while sending the message. Please check your network or try again later."
+      );
     }
-};
+  };
 
   const formik = useFormik({
     initialValues: {
 
       message: "",
+      client_id: "",
+      ticket_id: "",
       file: "",
     },
     validate: (values) => {
       const errors = {};
-      
+
       if (!values.message) {
         errors.message = "Please Enter Message";
       }
       if (!values.file) {
         errors.file = "Please Upload File";
       }
-      if (values.file && values.file.size > 2 * 1024 * 1024) {
-        errors.file = "File size should be less than 2MB";
-      }
+
       return errors;
     },
     onSubmit: async (values, { resetForm }) => {
       const data = {
         client_id: userid,
-        
         message: values.message,
-        file: values.file,
+        ticket_id: id,
+        attachment: values.file
       };
 
       await Sendmessagedata(data);
@@ -138,7 +140,7 @@ const HelpDesk = () => {
             <div className="card-header border-bottom bg-transparent p-3">
               <div className="d-flex align-items-center">
                 <div>
-                <h5 className="mb-0">Ticket Details: #{messagedata.ticketnumber}</h5>
+                  <h5 className="mb-0">Ticket Details: #{messagedata.ticketnumber}</h5>
 
                 </div>
                 <div className="ms-auto">
@@ -154,7 +156,7 @@ const HelpDesk = () => {
                 </div>
 
                 <p className="text-muted">
-                {messagedata.message}
+                  {messagedata.message}
                 </p>
               </div>
             </div>
@@ -174,32 +176,32 @@ const HelpDesk = () => {
               </div>
 
               <ul className="list-group list-group-flush review-list">
-  {messagedata.length > 0 ? (
-    messagedata.map((msg, index) => (
-      <li key={index} className="list-group-item bg-transparent">
-        <div className="d-flex align-items-center">
-          <img
-            src="assets/images/avatar/1.png"
-            alt="user avatar"
-            className="rounded-circle"
-            width={55}
-            height={55}
-          />
-          <div className="ms-3">
-            <h6 className="mb-0">
-              {msg.subject || "No Subject"} <small className="ms-4">{msg.created_at || ""}</small>
-            </h6>
-            <p className="mb-0 small-font">{msg.message}</p>
-          </div>
-        </div>
-      </li>
-    ))
-  ) : (
-    <li className="list-group-item bg-transparent text-center">
-      No messages found
-    </li>
-  )}
-</ul>
+                {messagedata.length > 0 ? (
+                  messagedata.map((msg, index) => (
+                    <li key={index} className="list-group-item bg-transparent">
+                      <div className="d-flex align-items-center">
+                        <img
+                          src="assets/images/avatar/1.png"
+                          alt="user avatar"
+                          className="rounded-circle"
+                          width={55}
+                          height={55}
+                        />
+                        <div className="ms-3">
+                          <h6 className="mb-0">
+                            {msg.subject || "No Subject"} <small className="ms-4">{msg.created_at || ""}</small>
+                          </h6>
+                          <p className="mb-0 small-font">{msg.message}</p>
+                        </div>
+                      </div>
+                    </li>
+                  ))
+                ) : (
+                  <li className="list-group-item bg-transparent text-center">
+                    No messages found
+                  </li>
+                )}
+              </ul>
 
               <ul className="list-group list-group-flush review-list">
                 <li className="list-group-item bg-transparent">

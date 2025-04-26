@@ -1201,6 +1201,9 @@ export async function GetAllTicketData(data, token) {
     }
 }
 
+
+
+
 export async function GetReplyTicketData(data, token) {
     try {
         const response = await axios.post(`${Config.base_url}api/client/ticketreply`, data, {
@@ -1219,6 +1222,35 @@ export async function GetReplyTicketData(data, token) {
         throw error.response?.data || { message: 'Something went wrong!' };
     }
 }
+
+
+// export async function GetReplyTicketData(data, token) {
+
+//     try {
+//         const formData = new FormData();
+//         for (const key in data) {
+//             if (key === 'attachment' && data[key]) {
+//                 formData.append(key, data[key]);
+//             } else {
+//                 formData.append(key, data[key]);
+//             }
+//         }
+
+//         const res = await axios.post(`${Config.base_url}api/client/ticketreply`, formData, {
+//             headers: {
+//                 'Content-Type': 'multipart/form-data',
+//                 'Authorization': `${token}`,
+//             },
+//         });
+
+//         return res?.data;
+//     } catch (err) {
+//         return err.response?.data || err.message;
+//     }
+// }
+
+
+
 
 export async function GetTicketDetaildata(ticketId, token) {
     try {
