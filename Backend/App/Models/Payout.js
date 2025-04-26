@@ -20,7 +20,8 @@ const PayoutSchema = new Schema({
     },
     remark: {
         type: String,
-        trim: true
+        trim: true,
+        default: null,
     },
     del: {
         type: Boolean,

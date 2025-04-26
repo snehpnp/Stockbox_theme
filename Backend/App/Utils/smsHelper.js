@@ -6,7 +6,6 @@ const Smsprovider_Modal = db.Smsprovider;
 
 const sendSMS = async (mobile, message, templateId) => {
 
-
   const activeProvider = await Smsprovider_Modal.findOne({ status: 1 });
 
   const authKey = activeProvider.apikey; 
@@ -35,10 +34,10 @@ if(name=="bulksmsservice")
   const url = `${urls}?${config}`;
   try {
     const response = await axios.get(url);
-
+  // console.log('SMS Response:', response.data);
     return response.data;
   } catch (error) {
-    // console.error('SMS Send Error:', error.response?.data || error.message);
+   // console.log('SMS Send Error:', error.response?.data || error.message);
     return error.message;
   }
 

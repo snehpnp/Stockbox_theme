@@ -53,14 +53,13 @@ async function sendEmail(mailOptions) {
     }
 
 
-
     const transporter = await createTransporter(settings);
     const info = await transporter.sendMail(mailOptions);
     // console.log('Message sent:', info.messageId);
     return info;
   } catch (error) {
     // console.log('Error sending email:', error);
-    throw error;
+    return error;
   }
 }
 

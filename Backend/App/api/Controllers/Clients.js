@@ -414,6 +414,7 @@ class Clients {
         };
         // Send email
         await sendEmail(mailOptions);
+       
       });
 
 
@@ -727,7 +728,7 @@ class Clients {
       if (!client) {
         return res.status(400).json({
           status: false,
-          message: "Something went wrong",
+          message: "Client not found",
         });
       }
 
@@ -933,8 +934,8 @@ class Clients {
       // let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
       let htmlContent = settings.pdf_template || '';
-      let pdf_header = settings.pdf_header || '';
-      let pdf_footer = settings.pdf_footer || '';
+      let pdf_header = settings.pdf_header || '<div style="height:0;"></div>';
+      let pdf_footer = settings.pdf_footer || '<div style="height:0;"></div>';
 
 
       let state;
@@ -964,6 +965,7 @@ class Clients {
 
       // const browser = await puppeteer.launch();
       const browser = await puppeteer.launch({
+        headless: 'new',
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
       const page = await browser.newPage();
@@ -1015,26 +1017,18 @@ class Clients {
       });
 
       // Make the POST request to Digio API using Axios
-      try {
-        const response = await axios.post(
-          'https://api.digio.in/client/kyc/v2/request/with_template',
-          payload,
-          {
-            headers: {
-              'Authorization': `Basic ${authToken}`,
-              'Content-Type': 'application/json'
-            },
-            timeout: 300000,
-          }
-        );
-      
-      } catch (error) {
-        return res.status(400).json({
-          status: false,
-          message: error.response.data.message,
-        });
-      }
-
+      const response = await axios.post(
+               'https://api.digio.in/client/kyc/v2/request/with_template',
+               payload,
+               {
+                 headers: {
+                   'Authorization': `Basic ${authToken}`,
+                   'Content-Type': 'application/json'
+                 },
+                 timeout: 300000,
+               }
+             );
+            
 
       const resData = response.data;
 
@@ -1054,9 +1048,12 @@ class Clients {
       }
 
     } catch (error) {
-      console.error('Error in submitting KYC:', error.message);
-      return res.status(500).json({ error: 'CURL request failed', details: error.message });
-    }
+      return res.status(500).json({
+        status: false,
+        error: 'Error during PDF generation or API request',
+        message: error?.response?.data?.message || error?.message || 'Unknown error',
+      });
+  }
 
   }
 
@@ -1161,8 +1158,13 @@ class Clients {
       });
 
     } catch (error) {
-      // console.error('Error uploading document:', error.response ? error.response.data : error.message);
-      return res.status(400).json({ error: 'Error uploading document to Digio' });
+
+      return res.status(500).json({
+        status: false,
+        error: 'Error during PDF generation or API request',
+        message: error?.response?.data?.message || error?.message || 'Unknown error',
+      });
+   
     }
   }
   async downloadDocument(req, res) {
@@ -1262,10 +1264,10 @@ class Clients {
         message: 'Document downloaded and saved successfully'
       });
     } catch (error) {
-      // console.error('Error downloading the document:', error);
+      
       return res.status(500).json({
         status: false,
-        message: 'Failed to download the document',
+        message: error?.response?.data?.message || error?.message || 'Unknown error',
         error: error.message || 'An unknown error occurred'
       });
     }
@@ -1604,19 +1606,31 @@ class Clients {
     try {
 
       const { email } = req.body;
+
+      const client = await Clients_Modal.findOne({
+        Email: email,
+        del:0
+      });
+
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found' });
+      }
+
       const resetToken = Math.floor(100000 + Math.random() * 900000);
 
 
       const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'client_verification_mail' }); // Use findOne if you expect a single document
       if (!mailtemplate || !mailtemplate.mail_body) {
-        throw new Error('Mail template not found');
+     //   throw new Error('Mail template not found');
+        return res.status(404).json({ status: false, message: 'Mail template not found' });
       }
 
 
 
       const settings = await BasicSetting_Modal.findOne();
       if (!settings || !settings.smtp_status) {
-        throw new Error('SMTP settings are not configured or are disabled');
+        // throw new Error('SMTP settings are not configured or are disabled');
+        return res.status(404).json({ status: false, message: 'SMTP settings are not configured or are disabled' });
       }
 
 
@@ -1653,12 +1667,9 @@ class Clients {
       });
 
 
-      if (settings.smsprovider == '1') {
-        const client = await Clients_Modal.findOne({
-          Email: email,
-          del: 0
-        });
-
+      if(settings.smsprovider =='1')
+        {
+         
 
         const smstemplate = await Smstemplate_Modal.findOne({ sms_type: "otp" });
         let message = smstemplate.sms_body.replace(/{#var#}/g, resetToken);

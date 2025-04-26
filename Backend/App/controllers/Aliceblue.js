@@ -105,7 +105,7 @@ class Aliceblue {
 
 
                     if (client.devicetoken) {
-                        return res.status(500).json({ status: false, message: "Server error" });
+                        return res.status(500).json({ status: false, message: error.message || "Server error" });
                     } else {
                         const dynamicUrl = `${req.protocol}://${req.headers.host}`;
                         return res.redirect(dynamicUrl);
@@ -721,7 +721,7 @@ class Aliceblue {
                     }
 
                 } catch (error) {
-                    return res.status(500).json({ status: false, message: "Server error" });
+                    return res.status(500).json({ status: false, message: error.message || "Server error" });
                 }
 
             } else {
@@ -769,12 +769,9 @@ class Aliceblue {
             });
 
         } catch (error) {
-            // Handle server errors
-            return res.status(500).json({
-                status: false,
-                message: "Server error",
-                error: error.message,
-            });
+          
+            return res.status(500).json({ status: false, message: error.message || "Server error" });
+
         }
     }
 

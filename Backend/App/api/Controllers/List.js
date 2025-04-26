@@ -557,6 +557,12 @@ class List {
         return res.status(400).json({ status: false, message: 'Missing required fields' });
       }
 
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+
+      if (!client) {
+        return console.log('Client not found or inactive.');
+      }
 
       const settings = await BasicSetting_Modal.findOne();
 
@@ -772,12 +778,7 @@ class List {
         }
       }
 
-      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
 
-
-      if (!client) {
-        return console.log('Client not found or inactive.');
-      }
 
 
       if (client.freetrial == 0) {
@@ -979,6 +980,7 @@ class List {
         .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
       const browser = await puppeteer.launch({
+        headless: 'new',
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
       const page = await browser.newPage();
@@ -1254,6 +1256,7 @@ class List {
 
 
       const browser = await puppeteer.launch({
+        headless: 'new',
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
       const page = await browser.newPage();
@@ -5990,7 +5993,10 @@ class List {
 
 
       if (!client) {
-        return console.log('Client not found or inactive.');
+        return res.status(404).json({
+          status: false,
+          message: 'Client not found.'
+        });
       }
 
       // const length = 6;
@@ -6026,7 +6032,9 @@ class List {
         const invoiceNumber = invoiceStart + totalCount;
         const formattedNumber = invoiceNumber < 10 ? `0${invoiceNumber}` : `${invoiceNumber}`;
         const financialYear = getFinancialYear();
-        const orderNumber = `${invoicePrefix}${financialYear}-${formattedNumber}`;
+        const orderNumber = `${invoicePrefix}-${financialYear}-${formattedNumber}`;
+        const orderNumberName = `${invoicePrefix}/${financialYear}/${formattedNumber}`;
+
         // const orderNumber = `${invoicePrefix}${formattedNumber}`;
 
 
@@ -6256,7 +6264,7 @@ class List {
           plan_end: end,
           validity: plan.validity,
           orderid: orderid,
-          ordernumber: `${orderNumber}`,
+          ordernumber: `${orderNumberName}`,
           invoice: `${orderNumber}.pdf`,
         });
 
@@ -6286,7 +6294,7 @@ class List {
 
         let planDetailsHtml = '';
 
-        let sgst = 0, cgst = 0, igst = 0;
+        let sgst = 0, cgst = 0, igst = 0, pergstsc = settings.gst / 2, pergstt = settings.gst;
 
         if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() === "") {
           sgst = totalgst / 2;
@@ -6319,7 +6327,7 @@ class List {
 
 
         htmlContent = htmlContent
-          .replace(/{{orderNumber}}/g, `${orderNumber}`)
+          .replace(/{{orderNumber}}/g, `${orderNumberName}`)
           .replace(/{{created_at}}/g, formatDate(todays))
           .replace(/{{payment_type}}/g, payment_type)
           .replace(/{{clientname}}/g, client.FullName)
@@ -6337,10 +6345,13 @@ class List {
           .replace(/{{simage}}/g, simage)
           .replace(/{{total}}/g, total.toFixed(2))
           .replace(/{{plantype}}/g, "Plan")
+          .replace(/{{pergstsc}}/g, pergstsc)
+          .replace(/{{pergstt}}/g, pergstt)
           .replace(/{{discount}}/g, discountPerPlan.toFixed(2));
 
 
         const browser = await puppeteer.launch({
+          headless: 'new',
           args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
         const page = await browser.newPage();
@@ -7230,7 +7241,10 @@ class List {
       const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
 
       if (!client) {
-        return console.log('Client not found or inactive.');
+        return res.status(404).json({
+          status: false,
+          message: 'Client not found.'
+        });
       }
 
       const settings = await BasicSetting_Modal.findOne();
@@ -7267,7 +7281,9 @@ class List {
         const invoiceNumber = invoiceStart + totalCount;
         const formattedNumber = invoiceNumber < 10 ? `0${invoiceNumber}` : `${invoiceNumber}`;
         const financialYear = getFinancialYear();
-        const orderNumber = `${invoicePrefix}${financialYear}-${formattedNumber}`;
+        const orderNumber = `${invoicePrefix}-${financialYear}-${formattedNumber}`;
+        const orderNumberName = `${invoicePrefix}/${financialYear}/${formattedNumber}`;
+
         //const orderNumber = `${invoicePrefix}${formattedNumber}`;
 
         const basket = await Basket_Modal.findOne({
@@ -7328,7 +7344,7 @@ class List {
           enddate: end,
           validity: basket.validity,
           orderid: orderid,
-          ordernumber: `${orderNumber}`,
+          ordernumber: `${orderNumberName}`,
           invoice: `${orderNumber}.pdf`,
         });
 
@@ -7350,7 +7366,7 @@ class List {
         let planDetailsHtml = '';
         let ttl = 0;
 
-        let sgst = 0, cgst = 0, igst = 0;
+        let sgst = 0, cgst = 0, igst = 0, pergstsc = settings.gst / 2, pergstt = settings.gst;
 
         if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() === "") {
           sgst = totalgst / 2;
@@ -7386,7 +7402,7 @@ class List {
         const todays = new Date();
 
         htmlContent = htmlContent
-          .replace(/{{orderNumber}}/g, `${orderNumber}`)
+          .replace(/{{orderNumber}}/g, `${orderNumberName}`)
           .replace(/{{created_at}}/g, formatDate(todays))
           .replace(/{{payment_type}}/g, payment_type)
           .replace(/{{clientname}}/g, client.FullName)
@@ -7404,10 +7420,13 @@ class List {
           .replace(/{{state}}/g, client.state)
           .replace(/{{logo}}/g, logo)
           .replace(/{{simage}}/g, simage)
+          .replace(/{{pergstsc}}/g, pergstsc)
+          .replace(/{{pergstt}}/g, pergstt)
           .replace(/{{plantype}}/g, "Basket");
 
 
         const browser = await puppeteer.launch({
+          headless: 'new',
           args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
         const page = await browser.newPage();
@@ -8604,7 +8623,9 @@ class List {
         data: []
       });
     }
-  } async getLivePriceCash(req, res) {
+  }
+
+  async getLivePriceCash(req, res) {
     try {
       const livePrices = await Signal_Modal.aggregate([
         // Filter signals with close_status false and segment "C"
@@ -8828,7 +8849,7 @@ class List {
       });
 
     } catch (error) {
-      console.error("Error fetching signals:", error);
+      // console.error("Error fetching signals:", error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -9165,7 +9186,7 @@ class List {
       return res.json({ reminders, status: false });
 
     } catch (err) {
-      console.error("PlanSubscriptionExpire error:", err);
+      // console.error("PlanSubscriptionExpire error:", err);
       return res.status(500).json({ message: "Server Error", error: err.message, status: false });
     }
   }

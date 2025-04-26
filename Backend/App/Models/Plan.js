@@ -5,21 +5,24 @@ const { Schema, model } = require('mongoose');
 const PlanSchema = new Schema({
     title: {
         type: String,
-        trim: true
+        trim: true,
+        default: null
     },
     description: {
         type: String,
-        trim: true
+        trim: true,
+        default: null
     },
     accuracy: {
         type: String,
       //  required: true,
-        trim: true
+        trim: true,
+        default: null
     },
     price: {
         type: Number,
         required: true,
-        min: 0
+        min: 0,
     },
     // Rename total_month_service to totaldays
     validity: {
