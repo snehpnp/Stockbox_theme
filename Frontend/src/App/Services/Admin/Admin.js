@@ -3709,3 +3709,18 @@ export async function GetSegmentList(token) {
         return err;
     }
 }
+
+// get strategy segment 
+
+export async function GetStrategySegmentList(token) {
+    try {
+        const res = await axios.get(`${Config.base_url}service/liststratrgy`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
