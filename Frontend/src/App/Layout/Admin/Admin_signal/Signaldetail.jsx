@@ -19,6 +19,7 @@ const Signaldetail = () => {
     const [currentlocation, setCurrentlocation] = useState({})
 
     const location = useLocation()
+    const { openSignal } = location.state || {}
 
     useEffect(() => {
         if (location?.state) {
@@ -125,13 +126,25 @@ const Signaldetail = () => {
                                                             <h6 className="mb-0">Suggested Quantity/Lot</h6>
                                                             <span className="text-secondary">{item.lot || '-'}</span>
                                                         </li>
-                                                        <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                                            <h6 className="mb-0">Exit Price</h6>
-                                                            <span className="text-secondary"><IndianRupee size={16} />
-                                                                {Math.max(item.targetprice1, item.targetprice2, item.targetprice3)
-                                                                    ? Math.max(item.targetprice1, item.targetprice2, item.targetprice3)
-                                                                    : item.closeprice || '-'} </span>
-                                                        </li>
+                                                        {openSignal ? (
+                                                            <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                                                <h6 className="mb-0">Exit Price</h6>
+                                                                <span className="text-secondary">
+                                                                     -
+                                                                </span>
+                                                            </li>
+                                                        ) : (
+                                                            <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                                                <h6 className="mb-0">Exit Price</h6>
+                                                                <span className="text-secondary">
+                                                                    <IndianRupee size={16} />
+                                                                    {Math.max(item.targetprice1, item.targetprice2, item.targetprice3)
+                                                                        ? Math.max(item.targetprice1, item.targetprice2, item.targetprice3)
+                                                                        : item.closeprice || '-'}
+                                                                </span>
+                                                            </li>
+                                                        )}
+
                                                         <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                                             <h6 className="mb-0">Entry Date & Time</h6>
                                                             <span className="text-secondary">{fDateTimeH(item.created_at) || '-'}</span>

@@ -62,7 +62,7 @@ const Dashbord = () => {
         setClients(topClients);
       }
     } catch (error) {
-      console.log("error",error);
+      console.log("error", error);
     }
     setLoading(false)
   };
@@ -112,36 +112,38 @@ const Dashbord = () => {
       sortable: true,
       width: "200px",
     },
-
     {
       name: "Client Segment",
-      cell: (row) => (
-        <>
-          {Array.isArray(row?.plansStatus) && row.plansStatus.length > 0 ? (
-            row.plansStatus.map((item, index) => (
-              <span
+      cell: (row) => {
+        if (!Array.isArray(row?.plansStatus) || row.plansStatus.length === 0) {
+          return <span>N/A</span>;
+        }
+    
+        return (
+          <div style={{ display: "flex", flexWrap: "wrap" }}>
+            {row.plansStatus.map((item, index) => (
+              <div
                 key={index}
                 style={{
+                  marginBottom: "5px",
                   color:
                     item.status === "active"
                       ? "green"
                       : item.status === "expired"
-                      ? "red"
-                      : "inherit",
-                  marginRight: "5px",
+                        ? "red"
+                        : "inherit",
                 }}
               >
                 {item.serviceName || "N/A"}
-              </span>
-            ))
-          ) : (
-            <span>N/A</span>
-          )}
-        </>
-      ),
+                {index < row.plansStatus.length - 1 ? ", " : ""}
+              </div>
+            ))}
+          </div>
+        );
+      },
       sortable: true,
       width: "200px",
-    },
+    },    
     {
       name: "Phone No",
       selector: (row) => row.PhoneNo,
@@ -167,33 +169,33 @@ const Dashbord = () => {
 
   return (
     <div>
-      {loading ?(
-        <Loader/>
-      ):
-      (<>   
-      
-      <div className="page-content">
-        {data && monthexpiry && currentMonthYear && (
-          <Dashboard monthexpiry={monthexpiry} data={data} />
-        )}
+      {loading ? (
+        <Loader />
+      ) :
+        (<>
 
-        <div className="card radius-10 mt-4">
-          <div className="card-body">
-            <div className="d-flex align-items-center">
-              <div>
-                <h5 className="mb-0">Recent Clients</h5>
+          <div className="page-content">
+            {data && monthexpiry && currentMonthYear && (
+              <Dashboard monthexpiry={monthexpiry} data={data} />
+            )}
+
+            <div className="card radius-10 mt-4">
+              <div className="card-body">
+                <div className="d-flex align-items-center">
+                  <div>
+                    <h5 className="mb-0">Recent Clients</h5>
+                  </div>
+                </div>
+
+                <hr />
+
+                <div className="table-responsive d-flex justify-content-center">
+                  <Table columns={columns} data={clients} />
+                </div>
               </div>
             </div>
-
-            <hr />
-
-            <div className="table-responsive d-flex justify-content-center">
-              <Table columns={columns} data={clients} />
-            </div>
           </div>
-        </div>
-      </div>
-      </>)}
+        </>)}
     </div>
   );
 };

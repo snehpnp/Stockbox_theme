@@ -111,7 +111,7 @@ const Updatebankdetail = () => {
     {
       name: "image",
       label: "Image",
-      type: "file3",
+      type: "file2",
       label_size: 12,
       col_size: 6,
       disable: false,

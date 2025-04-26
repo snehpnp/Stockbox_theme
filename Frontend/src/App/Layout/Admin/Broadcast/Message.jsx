@@ -22,6 +22,8 @@ const Message = () => {
 
     const [servicedata, setServicedata] = useState({});
     const [chatMessages, setChatMessages] = useState([]);
+    console.log("chatMessages", chatMessages);
+
 
 
     const [isLoading, setIsLoading] = useState(true)
@@ -29,14 +31,14 @@ const Message = () => {
 
     const getservice = async () => {
         try {
-            const response = await GetService(token);          
+            const response = await GetService(token);
             if (response.status) {
                 setServicedata(response?.data);
             }
         } catch (error) {
             console.log("Error fetching services:", error);
         }
-        setIsLoading(false)        
+        setIsLoading(false)
     };
 
 
@@ -44,6 +46,7 @@ const Message = () => {
     const sendmessagedetail = async () => {
         try {
             const response = await getBroadCastmessage(token);
+            console.log("response", response)
             if (response.status) {
                 setChatMessages(response.data);
             }
@@ -133,17 +136,23 @@ const Message = () => {
                                                                     <h4 className="card-title text-muted">
                                                                         <span>
                                                                             {matchedServices.length > 0 ? (
-                                                                                matchedServices.map((service, idx) => (
-                                                                                    <span key={idx}>
-                                                                                        {service.segment === "C" && <span>CASH </span>}
-                                                                                        {service.segment === "O" && <span>OPTION </span>}
-                                                                                        {service.segment === "F" && <span>FUTURE </span>}
-                                                                                    </span>
-                                                                                ))
-
-                                                                            ) : ""}
+                                                                                matchedServices.some(service => ["C", "O", "F"].includes(service.segment)) ? (
+                                                                                    matchedServices.map((service, idx) => (
+                                                                                        <span key={idx}>
+                                                                                            {service.segment === "C" && <span>CASH </span>}
+                                                                                            {service.segment === "O" && <span>OPTION </span>}
+                                                                                            {service.segment === "F" && <span>FUTURE </span>}
+                                                                                        </span>
+                                                                                    ))
+                                                                                ) : (
+                                                                                    <span>All </span>
+                                                                                )
+                                                                            ) : (
+                                                                                <span>All </span>
+                                                                            )}
                                                                         </span>({item.type})
                                                                     </h4>
+
                                                                     <hr />
                                                                     <p><strong>Subject:</strong> {item.subject}</p>
                                                                     <p className="card-text">
