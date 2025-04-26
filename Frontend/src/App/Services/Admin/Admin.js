@@ -3765,3 +3765,36 @@ export async function GetTicketmessagedetailbyuser(id, token) {
         return err.response?.data || err.message;
     }
 }
+
+//send ticket reply
+
+export async function sendTicketReply(data , token) {
+    try {
+        // Create form data for the request
+        const formData = new FormData();
+        formData.append('ticket_id',data.ticket_id);
+        formData.append('message',data.message);
+        
+        // Add file if provided
+        if (data.attachment) {
+            formData.append('attachment', data.attachment);
+        }
+
+        // Make the API request
+        const response = await axios.post(
+            `${Config.base_url}ticket/reply`,
+            formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        console.error('Error in sendTicketReply API:', error.message);
+        throw error.response?.data || { status: false, message: 'Something went wrong!' };
+    }
+}

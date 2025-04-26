@@ -1,20 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
-import FormicForm from "../../../Extracomponents/Newformicform";
-import { useFormik } from "formik";
 import { Tabs, Tab } from "react-bootstrap";
 import {
-  SendHelpRequest
-} from "../../../Services/UserService/User";
+  GetTicketmessagedetailbyuser,
+  sendTicketReply
+} from "../../../Services/Admin/Admin";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
-import Table from "../../../Extracomponents/Table";
 import { useParams } from "react-router-dom";
-import {
-  GetTicketmessagedetailbyuser
-} from "../../../Services/Admin/Admin";
-
-
 
 const ViewTicket = () => {
   const token = localStorage.getItem("token");
@@ -23,17 +16,20 @@ const ViewTicket = () => {
   const [key, setKey] = useState("sendMessage");
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Form state without formik
+  const [formData, setFormData] = useState({
+    subject: "",
+    message: "",
+    file: null
+  });
+  const [errors, setErrors] = useState({});
 
-  const { id } = useParams()
-
-
+  const { id } = useParams();
 
   useEffect(() => {
     FetchMessage();
   }, []);
-
-
-
 
   const FetchMessage = async () => {
     try {
@@ -41,8 +37,7 @@ const ViewTicket = () => {
 
       if (response.status) {
         setMessages(response?.data?.ticket);
-        console.log("response.data", response?.data?.ticket
-        )
+        console.log("response.data", response?.data?.ticket);
       }
     } catch (error) {
       console.error("Error fetching trade data:", error);
@@ -50,97 +45,103 @@ const ViewTicket = () => {
     setIsLoading(false);
   };
 
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    
+    if (name === "file" && files) {
+      setFormData({
+        ...formData,
+        [name]: files[0]
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
 
-
-
-  const Sendmessagedata = async (data) => {
-    try {
-      const response = await SendHelpRequest(data, token);
-      if (response.status) {
-        showCustomAlert("Success", "Your message has been sent successfully!");
-      } else {
-        showCustomAlert("error", "Message Failed. Please try again.");
-      }
-    } catch (error) {
-      showCustomAlert(
-        "error",
-        "An error occurred while sending the message. Please check your network or try again later."
-      );
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: null
+      });
     }
   };
 
+  // Validate form
+  const validateForm = () => {
+    let newErrors = {};
+    let isValid = true;
 
+    if (!formData.subject) {
+      newErrors.subject = "Please Enter Subject";
+      isValid = false;
+    }
+    
+    if (!formData.message) {
+      newErrors.message = "Please Enter Message";
+      isValid = false;
+    }
+    
+    if (!formData.file) {
+      newErrors.file = "Please Upload File";
+      isValid = false;
+    }
+    
+    if (formData.file && formData.file.size > 2 * 1024 * 1024) {
+      newErrors.file = "File size should be less than 2MB";
+      isValid = false;
+    }
 
+    setErrors(newErrors);
+    return isValid;
+  };
 
-  const formik = useFormik({
-    initialValues: {
-      subject: "",
-      message: "",
-      file: "",
-    },
-    validate: (values) => {
-      const errors = {};
-      if (!values.subject) {
-        errors.subject = "Please Enter Subject";
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validate the form
+    if (validateForm()) {
+      try {
+       const data = {
+        ticket_id : messages?._id ,
+          message: formData.message,
+          attachment: formData.file
+        }
+  
+        const response = await sendTicketReply(data,token);
+        
+        console.log("Reply response:", response);
+
+        if (response.status) {
+          showCustomAlert("Success", "Your reply has been sent successfully!");
+          // Refresh ticket messages after successful reply
+          FetchMessage();
+          // Reset form
+          setFormData({
+            ticket_id:"",
+            subject: "",
+            message: "",
+            file: null
+          });
+          // Reset file input
+          const fileInput = document.getElementById('file');
+          if (fileInput) fileInput.value = '';
+        } else {
+          showCustomAlert("error", "Reply Failed. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error sending reply:", error);
+        showCustomAlert(
+          "error",
+          "An error occurred while sending the reply. Please check your network or try again later."
+        );
       }
-      if (!values.message) {
-        errors.message = "Please Enter Message";
-      }
-      if (!values.file) {
-        errors.file = "Please Upload File";
-      }
-      if (values.file && values.file.size > 2 * 1024 * 1024) {
-        errors.file = "File size should be less than 2MB";
-      }
-      return errors;
-    },
-    onSubmit: async (values, { resetForm }) => {
-      const data = {
-        client_id: userid,
-        subject: values.subject,
-        message: values.message,
-        file: values.file,
-      };
-
-      await Sendmessagedata(data);
-      setMessages([...messages, values]);
-      resetForm();
-    },
-  });
-
-  let fieldtype = [
-    {
-      type: "text",
-      name: "subject",
-      label: "Subject",
-      placeholder: "Enter Subject",
-      required: true,
-      label_size: 5,
-      col_size: 12,
-      disable: false,
-    },
-    {
-      type: "textarea",
-      name: "message",
-      label: "Message",
-      placeholder: "Enter Message",
-      required: true,
-      label_size: 5,
-      col_size: 12,
-      disable: false,
-    },
-    {
-      type: "file",
-      name: "file",
-      label: "Upload File",
-      placeholder: "Upload File",
-      required: false,
-      label_size: 5,
-      col_size: 12,
-      disable: false,
-      accept: "image/*",
-    },
-  ];
+    }
+  };
 
   return (
     <Content
@@ -148,7 +149,6 @@ const ViewTicket = () => {
       button_status={false}
       backbutton_status={false}
       backForword={true}
-
     >
       <div className="row row-cols-1 row-cols-lg-1 mb-3">
         <div className="col">
@@ -263,35 +263,56 @@ const ViewTicket = () => {
               </div>
             </div>
             <div className="card-body px-3">
-              <FormicForm
-                fieldtype={fieldtype}
-                formik={formik}
-                ButtonName="Submit"
-                BtnStatus={true}
-              />
+              <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label htmlFor="subject" className="form-label">Subject</label>
+                  <input
+                    type="text"
+                    className={`form-control ${errors.subject ? 'is-invalid' : ''}`}
+                    id="subject"
+                    name="subject"
+                    placeholder="Enter Subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                  />
+                  {errors.subject && <div className="invalid-feedback">{errors.subject}</div>}
+                </div>
+                
+                <div className="mb-3">
+                  <label htmlFor="message" className="form-label">Message</label>
+                  <textarea
+                    className={`form-control ${errors.message ? 'is-invalid' : ''}`}
+                    id="message"
+                    name="message"
+                    placeholder="Enter Message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    rows="4"
+                  />
+                  {errors.message && <div className="invalid-feedback">{errors.message}</div>}
+                </div>
+                
+                <div className="mb-3">
+                  <label htmlFor="file" className="form-label">Upload File</label>
+                  <input
+                    type="file"
+                    className={`form-control ${errors.file ? 'is-invalid' : ''}`}
+                    id="file"
+                    name="file"
+                    accept="image/*"
+                    onChange={handleChange}
+                  />
+                  {errors.file && <div className="invalid-feedback">{errors.file}</div>}
+                </div>
+                
+                <div className="mt-4">
+                  <button type="submit" className="btn btn-primary float-end">Submit</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
       </div>
-
-      {/* {isLoading ? <Loader /> : <div>
-                        {messages?.length > 0 ? (
-                            messages?.map((msg, index) => (
-                                <div key={index} className="p-3 border mb-2 relative">
-                                    <h6><strong>Subject:</strong> {msg.subject}</h6>
-                                    <p><strong>Message:</strong> {msg.message}</p>
-                                    <p><strong>Date:</strong> {fDateTime(msg.created_at)}</p>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="text-center mt-5">
-                                <img
-                                    src="/assets/images/norecordfound.png"
-                                    alt="No Records Found"
-                                />
-                            </div>
-                        )}
-                    </div>} */}
     </Content>
   );
 };
