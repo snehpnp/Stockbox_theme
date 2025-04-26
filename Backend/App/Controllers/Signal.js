@@ -68,7 +68,16 @@ if (segment == "C") {
 } else if (segment == "O") {
   service = "66dfeef84a88602fbbca9b79";
   serviceName = "Option";
-} else {
+} 
+else if (segment == "OS") {
+  service = "67e12758a0a2be895da19550";
+  serviceName = "Strategy";
+} 
+else if (segment == "FS") {
+  service = "67e1279ba0a2be895da19551";
+  serviceName = "Future Strategy";
+} 
+else {
   service = "66dfede64a88602fbbca9b72";
   serviceName = "Future";
 }
@@ -529,7 +538,16 @@ async getSignalWithFilter(req, res) {
       } else if (Signal.segment == "O") {
         serviceName = "Option";
         service = "66dfeef84a88602fbbca9b79";
-      } else {
+      } 
+      else if (segment == "OS") {
+        service = "67e12758a0a2be895da19550";
+        serviceName = "Strategy";
+      } 
+      else if (segment == "FS") {
+        service = "67e1279ba0a2be895da19551";
+        serviceName = "Future Strategy";
+      } 
+      else {
         serviceName = "Future";
         service = "66dfede64a88602fbbca9b72";
       }
@@ -1217,7 +1235,16 @@ serviceName = "Cash";
 } else if (segment == "O") {
 service = "66dfeef84a88602fbbca9b79";
 serviceName = "Option";
-} else {
+} 
+else if (segment == "OS") {
+  service = "67e12758a0a2be895da19550";
+  serviceName = "Strategy";
+} 
+else if (segment == "FS") {
+  service = "67e1279ba0a2be895da19551";
+  serviceName = "Future Strategy";
+} 
+else {
 service = "66dfede64a88602fbbca9b72";
 serviceName = "Future";
 }
@@ -1666,7 +1693,16 @@ async closeSignalwithplan(req, res) {
     } else if (Signal.segment == "O") {
       serviceName = "Option";
       service = "66dfeef84a88602fbbca9b79";
-    } else {
+    } 
+    else if (segment == "OS") {
+      service = "67e12758a0a2be895da19550";
+      serviceName = "Strategy";
+    } 
+    else if (segment == "FS") {
+      service = "67e1279ba0a2be895da19551";
+      serviceName = "Future Strategy";
+    } 
+    else {
       serviceName = "Future";
       service = "66dfede64a88602fbbca9b72";
     }
@@ -2177,7 +2213,16 @@ serviceName = "Cash";
 } else if (segment == "O") {
   services = "66dfeef84a88602fbbca9b79";
 serviceName = "Option";
-} else {
+} 
+else if (segment == "OS") {
+  service = "67e12758a0a2be895da19550";
+  serviceName = "Strategy";
+} 
+else if (segment == "FS") {
+  service = "67e1279ba0a2be895da19551";
+  serviceName = "Future Strategy";
+} 
+else {
   services = "66dfede64a88602fbbca9b72";
 serviceName = "Future";
 }
