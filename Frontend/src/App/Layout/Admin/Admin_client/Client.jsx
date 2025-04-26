@@ -496,7 +496,7 @@ const Client = () => {
         if (!Array.isArray(row?.plansStatus) || row.plansStatus.length === 0) {
           return <span>N/A</span>;
         }
-
+    
         return (
           <div style={{ display: "flex", flexWrap: "wrap" }}>
             {row.plansStatus.map((item, index) => (
@@ -512,7 +512,8 @@ const Client = () => {
                         : "inherit",
                 }}
               >
-                {item.serviceName || "N/A"}{" , "}
+                {item.serviceName || "N/A"}
+                {index < row.plansStatus.length - 1 ? ", " : ""}
               </div>
             ))}
           </div>
@@ -521,6 +522,7 @@ const Client = () => {
       sortable: true,
       width: "200px",
     },
+    
 
     // {
     //   name: "Phone No",

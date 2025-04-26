@@ -346,9 +346,11 @@ const Signal = () => {
 
 
     const Signaldetail = async (_id) => {
-        navigate(`/admin/signaldetaile/${_id}`);
+        navigate(`/admin/signaldetaile/${_id}`, {
+            state: { openSignal: true }
+        });
     };
-
+    
 
 
     const DeleteSignals = async (_id) => {

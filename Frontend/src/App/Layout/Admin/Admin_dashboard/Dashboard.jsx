@@ -118,7 +118,7 @@ const Dashbord = () => {
         if (!Array.isArray(row?.plansStatus) || row.plansStatus.length === 0) {
           return <span>N/A</span>;
         }
-
+    
         return (
           <div style={{ display: "flex", flexWrap: "wrap" }}>
             {row.plansStatus.map((item, index) => (
@@ -134,7 +134,8 @@ const Dashbord = () => {
                         : "inherit",
                 }}
               >
-                {item.serviceName || "N/A"}{" , "}
+                {item.serviceName || "N/A"}
+                {index < row.plansStatus.length - 1 ? ", " : ""}
               </div>
             ))}
           </div>
@@ -142,7 +143,7 @@ const Dashbord = () => {
       },
       sortable: true,
       width: "200px",
-    },
+    },    
     {
       name: "Phone No",
       selector: (row) => row.PhoneNo,
