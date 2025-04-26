@@ -38,7 +38,6 @@ import BlogDetail from "../Layout/Users/Blogs/BlogDetail";
 import ThankYou from "../Layout/Users/Basket/ThankYou";
 import Strategy from "../Layout/Users/Strategy/Strategy";
 import Cart from "../Layout/Users/Cart/Cart";
-import HelpDeskNew from "../Layout/Users/HelpDesk/HelpDeskNew";
 import HelpDeskView from "../Layout/Users/HelpDesk/HelpDeskView";
 
 export default function App() {
@@ -82,8 +81,7 @@ export default function App() {
       <Route path="/strategy" element={<Strategy />} />
       <Route path="/thankyou" element={<ThankYou />} />
       <Route path="/cart" element={<Cart />} />
-      <Route path="/help-desk-new" element={<HelpDeskNew />} />
-      <Route path="/help-desk-view" element={<HelpDeskView />} />
+      <Route path="/help-desk-view/:id" element={<HelpDeskView />} />
 
     </Routes>
   );

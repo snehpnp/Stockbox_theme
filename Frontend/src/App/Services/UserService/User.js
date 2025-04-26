@@ -1220,9 +1220,9 @@ export async function GetReplyTicketData(data, token) {
     }
 }
 
-export async function GetTicketDetaildata(data, token) {
+export async function GetTicketDetaildata(ticketId, token) {
     try {
-        const response = await axios.get(`${Config.base_url}api/client/ticketdetail/:ticketId`, data, {
+        const response = await axios.get(`${Config.base_url}api/client/ticketdetail/${ticketId}`, {
 
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -1238,3 +1238,5 @@ export async function GetTicketDetaildata(data, token) {
         throw error.response?.data || { message: 'Something went wrong!' };
     }
 }
+
+

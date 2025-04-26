@@ -834,7 +834,14 @@ async function PlanExpire(req, res) {
               
               } else if (plan.serviceid == "66dfeef84a88602fbbca9b79") {
                 serviceName = "Option";
-              } else {
+              } 
+              else if (plan.serviceid == "67e12758a0a2be895da19550") {
+                serviceName = "Strategy";
+              } 
+              else if (plan.serviceid == "67e1279ba0a2be895da19551") {
+                serviceName = "Future Strategy";
+              } 
+              else {
                 serviceName = "Future";
               }
               

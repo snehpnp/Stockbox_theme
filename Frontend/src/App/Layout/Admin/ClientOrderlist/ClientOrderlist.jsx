@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getPayementhistory, getOrderlistofclient, getOrderlistofclientExport } from '../../../Services/Admin/Admin';
+import { getPayementhistory, GetSegmentList, getOrderlistofclient, getOrderlistofclientExport } from '../../../Services/Admin/Admin';
 
 import Table1 from '../../../Extracomponents/Table1';
 import Table from '../../../Extracomponents/Table';
@@ -31,6 +31,9 @@ const ClientOrderlist = () => {
     const [ordertype, setOrdertype] = useState("");
     const [broker, setBroker] = useState("");
     const [segemnt, setSegemnt] = useState("");
+    const [serviceList, setServiceList] = useState([]);
+
+
 
     const [showModal, setShowModal] = useState(false);
     const [text, setText] = useState([]);
@@ -49,6 +52,10 @@ const ClientOrderlist = () => {
 
     const token = localStorage.getItem('token');
     const userid = localStorage.getItem('id');
+
+    useEffect(() => {
+        fetchAdminSegment()
+    }, [])
 
 
     const resethandle = () => {
@@ -223,6 +230,19 @@ const ClientOrderlist = () => {
 
 
 
+    const fetchAdminSegment = async () => {
+        try {
+            const response = await GetSegmentList(token);
+            if (response.status) {
+                setServiceList(response.data);
+
+            }
+        } catch (error) {
+            console.log('Error fetching services:', error);
+        }
+    };
+
+
 
     return (
         <div>
@@ -345,9 +365,13 @@ const ClientOrderlist = () => {
                                     onChange={(e) => setSegemnt(e.target.value)}
                                 >
                                     <option value="">Select</option>
-                                    <option value="C">CASH</option>
-                                    <option value="F">FUTURE</option>
-                                    <option value="O">OPTION</option>
+                                    {serviceList?.map((item) => {
+                                        return (
+                                            <option key={item.segment} value={item.segment}>
+                                                {item.title}
+                                            </option>
+                                        );
+                                    })}
 
                                 </select>
                             </div>

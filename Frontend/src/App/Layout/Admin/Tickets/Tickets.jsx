@@ -70,7 +70,7 @@ const Ticket = () => {
       cell: (row) => (
         <div>
           <Link to='/admin/viewticket' className="btn btn-secondary btn-sm p-0">
-           
+
             <Eye width="15px" />
           </Link>
         </div>
@@ -87,7 +87,7 @@ const Ticket = () => {
       description:
         "Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development.",
     },
-    
+
     {
       id: 2,
       ticket: "123456",
@@ -99,13 +99,15 @@ const Ticket = () => {
   ];
 
   return (
-    <Content Page_title="Help Desk" button_status={true}>
-    
-         
-          <div className="table-responsive">
-            <Table columns={columns} data={data} />
-          </div>
-       
+    <Content
+      Page_title="Help Desk"
+      button_status={false}
+      backbutton_status={false}
+    >
+      <div className="table-responsive">
+        <Table columns={columns} data={data} />
+      </div>
+
     </Content>
   );
 };

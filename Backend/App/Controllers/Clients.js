@@ -352,6 +352,24 @@ class Clients {
                             ]
                           },
                           then: "Option" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e12758a0a2be895da19550" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Strategy" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e1279ba0a2be895da19551" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Future Strategy" // If serviceid matches, return "Option"
                         }
                       ],
                       default: "Unknown Service" // Default value if no match
@@ -562,7 +580,7 @@ class Clients {
                               "67e12758a0a2be895da19550" // Static ObjectId for "Option"
                             ]
                           },
-                          then: "Option Strategy" // If serviceid matches, return "Option"
+                          then: "Strategy" // If serviceid matches, return "Option"
                         },
                         {
                           case: {
@@ -796,6 +814,24 @@ class Clients {
                             ]
                           },
                           then: "Option" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e12758a0a2be895da19550" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Strategy" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e1279ba0a2be895da19551" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Future Strategy" // If serviceid matches, return "Option"
                         }
                       ],
                       default: "Unknown Service" // Default value if no match
@@ -1025,6 +1061,24 @@ class Clients {
                             ]
                           },
                           then: "Option" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e12758a0a2be895da19550" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Strategy" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e1279ba0a2be895da19551" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Future Strategy" // If serviceid matches, return "Option"
                         }
                       ],
                       default: "Unknown Service" // Default value if no match
@@ -1224,6 +1278,24 @@ class Clients {
                             ]
                           },
                           then: "Option" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e12758a0a2be895da19550" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Strategy" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e1279ba0a2be895da19551" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Future Strategy" // If serviceid matches, return "Option"
                         }
                       ],
                       default: "Unknown Service" // Default value if no match
@@ -1393,7 +1465,11 @@ class Clients {
                       branches: [
                         { case: { $eq: [{ $toString: "$$plan.serviceid" }, "66d2c3bebf7e6dc53ed07626"] }, then: "Cash" },
                         { case: { $eq: [{ $toString: "$$plan.serviceid" }, "66dfede64a88602fbbca9b72"] }, then: "Future" },
-                        { case: { $eq: [{ $toString: "$$plan.serviceid" }, "66dfeef84a88602fbbca9b79"] }, then: "Option" }
+                        { case: { $eq: [{ $toString: "$$plan.serviceid" }, "66dfeef84a88602fbbca9b79"] }, then: "Option" },
+                        { case: { $eq: [{ $toString: "$$plan.serviceid" }, "67e12758a0a2be895da19550"] }, then: "Strategy" },
+                        { case: { $eq: [{ $toString: "$$plan.serviceid" }, "67e1279ba0a2be895da19551"] }, then: "Future Strategy" }
+
+
                       ],
                       default: "Unknown Service" // Default to "Unknown Service"
                     }
@@ -3330,6 +3406,24 @@ class Clients {
                             ]
                           },
                           then: "Option" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e12758a0a2be895da19550" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Strategy" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e1279ba0a2be895da19551" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Future Strategy" // If serviceid matches, return "Option"
                         }
                       ],
                       default: "Unknown Service" // Default value if no match
@@ -3552,6 +3646,24 @@ class Clients {
                             ]
                           },
                           then: "Option" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e12758a0a2be895da19550" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Strategy" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e1279ba0a2be895da19551" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Future Strategy" // If serviceid matches, return "Option"
                         }
                       ],
                       default: "Unknown Service" // Default value if no match
@@ -3779,6 +3891,24 @@ class Clients {
                             ]
                           },
                           then: "Option" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e12758a0a2be895da19550" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Strategy" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e1279ba0a2be895da19551" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Future Strategy" // If serviceid matches, return "Option"
                         }
                       ],
                       default: "Unknown Service" // Default value if no match

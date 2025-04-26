@@ -11,6 +11,9 @@ import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import Table from "../../../Extracomponents/Table";
 
+
+
+
 const ViewTicket = () => {
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
@@ -23,6 +26,9 @@ const ViewTicket = () => {
     FetchMessage();
   }, []);
 
+
+
+
   const FetchMessage = async () => {
     try {
       const response = await GetHelpMessage(userid, token);
@@ -34,6 +40,9 @@ const ViewTicket = () => {
     }
     setIsLoading(false);
   };
+
+
+
 
   const Sendmessagedata = async (data) => {
     try {
@@ -50,6 +59,9 @@ const ViewTicket = () => {
       );
     }
   };
+
+
+
 
   const formik = useFormik({
     initialValues: {
@@ -122,7 +134,13 @@ const ViewTicket = () => {
   ];
 
   return (
-    <Content Page_title="Help Desk" button_status={true}>
+    <Content
+      Page_title="Help Desk"
+      button_status={false}
+      backbutton_status={false}
+      backForword={true}
+
+    >
       <div className="row row-cols-1 row-cols-lg-1 mb-3">
         <div className="col">
           <div className="card shadow-lg border-0">

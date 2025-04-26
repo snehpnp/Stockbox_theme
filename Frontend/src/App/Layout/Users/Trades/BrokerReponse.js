@@ -49,8 +49,8 @@ const BrokerResponse = () => {
     <Content
       Page_title="Broker Response"
       button_status={false}
-      backbutton_status={true}
-      backForword={true}
+      // backbutton_status={true}
+      // backForword={true}
     >
       <div className="accordion accordion-flush" id="accordionFlushExample">
         {isLoading ? (
