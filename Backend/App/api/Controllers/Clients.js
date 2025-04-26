@@ -1583,7 +1583,11 @@ class Clients {
     try {
 
       const { id } = req.params; // Extract client_id from query parameters
+      const client = await Clients_Modal.findOne({ _id: id, del: 0, ActiveStatus: 1 });
 
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+      }
       // Step 1: Fetch helpdesk entries for the specified client_id
       const result = await Helpdesk_Modal.find({ client_id: id });
 
@@ -1705,6 +1709,13 @@ class Clients {
 
       const { clientid } = req.body;
 
+
+      const client = await Clients_Modal.findOne({ _id: clientid, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+      }
+
       const todayStart = new Date();
       todayStart.setHours(0, 0, 0, 0);
 
@@ -1784,6 +1795,13 @@ class Clients {
 
       const { clientid, signalid } = req.body;
 
+      const client = await Clients_Modal.findOne({ _id: clientid, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+      }
+
+
       const result = await Order_Modal.aggregate([
         {
           $match: {
@@ -1842,6 +1860,13 @@ class Clients {
     try {
 
       const { clientid } = req.body;
+
+      const client = await Clients_Modal.findOne({ _id: clientid, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+      }
+
       const result = await Basketorder_Modal.find({ clientid: clientid });
 
       return res.json({
@@ -1859,8 +1884,16 @@ class Clients {
     try {
       const { clientid, signalid } = req.body;
 
+
+
       if (!clientid) {
         return res.status(400).json({ status: false, message: "clientid is required", data: [] });
+      }
+
+      const client = await Clients_Modal.findOne({ _id: clientid, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
       }
 
       const matchStage = { clientid };
@@ -1936,6 +1969,12 @@ class Clients {
           status: false,
           message: "Unauthorized. Client not found.",
         });
+      }
+
+      const client = await Clients_Modal.findOne({ _id: clientid, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
       }
 
       // Total count for pagination
@@ -2041,7 +2080,7 @@ class Clients {
 
   async rePly(req, res) {
     try {
-      console.log("req.body", req.body)
+
       // Handle the image upload
       await new Promise((resolve, reject) => {
         upload('ticket').fields([{ name: 'attachment', maxCount: 1 }])(req, res, (err) => {
@@ -2052,8 +2091,10 @@ class Clients {
 
           if (!req.files || !req.files['attachment']) {
 
-            return res.json({ status: false, message: "No file uploaded." });
+            return res.status(400).json({ status: false, message: "No file uploaded." });
           }
+
+
           resolve();
         });
       });
@@ -2061,17 +2102,28 @@ class Clients {
       // After the upload is successful, proceed with the rest of the logic
       const { ticket_id, message, client_id } = req.body;
 
-
-
       if (!ticket_id) {
-        return res.json({ status: false, message: "Ticket Id is required" });
+        return res.status(400).json({ status: false, message: "Ticket Id is required" });
       }
       if (!message) {
-        return res.json({ status: false, message: "Message is required" });
+        return res.status(400).json({ status: false, message: "Message is required" });
       }
       if (!client_id) {
-        return res.json({ status: false, message: "Client Id is required" });
+        return res.status(400).json({ status: false, message: "Client Id is required" });
       }
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+      }
+
+      const ticket = await Ticket_Modal.findOne({ _id: ticket_id, del: false });
+
+      if (!ticket) {
+        return res.status(404).json({ status: false, message: 'Ticket not found' });
+      }
+
+
 
       const attachment = req.files['attachment'] ? req.files['attachment'][0].filename : null;
 
@@ -2094,7 +2146,7 @@ class Clients {
 
     } catch (error) {
       // console.log("Server error:", error);
-      return res.json({ status: false, message: "Server error", data: [] });
+      return res.status(500).json({ status: false, message: "Server error", data: [] });
     }
   }
 
@@ -2112,21 +2164,28 @@ class Clients {
       const { subject, message, client_id } = req.body;
 
       if (!subject || !message || !client_id) {
-        return res.json({
+        return res.status(400).json({
           status: false,
           message: "Subject, Message, and Client ID are required"
         });
       }
 
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+      }
+
+
 
       const existingOpenTicket = await Ticket_Modal.findOne({
         client_id,
-        status: false,
+        status: false, // assuming 'true' means ticket is open
         del: false
       });
 
       if (existingOpenTicket) {
-        return res.json({
+        return res.status(409).json({
           status: false,
           message: "An open ticket already exists. Please wait for a response before creating a new one.",
           ticket_id: existingOpenTicket.ticketnumber
@@ -2137,13 +2196,13 @@ class Clients {
         ? req.files['attachment'][0].filename
         : null;
 
-
+      // Generate ticket number
       const prefix = "TKT";
       const timestamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 12);
       const randomStr = Math.random().toString(36).substr(2, 5).toUpperCase();
       const ticketnumber = `${prefix}-${timestamp}-${randomStr}`;
 
-
+      // Create ticket
       const newTicket = new Ticket_Modal({
         client_id,
         subject,
@@ -2151,8 +2210,6 @@ class Clients {
         attachment,
         ticketnumber
       });
-
-
 
       await newTicket.save();
 
@@ -2162,10 +2219,9 @@ class Clients {
         data: newTicket
       });
 
-
-
     } catch (error) {
-      return res.json({
+      //    console.error("Add Ticket Error:", error);
+      return res.status(500).json({
         status: false,
         message: "Server error",
         error: error.message

@@ -1844,40 +1844,69 @@ class List {
       //   }
       // };
 
+      /*
+            const query = {
+              service: service_id,
+              close_status: false,
+            };
+      
+            // Check if deliverystatus is true
+            if (client.deliverystatus === true) {
+              query.created_at = {
+                $lte: endDates[0], // Only keep the end date condition
+              };
+            } else {
+              query.created_at = {
+                $gte: startDates[0], // Include both start and end date conditions
+                $lte: endDates[0],
+              };
+            }
+      
+      
+            if (search && search.trim() !== '') {
+              query.$or = [
+                { tradesymbol: { $regex: search, $options: 'i' } },
+                { calltype: { $regex: search, $options: 'i' } },
+                { price: { $regex: search, $options: 'i' } },
+                { closeprice: { $regex: search, $options: 'i' } }
+              ];
+            }
+      */
 
-      const query = {
+
+      let query = {
         service: service_id,
         close_status: false,
       };
 
       // Check if deliverystatus is true
       if (client.deliverystatus === true) {
-        query.created_at = {
-          $lte: endDates[0], // Only keep the end date condition
-        };
+        query.created_at = { $lte: endDates[0] };
       } else {
-        query.created_at = {
-          $gte: startDates[0], // Include both start and end date conditions
-          $lte: endDates[0],
-        };
+        query.created_at = { $gte: startDates[0], $lte: endDates[0] };
       }
 
-      // const signals = await Signal_Modal.find(query);
+      // Now handle search properly
+      if (search && search.trim() !== '') {
+        query = {
+          $and: [
+            query,
+            {
+              $or: [
+                { tradesymbol: { $regex: search, $options: 'i' } },
+                { calltype: { $regex: search, $options: 'i' } },
+                { price: { $regex: search, $options: 'i' } },
+                { closeprice: { $regex: search, $options: 'i' } }
+              ]
+            }
+          ]
+        };
+      }
 
       const protocol = req.protocol; // Will be 'http' or 'https'
 
       const baseUrl = `https://${req.headers.host}`; // Construct the base URL
 
-
-
-      if (search && search.trim() !== '') {
-        query.$or = [
-          { tradesymbol: { $regex: search, $options: 'i' } },
-          { calltype: { $regex: search, $options: 'i' } },
-          { price: { $regex: search, $options: 'i' } },
-          { closeprice: { $regex: search, $options: 'i' } }
-        ];
-      }
 
 
 
@@ -2006,9 +2035,41 @@ class List {
       // };
 
 
+      /*
+      
+            const query = {
+              service: service_id,
+              close_status: true,
+              closedate: {
+                $gte: startDates[0],
+              }
+            };
+      
+            // Check if deliverystatus is true
+            if (client.deliverystatus === true) {
+              query.created_at = {
+                $lte: endDates[0], // Only keep the end date condition
+              };
+            } else {
+              query.created_at = {
+                $gte: startDates[0], // Include both start and end date conditions
+                $lte: endDates[0],
+              };
+            }
+           
+            if (search && search.trim() !== '') {
+              query.$or = [
+                { tradesymbol: { $regex: search, $options: 'i' } },
+                { calltype: { $regex: search, $options: 'i' } },
+                { price: { $regex: search, $options: 'i' } },
+                { closeprice: { $regex: search, $options: 'i' } }
+              ];
+            }
+      
+      */
 
 
-      const query = {
+      let query = {
         service: service_id,
         close_status: true,
         closedate: {
@@ -2019,31 +2080,35 @@ class List {
       // Check if deliverystatus is true
       if (client.deliverystatus === true) {
         query.created_at = {
-          $lte: endDates[0], // Only keep the end date condition
+          $lte: endDates[0],
         };
       } else {
         query.created_at = {
-          $gte: startDates[0], // Include both start and end date conditions
+          $gte: startDates[0],
           $lte: endDates[0],
         };
       }
 
+      // Now properly merge search
+      if (search && search.trim() !== '') {
+        query = {
+          $and: [
+            query,
+            {
+              $or: [
+                { tradesymbol: { $regex: search, $options: 'i' } },
+                { calltype: { $regex: search, $options: 'i' } },
+                { price: { $regex: search, $options: 'i' } },
+                { closeprice: { $regex: search, $options: 'i' } }
+              ]
+            }
+          ]
+        };
+      }
 
       const protocol = req.protocol; // Will be 'http' or 'https'
 
       const baseUrl = `https://${req.headers.host}`; // Construct the base URL
-
-
-      if (search && search.trim() !== '') {
-        query.$or = [
-          { tradesymbol: { $regex: search, $options: 'i' } },
-          { calltype: { $regex: search, $options: 'i' } },
-          { price: { $regex: search, $options: 'i' } },
-          { closeprice: { $regex: search, $options: 'i' } }
-        ];
-      }
-
-
 
       // const signals = await Signal_Modal.find(query).lean(); // Use lean() to return plain JavaScript objects
       const signals = await Signal_Modal.find(query)
@@ -2236,20 +2301,43 @@ class List {
       const limitValue = parseInt(limit);
 
 
-      const query = {
+      /*  const query = {
+          service: service_id,
+          close_status: true,
+          closeprice: { $ne: 0 }
+        };
+  
+        if (search && search.trim() !== '') {
+          query.$or = [
+            { tradesymbol: { $regex: search, $options: 'i' } },
+            { calltype: { $regex: search, $options: 'i' } },
+            { price: { $regex: search, $options: 'i' } },
+            { closeprice: { $regex: search, $options: 'i' } }
+          ];
+        }
+        */
+      let query = {
         service: service_id,
         close_status: true,
         closeprice: { $ne: 0 }
       };
 
       if (search && search.trim() !== '') {
-        query.$or = [
-          { tradesymbol: { $regex: search, $options: 'i' } },
-          { calltype: { $regex: search, $options: 'i' } },
-          { price: { $regex: search, $options: 'i' } },
-          { closeprice: { $regex: search, $options: 'i' } }
-        ];
+        query = {
+          $and: [
+            query,
+            {
+              $or: [
+                { tradesymbol: { $regex: search, $options: 'i' } },
+                { calltype: { $regex: search, $options: 'i' } },
+                { price: { $regex: search, $options: 'i' } },
+                { closeprice: { $regex: search, $options: 'i' } }
+              ]
+            }
+          ]
+        };
       }
+
 
       // Fetch signals and sort by createdAt in descending order
       const signals = await Signal_Modal.find(query).sort({ created_at: -1 })
@@ -5267,45 +5355,59 @@ class List {
         ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
       ].map(id => new ObjectId(id));
 
+      /*
+            const query = {
+              service: service_id,
+              close_status: false,
+              $or: uniquePlanIds.map((planId, index) => ({
+                planid: planId.toString(), // Matching the planid with regex
+                created_at: { $lte: planEnds[index] }       // Checking if created_at is <= to planEnds
+              }))
+            };
+      
+      
+      
+            if (search && search.trim() !== '') {
+              query.$or = [
+                { tradesymbol: { $regex: search, $options: 'i' } },
+                { calltype: { $regex: search, $options: 'i' } },
+                { price: { $regex: search, $options: 'i' } },
+                { closeprice: { $regex: search, $options: 'i' } }
+              ];
+            }
+      */
 
-      const query = {
+
+      const baseConditions = {
         service: service_id,
         close_status: false,
         $or: uniquePlanIds.map((planId, index) => ({
-          planid: planId.toString(), // Matching the planid with regex
-          created_at: { $lte: planEnds[index] }       // Checking if created_at is <= to planEnds
+          planid: planId.toString(),
+          created_at: { $lte: planEnds[index] }
         }))
       };
 
-
-      //   const query = {
-      //     service: service_id,
-      //     close_status: false,
-      //     $or: uniquePlanIds.map((planId, index) => {
-      //         return {
-      //             planid: { $regex: `(^|,)${planId}($|,)` }
-      //             created_at: { $lte: planEnds[index] } // Compare created_at with the plan_end date of each subscription
-      //         };
-      //     })
-      // };
-
-
-      //console.log("Final Query:", JSON.stringify(query, null, 2));
-      const protocol = req.protocol; // Will be 'http' or 'https'
-
-      const baseUrl = `https://${req.headers.host}`; // Construct the base URL
-
-
+      let query = { ...baseConditions }; // default
 
       if (search && search.trim() !== '') {
-        query.$or = [
-          { tradesymbol: { $regex: search, $options: 'i' } },
-          { calltype: { $regex: search, $options: 'i' } },
-          { price: { $regex: search, $options: 'i' } },
-          { closeprice: { $regex: search, $options: 'i' } }
-        ];
+        query = {
+          $and: [
+            baseConditions,
+            {
+              $or: [
+                { tradesymbol: { $regex: search, $options: 'i' } },
+                { calltype: { $regex: search, $options: 'i' } },
+                { price: { $regex: search, $options: 'i' } },
+                { closeprice: { $regex: search, $options: 'i' } }
+              ]
+            }
+          ]
+        };
       }
 
+      const protocol = req.protocol;
+
+      const baseUrl = `https://${req.headers.host}`;
 
       const signals = await Signal_Modal.find(query)
         .sort({ created_at: -1 })
@@ -7817,43 +7919,39 @@ class List {
       // ].map(id => new ObjectId(id));
 
 
-      const query = {
+
+
+      const baseConditions = {
         service: service_id,
-        close_status: true,
-        $or: planIds.map((planId, index) => ({
-          planid: planId.toString(), // Matching the planid with regex
-          created_at: { $lte: planEnds[index] },
-          closedate: { $gte: planStarts[index] }      // Checking if created_at is <= to planEnds
+        close_status: false,
+        $or: uniquePlanIds.map((planId, index) => ({
+          planid: planId.toString(),
+          created_at: { $lte: planEnds[index] }
         }))
       };
 
-      //   const query = {
-      //     service: service_id,
-      //     close_status: false,
-      //     $or: uniquePlanIds.map((planId, index) => {
-      //         return {
-      //             planid: { $regex: `(^|,)${planId}($|,)` }
-      //             created_at: { $lte: planEnds[index] } // Compare created_at with the plan_end date of each subscription
-      //         };
-      //     })
-      // };
-
-
-      //console.log("Final Query:", JSON.stringify(query, null, 2));
-      const protocol = req.protocol; // Will be 'http' or 'https'
-
-      const baseUrl = `https://${req.headers.host}`; // Construct the base URL
-
-
+      let query = { ...baseConditions }; // default
 
       if (search && search.trim() !== '') {
-        query.$or = [
-          { tradesymbol: { $regex: search, $options: 'i' } },
-          { calltype: { $regex: search, $options: 'i' } },
-          { price: { $regex: search, $options: 'i' } },
-          { closeprice: { $regex: search, $options: 'i' } }
-        ];
+        query = {
+          $and: [
+            baseConditions,
+            {
+              $or: [
+                { tradesymbol: { $regex: search, $options: 'i' } },
+                { calltype: { $regex: search, $options: 'i' } },
+                { price: { $regex: search, $options: 'i' } },
+                { closeprice: { $regex: search, $options: 'i' } }
+              ]
+            }
+          ]
+        };
       }
+
+
+      const protocol = req.protocol;
+
+      const baseUrl = `https://${req.headers.host}`;
 
 
       const signals = await Signal_Modal.find(query)
@@ -8153,26 +8251,54 @@ class List {
       const limitValue = parseInt(limit);
 
       // Base query
-      const query = {
+      /* const query = {
+         service: service_id,
+         close_status: true,
+         closeprice: { $ne: 0 }
+       };
+   
+       if (callduration) {
+         query.callduration = callduration;
+       }
+   
+       // Agar search filter exist karta hai to query me add karein
+       if (search && search.trim() !== '') {
+         query.$or = [
+           { tradesymbol: { $regex: search, $options: 'i' } },
+           { calltype: { $regex: search, $options: 'i' } },
+           { price: { $regex: search, $options: 'i' } },
+           { closeprice: { $regex: search, $options: 'i' } }
+         ];
+       } */
+
+      let query = {
         service: service_id,
         close_status: true,
         closeprice: { $ne: 0 }
       };
 
-      // Agar callduration exist karta hai to query me add karein
+      // Agar callduration aaya to
       if (callduration) {
         query.callduration = callduration;
       }
 
-      // Agar search filter exist karta hai to query me add karein
+      // Agar search aaya to
       if (search && search.trim() !== '') {
-        query.$or = [
-          { tradesymbol: { $regex: search, $options: 'i' } },
-          { calltype: { $regex: search, $options: 'i' } },
-          { price: { $regex: search, $options: 'i' } },
-          { closeprice: { $regex: search, $options: 'i' } }
-        ];
+        query = {
+          $and: [
+            query, // Pehle pura basic filter
+            {
+              $or: [
+                { tradesymbol: { $regex: search, $options: 'i' } },
+                { calltype: { $regex: search, $options: 'i' } },
+                { price: { $regex: search, $options: 'i' } },
+                { closeprice: { $regex: search, $options: 'i' } }
+              ]
+            }
+          ]
+        };
       }
+
 
       // Fetch signals and sort by createdAt in descending order
       const signals = await Signal_Modal.find(query)
@@ -8776,7 +8902,25 @@ class List {
 
       const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
 
-      const query = {
+      /*  const query = {
+          close_status: false,
+          $or: uniquePlanIds.map((planId, index) => ({
+            planid: planId.toString(),
+            created_at: { $lte: planEnds[index] }
+          }))
+        };
+    
+        // 🔹 Search Query
+        if (search && search.trim() !== '') {
+          query.$or = [
+            { stock: { $regex: search, $options: 'i' } },
+            { strategy_name: { $regex: search, $options: 'i' } },
+            { callduration: { $regex: search, $options: 'i' } },
+            // { closeprice: { $regex: search, $options: 'i' } }
+          ];
+        } */
+
+      let query = {
         close_status: false,
         $or: uniquePlanIds.map((planId, index) => ({
           planid: planId.toString(),
@@ -8786,13 +8930,21 @@ class List {
 
       // 🔹 Search Query
       if (search && search.trim() !== '') {
-        query.$or = [
-          { stock: { $regex: search, $options: 'i' } },
-          { strategy_name: { $regex: search, $options: 'i' } },
-          { callduration: { $regex: search, $options: 'i' } },
-          // { closeprice: { $regex: search, $options: 'i' } }
-        ];
+        query = {
+          $and: [
+            query, // Pehle pura base query
+            {
+              $or: [
+                { stock: { $regex: search, $options: 'i' } },
+                { strategy_name: { $regex: search, $options: 'i' } },
+                { callduration: { $regex: search, $options: 'i' } },
+                // { closeprice: { $regex: search, $options: 'i' } } // Yeh abhi commented hai
+              ]
+            }
+          ]
+        };
       }
+
 
       // 🔹 Fetch Signals with Pagination
       const signals = await Signalsdata_Modal.find(query)
@@ -8882,23 +9034,50 @@ class List {
 
       const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
 
-      const query = {
+      /* const query = {
+         close_status: true,
+         $or: uniquePlanIds.map((planId, index) => ({
+           planid: planId.toString(), // Matching the planid with regex
+           created_at: { $lte: planEnds[index] },  
+          // closedate: { $gte: planStarts[index] }      // Checking if created_at is <= to planEnds
+         }))
+       };
+       // 🔹 Search Query
+       if (search && search.trim() !== '') {
+         query.$or = [
+           { stock: { $regex: search, $options: 'i' } },
+           { strategy_name: { $regex: search, $options: 'i' } },
+           { callduration: { $regex: search, $options: 'i' } },
+           // { closeprice: { $regex: search, $options: 'i' } }
+         ];
+       } */
+
+      let query = {
         close_status: true,
         $or: uniquePlanIds.map((planId, index) => ({
-          planid: planId.toString(), // Matching the planid with regex
-          created_at: { $lte: planEnds[index] },
-          // closedate: { $gte: planStarts[index] }      // Checking if created_at is <= to planEnds
+          planid: planId.toString(),
+          created_at: { $lte: planEnds[index] }
+          // closedate: { $gte: planStarts[index] } // Agar chahiye to uncomment kar lena
         }))
       };
+
       // 🔹 Search Query
       if (search && search.trim() !== '') {
-        query.$or = [
-          { stock: { $regex: search, $options: 'i' } },
-          { strategy_name: { $regex: search, $options: 'i' } },
-          { callduration: { $regex: search, $options: 'i' } },
-          // { closeprice: { $regex: search, $options: 'i' } }
-        ];
+        query = {
+          $and: [
+            query,
+            {
+              $or: [
+                { stock: { $regex: search, $options: 'i' } },
+                { strategy_name: { $regex: search, $options: 'i' } },
+                { callduration: { $regex: search, $options: 'i' } },
+                // { closeprice: { $regex: search, $options: 'i' } }
+              ]
+            }
+          ]
+        };
       }
+
 
       // 🔹 Fetch Signals with Pagination
       const signals = await Signalsdata_Modal.find(query)
