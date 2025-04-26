@@ -1061,7 +1061,7 @@ async function downloadAndExtractUpstox(req, res) {
 
 
 async function calculateCAGRForBaskets(req, res) {
-    const result = await Basket_Modal.aggregate([
+  /*  const result = await Basket_Modal.aggregate([
         {
             $match: {
                 del: false,
@@ -1168,14 +1168,148 @@ async function calculateCAGRForBaskets(req, res) {
             }
         }
     ]);
+    */
+
+
+    const result = await Basket_Modal.aggregate([
+        {
+            $match: {
+                del: false,
+            }
+        },
+        // Lookup for latest stocks
+        {
+            $lookup: {
+                from: "basketstocks",
+                let: { basketId: { $toString: "$_id" } },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$basket_id", "$$basketId"] },
+                                    { $eq: ["$status", 1] }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: "$basket_id",
+                            maxVersion: { $max: "$version" }
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "basketstocks",
+                            let: { basketId: "$_id", maxVer: "$maxVersion" },
+                            pipeline: [
+                                {
+                                    $match: {
+                                        $expr: {
+                                            $and: [
+                                                { $eq: ["$basket_id", "$$basketId"] },
+                                                { $eq: ["$version", "$$maxVer"] },
+                                                { $eq: ["$status", 1] }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ],
+                            as: "latestStocks"
+                        }
+                    },
+                    { $unwind: "$latestStocks" },
+                    { $replaceRoot: { newRoot: "$latestStocks" } },
+                    {
+                        $lookup: {
+                            from: "stocks",
+                            localField: "tradesymbol",
+                            foreignField: "tradesymbol",
+                            as: "stock_info"
+                        }
+                    },
+                    {
+                        $unwind: {
+                            path: "$stock_info",
+                            preserveNullAndEmptyArrays: true
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "stockliveprices",
+                            localField: "stock_info.instrument_token",
+                            foreignField: "token",
+                            as: "live_price_info"
+                        }
+                    },
+                    {
+                        $unwind: {
+                            path: "$live_price_info",
+                            preserveNullAndEmptyArrays: true
+                        }
+                    },
+                    {
+                        $addFields: {
+                            livePrice: {
+                                $ifNull: ["$live_price_info.lp", "$price"] // Live price or fallback to price
+                            }
+                        }
+                    }
+                ],
+                as: "stock_details"
+            }
+        },
+        // Lookup for version 1 stocks (for starting price)
+        {
+            $lookup: {
+                from: "basketstocks",
+                let: { basketId: { $toString: "$_id" } },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$basket_id", "$$basketId"] },
+                                    { $eq: ["$version", 1] },
+                                    { $eq: ["$status", 1] },
+                                    { $eq: ["$del", false] }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                as: "version1_stocks"
+            }
+        },
+        {
+            $project: {
+                basket_id: "$_id",
+                title: 1,
+                created_at: 1,
+                stock_details: {
+                    $filter: {
+                        input: "$stock_details",
+                        as: "stock",
+                        cond: { $eq: ["$$stock.del", false] }
+                    }
+                },
+                version1_stocks: 1
+            }
+        }
+    ]);
 
     const currentDate = new Date();
 
     for (const basket of result) {
-        const { stock_details, created_at, _id } = basket;
+        const { stock_details, version1_stocks, created_at, _id } = basket;
 
         // Calculate starting price
-        const startingPrice = stock_details.reduce((sum, stock) => {
+        // const startingPrice = stock_details.reduce((sum, stock) => {
+        //     return sum + (stock.price * stock.quantity);
+        // }, 0);
+
+        const startingPrice = version1_stocks.reduce((sum, stock) => {
             return sum + (stock.price * stock.quantity);
         }, 0);
 
@@ -1218,7 +1352,7 @@ async function calculateCAGRForBaskets(req, res) {
 
 
 async function calculateCAGRForBasketsClient(req, res) {
-    const result = await Basket_Modal.aggregate([
+   /* const result = await Basket_Modal.aggregate([
         {
             $match: {
                 del: false,
@@ -1325,14 +1459,144 @@ async function calculateCAGRForBasketsClient(req, res) {
             }
         }
     ]);
+    */
+
+    const result = await Basket_Modal.aggregate([
+        {
+            $match: {
+                del: false,
+            }
+        },
+        // Lookup for latest stocks
+        {
+            $lookup: {
+                from: "basketstocks",
+                let: { basketId: { $toString: "$_id" } },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$basket_id", "$$basketId"] },
+                                    { $eq: ["$status", 1] }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: "$basket_id",
+                            maxVersion: { $max: "$version" }
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "basketstocks",
+                            let: { basketId: "$_id", maxVer: "$maxVersion" },
+                            pipeline: [
+                                {
+                                    $match: {
+                                        $expr: {
+                                            $and: [
+                                                { $eq: ["$basket_id", "$$basketId"] },
+                                                { $eq: ["$version", "$$maxVer"] },
+                                                { $eq: ["$status", 1] }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ],
+                            as: "latestStocks"
+                        }
+                    },
+                    { $unwind: "$latestStocks" },
+                    { $replaceRoot: { newRoot: "$latestStocks" } },
+                    {
+                        $lookup: {
+                            from: "stocks",
+                            localField: "tradesymbol",
+                            foreignField: "tradesymbol",
+                            as: "stock_info"
+                        }
+                    },
+                    {
+                        $unwind: {
+                            path: "$stock_info",
+                            preserveNullAndEmptyArrays: true
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "stockliveprices",
+                            localField: "stock_info.instrument_token",
+                            foreignField: "token",
+                            as: "live_price_info"
+                        }
+                    },
+                    {
+                        $unwind: {
+                            path: "$live_price_info",
+                            preserveNullAndEmptyArrays: true
+                        }
+                    },
+                    {
+                        $addFields: {
+                            livePrice: {
+                                $ifNull: ["$live_price_info.lp", "$price"] // Live price or fallback to price
+                            }
+                        }
+                    }
+                ],
+                as: "stock_details"
+            }
+        },
+        // Lookup for version 1 stocks (for starting price)
+        {
+            $lookup: {
+                from: "basketstocks",
+                let: { basketId: { $toString: "$_id" } },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$basket_id", "$$basketId"] },
+                                    { $eq: ["$version", 1] },
+                                    { $eq: ["$status", 1] },
+                                    { $eq: ["$del", false] }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                as: "version1_stocks"
+            }
+        },
+        {
+            $project: {
+                basket_id: "$_id",
+                title: 1,
+                created_at: 1,
+                stock_details: {
+                    $filter: {
+                        input: "$stock_details",
+                        as: "stock",
+                        cond: { $eq: ["$$stock.del", false] }
+                    }
+                },
+                version1_stocks: 1
+            }
+        }
+    ]);
+
 
     const currentDate = new Date();
 
     for (const basket of result) {
-        const { stock_details, created_at, _id } = basket;
+        const { stock_details,version1_stocks, created_at, _id } = basket;
 
         // Calculate starting price
-        const startingPrice = stock_details.reduce((sum, stock) => {
+        const startingPrice = version1_stocks.reduce((sum, stock) => {
             return sum + (stock.price * stock.quantity);
         }, 0);
 
