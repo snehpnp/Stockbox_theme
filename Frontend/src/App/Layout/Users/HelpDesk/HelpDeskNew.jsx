@@ -5,7 +5,7 @@ import { useFormik } from "formik";
 import { Tabs, Tab } from "react-bootstrap";
 import {
   GetTicketForhelp,
-  GetHelpMessage,
+  GetAllTicketData,
 } from "../../../Services/UserService/User";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
@@ -20,26 +20,31 @@ const HelpDesk = () => {
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
-
+ //const ticketid = localStorage.getItem("ticketid")
   const [key, setKey] = useState("sendMessage");
   const [messages, setMessages] = useState([]);
+  const [messagedata, setMessagedata] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // useEffect(() => {
-  //   FetchMessage();
-  // }, []);
+  useEffect(() => {
+    FetchMessage();
+  }, []);
 
-  // const FetchMessage = async () => {
-  //   try {
-  //     const response = await GetHelpMessage(userid, token);
-  //     if (response.status) {
-  //       setMessages(response.data);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching trade data:", error);
-  //   }
-  //   setIsLoading(false);
-  // };
+  const FetchMessage = async () => {
+
+    try {
+      const data= {page: '1', clientId:userid}
+      const response = await GetAllTicketData(data, token);
+      if (response.status) {
+        setMessagedata(response.data);
+        console.log("response", response.data);
+        console.log("id", response.data[0]._id);
+      }
+    } catch (error) {
+      console.error("Error fetching trade data:", error);
+    }
+    setIsLoading(false);
+  };
 
 
 
@@ -128,21 +133,31 @@ const HelpDesk = () => {
 
   const columns = [
     {
+      name: "Ticket No.",
+      selector: (row) => row.ticketnumber,
+    },
+    {
       name: "Subject",
       selector: (row) => row.subject,
     },
+    
     {
       name: "Description",
-      selector: (row) => row.description,
+      selector: (row) => row.message,
       width: "300px",
     },
     {
       name: "Status",
       cell: (row) => (
         <div>
-          <button className="btn btn-primary btn-sm">Pending</button>
-        </div>
-      ),
+        {row.status === true ? (
+          <button className="btn btn-outline-success btn-sm transition-0" >Open</button>
+         
+        ) : (
+          <button className="btn btn-outline-warning btn-sm transition-0" >In Progress</button>
+        )}
+      </div>
+      )
     },
     {
       name: "Action",
@@ -157,20 +172,7 @@ const HelpDesk = () => {
     },
   ];
 
-  const data = [
-    {
-      id: 1,
-      subject: "Beetlejuice",
-      description:
-        "Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development.",
-    },
-    {
-      id: 2,
-      subject: "Ghostbusters",
-      description:
-        "Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development.",
-    },
-  ];
+
 
   return (
     <Content Page_title="Help Desk"
@@ -185,7 +187,7 @@ const HelpDesk = () => {
       <div className="table-responsive">
         <Table
           columns={columns}
-          data={data} />
+          data={messagedata} />
       </div>
 
     </Content>

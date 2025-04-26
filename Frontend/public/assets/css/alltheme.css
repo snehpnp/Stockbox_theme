@@ -2048,3 +2048,7 @@ svg.lucide.lucide-x.text-danger {
   height: 220px;
   overflow-y: auto;
 }
+.transition-0
+{
+  transition: none !important;
+}
