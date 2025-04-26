@@ -4,13 +4,15 @@ import FormicForm from "../../../Extracomponents/Newformicform";
 import { useFormik } from "formik";
 import { Tabs, Tab } from "react-bootstrap";
 import {
-  SendHelpRequest,
-  GetHelpMessage,
+  SendHelpRequest
 } from "../../../Services/UserService/User";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import Table from "../../../Extracomponents/Table";
-
+import { useParams } from "react-router-dom";
+import {
+  GetTicketmessagedetailbyuser
+} from "../../../Services/Admin/Admin";
 
 
 
@@ -22,6 +24,10 @@ const ViewTicket = () => {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const { id } = useParams()
+
+
+
   useEffect(() => {
     FetchMessage();
   }, []);
@@ -31,9 +37,12 @@ const ViewTicket = () => {
 
   const FetchMessage = async () => {
     try {
-      const response = await GetHelpMessage(userid, token);
+      const response = await GetTicketmessagedetailbyuser(id, token);
+
       if (response.status) {
-        setMessages(response.data);
+        setMessages(response?.data?.ticket);
+        console.log("response.data", response?.data?.ticket
+        )
       }
     } catch (error) {
       console.error("Error fetching trade data:", error);
@@ -147,7 +156,7 @@ const ViewTicket = () => {
             <div className="card-header border-bottom bg-transparent p-3">
               <div className="d-flex align-items-center">
                 <div>
-                  <h5 className="mb-0">Ticket Details:#qw232334</h5>
+                  <h5 className="mb-0">Ticket Details:{messages?.ticketnumber}</h5>
                 </div>
                 <div className="ms-auto">
                   <small className="pe-3">08.34 AM</small>

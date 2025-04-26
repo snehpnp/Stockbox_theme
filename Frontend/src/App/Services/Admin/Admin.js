@@ -3724,3 +3724,44 @@ export async function GetStrategySegmentList(token) {
         return err;
     }
 }
+
+
+// get help message
+
+export async function GetTicketRaiseMesaage(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}ticket/listwithfilter`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+// get message tisket detail 
+
+
+// get help message
+
+export async function GetTicketmessagedetailbyuser(id, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}ticket/detail/${id}`, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}

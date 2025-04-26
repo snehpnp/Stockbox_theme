@@ -4,32 +4,48 @@ import FormicForm from "../../../Extracomponents/Newformicform";
 import { useFormik } from "formik";
 import { Tabs, Tab } from "react-bootstrap";
 import {
-  SendHelpRequest,
-  GetHelpMessage,
-} from "../../../Services/UserService/User";
+  GetTicketRaiseMesaage,
+} from "../../../Services/Admin/Admin";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
-import Table from "../../../Extracomponents/Table";
+import Table from "../../../Extracomponents/Table1";
 import { Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 
+
+
 const Ticket = () => {
+
+
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
-  const [key, setKey] = useState("sendMessage");
-  const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [messagedata, setMessagedata] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalRows, setTotalRows] = useState(0);
+
+
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
 
   useEffect(() => {
     FetchMessage();
-  }, []);
+  }, [currentPage]);
+
+
 
   const FetchMessage = async () => {
     try {
-      const response = await GetHelpMessage(userid, token);
+      const data = { from: "", to: "", status: "", search: "", page: currentPage }
+      const response = await GetTicketRaiseMesaage(data, token);
       if (response.status) {
-        setMessages(response.data);
+        setMessagedata(response.data);
+        console.log("response.data", response.data)
       }
     } catch (error) {
       console.error("Error fetching trade data:", error);
@@ -42,34 +58,39 @@ const Ticket = () => {
   const columns = [
     {
       name: "Ticket ID",
-      selector: (row) => row.ticket,
+      selector: (row) => row?.ticketnumber,
+      width: "250px",
     },
     {
       name: "Email",
-      selector: (row) => row.email,
+      selector: (row) => row?.client?.Email,
+      width: "250px",
     },
     {
       name: "Subject",
       selector: (row) => row.subject,
     },
     {
-      name: "Description",
-      selector: (row) => row.description,
+      name: "Message",
+      selector: (row) => row.message,
       width: "300px",
     },
     {
       name: "Status",
       cell: (row) => (
         <div>
-          <button className="btn btn-primary btn-sm">Pending</button>
+          <button className="btn btn-primary btn-sm">
+            {row.status ? "Close" : "Open"}
+          </button>
         </div>
       ),
     },
+
     {
       name: "Action",
       cell: (row) => (
         <div>
-          <Link to='/admin/viewticket' className="btn btn-secondary btn-sm p-0">
+          <Link to={`/admin/viewticket/${row._id}`} className="btn btn-secondary btn-sm p-0">
 
             <Eye width="15px" />
           </Link>
@@ -105,7 +126,13 @@ const Ticket = () => {
       backbutton_status={false}
     >
       <div className="table-responsive">
-        <Table columns={columns} data={data} />
+        <Table
+          columns={columns}
+          data={messagedata}
+          totalRows={totalRows}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
       </div>
 
     </Content>

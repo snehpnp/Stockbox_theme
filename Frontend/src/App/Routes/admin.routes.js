@@ -222,7 +222,7 @@ export default function App() {
 
 
       <Route path="/tickets" element={<Tickets />} />
-      <Route path="/viewticket" element={<ViewTicket />} />
+      <Route path="/viewticket/:id" element={<ViewTicket />} />
 
     </Routes>
   );
