@@ -145,12 +145,12 @@ const HelpDesk = () => {
                     )}
                 </div>
 
-                <button type="submit" className="btn btn-primary">
+                <button type="submit" className="btn btn-primary mt-2">
                     Submit
                 </button>
             </form>
 
-            <div className="table-responsive">
+            <div className="table-responsive mt-2">
                 <Table
                     columns={[
                         { name: "Ticket No.", selector: (row) => row.ticketnumber },
@@ -159,8 +159,9 @@ const HelpDesk = () => {
                         {
                             name: "Status",
                             cell: (row) => (
-                                <button className={`btn btn-sm ${row.status ? 'btn-outline-success' : 'btn-outline-warning'}`}>
-                                    {row.status ? "Open" : "In Progress"}
+                                // <button className={`btn btn-sm ${row.status ? 'btn-outline-success' : 'btn-outline-warning'}`}>
+                                <button className="btn btn-primary">
+                                    {row.status ? "Close" : "Open"}
                                 </button>
                             ),
                         },

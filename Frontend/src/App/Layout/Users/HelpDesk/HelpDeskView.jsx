@@ -9,6 +9,8 @@ import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import { useParams } from "react-router-dom";
 import { fDate, Date } from "../../../../Utils/Date_formate";
+import { ArrowDownToLine } from "lucide-react";
+
 
 
 
@@ -58,6 +60,28 @@ const HelpDesk = () => {
       console.error("Error fetching trade data:", error);
     }
     setIsLoading(false);
+  };
+
+  const handleDownload = (messages) => {
+    const url = `${messages?.ticket?.attachment}`;
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleDownload1 = (data) => {
+    const url = `${data?.attachment}`;
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
 
@@ -110,7 +134,8 @@ const HelpDesk = () => {
         const data = {
           ticket_id: messages?.ticket?._id,
           message: formData.message,
-          attachment: formData.file
+          attachment: formData.file,
+          client_id:userid
         }
 
         const response = await GetReplyTicketData(data, token);
@@ -122,6 +147,7 @@ const HelpDesk = () => {
             ticket_id: "",
             subject: "",
             message: "",
+            client_id:"",
             file: null
           });
 
@@ -177,8 +203,10 @@ const HelpDesk = () => {
                   {messages?.ticket?.message}
                 </p>
               </div>
-              <button className="btn btn-primary btn-sm"
-              >Download</button>
+              {messages.ticket?.attachment && (
+                <button className="btn btn-primary mt-2" onClick={() => handleDownload(messages)}
+                >Download</button>
+              )}
             </div>
           </div>
         </div>
@@ -197,26 +225,37 @@ const HelpDesk = () => {
               <ul className="list-group list-group-flush review-list">
                 {messages?.messages?.map((item, index) => (
                   <li key={index} className="list-group-item bg-transparent">
-                    <div className="d-flex align-items-center">
-                      <img
-                        src="assets/images/avatar/1.png"
-                        alt="user avatar"
-                        className="rounded-circle"
-                        width={55}
-                        height={55}
-                      />
-                      <div className="ms-3">
-                        <h6 className="mb-0">
-                          {item?.client_id ? messages?.ticket?.client_id?.FullName : "Admin"}<small className="ms-4">{fDate(item?.created_at)}</small>
-                        </h6>
-                        <p className="mb-0 small-font">
-                          {item?.message}
-                        </p>
+                    <div className="d-flex align-items-center justify-content-between">
+                      <div className="d-flex align-items-center">
+                        <img
+                          src="assets/images/avatar/1.png"
+                          alt="user avatar"
+                          className="rounded-circle"
+                          width={55}
+                          height={55}
+                        />
+                        <div className="ms-3">
+                          <h6 className="mb-0">
+                            {item?.client_id ? messages?.ticket?.client_id?.FullName : "Admin"}
+                            <small className="ms-4">{fDate(item?.created_at)}</small>
+                          </h6>
+                          <p className="mb-0 small-font">{item?.message}</p>
+                        </div>
                       </div>
+                      {messages.messages[index]?.attachment && (
+                        <button
+                          onClick={() => handleDownload1(item)}
+                          className="border-0 bg-transparent p-0 d-flex align-items-center justify-content-center"
+                          style={{ width: '35px', height: '35px' }}
+                        >
+                          <ArrowDownToLine size={22} />
+                        </button>
+                      )}
                     </div>
                   </li>
                 ))}
               </ul>
+
 
             </div>
           </div>

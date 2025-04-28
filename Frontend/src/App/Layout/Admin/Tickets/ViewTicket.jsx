@@ -10,6 +10,8 @@ import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import { useParams } from "react-router-dom";
 import { fDate, Date } from "../../../../Utils/Date_formate";
+import { ArrowDownToLine } from "lucide-react";
+
 
 const ViewTicket = () => {
 
@@ -19,7 +21,6 @@ const ViewTicket = () => {
 
 
   const [messages, setMessages] = useState([]);
-  console.log("messages", messages);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -224,7 +225,7 @@ const ViewTicket = () => {
                 </p>
               </div>
               {messages.ticket?.attachment && (
-                <button className="btn btn-primary btn-sm" onClick={() => handleDownload(messages)}
+                <button className="btn btn-primary mt-2" onClick={() => handleDownload(messages)}
                 >Download</button>
               )}
             </div>
@@ -245,31 +246,37 @@ const ViewTicket = () => {
               <ul className="list-group list-group-flush review-list">
                 {messages?.messages?.map((item, index) => (
                   <li key={index} className="list-group-item bg-transparent">
-                    <div className="d-flex align-items-center">
-                      <img
-                        src="assets/images/avatar/1.png"
-                        alt="user avatar"
-                        className="rounded-circle"
-                        width={55}
-                        height={55}
-                      />
-                      <div className="ms-3">
-                        <h6 className="mb-0">
-                          {item?.client_id ? messages?.ticket?.client_id?.FullName : "Admin"}<small className="ms-4">{fDate(item?.created_at)}</small>
-                        </h6>
-                        <p className="mb-0 small-font">
-                          {item?.message}
-                        </p>
-                        {messages.messages[index]?.attachment && (
-                          <button onClick={() => handleDownload1(item)}>
-                            Download
-                          </button>
-                        )}
+                    <div className="d-flex align-items-center justify-content-between">
+                      <div className="d-flex align-items-center">
+                        <img
+                          src="assets/images/avatar/1.png"
+                          alt="user avatar"
+                          className="rounded-circle"
+                          width={55}
+                          height={55}
+                        />
+                        <div className="ms-3">
+                          <h6 className="mb-0">
+                            {item?.client_id ? messages?.ticket?.client_id?.FullName : "Admin"}
+                            <small className="ms-4">{fDate(item?.created_at)}</small>
+                          </h6>
+                          <p className="mb-0 small-font">{item?.message}</p>
+                        </div>
                       </div>
+                      {messages.messages[index]?.attachment && (
+                        <button
+                          onClick={() => handleDownload1(item)}
+                          className="border-0 bg-transparent p-0 d-flex align-items-center justify-content-center"
+                          style={{ width: '35px', height: '35px' }}
+                        >
+                          <ArrowDownToLine size={22} />
+                        </button>
+                      )}
                     </div>
                   </li>
                 ))}
               </ul>
+
 
             </div>
           </div>
