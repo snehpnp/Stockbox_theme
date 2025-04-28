@@ -296,7 +296,7 @@ const Freeclient = () => {
     const Updateplansubscription = async () => {
         setLoading(true);
         try {
-            const data = { plan_id: updatetitle.plan_id, client_id: client.clientid, price: updatetitle.price };
+            const data = { plan_id: updatetitle.plan_id, client_id: client._id, price: updatetitle.price };
             const response = await PlanSubscription(data, token);
 
             if (response && response.status) {
@@ -317,7 +317,7 @@ const Freeclient = () => {
     // assign basket 
     const UpdateBasketservice = async () => {
         try {
-            const data = { basket_id: basketdetail.basket_id, client_id: client.clientid, price: basketdetail.price, };
+            const data = { basket_id: basketdetail.basket_id, client_id: client._id, price: basketdetail.price, };
 
             const response = await BasketSubscription(data, token);
             if (response && response.status) {
