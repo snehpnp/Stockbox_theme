@@ -19,8 +19,8 @@ const ViewTicket = () => {
 
 
   const [messages, setMessages] = useState([]);
-  console.log("messages",messages);
-  
+  console.log("messages", messages);
+
   const [isLoading, setIsLoading] = useState(true);
 
 
@@ -77,6 +77,28 @@ const ViewTicket = () => {
     } else {
       FetchMessage();
     }
+  };
+
+  const handleDownload = (messages) => {
+    const url = `${messages?.ticket?.attachment}`;
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleDownload1 = (data) => {
+    const url = `${data?.attachment}`;
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
 
@@ -201,8 +223,10 @@ const ViewTicket = () => {
                   {messages?.ticket?.message}
                 </p>
               </div>
-              <button className="btn btn-primary btn-sm"
-              >Download</button>
+              {messages.ticket?.attachment && (
+                <button className="btn btn-primary btn-sm" onClick={() => handleDownload(messages)}
+                >Download</button>
+              )}
             </div>
           </div>
         </div>
@@ -236,6 +260,11 @@ const ViewTicket = () => {
                         <p className="mb-0 small-font">
                           {item?.message}
                         </p>
+                        {messages.messages[index]?.attachment && (
+                          <button onClick={() => handleDownload1(item)}>
+                            Download
+                          </button>
+                        )}
                       </div>
                     </div>
                   </li>

@@ -275,7 +275,7 @@ const Basket = () => {
               >
                 <Plus />
               </Link>
-            </Tooltip> : ""}
+            </Tooltip> : ""} 
 
           <Tooltip title="view">
             <Link
