@@ -19,6 +19,8 @@ const ViewTicket = () => {
 
 
   const [messages, setMessages] = useState([]);
+  console.log("messages",messages);
+  
   const [isLoading, setIsLoading] = useState(true);
 
 
