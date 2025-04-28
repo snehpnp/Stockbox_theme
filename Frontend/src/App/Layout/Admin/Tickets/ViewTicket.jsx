@@ -8,6 +8,7 @@ import {
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import { useParams } from "react-router-dom";
+import { message } from "antd";
 
 const ViewTicket = () => {
   const token = localStorage.getItem("token");
@@ -15,6 +16,8 @@ const ViewTicket = () => {
 
   const [key, setKey] = useState("sendMessage");
   const [messages, setMessages] = useState([]);
+  console.log("messages",messages);
+  
   const [isLoading, setIsLoading] = useState(true);
   
   // Form state without formik
@@ -171,8 +174,7 @@ const ViewTicket = () => {
                 </div>
 
                 <p className="text-muted">
-                  Lorem ipsum is a dummy or placeholder text commonly used in
-                  graphic design, publishing, and web development.
+                  {messages.message}
                 </p>
               </div>
             </div>
