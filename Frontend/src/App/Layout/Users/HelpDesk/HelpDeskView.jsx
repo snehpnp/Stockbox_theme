@@ -1,46 +1,45 @@
 import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
-import FormicForm from "../../../Extracomponents/Newformicform";
-import { useFormik } from "formik";
 import { Tabs, Tab } from "react-bootstrap";
 import {
-  SendHelpRequest,
   GetTicketDetaildata,
   GetReplyTicketData,
 } from "../../../Services/UserService/User";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
-import Table from "../../../Extracomponents/Table";
 import { useParams } from "react-router-dom";
 
-
 const HelpDesk = () => {
+
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
-
+  const [key, setKey] = useState("sendMessage");
   const [messages, setMessages] = useState([]);
-  const [messagedata, setMessagedata] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { id } = useParams()
+  // Form state without formik
+  const [formData, setFormData] = useState({
+    subject: "",
+    message: "",
+    file: null
+  });
+  const [errors, setErrors] = useState({});
 
-
+  const { id } = useParams();
 
   useEffect(() => {
     FetchMessage();
   }, []);
 
-
-
-
   const FetchMessage = async () => {
     try {
       const response = await GetTicketDetaildata(id, token);
-      if (response.status) {
-        setMessagedata(response.data.ticket);
 
+      if (response.status) {
+        setMessages(response?.data?.ticket);
+        console.log("response.data", response?.data?.ticket);
       }
     } catch (error) {
       console.error("Error fetching trade data:", error);
@@ -48,85 +47,97 @@ const HelpDesk = () => {
     setIsLoading(false);
   };
 
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
 
+    if (name === "file" && files) {
+      setFormData({
+        ...formData,
+        [name]: files[0]
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
 
-  const Sendmessagedata = async (data) => {
-    try {
-      const response = await GetReplyTicketData(data, token);
-      if (response.status) {
-        showCustomAlert("Success", response.message);
-      } else {
-        showCustomAlert("error", response.message);
-      }
-    } catch (error) {
-      showCustomAlert(
-        "error",
-        "An error occurred while sending the message. Please check your network or try again later."
-      );
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: null
+      });
     }
   };
 
-  const formik = useFormik({
-    initialValues: {
-      message: "",
-      file: '',
-    },
-    validate: (values) => {
-      const errors = {};
+  // Validate form
+  const validateForm = () => {
+    let newErrors = {};
+    let isValid = true;
 
-      if (!values.message) {
-        errors.message = "Please Enter Message";
+    if (!formData.message) {
+      newErrors.message = "Please Enter Message";
+      isValid = false;
+    }
+
+    if (!formData.file) {
+      newErrors.file = "Please Upload File";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validate the form
+    if (validateForm()) {
+      try {
+        const data = {
+          ticket_id: messages?._id,
+          client_id: userid,
+          message: formData.message,
+          attachment: formData.file
+        }
+
+        const response = await GetReplyTicketData(data, token);
+
+        if (response.status) {
+          showCustomAlert("Success", "Your reply has been sent successfully!");
+          FetchMessage();
+          setFormData({
+            ticket_id: "",
+            client_id: "",
+            message: "",
+            file: null
+          });
+
+          const fileInput = document.getElementById('file');
+          if (fileInput) fileInput.value = '';
+        } else {
+          showCustomAlert("error", "Reply Failed. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error sending reply:", error);
+        showCustomAlert(
+          "error",
+          "An error occurred while sending the reply. Please check your network or try again later."
+        );
       }
-      if (!values.file) {
-        errors.file = "Please Upload File";
-      }
-      return errors;
-    },
-    onSubmit: async (values, { resetForm }) => {
-      const data = {
-        client_id: userid,
-        message: values.message,
-        attachment: values.file,
-      };
-
-      await Sendmessagedata(data);
-      setMessages([...messages, values]);
-      resetForm();
-    },
-  });
-
-
-  let fieldtype = [
-
-    {
-      type: "textarea",
-      name: "message",
-      label: "Message",
-      placeholder: "Enter Message",
-      required: true,
-      label_size: 5,
-      col_size: 12,
-      disable: false,
-    },
-    {
-      type: "file",
-      name: "file",
-      label: "Upload File",
-      placeholder: "Upload File",
-      required: false,
-      label_size: 5,
-      col_size: 12,
-      disable: false,
-    },
-  ];
+    }
+  };
 
   return (
     <Content
       Page_title="Help Desk"
       button_status={false}
-      backbutton_status={true}
+      backbutton_status={false}
       backForword={true}
-
     >
       <div className="row row-cols-1 row-cols-lg-1 mb-3">
         <div className="col">
@@ -134,11 +145,10 @@ const HelpDesk = () => {
             <div className="card-header border-bottom bg-transparent p-3">
               <div className="d-flex align-items-center">
                 <div>
-                  <h5 className="mb-0">Ticket Details: #{messagedata.ticketnumber}</h5>
-
+                  <h5 className="mb-0">Ticket Details:{messages?.ticketnumber}</h5>
                 </div>
                 <div className="ms-auto">
-                  <small className="pe-3">{messagedata.created_at}</small>
+                  <small className="pe-3">08.34 AM</small>
                   <button className="btn btn-primary btn-sm">Pending</button>
                 </div>
               </div>
@@ -146,11 +156,12 @@ const HelpDesk = () => {
             <div className="card-body">
               <div className="card-header border-bottom bg-transparent p-3">
                 <div className="card-title">
-                  <h6 className="mb-0">{messagedata.subject}</h6>
+                  <h6 className="mb-0">Messages</h6>
                 </div>
 
                 <p className="text-muted">
-                  {messagedata.message}
+                  Lorem ipsum is a dummy or placeholder text commonly used in
+                  graphic design, publishing, and web development.
                 </p>
               </div>
             </div>
@@ -168,35 +179,6 @@ const HelpDesk = () => {
                   </div>
                 </div>
               </div>
-
-              <ul className="list-group list-group-flush review-list">
-                {messagedata.length > 0 ? (
-                  messagedata.map((msg, index) => (
-                    <li key={index} className="list-group-item bg-transparent">
-                      <div className="d-flex align-items-center">
-                        <img
-                          src="assets/images/avatar/1.png"
-                          alt="user avatar"
-                          className="rounded-circle"
-                          width={55}
-                          height={55}
-                        />
-                        <div className="ms-3">
-                          <h6 className="mb-0">
-                            {msg.subject || "No Subject"} <small className="ms-4">{msg.created_at || ""}</small>
-                          </h6>
-                          <p className="mb-0 small-font">{msg.message}</p>
-                        </div>
-                      </div>
-                    </li>
-                  ))
-                ) : (
-                  <li className="list-group-item bg-transparent text-center">
-                    No messages found
-                  </li>
-                )}
-              </ul>
-
               <ul className="list-group list-group-flush review-list">
                 <li className="list-group-item bg-transparent">
                   <div className="d-flex align-items-center">
@@ -270,18 +252,56 @@ const HelpDesk = () => {
               </div>
             </div>
             <div className="card-body px-3">
-              <FormicForm
-                fieldtype={fieldtype}
-                formik={formik}
-                ButtonName="Submit"
-                BtnStatus={true}
-              />
+              <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label htmlFor="subject" className="form-label">Subject</label>
+                  <input
+                    type="text"
+                    className={`form-control ${errors.subject ? 'is-invalid' : ''}`}
+                    id="subject"
+                    name="subject"
+                    placeholder="Enter Subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                  />
+                  {errors.subject && <div className="invalid-feedback">{errors.subject}</div>}
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="message" className="form-label">Message</label>
+                  <textarea
+                    className={`form-control ${errors.message ? 'is-invalid' : ''}`}
+                    id="message"
+                    name="message"
+                    placeholder="Enter Message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    rows="4"
+                  />
+                  {errors.message && <div className="invalid-feedback">{errors.message}</div>}
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="file" className="form-label">Upload File</label>
+                  <input
+                    type="file"
+                    className={`form-control ${errors.file ? 'is-invalid' : ''}`}
+                    id="file"
+                    name="file"
+                    accept="image/*"
+                    onChange={handleChange}
+                  />
+                  {errors.file && <div className="invalid-feedback">{errors.file}</div>}
+                </div>
+
+                <div className="mt-4">
+                  <button type="submit" className="btn btn-primary float-end">Submit</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
       </div>
-
-
     </Content>
   );
 };

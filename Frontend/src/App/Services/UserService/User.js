@@ -1203,49 +1203,58 @@ export async function GetAllTicketData(data, token) {
 
 
 
+// export async function GetReplyTicketData(data, token) {
+//     try {
+//         const response = await axios.post(`${Config.base_url}api/client/ticketreply`, data, {
+
+//             headers: {
+//                 Authorization: `Bearer ${token}`,
+//                 'Content-Type': 'application/json'
+//             },
+//         }
+//         );
+
+//         return response.data;
+
+//     } catch (error) {
+//         console.error('Error in clientKycAndAgreement API:', error.message);
+//         throw error.response?.data || { message: 'Something went wrong!' };
+//     }
+// }
+
+
+
+//send ticket reply
+
 export async function GetReplyTicketData(data, token) {
     try {
-        const response = await axios.post(`${Config.base_url}api/client/ticketreply`, data, {
+        const formData = new FormData();
+        formData.append('ticket_id', data.ticket_id);
+        formData.append('client_id', data.client_id);
+        formData.append('message', data.message);
 
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
+
+
+        if (data.attachment) {
+            formData.append('attachment', data.attachment);
         }
+        const response = await axios.post(
+            `${Config.base_url}api/client/ticketreply`,
+            formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
         );
 
         return response.data;
-
     } catch (error) {
-        console.error('Error in clientKycAndAgreement API:', error.message);
-        throw error.response?.data || { message: 'Something went wrong!' };
+        console.error('Error in sendTicketReply API:', error.message);
+        throw error.response?.data || { status: false, message: 'Something went wrong!' };
     }
 }
-
-
-
-// export async function GetReplyTicketData(data, token) {
-//     const formData = new FormData();
-//     formData.append('client_id', data.client_id);
-//     formData.append('message', data.message);
-//     formData.append('ticket_id', data.ticket_id);
-
-//     if (data.attachment) {
-//         formData.append('attachment', data.file);
-//     }
-
-//     try {
-//         const res = await axios.post(`${Config.base_url}api/client/ticketreply`, formData, {
-//             headers: {
-//                 'Content-Type': 'multipart/form-data',
-//                 'Authorization': `Bearer ${token}`,
-//             },
-//         });
-//         return res?.data;
-//     } catch (err) {
-//         return err.response?.data || err.message;
-//     }
-// }
 
 
 

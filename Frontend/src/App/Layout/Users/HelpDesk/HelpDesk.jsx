@@ -93,17 +93,19 @@ const HelpDesk = () => {
             return errors;
         },
         onSubmit: async (values, { resetForm }) => {
-            const data = {
-                client_id: userid,
-                subject: values.subject,
-                message: values.message,
-                attachment: values.file,
-            };
+            const formData = new FormData();
+            formData.append("client_id", userid);
+            formData.append("subject", values.subject);
+            formData.append("message", values.message);
+            if (values.file) {
+                formData.append("attachment", values.file);
+            }
 
-            await Sendmessagedata(data);
+            await Sendmessagedata(formData);
             setMessages([...messages, values]);
             resetForm();
         },
+
     });
 
     let fieldtype = [
