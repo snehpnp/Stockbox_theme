@@ -83,7 +83,7 @@ const Client = () => {
   };
 
 
-
+  console.log("client", client)
 
   useEffect(() => {
     if (clientStatus == 1) {
@@ -413,10 +413,15 @@ const Client = () => {
     try {
       const data = {
         basket_id: basketdetail.basket_id,
-        client_id: client.clientid,
+        client_id: client._id,
         price: basketdetail.price,
       };
+
+      console.log("data", data)
+
       const response = await BasketSubscription(data, token);
+
+
       if (response && response.status) {
         showCustomAlert("Success", "Basket service updated successfully.");
         setBasketdetail({ basket_id: "", client_id: "", price: "" });
