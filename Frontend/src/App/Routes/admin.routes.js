@@ -88,6 +88,7 @@ import SmsTemplate from "../Layout/Admin/BasicSetting/SmsTemplate";
 import SMSProvider from "../Layout/Admin/BasicSetting/SMSProvider";
 import Tickets from "../Layout/Admin/Tickets/Tickets";
 import ViewTicket from "../Layout/Admin/Tickets/ViewTicket";
+import EditBasketStockPublish from "../Layout/Admin/Admin_basket/EditBasketStockPublish";
 
 
 export default function App() {
@@ -108,6 +109,7 @@ export default function App() {
       <Route path="/basket/editbasket/:id" element={<Editbasket />} />
       <Route path="/addstock/:id" element={<AddStock />} />
       <Route path="/basket/basketstockpublish" element={<BasketStockPublish />} />
+      <Route path="/basket/basketstockpublish/:id" element={<EditBasketStockPublish />} />
       <Route path="/basket-purchase-history/:id" element={<BasketPurchaseHistory />} />
       <Route path="/purchasebaskethistory" element={<AllBasketHistory />} />
       <Route path="/editstock" element={<EditStock />} />

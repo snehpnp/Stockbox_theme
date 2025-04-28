@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, RefreshCcw, Trash2, RotateCcw, IndianRupee, X, Plus, History } from 'lucide-react';
+import { Eye, RefreshCcw, Trash2, RotateCcw,SquarePen, IndianRupee, X, Plus, History } from 'lucide-react';
 import { Tooltip } from 'antd';
 // import Table from "../../../components/Table";
 import Table from '../../../Extracomponents/Table1';
@@ -290,6 +290,14 @@ const BasketStockPublish = () => {
               <SquarePen />
             </Link>
           </Tooltip> */}
+          <Tooltip title="Edit">
+            <Link
+              to={`${row._id}`}
+              className="btn px-2"
+            >
+              <SquarePen />
+            </Link>
+          </Tooltip>
           <Tooltip title="History ">
             <Link
               to={`/admin/basket-purchase-history/${row._id}`}
@@ -306,7 +314,7 @@ const BasketStockPublish = () => {
           </button> */}
         </div>
       ),
-      width: '150px',
+      width: '200px',
     },
   ];
 
