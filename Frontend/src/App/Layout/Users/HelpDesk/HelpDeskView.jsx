@@ -4,6 +4,7 @@ import { Tabs, Tab } from "react-bootstrap";
 import {
   GetTicketDetaildata,
   GetReplyTicketData,
+
 } from "../../../Services/UserService/User";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
@@ -41,7 +42,7 @@ const HelpDesk = () => {
 
       if (response.status) {
         setMessages(response?.data?.ticket);
-        console.log("response.data", response?.data?.ticket);
+
       }
     } catch (error) {
       console.error("Error fetching trade data:", error);

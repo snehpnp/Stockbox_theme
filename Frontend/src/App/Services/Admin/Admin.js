@@ -3768,12 +3768,12 @@ export async function GetTicketmessagedetailbyuser(id, token) {
 
 //send ticket reply
 
-export async function sendTicketReply(data , token) {
+export async function sendTicketReply(data, token) {
     try {
         const formData = new FormData();
-        formData.append('ticket_id',data.ticket_id);
-        formData.append('message',data.message);
-    
+        formData.append('ticket_id', data.ticket_id);
+        formData.append('message', data.message);
+
         if (data.attachment) {
             formData.append('attachment', data.attachment);
         }
@@ -3792,5 +3792,45 @@ export async function sendTicketReply(data , token) {
     } catch (error) {
         console.error('Error in sendTicketReply API:', error.message);
         throw error.response?.data || { status: false, message: 'Something went wrong!' };
+    }
+}
+
+
+
+// ticket status 
+
+export async function TicketRaiseStatus(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}ticket/change-status`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// delete ticket message 
+
+export async function DeleteRaiseTicket(_id, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}ticket/delete/${_id}`, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
     }
 }

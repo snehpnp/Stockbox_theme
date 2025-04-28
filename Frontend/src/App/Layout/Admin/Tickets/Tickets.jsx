@@ -5,12 +5,14 @@ import { useFormik } from "formik";
 import { Tabs, Tab } from "react-bootstrap";
 import {
   GetTicketRaiseMesaage,
+  DeleteRaiseTicket
 } from "../../../Services/Admin/Admin";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import Table from "../../../Extracomponents/Table1";
-import { Eye } from "lucide-react";
+import { Eye, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Tooltip } from "antd";
 
 
 
@@ -44,14 +46,40 @@ const Ticket = () => {
       const data = { from: "", to: "", status: "", search: "", page: currentPage }
       const response = await GetTicketRaiseMesaage(data, token);
       if (response.status) {
-        setMessagedata(response.data);
-        console.log("response.data", response.data)
+        setMessagedata(response?.data);
+
       }
     } catch (error) {
       console.error("Error fetching trade data:", error);
     }
     setIsLoading(false);
   };
+
+
+
+  const DeleteTicket = async (_id) => {
+    try {
+      const result = await showCustomAlert(
+        "confirm",
+        "Do you want to delete this Ticket? This action cannot be undone."
+      );
+
+      if (!result.isConfirmed) return;
+
+      const response = await DeleteRaiseTicket(_id, token);
+      if (response.status) {
+        showCustomAlert("success", "Successfully deleted!");
+        FetchMessage();
+      } else {
+        throw new Error("Deletion failed");
+      }
+    } catch (error) {
+      showCustomAlert("error", "There was an error deleting this Ticket.");
+    }
+  };
+
+
+
 
 
 
@@ -86,15 +114,23 @@ const Ticket = () => {
       ),
     },
 
+
     {
       name: "Action",
       cell: (row) => (
-        <div>
-          <Link to={`/admin/viewticket/${row._id}`} className="btn btn-secondary btn-sm p-0">
+        <>
+          <div>
+            <Link to={`/admin/viewticket/${row._id}`} className="btn btn-secondary btn-sm p-0">
 
-            <Eye width="15px" />
-          </Link>
-        </div>
+              <Eye width="15px" />
+            </Link>
+          </div>
+          <div>
+            <Tooltip placement="top" overlay="Delete">
+              <Trash2 onClick={() => DeleteTicket(row._id)} />
+            </Tooltip>
+          </div>
+        </>
       ),
     },
   ];

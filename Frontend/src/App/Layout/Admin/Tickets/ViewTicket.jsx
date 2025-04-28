@@ -3,12 +3,13 @@ import Content from "../../../components/Contents/Content";
 import { Tabs, Tab } from "react-bootstrap";
 import {
   GetTicketmessagedetailbyuser,
-  sendTicketReply
+  sendTicketReply,
+  TicketRaiseStatus
 } from "../../../Services/Admin/Admin";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import { useParams } from "react-router-dom";
-import { fDate } from "../../../../Utils/Date_formate";
+import { fDate, Date } from "../../../../Utils/Date_formate";
 
 const ViewTicket = () => {
 
@@ -16,7 +17,7 @@ const ViewTicket = () => {
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
-  const [key, setKey] = useState("sendMessage");
+
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -56,6 +57,28 @@ const ViewTicket = () => {
   };
 
 
+  // close status 
+
+  const handleSwitchChange = async (event) => {
+    const data = { id: messages?.ticket?._id, status: "true" };
+    const result = await showCustomAlert("confirm", "Do you want to Close This Ticket?")
+    if (result.isConfirmed) {
+      try {
+        const response = await TicketRaiseStatus(data, token);
+        if (response.status) {
+          showCustomAlert("Success", "Status Changed")
+        }
+        FetchMessage();
+      } catch (error) {
+        showCustomAlert("error", "There was an error processing your request.")
+      }
+    } else {
+      FetchMessage();
+    }
+  };
+
+
+
 
 
   const handleChange = (e) => {
@@ -86,18 +109,8 @@ const ViewTicket = () => {
     let newErrors = {};
     let isValid = true;
 
-    if (!formData.subject) {
-      newErrors.subject = "Please Enter Subject";
-      isValid = false;
-    }
-
     if (!formData.message) {
       newErrors.message = "Please Enter Message";
-      isValid = false;
-    }
-
-    if (!formData.file) {
-      newErrors.file = "Please Upload File";
       isValid = false;
     }
 
@@ -164,7 +177,10 @@ const ViewTicket = () => {
                 </div>
                 <div className="ms-auto">
                   <small className="pe-3">{fDate(messages?.ticket?.created_at)}</small>
-                  <button className="btn btn-primary btn-sm">Pending</button>
+                  <button className="btn btn-primary btn-sm"
+                    onClick={(event) => handleSwitchChange(event)}
+                    disabled={messages?.ticket?.status === true}
+                  >Close Ticket </button>
                 </div>
               </div>
             </div>
@@ -173,11 +189,18 @@ const ViewTicket = () => {
                 <div className="card-title">
                   <h6 className="mb-0">Subject</h6>
                 </div>
-
                 <p className="text-muted">
                   {messages?.ticket?.subject}
                 </p>
+                <div className="card-title">
+                  <h6 className="mb-0">Message</h6>
+                </div>
+                <p className="text-muted">
+                  {messages?.ticket?.message}
+                </p>
               </div>
+              <button className="btn btn-primary btn-sm"
+              >Download</button>
             </div>
           </div>
         </div>
@@ -206,7 +229,7 @@ const ViewTicket = () => {
                       />
                       <div className="ms-3">
                         <h6 className="mb-0">
-                          {item?.deviceName} <small className="ms-4">{item?.time}</small>
+                          {item?.client_id ? messages?.ticket?.client_id?.FullName : "Admin"}<small className="ms-4">{fDate(item?.created_at)}</small>
                         </h6>
                         <p className="mb-0 small-font">
                           {item?.message}
@@ -220,7 +243,7 @@ const ViewTicket = () => {
             </div>
           </div>
         </div>
-        <div className="col">
+        {messages?.ticket?.status === false && <div className="col">
           <div className="card shadow-lg border-0">
             <div className="card-header border-bottom bg-transparent p-3">
               <div className="d-flex align-items-center">
@@ -231,19 +254,6 @@ const ViewTicket = () => {
             </div>
             <div className="card-body px-3">
               <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label htmlFor="subject" className="form-label">Subject</label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.subject ? 'is-invalid' : ''}`}
-                    id="subject"
-                    name="subject"
-                    placeholder="Enter Subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                  />
-                  {errors.subject && <div className="invalid-feedback">{errors.subject}</div>}
-                </div>
 
                 <div className="mb-3">
                   <label htmlFor="message" className="form-label">Message</label>
@@ -278,7 +288,7 @@ const ViewTicket = () => {
               </form>
             </div>
           </div>
-        </div>
+        </div>}
       </div>
     </Content>
   );
