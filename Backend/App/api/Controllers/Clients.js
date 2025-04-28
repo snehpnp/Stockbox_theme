@@ -2116,10 +2116,10 @@ else {
                           return reject(err);
                       }
   
-                      if (!req.files || !req.files['attachment']) {
+                      // if (!req.files || !req.files['attachment']) {
                          
-                          return res.status(400).json({ status: false, message: "No file uploaded." });
-                        }
+                      //     return res.status(400).json({ status: false, message: "No file uploaded." });
+                      //   }
   
   
                       resolve();

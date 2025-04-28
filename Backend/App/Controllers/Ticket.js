@@ -19,10 +19,10 @@ class TicketController {
                         return reject(err);
                     }
 
-                    if (!req.files || !req.files['attachment']) {
+                    // if (!req.files || !req.files['attachment']) {
                        
-                        return res.status(400).json({ status: false, message: "No file uploaded." });
-                      }
+                    //     return res.status(400).json({ status: false, message: "No file uploaded." });
+                    //   }
 
 
                     resolve();
@@ -85,10 +85,15 @@ class TicketController {
         }
     
         // Status filter
-        if (status !== undefined) {
-          matchQuery.status = status === "true" || status === true;
-        }
-    
+       
+if (status !== undefined && status !== "") {
+  // agar status explicitly aaya hai aur empty nahi hai
+  if (status === "true" || status === true) {
+    matchQuery.status = true;
+  } else if (status === "false" || status === false) {
+    matchQuery.status = false;
+  }
+}
         // Aggregation pipeline with lookup and match
         const pipeline = [
           {
