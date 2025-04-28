@@ -4,28 +4,39 @@ import { Tabs, Tab } from "react-bootstrap";
 import {
   GetTicketDetaildata,
   GetReplyTicketData,
-
 } from "../../../Services/UserService/User";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import { useParams } from "react-router-dom";
+import { fDate, Date } from "../../../../Utils/Date_formate";
+
+
+
 
 const HelpDesk = () => {
 
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
+
+
   const [messages, setMessages] = useState([]);
+
+
   const [isLoading, setIsLoading] = useState(true);
 
 
   const [formData, setFormData] = useState({
+    subject: "",
     message: "",
     file: null
   });
+
+
   const [errors, setErrors] = useState({});
 
   const { id } = useParams();
+
 
 
 
@@ -35,13 +46,12 @@ const HelpDesk = () => {
 
 
 
-
   const FetchMessage = async () => {
     try {
       const response = await GetTicketDetaildata(id, token);
 
       if (response.status) {
-        setMessages(response?.data?.ticket);
+        setMessages(response?.data);
 
       }
     } catch (error) {
@@ -53,7 +63,6 @@ const HelpDesk = () => {
 
 
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
@@ -69,7 +78,6 @@ const HelpDesk = () => {
       });
     }
 
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors({
         ...errors,
@@ -79,9 +87,6 @@ const HelpDesk = () => {
   };
 
 
-
-
-  // Validate form
   const validateForm = () => {
     let newErrors = {};
     let isValid = true;
@@ -91,28 +96,19 @@ const HelpDesk = () => {
       isValid = false;
     }
 
-    if (!formData.file) {
-      newErrors.file = "Please Upload File";
-      isValid = false;
-    }
 
     setErrors(newErrors);
     return isValid;
   };
 
 
-
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate the form
     if (validateForm()) {
       try {
         const data = {
-          ticket_id: messages?._id,
-          client_id: userid,
+          ticket_id: messages?.ticket?._id,
           message: formData.message,
           attachment: formData.file
         }
@@ -124,7 +120,7 @@ const HelpDesk = () => {
           FetchMessage();
           setFormData({
             ticket_id: "",
-            client_id: "",
+            subject: "",
             message: "",
             file: null
           });
@@ -146,8 +142,6 @@ const HelpDesk = () => {
 
 
 
-
-
   return (
     <Content
       Page_title="Help Desk"
@@ -161,25 +155,30 @@ const HelpDesk = () => {
             <div className="card-header border-bottom bg-transparent p-3">
               <div className="d-flex align-items-center">
                 <div>
-                  <h5 className="mb-0">Ticket Details:{messages?.ticketnumber}</h5>
+                  <h5 className="mb-0">Ticket Details:{messages?.ticket?.ticketnumber}</h5>
                 </div>
                 <div className="ms-auto">
-                  <small className="pe-3">08.34 AM</small>
-                  <button className="btn btn-primary btn-sm">Pending</button>
+                  <small className="pe-3">{fDate(messages?.ticket?.created_at)}</small>
                 </div>
               </div>
             </div>
             <div className="card-body">
               <div className="card-header border-bottom bg-transparent p-3">
                 <div className="card-title">
-                  <h6 className="mb-0">Messages</h6>
+                  <h6 className="mb-0">Subject</h6>
                 </div>
-
                 <p className="text-muted">
-                  Lorem ipsum is a dummy or placeholder text commonly used in
-                  graphic design, publishing, and web development.
+                  {messages?.ticket?.subject}
+                </p>
+                <div className="card-title">
+                  <h6 className="mb-0">Message</h6>
+                </div>
+                <p className="text-muted">
+                  {messages?.ticket?.message}
                 </p>
               </div>
+              <button className="btn btn-primary btn-sm"
+              >Download</button>
             </div>
           </div>
         </div>
@@ -196,69 +195,33 @@ const HelpDesk = () => {
                 </div>
               </div>
               <ul className="list-group list-group-flush review-list">
-                <li className="list-group-item bg-transparent">
-                  <div className="d-flex align-items-center">
-                    <img
-                      src="assets/images/avatar/1.png"
-                      alt="user avatar"
-                      className="rounded-circle"
-                      width={55}
-                      height={55}
-                    />
-                    <div className="ms-3">
-                      <h6 className="mb-0">
-                        iPhone X <small className="ms-4">08.34 AM</small>
-                      </h6>
-                      <p className="mb-0 small-font">
-                        Sara Jhon : This is svery Nice phone in low budget.
-                      </p>
+                {messages?.messages?.map((item, index) => (
+                  <li key={index} className="list-group-item bg-transparent">
+                    <div className="d-flex align-items-center">
+                      <img
+                        src="assets/images/avatar/1.png"
+                        alt="user avatar"
+                        className="rounded-circle"
+                        width={55}
+                        height={55}
+                      />
+                      <div className="ms-3">
+                        <h6 className="mb-0">
+                          {item?.client_id ? messages?.ticket?.client_id?.FullName : "Admin"}<small className="ms-4">{fDate(item?.created_at)}</small>
+                        </h6>
+                        <p className="mb-0 small-font">
+                          {item?.message}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </li>
-
-                <li className="list-group-item bg-transparent">
-                  <div className="d-flex align-items-center">
-                    <img
-                      src="assets/images/avatar/1.png"
-                      alt="user avatar"
-                      className="rounded-circle"
-                      width={55}
-                      height={55}
-                    />
-                    <div className="ms-3">
-                      <h6 className="mb-0">
-                        Mackbook <small className="ml-4">08.34 AM</small>
-                      </h6>
-                      <p className="mb-0 small-font">
-                        Michle : The brand apple is original !
-                      </p>
-                    </div>
-                  </div>
-                </li>
-                <li className="list-group-item bg-transparent">
-                  <div className="d-flex align-items-center">
-                    <img
-                      src="assets/images/avatar/1.png"
-                      alt="user avatar"
-                      className="rounded-circle"
-                      width={55}
-                      height={55}
-                    />
-                    <div className="ms-3">
-                      <h6 className="mb-0">
-                        Air Pod <small className="ml-4">08.34 AM</small>
-                      </h6>
-                      <p className="mb-0 small-font">
-                        Danish Josh : The brand apple is original !
-                      </p>
-                    </div>
-                  </div>
-                </li>
+                  </li>
+                ))}
               </ul>
+
             </div>
           </div>
         </div>
-        <div className="col">
+        {messages?.ticket?.status === false && <div className="col">
           <div className="card shadow-lg border-0">
             <div className="card-header border-bottom bg-transparent p-3">
               <div className="d-flex align-items-center">
@@ -303,7 +266,7 @@ const HelpDesk = () => {
               </form>
             </div>
           </div>
-        </div>
+        </div>}
       </div>
     </Content>
   );
