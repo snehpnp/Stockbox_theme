@@ -23,6 +23,7 @@ const Ticketmessage_Modal = db.Ticketmessage;
 
 const { sendSMS } = require('../../Utils/smsHelper');
 const upload = require('../../Utils/multerHelper'); 
+const { generatePDF } = require('../../Utils/pdfGenerator');
 
 class Clients {
 
@@ -967,7 +968,30 @@ class Clients {
         .replace(/{{city}}/g, city)
         .replace(/{{aadhaarno}}/g, aadhaarno);
 
-      // const browser = await puppeteer.launch();
+
+        const pdfresponse = await generatePDF({
+          htmlContent,
+          fileName: `kyc-agreement-${phone}.pdf`,
+          folderPath: 'uploads/pdf',
+          baseBackPath: '../../../',  
+          headerTemplate: pdf_header,
+          footerTemplate: pdf_footer
+        });
+
+       
+ // If the PDF generation is not successful, return an error response
+ if (pdfresponse.status !== true) {
+  return res.status(400).json({
+    status: false,
+    message: 'Error in PDF generation',
+  });
+}
+
+
+
+
+
+      /*
       const browser = await puppeteer.launch({
         headless: 'new',
         args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -975,11 +999,9 @@ class Clients {
       const page = await browser.newPage();
       await page.setContent(htmlContent);
 
-      // Define the path to save the PDF
       const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'pdf');
       const pdfPath = path.join(pdfDir, `kyc-agreement-${phone}.pdf`);
 
-      // Generate PDF and save to the specified path
       await page.pdf({
         path: pdfPath,
         format: 'A4',
@@ -996,7 +1018,7 @@ class Clients {
       });
 
       await browser.close();
-
+*/
       // Update client with new information
       client.panno = panno;
       client.aadhaarno = aadhaarno;

@@ -11,6 +11,7 @@ const fs = require('fs');
 const { toWords } = require('number-to-words');
 
 const { sendEmail } = require('../Utils/emailService');
+const { generatePDF } = require('../Utils/pdfGenerator');
 
 const Basket_Modal = db.Basket;
 const Basketstock_Modal = db.Basketstock;
@@ -406,6 +407,16 @@ class Basket {
 
         // Calculate quantity and total value
         const quantity = Math.floor(allocatedAmount / currentPrice);
+
+        if (quantity <= 0) {
+          return res.status(400).json({
+            status: false,
+            message: `Quantity is zero for stock ${tradesymbol}. Cannot add stock.`,
+          });
+        }
+
+
+
         const total_value = quantity * currentPrice;
 
         // Deduct from remaining amount
@@ -564,6 +575,14 @@ class Basket {
   
               // Calculate quantity and total value
               const quantity = Math.floor(allocatedAmount / currentPrice);
+
+              if (quantity <= 0) {
+                return res.status(400).json({
+                  status: false,
+                  message: `Quantity is zero for stock ${tradesymbol}. Cannot add stock.`,
+                });
+              }
+
               const total_value = quantity * currentPrice;
   
               remainingAmount -= total_value;
@@ -767,6 +786,14 @@ class Basket {
 
     // Calculate quantity and total value
     const quantity = Math.floor(allocatedAmount / currentPrice);
+
+    if (quantity <= 0) {
+      return res.status(400).json({
+        status: false,
+        message: `Quantity is zero for stock ${tradesymbol}. Cannot add stock.`,
+      });
+    }
+
     const total_value = quantity * currentPrice;
 
     // Deduct from remaining amount
@@ -931,6 +958,14 @@ class Basket {
         }
   
         const quantity = Math.floor(allocatedAmount / currentPrice);
+
+        if (quantity <= 0) {
+          return res.status(400).json({
+            status: false,
+            message: `Quantity is zero for stock ${tradesymbol}. Cannot add stock.`,
+          });
+        }
+
         const total_value = quantity * currentPrice;
         remainingAmount -= total_value;
   
@@ -1767,7 +1802,7 @@ class Basket {
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.startdate));
 
 
-        const browser = await puppeteer.launch({
+      /*  const browser = await puppeteer.launch({
           headless: 'new',
           args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
@@ -1792,11 +1827,26 @@ class Basket {
         });
 
         await browser.close();
+*/
+
+const pdfresponse = await generatePDF({
+  htmlContent,
+  fileName: `${orderNumber}.pdf`,
+  folderPath: 'uploads/invoice',
+  baseBackPath: '../../../',  
+  headerTemplate: "",
+  footerTemplate: ""
+});
+
+
+
+if (pdfresponse.status === true) {
+
 
         savedSubscription.ordernumber = `${orderNumber}`;
         savedSubscription.invoice = `${orderNumber}.pdf`;
         const updatedSubscription = await savedSubscription.save();
-
+}
         if (settings.invoicestatus == 1) {
 
         const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
@@ -1830,12 +1880,14 @@ class Basket {
             from: `${settings.from_name} <${settings.from_mail}>`,
             subject: `${mailtemplate.mail_subject}`,
             html: finalHtml,
-            attachments: [
-              {
-                filename: `${orderNumber}.pdf`, // PDF file name
-                path: pdfPath, // Path to the PDF file
-              }
-            ]
+           ...(pdfresponse.status === true && {
+                        attachments: [
+                          {
+                            filename: `${orderNumber}.pdf`,
+                            path: pdfresponse.path, // Path from the response of PDF generation
+                          }
+                        ]
+                      })
           };
 
           // Send email
@@ -2077,7 +2129,7 @@ class Basket {
         .replace(/{{plan_start}}/g, formatDate(savedSubscription.startdate));
 
 */
-      const browser = await puppeteer.launch({
+    /*  const browser = await puppeteer.launch({
         headless: 'new',
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
@@ -2102,11 +2154,25 @@ class Basket {
       });
 
       await browser.close();
+*/
+
+
+const pdfresponse = await generatePDF({
+  htmlContent,
+  fileName: `${orderNumber}.pdf`,
+  folderPath: 'uploads/invoice',
+  baseBackPath: '../../../',  
+  headerTemplate: "",
+  footerTemplate: ""
+});
+
+
+if (pdfresponse.status === true) {
 
       savedSubscription.ordernumber = `${orderNumberName}`;
       savedSubscription.invoice = `${orderNumber}.pdf`;
       const updatedSubscription = await savedSubscription.save();
-
+}
       if (settings.invoicestatus == 1) {
 
       const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
@@ -2140,12 +2206,14 @@ class Basket {
           from: `${settings.from_name} <${settings.from_mail}>`,
           subject: `${mailtemplate.mail_subject}`,
           html: finalHtml,
-          attachments: [
-            {
-              filename: `${orderNumber}.pdf`, // PDF file name
-              path: pdfPath, // Path to the PDF file
-            }
-          ]
+           ...(pdfresponse.status === true && {
+                        attachments: [
+                          {
+                            filename: `${orderNumber}.pdf`,
+                            path: pdfresponse.path, // Path from the response of PDF generation
+                          }
+                        ]
+                      })
         };
 
         // Send email

@@ -19,6 +19,7 @@ const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs');
 const { sendEmail } = require('../Utils/emailService');
+const { generatePDF } = require('../Utils/pdfGenerator');
 
 
 const Adminnotification_Modal = db.Adminnotification;
@@ -430,70 +431,6 @@ async  statusChange(req, res) {
 }
 
 
-/*
-async  addPlanSubscription(req, res) {
-    try {
-      const { plan_id, client_id, price} = req.body;
-      // Validate input
-      if (!plan_id || !client_id ) {
-        return res.status(400).json({ status: false, message: 'Missing required fields' });
-      }
-      const plan = await Plan_Modal.findById(plan_id).exec();
-  
-      const validityMapping = {
-        '1 month': 1,
-        '3 months': 3,
-        '6 months': 6,
-        '9 months': 9,
-        '1 year': 12,
-        '2 years': 24,
-        '3 years': 36,
-        '4 years': 48,
-        '5 years': 60
-      };
-  
-      const start = new Date();
-  
-      const monthsToAdd = validityMapping[plan.validity];
-    
-      if (monthsToAdd === undefined) {
-        throw new Error('Invalid validity period');
-      }
-    
-      const end = new Date(start);
-      end.setHours(23, 59, 59, 999);  // Set to end of the day
-          end.setMonth(start.getMonth() + monthsToAdd);
-  
-  
-  
-  
-  
-      // Create a new subscription
-      const newSubscription = new PlanSubscription_Modal({
-        plan_id,
-        client_id,
-        total:plan.price,
-        plan_price:price,
-        plan_start:start,
-        plan_end:end
-      });
-  
-      // Save to the database
-      const savedSubscription = await newSubscription.save();
-  
-      // Respond with the created subscription
-      return res.status(201).json({
-        status: true,
-        message: 'Subscription added successfully',
-        data: savedSubscription
-      });
-  
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ status: false, message: 'Server error', data: [] });
-    }
-  }
-  */
 
   async addPlanSubscription(req, res) {
     try {
@@ -906,7 +843,7 @@ if (settings.gst > 0 && settings.gststatus==1) {
                   .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total.toFixed(2)))
                   .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
-
+/*
         const browser = await puppeteer.launch({
           headless: 'new',
           args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -932,10 +869,25 @@ if (settings.gst > 0 && settings.gststatus==1) {
         });
 
         await browser.close();
+*/
+
+const pdfresponse = await generatePDF({
+  htmlContent,
+  fileName: `${orderNumber}.pdf`,
+  folderPath: 'uploads/invoice',
+  baseBackPath: '../../../',  
+  headerTemplate: "",
+  footerTemplate: ""
+});
+
+
+
+if (pdfresponse.status === true) {
 
         savedSubscription.ordernumber = `${orderNumber}`;
         savedSubscription.invoice = `${orderNumber}.pdf`;
         const updatedSubscription = await savedSubscription.save();
+}
         if (settings.invoicestatus == 1) {
 
         const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
@@ -967,12 +919,14 @@ if (settings.gst > 0 && settings.gststatus==1) {
             from: `${settings.from_name} <${settings.from_mail}>`,
             subject: `${mailtemplate.mail_subject}`,
             html: finalHtml,
-            attachments: [
-              {
-                filename: `${orderNumber}.pdf`, // PDF file name
-                path: pdfPath, // Path to the PDF file
-              }
-            ]
+            ...(pdfresponse.status === true && {
+                                   attachments: [
+                                     {
+                                       filename: `${orderNumber}.pdf`,
+                                       path: pdfresponse.path, // Path from the response of PDF generation
+                                     }
+                                   ]
+                                 })
           };
 
           // Send email
@@ -1546,8 +1500,8 @@ const orderNumberName = `${invoicePrefix}/${financialYear}/${formattedNumber}`;
         plan_start: start,
         plan_end: end,
         validity: plan.validity,
-        ordernumber:`${orderNumberName}`,
-        invoice:`${orderNumber}.pdf`,
+        // ordernumber:`${orderNumberName}`,
+        // invoice:`${orderNumber}.pdf`,
       });
   
       // Save the subscription
@@ -1724,7 +1678,7 @@ const orderNumberName = `${invoicePrefix}/${financialYear}/${formattedNumber}`;
 
 
 
-
+/*
         const browser = await puppeteer.launch({
           headless: 'new',
           args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -1750,8 +1704,27 @@ const orderNumberName = `${invoicePrefix}/${financialYear}/${formattedNumber}`;
         });
 
         await browser.close();
-
+*/
    
+
+const pdfresponse = await generatePDF({
+  htmlContent,
+  fileName: `${orderNumber}.pdf`,
+  folderPath: 'uploads/invoice',
+  baseBackPath: '../../../',  
+  headerTemplate: "",
+  footerTemplate: ""
+});
+
+
+
+
+if (pdfresponse.status === true) {
+
+  savedSubscription.ordernumber = `${orderNumberName}`;
+  savedSubscription.invoice = `${orderNumber}.pdf`;
+  const updatedSubscription = await savedSubscription.save();
+}
 
         if (settings.invoicestatus == 1) {
         const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
@@ -1783,12 +1756,14 @@ const orderNumberName = `${invoicePrefix}/${financialYear}/${formattedNumber}`;
             from: `${settings.from_name} <${settings.from_mail}>`,
             subject: `${mailtemplate.mail_subject}`,
             html: finalHtml,
-            attachments: [
-              {
-                filename: `${orderNumber}.pdf`, // PDF file name
-                path: pdfPath, // Path to the PDF file
-              }
-            ]
+            ...(pdfresponse.status === true && {
+                                   attachments: [
+                                     {
+                                       filename: `${orderNumber}.pdf`,
+                                       path: pdfresponse.path, // Path from the response of PDF generation
+                                     }
+                                   ]
+                                 })
           };
 
           // Send email
