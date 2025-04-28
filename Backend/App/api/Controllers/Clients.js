@@ -1970,16 +1970,16 @@ else {
   
   
       if (!clientId) {
-        return res.status(401).json({
+        return res.json({
           status: false,
           message: "Unauthorized. Client not found.",
         });
       }
 
-      const client = await Clients_Modal.findOne({ _id: clientid, del: 0, ActiveStatus: 1 });
+      const client = await Clients_Modal.findOne({ _id: clientId, del: 0, ActiveStatus: 1 });
 
       if (!client) {
-        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+        return res.json({ status: false, message: 'Client not found or inactive.' });
       }
   
       // Total count for pagination
@@ -2019,7 +2019,7 @@ else {
   
     } catch (error) {
    //   console.error("getClientTickets error:", error);
-      return res.status(500).json({
+      return res.json({
         status: false,
         message: "Server Error",
         error: error.message
@@ -2032,7 +2032,7 @@ else {
       const { ticketid } = req.params;
   
       if (!ticketid) {
-        return res.status(400).json({
+        return res.json({
           status: false,
           message: "ticketid is required",
         });
@@ -2040,7 +2040,7 @@ else {
       let ticket = await Ticket_Modal.findOne({ _id: ticketid, del: false }).lean();
 
       if (!ticket) {
-        return res.status(404).json({
+        return res.json({
           status: false,
           message: "Ticket not found",
         });
@@ -2075,7 +2075,7 @@ else {
   
     } catch (error) {
    //   console.error("getTicketDetailById error:", error);
-      return res.status(500).json({
+      return res.json({
         status: false,
         message: "Server Error",
         error: error.message
@@ -2108,24 +2108,24 @@ else {
               const { ticket_id, message, client_id } = req.body;
   
               if (!ticket_id) {
-                  return res.status(400).json({ status: false, message: "Ticket Id is required" });
+                  return res.json({ status: false, message: "Ticket Id is required" });
                 }
                 if (!message) {
-                  return res.status(400).json({ status: false, message: "Message is required" });
+                  return res.json({ status: false, message: "Message is required" });
                 }
                 if (!client_id) {
-                  return res.status(400).json({ status: false, message: "Client Id is required" });
+                  return res.json({ status: false, message: "Client Id is required" });
                 }
                 const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
 
                 if (!client) {
-                  return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+                  return res.json({ status: false, message: 'Client not found or inactive.' });
                 }
 
                 const ticket = await Ticket_Modal.findOne({ _id: ticket_id, del: false });
 
                 if (!ticket) {
-                  return res.status(404).json({ status: false, message: 'Ticket not found' });
+                  return res.json({ status: false, message: 'Ticket not found' });
                 }
       
 
@@ -2151,7 +2151,7 @@ else {
       
           } catch (error) {
               // console.log("Server error:", error);
-              return res.status(500).json({ status: false, message: "Server error", data: [] });
+              return res.json({ status: false, message: "Server error", data: [] });
           }
       }
   
@@ -2169,7 +2169,7 @@ else {
           const { subject, message, client_id } = req.body;
       
           if (!subject || !message || !client_id) {
-            return res.status(400).json({
+            return res.json({
               status: false,
               message: "Subject, Message, and Client ID are required"
             });
@@ -2178,7 +2178,7 @@ else {
           const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
 
           if (!client) {
-            return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+            return res.json({ status: false, message: 'Client not found or inactive.' });
           }
 
 
@@ -2190,7 +2190,7 @@ else {
           });
       
           if (existingOpenTicket) {
-            return res.status(409).json({
+            return res.json({
               status: false,
               message: "An open ticket already exists. Please wait for a response before creating a new one.",
               ticket_id: existingOpenTicket.ticketnumber
@@ -2226,7 +2226,7 @@ else {
       
         } catch (error) {
       //    console.error("Add Ticket Error:", error);
-          return res.status(500).json({
+          return res.json({
             status: false,
             message: "Server error",
             error: error.message
