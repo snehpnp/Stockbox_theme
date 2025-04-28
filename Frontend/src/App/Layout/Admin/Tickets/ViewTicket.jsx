@@ -8,36 +8,46 @@ import {
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import { useParams } from "react-router-dom";
+import { fDate } from "../../../../Utils/Date_formate";
 
 const ViewTicket = () => {
+
+
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
   const [key, setKey] = useState("sendMessage");
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  
-  // Form state without formik
+
+
   const [formData, setFormData] = useState({
     subject: "",
     message: "",
     file: null
   });
+
+
   const [errors, setErrors] = useState({});
 
   const { id } = useParams();
 
+
+
+
   useEffect(() => {
     FetchMessage();
   }, []);
+
+
 
   const FetchMessage = async () => {
     try {
       const response = await GetTicketmessagedetailbyuser(id, token);
 
       if (response.status) {
-        setMessages(response?.data?.ticket);
-        console.log("response.data", response?.data?.ticket);
+        setMessages(response?.data);
+
       }
     } catch (error) {
       console.error("Error fetching trade data:", error);
@@ -45,10 +55,12 @@ const ViewTicket = () => {
     setIsLoading(false);
   };
 
-  // Handle input changes
+
+
+
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    
+
     if (name === "file" && files) {
       setFormData({
         ...formData,
@@ -61,7 +73,6 @@ const ViewTicket = () => {
       });
     }
 
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors({
         ...errors,
@@ -70,7 +81,7 @@ const ViewTicket = () => {
     }
   };
 
-  // Validate form
+
   const validateForm = () => {
     let newErrors = {};
     let isValid = true;
@@ -79,55 +90,46 @@ const ViewTicket = () => {
       newErrors.subject = "Please Enter Subject";
       isValid = false;
     }
-    
+
     if (!formData.message) {
       newErrors.message = "Please Enter Message";
       isValid = false;
     }
-    
+
     if (!formData.file) {
       newErrors.file = "Please Upload File";
       isValid = false;
     }
-    
-    if (formData.file && formData.file.size > 2 * 1024 * 1024) {
-      newErrors.file = "File size should be less than 2MB";
-      isValid = false;
-    }
+
 
     setErrors(newErrors);
     return isValid;
   };
 
-  // Handle form submission
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validate the form
+
     if (validateForm()) {
       try {
-       const data = {
-        ticket_id : messages?._id ,
+        const data = {
+          ticket_id: messages?.ticket?._id,
           message: formData.message,
           attachment: formData.file
         }
-  
-        const response = await sendTicketReply(data,token);
-        
-        console.log("Reply response:", response);
+
+        const response = await sendTicketReply(data, token);
 
         if (response.status) {
           showCustomAlert("Success", "Your reply has been sent successfully!");
-          // Refresh ticket messages after successful reply
           FetchMessage();
-          // Reset form
           setFormData({
-            ticket_id:"",
+            ticket_id: "",
             subject: "",
             message: "",
             file: null
           });
-          // Reset file input
+
           const fileInput = document.getElementById('file');
           if (fileInput) fileInput.value = '';
         } else {
@@ -143,6 +145,8 @@ const ViewTicket = () => {
     }
   };
 
+
+
   return (
     <Content
       Page_title="Help Desk"
@@ -156,10 +160,10 @@ const ViewTicket = () => {
             <div className="card-header border-bottom bg-transparent p-3">
               <div className="d-flex align-items-center">
                 <div>
-                  <h5 className="mb-0">Ticket Details:{messages?.ticketnumber}</h5>
+                  <h5 className="mb-0">Ticket Details:{messages?.ticket?.ticketnumber}</h5>
                 </div>
                 <div className="ms-auto">
-                  <small className="pe-3">08.34 AM</small>
+                  <small className="pe-3">{fDate(messages?.ticket?.created_at)}</small>
                   <button className="btn btn-primary btn-sm">Pending</button>
                 </div>
               </div>
@@ -167,12 +171,11 @@ const ViewTicket = () => {
             <div className="card-body">
               <div className="card-header border-bottom bg-transparent p-3">
                 <div className="card-title">
-                  <h6 className="mb-0">Messages</h6>
+                  <h6 className="mb-0">Subject</h6>
                 </div>
 
                 <p className="text-muted">
-                  Lorem ipsum is a dummy or placeholder text commonly used in
-                  graphic design, publishing, and web development.
+                  {messages?.ticket?.subject}
                 </p>
               </div>
             </div>
@@ -191,65 +194,29 @@ const ViewTicket = () => {
                 </div>
               </div>
               <ul className="list-group list-group-flush review-list">
-                <li className="list-group-item bg-transparent">
-                  <div className="d-flex align-items-center">
-                    <img
-                      src="assets/images/avatar/1.png"
-                      alt="user avatar"
-                      className="rounded-circle"
-                      width={55}
-                      height={55}
-                    />
-                    <div className="ms-3">
-                      <h6 className="mb-0">
-                        iPhone X <small className="ms-4">08.34 AM</small>
-                      </h6>
-                      <p className="mb-0 small-font">
-                        Sara Jhon : This is svery Nice phone in low budget.
-                      </p>
+                {messages?.messages?.map((item, index) => (
+                  <li key={index} className="list-group-item bg-transparent">
+                    <div className="d-flex align-items-center">
+                      <img
+                        src="assets/images/avatar/1.png"
+                        alt="user avatar"
+                        className="rounded-circle"
+                        width={55}
+                        height={55}
+                      />
+                      <div className="ms-3">
+                        <h6 className="mb-0">
+                          {item?.deviceName} <small className="ms-4">{item?.time}</small>
+                        </h6>
+                        <p className="mb-0 small-font">
+                          {item?.message}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </li>
-
-                <li className="list-group-item bg-transparent">
-                  <div className="d-flex align-items-center">
-                    <img
-                      src="assets/images/avatar/1.png"
-                      alt="user avatar"
-                      className="rounded-circle"
-                      width={55}
-                      height={55}
-                    />
-                    <div className="ms-3">
-                      <h6 className="mb-0">
-                        Mackbook <small className="ml-4">08.34 AM</small>
-                      </h6>
-                      <p className="mb-0 small-font">
-                        Michle : The brand apple is original !
-                      </p>
-                    </div>
-                  </div>
-                </li>
-                <li className="list-group-item bg-transparent">
-                  <div className="d-flex align-items-center">
-                    <img
-                      src="assets/images/avatar/1.png"
-                      alt="user avatar"
-                      className="rounded-circle"
-                      width={55}
-                      height={55}
-                    />
-                    <div className="ms-3">
-                      <h6 className="mb-0">
-                        Air Pod <small className="ml-4">08.34 AM</small>
-                      </h6>
-                      <p className="mb-0 small-font">
-                        Danish Josh : The brand apple is original !
-                      </p>
-                    </div>
-                  </div>
-                </li>
+                  </li>
+                ))}
               </ul>
+
             </div>
           </div>
         </div>
@@ -277,7 +244,7 @@ const ViewTicket = () => {
                   />
                   {errors.subject && <div className="invalid-feedback">{errors.subject}</div>}
                 </div>
-                
+
                 <div className="mb-3">
                   <label htmlFor="message" className="form-label">Message</label>
                   <textarea
@@ -291,7 +258,7 @@ const ViewTicket = () => {
                   />
                   {errors.message && <div className="invalid-feedback">{errors.message}</div>}
                 </div>
-                
+
                 <div className="mb-3">
                   <label htmlFor="file" className="form-label">Upload File</label>
                   <input
@@ -304,7 +271,7 @@ const ViewTicket = () => {
                   />
                   {errors.file && <div className="invalid-feedback">{errors.file}</div>}
                 </div>
-                
+
                 <div className="mt-4">
                   <button type="submit" className="btn btn-primary float-end">Submit</button>
                 </div>

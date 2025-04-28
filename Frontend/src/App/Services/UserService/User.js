@@ -1165,22 +1165,32 @@ export async function getChatLineData(data, token) {
 
 export async function GetTicketForhelp(data, token) {
     try {
-        const response = await axios.post(`${Config.base_url}api/client/addticket`, data, {
-
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
+        const formData = new FormData();
+        formData.append("client_id", data.client_id);
+        formData.append("subject", data.subject);
+        formData.append("message", data.message);
+        if (data.attachment) {
+            console.log("Attachment: ", data.attachment);
+            formData.append("attachment", data.attachment);
         }
+
+        const response = await axios.post(
+            `${Config.base_url}api/client/addticket`,
+            formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
         );
-
         return response.data;
-
     } catch (error) {
-        console.error('Error in clientKycAndAgreement API:', error.message);
+        console.error('Error in GetTicketForhelp API:', error.message);
         throw error.response?.data || { message: 'Something went wrong!' };
     }
 }
+
+
 
 export async function GetAllTicketData(data, token) {
     try {

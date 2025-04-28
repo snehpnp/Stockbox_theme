@@ -14,14 +14,11 @@ const HelpDesk = () => {
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
-
-  const [key, setKey] = useState("sendMessage");
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Form state without formik
+
   const [formData, setFormData] = useState({
-    subject: "",
     message: "",
     file: null
   });
@@ -29,9 +26,14 @@ const HelpDesk = () => {
 
   const { id } = useParams();
 
+
+
   useEffect(() => {
     FetchMessage();
   }, []);
+
+
+
 
   const FetchMessage = async () => {
     try {
@@ -46,6 +48,9 @@ const HelpDesk = () => {
     }
     setIsLoading(false);
   };
+
+
+
 
   // Handle input changes
   const handleChange = (e) => {
@@ -72,6 +77,9 @@ const HelpDesk = () => {
     }
   };
 
+
+
+
   // Validate form
   const validateForm = () => {
     let newErrors = {};
@@ -90,6 +98,9 @@ const HelpDesk = () => {
     setErrors(newErrors);
     return isValid;
   };
+
+
+
 
 
   const handleSubmit = async (e) => {
@@ -131,6 +142,10 @@ const HelpDesk = () => {
       }
     }
   };
+
+
+
+
 
   return (
     <Content
@@ -253,19 +268,6 @@ const HelpDesk = () => {
             </div>
             <div className="card-body px-3">
               <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label htmlFor="subject" className="form-label">Subject</label>
-                  <input
-                    type="text"
-                    className={`form-control ${errors.subject ? 'is-invalid' : ''}`}
-                    id="subject"
-                    name="subject"
-                    placeholder="Enter Subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                  />
-                  {errors.subject && <div className="invalid-feedback">{errors.subject}</div>}
-                </div>
 
                 <div className="mb-3">
                   <label htmlFor="message" className="form-label">Message</label>

@@ -82,6 +82,9 @@ const Client = () => {
     setCurrentPage(page);
   };
 
+
+
+
   useEffect(() => {
     if (clientStatus == 1) {
       setheader("Active Client");
@@ -93,6 +96,9 @@ const Client = () => {
       setheader("Total Plan Expired Client");
     }
   }, [clientStatus, clients]);
+
+
+
 
   const handleDownload = (row) => {
     const url = `${image_baseurl}uploads/pdf/${row.pdf}`;
@@ -116,6 +122,9 @@ const Client = () => {
     client_id: "",
     price: "",
   });
+
+
+
 
   const handleTabChange = (index) => {
     setCheckedIndex(index);
@@ -496,7 +505,7 @@ const Client = () => {
         if (!Array.isArray(row?.plansStatus) || row.plansStatus.length === 0) {
           return <span>N/A</span>;
         }
-    
+
         return (
           <div style={{ display: "flex", flexWrap: "wrap" }}>
             {row.plansStatus.map((item, index) => (
@@ -522,7 +531,7 @@ const Client = () => {
       sortable: true,
       width: "200px",
     },
-    
+
 
     // {
     //   name: "Phone No",
