@@ -5,14 +5,13 @@ import FormicForm from "../../../Extracomponents/Newformicform";
 import { useFormik } from "formik";
 import Content from "../../../components/Contents/Content";
 import { GetUserData } from "../../../Services/UserService/User";
-import { UpdateBroker } from "../../../Services/UserService/User";
 import BrokersData from "../../../../Utils/BrokersData";
 import { base_url } from "../../../../Utils/config";
 import { Eye } from "lucide-react";
 
 const Demat = () => {
-  const [brokers, 
-    
+  const [brokers,
+
   ] = useState([
     {
       id: 1,
