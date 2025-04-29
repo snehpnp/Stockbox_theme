@@ -10,7 +10,7 @@ import {
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import Table from "../../../Extracomponents/Table1";
-import { Eye, Trash2 } from "lucide-react";
+import { Eye, Trash2, RefreshCcw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Tooltip } from "antd";
 
@@ -27,7 +27,13 @@ const Ticket = () => {
   const [messagedata, setMessagedata] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
+  const [searchInput, setSearchInput] = useState("");
+  const [filters, setFilters] = useState({
+    from: "",
+    to: "",
+    status: "",
 
+  });
 
 
   const handlePageChange = (page) => {
@@ -37,13 +43,20 @@ const Ticket = () => {
 
   useEffect(() => {
     FetchMessage();
-  }, [currentPage]);
+  }, [currentPage, searchInput, filters]);
+
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
+
 
 
 
   const FetchMessage = async () => {
     try {
-      const data = { from: "", to: "", status: "", search: "", page: currentPage }
+      const data = { from: filters.from, to: filters.to, status: filters.status, search: searchInput, page: currentPage }
       const response = await GetTicketRaiseMesaage(data, token);
       if (response.status) {
         setMessagedata(response?.data);
@@ -76,6 +89,18 @@ const Ticket = () => {
     } catch (error) {
       showCustomAlert("error", "There was an error deleting this Ticket.");
     }
+  };
+
+
+  //
+  const resethandle = () => {
+    setFilters({
+      from: "",
+      to: "",
+      status: "",
+    });
+    FetchMessage("");
+
   };
 
 
@@ -135,25 +160,6 @@ const Ticket = () => {
     },
   ];
 
-  const data = [
-    {
-      id: 1,
-      ticket: "123456",
-      email: "test@gmail.com",
-      subject: "Beetlejuice",
-      description:
-        "Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development.",
-    },
-
-    {
-      id: 2,
-      ticket: "123456",
-      email: "test@gmail.com",
-      subject: "Ghostbusters",
-      description:
-        "Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development.",
-    },
-  ];
 
   return (
     <Content
@@ -162,6 +168,65 @@ const Ticket = () => {
       backbutton_status={false}
     >
       <div className="table-responsive">
+        <div className="d-md-flex align-items-center mb-4 gap-3">
+          <div className="position-relative">
+            <input
+              type="text"
+              className="form-control ps-5 radius-10"
+              placeholder="Search Signal"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+            <span className="position-absolute top-50 product-show translate-middle-y">
+              <i className="bx bx-search" />
+            </span>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-md-3 mb-3">
+            <label>From Date</label>
+            <input
+              type="date"
+              name="from"
+              className="form-control radius-10"
+              value={filters.from}
+              onChange={handleFilterChange}
+            />
+          </div>
+          <div className="col-md-3 mb-3">
+            <label>To Date</label>
+            <input
+              type="date"
+              name="to"
+              className="form-control radius-10"
+              value={filters.to}
+              onChange={handleFilterChange}
+              min={filters.from}
+            />
+          </div>
+          <div className="col-md-3 d-flex">
+            <div className="col-md-3 mb-3">
+              <label>Select Status</label>
+              <select
+                name="status"
+                className="form-control radius-10"
+                value={filters.status}
+                onChange={handleFilterChange}
+              >
+                <option value="">Select</option>
+                <option value="false">OPEN</option>
+                <option value="true">CLOSE</option>
+
+              </select>
+
+              <div className="rfreshicon">
+                <RefreshCcw onClick={resethandle} />
+              </div>
+            </div>
+          </div>
+
+
+        </div>
         <Table
           columns={columns}
           data={messagedata}
@@ -171,7 +236,7 @@ const Ticket = () => {
         />
       </div>
 
-    </Content>
+    </Content >
   );
 };
 

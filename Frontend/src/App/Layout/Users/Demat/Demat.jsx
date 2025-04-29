@@ -77,6 +77,9 @@ const Demat = () => {
     }
   };
 
+
+
+
   const handleShowModal = (title) => {
     setModalTitle(title);
     if (brokerData.dlinkstatus == 0) {
@@ -97,9 +100,14 @@ const Demat = () => {
     }
   };
 
+
+
+
   const closeBrokerModal = () => {
     setViewModel(false);
   };
+
+  
 
   return (
     <div>
