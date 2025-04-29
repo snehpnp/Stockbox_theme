@@ -14,11 +14,17 @@ import { fDate, Date } from "../../../../Utils/Date_formate";
 import { ArrowDownToLine } from "lucide-react";
 
 
+
+
 const ViewTicket = () => {
+
+
 
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
+
+
 
 
   const [messages, setMessages] = useState([]);
@@ -34,9 +40,11 @@ const ViewTicket = () => {
   });
 
 
-  const [errors, setErrors] = useState({});
 
+
+  const [errors, setErrors] = useState({});
   const { id } = useParams();
+
 
 
 
@@ -45,6 +53,8 @@ const ViewTicket = () => {
     FetchMessage();
     getpermissioninfo();
   }, []);
+
+
 
 
   const getpermissioninfo = async () => {
@@ -57,7 +67,6 @@ const ViewTicket = () => {
       console.log("error", error);
     }
   };
-
 
 
 
@@ -75,6 +84,8 @@ const ViewTicket = () => {
     setIsLoading(false);
   };
 
+
+  
 
   // close status 
 
