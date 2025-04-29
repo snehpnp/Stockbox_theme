@@ -255,7 +255,7 @@ const HelpDesk = () => {
                         />
                         <div className="ms-3">
                           <h6 className="mb-0">
-                            {item?.client_id ? userDetail?.FullName : "Admin"}
+                            {item?.client_id ? userDetail?.FullName : item?.adminname}
                             <small className="ms-4">{fDate(item?.created_at)}</small>
                           </h6>
                           <p className="mb-0 small-font">{item?.message}</p>
