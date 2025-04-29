@@ -1134,7 +1134,7 @@ class Clients {
     signCoordinates[client.PhoneNo] = {}; // Initialize the phone number key
     
     for (let i = 1; i <= noof_pdf_pages; i++) {
-        signCoordinates[client.PhoneNo][i] = [{ llx: 290, lly: 190, urx: 520, ury: 90 }];
+        signCoordinates[client.PhoneNo][i] = [{ llx: 290, lly: 170, urx: 520, ury: 70 }];
     }
     
     const requestBody = {
