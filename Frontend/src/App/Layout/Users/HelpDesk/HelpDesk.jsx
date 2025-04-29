@@ -161,7 +161,7 @@ const HelpDesk = () => {
                             cell: (row) => (
                                 // <button className={`btn btn-sm ${row.status ? 'btn-outline-success' : 'btn-outline-warning'}`}>
                                 <button className="btn btn-primary">
-                                    {row.status ? "Close" : "Open"}
+                                    {row.status === 0 ? "Pending" : row.status === 1 ? "Open" : "Close"}
                                 </button>
                             ),
                         },

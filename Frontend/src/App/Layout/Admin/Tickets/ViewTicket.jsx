@@ -4,7 +4,8 @@ import { Tabs, Tab } from "react-bootstrap";
 import {
   GetTicketmessagedetailbyuser,
   sendTicketReply,
-  TicketRaiseStatus
+  TicketRaiseStatus,
+  getstaffperuser
 } from "../../../Services/Admin/Admin";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
@@ -24,7 +25,7 @@ const ViewTicket = () => {
 
   const [isLoading, setIsLoading] = useState(true);
 
-
+  const [data, setData] = useState([]);
   const [formData, setFormData] = useState({
     subject: "",
     message: "",
@@ -41,8 +42,22 @@ const ViewTicket = () => {
 
   useEffect(() => {
     FetchMessage();
+    getpermissioninfo();
   }, []);
 
+
+  const getpermissioninfo = async () => {
+    try {
+      const response = await getstaffperuser(userid, token);
+      if (response.status) {
+        setData([response.data]);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  console.log("data", data)
 
 
   const FetchMessage = async () => {
@@ -63,7 +78,7 @@ const ViewTicket = () => {
   // close status 
 
   const handleSwitchChange = async (event) => {
-    const data = { id: messages?.ticket?._id, status: "true" };
+    const data = { id: messages?.ticket?._id, status: 2 };
     const result = await showCustomAlert("confirm", "Do you want to Close This Ticket?")
     if (result.isConfirmed) {
       try {
@@ -198,13 +213,14 @@ const ViewTicket = () => {
             <div className="card-header border-bottom bg-transparent p-3">
               <div className="d-flex align-items-center">
                 <div>
-                  <h5 className="mb-0">Ticket Details:{messages?.ticket?.ticketnumber}</h5>
+                  <h5 className="mb-0">Ticket ID :</h5>
+                  <h6 className="mb-0">{messages?.ticket?.ticketnumber}</h6>
                 </div>
                 <div className="ms-auto">
                   <small className="pe-3">{fDate(messages?.ticket?.created_at)}</small>
                   <button className="btn btn-primary btn-sm"
                     onClick={(event) => handleSwitchChange(event)}
-                    disabled={messages?.ticket?.status === true}
+                    disabled={messages?.ticket?.status === 2}
                   >Close Ticket </button>
                 </div>
               </div>
@@ -257,7 +273,7 @@ const ViewTicket = () => {
                         />
                         <div className="ms-3">
                           <h6 className="mb-0">
-                            {item?.client_id ? messages?.ticket?.client_id?.FullName : "Admin"}
+                            {item?.client_id ? messages?.ticket?.client_id?.FullName : data[0]?.FullName}
                             <small className="ms-4">{fDate(item?.created_at)}</small>
                           </h6>
                           <p className="mb-0 small-font">{item?.message}</p>
@@ -281,7 +297,7 @@ const ViewTicket = () => {
             </div>
           </div>
         </div>
-        {messages?.ticket?.status === false && <div className="col">
+        {messages?.ticket?.status !== 2 && <div className="col">
           <div className="card shadow-lg border-0">
             <div className="card-header border-bottom bg-transparent p-3">
               <div className="d-flex align-items-center">

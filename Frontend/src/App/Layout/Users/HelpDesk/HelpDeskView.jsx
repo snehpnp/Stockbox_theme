@@ -4,6 +4,7 @@ import { Tabs, Tab } from "react-bootstrap";
 import {
   GetTicketDetaildata,
   GetReplyTicketData,
+  GetUserData
 } from "../../../Services/UserService/User";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
@@ -25,9 +26,11 @@ const HelpDesk = () => {
   const [messages, setMessages] = useState([]);
 
 
+
+
   const [isLoading, setIsLoading] = useState(true);
 
-
+  const [userDetail, setUserDetail] = useState({});
   const [formData, setFormData] = useState({
     subject: "",
     message: "",
@@ -44,8 +47,23 @@ const HelpDesk = () => {
 
   useEffect(() => {
     FetchMessage();
+    getuserdetail();
   }, []);
 
+
+
+  const getuserdetail = async () => {
+    try {
+      const response = await GetUserData(userid, token);
+
+      if (response.status) {
+        setUserDetail(response.data);
+
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
 
   const FetchMessage = async () => {
@@ -135,7 +153,7 @@ const HelpDesk = () => {
           ticket_id: messages?.ticket?._id,
           message: formData.message,
           attachment: formData.file,
-          client_id:userid
+          client_id: userid
         }
 
         const response = await GetReplyTicketData(data, token);
@@ -147,7 +165,7 @@ const HelpDesk = () => {
             ticket_id: "",
             subject: "",
             message: "",
-            client_id:"",
+            client_id: "",
             file: null
           });
 
@@ -181,7 +199,8 @@ const HelpDesk = () => {
             <div className="card-header border-bottom bg-transparent p-3">
               <div className="d-flex align-items-center">
                 <div>
-                  <h5 className="mb-0">Ticket Details:{messages?.ticket?.ticketnumber}</h5>
+                  <h5 className="mb-0">Ticket ID :</h5>
+                  <h6 className="mb-0">{messages?.ticket?.ticketnumber}</h6>
                 </div>
                 <div className="ms-auto">
                   <small className="pe-3">{fDate(messages?.ticket?.created_at)}</small>
@@ -236,7 +255,7 @@ const HelpDesk = () => {
                         />
                         <div className="ms-3">
                           <h6 className="mb-0">
-                            {item?.client_id ? messages?.ticket?.client_id?.FullName : "Admin"}
+                            {item?.client_id ? userDetail?.FullName : "Admin"}
                             <small className="ms-4">{fDate(item?.created_at)}</small>
                           </h6>
                           <p className="mb-0 small-font">{item?.message}</p>
@@ -260,7 +279,7 @@ const HelpDesk = () => {
             </div>
           </div>
         </div>
-        {messages?.ticket?.status === false && <div className="col">
+        {messages?.ticket?.status === 1 && <div className="col">
           <div className="card shadow-lg border-0">
             <div className="card-header border-bottom bg-transparent p-3">
               <div className="d-flex align-items-center">

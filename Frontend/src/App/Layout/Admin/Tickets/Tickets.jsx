@@ -133,7 +133,7 @@ const Ticket = () => {
       cell: (row) => (
         <div>
           <button className="btn btn-primary btn-sm">
-            {row.status ? "Close" : "Open"}
+            {row.status === 0 ? "Pending" : row.status === 1 ? "Open" : "Close"}
           </button>
         </div>
       ),
@@ -150,17 +150,20 @@ const Ticket = () => {
               <Eye width="15px" />
             </Link>
           </div>
-          <div>
+          {/* <div>
             <Tooltip placement="top" overlay="Delete">
               <Trash2 onClick={() => DeleteTicket(row._id)} />
             </Tooltip>
-          </div>
+          </div> */}
         </>
       ),
     },
   ];
 
 
+
+
+  
   return (
     <Content
       Page_title="Help Desk"
@@ -213,7 +216,7 @@ const Ticket = () => {
               onChange={handleFilterChange}
             >
               <option value="">Select</option>
-              <option value="1">Pending</option>
+              <option value="0">Pending</option>
               <option value="1">OPEN</option>
               <option value="2">CLOSE</option>
 
