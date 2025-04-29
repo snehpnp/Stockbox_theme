@@ -132,9 +132,18 @@ const Ticket = () => {
       name: "Status",
       cell: (row) => (
         <div>
-          <button className="btn btn-primary btn-sm">
-            {row.status === 0 ? "Pending" : row.status === 1 ? "Open" : "Close"}
-          </button>
+       <button
+  className={`btn btn-sm ${
+    row.status === 0
+      ? "btn-warning"
+      : row.status === 1
+      ? "btn-success"
+      : "btn-danger"
+  }`}
+>
+  {row.status === 0 ? "Pending" : row.status === 1 ? "Open" : "Close"}
+</button>
+
         </div>
       ),
     },
@@ -207,7 +216,9 @@ const Ticket = () => {
               min={filters.from}
             />
           </div>
-          <div className="col-md-3 mb-3">
+          <div className="col-md-4 mb-3 "> 
+            <div className="d-flex align-items-center gap-2 ">
+            <div className="w-100">
             <label>Select Status</label>
             <select
               name="status"
@@ -221,12 +232,12 @@ const Ticket = () => {
               <option value="2">CLOSE</option>
 
             </select>
-
-            <div className="rfreshicon">
+            </div>
+            <div className="rfreshicon ">
               <RefreshCcw onClick={resethandle} />
             </div>
           </div>
-
+</div>
 
 
         </div>

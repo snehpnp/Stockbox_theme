@@ -223,16 +223,16 @@ const ViewTicket = () => {
     >
       <div className="row row-cols-1 row-cols-lg-1 mb-3">
         <div className="col">
-          <div className="card shadow-lg border-0">
-            <div className="card-header border-bottom bg-transparent p-3">
+          <div className="card shadow-lg" style={{backgroundColor:"#ededed"}}>
+            <div className="card-header border-bottom bg-white p-3 ">
               <div className="d-flex align-items-center">
                 <div>
-                  <h5 className="mb-0">Ticket ID :</h5>
-                  <h6 className="mb-0">{messages?.ticket?.ticketnumber}</h6>
+                  <h5 className="mb-0">Ticket ID :<b>{messages?.ticket?.ticketnumber}</b></h5>
+                
                 </div>
                 <div className="ms-auto">
-                  <small className="pe-3">{fDate(messages?.ticket?.created_at)}</small>
-                  <button className="btn btn-primary btn-sm"
+                  <small className="me-3 btn btn-info btn-sm pointer-none">{fDate(messages?.ticket?.created_at)}</small>
+                  <button className="btn btn-warning btn-sm"
                     onClick={(event) => handleSwitchChange(event)}
                     disabled={messages?.ticket?.status === 2}
                   >Close Ticket </button>
@@ -241,21 +241,78 @@ const ViewTicket = () => {
             </div>
             <div className="card-body">
               <div className="card-header border-bottom bg-transparent p-3">
-                <div className="card-title">
-                  <h6 className="mb-0">Subject</h6>
+                <div className="row">
+                  <div className="col-md-6  ">
+                    <div className="card">
+                    <div className="card-body">
+                  <div className="row">
+                  <div className="col-6"> 
+                  <div className="card-title">
+                  <h6 className="mb-0"> <b>Name</b></h6>
                 </div>
-                <p className="text-muted">
+                    
+                </div>
+                  <div className="col-6 text-end">
+                  <p className="text-muted">
                   {messages?.ticket?.subject}
                 </p>
-                <div className="card-title">
-                  <h6 className="mb-0">Message</h6>
+                  </div>
                 </div>
-                <p className="text-muted">
+                <div className="row ">
+                  <div className="col-6"> 
+                  <div className="card-title">
+                  <h6 className="mb-0"><b>Email</b></h6>
+                </div>
+                    
+                </div>
+                  <div className="col-6 text-end">
+                  <p className="text-muted">
                   {messages?.ticket?.message}
                 </p>
+                  </div>
+                </div>
+                  </div>
+                  </div>
+                  </div>
+                  <div className="col-md-6 ">
+
+                    <div className="card">
+                  <div className="card-body">
+                  <div className="row">
+                  <div className="col-6"> 
+                  <div className="card-title">
+                  <h6 className="mb-0"> <b>Subject</b></h6>
+                </div>
+                    
+                </div>
+                  <div className="col-6 text-end">
+                  <p className="text-muted">
+                  {messages?.ticket?.subject}
+                </p>
+                  </div>
+                </div>
+                <div className="row ">
+                  <div className="col-6"> 
+                  <div className="card-title">
+                  <h6 className="mb-0"><b>Message</b></h6>
+                </div>
+                    
+                </div>
+                  <div className="col-6 text-end">
+                  <p className="text-muted">
+                  {messages?.ticket?.message}
+                </p>
+                  </div>
+                </div> 
+                  </div>
+                </div>
+               </div>
+                </div>
+                
               </div>
+         
               {messages.ticket?.attachment && (
-                <button className="btn btn-primary mt-2" onClick={() => handleDownload(messages)}
+                <button className="btn btn-secondary mt-2 " onClick={() => handleDownload(messages)}
                 >Download</button>
               )}
             </div>
@@ -265,17 +322,14 @@ const ViewTicket = () => {
       <div className="row row-cols-2 row-cols-lg-2 ">
         <div className="col">
           <div className="card  border-0">
-            <div className="card radius-10 w-100">
-              <div className="card-header border-bottom bg-transparent">
-                <div className="d-flex align-items-center">
-                  <div>
+          <div className="card-body px-3">
                     <h5 className="mb-0">Replies</h5>
-                  </div>
-                </div>
-              </div>
+                  
+             
+    
               <ul className="list-group list-group-flush review-list">
                 {messages?.messages?.map((item, index) => (
-                  <li key={index} className="list-group-item bg-transparent">
+                  <li key={index} className="list-group-item bg-transparent my-2  border shadow-lg">
                     <div className="d-flex align-items-center justify-content-between">
                       <div className="d-flex align-items-center">
                         <img
@@ -288,27 +342,32 @@ const ViewTicket = () => {
                         <div className="ms-3">
                           <h6 className="mb-0">
                             {item?.client_id ? messages?.ticket?.client_id?.FullName : sendername[0]?.FullName}
-                            <small className="ms-4">{fDate(item?.created_at)}</small>
+                           
                           </h6>
                           <p className="mb-0 small-font">{item?.message}</p>
                         </div>
                       </div>
+                      <div>
+                      <small className="ms-4  small-font badge bg-info text-white">{fDate(item?.created_at)}</small>
                       {messages.messages[index]?.attachment && (
                         <button
                           onClick={() => handleDownload1(item)}
-                          className="border-0 bg-transparent p-0 d-flex align-items-center justify-content-center"
+                          className="border-0 bg-transparent p-0 d-flex align-items-center justify-content-end w-100"
                           style={{ width: '35px', height: '35px' }}
                         >
                           <ArrowDownToLine size={22} />
                         </button>
                       )}
+                      </div>
+                    
+                     
                     </div>
                   </li>
                 ))}
               </ul>
 
-
-            </div>
+</div>
+           
           </div>
         </div>
         {messages?.ticket?.status !== 2 && <div className="col">
