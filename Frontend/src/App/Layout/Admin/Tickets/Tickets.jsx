@@ -204,26 +204,26 @@ const Ticket = () => {
               min={filters.from}
             />
           </div>
-          <div className="col-md-3 d-flex">
-            <div className="col-md-3 mb-3">
-              <label>Select Status</label>
-              <select
-                name="status"
-                className="form-control radius-10"
-                value={filters.status}
-                onChange={handleFilterChange}
-              >
-                <option value="">Select</option>
-                <option value="false">OPEN</option>
-                <option value="true">CLOSE</option>
+          <div className="col-md-3 mb-3">
+            <label>Select Status</label>
+            <select
+              name="status"
+              className="form-control radius-10"
+              value={filters.status}
+              onChange={handleFilterChange}
+            >
+              <option value="">Select</option>
+              <option value="1">Pending</option>
+              <option value="1">OPEN</option>
+              <option value="2">CLOSE</option>
 
-              </select>
+            </select>
 
-              <div className="rfreshicon">
-                <RefreshCcw onClick={resethandle} />
-              </div>
+            <div className="rfreshicon">
+              <RefreshCcw onClick={resethandle} />
             </div>
           </div>
+
 
 
         </div>
