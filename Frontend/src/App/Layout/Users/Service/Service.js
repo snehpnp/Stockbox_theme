@@ -76,6 +76,7 @@ const Service = () => {
 
 
 
+
   useEffect(() => {
     getPlan();
     getCoupon();
@@ -398,7 +399,7 @@ const Service = () => {
                           </h6>
                         </div>
                         <div className="card-body">
-                          <ul className="list-group list-group-flush" style={{minHeight:"200px"}}>
+                          <ul className="list-group list-group-flush" style={{ minHeight: "200px" }}>
                             <li className="list-group-item">
                               <i className="bx bx-check me-2 font-18" />
                               Validity: {plan?.validity}
