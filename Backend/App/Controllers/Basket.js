@@ -572,7 +572,8 @@ class Basket {
                       message: `Insufficient funds to allocate ${allocatedAmount} for ${tradesymbol}`,
                   });
               }
-  
+
+
               // Calculate quantity and total value
               const quantity = Math.floor(allocatedAmount / currentPrice);
 

@@ -238,8 +238,19 @@ class Upstox {
                     const parts = line.split(",");
             
                     if (parts.length > 1 && parts[1].replace(/"/g, "") === searchToken) {
-                        tradingsymbol = parts[0].replace(/"/g, ""); // Assign value to global variable
+                    
+                        
+                        if (signal.segment === "C") {
+                        if(parts[2].replace(/"/g, "").trim() == stock.symbol){
+                            tradingsymbol = parts[0].replace(/"/g, ""); // Assign value to global variable
+                            break;
+                        }
+                    }
+                    else{
+                    tradingsymbol = parts[0].replace(/"/g, ""); // Assign value to global variable
                         break;
+                    }
+
                     }
                 }
             } catch (err) {
@@ -455,8 +466,16 @@ let config = {
                     const parts = line.split(",");
             
                     if (parts.length > 1 && parts[1].replace(/"/g, "") === searchToken) {
+                        if (signal.segment === "C") {
+                            if(parts[2].replace(/"/g, "").trim() == stock.symbol){
+                                tradingsymbol = parts[0].replace(/"/g, ""); // Assign value to global variable
+                                break;
+                            }
+                        }
+                        else{
                         tradingsymbol = parts[0].replace(/"/g, ""); // Assign value to global variable
-                        break;
+                            break;
+                        }
                     }
                 }
             } catch (err) {
@@ -812,8 +831,17 @@ let config = {
                     const parts = line.split(",");
             
                     if (parts.length > 1 && parts[1].replace(/"/g, "") === searchToken) {
+                        if (signal.segment === "C") {
+                            if(parts[2].replace(/"/g, "").trim() == stock.symbol){
+                                tradingsymbol = parts[0].replace(/"/g, ""); // Assign value to global variable
+                                break;
+                            }
+                        }
+                        else{
                         tradingsymbol = parts[0].replace(/"/g, ""); // Assign value to global variable
-                        break;
+                            break;
+                        }
+
                     }
                 }
             } catch (err) {
@@ -987,6 +1015,7 @@ let config = {
         try {
             const { id, quantity, price, version, basket_id, tradesymbol, instrumentToken, calltype, brokerid, howmanytimebuy } = item;
 
+
             const client = await Clients_Modal.findById(id);
             if (!client) {
                 return {
@@ -994,7 +1023,6 @@ let config = {
                     message: "Client not found"
                 };
             }
-
 
             if (client.tradingstatus == 0) {
                 return {
@@ -1009,33 +1037,54 @@ let config = {
                     message: "Invalid Broker Place Order"
                 };
             }
+
+
             const authToken = client.authtoken;
 
             let exchange, producttype;
             exchange = "NSE";
             producttype = "D";
 
+           
+
+
+
+            
+            const searchToken = instrumentToken; 
+            const filePath = path.join(__dirname, "../../tokenupstox/complete.csv");
+            
+            let tradingsymbol = null; // Declare outside for global scope
+            let stock = await Stock_Modal.findOne({
+                instrument_token: searchToken,
+                 
+                });
+            try {
+                const data = fs.readFileSync(filePath, "utf8");
+                const lines = data.split("\n");
+            
+                for (const line of lines) {
+                    const parts = line.split(",");
+            
+                    if (parts.length > 1 && parts[1].replace(/"/g, "") === searchToken) {
+
+                    
+                   if(parts[2].replace(/"/g, "").trim() == stock.symbol){
+                            tradingsymbol = parts[0].replace(/"/g, ""); // Assign value to global variable
+                    break;
+                        }
+
+                    }
+             }
+            } catch (err) {
+                console.error("Error reading file:", err);
+            }
+            
+
+
             if (calltype == "BUY") { } else {
 
 
-                let tradingsymbol = null; // Declare outside for global scope
-            
-                try {
-                    const data = fs.readFileSync(filePath, "utf8");
-                    const lines = data.split("\n");
-                
-                    for (const line of lines) {
-                        const parts = line.split(",");
-                
-                        if (parts.length > 1 && parts[1].replace(/"/g, "") === searchToken) {
-                            tradingsymbol = parts[0].replace(/"/g, ""); // Assign value to global variable
-                            break;
-                        }
-                    }
-                } catch (err) {
-                    console.error("Error reading file:", err);
-                }
-                
+
     
 
                 let holdingData = { qty: 0 };
@@ -1072,13 +1121,11 @@ let config = {
 
 
             let quantitys = quantity; // Declare quantitys outside the blocks
-            if(stock.segment !== "C") {
-                quantitys=  quantitys*stock.lotsize;
-            }
+            // if(stock.segment !== "C") {
+            //     quantitys=  quantitys*stock.lotsize;
+            // }
           
 
-
-              
             var data = JSON.stringify({
                 "quantity": quantitys,
                 "product": producttype,
@@ -1096,7 +1143,6 @@ let config = {
             
                       
             
-            
             let config = {
                 method: 'post',
               maxBodyLength: Infinity,
@@ -1107,21 +1153,14 @@ let config = {
                 },
                 data : data
               };
-              
-
-
+      
+            
             return axios(config)
                 .then(async (response) => {
 
-
-
                     if (response.data.data != undefined) {
 
-
-
                        
-
-
                         const order = new Basketorder_Modal({
                             clientid: client._id,
                             tradesymbol: tradesymbol,
@@ -1174,11 +1213,14 @@ let config = {
                 })
                 .catch(async (error) => {
 
+                    const errorMessage =
+    error?.response?.data?.errors?.[0]?.message || error.message || "Unknown error";
+
 
                     return {
                         status: false,
-                        message: error
-                    };
+                        message: errorMessage
+                      };
 
                 });
 

@@ -4336,9 +4336,20 @@ let avgreturnpermonthpercent = 0;
         });
       }
 
-
+      const latestStock = await Basketstock_Modal.findOne({ basket_id, status: 1 }).sort({ version: -1 });
+      const latestVersion = latestStock ? latestStock.version : null;
+      
+      if (!latestVersion) {
+        return res.json({
+          status: false,
+          message: "No stocks found in the basket.",
+        });
+      }
+      
+      // ✅ Step 2: Get only latest version's stocks
+      const existingStocks = await Basketstock_Modal.find({ basket_id, version: latestVersion, status: 1 });
       // Get stocks for the basket
-      const existingStocks = await Basketstock_Modal.find({ basket_id }).sort({ version: -1 });
+      // const existingStocks = await Basketstock_Modal.find({ basket_id }).sort({ version: -1 });
 
       const version = existingStocks.length > 0 ? existingStocks[0].version : 1;
 
@@ -4784,13 +4795,14 @@ let avgreturnpermonthpercent = 0;
 
             
               let config = {
-                method: 'post',
-                url: 'https://api-hft.upstox.com/v2/user/get-funds-and-margin',
+                method: 'get',
+                maxBodyLength: Infinity,
+                url: 'https://api.upstox.com/v2/user/get-funds-and-margin',
                 headers: {
-                     Authorization: `Bearer ${authToken}`,
+                  Authorization: `Bearer ${authToken}`,
                 },
-            };
-
+              };
+            
 
               const response = await axios(config);
 
