@@ -52,6 +52,7 @@ const HelpDesk = () => {
             const response = await GetTicketForhelp(data, token);
             if (response.status) {
                 showCustomAlert("Success", response.message);
+                FetchMessage()
             } else {
                 showCustomAlert("error", response.message);
             }

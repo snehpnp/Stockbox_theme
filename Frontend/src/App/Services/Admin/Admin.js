@@ -3773,6 +3773,7 @@ export async function sendTicketReply(data, token) {
         const formData = new FormData();
         formData.append('ticket_id', data.ticket_id);
         formData.append('message', data.message);
+        formData.append('adminname', data.adminname);
 
         if (data.attachment) {
             formData.append('attachment', data.attachment);

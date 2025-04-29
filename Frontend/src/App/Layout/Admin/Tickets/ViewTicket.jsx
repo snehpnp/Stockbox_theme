@@ -25,11 +25,12 @@ const ViewTicket = () => {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const [data, setData] = useState([]);
+  const [sendername, setSetsendername] = useState([]);
   const [formData, setFormData] = useState({
     subject: "",
     message: "",
-    file: null
+    file: null,
+    adminname: "",
   });
 
 
@@ -50,14 +51,14 @@ const ViewTicket = () => {
     try {
       const response = await getstaffperuser(userid, token);
       if (response.status) {
-        setData([response.data]);
+        setSetsendername([response.data]);
       }
     } catch (error) {
       console.log("error", error);
     }
   };
 
-  console.log("data", data)
+
 
 
   const FetchMessage = async () => {
@@ -160,6 +161,7 @@ const ViewTicket = () => {
   };
 
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -168,7 +170,8 @@ const ViewTicket = () => {
         const data = {
           ticket_id: messages?.ticket?._id,
           message: formData.message,
-          attachment: formData.file
+          attachment: formData.file,
+          adminname: sendername[0]?.FullName,
         }
 
         const response = await sendTicketReply(data, token);
@@ -180,7 +183,8 @@ const ViewTicket = () => {
             ticket_id: "",
             subject: "",
             message: "",
-            file: null
+            file: null,
+            adminname: "",
           });
 
           const fileInput = document.getElementById('file');
@@ -189,7 +193,6 @@ const ViewTicket = () => {
           showCustomAlert("error", "Reply Failed. Please try again.");
         }
       } catch (error) {
-        console.error("Error sending reply:", error);
         showCustomAlert(
           "error",
           "An error occurred while sending the reply. Please check your network or try again later."
@@ -273,7 +276,7 @@ const ViewTicket = () => {
                         />
                         <div className="ms-3">
                           <h6 className="mb-0">
-                            {item?.client_id ? messages?.ticket?.client_id?.FullName : data[0]?.FullName}
+                            {item?.client_id ? messages?.ticket?.client_id?.FullName : sendername[0]?.FullName}
                             <small className="ms-4">{fDate(item?.created_at)}</small>
                           </h6>
                           <p className="mb-0 small-font">{item?.message}</p>
