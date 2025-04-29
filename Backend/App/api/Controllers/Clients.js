@@ -2207,7 +2207,7 @@ else {
          
           const existingOpenTicket = await Ticket_Modal.findOne({
             client_id,
-            status: false, // assuming 'true' means ticket is open
+            status: { $in: [0, 1] },  // Match if status is 0 OR 1
             del: false
           });
       
@@ -2235,7 +2235,8 @@ else {
             subject,
             message,
             attachment,
-            ticketnumber
+            ticketnumber,
+            status: 0, // assuming 'false' means ticket is open
           });
       
           await newTicket.save();
