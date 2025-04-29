@@ -30,7 +30,7 @@ class TicketController {
             });
     
             // After the upload is successful, proceed with the rest of the logic
-            const { ticket_id, message } = req.body;
+            const { ticket_id, message, adminname } = req.body;
 
             if (!ticket_id) {
                 return res.status(400).json({ status: false, message: "Ticket Id is required" });
@@ -47,6 +47,7 @@ class TicketController {
                 ticket_id: ticket_id,
                 message: message,
                 attachment: attachment,
+                adminname: adminname,
                 
             });
             
