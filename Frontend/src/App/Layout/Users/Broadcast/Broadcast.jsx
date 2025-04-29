@@ -10,10 +10,11 @@ import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 const Broadcast = () => {
 
+
+
   const [broadcastData, setBroadcastData] = useState([]);
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
-
   const [isLoading, setIsLoading] = useState(true)
 
 
