@@ -172,10 +172,19 @@ const HelpDesk = () => {
                         {
                             name: "Status",
                             cell: (row) => (
+                                <div>
+                                    <button
+                                        className={`btn btn-sm ${row.status === 0
+                                            ? "btn-warning"
+                                            : row.status === 1
+                                                ? "btn-success"
+                                                : "btn-danger"
+                                            }`}
+                                    >
+                                        {row.status === 0 ? "Pending" : row.status === 1 ? "Open" : "Close"}
+                                    </button>
 
-                                <button className="btn btn-primary">
-                                    {row.status === 0 ? "Pending" : row.status === 1 ? "Open" : "Close"}
-                                </button>
+                                </div>
                             ),
                         },
                         {

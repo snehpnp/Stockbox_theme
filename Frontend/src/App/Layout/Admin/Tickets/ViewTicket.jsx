@@ -232,22 +232,9 @@ const ViewTicket = () => {
                   <h5 className="mb-0">Ticket ID :</h5>
                   <h6 className="mb-0">#{messages?.ticket?.ticketnumber}</h6>
                 </div>
-                <div className="ms-auto">
-                  <small className="pe-3">
-                    {fTimeOnly(messages?.ticket?.created_at)}
-                  </small>
-
-                  <button className="btn btn-primary btn-sm">
-                    View Ticket
-                  </button>
-
-                  <h5 className="mb-0 mt-2">
-                    Ticket ID : <b>{messages?.ticket?.ticketnumber}</b>
-                  </h5>
-                </div>
 
                 <div className="ms-auto">
-                  <small className="me-3 btn btn-info btn-sm pointer-none">{fDate(messages?.ticket?.created_at)}</small>
+                  <small className="me-3 btn btn-info btn-sm pointer-none">{fTimeOnly(messages?.ticket?.created_at)}</small>
                   <button className="btn btn-warning btn-sm"
                     onClick={(event) => handleSwitchChange(event)}
                     disabled={messages?.ticket?.status === 2}
@@ -258,80 +245,83 @@ const ViewTicket = () => {
             <div className="card-body">
               <div className="card-header border-bottom bg-transparent p-3">
                 <div className="row">
-                  <div className="col-md-6  ">
+            
+                  <div className="col-md-6">
                     <div className="card">
                       <div className="card-body">
-                        <div className="row">
+                      
+                        <div className="row mb-3">
                           <div className="col-6">
-                            <div className="card-title">
-                              <h6 className="mb-0"> <b>Name</b></h6>
-                            </div>
-
+                            <h6 className="mb-0"><b>Subject : </b></h6>
                           </div>
                           <div className="col-6 text-end">
-                            <p className="text-muted">
-                              {messages?.ticket?.subject}
-                            </p>
+                            <p className="text-muted mb-0">{messages?.ticket?.subject}</p>
                           </div>
                         </div>
-                        <div className="row ">
-                          <div className="col-6">
-                            <div className="card-title">
-                              <h6 className="mb-0"><b>Email</b></h6>
-                            </div>
 
-                          </div>
-                          <div className="col-6 text-end">
-                            <p className="text-muted">
-                              {messages?.ticket?.message}
-                            </p>
+                      
+                        <div className="row">
+                          <div className="col-12">
+                            <h6 className="mb-2"><b>Message : </b></h6>
+                            <textarea
+                              className="form-control"
+                              rows="1"
+                              readOnly
+                              value={messages?.ticket?.message || ''}
+                            />
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-6 ">
 
+
+                  <div className="col-md-6">
                     <div className="card">
                       <div className="card-body">
-                        <div className="row">
-                          <div className="col-6">
-                            <div className="card-title">
-                              <h6 className="mb-0"> <b>Subject</b></h6>
-                            </div>
 
+                        <div className="row mb-3">
+                          <div className="col-6">
+                            <h6 className="mb-0"><b>Name : </b></h6>
                           </div>
                           <div className="col-6 text-end">
-                            <p className="text-muted">
-                              {messages?.ticket?.subject}
-                            </p>
+                            <p className="text-muted mb-0">{messages?.ticket?.client_id?.FullName}</p>
                           </div>
                         </div>
-                        <div className="row ">
-                          <div className="col-6">
-                            <div className="card-title">
-                              <h6 className="mb-0"><b>Message</b></h6>
-                            </div>
 
+
+                        <div className="row mb-3">
+                          <div className="col-6">
+                            <h6 className="mb-0"><b>Email : </b></h6>
                           </div>
                           <div className="col-6 text-end">
-                            <p className="text-muted">
-                              {messages?.ticket?.message}
-                            </p>
+                            <p className="text-muted mb-0">{messages?.ticket?.client_id?.Email}</p>
+                          </div>
+                        </div>
+
+
+                        <div className="row">
+                          <div className="col-6">
+                            <h6 className="mb-0"><b>Phone Number : </b></h6>
+                          </div>
+                          <div className="col-6 text-end">
+                            <p className="text-muted mb-0">{messages?.ticket?.client_id?.PhoneNo}</p>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-
               </div>
+
 
               {messages.ticket?.attachment && (
                 <button className="btn btn-secondary mt-2 " onClick={() => handleDownload(messages)}
                 >Download</button>
               )}
             </div>
+
+            
           </div>
         </div>
       </div>
@@ -358,14 +348,12 @@ const ViewTicket = () => {
                         <div className="ms-3">
                           <h6 className="mb-0">
                             {item?.client_id ? messages?.ticket?.client_id?.FullName : sendername[0]?.FullName}
-                            <small className="ms-4">{fTimeOnly(item?.created_at)}</small>
-
                           </h6>
                           <p className="mb-0 small-font">{item?.message}</p>
                         </div>
                       </div>
                       <div>
-                        <small className="ms-4  small-font badge bg-info text-white">{fDate(item?.created_at)}</small>
+                        <small className="ms-4  small-font badge bg-info text-white">{fTimeOnly(item?.created_at)}</small>
                         {messages.messages[index]?.attachment && (
                           <button
                             onClick={() => handleDownload1(item)}
