@@ -5,8 +5,10 @@ import { MessageCircleMore } from "lucide-react";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
-const Broadcast = () => {
 
+
+
+const Broadcast = () => {
 
   const [broadcastData, setBroadcastData] = useState([]);
   const token = localStorage.getItem("token");
@@ -15,12 +17,9 @@ const Broadcast = () => {
   const [isLoading, setIsLoading] = useState(true)
 
 
-
   useEffect(() => {
     GetBrodcast();
   }, []);
-
-
 
 
   const GetBrodcast = async () => {
