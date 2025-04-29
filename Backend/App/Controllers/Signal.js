@@ -539,11 +539,11 @@ async getSignalWithFilter(req, res) {
         serviceName = "Option";
         service = "66dfeef84a88602fbbca9b79";
       } 
-      else if (segment == "OS") {
+      else if (Signal.segment == "OS") {
         service = "67e12758a0a2be895da19550";
         serviceName = "Strategy";
       } 
-      else if (segment == "FS") {
+      else if (Signal.segment == "FS") {
         service = "67e1279ba0a2be895da19551";
         serviceName = "Future Strategy";
       } 
@@ -1694,11 +1694,11 @@ async closeSignalwithplan(req, res) {
       serviceName = "Option";
       service = "66dfeef84a88602fbbca9b79";
     } 
-    else if (segment == "OS") {
+    else if (Signal.segment == "OS") {
       service = "67e12758a0a2be895da19550";
       serviceName = "Strategy";
     } 
-    else if (segment == "FS") {
+    else if (Signal.segment == "FS") {
       service = "67e1279ba0a2be895da19551";
       serviceName = "Future Strategy";
     } 
