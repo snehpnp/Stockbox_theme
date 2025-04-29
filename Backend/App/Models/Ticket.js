@@ -29,9 +29,10 @@ const TicketSchema = new Schema({
         default: null
     },
     status: {
-        type: Boolean,
-        default: false // Assuming true means active and false means inactive
+        type: Number,
+        default: 0
     },
+
     del: {
         type: Boolean,
         default: false // assuming false means not deleted

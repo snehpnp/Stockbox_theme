@@ -2146,102 +2146,50 @@ class Clients {
       }
 
 
-
-      const attachment = req.files['attachment'] ? req.files['attachment'][0].filename : null;
-
-      // Create a new News record
-      const result = new Ticketmessage_Modal({
-        ticket_id: ticket_id,
-        client_id: client_id,
-        message: message,
-        attachment: attachment,
-      });
-
-      // Save the result to the database
-      await result.save();
-
-
-      return res.json({
-        status: true,
-        message: "reply successfully",
-      });
-
-    } catch (error) {
-      // console.log("Server error:", error);
-      return res.json({ status: false, message: "Server error", data: [] });
-    }
-  }
-
-
-  async addTicket(req, res) {
-    try {
-      // File upload
-      await new Promise((resolve, reject) => {
-        upload('ticket').fields([{ name: 'attachment', maxCount: 1 }])(req, res, (err) => {
-          if (err) return reject(err);
-          resolve();
-        });
-      });
-
-      const { subject, message, client_id } = req.body;
-
-      if (!subject || !message || !client_id) {
-        return res.json({
-          status: false,
-          message: "Subject, Message, and Client ID are required"
-        });
-      }
-
-      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
-
-      if (!client) {
-        return res.json({ status: false, message: 'Client not found or inactive.' });
-      }
-
-
-
-      const existingOpenTicket = await Ticket_Modal.findOne({
-        client_id,
-        status: false, // assuming 'true' means ticket is open
-        del: false
-      });
-
-      if (existingOpenTicket) {
-        return res.json({
-          status: false,
-          message: "An open ticket already exists. Please wait for a response before creating a new one.",
-          ticket_id: existingOpenTicket.ticketnumber
-        });
-      }
-
-      const attachment = req.files && req.files['attachment']
-        ? req.files['attachment'][0].filename
-        : null;
-
-      // Generate ticket number
-      const prefix = "TKT";
-      const timestamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 12);
-      const randomStr = Math.random().toString(36).substr(2, 5).toUpperCase();
-      const ticketnumber = `${prefix}-${timestamp}-${randomStr}`;
-
-      // Create ticket
-      const newTicket = new Ticket_Modal({
-        client_id,
-        subject,
-        message,
-        attachment,
-        ticketnumber
-      });
-
-      await newTicket.save();
-
-      return res.json({
-        status: true,
-        message: "Ticket added successfully",
-        data: newTicket
-      });
-
-    } catch (error) {
+         
+          const existingOpenTicket = await Ticket_Modal.findOne({
+            client_id,
+            status: { $in: [0, 1] },  // Match if status is 0 OR 1
+            del: false
+          });
+      
+          if (existingOpenTicket) {
+            return res.json({
+              status: false,
+              message: "An open ticket already exists. Please wait for a response before creating a new one.",
+              ticket_id: existingOpenTicket.ticketnumber
+            });
+          }
+      
+          const attachment = req.files && req.files['attachment']
+            ? req.files['attachment'][0].filename
+            : null;
+      
+          // Generate ticket number
+          const prefix = "TKT";
+          const timestamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 12);
+          const randomStr = Math.random().toString(36).substr(2, 5).toUpperCase();
+          const ticketnumber = `${prefix}-${timestamp}-${randomStr}`;
+      
+          // Create ticket
+          const newTicket = new Ticket_Modal({
+            client_id,
+            subject,
+            message,
+            attachment,
+            ticketnumber,
+            status: 0, // assuming 'false' means ticket is open
+          });
+      
+          await newTicket.save();
+      
+          return res.json({
+            status: true,
+            message: "Ticket added successfully",
+            data: newTicket
+          });
+      
+        } catch (error) {
       //    console.error("Add Ticket Error:", error);
       return res.json({
         status: false,

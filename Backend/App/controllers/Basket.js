@@ -677,7 +677,7 @@ class Basket {
   }
 
 
-  await Basketstock_Modal.deleteMany({ basket_id, version });
+  // await Basketstock_Modal.deleteMany({ basket_id, version });
 
 
   let totalAmount = 0;
@@ -745,6 +745,30 @@ class Basket {
 
 
   const bulkOps = [];
+
+
+  for (const stock of stocks) {
+    const { tradesymbol, percentage, price } = stock;
+
+    const currentPrice = price;
+    if (!currentPrice) {
+      return res.status(400).json({ status: false, message: `No market price found for ${tradesymbol}` });
+    }
+
+    const allocatedAmount = (percentage / 100) * totalAmount;
+    const quantity = Math.floor(allocatedAmount / currentPrice);
+
+    if (quantity <= 0) {
+      return res.status(400).json({
+        status: false,
+        message: `Quantity is zero for stock ${tradesymbol}. Cannot add stock.`,
+      });
+    }
+  }
+
+  // ✅ Jab yaha tak sab stocks valid hai, tab purane delete karo
+  await Basketstock_Modal.deleteMany({ basket_id, version });
+
 
   for (const stock of stocks) {
     const { name, tradesymbol, percentage, price, comment, type, status } = stock;
@@ -904,7 +928,7 @@ class Basket {
         }
       }
   
-      await Basketstock_Modal.deleteMany({ basket_id, version });
+      // await Basketstock_Modal.deleteMany({ basket_id, version });
   
       let totalAmount = existingStocks.length > 0 ? existingStocks.reduce((sum, stock) => sum + (stock.price * stock.quantity), 0) : basket.mininvamount;
   
@@ -917,6 +941,33 @@ class Basket {
       }
   
       const bulkOps = [];
+
+
+
+
+      for (const stock of stocks) {
+        const { tradesymbol, percentage, price } = stock;
+    
+        const currentPrice = price;
+        if (!currentPrice) {
+          return res.status(400).json({ status: false, message: `No market price found for ${tradesymbol}` });
+        }
+    
+        const allocatedAmount = (percentage / 100) * totalAmount;
+        const quantity = Math.floor(allocatedAmount / currentPrice);
+    
+        if (quantity <= 0) {
+          return res.status(400).json({
+            status: false,
+            message: `Quantity is zero for stock ${tradesymbol}. Cannot add stock.`,
+          });
+        }
+      }
+    
+      // ✅ Jab yaha tak sab stocks valid hai, tab purane delete karo
+      await Basketstock_Modal.deleteMany({ basket_id, version });
+    
+
       for (const stock of stocks) {
         const { name, tradesymbol, percentage, price, comment, status } = stock;
   
