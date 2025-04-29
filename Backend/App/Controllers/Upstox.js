@@ -1213,8 +1213,7 @@ let config = {
                 })
                 .catch(async (error) => {
 
-                    const errorMessage =
-    error?.response?.data?.errors?.[0]?.message || error.message || "Unknown error";
+                const errorMessage = error?.response?.data?.errors?.[0]?.message || error.message || "Unknown error";
 
 
                     return {
