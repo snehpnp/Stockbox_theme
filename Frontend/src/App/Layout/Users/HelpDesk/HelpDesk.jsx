@@ -7,6 +7,7 @@ import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import Table from "../../../Extracomponents/Table1";
 import { Eye } from "lucide-react";
 import { Link } from "react-router-dom";
+import { fDate } from "../../../../Utils/Date_formate";
 
 const HelpDesk = () => {
 
@@ -154,13 +155,24 @@ const HelpDesk = () => {
             <div className="table-responsive mt-2">
                 <Table
                     columns={[
-                        { name: "Ticket No.", selector: (row) => row.ticketnumber },
-                        { name: "Subject", selector: (row) => row.subject },
-                        { name: "Description", selector: (row) => row.message, width: "300px" },
+                        {
+                            name: "Ticket No.",
+                            selector: (row) => `#${row?.ticketnumber}`,
+                            width: "250px"
+                        },
+                        {
+                            name: "Subject",
+                            selector: (row) => row?.subject
+                        },
+                        {
+                            name: "Created At",
+                            selector: (row) => fDate(row?.created_at),
+                            width: "300px"
+                        },
                         {
                             name: "Status",
                             cell: (row) => (
-                                // <button className={`btn btn-sm ${row.status ? 'btn-outline-success' : 'btn-outline-warning'}`}>
+
                                 <button className="btn btn-primary">
                                     {row.status === 0 ? "Pending" : row.status === 1 ? "Open" : "Close"}
                                 </button>

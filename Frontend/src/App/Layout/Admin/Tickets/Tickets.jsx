@@ -13,7 +13,7 @@ import Table from "../../../Extracomponents/Table1";
 import { Eye, Trash2, RefreshCcw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Tooltip } from "antd";
-
+import { fDate } from "../../../../Utils/Date_formate";
 
 
 const Ticket = () => {
@@ -111,7 +111,7 @@ const Ticket = () => {
   const columns = [
     {
       name: "Ticket ID",
-      selector: (row) => row?.ticketnumber,
+      selector: (row) => `#${row?.ticketnumber}`,
       width: "250px",
     },
     {
@@ -124,9 +124,9 @@ const Ticket = () => {
       selector: (row) => row.subject,
     },
     {
-      name: "Message",
-      selector: (row) => row.message,
-      width: "300px",
+      name: "Created At",
+      selector: (row) => fDate(row?.created_at),
+      width: "250px",
     },
     {
       name: "Status",
@@ -163,7 +163,7 @@ const Ticket = () => {
 
 
 
-  
+
   return (
     <Content
       Page_title="Help Desk"

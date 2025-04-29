@@ -9,7 +9,7 @@ import {
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import { useParams } from "react-router-dom";
-import { fDate, Date } from "../../../../Utils/Date_formate";
+import { fDate, Date, fTimeOnly } from "../../../../Utils/Date_formate";
 import { ArrowDownToLine } from "lucide-react";
 
 
@@ -200,10 +200,10 @@ const HelpDesk = () => {
               <div className="d-flex align-items-center">
                 <div>
                   <h5 className="mb-0">Ticket ID :</h5>
-                  <h6 className="mb-0">{messages?.ticket?.ticketnumber}</h6>
+                  <h6 className="mb-0">#{messages?.ticket?.ticketnumber}</h6>
                 </div>
                 <div className="ms-auto">
-                  <small className="pe-3">{fDate(messages?.ticket?.created_at)}</small>
+                  <small className="pe-3">{fTimeOnly(messages?.ticket?.created_at ? messages?.ticket?.created_at : "")}</small>
                 </div>
               </div>
             </div>
@@ -256,7 +256,7 @@ const HelpDesk = () => {
                         <div className="ms-3">
                           <h6 className="mb-0">
                             {item?.client_id ? userDetail?.FullName : item?.adminname}
-                            <small className="ms-4">{fDate(item?.created_at)}</small>
+                            <small className="ms-4">{fTimeOnly(item?.created_at)}</small>
                           </h6>
                           <p className="mb-0 small-font">{item?.message}</p>
                         </div>
