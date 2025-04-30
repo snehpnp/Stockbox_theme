@@ -7271,14 +7271,6 @@ class List {
 
 
 
-      const baseConditions = {
-        service: service_id,
-        close_status: false,
-        $or: uniquePlanIds.map((planId, index) => ({
-          planid: planId.toString(),
-          created_at: { $lte: planEnds[index] }
-        }))
-      };
 
       let query = { ...baseConditions }; // default
 
