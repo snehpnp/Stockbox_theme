@@ -8,7 +8,7 @@ const qs = require('qs');
 
 export async function GetClient(token) {
     try {
-        const res = await axios.get(`${Config.base_url}client/list`, {
+        const res = await axios.get(`${Config.base_url}client/listfive`, {
             headers: {
                 'Authorization': `${token}`
             },
