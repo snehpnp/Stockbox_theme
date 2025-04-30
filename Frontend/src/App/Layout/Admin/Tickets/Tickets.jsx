@@ -138,10 +138,10 @@ const Ticket = () => {
         <div>
           <button
             className={`btn btn-sm ${row.status === 0
-                ? "btn-warning"
-                : row.status === 1
-                  ? "btn-success"
-                  : "btn-danger"
+              ? "btn-warning"
+              : row.status === 1
+                ? "btn-success"
+                : "btn-danger"
               }`}
           >
             {row.status === 0 ? "Pending" : row.status === 1 ? "Open" : "Close"}
