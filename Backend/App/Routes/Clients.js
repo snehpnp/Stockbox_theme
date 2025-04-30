@@ -1,7 +1,7 @@
 const router = require("express").Router()
 const { checkPermission } = require('../Middleware/permissionMiddleware');
 
-const {AddClient,getClient,updateClient,deleteClient,detailClient,statusChange,activeClient,processPayoutRequest,payoutList,freetrialList,deleteFreetrial,helpdeskList,deleteHelpdesk,myPlan,myService,deActiveClient,getClientWithFilter,freetrialListWithFilter,getClientWithFilterExcel,getDeleteClientWithFilter,clientRequest,deleteClientrequest,orderListDetail,PlanCartList,BasketCartList,getClientWithFilterwithplan,orderListDetailexport,getClientWithFilterExport,freetrialListWithFilterExport} = require('../Controllers/Clients')
+const {AddClient,getClient,updateClient,deleteClient,detailClient,statusChange,activeClient,processPayoutRequest,payoutList,freetrialList,deleteFreetrial,helpdeskList,deleteHelpdesk,myPlan,myService,deActiveClient,getClientWithFilter,freetrialListWithFilter,getClientWithFilterExcel,getDeleteClientWithFilter,clientRequest,deleteClientrequest,orderListDetail,PlanCartList,BasketCartList,getClientWithFilterwithplan,orderListDetailexport,getClientWithFilterExport,freetrialListWithFilterExport,getClientFive} = require('../Controllers/Clients')
 
 
 
@@ -18,6 +18,8 @@ const PERMISSIONS = {
 
 router.post('/client/add', AddClient);
 router.get('/client/list', getClient);
+router.get('/client/listfive', getClientFive);
+
 router.post('/client/listwithfilter', getClientWithFilter);
 
 router.post('/client/deletelistwithfilter', getDeleteClientWithFilter);

@@ -5407,9 +5407,9 @@ let avgreturnpermonthpercent = 0;
      
 
 
-      const uniquePlanIds = [
-        ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
-      ].map(id => new ObjectId(id));
+    //  const uniquePlanIds = [
+      //   ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
+      // ].map(id => new ObjectId(id));
       
 /*
       const query = {
@@ -5437,7 +5437,7 @@ let avgreturnpermonthpercent = 0;
 const baseConditions = {
   service: service_id,
   close_status: false,
-  $or: uniquePlanIds.map((planId, index) => ({
+  $or: planIds.map((planId, index) => ({
     planid: planId.toString(),
     created_at: { $lte: planEnds[index] }
   }))
@@ -8244,7 +8244,7 @@ async SignalClientWithPlanStrategy(req, res) {
     const planIds = subscriptions.map(sub => sub.plan_category_id).filter(id => id != null);
     const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
 
-    const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
+    // const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
 
   /*  const query = {
       close_status: false,
@@ -8266,7 +8266,7 @@ async SignalClientWithPlanStrategy(req, res) {
 
       let query = {
         close_status: false,
-        $or: uniquePlanIds.map((planId, index) => ({
+        $or: planIds.map((planId, index) => ({
           planid: planId.toString(),
           created_at: { $lte: planEnds[index] }
         }))
@@ -8376,7 +8376,7 @@ async SignalClientWithPlanCloseStrategy(req, res) {
     const planStarts = subscriptions.map(sub => new Date(sub.plan_start));
     const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
 
-    const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
+   // const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
 
    /* const query = {
       close_status: true,
@@ -8398,7 +8398,7 @@ async SignalClientWithPlanCloseStrategy(req, res) {
 
       let query = {
         close_status: true,
-        $or: uniquePlanIds.map((planId, index) => ({
+        $or: planIds.map((planId, index) => ({
           planid: planId.toString(),
           created_at: { $lte: planEnds[index] }
           // closedate: { $gte: planStarts[index] } // Agar chahiye to uncomment kar lena

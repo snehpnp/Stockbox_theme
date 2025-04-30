@@ -439,6 +439,202 @@ class Clients {
   }
 
 
+
+  
+  async getClientFive(req, res) {
+    try {
+
+    
+      const { } = req.body;
+      //  const result = await Clients_Modal.find({ del: 0 }).sort({ createdAt: -1 });
+
+      const result = await Clients_Modal.aggregate([
+        {
+          $match: { del: 0 }
+        },
+        {
+          $lookup: {
+            from: 'users', // The users collection name
+            let: { userId: { $toObjectId: "$add_by" } }, // Convert add_by to ObjectId
+            pipeline: [
+              { $match: { $expr: { $eq: ["$_id", "$$userId"] } } }
+            ],
+            as: 'addedByDetails'
+          }
+        },
+        {
+          $unwind: {
+            path: '$addedByDetails',
+            preserveNullAndEmptyArrays: true // Keeps clients without a matching user
+          }
+        },
+        {
+          $lookup: {
+            from: 'planmanages', // Planmanage collection
+            let: { clientId: { $toObjectId: "$_id" } }, // Convert Clients_Modal _id to ObjectId
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: [{ $toObjectId: "$clientid" }, "$$clientId"] // Match clientid in planmanages
+                  }
+                }
+              }
+            ],
+            as: 'plans'
+          }
+        },
+        {
+          $lookup: {
+            from: 'services', // Assuming services collection contains the service details
+            localField: 'plans.serviceid', // Linking serviceid in planmanages
+            foreignField: '_id', // Matching _id in services
+            as: 'serviceDetails'
+          }
+        },
+        {
+          $addFields: {
+            activePlans: {
+              $filter: {
+                input: "$plans",
+                as: "plan",
+                cond: { $gte: ["$$plan.enddate", new Date()] } // Active if enddate >= today
+              }
+            },
+            expiredPlans: {
+              $filter: {
+                input: "$plans",
+                as: "plan",
+                cond: { $lt: ["$$plan.enddate", new Date()] } // Expired if enddate < today
+              }
+            },
+            plansStatus: {
+              $map: {
+                input: "$plans",
+                as: "plan",
+                in: {
+                  planId: "$$plan._id", // Include plan ID
+                  serviceName: {
+                    $switch: {
+                      branches: [
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "66d2c3bebf7e6dc53ed07626" // Static ObjectId for "Cash"
+                            ]
+                          },
+                          then: "Cash" // If serviceid matches, return "Cash"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "66dfede64a88602fbbca9b72" // Static ObjectId for "Future"
+                            ]
+                          },
+                          then: "Future" // If serviceid matches, return "Future"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "66dfeef84a88602fbbca9b79" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Option" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e12758a0a2be895da19550" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Strategy" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e1279ba0a2be895da19551" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Future Strategy" // If serviceid matches, return "Option"
+                        }
+                      ],
+                      default: "Unknown Service" // Default value if no match
+                    }
+                  },
+                  status: {
+                    $cond: {
+                      if: { $gte: ["$$plan.enddate", new Date()] }, // Active if enddate >= today
+                      then: "active", // Plan is active
+                      else: "expired" // Plan is expired
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          $project: {
+            _id: 1,
+            FullName: 1,
+            Email: 1,
+            PhoneNo: 1,
+            password: 1,
+            token: 1,
+            panno: 1,
+            aadhaarno: 1,
+            kyc_verification: 1,
+            pdf: 1,
+            add_by: 1,
+            apikey: 1,
+            apisecret: 1,
+            alice_userid: 1,
+            brokerid: 1,
+            authtoken: 1,
+            dlinkstatus: 1,
+            tradingstatus: 1,
+            wamount: 1,
+            del: 1,
+            clientcome: 1,
+            ActiveStatus: 1,
+            freetrial: 1,
+            refer_token: 1,
+            forgotPasswordToken: 1,
+            forgotPasswordTokenExpiry: 1,
+            devicetoken: 1,
+            createdAt: 1,
+            updatedAt: 1,
+            'addedByDetails.FullName': 1, // Include user's first name
+            plansStatus: 1, // Updated to include service name and status
+          }
+        },
+        {
+          $sort: { 'createdAt': -1 } // Sort by createdAt in descending order
+        },
+        {
+          $limit: 5
+        }
+      ]);
+
+      return res.json({
+        status: true,
+        message: "Clients with their plan statuses fetched",
+        data: result
+      });
+
+    } catch (error) {
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
+
+
+
+
   async getClientWithFilter(req, res) {
     try {
       const { status, kyc_verification, createdby, planStatus, search, add_by, page = 1 } = req.body;

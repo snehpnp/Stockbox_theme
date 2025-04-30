@@ -2180,13 +2180,33 @@ async AddSignals(req, res) {
 
     // Split planid into an array of plan IDs
     const planIds = planid.split(',');
+    var servicess;
+
+    if (service == "C") {
+      servicess = "66d2c3bebf7e6dc53ed07626";
+    
+    } else if (service == "O") {
+      servicess = "66dfeef84a88602fbbca9b79";
+    } 
+    else if (service == "OS") {
+      servicess = "67e12758a0a2be895da19550";
+    } 
+    else if (service == "FS") {
+      servicess = "67e1279ba0a2be895da19551";
+    } 
+    else {
+      servicess = "66dfede64a88602fbbca9b72";
+    }
+    
+
+
 
     // Create signal entries for each plan id using Signalsdata_Modal
     const signalEntries = planIds.map(id => {
       return new Signalsdata_Modal({
         stock: stock,
         strategy_name: strategy_name,
-        service: service, // Hardcoded service value
+        service: servicess, // Hardcoded service value
         callduration: callduration,
         description: description,
         planid: id,
