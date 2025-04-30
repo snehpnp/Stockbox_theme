@@ -8,6 +8,7 @@ import {
   AddplanSubscription,
   GetCouponlist,
   ApplyCoupondata,
+  GetUserData
 } from "../../../Services/UserService/User";
 import { IndianRupee } from "lucide-react";
 import { loadScript } from "../../../../Utils/Razorpayment";
@@ -34,6 +35,7 @@ const Service = () => {
 
   const [category, setCategory] = useState([]);
   const [plan, setPlan] = useState([]);
+  const [userdata, setUserdata] = useState([]);
 
 
   const [showModal, setShowModal] = useState(false);
@@ -79,11 +81,22 @@ const Service = () => {
     getPlan();
     getCoupon();
     getkeybydata();
+    fetchUserData();
   }, []);
 
-  // useEffect(()=>{
-  //   selectedPlanDetails
-  // },[selectedPlanDetails])
+
+
+  const fetchUserData = async () => {
+    try {
+      const userData = await GetUserData(userid, token);
+      if (userData && userData.data) {
+        setUserdata(userData.data)
+
+      }
+    } catch (error) {
+      showCustomAlert("error", "Failed to load user data. Please refresh and try again.");
+    }
+  };
 
 
 
@@ -255,13 +268,13 @@ const Service = () => {
 
 
 
-  console.log("kycStatus", kycStatus)
+
 
 
 
   const handleShowModal = (item) => {
 
-    if (kycStatus == 2) {
+    if (kycStatus == 2 && userdata?.kyc_verification == 0) {
       setViewModel2(true)
     } else {
       setSelectedPlanDetails(item);

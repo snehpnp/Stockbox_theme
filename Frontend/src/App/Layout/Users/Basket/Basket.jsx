@@ -5,10 +5,14 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   GetBasketService,
   BasketPurchaseList,
+
 } from "../../../Services/UserService/User";
 import { basicsettinglist } from "../../../Services/Admin/Admin";
 import { loadScript } from "../../../../Utils/Razorpayment";
 import Loader from "../../../../Utils/Loader";
+import Kyc from "../Profile/Kyc";
+import ReusableModal from "../../../components/Models/ReusableModal";
+
 
 function Basket() {
   const location = useLocation();
@@ -33,6 +37,12 @@ function Basket() {
 
   const [onlinePaymentStatus, setOnlinePaymentStatus] = useState();
   const [offlinePaymentStatus, setOfflinePaymentStatus] = useState();
+  const [userdata, setUserdata] = useState([]);
+  const [kycStatus, setKycStatus] = useState("")
+  const [viewmodel2, setViewModel2] = useState(false);
+
+
+
 
 
   useEffect(() => {
@@ -45,7 +55,22 @@ function Basket() {
 
   useEffect(() => {
     getkeybydata();
+
   }, []);
+
+
+  const handleShowModal = (item) => {
+
+    if (kycStatus == 2 && userdata?.kyc_verification == 0) {
+      setViewModel2(true)
+    } else {
+      // setSelectedPlanDetails(item);
+      // setShowModal(true);
+    }
+  };
+
+
+  
 
   const getkeybydata = async () => {
     try {
@@ -53,11 +78,15 @@ function Basket() {
       if (response.status) {
         setOnlinePaymentStatus(response.data[0].paymentstatus);
         setOfflinePaymentStatus(response.data[0].officepaymenystatus);
+        
       }
     } catch (error) {
       console.error("Error fetching coupons:", error);
     }
   };
+
+
+
 
   const getbasketdata = async () => {
     try {
@@ -72,6 +101,9 @@ function Basket() {
     setIsLoading(false);
   };
 
+
+
+
   const getbasketpurchasedata = async () => {
     try {
       const data = { clientid: userid };
@@ -85,27 +117,19 @@ function Basket() {
     setIsLoading(false);
   };
 
+
+
   const stripHtmlTags = (input) => {
     if (!input) return "";
     return input.replace(/<\/?[^>]+(>|$)/g, "");
   };
 
-  // Static details
-  const details = {
-    title: "SADSD",
-    name: "sdad",
-    accuracy: "0%",
-    cagr: "null %",
-    rebalanceFrequency: "Half Yearly",
-    portfolioWeightage: "0",
-    validity: "1 month",
-    type: "null",
-    theme: "dsd",
-    noOfStocks: "0",
-    nextRebalanceDate: "2024-12-10",
-    minInvestment: "10",
-    description: "Mid Cap",
-  };
+
+
+
+
+
+
 
   const handelRedirect = (item) => {
     if (item?.isSubscribed && item?.isActive) {
@@ -359,6 +383,14 @@ function Basket() {
             />
           </div>
         ))}
+
+      <ReusableModal
+        show={viewmodel2}
+        onClose={() => setViewModel2(false)}
+        title={<>KYC</>}
+        body={<Kyc setViewModel2={setViewModel2} />}
+      />
+
     </Content>
   );
 }

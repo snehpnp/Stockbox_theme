@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
 import { clientKycAndAgreement, GetUserData } from "../../../Services/UserService/User";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import { redirect } from "react-router-dom";
+import { base_url } from "../../../../Utils/config";
 
 function Kyc({ setViewModel2 }) {
 
@@ -197,8 +199,6 @@ function Kyc({ setViewModel2 }) {
 
   const handleKycSubmit = async (e) => {
     e.preventDefault();
-
-    // Validate all fields before submitting
     if (!validateForm()) {
       showCustomAlert("error", "Please fix the errors in the form");
       return;
@@ -217,7 +217,6 @@ function Kyc({ setViewModel2 }) {
     try {
       const token = localStorage.getItem('token');
       const result = await clientKycAndAgreement(data, token);
-      showCustomAlert("success", "KYC form submitted successfully!");
       setFormData({
         fullName: "",
         email: "",
@@ -233,6 +232,7 @@ function Kyc({ setViewModel2 }) {
         panno: false,
       });
       setViewModel2(false)
+      window.location.href = `https://app.digio.in/#/gateway/login/${result?.kid}/${result?.refid}/${result?.customer_identifier}?redirect_url=${encodeURIComponent(base_url)}`;
     } catch (err) {
       console.error('KYC Failed:', err);
       showCustomAlert("error", "KYC submission failed. Please try again.");
