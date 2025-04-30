@@ -91,33 +91,21 @@ const Apiinfo = () => {
         }
     };
 
-
-
-
-
-    const handleSwitchChange = async () => {
-
-        const data = { kyc: kycstatus.kyc };
-
-        console.log("data",)
-        return
-
-        const result = await showCustomAlert("confirm", "Do you want to change the status?")
-
+    const handleSwitchChange = async (newValue) => {
+        const result = await showCustomAlert("confirm", "Do you want to change the KYC status?");
         if (result.isConfirmed) {
             try {
-                const response = await UpdateKycstatus(data, token);
+                const response = await UpdateKycstatus({ kyc: newValue }, token);
                 if (response.status) {
-                    showCustomAlert("Success", "Status changed successfully!")
+                    showCustomAlert("Success", "KYC status updated successfully!");
                     getApidetail();
                 }
             } catch (error) {
-                showCustomAlert("error", "There was an error processing your request.")
+                showCustomAlert("error", "There was an error updating the KYC status.");
             }
-        } else {
-            getApidetail();
         }
     };
+
 
 
     const handleSwitchChange1 = async (event) => {
@@ -170,7 +158,7 @@ const Apiinfo = () => {
                         <div className="card">
                             <div className="card-header mt-2">
                                 <div className="row justify-content-end mb-3">
-                                    <div className="col-md-5">
+                                    <div className="col-md-4">
                                         <h5>Kyc Status</h5>
                                     </div>
 
@@ -178,13 +166,13 @@ const Apiinfo = () => {
                                         <select
                                             className="form-select"
                                             value={kycstatus?.kyc}
-                                            onChange={(e) => setKycstatus({ ...kycstatus, kyc: e.target.value })}
-                                            onClick={(e) => { handleSwitchChange(e) }}
+                                            onChange={(e) => handleSwitchChange(e.target.value)}
                                         >
                                             <option value={0}>None</option>
                                             <option value={1}>After Payment</option>
                                             <option value={2}>Before Payment</option>
                                         </select>
+
                                     </div>
 
 
