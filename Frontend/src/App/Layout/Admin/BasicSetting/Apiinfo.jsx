@@ -11,7 +11,9 @@ const Apiinfo = () => {
     const navigate = useNavigate();
 
     const [clients, setClients] = useState("");
-    const [kycstatus, setKycstatus] = useState({});
+    const [kycstatus, setKycstatus] = useState({
+        kyc: ""
+    });
     const [initialApiData, setInitialApiData] = useState({
         digio_client_id: "",
         digio_client_secret: "",
@@ -89,11 +91,17 @@ const Apiinfo = () => {
         }
     };
 
-    const handleSwitchChange = async (event) => {
 
-        const originalChecked = event.target.checked;
-        const user_active_status = originalChecked ? 1 : 0;
-        const data = { kyc: user_active_status };
+
+
+
+    const handleSwitchChange = async () => {
+
+        const data = { kyc: kycstatus.kyc };
+
+        console.log("data",)
+        return
+
         const result = await showCustomAlert("confirm", "Do you want to change the status?")
 
         if (result.isConfirmed) {
@@ -107,7 +115,6 @@ const Apiinfo = () => {
                 showCustomAlert("error", "There was an error processing your request.")
             }
         } else {
-            event.target.checked = !originalChecked;
             getApidetail();
         }
     };
@@ -167,21 +174,19 @@ const Apiinfo = () => {
                                         <h5>Kyc Status</h5>
                                     </div>
 
-                                    <div className="col-md-1 d-flex justify-content-end">
-                                        <div className="form-check form-switch form-check-info">
-                                            <input
-                                                id={`rating_${kycstatus?._id}`}
-                                                className="form-check-input toggleswitch"
-                                                type="checkbox"
-                                                checked={kycstatus?.kyc === 1}
-                                                onChange={handleSwitchChange}
-                                            />
-                                            <label
-                                                htmlFor={`rating_${kycstatus?._id}`}
-                                                className="checktoggle checkbox-bg"
-                                            ></label>
-                                        </div>
+                                    <div className="col-md-2 d-flex justify-content-end align-items-center">
+                                        <select
+                                            className="form-select"
+                                            value={kycstatus?.kyc}
+                                            onChange={(e) => setKycstatus({ ...kycstatus, kyc: e.target.value })}
+                                            onClick={(e) => { handleSwitchChange(e) }}
+                                        >
+                                            <option value={0}>None</option>
+                                            <option value={1}>After Payment</option>
+                                            <option value={2}>Before Payment</option>
+                                        </select>
                                     </div>
+
 
                                     <div className="col-md-5">
                                         <h5>Invoice Status</h5>
