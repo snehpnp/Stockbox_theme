@@ -1471,7 +1471,6 @@ class Aliceblue {
         }
     }
     
-    
     async MultipleExitplaceOrder(req, res) {
         try {
             const { id, signalid, quantity } = req.body;
