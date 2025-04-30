@@ -7260,13 +7260,15 @@ if (pdfresponse.status === true) {
       
 
     
-     
+
+
 const baseConditions = {
   service: service_id,
-  close_status: false,
-  $or: uniquePlanIds.map((planId, index) => ({
-    planid: planId.toString(),
-    created_at: { $lte: planEnds[index] }
+  close_status: true,
+  $or: planIds.map((planId, index) => ({
+    planid: planId.toString(), // Matching the planid with regex
+    created_at: { $lte: planEnds[index] },  
+    closedate: { $gte: planStarts[index] }      // Checking if created_at is <= to planEnds
   }))
 };
 
