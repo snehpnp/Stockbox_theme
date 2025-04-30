@@ -6,6 +6,8 @@ import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import { redirect } from "react-router-dom";
 import { base_url } from "../../../../Utils/config";
 
+
+
 function Kyc({ setViewModel2 }) {
 
 
