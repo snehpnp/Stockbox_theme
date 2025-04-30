@@ -5406,19 +5406,9 @@ class List {
 
 
 
-      const uniquePlanIds = [
-        ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
-      ].map(id => new ObjectId(id));
-
-      /*
-            const query = {
-              service: service_id,
-              close_status: false,
-              $or: uniquePlanIds.map((planId, index) => ({
-                planid: planId.toString(), // Matching the planid with regex
-                created_at: { $lte: planEnds[index] }       // Checking if created_at is <= to planEnds
-              }))
-            };
+    //  const uniquePlanIds = [
+      //   ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
+      // ].map(id => new ObjectId(id));
       
       
       
@@ -5460,7 +5450,35 @@ class List {
         };
       }
 
-      const protocol = req.protocol;
+
+const baseConditions = {
+  service: service_id,
+  close_status: false,
+  $or: planIds.map((planId, index) => ({
+    planid: planId.toString(),
+    created_at: { $lte: planEnds[index] }
+  }))
+};
+
+let query = { ...baseConditions }; // default
+
+if (search && search.trim() !== '') {
+  query = {
+    $and: [
+      baseConditions,
+      {
+        $or: [
+          { tradesymbol: { $regex: search, $options: 'i' } },
+          { calltype: { $regex: search, $options: 'i' } },
+          { price: { $regex: search, $options: 'i' } },
+          { closeprice: { $regex: search, $options: 'i' } }
+        ]
+      }
+    ]
+  };
+}
+
+      const protocol = req.protocol; 
 
       const baseUrl = `https://${req.headers.host}`;
 
@@ -8183,9 +8201,7 @@ class List {
 
       // 🔹 Check if an existing plan exists
 
-      const protocol = req.protocol;
-      const baseUrl = `${protocol}://${req.headers.host}`;
-      const service_ids = ['67e12758a0a2be895da19550', '67e1279ba0a2be895da19551'];
+    // const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
 
 
       const existingPlan = await Planmanage.findOne({
@@ -8264,7 +8280,7 @@ class List {
 
       let query = {
         close_status: false,
-        $or: uniquePlanIds.map((planId, index) => ({
+        $or: planIds.map((planId, index) => ({
           planid: planId.toString(),
           created_at: { $lte: planEnds[index] }
         }))
@@ -8355,6 +8371,7 @@ class List {
   }
 
 
+   // const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
 
   async SignalClientWithPlanCloseStrategy(req, res) {
     try {
@@ -8396,7 +8413,7 @@ class List {
 
       let query = {
         close_status: true,
-        $or: uniquePlanIds.map((planId, index) => ({
+        $or: planIds.map((planId, index) => ({
           planid: planId.toString(),
           created_at: { $lte: planEnds[index] }
           // closedate: { $gte: planStarts[index] } // Agar chahiye to uncomment kar lena
