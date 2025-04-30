@@ -4174,9 +4174,9 @@ class List {
             clientid: null,
             $or: [
 
-              { 
+              {
                 type: { $in: ['close signal', 'strategy close signal'] },
-                segmentid: { $in: activePlans }, 
+                segmentid: { $in: activePlans },
                 signalcreatedate: { $gte: planStartDate }  // Ensure it's created after plan start date
               },
               // Global notifications with 'close signal', 'open signal', or 'add broadcast' types
@@ -5406,9 +5406,19 @@ class List {
 
 
 
-    //  const uniquePlanIds = [
+      //  const uniquePlanIds = [
       //   ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
       // ].map(id => new ObjectId(id));
+
+      /*
+            const query = {
+              service: service_id,
+              close_status: false,
+              $or: uniquePlanIds.map((planId, index) => ({
+                planid: planId.toString(), // Matching the planid with regex
+                created_at: { $lte: planEnds[index] }       // Checking if created_at is <= to planEnds
+              }))
+            };
       
       
       
@@ -5426,7 +5436,7 @@ class List {
       const baseConditions = {
         service: service_id,
         close_status: false,
-        $or: uniquePlanIds.map((planId, index) => ({
+        $or: planIds.map((planId, index) => ({
           planid: planId.toString(),
           created_at: { $lte: planEnds[index] }
         }))
@@ -5450,35 +5460,7 @@ class List {
         };
       }
 
-
-const baseConditions = {
-  service: service_id,
-  close_status: false,
-  $or: planIds.map((planId, index) => ({
-    planid: planId.toString(),
-    created_at: { $lte: planEnds[index] }
-  }))
-};
-
-let query = { ...baseConditions }; // default
-
-if (search && search.trim() !== '') {
-  query = {
-    $and: [
-      baseConditions,
-      {
-        $or: [
-          { tradesymbol: { $regex: search, $options: 'i' } },
-          { calltype: { $regex: search, $options: 'i' } },
-          { price: { $regex: search, $options: 'i' } },
-          { closeprice: { $regex: search, $options: 'i' } }
-        ]
-      }
-    ]
-  };
-}
-
-      const protocol = req.protocol; 
+      const protocol = req.protocol;
 
       const baseUrl = `https://${req.headers.host}`;
 
@@ -5579,16 +5561,16 @@ if (search && search.trim() !== '') {
               // Global notifications for 'close signal' and 'open signal'
               ...(subscriptions.length > 0
                 ? [{
-                    type: { $in: ['close signal', 'open signal', 'strategy open signal', 'strategy close signal'] },
-                    $or: subscriptions.map((sub) => ({
-                      segmentid: { $regex: `(^|,)${sub.plan_category_id}($|,)` }, // Match plan_id in segmentid
-                      createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
-                    }))
-                  }]
+                  type: { $in: ['close signal', 'open signal', 'strategy open signal', 'strategy close signal'] },
+                  $or: subscriptions.map((sub) => ({
+                    segmentid: { $regex: `(^|,)${sub.plan_category_id}($|,)` }, // Match plan_id in segmentid
+                    createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
+                  }))
+                }]
                 : []),
 
               // Include all other types of notifications (e.g., add coupon, blogs, news, etc.)
-              { type: { $nin: ['close signal', 'open signal', 'add broadcast' , 'strategy open signal', 'strategy close signal'] } }
+              { type: { $nin: ['close signal', 'open signal', 'add broadcast', 'strategy open signal', 'strategy close signal'] } }
             ]
           },
 
@@ -7277,6 +7259,7 @@ if (search && search.trim() !== '') {
 
 
 
+
       const baseConditions = {
         service: service_id,
         close_status: true,
@@ -7286,9 +7269,6 @@ if (search && search.trim() !== '') {
           closedate: { $gte: planStarts[index] }      // Checking if created_at is <= to planEnds
         }))
       };
-
-
-
 
       let query = { ...baseConditions }; // default
 
@@ -8201,7 +8181,9 @@ if (search && search.trim() !== '') {
 
       // 🔹 Check if an existing plan exists
 
-    // const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
+      const protocol = req.protocol;
+      const baseUrl = `${protocol}://${req.headers.host}`;
+      const service_ids = ['67e12758a0a2be895da19550', '67e1279ba0a2be895da19551'];
 
 
       const existingPlan = await Planmanage.findOne({
@@ -8258,7 +8240,7 @@ if (search && search.trim() !== '') {
       const planIds = subscriptions.map(sub => sub.plan_category_id).filter(id => id != null);
       const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
 
-      const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
+      // const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
 
       /*  const query = {
           close_status: false,
@@ -8371,7 +8353,6 @@ if (search && search.trim() !== '') {
   }
 
 
-   // const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
 
   async SignalClientWithPlanCloseStrategy(req, res) {
     try {
@@ -8391,7 +8372,7 @@ if (search && search.trim() !== '') {
       const planStarts = subscriptions.map(sub => new Date(sub.plan_start));
       const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
 
-      const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
+      // const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
 
       /* const query = {
          close_status: true,
