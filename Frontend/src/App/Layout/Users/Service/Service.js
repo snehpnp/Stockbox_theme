@@ -48,11 +48,8 @@ const Service = () => {
   const [offlinePaymentStatus, setOfflinePaymentStatus] = useState()
 
 
-
   const [appliedCoupon, setAppliedCoupon] = useState(null);
-
   const [manualCoupon, setManualCoupon] = useState("");
-
 
   const [coupondata, setCouponData] = useState("");
 
