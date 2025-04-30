@@ -98,6 +98,9 @@ if (segment === "C") {
         segment: segment, 
         expiry: expirydate, 
     });
+
+    tradesymbols = `${stocks.symbol} ${stocks.expiry_str} FUT`;
+
 } else {
     stocks = await Stock_Modal.findOne({ 
         symbol: stock, 
@@ -1264,6 +1267,8 @@ stocks = await Stock_Modal.findOne({
   segment: segment, 
   expiry: expirydate, 
 });
+tradesymbols = `${stocks.symbol} ${stocks.expiry_str} FUT`;
+
 } else {
 stocks = await Stock_Modal.findOne({ 
   symbol: stock, 
@@ -2242,6 +2247,8 @@ stockss = await Stock_Modal.findOne({
     segment: segment, 
     expiry: expirydate, 
 });
+tradesymbols = `${stockss.symbol} ${stockss.expiry_str} FUT`;
+
 } else {
 stockss = await Stock_Modal.findOne({ 
     symbol: stock, 
@@ -2315,7 +2322,7 @@ return res.status(404).json({
 
       const resultn = new Notification_Modal({
         segmentid: planid,
-        type: 'open signal',
+        type: 'strategy open signal',
         title: notificationTitle,
         message: notificationBody,
         signalid: signal._id,
@@ -2325,7 +2332,7 @@ return res.status(404).json({
     }
 
       try {
-        await sendFCMNotification(notificationTitle, notificationBody, tokens, "open signal");
+        await sendFCMNotification(notificationTitle, notificationBody, tokens, "strategy open signal");
       } catch (error) {
         console.error("FCM notification error:", error);
       }
@@ -2546,12 +2553,12 @@ async closeSignals(req, res) {
     const tokens = clients.map(client => client.devicetoken);
 
     if (tokens.length > 0) {
-      await sendFCMNotification(notificationTitle, notificationBody, tokens, "close signal");
+      await sendFCMNotification(notificationTitle, notificationBody, tokens, "strategy close signal");
     }
 
     const resultn = new Notification_Modal({
       segmentid: service,
-      type: close_status ? "close signal" : "open signal",
+      type: close_status ? "strategy close signal" : "strategy open signal",
       title: notificationTitle,
       message: notificationBody,
       signalcreatedate: signalCreatedAt,

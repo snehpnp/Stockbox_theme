@@ -1062,7 +1062,8 @@ class Clients {
         const data = {
           kid,
           customer_identifier,
-          gid
+          gid,
+          refid
         };
         return res.json(data); // Ensure only one response is sent
       } else {

@@ -4174,15 +4174,15 @@ class List {
             clientid: null,
             $or: [
 
-              {
-                type: "close signal",
-                segmentid: { $in: activePlans },
+              { 
+                type: { $in: ['close signal', 'strategy close signal'] },
+                segmentid: { $in: activePlans }, 
                 signalcreatedate: { $gte: planStartDate }  // Ensure it's created after plan start date
               },
               // Global notifications with 'close signal', 'open signal', or 'add broadcast' types
-              { type: { $in: ['open signal', 'add broadcast'] }, segmentid: { $in: activePlans } },
+              { type: { $in: ['open signal', 'add broadcast', 'strategy open signal'] }, segmentid: { $in: activePlans } },
               // Global notifications with other types
-              { type: { $nin: ['close signal', 'open signal', 'add broadcast'] } }
+              { type: { $nin: ['close signal', 'open signal', 'add broadcast', 'strategy open signal', 'strategy close signal'] } }
             ]
           },
 
@@ -5561,16 +5561,16 @@ class List {
               // Global notifications for 'close signal' and 'open signal'
               ...(subscriptions.length > 0
                 ? [{
-                  type: { $in: ['close signal', 'open signal'] },
-                  $or: subscriptions.map((sub) => ({
-                    segmentid: { $regex: `(^|,)${sub.plan_category_id}($|,)` }, // Match plan_id in segmentid
-                    createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
-                  }))
-                }]
+                    type: { $in: ['close signal', 'open signal', 'strategy open signal', 'strategy close signal'] },
+                    $or: subscriptions.map((sub) => ({
+                      segmentid: { $regex: `(^|,)${sub.plan_category_id}($|,)` }, // Match plan_id in segmentid
+                      createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
+                    }))
+                  }]
                 : []),
 
               // Include all other types of notifications (e.g., add coupon, blogs, news, etc.)
-              { type: { $nin: ['close signal', 'open signal', 'add broadcast'] } }
+              { type: { $nin: ['close signal', 'open signal', 'add broadcast' , 'strategy open signal', 'strategy close signal'] } }
             ]
           },
 
