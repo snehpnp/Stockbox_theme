@@ -4337,14 +4337,14 @@ class List {
 
       const latestStock = await Basketstock_Modal.findOne({ basket_id, status: 1 }).sort({ version: -1 });
       const latestVersion = latestStock ? latestStock.version : null;
-      
+
       if (!latestVersion) {
         return res.json({
           status: false,
           message: "No stocks found in the basket.",
         });
       }
-      
+
       // ✅ Step 2: Get only latest version's stocks
       const existingStocks = await Basketstock_Modal.find({ basket_id, version: latestVersion, status: 1 });
       // Get stocks for the basket
@@ -4801,7 +4801,7 @@ class List {
                   Authorization: `Bearer ${authToken}`,
                 },
               };
-            
+
 
               const response = await axios(config);
 
@@ -7256,6 +7256,18 @@ class List {
       //   ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
       // ].map(id => new ObjectId(id));
 
+
+
+
+      const baseConditions = {
+        service: service_id,
+        close_status: true,
+        $or: planIds.map((planId, index) => ({
+          planid: planId.toString(), // Matching the planid with regex
+          created_at: { $lte: planEnds[index] },
+          closedate: { $gte: planStarts[index] }      // Checking if created_at is <= to planEnds
+        }))
+      };
 
 
 
