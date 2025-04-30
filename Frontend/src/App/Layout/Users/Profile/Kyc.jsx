@@ -232,7 +232,11 @@ function Kyc({ setViewModel2 }) {
         panno: false,
       });
       setViewModel2(false)
-      window.location.href = `https://app.digio.in/#/gateway/login/${result?.kid}/${result?.refid}/${result?.customer_identifier}?redirect_url=${encodeURIComponent(base_url)}`;
+      window.open(
+        `https://app.digio.in/#/gateway/login/${result?.kid}/${result?.refid}/${result?.customer_identifier}?redirect_url=${encodeURIComponent(base_url)}`,
+        '_blank'
+      );
+
     } catch (err) {
       console.error('KYC Failed:', err);
       showCustomAlert("error", "KYC submission failed. Please try again.");
