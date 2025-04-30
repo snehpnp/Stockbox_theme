@@ -72,7 +72,7 @@ const Service = () => {
 
   const [discription, setDiscription] = useState("");
 
-  const [kycStatus, setKycStatus] = useState(0)
+  const [kycStatus, setKycStatus] = useState("")
 
 
 
@@ -163,8 +163,6 @@ const Service = () => {
   const getkeybydata = async () => {
     try {
       const response = await basicsettinglist();
-      // console.log("basicsettinglist", response?.data[0].kyc);
-
 
       if (response.status) {
         setGetkey(response?.data[0]?.razorpay_key);
@@ -187,7 +185,6 @@ const Service = () => {
   const getPlan = async () => {
     try {
       const response = await GetPlanByCategory(token);
-      // console.log("response",response)
       if (response.status) {
         setPlan(response?.data);
         setCategory(response?.data.sort((a, b) => b._id.localeCompare(a._id)));
@@ -260,12 +257,13 @@ const Service = () => {
 
 
 
+  console.log("kycStatus", kycStatus)
+
 
 
   const handleShowModal = (item) => {
 
-    if (kycStatus === 1) {
-      // navigate("/user/kyc")
+    if (kycStatus == 2) {
       setViewModel2(true)
     } else {
       setSelectedPlanDetails(item);
@@ -284,11 +282,6 @@ const Service = () => {
     setManualCoupon("")
     setAppliedCoupon(null)
   };
-
-  // const handleCloseModal2=()=>{
-  //   setViewModel2(false)
-  // }
-
 
 
 
@@ -754,7 +747,7 @@ const Service = () => {
                       className="btn btn-success w-100"
                       onClick={() => AddSubscribeplan(selectedPlanDetails)}
                     >
-                      {/* ✅ Confirm & Subscribe */}
+
                       ✅ Pay Online
                     </button>
                   )}
@@ -797,7 +790,7 @@ const Service = () => {
         show={viewmodel2}
         onClose={() => setViewModel2(false)}
         title={<>KYC</>}
-        body={<Kyc />}
+        body={<Kyc setViewModel2={setViewModel2} />}
       />
     </Content>
   );

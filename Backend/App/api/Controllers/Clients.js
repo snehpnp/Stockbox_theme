@@ -1079,6 +1079,10 @@ class Clients {
 
   }
 
+
+
+
+  
   async uploadDocument(req, res) {
     const id = req.body.id;
 
