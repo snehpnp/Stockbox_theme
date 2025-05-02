@@ -46,6 +46,10 @@ const BasketSchema = new Schema({
         type: Number,
         default: 0
     },
+    remaining_amount: {
+        type: Number,
+        default: 0
+    },
     cagr: {
         type: String,
         trim: true,

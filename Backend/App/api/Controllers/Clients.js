@@ -1954,11 +1954,23 @@ class Clients {
             quantity: 1,
             status: 1,
             borkerid: 1,
-            data: 1,
             ordertype: 1,
             signalid: 1,
             createdAt: 1,
-            signalDetails: 1
+            signalDetails: 1,
+            data: {
+              $cond: {
+                if: {
+                  $and: [
+                    { $eq: [{ $type: "$data" }, "object"] }, // Check if "data" is an object
+                    { $eq: [{ $type: "$data.stat" }, "null"] }, // Check if "stat" is null
+                    { $eq: [{ $type: "$data.emsg" }, "null"] } // Check if "emsg" is null
+                  ]
+                },
+                then: null, // If all are null, set data to null
+                else: "$data" // Else, retain the original "data"
+              }
+            }
           }
         },
         {

@@ -312,6 +312,7 @@ class Aliceblue {
 
 
         } catch (error) {
+
             return res.status(500).json({
                 status: false,
                 message: error.response ? error.response.data : "An error occurred while placing the order"
@@ -404,11 +405,6 @@ class Aliceblue {
                     message: "Stock not found"
                 });
             }
-
-
-
-
-
 
 
             let holdingData = { qty: 0 };
@@ -531,7 +527,9 @@ class Aliceblue {
 
                     })
                     .catch(async (error) => {
-                        const message = (JSON.stringify(error.response.data)).replace(/["',]/g, '');
+                        const message = error.response?.data
+                        ? JSON.stringify(error.response.data).replace(/["',]/g, '')
+                        : error.message;
 
                         let url;
                         if (message == "") {
@@ -598,11 +596,18 @@ class Aliceblue {
 
 
             if (order.status == 1) {
-
-                return res.json({
-                    status: true,
-                    response: order.data
-                });
+                const firstData = order.data?.[0]; // safe access
+                if (firstData?.stat) {
+                    return res.json({
+                        status: true,
+                        response: order.data
+                    });
+                } else {
+                    return res.json({
+                        status: false,
+                        response: order.data
+                    });
+                }
             }
 
             if (client.tradingstatus == 0) {
@@ -646,6 +651,7 @@ class Aliceblue {
             };
 
             const response = await axios(config);
+           
 
             order.data = response.data;
             order.status = 1;
@@ -874,10 +880,6 @@ class Aliceblue {
 
 
 
-
-
-
-
             let holdingData = { qty: 0 };
             let positionData = { qty: 0 };
             let totalValue = 0;  // Declare totalValue outside the blocks
@@ -990,7 +992,9 @@ class Aliceblue {
 
                     })
                     .catch(async (error) => {
-                        const message = (JSON.stringify(error.response.data)).replace(/["',]/g, '');
+                        const message = error.response?.data
+                        ? JSON.stringify(error.response.data).replace(/["',]/g, '')
+                        : error.message;
 
                         let url;
                         if (message == "") {
@@ -1195,7 +1199,9 @@ class Aliceblue {
                 .catch(async (error) => {
 
 
-                    const message = (JSON.stringify(error.response.data)).replace(/["',]/g, '');
+                    const message = error.response?.data
+                    ? JSON.stringify(error.response.data).replace(/["',]/g, '')
+                    : error.message;
                     return {
                         status: false,
                         message: message
@@ -1239,13 +1245,20 @@ class Aliceblue {
             }
 
             if (order.status == 1) {
-
-                return res.json({
-                    status: true,
-                    response: order.data
-                });
+                const firstData = order.data?.[0]; // safe access
+                if (firstData?.stat) {
+                    return res.json({
+                        status: true,
+                        response: order.data
+                    });
+                } else {
+                    return res.json({
+                        status: false,
+                        response: order.data
+                    });
+                }
             }
-
+            
             if (client.tradingstatus == 0) {
                 return res.status(404).json({
                     status: false,

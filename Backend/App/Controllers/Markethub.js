@@ -1127,7 +1127,16 @@ async  MultipleplaceOrder(req, res) {
             }
         }
 
-        return res.json({ status: true, responses });
+        // return res.json({ status: true, responses });
+        const successResponses = responses.filter(r => r.status === true);
+const failedResponses = responses.filter(r => r.status === false);
+
+return res.json({
+    status: true,
+    message: `Orders Processed: ${successResponses.length} Success, ${failedResponses.length} Failed`,
+    successOrders: successResponses,
+    failedOrders: failedResponses
+});
 
     } catch (error) {
         return res.status(500).json({ status: false, message: error.message || "An error occurred while placing orders" });
@@ -1236,8 +1245,16 @@ async MultipleExitplaceOrder(req, res) {
                 responses.push({ status: false, message: `Error placing exit order for ${stockData.tradesymbol}: ${error.message}` });
             }
         }
-
-        return res.json({ status: true, responses });
+        const successResponses = responses.filter(r => r.status === true);
+        const failedResponses = responses.filter(r => r.status === false);
+        
+        return res.json({
+            status: true,
+            message: `Orders Processed: ${successResponses.length} Success, ${failedResponses.length} Failed`,
+            successOrders: successResponses,
+            failedOrders: failedResponses
+        });
+        // return res.json({ status: true, responses });
 
     } catch (error) {
         return res.status(500).json({ status: false, message: error.message || "An error occurred while placing exit orders" });
