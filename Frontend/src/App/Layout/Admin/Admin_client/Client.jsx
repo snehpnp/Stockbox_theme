@@ -355,6 +355,8 @@ const Client = () => {
 
 
 
+
+
   // update status
   const handleSwitchChange = async (event, id) => {
     const originalChecked = event.target.checked;
@@ -377,6 +379,8 @@ const Client = () => {
       event.target.checked = !originalChecked;
     }
   };
+
+
 
 
 
@@ -407,6 +411,8 @@ const Client = () => {
   };
 
 
+
+  
 
   // assign basket
   const UpdateBasketservice = async () => {
