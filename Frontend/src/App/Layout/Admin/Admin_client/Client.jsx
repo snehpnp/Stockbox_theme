@@ -46,8 +46,12 @@ const Client = () => {
     // getActiveBasketdetail();
   }, []);
 
+
+
   const location = useLocation();
   const clientStatus = location?.state?.clientStatus;
+
+
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
