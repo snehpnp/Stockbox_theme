@@ -412,7 +412,7 @@ const Client = () => {
 
 
 
-  
+
 
   // assign basket
   const UpdateBasketservice = async () => {
@@ -423,11 +423,7 @@ const Client = () => {
         price: basketdetail.price,
       };
 
-      console.log("data", data)
-
       const response = await BasketSubscription(data, token);
-
-
       if (response && response.status) {
         showCustomAlert("Success", "Basket service updated successfully.");
         setBasketdetail({ basket_id: "", client_id: "", price: "" });
@@ -440,7 +436,6 @@ const Client = () => {
       showCustomAlert("error", "There was an error updating the Basket.");
     }
   };
-
 
 
 
