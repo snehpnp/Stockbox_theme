@@ -47,7 +47,7 @@ const FreetrialStatus = () => {
   const getstatusdetail = async () => {
     try {
       const response = await basicsettinglist(token);
-      
+
       if (response?.status && response?.data) {
         const defaultTrial = response.data.length > 0 ? response.data[0].freetrial : '1';
         setAddStatus((prevState) => ({ ...prevState, freetrial: defaultTrial }));
@@ -166,8 +166,8 @@ const FreetrialStatus = () => {
                   Select days
                 </option>
                 {[...Array(7)].map((_, index) => (
-                  <option key={index + 1} value={index + 1}>
-                    {index + 1} day{index > 0 ? 's' : ''}
+                  <option key={index} value={index}>
+                    {index} day{index > 0 ? 's' : ''}
                   </option>
                 ))}
               </select>
