@@ -1061,114 +1061,7 @@ async function downloadAndExtractUpstox(req, res) {
 
 
 async function calculateCAGRForBaskets(req, res) {
-  /*  const result = await Basket_Modal.aggregate([
-        {
-            $match: {
-                del: false,
-            }
-        },
-        {
-            $lookup: {
-                from: "basketstocks",
-                let: { basketId: { $toString: "$_id" } },
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: {
-                                $and: [
-                                    { $eq: ["$basket_id", "$$basketId"] },
-                                    { $eq: ["$status", 1] }
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        $group: {
-                            _id: "$basket_id",
-                            maxVersion: { $max: "$version" }
-                        }
-                    },
-                    {
-                        $lookup: {
-                            from: "basketstocks",
-                            let: { basketId: "$_id", maxVer: "$maxVersion" },
-                            pipeline: [
-                                {
-                                    $match: {
-                                        $expr: {
-                                            $and: [
-                                                { $eq: ["$basket_id", "$$basketId"] },
-                                                { $eq: ["$version", "$$maxVer"] },
-                                                { $eq: ["$status", 1] }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ],
-                            as: "latestStocks"
-                        }
-                    },
-                    {
-                        $unwind: "$latestStocks"
-                    },
-                    {
-                        $replaceRoot: { newRoot: "$latestStocks" }
-                    },
-                    {
-                        $lookup: {
-                            from: "stocks",
-                            localField: "tradesymbol",
-                            foreignField: "tradesymbol",
-                            as: "stock_info"
-                        }
-                    },
-                    {
-                        $unwind: {
-                            path: "$stock_info",
-                            preserveNullAndEmptyArrays: true
-                        }
-                    },
-                    {
-                        $lookup: {
-                            from: "stockliveprices",
-                            localField: "stock_info.instrument_token",
-                            foreignField: "token",
-                            as: "live_price_info"
-                        }
-                    },
-                    {
-                        $unwind: {
-                            path: "$live_price_info",
-                            preserveNullAndEmptyArrays: true
-                        }
-                    },
-                    {
-                        $addFields: {
-                            livePrice: {
-                                $ifNull: ["$live_price_info.lp", "$price"] // Use live price if available, fallback to original price
-                            }
-                        }
-                    }
-                ],
-                as: "stock_details"
-            }
-        },
-        {
-            $project: {
-                basket_id: "$_id",
-                title: 1,
-                created_at: 1,
-                stock_details: {
-                    $filter: {
-                        input: "$stock_details",
-                        as: "stock",
-                        cond: { $eq: ["$$stock.del", false] }
-                    }
-                },
-            }
-        }
-    ]);
-    */
+ 
 
 
     const result = await Basket_Modal.aggregate([
@@ -1302,7 +1195,7 @@ async function calculateCAGRForBaskets(req, res) {
     const currentDate = new Date();
 
     for (const basket of result) {
-        const { stock_details, version1_stocks, created_at, _id } = basket;
+        const { stock_details, version1_stocks, created_at, _id, remaining_amount  } = basket;
 
         // Calculate starting price
         // const startingPrice = stock_details.reduce((sum, stock) => {
@@ -1317,7 +1210,8 @@ async function calculateCAGRForBaskets(req, res) {
         const currentPrice = stock_details.reduce((sum, stock) => {
             return sum + (stock.livePrice * stock.quantity);
         }, 0);
-
+      
+        currentPrice = currentPrice + (remaining_amount || 0);  // If remaining_amount is undefined, treat it as 0
         // Calculate years difference
         const createdAt = new Date(created_at);
         const years = (currentDate - createdAt) / (1000 * 60 * 60 * 24 * 365.25); // Approximate years
@@ -1352,114 +1246,7 @@ async function calculateCAGRForBaskets(req, res) {
 
 
 async function calculateCAGRForBasketsClient(req, res) {
-   /* const result = await Basket_Modal.aggregate([
-        {
-            $match: {
-                del: false,
-            }
-        },
-        {
-            $lookup: {
-                from: "basketstocks",
-                let: { basketId: { $toString: "$_id" } },
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: {
-                                $and: [
-                                    { $eq: ["$basket_id", "$$basketId"] },
-                                    { $eq: ["$status", 1] }
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        $group: {
-                            _id: "$basket_id",
-                            maxVersion: { $max: "$version" }
-                        }
-                    },
-                    {
-                        $lookup: {
-                            from: "basketstocks",
-                            let: { basketId: "$_id", maxVer: "$maxVersion" },
-                            pipeline: [
-                                {
-                                    $match: {
-                                        $expr: {
-                                            $and: [
-                                                { $eq: ["$basket_id", "$$basketId"] },
-                                                { $eq: ["$version", "$$maxVer"] },
-                                                { $eq: ["$status", 1] }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ],
-                            as: "latestStocks"
-                        }
-                    },
-                    {
-                        $unwind: "$latestStocks"
-                    },
-                    {
-                        $replaceRoot: { newRoot: "$latestStocks" }
-                    },
-                    {
-                        $lookup: {
-                            from: "stocks",
-                            localField: "tradesymbol",
-                            foreignField: "tradesymbol",
-                            as: "stock_info"
-                        }
-                    },
-                    {
-                        $unwind: {
-                            path: "$stock_info",
-                            preserveNullAndEmptyArrays: true
-                        }
-                    },
-                    {
-                        $lookup: {
-                            from: "stockliveprices",
-                            localField: "stock_info.instrument_token",
-                            foreignField: "token",
-                            as: "live_price_info"
-                        }
-                    },
-                    {
-                        $unwind: {
-                            path: "$live_price_info",
-                            preserveNullAndEmptyArrays: true
-                        }
-                    },
-                    {
-                        $addFields: {
-                            livePrice: {
-                                $ifNull: ["$live_price_info.lp", "$price"] // Use live price if available, fallback to original price
-                            }
-                        }
-                    }
-                ],
-                as: "stock_details"
-            }
-        },
-        {
-            $project: {
-                basket_id: "$_id",
-                title: 1,
-                created_at: 1,
-                stock_details: {
-                    $filter: {
-                        input: "$stock_details",
-                        as: "stock",
-                        cond: { $eq: ["$$stock.del", false] }
-                    }
-                },
-            }
-        }
-    ]);
-    */
+ 
 
     const result = await Basket_Modal.aggregate([
         {
@@ -1593,7 +1380,7 @@ async function calculateCAGRForBasketsClient(req, res) {
     const currentDate = new Date();
 
     for (const basket of result) {
-        const { stock_details,version1_stocks, created_at, _id } = basket;
+        const { stock_details,version1_stocks, created_at, _id, remaining_amount } = basket;
 
         // Calculate starting price
         const startingPrice = version1_stocks.reduce((sum, stock) => {
@@ -1604,6 +1391,7 @@ async function calculateCAGRForBasketsClient(req, res) {
         const currentPrice = stock_details.reduce((sum, stock) => {
             return sum + (stock.livePrice * stock.quantity);
         }, 0);
+        currentPrice = currentPrice + (remaining_amount || 0);  // If remaining_amount is undefined, treat it as 0
 
         // Calculate years difference
         const createdAt = new Date(created_at);

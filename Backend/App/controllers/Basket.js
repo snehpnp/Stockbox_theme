@@ -448,11 +448,34 @@ class Basket {
 
       // Execute the bulk insert
       const result = await Basketstock_Modal.bulkWrite(bulkOps);
-      const updatedBasket = await Basket_Modal.findByIdAndUpdate(
-        basket_id, 
-        { stockname: stockname }, 
-        { new: true }  // Ye ensure karega ki updated document return ho
-    );
+    //   const updatedBasket = await Basket_Modal.findByIdAndUpdate(
+    //     basket_id, 
+    //     { stockname: stockname }, 
+    //     { new: true }  // Ye ensure karega ki updated document return ho
+    // );
+
+
+    // const updatedBasket = await Basket_Modal.findByIdAndUpdate(
+    //   basket_id,
+    //   {
+    //     stockname: stockname,
+    //     ...(publishstatus == 1 && { remaining_amount: remainingAmount })
+    //   },
+    //   { new: true }
+    // );
+    const versionss = existingStocks.length > 0 ? existingStocks[0].version + 1 : 1;
+
+    const updateData = { stockname: stockname };
+
+if (publishstatus == 1 && versionss > 1) {
+  updateData.remaining_amount = remainingAmount;
+}
+
+const updatedBasket = await Basket_Modal.findByIdAndUpdate(
+  basket_id,
+  updateData,
+  { new: true }
+);
 
       if (publishstatus == 1) {
       
@@ -851,11 +874,35 @@ class Basket {
 
       // Execute the bulk upsert
       const result = await Basketstock_Modal.bulkWrite(bulkOps);
-      const updatedBasket = await Basket_Modal.findByIdAndUpdate(
-        basket_id, 
-        { stockname: stockname }, 
-        { new: true }  // Ye ensure karega ki updated document return ho
-    );
+    //   const updatedBasket = await Basket_Modal.findByIdAndUpdate(
+    //     basket_id, 
+    //     { stockname: stockname }, 
+    //     { new: true }  // Ye ensure karega ki updated document return ho
+    // );
+
+    // const updatedBasket = await Basket_Modal.findByIdAndUpdate(
+    //   basket_id,
+    //   {
+    //     stockname: stockname,
+    //     ...(publishstatus == 1 && { remaining_amount: remainingAmount })
+    //   },
+    //   { new: true }
+    // );
+
+    const versionss = existingStocks.length > 0 ? existingStocks[0].version + 1 : 1;
+
+    const updateData = { stockname: stockname };
+
+if (publishstatus == 1 && versionss > 1) {
+  updateData.remaining_amount = remainingAmount;
+}
+
+const updatedBasket = await Basket_Modal.findByIdAndUpdate(
+  basket_id,
+  updateData,
+  { new: true }
+);
+
       if (publishstatus == 1) {
       
         await addBasketVolatilityData(req);

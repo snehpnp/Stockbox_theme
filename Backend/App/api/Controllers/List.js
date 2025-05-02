@@ -5596,10 +5596,32 @@ if (search && search.trim() !== '') {
       };
   
       // Fetch notifications based on constructed query
-      const result = await Notification_Modal.find(queryConditions)
-        .sort({ createdAt: -1 })
-        .skip((page - 1) * limit) // Pagination
-        .limit(parseInt(limit)); // Limit the number of records
+      // const result = await Notification_Modal.find(queryConditions)
+      //   .sort({ createdAt: -1 })
+      //   .skip((page - 1) * limit) // Pagination
+      //   .limit(parseInt(limit)); // Limit the number of records
+
+      const notifications = await Notification_Modal.find(queryConditions)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit) // Pagination
+      .limit(parseInt(limit)); // Limit the number of records
+    // Loop through each notification and fetch the associated service from signalsdatas
+    const result = [];
+    for (const notification of notifications) {
+      const notif = notification.toObject(); // 👈 Convert to plain object
+      if (notif.signalid) {
+        const signal = await Signal_Modal.findById(notif.signalid).select('service');
+        if (signal && signal.service) {
+          notif.service = signal.service;
+        } else {
+          notif.service = null;
+        }
+      }
+      result.push(notif);
+    }
+     
+
+
   
       const totalcount = await Notification_Modal.countDocuments(queryConditions);
   
@@ -8195,7 +8217,6 @@ async SignalClientWithPlanStrategy(req, res) {
       serviceid: { $in: service_ids } 
     }).exec();
 
-
        
     if (!existingPlan) {
       const lastFiveSignals = await Signalsdata_Modal.find({ close_status: false })
@@ -8206,7 +8227,7 @@ async SignalClientWithPlanStrategy(req, res) {
       const signalIds = lastFiveSignals.map(signal => signal._id);
 
       const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
-        .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price lot lotsize")
+        .select("signal_id tradesymbol tradesymbols calltype segment expirydate optiontype strikeprice price lot lotsize")
         .lean();
 
       const stockMap = {};
@@ -8304,7 +8325,7 @@ async SignalClientWithPlanStrategy(req, res) {
 
     // 🔹 Fetch Stock Data for Existing Signals
     const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
-      .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price lot lotsize")
+      .select("signal_id tradesymbol tradesymbols calltype segment expirydate optiontype strikeprice price lot lotsize")
       .lean();
 
     // 🔹 Map Stock Details to Signals
@@ -8438,7 +8459,7 @@ async SignalClientWithPlanCloseStrategy(req, res) {
 
     // 🔹 Fetch Stock Data for Existing Signals
     const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
-      .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price lot lotsize")
+      .select("signal_id tradesymbol tradesymbols calltype segment expirydate optiontype strikeprice price lot lotsize")
       .lean();
 
     // 🔹 Map Stock Details to Signals

@@ -281,7 +281,8 @@ class Angle {
                 .catch(async (error) => {
                     return res.status(500).json({
                         status: false,
-                        message: response.data.message
+                        message: error.response ? error.response.data : "An error occurred while placing the order"
+
                     });
 
                 });
@@ -505,7 +506,7 @@ class Angle {
                     .catch(async (error) => {
                         return res.status(500).json({
                             status: false,
-                            message: response.data.message
+                            message: error.response ? error.response.data : "An error occurred while placing the order"
                         });
 
                     });
@@ -844,7 +845,7 @@ class Angle {
                     .catch(async (error) => {
                         return {
                             status: false,
-                            message: response.data.message
+                            message: error.response ? error.response.data : "An error occurred while placing the order"
                         };
 
                     });
@@ -1044,7 +1045,7 @@ class Angle {
 
                     return {
                         status: false,
-                        message: error
+                        message: error.response ? error.response.data : "An error occurred while placing the order"
                     };
 
                 });
@@ -1180,7 +1181,7 @@ class Angle {
             const authToken = client.authtoken;
     
             let orderRecords = [];
-    
+            let failedOrders = []; // ❌ To Track Failed Orders
             for (let stock of stocks) {
                 let optiontype, exchange, producttype;
     
@@ -1219,7 +1220,7 @@ class Angle {
                 }
     
                 if (!stockData) {
-                    return res.status(404).json({ status: false, message: `Stock not found for ${stockData.tradesymbol}` });
+                    failedOrders.push({ stock: stock.tradesymbol, message: "Stock not found" });
                 }
     
                 // ✅ Order Object
@@ -1276,17 +1277,28 @@ class Angle {
                     // Insert the order records into the database after processing the current stock
                     await Order_Modal.insertMany(orderRecords);
                 } else {
-                    return res.status(500).json({
-                        status: false,
-                        message: response.data.message
-                    });
+                    // return res.status(500).json({
+                    //     status: false,
+                    //     message: response.data.message
+                    // });
+
+                    failedOrders.push({ stock: stock.tradesymbol, message: response.data.message });
+
                 }
             }
     
+            // return res.json({
+            //     status: true,
+            //     message: "Orders Placed Successfully",
+            //     data: orderRecords
+            // });
+
+
             return res.json({
                 status: true,
-                message: "Orders Placed Successfully",
-                data: orderRecords
+                message: `Orders Processed: ${orderRecords.length} Success, ${failedOrders.length} Failed`,
+                successOrders: orderRecords,
+                failedOrders: failedOrders
             });
     
         } catch (error) {
@@ -1327,7 +1339,9 @@ class Angle {
             const authToken = client.authtoken;
     
             let orderRecords = [];
-    
+            let failedOrders = [];
+
+            
             for (let stock of stocks) {
                 let optiontype, exchange, producttype;
     
@@ -1366,7 +1380,7 @@ class Angle {
                 }
     
                 if (!stockData) {
-                    return res.status(404).json({ status: false, message: `Stock not found for ${stock.tradesymbol}` });
+                    failedOrders.push({ stock: stock.tradesymbol, message: "Stock not found" });
                 }
     
                 let holdingData = { qty: 0 };
@@ -1443,17 +1457,26 @@ class Angle {
                         await Order_Modal.insertMany(orderRecords);
                     }
                 } else {
-                    return res.status(500).json({
-                        status: false,
-                        message: `Insufficient quantity available for ${stockData.tradesymbol}`
-                    });
+                    failedOrders.push({ stock: stock.tradesymbol, message: "Stock not found" });
+
+                    // return res.status(500).json({
+                    //     status: false,
+                    //     message: `Insufficient quantity available for ${stockData.tradesymbol}`
+                    // });
                 }
             }
     
+            // return res.json({
+            //     status: true,
+            //     message: "Exit Order Placed Successfully",
+            //     data: orderRecords
+            // });
+
             return res.json({
                 status: true,
-                message: "Exit Order Placed Successfully",
-                data: orderRecords
+                message: `Orders Processed: ${orderRecords.length} Success, ${failedOrders.length} Failed`,
+                successOrders: orderRecords,
+                failedOrders: failedOrders
             });
     
         } catch (error) {

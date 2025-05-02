@@ -1401,7 +1401,7 @@ return res.status(404).json({
 
       try {
       
-        await sendFCMNotification(notificationTitle, notificationBody, tokens,"open signal");
+        await sendFCMNotification(notificationTitle, notificationBody, tokens,"open signal",serviceName);
       
       } catch (error) {
      
@@ -1868,7 +1868,7 @@ async closeSignalwithplan(req, res) {
 
     try {
       // Send notifications to all device tokens
-      await sendFCMNotification(notificationTitle, notificationBody, tokens,"close signal");
+      await sendFCMNotification(notificationTitle, notificationBody, tokens,"close signal",serviceName);
       // console.log('Notifications sent successfully');
     } catch (error) {
   
@@ -2352,7 +2352,7 @@ return res.status(404).json({
     }
 
       try {
-        await sendFCMNotification(notificationTitle, notificationBody, tokens, "strategy open signal");
+        await sendFCMNotification(notificationTitle, notificationBody, tokens, "strategy open signal",serviceName);
       } catch (error) {
         console.error("FCM notification error:", error);
       }
