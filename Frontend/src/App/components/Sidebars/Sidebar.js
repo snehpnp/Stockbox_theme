@@ -47,7 +47,8 @@ import {
   GitCompare,
   MessageCircle,
   CircleFadingArrowUp,
-  Ticket
+  Ticket,
+  Mails
 } from "lucide-react";
 
 import { Link, useLocation } from "react-router-dom";
@@ -342,7 +343,8 @@ const IconComponent = ({ icon }) => {
     GitCompare,
     MessageCircle,
     CircleFadingArrowUp,
-    Ticket
+    Ticket,
+    Mails
 
   };
 
