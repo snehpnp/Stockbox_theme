@@ -28,7 +28,7 @@ const ViewTicket = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [sendername, setSetsendername] = useState([]);
-  
+
   const [formData, setFormData] = useState({
     subject: "",
     message: "",
@@ -39,8 +39,10 @@ const ViewTicket = () => {
 
 
 
+  
   const [errors, setErrors] = useState({});
   const { id } = useParams();
+
 
 
 
