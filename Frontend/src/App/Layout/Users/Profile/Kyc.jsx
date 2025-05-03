@@ -219,9 +219,6 @@ function Kyc({ setViewModel2 }) {
       const token = localStorage.getItem('token');
       const result = await clientKycAndAgreement(data, token);
       setFormData({
-        fullName: "",
-        email: "",
-        phone: "",
         aadhar: "",
         panno: "",
       });
