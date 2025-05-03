@@ -182,76 +182,76 @@ const Ticket = () => {
       button_status={false}
       backbutton_status={false}
     >
-      <div className="table-responsive">
-        <div className="d-md-flex align-items-center mb-4 gap-3">
-          <div className="position-relative">
-            <input
-              type="text"
-              className="form-control ps-5 radius-10"
-              placeholder="Search Signal"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-            />
-            <span className="position-absolute top-50 product-show translate-middle-y">
-              <i className="bx bx-search" />
-            </span>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-md-3 mb-3">
-            <label>From Date</label>
-            <input
-              type="date"
-              name="from"
-              className="form-control radius-10"
-              value={filters.from}
-              onChange={handleFilterChange}
-            />
-          </div>
-          <div className="col-md-3 mb-3">
-            <label>To Date</label>
-            <input
-              type="date"
-              name="to"
-              className="form-control radius-10"
-              value={filters.to}
-              onChange={handleFilterChange}
-              min={filters.from}
-            />
-          </div>
-          <div className="col-md-4 mb-3 ">
-            <div className="d-flex align-items-center gap-2 ">
-              <div className="w-100">
-                <label>Select Status</label>
-                <select
-                  name="status"
-                  className="form-control radius-10"
-                  value={filters.status}
-                  onChange={handleFilterChange}
-                >
-                  <option value="">Select</option>
-                  <option value="0">Pending</option>
-                  <option value="1">OPEN</option>
-                  <option value="2">CLOSE</option>
 
-                </select>
-              </div>
-              <div className="rfreshicon ">
-                <RefreshCcw onClick={resethandle} />
-              </div>
+      <div className="d-md-flex align-items-center mb-4 gap-3">
+        <div className="position-relative">
+          <input
+            type="text"
+            className="form-control ps-5 radius-10"
+            placeholder="Search Signal"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
+          <span className="position-absolute top-50 product-show translate-middle-y">
+            <i className="bx bx-search" />
+          </span>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-md-3 mb-3">
+          <label>From Date</label>
+          <input
+            type="date"
+            name="from"
+            className="form-control radius-10"
+            value={filters.from}
+            onChange={handleFilterChange}
+          />
+        </div>
+        <div className="col-md-3 mb-3">
+          <label>To Date</label>
+          <input
+            type="date"
+            name="to"
+            className="form-control radius-10"
+            value={filters.to}
+            onChange={handleFilterChange}
+            min={filters.from}
+          />
+        </div>
+        <div className="col-md-4 mb-3 ">
+          <div className="d-flex align-items-center gap-2 ">
+            <div className="w-100">
+              <label>Select Status</label>
+              <select
+                name="status"
+                className="form-control radius-10"
+                value={filters.status}
+                onChange={handleFilterChange}
+              >
+                <option value="">Select</option>
+                <option value="0">Pending</option>
+                <option value="1">OPEN</option>
+                <option value="2">CLOSE</option>
+
+              </select>
+            </div>
+            <div className="rfreshicon ">
+              <RefreshCcw onClick={resethandle} />
             </div>
           </div>
-
-
         </div>
-        <Table
-          columns={columns}
-          data={messagedata}
-          totalRows={totalRows}
-          currentPage={currentPage}
-          onPageChange={handlePageChange}
-        />
+
+
       </div>
+      <Table
+        columns={columns}
+        data={messagedata}
+        totalRows={totalRows}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
+      />
+
 
     </Content >
   );
