@@ -48,6 +48,12 @@ const PopupDescription = () => {
     };
 
     const handleSaveDescription = async () => {
+        const strippedText = description.replace(/<(.|\n)*?>/g, "").trim(); // removes HTML tags
+
+        if (!strippedText) {
+            showCustomAlert("error", "Description cannot be empty.");
+            return;
+        }
         const data = { popupcontent: description };
         try {
             const response = await popupdescription(data, token);
