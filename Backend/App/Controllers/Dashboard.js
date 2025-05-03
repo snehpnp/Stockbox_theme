@@ -14,6 +14,10 @@ const PlanSubscription_Modal = db.PlanSubscription;
 const States = db.States;
 const City = db.City;
 
+const path = require('path');
+const fs = require('fs');
+const { sendEmail } = require('../Utils/emailService');
+
 
 
 class Dashboard {
@@ -1703,6 +1707,103 @@ async getCityByStates(req, res) {
     res.status(500).json({ error: "Something went wrong" });
   }
 }
+
+
+  async sendMailToClient(req, res) {
+    try {
+      const { usertype, planid, subject, message, selectedUserIds } = req.body;
+      const today = new Date();
+      const query = { del:0,ActiveStatus:1 };
+      if (selectedUserIds && Array.isArray(selectedUserIds) && selectedUserIds.length > 0) {
+        query._id = { $in: selectedUserIds };
+        console.log("query",query);
+      }
+      const allClients = await Clients_Modal.find(query).select("Email devicetoken");
+  
+      const finalUsers = [];
+  
+      for (const client of allClients) {
+        const subscriptions = await PlanSubscription_Modal.find({ client_id: client._id });
+  
+        let status = "nonsubscriber";
+        const hasActive = subscriptions.some(
+          sub => new Date(sub.plan_start) <= today && new Date(sub.plan_end) >= today
+        );
+        const hasExpired = subscriptions.some(
+          sub => new Date(sub.plan_end) < today
+        );
+  
+        if (hasActive) status = "active";
+        else if (hasExpired) status = "expired";
+  
+        if (
+          usertype === "all" ||
+          (usertype === "active" && status === "active") ||
+          (usertype === "expired" && status === "expired") ||
+          (usertype === "nonsubscriber" && status === "nonsubscriber")
+        ) {
+          if (planid) {
+            const hasPlan = subscriptions.some(sub =>
+              sub.plan_category_id.toString() === planid.toString()
+            );
+            if (!hasPlan) continue;
+          }
+          finalUsers.push(client);
+        }
+      }
+  
+      if (finalUsers.length === 0) {
+        return res.status(404).json({ status: false, message: "No users found for selected criteria." });
+      }
+  
+      const emailList = finalUsers
+        .map(user => user.Email)
+        .filter(email => !!email);
+
+      if (emailList.length === 0) {
+        return res.status(400).json({ status: false, message: "No valid email addresses found." });
+      }
+      const settings = await BasicSetting_Modal.findOne();
+
+      // Step 2: Read the email template
+      const templatePath = path.join(__dirname, '../../template', 'mailtemplate.html');
+      fs.readFile(templatePath, 'utf8', (err, htmlTemplate) => {
+        if (err) {
+          console.error('Error reading HTML template:', err);
+          return;
+        }
+  
+        // Replace placeholders with actual values
+        const finalHtml = htmlTemplate
+          .replace(/{{company_name}}/g, settings.website_title)
+          .replace(/{{body}}/g, message)
+          .replace(/{{logo}}/g, `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`);
+  
+        // Step 3: Send email
+        const mailOptions = {
+          to: emailList,
+          from: `${settings.from_name} <${settings.from_mail}>`,
+          subject: subject,
+          html: finalHtml
+        };
+  
+        sendEmail(mailOptions)
+          .then(() => {
+            res.json({
+              status: true,
+              message: `${emailList.length} mail(s) sent successfully.`
+            });
+          })
+          .catch(error => {
+            console.error("Mail send error:", error);
+            res.status(500).json({ status: false, message: "Server error while sending emails." });
+          });
+      });
+    } catch (error) {
+      console.error("Mail send error:", error);
+      res.status(500).json({ status: false, message: "Server error while sending emails." });
+    }
+  }
 
 
 }
