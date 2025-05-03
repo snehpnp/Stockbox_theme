@@ -143,9 +143,11 @@ const AddSignal = () => {
         errors.expiry = 'Please Enter Expiry Date';
       }
 
+
       if (values.segment === "O" && !values.strikeprice) {
-        errors.strikePrice = 'Please Select Strike Price';
+        errors.strikeprice = 'Please Select Strike Price';
       }
+ 
       if (!values.entrytype) {
         errors.entrytype = 'Please Select Entry Type';
       }
@@ -156,6 +158,8 @@ const AddSignal = () => {
       if (values.lot && values.lot <= 0) {
         errors.lot = 'Please Enter Greater Than Zero';
       }
+
+
 
       return errors;
     },
