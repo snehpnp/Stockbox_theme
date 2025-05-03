@@ -1,4 +1,4 @@
-import { format, formatDistanceToNow } from 'date-fns';
+import { format, formatDistanceToNow, isValid } from 'date-fns';
 // import Holidays from "date-holidays"
 
 
@@ -15,6 +15,13 @@ export function fDate(date) {
 
 export function fDateTime(date) {
   return format(new Date(date), 'dd MMM yyyy');
+}
+
+
+export function fTimeOnly(date) {
+  const d = new Date(date);
+  if (!isValid(d)) return '';
+  return format(d, 'hh:mm a');
 }
 
 

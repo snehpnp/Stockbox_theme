@@ -10,7 +10,7 @@ const PlanSubscriptionSchema = new Schema({
     },
     client_id: {
         type: Schema.Types.ObjectId,
-        ref: 'Client', // Assuming there's a 'Client' model to reference
+        ref: 'CLIENTS', // Assuming there's a 'Client' model to reference
         required: true
     },
     plan_price: {

@@ -1399,7 +1399,8 @@ async  MultipleplaceOrder(req, res) {
         if (stocks.length === 0) return res.status(404).json({ status: false, message: "No stock found for this signal" });
 
         let responses = [];
-
+        let failedOrders = [];
+        const successResponses = [];
         for (let stock of stocks) {
             let optiontype, exchange, producttype, exchangess;
 
@@ -1425,7 +1426,7 @@ async  MultipleplaceOrder(req, res) {
             }
 
             if (!stockData) {
-                console.warn(`Stock not found for ${stockData.tradesymbol}, skipping order.`);
+                failedOrders.push({ stock: stock.tradesymbol, message: "Stock not found" });
                 continue;
             }
 
@@ -1434,7 +1435,7 @@ async  MultipleplaceOrder(req, res) {
             // ✅ Get Instrument Token from CSV
             let token = await getTokenFromCSV(stockData, stock.segment, optiontype);
             if (!token) {
-                console.warn(`Token not found for ${stockData.tradesymbol}, skipping order.`);
+                failedOrders.push({ stock: stock.tradesymbol, message: `Token not found for ${stockData.tradesymbol}, skipping order.` });
                 continue;
             }
 
@@ -1489,17 +1490,42 @@ async  MultipleplaceOrder(req, res) {
                     });
 
                     await order.save();
-                    responses.push({ status: true, data: response.data, message: "Order Placed Successfully", stock: stock.tradesymbol });
+                    successResponses.push({
+                        status: true,
+                        data: response.data,
+                        message: "Order Placed Successfully",
+                        stock: stock.tradesymbol
+                    });
 
                 } else {
-                    responses.push({ status: false, message: response.data.message || 'Unknown error in response', stock: stock.tradesymbol });
+
+                    failedResponses.push({
+                        status: false,
+                        message: response.data.message || 'Unknown error in response',
+                        stock: stock.tradesymbol
+                    });
+
                 }
             } catch (error) {
-                responses.push({ status: false, message: `Error placing order for ${stock.tradesymbol}: ${error.message}` });
+                const errorMessage =
+            error?.response?.data?.errors?.[0]?.message ||
+            error?.response?.data?.message ||
+            error.message || "Unknown error";
+
+        failedResponses.push({
+            status: false,
+            message: `Error placing order for ${stock.tradesymbol}: ${errorMessage}`,
+            stock: stock.tradesymbol
+        });
             }
         }
 
-        return res.json({ status: true, responses });
+        return res.json({
+            status: true,
+            message: `Orders Processed: ${successResponses.length} Success, ${failedResponses.length} Failed`,
+            successOrders: successResponses,
+            failedOrders: failedResponses
+        });
 
     } catch (error) {
         return res.status(500).json({ status: false, message: error.response ? error.response.data : "An error occurred while placing the orders" });
@@ -1527,6 +1553,8 @@ async  MultipleExitplaceOrder(req, res) {
         if (stocks.length === 0) return res.status(404).json({ status: false, message: "No stock found for this signal" });
 
         let responses = [];
+        const successResponses = [];
+        const failedResponses = [];
 
         for (let stock of stocks) {
             let optiontype, exchange, producttype;
@@ -1555,9 +1583,10 @@ async  MultipleExitplaceOrder(req, res) {
         
 
             if (!stockData) {
-                responses.push({ status: false, message: `Stock not found for ${stockData.tradesymbol}` });
+                failedResponses.push({ status: false, message: `Stock not found for ${stock.tradesymbol || stock.symbol}` });
                 continue;
             }
+
 
             // ✅ Get Position & Holding Data
             let holdingData = { qty: 0 };
@@ -1567,14 +1596,18 @@ async  MultipleExitplaceOrder(req, res) {
             try {
                 positionData = await CheckPosition(client.apikey, stock.segment, stockData.instrument_token);
             } catch (error) {
-                console.error(`Error fetching position data for ${stockData.tradesymbol}:`, error);
+
+
+                failedResponses.push({ status: false, message: `Error fetching position data for ${stockData.tradesymbol}` });
+                continue;
             }
 
             if (stock.segment === "C") {
                 try {
                     holdingData = await CheckHolding(client.apikey, stock.segment, stockData.instrument_token);
                 } catch (error) {
-                    console.error(`Error fetching holding data for ${stockData.tradesymbol}:`, error);
+                    failedResponses.push({ status: false, message: `Error fetching holding data for ${stockData.tradesymbol}` });
+                    continue;
                 }
                 totalValue = Math.abs(positionData.qty || 0) + (holdingData.qty || 0);
             } else {
@@ -1582,16 +1615,14 @@ async  MultipleExitplaceOrder(req, res) {
             }
 
             if (totalValue < quantity) {
-                console.warn(`Not enough quantity to exit for ${stockData.tradesymbol}`);
-                responses.push({ status: false, message: `Not enough quantity for ${stockData.tradesymbol}` });
+                failedResponses.push({ status: false, message: `Not enough quantity for ${stockData.tradesymbol}` });
                 continue;
             }
 
             // ✅ Get Instrument Token from CSV
             let token = await getTokenFromCSV(stockData, stock.segment, optiontype);
             if (!token) {
-                console.warn(`Token not found for ${stockData.tradesymbol}, skipping order.`);
-                responses.push({ status: false, message: `Token not found for ${stockData.tradesymbol}` });
+                failedResponses.push({ status: false, message: `Token not found for ${stockData.tradesymbol}` });
                 continue;
             }
 
@@ -1652,21 +1683,40 @@ async  MultipleExitplaceOrder(req, res) {
                         ordertoken: stockData.instrument_token,
                         exchange: exchange
                     });
+
+
+                    successResponses.push({
+                        status: true,
+                        data: response.data,
+                        message: `Exit Order Placed Successfully for ${stockData.tradesymbol}`
+                    });
+
                 } else {
-                    responses.push({
+                    failedResponses.push({
                         status: false,
                         message: response.data.message || `Exit Order failed for ${stock.tradesymbol}`
                     });
                 }
             } catch (error) {
-                responses.push({
+                const errorMsg =
+                    error?.response?.data?.errors?.[0]?.message ||
+                    error?.response?.data?.message ||
+                    error.message ||
+                    "Unknown error";
+
+                failedResponses.push({
                     status: false,
-                    message: `Error placing exit order for ${stock.tradesymbol}: ${error.message}`
+                    message: `Error placing exit order for ${stock.tradesymbol}: ${errorMsg}`
                 });
             }
         }
 
-        return res.json({ status: true, responses });
+        return res.json({
+            status: true,
+            message: `Orders Processed: ${successResponses.length} Success, ${failedResponses.length} Failed`,
+            successOrders: successResponses,
+            failedOrders: failedResponses
+        });
 
     } catch (error) {
         return res.status(500).json({

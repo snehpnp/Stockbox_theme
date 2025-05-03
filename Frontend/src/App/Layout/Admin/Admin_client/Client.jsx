@@ -46,8 +46,12 @@ const Client = () => {
     // getActiveBasketdetail();
   }, []);
 
+
+
   const location = useLocation();
   const clientStatus = location?.state?.clientStatus;
+
+
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
@@ -355,6 +359,8 @@ const Client = () => {
 
 
 
+
+
   // update status
   const handleSwitchChange = async (event, id) => {
     const originalChecked = event.target.checked;
@@ -377,6 +383,8 @@ const Client = () => {
       event.target.checked = !originalChecked;
     }
   };
+
+
 
 
 
@@ -408,6 +416,8 @@ const Client = () => {
 
 
 
+
+
   // assign basket
   const UpdateBasketservice = async () => {
     try {
@@ -417,11 +427,7 @@ const Client = () => {
         price: basketdetail.price,
       };
 
-      console.log("data", data)
-
       const response = await BasketSubscription(data, token);
-
-
       if (response && response.status) {
         showCustomAlert("Success", "Basket service updated successfully.");
         setBasketdetail({ basket_id: "", client_id: "", price: "" });
@@ -434,7 +440,6 @@ const Client = () => {
       showCustomAlert("error", "There was an error updating the Basket.");
     }
   };
-
 
 
 

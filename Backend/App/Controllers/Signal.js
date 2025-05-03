@@ -98,6 +98,9 @@ if (segment === "C") {
         segment: segment, 
         expiry: expirydate, 
     });
+
+    tradesymbols = `${stocks.symbol} ${stocks.expiry_str} FUT`;
+
 } else {
     stocks = await Stock_Modal.findOne({ 
         symbol: stock, 
@@ -539,11 +542,11 @@ async getSignalWithFilter(req, res) {
         serviceName = "Option";
         service = "66dfeef84a88602fbbca9b79";
       } 
-      else if (segment == "OS") {
+      else if (Signal.segment == "OS") {
         service = "67e12758a0a2be895da19550";
         serviceName = "Strategy";
       } 
-      else if (segment == "FS") {
+      else if (Signal.segment == "FS") {
         service = "67e1279ba0a2be895da19551";
         serviceName = "Future Strategy";
       } 
@@ -1264,6 +1267,8 @@ stocks = await Stock_Modal.findOne({
   segment: segment, 
   expiry: expirydate, 
 });
+tradesymbols = `${stocks.symbol} ${stocks.expiry_str} FUT`;
+
 } else {
 stocks = await Stock_Modal.findOne({ 
   symbol: stock, 
@@ -1391,16 +1396,18 @@ return res.status(404).json({
           });
         
           await resultn.save();
+
+          try {
+      
+            await sendFCMNotification(notificationTitle, notificationBody, tokens,"open signal",serviceName);
+          
+          } catch (error) {
+         
+          }
         }
 
 
-      try {
-      
-        await sendFCMNotification(notificationTitle, notificationBody, tokens,"open signal");
-      
-      } catch (error) {
      
-      }
 
       }
     
@@ -1694,11 +1701,11 @@ async closeSignalwithplan(req, res) {
       serviceName = "Option";
       service = "66dfeef84a88602fbbca9b79";
     } 
-    else if (segment == "OS") {
+    else if (Signal.segment == "OS") {
       service = "67e12758a0a2be895da19550";
       serviceName = "Strategy";
     } 
-    else if (segment == "FS") {
+    else if (Signal.segment == "FS") {
       service = "67e1279ba0a2be895da19551";
       serviceName = "Future Strategy";
     } 
@@ -1851,7 +1858,7 @@ async closeSignalwithplan(req, res) {
 
       const resultn = new Notification_Modal({
         segmentid: Signal.planid,
-        type: close_status == "true" ? "close signal" : "open signal",
+        type: close_status == true ? "close signal" : "open signal",
         title: notificationTitle,
         message: notificationBody,
         signalid: Signal._id,
@@ -1863,7 +1870,7 @@ async closeSignalwithplan(req, res) {
 
     try {
       // Send notifications to all device tokens
-      await sendFCMNotification(notificationTitle, notificationBody, tokens,"close signal");
+      await sendFCMNotification(notificationTitle, notificationBody, tokens,close_status === true ? "close signal" : "open signal",serviceName);
       // console.log('Notifications sent successfully');
     } catch (error) {
   
@@ -2175,13 +2182,33 @@ async AddSignals(req, res) {
 
     // Split planid into an array of plan IDs
     const planIds = planid.split(',');
+    var servicess;
+
+    if (service == "C") {
+      servicess = "66d2c3bebf7e6dc53ed07626";
+    
+    } else if (service == "O") {
+      servicess = "66dfeef84a88602fbbca9b79";
+    } 
+    else if (service == "OS") {
+      servicess = "67e12758a0a2be895da19550";
+    } 
+    else if (service == "FS") {
+      servicess = "67e1279ba0a2be895da19551";
+    } 
+    else {
+      servicess = "66dfede64a88602fbbca9b72";
+    }
+    
+
+
 
     // Create signal entries for each plan id using Signalsdata_Modal
     const signalEntries = planIds.map(id => {
       return new Signalsdata_Modal({
         stock: stock,
         strategy_name: strategy_name,
-        service: service, // Hardcoded service value
+        service: servicess, // Hardcoded service value
         callduration: callduration,
         description: description,
         planid: id,
@@ -2242,6 +2269,8 @@ stockss = await Stock_Modal.findOne({
     segment: segment, 
     expiry: expirydate, 
 });
+tradesymbols = `${stockss.symbol} ${stockss.expiry_str} FUT`;
+
 } else {
 stockss = await Stock_Modal.findOne({ 
     symbol: stock, 
@@ -2315,7 +2344,7 @@ return res.status(404).json({
 
       const resultn = new Notification_Modal({
         segmentid: planid,
-        type: 'open signal',
+        type: 'strategy open signal',
         title: notificationTitle,
         message: notificationBody,
         signalid: signal._id,
@@ -2325,7 +2354,7 @@ return res.status(404).json({
     }
 
       try {
-        await sendFCMNotification(notificationTitle, notificationBody, tokens, "open signal");
+        await sendFCMNotification(notificationTitle, notificationBody, tokens, "strategy open signal",serviceName);
       } catch (error) {
         console.error("FCM notification error:", error);
       }
@@ -2509,7 +2538,7 @@ async closeSignals(req, res) {
     } else if (closetype === "2") {
       close_status = closestatus;
       closedate = new Date();
-      notificationBody = `${strategy_name} Symbol ${stock} Strategy Closed Enjoy Profits`;
+      notificationBody = `${strategy_name} Symbol ${stock} Strategy Partially Closed Book Profit`;
     } else if (closetype === "3") {
       close_status = true;
       finalClosePrice = 0;
@@ -2529,29 +2558,47 @@ async closeSignals(req, res) {
       { new: true, runValidators: true }
     );
 
-    const today = new Date();
+    // const today = new Date();
 
+    // const clients = await Clients_Modal.find({
+    //   del: 0,
+    //   ActiveStatus: 1,
+    //   devicetoken: { $exists: true, $ne: null },
+    //   _id: {
+    //     $in: await Planmanage.find({
+    //       serviceid: service,
+    //       enddate: { $gte: today }
+    //     }).distinct('clientid')
+    //   }
+    // }).select('devicetoken');
+
+
+    
+    const today = new Date();
     const clients = await Clients_Modal.find({
       del: 0,
       ActiveStatus: 1,
       devicetoken: { $exists: true, $ne: null },
       _id: {
-        $in: await Planmanage.find({
-          serviceid: service,
-          enddate: { $gte: today }
-        }).distinct('clientid')
-      }
+        $in: await PlanSubscription_Modal.find({
+          client_id: { $ne: null },
+          plan_category_id: service,
+          plan_end: { $gte: today },
+          del: false,
+        }).distinct('client_id'),
+      },
     }).select('devicetoken');
+
 
     const tokens = clients.map(client => client.devicetoken);
 
     if (tokens.length > 0) {
-      await sendFCMNotification(notificationTitle, notificationBody, tokens, "close signal");
+      await sendFCMNotification(notificationTitle, notificationBody, tokens, close_status === true ? "strategy close signal" : "strategy open signal", "Strategy");
     }
 
     const resultn = new Notification_Modal({
       segmentid: service,
-      type: close_status ? "close signal" : "open signal",
+      type: close_status ? "strategy close signal" : "strategy open signal",
       title: notificationTitle,
       message: notificationBody,
       signalcreatedate: signalCreatedAt,

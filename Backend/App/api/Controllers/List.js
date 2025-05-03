@@ -4175,14 +4175,14 @@ class List {
             $or: [
 
               {
-                type: "close signal",
+                type: { $in: ['close signal', 'strategy close signal'] },
                 segmentid: { $in: activePlans },
                 signalcreatedate: { $gte: planStartDate }  // Ensure it's created after plan start date
               },
               // Global notifications with 'close signal', 'open signal', or 'add broadcast' types
-              { type: { $in: ['open signal', 'add broadcast'] }, segmentid: { $in: activePlans } },
+              { type: { $in: ['open signal', 'add broadcast', 'strategy open signal'] }, segmentid: { $in: activePlans } },
               // Global notifications with other types
-              { type: { $nin: ['close signal', 'open signal', 'add broadcast'] } }
+              { type: { $nin: ['close signal', 'open signal', 'add broadcast', 'strategy open signal', 'strategy close signal'] } }
             ]
           },
 
@@ -4335,9 +4335,20 @@ class List {
         });
       }
 
+      const latestStock = await Basketstock_Modal.findOne({ basket_id, status: 1 }).sort({ version: -1 });
+      const latestVersion = latestStock ? latestStock.version : null;
 
+      if (!latestVersion) {
+        return res.json({
+          status: false,
+          message: "No stocks found in the basket.",
+        });
+      }
+
+      // ✅ Step 2: Get only latest version's stocks
+      const existingStocks = await Basketstock_Modal.find({ basket_id, version: latestVersion, status: 1 });
       // Get stocks for the basket
-      const existingStocks = await Basketstock_Modal.find({ basket_id }).sort({ version: -1 });
+      // const existingStocks = await Basketstock_Modal.find({ basket_id }).sort({ version: -1 });
 
       const version = existingStocks.length > 0 ? existingStocks[0].version : 1;
 
@@ -4783,8 +4794,9 @@ class List {
 
 
               let config = {
-                method: 'post',
-                url: 'https://api-hft.upstox.com/v2/user/get-funds-and-margin',
+                method: 'get',
+                maxBodyLength: Infinity,
+                url: 'https://api.upstox.com/v2/user/get-funds-and-margin',
                 headers: {
                   Authorization: `Bearer ${authToken}`,
                 },
@@ -5394,9 +5406,9 @@ class List {
 
 
 
-      const uniquePlanIds = [
-        ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
-      ].map(id => new ObjectId(id));
+      //  const uniquePlanIds = [
+      //   ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
+      // ].map(id => new ObjectId(id));
 
       /*
             const query = {
@@ -5424,7 +5436,7 @@ class List {
       const baseConditions = {
         service: service_id,
         close_status: false,
-        $or: uniquePlanIds.map((planId, index) => ({
+        $or: planIds.map((planId, index) => ({
           planid: planId.toString(),
           created_at: { $lte: planEnds[index] }
         }))
@@ -5549,7 +5561,7 @@ class List {
               // Global notifications for 'close signal' and 'open signal'
               ...(subscriptions.length > 0
                 ? [{
-                  type: { $in: ['close signal', 'open signal'] },
+                  type: { $in: ['close signal', 'open signal', 'strategy open signal', 'strategy close signal'] },
                   $or: subscriptions.map((sub) => ({
                     segmentid: { $regex: `(^|,)${sub.plan_category_id}($|,)` }, // Match plan_id in segmentid
                     createdAt: { $lte: new Date(sub.plan_end) } // Ensure the notification was created before plan_end date
@@ -5558,7 +5570,7 @@ class List {
                 : []),
 
               // Include all other types of notifications (e.g., add coupon, blogs, news, etc.)
-              { type: { $nin: ['close signal', 'open signal', 'add broadcast'] } }
+              { type: { $nin: ['close signal', 'open signal', 'add broadcast', 'strategy open signal', 'strategy close signal'] } }
             ]
           },
 
@@ -5583,10 +5595,32 @@ class List {
       };
 
       // Fetch notifications based on constructed query
-      const result = await Notification_Modal.find(queryConditions)
+      // const result = await Notification_Modal.find(queryConditions)
+      //   .sort({ createdAt: -1 })
+      //   .skip((page - 1) * limit) // Pagination
+      //   .limit(parseInt(limit)); // Limit the number of records
+
+      const notifications = await Notification_Modal.find(queryConditions)
         .sort({ createdAt: -1 })
         .skip((page - 1) * limit) // Pagination
         .limit(parseInt(limit)); // Limit the number of records
+      // Loop through each notification and fetch the associated service from signalsdatas
+      const result = [];
+      for (const notification of notifications) {
+        const notif = notification.toObject(); // 👈 Convert to plain object
+        if (notif.signalid) {
+          const signal = await Signal_Modal.findById(notif.signalid).select('service');
+          if (signal && signal.service) {
+            notif.service = signal.service;
+          } else {
+            notif.service = null;
+          }
+        }
+        result.push(notif);
+      }
+
+
+
 
       const totalcount = await Notification_Modal.countDocuments(queryConditions);
 
@@ -7247,12 +7281,14 @@ class List {
 
 
 
+
       const baseConditions = {
         service: service_id,
-        close_status: false,
-        $or: uniquePlanIds.map((planId, index) => ({
-          planid: planId.toString(),
-          created_at: { $lte: planEnds[index] }
+        close_status: true,
+        $or: planIds.map((planId, index) => ({
+          planid: planId.toString(), // Matching the planid with regex
+          created_at: { $lte: planEnds[index] },
+          closedate: { $gte: planStarts[index] }      // Checking if created_at is <= to planEnds
         }))
       };
 
@@ -8178,7 +8214,6 @@ class List {
       }).exec();
 
 
-
       if (!existingPlan) {
         const lastFiveSignals = await Signalsdata_Modal.find({ close_status: false })
           .sort({ created_at: -1 })
@@ -8188,7 +8223,7 @@ class List {
         const signalIds = lastFiveSignals.map(signal => signal._id);
 
         const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
-          .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price lot lotsize")
+          .select("signal_id tradesymbol tradesymbols calltype segment expirydate optiontype strikeprice price lot lotsize")
           .lean();
 
         const stockMap = {};
@@ -8226,7 +8261,7 @@ class List {
       const planIds = subscriptions.map(sub => sub.plan_category_id).filter(id => id != null);
       const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
 
-      const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
+      // const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
 
       /*  const query = {
           close_status: false,
@@ -8248,7 +8283,7 @@ class List {
 
       let query = {
         close_status: false,
-        $or: uniquePlanIds.map((planId, index) => ({
+        $or: planIds.map((planId, index) => ({
           planid: planId.toString(),
           created_at: { $lte: planEnds[index] }
         }))
@@ -8286,7 +8321,7 @@ class List {
 
       // 🔹 Fetch Stock Data for Existing Signals
       const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
-        .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price lot lotsize")
+        .select("signal_id tradesymbol tradesymbols calltype segment expirydate optiontype strikeprice price lot lotsize")
         .lean();
 
       // 🔹 Map Stock Details to Signals
@@ -8358,7 +8393,7 @@ class List {
       const planStarts = subscriptions.map(sub => new Date(sub.plan_start));
       const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
 
-      const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
+      // const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
 
       /* const query = {
          close_status: true,
@@ -8380,7 +8415,7 @@ class List {
 
       let query = {
         close_status: true,
-        $or: uniquePlanIds.map((planId, index) => ({
+        $or: planIds.map((planId, index) => ({
           planid: planId.toString(),
           created_at: { $lte: planEnds[index] }
           // closedate: { $gte: planStarts[index] } // Agar chahiye to uncomment kar lena
@@ -8420,7 +8455,7 @@ class List {
 
       // 🔹 Fetch Stock Data for Existing Signals
       const stockDetails = await Signalstock_Modal.find({ signal_id: { $in: signalIds } })
-        .select("signal_id tradesymbol calltype segment expirydate optiontype strikeprice price lot lotsize")
+        .select("signal_id tradesymbol tradesymbols calltype segment expirydate optiontype strikeprice price lot lotsize")
         .lean();
 
       // 🔹 Map Stock Details to Signals

@@ -1062,7 +1062,8 @@ class Clients {
         const data = {
           kid,
           customer_identifier,
-          gid
+          gid,
+          refid
         };
         return res.json(data); // Ensure only one response is sent
       } else {
@@ -1079,6 +1080,10 @@ class Clients {
 
   }
 
+
+
+
+  
   async uploadDocument(req, res) {
     const id = req.body.id;
 
@@ -1130,7 +1135,7 @@ class Clients {
     signCoordinates[client.PhoneNo] = {}; // Initialize the phone number key
 
     for (let i = 1; i <= noof_pdf_pages; i++) {
-      signCoordinates[client.PhoneNo][i] = [{ llx: 290, lly: 190, urx: 520, ury: 90 }];
+        signCoordinates[client.PhoneNo][i] = [{ llx: 290, lly: 170, urx: 520, ury: 70 }];
     }
 
     const requestBody = {
@@ -1949,11 +1954,23 @@ class Clients {
             quantity: 1,
             status: 1,
             borkerid: 1,
-            data: 1,
             ordertype: 1,
             signalid: 1,
             createdAt: 1,
-            signalDetails: 1
+            signalDetails: 1,
+            data: {
+              $cond: {
+                if: {
+                  $and: [
+                    { $eq: [{ $type: "$data" }, "object"] }, // Check if "data" is an object
+                    { $eq: [{ $type: "$data.stat" }, "null"] }, // Check if "stat" is null
+                    { $eq: [{ $type: "$data.emsg" }, "null"] } // Check if "emsg" is null
+                  ]
+                },
+                then: null, // If all are null, set data to null
+                else: "$data" // Else, retain the original "data"
+              }
+            }
           }
         },
         {
@@ -2202,7 +2219,7 @@ class Clients {
 
       const existingOpenTicket = await Ticket_Modal.findOne({
         client_id,
-        status: false, // assuming 'true' means ticket is open
+        status: { $in: [0, 1] },  // Match if status is 0 OR 1
         del: false
       });
 
@@ -2230,7 +2247,8 @@ class Clients {
         subject,
         message,
         attachment,
-        ticketnumber
+        ticketnumber,
+        status: 0, // assuming 'false' means ticket is open
       });
 
       await newTicket.save();

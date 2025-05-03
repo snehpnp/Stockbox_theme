@@ -5,12 +5,18 @@ import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
+
+
+
 const PopupDescription = () => {
-    
+
+
     const token = localStorage.getItem('token');
     const [clients, setClients] = useState(null);
     const [description, setDescription] = useState("");
     const [initialValues, setInitialValues] = useState({ popupstatus: "" });
+
+
 
     const getApidetail = async () => {
         try {
@@ -26,9 +32,14 @@ const PopupDescription = () => {
         }
     };
 
+
     useEffect(() => {
         getApidetail();
     }, []);
+
+
+
+
 
     const handleStatusChange = async (event) => {
         const newStatus = event.target.checked ? 1 : 0;
@@ -47,12 +58,14 @@ const PopupDescription = () => {
         }
     };
 
-    const handleSaveDescription = async () => {
-        const strippedText = description.replace(/<(.|\n)*?>/g, "").trim(); // removes HTML tags
 
-        if (!strippedText) {
-            showCustomAlert("error", "Description cannot be empty.");
-            return;
+
+
+
+    const handleSaveDescription = async () => {
+        if (description === "<p><br></p>") {
+            showCustomAlert("error", "Please field The Description");
+            return
         }
         const data = { popupcontent: description };
         try {
@@ -64,7 +77,10 @@ const PopupDescription = () => {
         } catch (error) {
             showCustomAlert("error", "Failed to update description.");
         }
-    };
+    }
+
+
+
 
     const quillModules = {
         toolbar: [
@@ -75,6 +91,8 @@ const PopupDescription = () => {
             ["clean"],
         ],
     };
+
+
 
     const quillFormats = [
         "header",
@@ -107,7 +125,7 @@ const PopupDescription = () => {
 
             <div className="row justify-content-center">
                 <div className="col-lg-8">
-                    {/* Status Card */}
+
                     <div className="card mb-4 shadow-sm">
                         <div className="card-header fw-semibold">Pop-up Status</div>
                         <div className="card-body">
@@ -126,7 +144,7 @@ const PopupDescription = () => {
                         </div>
                     </div>
 
-                    {/* Description Card */}
+
                     <div className="card mb-4 shadow-sm">
                         <div className="card-header fw-semibold">Pop-up Description</div>
                         <div className="card-body">

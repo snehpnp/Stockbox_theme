@@ -448,11 +448,34 @@ class Basket {
 
       // Execute the bulk insert
       const result = await Basketstock_Modal.bulkWrite(bulkOps);
-      const updatedBasket = await Basket_Modal.findByIdAndUpdate(
-        basket_id, 
-        { stockname: stockname }, 
-        { new: true }  // Ye ensure karega ki updated document return ho
-    );
+    //   const updatedBasket = await Basket_Modal.findByIdAndUpdate(
+    //     basket_id, 
+    //     { stockname: stockname }, 
+    //     { new: true }  // Ye ensure karega ki updated document return ho
+    // );
+
+
+    // const updatedBasket = await Basket_Modal.findByIdAndUpdate(
+    //   basket_id,
+    //   {
+    //     stockname: stockname,
+    //     ...(publishstatus == 1 && { remaining_amount: remainingAmount })
+    //   },
+    //   { new: true }
+    // );
+    const versionss = existingStocks.length > 0 ? existingStocks[0].version + 1 : 1;
+
+    const updateData = { stockname: stockname };
+
+if (publishstatus == 1 && versionss > 1) {
+  updateData.remaining_amount = remainingAmount;
+}
+
+const updatedBasket = await Basket_Modal.findByIdAndUpdate(
+  basket_id,
+  updateData,
+  { new: true }
+);
 
       if (publishstatus == 1) {
       
@@ -572,7 +595,8 @@ class Basket {
                       message: `Insufficient funds to allocate ${allocatedAmount} for ${tradesymbol}`,
                   });
               }
-  
+
+
               // Calculate quantity and total value
               const quantity = Math.floor(allocatedAmount / currentPrice);
 
@@ -677,7 +701,7 @@ class Basket {
   }
 
 
-  await Basketstock_Modal.deleteMany({ basket_id, version });
+  // await Basketstock_Modal.deleteMany({ basket_id, version });
 
 
   let totalAmount = 0;
@@ -745,6 +769,30 @@ class Basket {
 
 
   const bulkOps = [];
+
+
+  for (const stock of stocks) {
+    const { tradesymbol, percentage, price } = stock;
+
+    const currentPrice = price;
+    if (!currentPrice) {
+      return res.status(400).json({ status: false, message: `No market price found for ${tradesymbol}` });
+    }
+
+    const allocatedAmount = (percentage / 100) * totalAmount;
+    const quantity = Math.floor(allocatedAmount / currentPrice);
+
+    if (quantity <= 0) {
+      return res.status(400).json({
+        status: false,
+        message: `Quantity is zero for stock ${tradesymbol}. Cannot add stock.`,
+      });
+    }
+  }
+
+  // ✅ Jab yaha tak sab stocks valid hai, tab purane delete karo
+  await Basketstock_Modal.deleteMany({ basket_id, version });
+
 
   for (const stock of stocks) {
     const { name, tradesymbol, percentage, price, comment, type, status } = stock;
@@ -826,11 +874,35 @@ class Basket {
 
       // Execute the bulk upsert
       const result = await Basketstock_Modal.bulkWrite(bulkOps);
-      const updatedBasket = await Basket_Modal.findByIdAndUpdate(
-        basket_id, 
-        { stockname: stockname }, 
-        { new: true }  // Ye ensure karega ki updated document return ho
-    );
+    //   const updatedBasket = await Basket_Modal.findByIdAndUpdate(
+    //     basket_id, 
+    //     { stockname: stockname }, 
+    //     { new: true }  // Ye ensure karega ki updated document return ho
+    // );
+
+    // const updatedBasket = await Basket_Modal.findByIdAndUpdate(
+    //   basket_id,
+    //   {
+    //     stockname: stockname,
+    //     ...(publishstatus == 1 && { remaining_amount: remainingAmount })
+    //   },
+    //   { new: true }
+    // );
+
+    const versionss = existingStocks.length > 0 ? existingStocks[0].version + 1 : 1;
+
+    const updateData = { stockname: stockname };
+
+if (publishstatus == 1 && versionss > 1) {
+  updateData.remaining_amount = remainingAmount;
+}
+
+const updatedBasket = await Basket_Modal.findByIdAndUpdate(
+  basket_id,
+  updateData,
+  { new: true }
+);
+
       if (publishstatus == 1) {
       
         await addBasketVolatilityData(req);
@@ -904,7 +976,7 @@ class Basket {
         }
       }
   
-      await Basketstock_Modal.deleteMany({ basket_id, version });
+      // await Basketstock_Modal.deleteMany({ basket_id, version });
   
       let totalAmount = existingStocks.length > 0 ? existingStocks.reduce((sum, stock) => sum + (stock.price * stock.quantity), 0) : basket.mininvamount;
   
@@ -917,6 +989,33 @@ class Basket {
       }
   
       const bulkOps = [];
+
+
+
+
+      for (const stock of stocks) {
+        const { tradesymbol, percentage, price } = stock;
+    
+        const currentPrice = price;
+        if (!currentPrice) {
+          return res.status(400).json({ status: false, message: `No market price found for ${tradesymbol}` });
+        }
+    
+        const allocatedAmount = (percentage / 100) * totalAmount;
+        const quantity = Math.floor(allocatedAmount / currentPrice);
+    
+        if (quantity <= 0) {
+          return res.status(400).json({
+            status: false,
+            message: `Quantity is zero for stock ${tradesymbol}. Cannot add stock.`,
+          });
+        }
+      }
+    
+      // ✅ Jab yaha tak sab stocks valid hai, tab purane delete karo
+      await Basketstock_Modal.deleteMany({ basket_id, version });
+    
+
       for (const stock of stocks) {
         const { name, tradesymbol, percentage, price, comment, status } = stock;
   

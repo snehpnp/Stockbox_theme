@@ -30,7 +30,7 @@ class TicketController {
             });
     
             // After the upload is successful, proceed with the rest of the logic
-            const { ticket_id, message } = req.body;
+            const { ticket_id, message, adminname } = req.body;
 
             if (!ticket_id) {
                 return res.status(400).json({ status: false, message: "Ticket Id is required" });
@@ -47,11 +47,19 @@ class TicketController {
                 ticket_id: ticket_id,
                 message: message,
                 attachment: attachment,
+                adminname: adminname,
+                
             });
             
             // Save the result to the database
             await result.save();
 
+            const ticket = await Ticket_Modal.findById(ticket_id);
+
+if (ticket && ticket.status === 0) {
+    ticket.status = 1;
+    await ticket.save();
+}
 
             return res.json({
                 status: true,
@@ -85,15 +93,14 @@ class TicketController {
         }
     
         // Status filter
-       
-if (status !== undefined && status !== "") {
-  // agar status explicitly aaya hai aur empty nahi hai
-  if (status === "true" || status === true) {
-    matchQuery.status = true;
-  } else if (status === "false" || status === false) {
-    matchQuery.status = false;
-  }
-}
+        if (status !== undefined && status !== "") {
+          // Agar status aya hai aur empty nahi hai
+          const parsedStatus = Number(status); // Convert to Number (0,1,2)
+        
+          if (!isNaN(parsedStatus)) {
+            matchQuery.status = parsedStatus;
+          }
+        }
         // Aggregation pipeline with lookup and match
         const pipeline = [
           {
@@ -267,23 +274,27 @@ if (status !== undefined && status !== "") {
             const { id, status } = req.body;
       
             // Validate status
-            const validStatuses = ['true', 'false'];
+            const validStatuses = [0, 1, 2, "0", "1", "2"];
+
             if (!validStatuses.includes(status)) {
-                return res.status(400).json({
-                    status: false,
-                    message: "Invalid status value"
-                });
+              return res.json({
+                status: false,
+                message: "Invalid status value."
+              });
             }
-      
-            // Find and update the plan
+            
+            // Ensure status is stored as a number
+            const parsedStatus = Number(status);
+            
+            // Find and update the ticket
             const result = await Ticket_Modal.findByIdAndUpdate(
-                id,
-                { status: status },
-                { new: true } // Return the updated document
+              id,
+              { status: parsedStatus },
+              { new: true } // Return the updated document
             );
       
             if (!result) {
-                return res.status(404).json({
+                return res.json({
                     status: false,
                     message: "Ticket not found"
                 });
@@ -297,7 +308,7 @@ if (status !== undefined && status !== "") {
       
         } catch (error) {
             // console.log("Error updating status:", error);
-            return res.status(500).json({
+            return res.json({
                 status: false,
                 message: "Server error",
                 data: []

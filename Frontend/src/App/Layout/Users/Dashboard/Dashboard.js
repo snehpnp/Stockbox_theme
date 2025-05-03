@@ -22,6 +22,7 @@ import { getblogslist } from "../../../Services/Admin/Admin";
 import { GetNewsData } from "../../../Services/UserService/User";
 import { image_baseurl } from "../../../../Utils/config";
 import { Getdashboardata } from "../../../Services/UserService/User";
+import Kyc from "../Profile/Kyc";
 
 
 
@@ -736,132 +737,133 @@ const Dashboard = () => {
         onClose={() => setModel(false)}
         title={<span><b>KYC Details</b></span>}
         body={
-          <form onSubmit={handleKycSubmit}>
-            <div className="mb-3">
-              <label htmlFor="fullName" className="form-label">
-                Name
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="fullName"
-                name="fullName"
-                placeholder="Enter your full name"
-                value={formData.fullName}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-              {touched.fullName && errors.fullName && (
-                <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
-                  {errors.fullName}
-                </div>
-              )}
-            </div>
+          // <form onSubmit={handleKycSubmit}>
+          //   <div className="mb-3">
+          //     <label htmlFor="fullName" className="form-label">
+          //       Name
+          //     </label>
+          //     <input
+          //       type="text"
+          //       className="form-control"
+          //       id="fullName"
+          //       name="fullName"
+          //       placeholder="Enter your full name"
+          //       value={formData.fullName}
+          //       onChange={handleChange}
+          //       onBlur={handleBlur}
+          //     />
+          //     {touched.fullName && errors.fullName && (
+          //       <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
+          //         {errors.fullName}
+          //       </div>
+          //     )}
+          //   </div>
 
-            <div className="mb-3">
-              <label htmlFor="email" className="form-label">
-                Email
-              </label>
-              <input
-                type="email"
-                className="form-control"
-                id="email"
-                name="email"
-                placeholder="Enter your email"
-                value={formData.email}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-              {touched.email && errors.email && (
-                <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
-                  {errors.email}
-                </div>
-              )}
-            </div>
+          //   <div className="mb-3">
+          //     <label htmlFor="email" className="form-label">
+          //       Email
+          //     </label>
+          //     <input
+          //       type="email"
+          //       className="form-control"
+          //       id="email"
+          //       name="email"
+          //       placeholder="Enter your email"
+          //       value={formData.email}
+          //       onChange={handleChange}
+          //       onBlur={handleBlur}
+          //     />
+          //     {touched.email && errors.email && (
+          //       <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
+          //         {errors.email}
+          //       </div>
+          //     )}
+          //   </div>
 
-            <div className="mb-3">
-              <label htmlFor="phone" className="form-label">
-                Mobile No.
-              </label>
-              <input
-                type="tel"
-                className="form-control"
-                id="phone"
-                name="phone"
-                placeholder="Enter your 10-digit mobile number"
-                value={formData.phone}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                maxLength="10"
-              />
-              {touched.phone && errors.phone && (
-                <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
-                  {errors.phone}
-                </div>
-              )}
-            </div>
+          //   <div className="mb-3">
+          //     <label htmlFor="phone" className="form-label">
+          //       Mobile No.
+          //     </label>
+          //     <input
+          //       type="tel"
+          //       className="form-control"
+          //       id="phone"
+          //       name="phone"
+          //       placeholder="Enter your 10-digit mobile number"
+          //       value={formData.phone}
+          //       onChange={handleChange}
+          //       onBlur={handleBlur}
+          //       maxLength="10"
+          //     />
+          //     {touched.phone && errors.phone && (
+          //       <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
+          //         {errors.phone}
+          //       </div>
+          //     )}
+          //   </div>
 
-            <div className="mb-3">
-              <label htmlFor="aadhar" className="form-label">
-                Aadhar No.
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="aadhar"
-                name="aadhar"
-                placeholder="Enter your 12-digit Aadhar number"
-                value={formData.aadhar}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                maxLength="12"
-              />
-              {touched.aadhar && errors.aadhar && (
-                <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
-                  {errors.aadhar}
-                </div>
-              )}
-            </div>
+          //   <div className="mb-3">
+          //     <label htmlFor="aadhar" className="form-label">
+          //       Aadhar No.
+          //     </label>
+          //     <input
+          //       type="text"
+          //       className="form-control"
+          //       id="aadhar"
+          //       name="aadhar"
+          //       placeholder="Enter your 12-digit Aadhar number"
+          //       value={formData.aadhar}
+          //       onChange={handleChange}
+          //       onBlur={handleBlur}
+          //       maxLength="12"
+          //     />
+          //     {touched.aadhar && errors.aadhar && (
+          //       <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
+          //         {errors.aadhar}
+          //       </div>
+          //     )}
+          //   </div>
 
-            <div className="mb-3">
-              <label htmlFor="panno" className="form-label">
-                PAN No.
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="panno"
-                name="panno"
-                placeholder="Enter your PAN (e.g., ABCDE1234F)"
-                value={formData.panno}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                maxLength="10"
-              />
-              {touched.panno && errors.panno && (
-                <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
-                  {errors.panno}
-                </div>
-              )}
-            </div>
+          //   <div className="mb-3">
+          //     <label htmlFor="panno" className="form-label">
+          //       PAN No.
+          //     </label>
+          //     <input
+          //       type="text"
+          //       className="form-control"
+          //       id="panno"
+          //       name="panno"
+          //       placeholder="Enter your PAN (e.g., ABCDE1234F)"
+          //       value={formData.panno}
+          //       onChange={handleChange}
+          //       onBlur={handleBlur}
+          //       maxLength="10"
+          //     />
+          //     {touched.panno && errors.panno && (
+          //       <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
+          //         {errors.panno}
+          //       </div>
+          //     )}
+          //   </div>
 
-            <div className="d-grid">
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    Submitting...
-                  </>
-                ) : (
-                  "Submit"
-                )}
-              </button>
-            </div>
-          </form>
+          //   <div className="d-grid">
+          //     <button
+          //       type="submit"
+          //       className="btn btn-primary"
+          //       disabled={loading}
+          //     >
+          //       {loading ? (
+          //         <>
+          //           <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          //           Submitting...
+          //         </>
+          //       ) : (
+          //         "Submit"
+          //       )}
+          //     </button>
+          //   </div>
+          // </form>
+          <Kyc />
         }
       // footer={
       //   <>

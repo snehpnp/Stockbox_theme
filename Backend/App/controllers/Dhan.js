@@ -1232,6 +1232,7 @@ class Dhan {
             const authToken = client.authtoken;
     
             let ordersData = [];
+            let failedOrders = [];
             for (let stock of stocks) {
                 let optiontype, exchange, exchangess, producttype;
     
@@ -1270,8 +1271,11 @@ class Dhan {
                     });
                 }
     
-                if (!stockData) return res.status(404).json({ status: false, message: `Stock not found for ${stockData.tradesymbol}` });
-    
+                if (!stockData)
+                    { 
+                        failedOrders.push({ stock: stock.tradesymbol, message: "Stock not found" });
+                        continue;
+            }
                 // ✅ Unique Correlation ID
                 const correlationId = crypto.randomBytes(12).toString('hex').substring(0, 25);
     
@@ -1324,19 +1328,24 @@ class Dhan {
                         ordersData.push(orderRecord);
                     }
                 } catch (error) {
-                    console.error(`Error placing order for ${stockData.tradesymbol}:`, error.message);
-                    ordersData.push({
-                        status: false,
-                        message: `Error placing order for ${stockData.tradesymbol}`
-                    });
+
+                    failedOrders.push({ stock: stock.tradesymbol, message: `Error placing order for ${stock.tradesymbol}` });
+                 
                 }
             }
     
+            // return res.json({
+            //     status: true,
+            //     message: "Orders processed",
+            //     data: ordersData
+            // });
+
             return res.json({
                 status: true,
-                message: "Orders processed",
-                data: ordersData
-            });
+                message: `Orders Processed: ${ordersData.length} Success, ${failedOrders.length} Failed`,
+                successOrders: ordersData,
+                failedOrders: failedOrders
+            })
     
         } catch (error) {
             return res.status(500).json({
@@ -1373,7 +1382,8 @@ class Dhan {
             const authToken = client.authtoken;
     
             let ordersData = [];
-    
+            let failedOrders = [];
+
             for (let stock of stocks) {
                 let optiontype, exchange, exchangess, producttype;
     
@@ -1412,7 +1422,11 @@ class Dhan {
                     });
                 }
     
-                if (!stockData) return res.status(404).json({ status: false, message: `Stock not found for ${stockData.tradesymbol}` });
+                if (!stockData)
+                    { 
+                        failedOrders.push({ stock: stock.tradesymbol, message: "Stock not found" });
+                        continue;
+                    }
     
                 // ✅ Check Holding & Position
                 let holdingData = { qty: 0 };
@@ -1421,14 +1435,16 @@ class Dhan {
                 try {
                     positionData = await CheckPosition(authToken, stock.segment, stockData.instrument_token);
                 } catch (error) {
-                    console.error('Error fetching position data:', error.message);
+                    failedOrders.push({ stock: stock.tradesymbol, message: error.message });
+                        continue;
                 }
     
                 if (stock.segment === "C") {
                     try {
                         holdingData = await CheckHolding(authToken, stock.segment, stockData.instrument_token);
                     } catch (error) {
-                        console.error('Error fetching holding data:', error.message);
+                        failedOrders.push({ stock: stock.tradesymbol, message: error.message });
+                        continue;
                     }
                 }
     
@@ -1490,25 +1506,29 @@ class Dhan {
                             ordersData.push(orderRecord);
                         }
                     } catch (error) {
-                        console.error(`Error placing exit order for ${stockData.tradesymbol}:`, error.message);
-                        ordersData.push({
-                            status: false,
-                            message: `Error placing exit order for ${stockData.tradesymbol}`
-                        });
+
+                        failedOrders.push({ stock: stock.tradesymbol, message: error.message });
+
+                     
                     }
                 } else {
-                    ordersData.push({
-                        status: false,
-                        message: `Insufficient quantity for ${stock.tradesymbol}`
-                    });
+                    failedOrders.push({ stock: stock.tradesymbol, message: `Insufficient quantity for ${stock.tradesymbol}` });
+                   
                 }
             }
     
+            // return res.json({
+            //     status: true,
+            //     message: "Exit Orders processed",
+            //     data: ordersData
+            // });
+
             return res.json({
                 status: true,
-                message: "Exit Orders processed",
-                data: ordersData
-            });
+                message: `Orders Processed: ${ordersData.length} Success, ${failedOrders.length} Failed`,
+                successOrders: ordersData,
+                failedOrders: failedOrders
+            })
     
         } catch (error) {
             return res.status(500).json({

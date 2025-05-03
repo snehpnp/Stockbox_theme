@@ -3,10 +3,14 @@ import Content from "../../../components/Contents/Content";
 import { HandCoins } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { loadScript } from "../../../../Utils/Razorpayment";
-import { AddBasketsubscription, getQRcodedata, getBankdetaildata } from "../../../Services/UserService/User";
+import { AddBasketsubscription, getQRcodedata, getBankdetaildata, GetUserData } from "../../../Services/UserService/User";
 import { basicsettinglist } from "../../../Services/Admin/Admin";
 import { image_baseurl } from "../../../../Utils/config";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import Kyc from "../Profile/Kyc";
+import ReusableModal from "../../../components/Models/ReusableModal";
+
+
 
 const Payments = () => {
 
@@ -21,13 +25,16 @@ const Payments = () => {
     const [allKey, setAllKey] = useState([])
     const [bankdetail, setBankdetail] = useState([]);
     const [qrdata, setQrdata] = useState([]);
-
+    const [userdata, setUserdata] = useState([]);
+    const [kycStatus, setKycStatus] = useState("")
+    const [viewmodel2, setViewModel2] = useState(false);
 
 
     useEffect(() => {
         getkeybydata()
         getQRimage()
         getbankdata()
+        fetchUserData();
     }, [])
 
     useEffect(() => {
@@ -35,6 +42,32 @@ const Payments = () => {
             setActiveTab("offline");
         }
     }, [location.state?.key]);
+
+
+
+
+
+    const handleShowModal = (item) => {
+
+        if (kycStatus == 2 && userdata?.kyc_verification == 0) {
+            setViewModel2(true)
+        } else {
+            AddbasketSubscribeplan()
+        }
+    };
+
+
+    const fetchUserData = async () => {
+        try {
+            const userData = await GetUserData(userid, token);
+            if (userData && userData.data) {
+                setUserdata(userData.data)
+
+            }
+        } catch (error) {
+            showCustomAlert("error", "Failed to load user data. Please refresh and try again.");
+        }
+    }
 
 
     const getQRimage = async () => {
@@ -69,6 +102,7 @@ const Payments = () => {
 
             if (response.status) {
                 setAllKey(response.data[0])
+                setKycStatus(response?.data[0].kyc)
             }
         } catch (error) {
             console.error("Error fetching coupons:", error);
@@ -197,7 +231,7 @@ const Payments = () => {
 
                                 <button
                                     className="btn btn-success w-100"
-                                    onClick={() => AddbasketSubscribeplan(item)}
+                                    onClick={() => handleShowModal(item)}
                                 >
                                     Subscribe Now
                                     <span className="text-decoration-line-through text-light small mx-2">
@@ -261,6 +295,14 @@ const Payments = () => {
                 </div>
             )
             }
+
+
+            <ReusableModal
+                show={viewmodel2}
+                onClose={() => setViewModel2(false)}
+                title={<>KYC</>}
+                body={<Kyc setViewModel2={setViewModel2} />}
+            />
         </Content >
     );
 };

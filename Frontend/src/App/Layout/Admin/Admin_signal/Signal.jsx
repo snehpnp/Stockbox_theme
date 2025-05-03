@@ -47,10 +47,15 @@ const Signal = () => {
         description: "",
     });
 
+
+
     const [signalnotification, setSignalnotification] = useState({
         signalid: "",
         message: "",
     });
+
+
+
 
     const [signalmessage, setSignalmessage] = useState([]);
 
@@ -59,14 +64,21 @@ const Signal = () => {
 
     const [isLoading, setIsLoading] = useState(true);
 
+
+
     useEffect(() => {
         if (clientStatus == "todayopensignal") {
             setheader("Todays Open Signal");
         }
     }, [clientStatus]);
 
+
+
+
     const today = new Date();
     const formattedDate = today.toISOString().slice(0, 10);
+
+
 
     const [filters, setFilters] = useState({
         from: "",
@@ -75,6 +87,9 @@ const Signal = () => {
         stock: "",
     });
 
+
+
+
     const navigate = useNavigate();
     const [clients, setClients] = useState([]);
     const [model, setModel] = useState(false);
@@ -82,9 +97,13 @@ const Signal = () => {
     const [model2, setModel2] = useState(false);
     const [serviceid, setServiceid] = useState({});
 
+
+
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
+
+
 
     const [closedata, setClosedata] = useState({
         id: "",
@@ -105,6 +124,9 @@ const Signal = () => {
     const [stockList, setStockList] = useState([]);
     const [searchstock, setSearchstock] = useState("");
     const [ForGetCSV, setForGetCSV] = useState([]);
+
+
+
 
     const [checkedIndex, setCheckedIndex] = useState(0);
 
@@ -132,6 +154,9 @@ const Signal = () => {
         target3: 0,
     });
 
+
+
+
     const handleCheckboxChange = (e, target) => {
         setCheckedTargets1((prevState) => ({
             ...prevState,
@@ -150,6 +175,9 @@ const Signal = () => {
         });
     };
 
+
+
+
     const handleChange = (e, field) => {
         setClosedata({
             ...closedata,
@@ -162,9 +190,14 @@ const Signal = () => {
         label: item.stock,
     }));
 
+
+
+
     const handleChange1 = (selectedOption) => {
         setSearchstock(selectedOption ? selectedOption.value : "");
     };
+
+
 
     const getexportfile = async () => {
         try {
@@ -350,7 +383,7 @@ const Signal = () => {
             state: { openSignal: true }
         });
     };
-    
+
 
 
     const DeleteSignals = async (_id) => {
@@ -632,7 +665,7 @@ const Signal = () => {
         document.body.removeChild(link);
     };
 
-    // for signal message
+
 
     const getsignalmessage = async (signalid) => {
         try {
@@ -645,6 +678,8 @@ const Signal = () => {
             console.log("Error fetching stock list:", error);
         }
     };
+
+
 
     // colums
     let columns = [
@@ -932,7 +967,7 @@ const Signal = () => {
                                 </div>
                             </div>
 
-                            {/* Search and Add Button */}
+
                             <div className="d-md-flex align-items-center mb-4 gap-3">
                                 <div className="position-relative">
                                     <input
@@ -979,7 +1014,7 @@ const Signal = () => {
                                 </div>
                             </div>
 
-                            {/* Filters */}
+
                             <div className="row">
                                 <div className="col-md-3 mb-3">
                                     <label>From Date</label>
@@ -1039,7 +1074,6 @@ const Signal = () => {
                                 </div>
                             </div>
 
-                            {/* Conditional Rendering for Different Views */}
                             {viewMode === "table" ? (
                                 isLoading ? (
                                     <Loader />
@@ -1104,84 +1138,10 @@ const Signal = () => {
                                         />
                                     </div>
                                 )
-                            ) : (
-                                // **Strategy Content**
-                                <div className="strategy-content mt-4">
-                                    <div className="card py-3">
-                                        <div className="row w-100 mx-auto">
-                                            <div className="col-md-3 ">
-                                                <div className=" d-flex flex-column gap-3  p-4 sticky-card">
-                                                    <button className="btn btn-secondary w-100">
-                                                        Open Signal
-                                                    </button>
-                                                    <button className="btn btn-secondary w-100">
-                                                        About Trade
-                                                    </button>
-                                                    <button className="btn btn-secondary w-100">
-                                                        PDF
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div className="col-md-9">
-                                                <div className="row w-100">
-                                                    <div className="col-md-4">
-                                                        <label className="text-muted"> Stock Name</label>
-                                                        <p>Test</p>
-                                                    </div>
-                                                    <div className="col-md-4">
-                                                        <label className="text-muted">Strategy</label>
-                                                        <p>Test</p>
-                                                    </div>
-                                                    <div className="col-md-4">
-                                                        <label className="text-muted">Plan Name</label>
-                                                        <p>Test</p>
-                                                    </div>
-                                                </div>
-                                                <div className="row w-100">
-                                                    <div className="col-md-4">
-                                                        <label className="text-muted">Trade Duration</label>
-                                                        <p>Test</p>
-                                                    </div>
-                                                    <div className="col-md-4">
-                                                        <label className="text-muted">Max. Loss</label>
-                                                        <p>Test</p>
-                                                    </div>
-                                                    <div className="col-md-4">
-                                                        <label className="text-muted">Max. Profit</label>
-                                                        <p>Test</p>
-                                                    </div>
-                                                </div>
-                                                <div className="row w-100">
-                                                    <div className="shadow card p-3">
-                                                        <table className="table table-bordered ">
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td>F</td>
-                                                                    <td>Buy</td>
-                                                                    <td>Exp.</td>
-                                                                    <td>CE</td>
-                                                                    <td>25545</td>
-                                                                    <td>1</td>
-                                                                    <td>1</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>F</td>
-                                                                    <td>Buy</td>
-                                                                    <td>Exp.</td>
-                                                                    <td>CE</td>
-                                                                    <td>25545</td>
-                                                                    <td>1</td>
-                                                                    <td>1</td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
+                            ) :
+
+                                ""
+                            }
                         </div>
                     </div>
                 </div>

@@ -8,6 +8,7 @@ import {
   AddplanSubscription,
   GetCouponlist,
   ApplyCoupondata,
+  GetUserData
 } from "../../../Services/UserService/User";
 import { IndianRupee } from "lucide-react";
 import { loadScript } from "../../../../Utils/Razorpayment";
@@ -18,6 +19,7 @@ import ShowCustomAlert from "../../../../App/Extracomponents/CustomAlert/CustomA
 import showCustomAlert from "../../../../App/Extracomponents/CustomAlert/CustomAlert";
 import { useNavigate } from "react-router-dom";
 import Kyc from "../Profile/Kyc"
+
 
 
 const Service = () => {
@@ -33,6 +35,7 @@ const Service = () => {
 
   const [category, setCategory] = useState([]);
   const [plan, setPlan] = useState([]);
+  const [userdata, setUserdata] = useState([]);
 
 
   const [showModal, setShowModal] = useState(false);
@@ -47,11 +50,8 @@ const Service = () => {
   const [offlinePaymentStatus, setOfflinePaymentStatus] = useState()
 
 
-
   const [appliedCoupon, setAppliedCoupon] = useState(null);
-
   const [manualCoupon, setManualCoupon] = useState("");
-
 
   const [coupondata, setCouponData] = useState("");
 
@@ -72,7 +72,8 @@ const Service = () => {
 
   const [discription, setDiscription] = useState("");
 
-  const [kycStatus, setKycStatus] = useState(0)
+  const [kycStatus, setKycStatus] = useState("")
+
 
 
 
@@ -80,11 +81,22 @@ const Service = () => {
     getPlan();
     getCoupon();
     getkeybydata();
+    fetchUserData();
   }, []);
 
-  // useEffect(()=>{
-  //   selectedPlanDetails
-  // },[selectedPlanDetails])
+
+
+  const fetchUserData = async () => {
+    try {
+      const userData = await GetUserData(userid, token);
+      if (userData && userData.data) {
+        setUserdata(userData.data)
+
+      }
+    } catch (error) {
+      showCustomAlert("error", "Failed to load user data. Please refresh and try again.");
+    }
+  };
 
 
 
@@ -162,8 +174,6 @@ const Service = () => {
   const getkeybydata = async () => {
     try {
       const response = await basicsettinglist();
-      // console.log("basicsettinglist", response?.data[0].kyc);
-
 
       if (response.status) {
         setGetkey(response?.data[0]?.razorpay_key);
@@ -186,7 +196,6 @@ const Service = () => {
   const getPlan = async () => {
     try {
       const response = await GetPlanByCategory(token);
-      // console.log("response",response)
       if (response.status) {
         setPlan(response?.data);
         setCategory(response?.data.sort((a, b) => b._id.localeCompare(a._id)));
@@ -261,10 +270,11 @@ const Service = () => {
 
 
 
+
+
   const handleShowModal = (item) => {
 
-    if (kycStatus === 1) {
-      // navigate("/user/kyc")
+    if (kycStatus == 2 && userdata?.kyc_verification == 0) {
       setViewModel2(true)
     } else {
       setSelectedPlanDetails(item);
@@ -283,11 +293,6 @@ const Service = () => {
     setManualCoupon("")
     setAppliedCoupon(null)
   };
-
-  // const handleCloseModal2=()=>{
-  //   setViewModel2(false)
-  // }
-
 
 
 
@@ -398,7 +403,7 @@ const Service = () => {
                           </h6>
                         </div>
                         <div className="card-body">
-                          <ul className="list-group list-group-flush" style={{minHeight:"200px"}}>
+                          <ul className="list-group list-group-flush" style={{ minHeight: "200px" }}>
                             <li className="list-group-item">
                               <i className="bx bx-check me-2 font-18" />
                               Validity: {plan?.validity}
@@ -753,7 +758,7 @@ const Service = () => {
                       className="btn btn-success w-100"
                       onClick={() => AddSubscribeplan(selectedPlanDetails)}
                     >
-                      {/* ✅ Confirm & Subscribe */}
+
                       ✅ Pay Online
                     </button>
                   )}
@@ -796,7 +801,7 @@ const Service = () => {
         show={viewmodel2}
         onClose={() => setViewModel2(false)}
         title={<>KYC</>}
-        body={<Kyc />}
+        body={<Kyc setViewModel2={setViewModel2} />}
       />
     </Content>
   );

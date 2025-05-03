@@ -8,7 +8,7 @@ const qs = require('qs');
 
 export async function GetClient(token) {
     try {
-        const res = await axios.get(`${Config.base_url}client/list`, {
+        const res = await axios.get(`${Config.base_url}client/listfive`, {
             headers: {
                 'Authorization': `${token}`
             },
@@ -3773,6 +3773,7 @@ export async function sendTicketReply(data, token) {
         const formData = new FormData();
         formData.append('ticket_id', data.ticket_id);
         formData.append('message', data.message);
+        formData.append('adminname', data.adminname);
 
         if (data.attachment) {
             formData.append('attachment', data.attachment);
