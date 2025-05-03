@@ -39,7 +39,7 @@ const ViewTicket = () => {
 
 
 
-  
+
   const [errors, setErrors] = useState({});
   const { id } = useParams();
 
@@ -50,7 +50,6 @@ const ViewTicket = () => {
     FetchMessage();
     getpermissioninfo();
   }, []);
-
 
 
 
@@ -83,7 +82,6 @@ const ViewTicket = () => {
 
 
 
-
   // close status 
 
   const handleSwitchChange = async (event) => {
@@ -103,6 +101,7 @@ const ViewTicket = () => {
       FetchMessage();
     }
   };
+
 
 
 
@@ -132,7 +131,6 @@ const ViewTicket = () => {
 
 
 
-
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
@@ -155,6 +153,8 @@ const ViewTicket = () => {
       });
     }
   };
+
+
 
 
   const validateForm = () => {
@@ -211,8 +211,6 @@ const ViewTicket = () => {
       }
     }
   };
-
-
 
 
 
@@ -314,13 +312,11 @@ const ViewTicket = () => {
                 </div>
               </div>
 
-
               {messages.ticket?.attachment && (
                 <button className="btn btn-secondary mt-2 " onClick={() => handleDownload(messages)}
                 >Download</button>
               )}
             </div>
-
 
           </div>
         </div>
