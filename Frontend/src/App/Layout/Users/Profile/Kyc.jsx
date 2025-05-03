@@ -56,7 +56,7 @@ function Kyc({ setViewModel2 }) {
           panno: "",
         });
 
-        // Mark as touched and validate autofilled fields
+
         const fullNameError = validateField("fullName", user.FullName || "");
         const emailError = validateField("email", user.Email || "");
         const phoneError = validateField("phone", user.PhoneNo || "");
@@ -184,7 +184,6 @@ function Kyc({ setViewModel2 }) {
     const newErrors = {};
     const newTouched = {};
 
-    // Mark all fields as touched and validate
     Object.keys(formData).forEach(key => {
       newTouched[key] = true;
       const errorMessage = validateField(key, formData[key]);
