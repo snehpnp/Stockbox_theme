@@ -19,12 +19,8 @@ import { ArrowDownToLine } from "lucide-react";
 const ViewTicket = () => {
 
 
-
-
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
-
-
 
 
   const [messages, setMessages] = useState([]);
@@ -41,11 +37,8 @@ const ViewTicket = () => {
 
 
 
-
   const [errors, setErrors] = useState({});
   const { id } = useParams();
-
-
 
 
 
@@ -106,6 +99,9 @@ const ViewTicket = () => {
       FetchMessage();
     }
   };
+
+
+
 
   const handleDownload = (messages) => {
     const url = `${messages?.ticket?.attachment}`;
@@ -245,11 +241,11 @@ const ViewTicket = () => {
             <div className="card-body">
               <div className="card-header border-bottom bg-transparent p-3">
                 <div className="row">
-            
+
                   <div className="col-md-6">
                     <div className="card">
                       <div className="card-body">
-                      
+
                         <div className="row mb-3">
                           <div className="col-6">
                             <h6 className="mb-0"><b>Subject : </b></h6>
@@ -259,7 +255,7 @@ const ViewTicket = () => {
                           </div>
                         </div>
 
-                      
+
                         <div className="row">
                           <div className="col-12">
                             <h6 className="mb-2"><b>Message : </b></h6>
@@ -321,7 +317,7 @@ const ViewTicket = () => {
               )}
             </div>
 
-            
+
           </div>
         </div>
       </div>
