@@ -1083,7 +1083,7 @@ class Clients {
 
 
 
-  
+
   async uploadDocument(req, res) {
     const id = req.body.id;
 
@@ -1135,7 +1135,7 @@ class Clients {
     signCoordinates[client.PhoneNo] = {}; // Initialize the phone number key
 
     for (let i = 1; i <= noof_pdf_pages; i++) {
-        signCoordinates[client.PhoneNo][i] = [{ llx: 290, lly: 170, urx: 520, ury: 70 }];
+      signCoordinates[client.PhoneNo][i] = [{ llx: 290, lly: 170, urx: 520, ury: 70 }];
     }
 
     const requestBody = {

@@ -94,14 +94,14 @@ const AddUser = () => {
     try {
       const response = await AddClient(req, token);
       if (response.status) {
-        showCustomAlert('Success','Client Create Successfull !',navigate,"/employee/client")
+        showCustomAlert('Success', 'Client Create Successfull !', navigate, "/employee/client")
       } else {
-        showCustomAlert('error',response.message)
+        showCustomAlert('error', response.message)
         setLoading(false)
       }
     } catch (error) {
       setLoading(false)
-      showCustomAlert('error','An unexpected error occurred. Please try again later.')
+      showCustomAlert('error', 'An unexpected error occurred. Please try again later.')
     }
   };
 
@@ -165,14 +165,14 @@ const AddUser = () => {
       label: "Select State",
       type: 'select',
       options: indianStates?.map((item) => ({
-          label: item.name, 
-          value: item.name,
+        label: item.name,
+        value: item.name,
       })),
       label_size: 12,
       col_size: 6,
       disable: false,
       star: true
-  }
+    }
   ];
 
   const handlefreeTrialChange = (e) => {
@@ -188,10 +188,10 @@ const AddUser = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         formik.setFieldValue("freetrial", !currentValue);
-        console.log("Updated toggle value:", !currentValue);
+
       } else if (result.isDenied) {
         formik.setFieldValue("freetrial", currentValue);
-        console.log("Value reverted to:", currentValue);
+
       }
     });
   };

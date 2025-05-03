@@ -32,7 +32,7 @@ const Addnews = () => {
         if (!values.image) {
             errors.image = "Please Enter Image";
         }
-        // console.log("errors",errors)
+
 
         return errors;
     };
