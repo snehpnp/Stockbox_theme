@@ -87,7 +87,6 @@ const Client = () => {
   };
 
 
-  console.log("client", client)
 
   useEffect(() => {
     if (clientStatus == 1) {

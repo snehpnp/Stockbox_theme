@@ -11,7 +11,7 @@ const Notification = () => {
   const [notificationData, setNotificationData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  console.log("totalPages",totalPages)
+
   const [isLoading, setIsLoading] = useState(true);
 
   const token = localStorage.getItem("token");
@@ -24,7 +24,7 @@ const Notification = () => {
     try {
       const data = { user_id: userid, page: currentPage };
       const response = await GetNotificationData(data, token);
-      console.log("response",response)
+
       if (response.status) {
         setNotificationData(response.data);
         setTotalPages(response.pagination.totalPages);
@@ -35,7 +35,7 @@ const Notification = () => {
     setIsLoading(false);
   };
 
-  // console.log("currentPage", currentPage)
+
 
 
   useEffect(() => {
@@ -55,7 +55,7 @@ const Notification = () => {
       navigate("/user/trades")
     } else if (notification?.type === "close signal") {
       navigate("/user/trades", { state: { type: "closeSignal" } })
-    }else if(notification?.type === "add broadcast") {
+    } else if (notification?.type === "add broadcast") {
       navigate("/user/broadcast");
     }
   };

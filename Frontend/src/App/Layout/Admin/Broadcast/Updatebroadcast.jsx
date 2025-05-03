@@ -53,9 +53,8 @@ const Updatebroadcast = () => {
 
             try {
                 const response = await UpdateCastmessage(data, token);
-                // console.log("response",response);
-                // return
-                
+
+
                 if (response.status) {
                     showCustomAlert("Success", response.message, navigate, "/admin/message")
                 } else {
