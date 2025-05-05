@@ -280,35 +280,35 @@ const ViewTicket = () => {
 
                         <div className="row mb-3">
                           <div className="col-6">
-                            <h6 className="mb-0"><b>Name : </b></h6>
+                            <h6 className="mb-0"><b>Name </b></h6>
                           </div>
-                          <div className="col-6 text-end">
+                          <div className="col-6">
                             <p className="text-muted mb-0">{messages?.ticket?.client_id?.FullName}</p>
                           </div>
                         </div>
 
-
                         <div className="row mb-3">
                           <div className="col-6">
-                            <h6 className="mb-0"><b>Email : </b></h6>
+                            <h6 className="mb-0"><b>Email </b></h6>
                           </div>
-                          <div className="col-6 text-end">
+                          <div className="col-6">
                             <p className="text-muted mb-0">{messages?.ticket?.client_id?.Email}</p>
                           </div>
                         </div>
 
-
                         <div className="row">
                           <div className="col-6">
-                            <h6 className="mb-0"><b>Phone Number : </b></h6>
+                            <h6 className="mb-0"><b>Phone Number </b></h6>
                           </div>
-                          <div className="col-6 text-end">
+                          <div className="col-6">
                             <p className="text-muted mb-0">{messages?.ticket?.client_id?.PhoneNo}</p>
                           </div>
                         </div>
+
                       </div>
                     </div>
                   </div>
+
                 </div>
               </div>
 
