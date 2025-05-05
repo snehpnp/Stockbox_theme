@@ -63,7 +63,7 @@ const AllBasketHistory = () => {
         setSearchInput("")
         setStartDate("")
         setEndDate("")
-
+        setCurrentPage(1);
 
     }
 
@@ -122,6 +122,10 @@ const AllBasketHistory = () => {
         setIsLoading(false)
     };
 
+
+        useEffect(() => {
+            setCurrentPage(1); 
+        }, [searchInput]);
 
 
     useEffect(() => {

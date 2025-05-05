@@ -56,6 +56,7 @@ const Planexpiry = () => {
 
     const getClientData = async () => {
         try {
+            setIsLoading(true)
             const data = {
                 page: currentPage,
                 serviceid: searchStock,
@@ -71,9 +72,9 @@ const Planexpiry = () => {
         } catch (error) {
             console.log('Error fetching client data:', error);
         }
-
+        finally{
         setIsLoading(false)
-
+        }
     };
 
 
@@ -124,8 +125,9 @@ const Planexpiry = () => {
         setCurrentPage(1);
     };
 
-
-
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchInput, searchStock, startDate, endDate]);
 
 
     useEffect(() => {
