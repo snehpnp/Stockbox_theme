@@ -89,6 +89,9 @@ import SMSProvider from "../Layout/Admin/BasicSetting/SMSProvider";
 import Tickets from "../Layout/Admin/Tickets/Tickets";
 import ViewTicket from "../Layout/Admin/Tickets/ViewTicket";
 import EditBasketStockPublish from "../Layout/Admin/Admin_basket/EditBasketStockPublish";
+import AddMailToClient from '../Layout/Admin/SendMailToClient/AddMailToClient';
+import ViewMail from '../Layout/Admin/SendMailToClient/ViewMail';
+import UpdateMail from '../Layout/Admin/SendMailToClient/UpdateMail'
 
 
 export default function App() {
@@ -225,6 +228,10 @@ export default function App() {
 
       <Route path="/tickets" element={<Tickets />} />
       <Route path="/viewticket/:id" element={<ViewTicket />} />
+
+      <Route path="/addmail-to-client" element={<AddMailToClient/>} />
+      <Route path="/view-mail" element={<ViewMail/>} />
+      <Route path="/update-mail" element={<UpdateMail/>} />
 
     </Routes>
   );

@@ -40,8 +40,6 @@ const Freeclient = () => {
     const [totalRows, setTotalRows] = useState(0);
 
 
-    console.log("client", client.clientid)
-
     //state for loading
     const [isLoading, setIsLoading] = useState(true)
     const [loading, setLoading] = useState(false);

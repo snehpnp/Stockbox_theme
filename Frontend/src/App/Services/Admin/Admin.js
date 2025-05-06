@@ -3835,3 +3835,20 @@ export async function DeleteRaiseTicket(_id, token) {
         return err.response?.data || err.message;
     }
 }
+
+
+//Add main to client 
+
+export async function sendMailToClient(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}dashboard/sendmailtoclient`, data, {
+            headers: {
+                'Authorization': `${token}`,   // ✅ Correct header
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}

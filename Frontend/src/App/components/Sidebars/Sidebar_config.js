@@ -232,6 +232,12 @@ const Admin = [
     link: "/admin/message",
     name: "BroadcastSMS"
   },
+  // {
+  //   label: "Send Mail To Client",
+  //   icon: "Mails",
+  //   link: "/admin/view-mail",
+  //   name: "SendMailToClient"
+  // },
   {
     label: "FAQ",
     icon: "FileQuestion",
