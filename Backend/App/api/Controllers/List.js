@@ -5226,41 +5226,46 @@ let avgreturnpermonthpercent = 0;
     }
   }
 
+  
   async Refer(req, res) {
     if (req.headers.host === 'app.rmpro.in') {
-    const referralCode = req.query.ref;
-    const utmSource = req.query.utmSource;
-
-    let appUrl = `rmpro://referral?code=${referralCode}`;
-    if (utmSource) {
-      appUrl += `&utm_source=${utmSource}`;
-    }
-
-    return res.send(`
-      <!DOCTYPE html>
-      <html>
+      const referralCode = req.query.ref || '';
+      const utmSource = req.query.utmSource !== undefined ? req.query.utmSource : '';
+              
+        const appUrl = `rmpro://referral?referral_code=${referralCode}&utm_source=${utmSource}`;
+        const referrerValue = `utm_source=${utmSource}&referral_code=${referralCode}`;
+        const encodedReferrer = encodeURIComponent(referrerValue);
+      
+        const playStoreUrl = `https://play.google.com/store/apps/details?id=com.researchmart.rm_pro&referrer=${encodedReferrer}`;
+        
+      
+        return res.send(`
+        <!DOCTYPE html>
+        <html>
         <head>
-          <title>Redirecting...</title>
-          <script>
-            setTimeout(function () {
-              window.location = "https://play.google.com/store/apps/details?id=com.researchmart.rm_pro";
-            }, 2000);
-            window.location = "${appUrl}";
-          </script>
+        <title>Redirecting...</title>
+        <script>
+        setTimeout(function () {
+        window.location = "${playStoreUrl}";
+        }, 2000);
+        
+        window.location = "${appUrl}";
+        </script>
         </head>
         <body>
-          <p>Redirecting to the app...</p>
+        <p>Redirecting to the app...</p>
         </body>
-      </html>
-    `);
-    }else { 
-    
-    return res.status(200).json({
-      status: true,
-    });
+        </html>
+        `);
+        
+        } else {
+        
+        return res.status(200).json({ status: true });
+        
+        }
+        
+        }
   
-  }
-  }
 
   async getLivePrice(req, res) {
     try {
