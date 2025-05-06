@@ -5225,20 +5225,20 @@ class List {
     }
   }
 
-  
+
   async Refer(req, res) {
     if (req.headers.host === 'app.rmpro.in') {
       const referralCode = req.query.ref || '';
       const utmSource = req.query.utmSource !== undefined ? req.query.utmSource : '';
-              
-        const appUrl = `rmpro://referral?referral_code=${referralCode}&utm_source=${utmSource}`;
-        const referrerValue = `utm_source=${utmSource}&referral_code=${referralCode}`;
-        const encodedReferrer = encodeURIComponent(referrerValue);
-      
-        const playStoreUrl = `https://play.google.com/store/apps/details?id=com.researchmart.rm_pro&referrer=${encodedReferrer}`;
-        
-      
-        return res.send(`
+
+      const appUrl = `rmpro://referral?referral_code=${referralCode}&utm_source=${utmSource}`;
+      const referrerValue = `utm_source=${utmSource}&referral_code=${referralCode}`;
+      const encodedReferrer = encodeURIComponent(referrerValue);
+
+      const playStoreUrl = `https://play.google.com/store/apps/details?id=com.researchmart.rm_pro&referrer=${encodedReferrer}`;
+
+
+      return res.send(`
         <!DOCTYPE html>
         <html>
         <head>
@@ -5256,15 +5256,15 @@ class List {
         </body>
         </html>
         `);
-        
-        } else {
-        
-        return res.status(200).json({ status: true });
-        
-        }
-        
-        }
-  
+
+    } else {
+
+      return res.status(200).json({ status: true });
+
+    }
+
+  }
+
 
   async getLivePrice(req, res) {
     try {
@@ -8750,7 +8750,6 @@ class List {
       return res.status(500).json({ message: "Server Error", error: err.message, status: false });
     }
   }
-
   async BasketExpire(req, res) {
     try {
       const { client_id } = req.body;
