@@ -38,7 +38,7 @@ router.get('/dashboard/getdailyprofitloss/:id', getDailyProfitLoss);
 router.get('/dashboard/getstates', getAllStates);
 router.get('/dashboard/getcitybystates/:stateName', getCityByStates);
 router.post('/dashboard/sendmailtoclient', sendMailToClient);
-
+sendMailToClient
 
 
 
