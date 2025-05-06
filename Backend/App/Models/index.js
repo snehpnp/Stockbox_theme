@@ -61,6 +61,7 @@ module.exports = {
     Smsprovider: require("./Smsprovider"),
     Ticket: require("./Ticket"),
     Ticketmessage: require("./Ticketmessage"),
+    Utmsource: require("./Utmsource"),
 
 
     open_position:open_position,

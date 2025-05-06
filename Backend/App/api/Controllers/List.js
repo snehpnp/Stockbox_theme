@@ -5193,7 +5193,8 @@ let avgreturnpermonthpercent = 0;
         },
         {
           $group: {
-            _id: "$howmanytimebuy"
+            _id: "$howmanytimebuy",
+            createdAt: { $min: "$createdAt" }  // or use $max for latest
           }
         },
         {
@@ -5228,7 +5229,13 @@ let avgreturnpermonthpercent = 0;
   async Refer(req, res) {
     if (req.headers.host === 'app.rmpro.in') {
     const referralCode = req.query.ref;
-  
+    const utmSource = req.query.utmSource;
+
+    let appUrl = `rmpro://referral?code=${referralCode}`;
+    if (utmSource) {
+      appUrl += `&utm_source=${utmSource}`;
+    }
+
     return res.send(`
       <!DOCTYPE html>
       <html>
@@ -5238,7 +5245,7 @@ let avgreturnpermonthpercent = 0;
             setTimeout(function () {
               window.location = "https://play.google.com/store/apps/details?id=com.researchmart.rm_pro";
             }, 2000);
-            window.location = "rmpro://referral?code=${referralCode}";
+            window.location = "${appUrl}";
           </script>
         </head>
         <body>
@@ -8742,9 +8749,106 @@ async PlanSubscriptionExpire(req, res) {
     return res.status(500).json({ message: "Server Error", error: err.message,status: false });
   }
 }
+async BasketExpire(req, res) {
+  try {
+    const { client_id } = req.body;
+    if (!client_id) {
+      return res.status(400).json({ message: "client_id is required", status: false });
+    }
 
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
 
+    const yesterday = new Date(currentDate);
+    yesterday.setDate(currentDate.getDate() - 1);
+    const today = new Date(currentDate);
+    const day3 = new Date(currentDate);
+    day3.setDate(currentDate.getDate() + 3);
 
+    const ranges = [
+      { diff: -1, start: new Date(yesterday), end: new Date(yesterday.setHours(23, 59, 59, 999)) },
+      { diff:  0, start: new Date(today),     end: new Date(today.setHours(23, 59, 59, 999)) },
+      { diff:  3, start: new Date(day3),      end: new Date(day3.setHours(23, 59, 59, 999)) }
+    ];
+
+    // Fix: Use client_id instead of clientid
+    const orConds = ranges.map(r => ({
+      client_id: client_id,  // corrected field name
+      enddate: { $gte: r.start, $lte: r.end }
+    }));
+
+    console.log("orConds", orConds);
+
+    const subs = await BasketSubscription_Modal.find({ $or: orConds });
+    console.log("subs", subs);
+    if (!subs.length) {
+      return res.json({ message: "No basket subscriptions expiring in range.", status: false });
+    }
+
+    const client = await Clients_Modal.findById(client_id);
+    if (!client) {
+      return res.status(404).json({ message: "Client not found", status: false });
+    }
+
+    const groups = {}; // diff => Set(basketName)
+
+    for (const sub of subs) {
+      const endMid = new Date(sub.enddate);
+      endMid.setHours(0, 0, 0, 0);
+      const diff = Math.floor((endMid - currentDate) / (1000 * 60 * 60 * 24));
+
+      // Fetch basket name (modify based on your schema)
+      let basketName = "UNKNOWN";
+      const basket = await Basket_Modal.findById(sub.basket_id);
+      
+      // replace with actual basket model name
+      if (basket) {
+        basketName = basket.title?.toUpperCase() || basket.name?.toUpperCase() || "UNKNOWN";
+      }
+
+      groups[diff] = groups[diff] || new Set();
+      groups[diff].add(basketName);
+    }
+
+    const joinNames = arr => {
+      if (arr.length === 1) return arr[0];
+      if (arr.length === 2) return `${arr[0]} and ${arr[1]}`;
+      const last = arr.pop();
+      return `${arr.join(', ')}, and ${last}`;
+    };
+
+    const reminders = [];
+    for (const diffKey of Object.keys(groups)) {
+      const diff = Number(diffKey);
+      const names = Array.from(groups[diff]);
+      const combo = joinNames([...names]);
+      const plural = names.length > 1;
+
+      let msg = "";
+      if (diff === 3) {
+        msg = plural
+          ? `Only 3 days left! Your ${combo} basket subscriptions are about to expire. Renew now to avoid any disruption.`
+          : `Only 3 days left! Your ${combo} basket subscription is about to expire. Renew now to avoid any disruption.`;
+      } else if (diff === 0) {
+        msg = plural
+          ? `Your ${combo} basket subscriptions expire today. Don’t miss out—renew now to continue enjoying uninterrupted access!`
+          : `Your ${combo} basket subscription expires today. Don’t miss out—renew now to continue enjoying uninterrupted access!`;
+      } else if (diff === -1) {
+        msg = plural
+          ? `Oops! Your ${combo} basket subscriptions expired yesterday. Let’s get you back on track—renew now and stay connected.`
+          : `Oops! Your ${combo} basket subscription expired yesterday. Let’s get you back on track—renew now and stay connected.`;
+      }
+
+      if (msg) reminders.push(msg);
+    }
+
+    return res.json({ reminders, status: true });
+
+  } catch (error) {
+    console.error("BasketExpire error:", error);
+    return res.status(500).json({ message: "Server Error", error: error.message, status: false });
+  }
+}
 
 
 }

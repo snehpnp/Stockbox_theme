@@ -17,6 +17,10 @@ const { sendFCMNotification } = require('./Pushnotification'); // Adjust if nece
 
 var axios = require('axios');
 
+const path = require('path');
+const fs = require('fs');
+const csv = require('csv-parser');
+
 
 class Signal {
 
@@ -2534,11 +2538,27 @@ async closeSignals(req, res) {
     if (closetype === "1") {
       close_status = true;
       closedate = new Date();
-      notificationBody = `${strategy_name} Symbol ${stock} Strategy Closed Enjoy Profits`;
+      let profiltloss;  
+      if (mtype == 1) {
+        profiltloss = "Enjoy Profits";
+    } else if (mtype == 2) {
+        profiltloss = "SL HIT";
+    }
+
+
+      notificationBody = `${strategy_name} Symbol ${stock} Strategy Closed ${profiltloss}`;
     } else if (closetype === "2") {
       close_status = closestatus;
       closedate = new Date();
-      notificationBody = `${strategy_name} Symbol ${stock} Strategy Partially Closed Book Profit`;
+      let profiltloss;  // Variable ko declare karna
+
+      if (mtype == 1) {
+          profiltloss = "Book Profit";
+      } else if (mtype == 2) {
+          profiltloss = "with some loss";
+      }
+
+      notificationBody = `${strategy_name} Symbol ${stock} Strategy Partially Closed ${profiltloss}`;
     } else if (closetype === "3") {
       close_status = true;
       finalClosePrice = 0;
@@ -2940,7 +2960,89 @@ async getNotificationsBySignal(req, res) {
 };
 
 
+async  importData(req, res) {
+  const csvFilePath = path.join(__dirname, '../../template', 'stockbox.signals1.csv');
+  const results = [];
 
+  // Define the parseDate function within the scope of the method
+  const parseDate = (dateString) => {
+    // Try to create a Date object from the string
+    const date = new Date(dateString);
 
+    // If the date is invalid, return the current date
+    return isNaN(date.getTime()) ? new Date() : date;
+  };
+
+  try {
+    // Start reading the CSV file
+    fs.createReadStream(csvFilePath)
+      .pipe(csv()) // Parse CSV
+      .on('data', (item) => {
+        console.log('Processing item:', item); // Log each row/item in the CSV
+
+        // Push data into results array after parsing
+        results.push({
+          price: parseFloat(item.price) || 0,
+          strikeprice: parseFloat(item.strikeprice) || 0,
+          service: item.service || '',
+          calltype: item.calltype || '',
+          callduration: item.callduration || '',
+          callperiod: item.callperiod || '',
+          report: item.report || '',
+          stock: item.stock || '',
+          tag1: item.tag1 || '',
+          tag2: item.tag2 || '',
+          tar3: parseFloat(item.tar3) || 0,
+          stoploss: parseFloat(item.stoploss) || 0,
+          dscription: item.dscription || '',
+          closeprice: parseFloat(item.closeprice) || 0,
+          close_status: item.close_status?.toString().toLowerCase() === 'true',
+          close_description: item.close_description || '',
+          closedate: parseDate(item.closedate),
+          targethit1: item.targethit1 || '',
+          targetprice1: parseFloat(item.targetprice1) || 0,
+          targethit2: item.targethit2 || '',
+          targetprice2: parseFloat(item.targetprice2) || 0,
+          targethit3: item.targethit3 || '',
+          targetprice3: parseFloat(item.targetprice3) || 0,
+          expirydate: item.expirydate || '',
+          segment: item.segment || '',
+          optiontype: item.optiontype || '',
+          tradesymbol: item.tradesymbol || '',
+          tradesymbols: item.tradesymbols || '',
+          lotsize: parseInt(item.lotsize) || 0,
+          add_by: item.add_by || '',
+          entrytype: item.entrytype || '',
+          lot: parseInt(item.lot) || 0,
+          planid: item.planid || '',
+          del: item.del === '1' || item.del === 1,
+          created_at: parseDate(item.created_at),
+          updated_at: parseDate(item.updated_at),
+        });
+      })
+      .on('end', async () => {
+        console.log('Final results array:', results); // Log the data being inserted
+
+        // If no valid data exists, return an error response
+        if (results.length === 0) {
+          console.log('No valid data to insert');
+          return res.status(400).json({ message: 'No valid data to insert' });
+        }
+
+        // Try inserting the data into the database
+        try {
+          const insertResult = await Signal_Modal.insertMany(results);
+          console.log('Insert result:', insertResult);  // Log the insert result
+          res.status(200).json({ message: 'CSV data imported successfully' });
+        } catch (err) {
+          console.error('Insert error:', err);
+          res.status(500).json({ message: 'Insert error', error: err.message });
+        }
+      });
+  } catch (err) {
+    console.error('File read error:', err);
+    res.status(500).json({ message: 'CSV file read error', error: err.message });
+  }
+}
 }
 module.exports = new Signal();
