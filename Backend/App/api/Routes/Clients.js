@@ -1,6 +1,6 @@
 const router = require("express").Router()
 
-const { AddClient, detailClient, loginClient, forgotPassword, resetPassword, changePassword, updateProfile, deleteClient, otpSubmit, aadhaarVerification, aadhaarOtpSubmit, clientKycAndAgreement, uploadDocument, downloadDocument, requestPayout, payoutList, referEarn, brokerLink, deleteBrokerLink, addHelpDesk, helpdeskList, resend, orderList, orderListDetail, basketOrderList, getClientSignalOrders, clientDelete, getTickets, detailTicket, rePly, addTicket } = require('../Controllers/Clients')
+const {AddClient,detailClient,loginClient,forgotPassword,resetPassword,changePassword,updateProfile,deleteClient,otpSubmit,aadhaarVerification,aadhaarOtpSubmit,clientKycAndAgreement,uploadDocument,downloadDocument,requestPayout,payoutList,referEarn,brokerLink,deleteBrokerLink,addHelpDesk,helpdeskList,resend,orderList,orderListDetail,basketOrderList,getClientSignalOrders,clientDelete,getTickets,detailTicket,rePly,addTicket,handleUtmSource} = require('../Controllers/Clients')
 
 
 
@@ -36,6 +36,8 @@ router.post('/api/client/gettickets', getTickets);
 router.get('/api/client/ticketdetail/:ticketid', detailTicket);
 router.post('/api/client/ticketreply', rePly);
 router.post('/api/client/addticket', addTicket);
+router.post('/api/client/handleutmsource', handleUtmSource);
+
 
 
 

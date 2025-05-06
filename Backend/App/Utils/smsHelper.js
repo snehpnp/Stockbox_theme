@@ -37,7 +37,7 @@ if(name=="bulksmsservice")
   // console.log('SMS Response:', response.data);
     return response.data;
   } catch (error) {
-   // console.log('SMS Send Error:', error.response?.data || error.message);
+  //  console.log('SMS Send Error:', error.response?.data || error.message);
     return error.message;
   }
 

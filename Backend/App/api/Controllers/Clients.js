@@ -20,6 +20,7 @@ const Basketorder_Modal = db.Basketorder;
 const Smstemplate_Modal = db.Smstemplate;
 const Ticket_Modal = db.Ticket;
 const Ticketmessage_Modal = db.Ticketmessage;
+const Utmsource_Model = db.Utmsource; // adjust path as needed
 
 const { sendSMS } = require('../../Utils/smsHelper');
 const upload = require('../../Utils/multerHelper');
@@ -33,7 +34,7 @@ class Clients {
     try {
 
 
-      const { FullName, Email, PhoneNo, password, token, state, city } = req.body;
+      const { FullName, Email, PhoneNo, password, token, state, city, utmSource="" } = req.body;
 
       if (!FullName) {
         return res.status(400).json({ status: false, message: "Please enter fullname" });
@@ -132,6 +133,7 @@ class Clients {
         refer_status: token ? (settings.refer_status || 0) : 0,
         state,
         city,
+        utmSource,
         del: 0,
       });
 
@@ -2271,6 +2273,37 @@ class Clients {
 
 
 
+      async  handleUtmSource(req, res) {
+        try {
+          const { type } = req.body;
+      
+          if (!type) {
+            return res.status(400).json({ success: false, message: "Type is required" });
+          }
+      
+          // Try to find the existing record
+          const existing = await Utmsource_Model.findOne({ type: type.trim() });
+      
+          if (existing) {
+            // Increment count
+            existing.utmcount += 1;
+            await existing.save();
+            return res.status(200).json({ success: true, message: "UTM count updated", data: existing });
+          } else {
+            // Create new record
+            const newEntry = await Utmsource_Model.create({
+              type: type.trim(),
+              utmcount: 1
+            });
+            return res.status(201).json({ success: true, message: "New UTM source added", data: newEntry });
+          }
+        } catch (error) {
+          console.error("Error in handleUtmSource:", error);
+          return res.status(500).json({ success: false, message: "Server Error" });
+        }
+      }
+
+  
 
 }
 module.exports = new Clients();

@@ -45,8 +45,9 @@ async function sendFCMNotification(title, body, tokens, type = "", segment = "")
     const response = await Promise.all(
       messages.map(message => admin.messaging().send(message))
     );
-
+return 1;
   } catch (error) {
+    return 2;
 
   }
 }

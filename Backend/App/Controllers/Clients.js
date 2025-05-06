@@ -914,7 +914,7 @@ class Clients {
       ]);
 
 
-
+/*
       const results = await Clients_Modal.aggregate([
         {
           $match: matchConditions // Match based on the conditions
@@ -1097,8 +1097,19 @@ class Clients {
           $count: "totalCount" // Count the total number of matching clients
         }
       ]);
-
+*/
       // Extract the total count from the result
+
+
+      const results = await Clients_Modal.aggregate([
+        {
+          $match: matchConditions // Match based on the conditions
+        },
+        {
+          $count: "totalCount" // Count the total number of matching clients
+        }
+      ]);
+  
       const totalClients = results.length > 0 ? results[0].totalCount : 0;
 
 
@@ -1378,7 +1389,7 @@ class Clients {
       ]);
 
 
-
+/*
       const results = await Clients_Modal.aggregate([
         {
           $match: matchConditions // Match based on the conditions
@@ -1561,8 +1572,19 @@ class Clients {
           $count: "totalCount" // Count the total number of matching clients
         }
       ]);
-
+*/
       // Extract the total count from the result
+
+
+      const results = await Clients_Modal.aggregate([
+        {
+          $match: matchConditions // Match based on the conditions
+        },
+        {
+          $count: "totalCount" // Count the total number of matching clients
+        }
+      ]);
+  
       const totalClients = results.length > 0 ? results[0].totalCount : 0;
 
 
@@ -3746,7 +3768,7 @@ class Clients {
       ]);
 
 
-
+/*
       const results = await Clients_Modal.aggregate([
         {
           $match: matchConditions // Match based on the conditions
@@ -3929,8 +3951,19 @@ class Clients {
           $count: "totalCount" // Count the total number of matching clients
         }
       ]);
-
+*/
       // Extract the total count from the result
+
+
+      const results = await Clients_Modal.aggregate([
+        {
+          $match: matchConditions // Match based on the conditions
+        },
+        {
+          $count: "totalCount" // Count the total number of matching clients
+        }
+      ]);
+  
       const totalClients = results.length > 0 ? results[0].totalCount : 0;
 
 
