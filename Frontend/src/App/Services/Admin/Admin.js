@@ -3852,3 +3852,20 @@ export async function sendMailToClient(data, token) {
         return err.response?.data || err.message;
     }
 }
+
+
+//UTM Source data 
+
+export async function getUtmSource(token) {
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/utmsource`, {
+            headers: {
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}

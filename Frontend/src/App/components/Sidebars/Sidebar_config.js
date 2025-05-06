@@ -262,6 +262,12 @@ const Admin = [
     link: "/admin/tickets",
     name: "Ticket"
   },
+  {
+    label: "UTM Source",
+    icon: "Facebook",
+    link: "/admin/utm-source",
+    name: "utmSource"
+  },
 ];
 
 
