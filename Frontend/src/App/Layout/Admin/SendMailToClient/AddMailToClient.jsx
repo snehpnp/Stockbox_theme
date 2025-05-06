@@ -68,7 +68,7 @@ const Addbroadcast = () => {
             planid: (values.type === "all" || values.type === "nonsubscribe") ? "" : values.service,
             subject: values.subject,
             message: values.message,
-            selectedUserIds: "680c7217a44e60e46147109d"
+            selectedUserIds: ""
         };
 
         try {
