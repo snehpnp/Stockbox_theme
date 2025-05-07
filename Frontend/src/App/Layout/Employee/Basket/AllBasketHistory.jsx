@@ -183,7 +183,7 @@ const AllBasketHistory = () => {
 
         {
             name: 'Plan Amount',
-            selector: row => <div> <IndianRupee />{(row.plan_price).toFixed(2)}</div>,
+            selector: row => <div> <IndianRupee style={{ width: "18px" }} />{(row.plan_price).toFixed(2)}</div>,
             sortable: true,
             width: '200px',
         },
@@ -204,7 +204,7 @@ const AllBasketHistory = () => {
 
         {
             name: 'Total',
-            selector: row => <div> <IndianRupee />{(row.total).toFixed(2)}</div>,
+            selector: row => <div> <IndianRupee style={{ width: "16px" }} />{(row.total).toFixed(2)}</div>,
             sortable: true,
             width: '200px',
         },
@@ -272,7 +272,7 @@ const AllBasketHistory = () => {
                     </div>
                 </div>
                 <hr />
-                
+
                 <div className="card">
                     <div className="card-body">
                         <div className="d-lg-flex align-items-center mb-4 gap-3 justify-content-between">

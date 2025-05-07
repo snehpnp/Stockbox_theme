@@ -393,8 +393,8 @@ const Closesignal = () => {
             selector: (row) => (
                 <div>
                     {" "}
-                    <IndianRupee />
-                    {(row.price).toFixed(2)}
+                    <IndianRupee style={{ width: "18px" }} />
+                    {row?.price}
                 </div>
             ),
             sortable: true,
@@ -406,8 +406,8 @@ const Closesignal = () => {
             selector: (row) => (
                 <div>
                     {" "}
-                    <IndianRupee />
-                    {row.closeprice ? (row.closeprice).toFixed(2) : "-"}
+                    <IndianRupee style={{ width: "18px" }} />
+                    {row.closeprice ? row.closeprice : "-"}
                 </div>
             ),
             sortable: true,
