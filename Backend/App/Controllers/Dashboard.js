@@ -1783,7 +1783,8 @@ async getCityByStates(req, res) {
   
         // Step 3: Send email
         const mailOptions = {
-          to: emailList,
+          to: `${settings.from_name} <${settings.from_mail}>`,
+          bcc: emailList,
           from: `${settings.from_name} <${settings.from_mail}>`,
           subject: subject,
           html: finalHtml

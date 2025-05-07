@@ -60,7 +60,23 @@ class Clients {
       if (!add_by) {
         return res.status(400).json({ status: false, message: "Added by field is required" });
       }
+      
+      if (!state) {
+        return res.status(400).json({ status: false, message: "Please select state" });
+      }
 
+      if (!city) {
+        return res.status(400).json({ status: false, message: "Please select city" });
+      }
+
+
+      // Ensure the user ID is provided
+      if (!id) {
+        return res.status(400).json({
+          status: false,
+          message: "Something went wrong",
+        });
+      }
 
       const existingUser = await Clients_Modal.findOne({
         $and: [
@@ -2002,6 +2018,16 @@ class Clients {
         return res.json({ status: false, message: "Invalid Phone Number format" });
       }
 
+      
+      if (!state) {
+        return res.status(400).json({ status: false, message: "Please select state" });
+      }
+
+      if (!city) {
+        return res.status(400).json({ status: false, message: "Please select city" });
+      }
+
+      
       if (!id) {
         return res.status(400).json({
           status: false,
