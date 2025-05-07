@@ -70,13 +70,7 @@ class Clients {
       }
 
 
-      // Ensure the user ID is provided
-      if (!id) {
-        return res.status(400).json({
-          status: false,
-          message: "Something went wrong",
-        });
-      }
+     
 
       const existingUser = await Clients_Modal.findOne({
         $and: [
@@ -2027,7 +2021,7 @@ class Clients {
         return res.status(400).json({ status: false, message: "Please select city" });
       }
 
-      
+
       if (!id) {
         return res.status(400).json({
           status: false,
