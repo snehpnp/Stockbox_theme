@@ -334,6 +334,7 @@ class Clients {
           Email: client.Email,
           PhoneNo: client.PhoneNo,
           id: client.id,
+          createdAt: client.createdAt,
           token: token,
           angleredirecturl: `https://${req.headers.host}/backend/angle/getaccesstoken?key=${client._id}`,
           aliceredirecturl: `https://${req.headers.host}/backend/aliceblue/getaccesstoken`,
