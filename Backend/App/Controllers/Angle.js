@@ -1234,8 +1234,6 @@ class Angle {
                     failedOrders.push({ stock: stock.tradesymbol, message: "Stock not found" });
                 }
 
-<<<<<<< HEAD
-=======
 
                 let quantitys = quantity;
                 // if (stock.segment !== "C") quantitys *= stockData.lotsize;
@@ -1243,7 +1241,6 @@ class Angle {
                     quantitys=  quantitys*stockData.lotsize*stock.lot;
                 }
 
->>>>>>> f48f9072e4c7b532ec24005da327fec2f80a961a
                 // ✅ Order Object
                 const orderData = JSON.stringify({
                     "variety": "NORMAL",
@@ -1257,16 +1254,11 @@ class Angle {
                     "price": 0,
                     "squareoff": "0",
                     "stoploss": "0",
-<<<<<<< HEAD
-                    "quantity": quantity
-                };
-=======
                     "quantity": quantitys
                 });
 
 
 
->>>>>>> f48f9072e4c7b532ec24005da327fec2f80a961a
 
                 let config = {
                     method: 'post',
@@ -1287,10 +1279,7 @@ class Angle {
 
                 // Make the API call and await the response for each stock
                 const response = await axios(config);
-<<<<<<< HEAD
-=======
                 console.log("response",response.data);
->>>>>>> f48f9072e4c7b532ec24005da327fec2f80a961a
 
                 if (response.data.message === 'SUCCESS') {
 
@@ -1436,13 +1425,10 @@ class Angle {
 
                 let calltypes = stock.calltype === 'BUY' ? "SELL" : "BUY";
 
-<<<<<<< HEAD
-=======
 
 
 
 
->>>>>>> f48f9072e4c7b532ec24005da327fec2f80a961a
                 if (totalValue >= quantity) {
 
 
@@ -1464,13 +1450,8 @@ class Angle {
                         "price": 0,
                         "squareoff": "0",
                         "stoploss": "0",
-<<<<<<< HEAD
-                        "quantity": quantity
-                    };
-=======
                         "quantity": quantitys
                     });
->>>>>>> f48f9072e4c7b532ec24005da327fec2f80a961a
 
                     let config = {
                         method: 'post',

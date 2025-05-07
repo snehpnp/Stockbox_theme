@@ -60,7 +60,7 @@ class Clients {
       if (!add_by) {
         return res.status(400).json({ status: false, message: "Added by field is required" });
       }
-
+      
       if (!state) {
         return res.status(400).json({ status: false, message: "Please select state" });
       }
@@ -70,11 +70,7 @@ class Clients {
       }
 
 
-<<<<<<< HEAD
-
-=======
      
->>>>>>> f48f9072e4c7b532ec24005da327fec2f80a961a
 
       const existingUser = await Clients_Modal.findOne({
         $and: [
@@ -92,7 +88,6 @@ class Clients {
           return res.status(400).json({ status: false, message: "Phone number already exists" });
         }
       }
-      console.log('aaaaa');
 
       const refer_tokens = crypto.randomBytes(10).toString('hex');
 
@@ -126,8 +121,8 @@ class Clients {
         refer_token: refer_tokenss,
         token: refer_tokens,
         freetrial: freetrial,
-        state: state,
-        city: city,
+        state:state,
+        city:city,
         ActiveStatus: 1,
         clientcome: 1
       })
@@ -180,22 +175,22 @@ class Clients {
         const freetrialDays = parseInt(settings.freetrial, 10);
         const start = new Date();
         const end = new Date(start);
-
+      
         let addedDays = 0;
-
+      
         while (addedDays < freetrialDays) {
           end.setDate(end.getDate() + 1);
           const day = end.getDay();
-
+      
           if (day !== 0 && day !== 6) {
             addedDays++;
           }
         }
-
+      
         end.setHours(23, 59, 59, 999);
-
+      
         const service = await Service_Modal.find({ del: false });
-
+      
         const savePromises = service.map(async (svc) => {
           const newPlanManage = new Planmanage({
             clientid: result._id,
@@ -203,16 +198,16 @@ class Clients {
             startdate: start,
             enddate: end,
           });
-
+      
           return newPlanManage.save();
         });
-
+      
         const newSubscription = new Freetrial_Modal({
           clientid: result._id,
           startdate: start,
           enddate: end,
         });
-
+      
         const savedSubscription = await newSubscription.save();
       }
 
@@ -268,7 +263,7 @@ class Clients {
   async getClient(req, res) {
     try {
 
-
+    
       const { } = req.body;
       //  const result = await Clients_Modal.find({ del: 0 }).sort({ createdAt: -1 });
 
@@ -455,11 +450,11 @@ class Clients {
 
 
 
-
+  
   async getClientFive(req, res) {
     try {
 
-
+    
       const { } = req.body;
       //  const result = await Clients_Modal.find({ del: 0 }).sort({ createdAt: -1 });
 
@@ -821,28 +816,28 @@ class Clients {
         },
         {
           $lookup: {
-            from: 'addtocarts', // Join with addtocarts collection
-            let: { clientId: { $toObjectId: "$_id" } }, // Convert client _id to ObjectId
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: [{ $toObjectId: "$client_id" }, "$$clientId"] }, // Ensure both are ObjectId
-                      { $eq: ["$status", false] } // Only fetch records where status is false
-                    ]
+              from: 'addtocarts', // Join with addtocarts collection
+              let: { clientId: { $toObjectId: "$_id" } }, // Convert client _id to ObjectId
+              pipeline: [
+                  {
+                      $match: {
+                          $expr: {
+                              $and: [
+                                  { $eq: [{ $toObjectId: "$client_id" }, "$$clientId"] }, // Ensure both are ObjectId
+                                  { $eq: ["$status", false] } // Only fetch records where status is false
+                              ]
+                          }
+                      }
                   }
-                }
-              }
-            ],
-            as: 'cartItems'
+              ],
+              as: 'cartItems'
           }
-        },
-        {
+      },
+      {
           $addFields: {
-            hasPendingCart: { $gt: [{ $size: "$cartItems" }, 0] } // If cartItems > 0, set true; else false
+              hasPendingCart: { $gt: [{ $size: "$cartItems" }, 0] } // If cartItems > 0, set true; else false
           }
-        },
+      },   
         {
           $project: {
             _id: 1,
@@ -911,7 +906,7 @@ class Clients {
                 }
               }
             },
-            hasPendingCart: 1
+            hasPendingCart:1
           }
         },
         ...(planStatus ? [{
@@ -929,190 +924,190 @@ class Clients {
       ]);
 
 
-      /*
-            const results = await Clients_Modal.aggregate([
+/*
+      const results = await Clients_Modal.aggregate([
+        {
+          $match: matchConditions // Match based on the conditions
+        },
+        {
+          $lookup: {
+            from: 'users', // The users collection name
+            let: { userId: { $toObjectId: "$add_by" } }, // Convert add_by to ObjectId
+            pipeline: [
+              { $match: { $expr: { $eq: ["$_id", "$$userId"] } } }
+            ],
+            as: 'addedByDetails'
+          }
+        },
+        {
+          $unwind: {
+            path: '$addedByDetails',
+            preserveNullAndEmptyArrays: true // Keeps clients without a matching user
+          }
+        },
+        {
+          $lookup: {
+            from: 'planmanages', // Planmanage collection
+            let: { clientId: { $toObjectId: "$_id" } }, // Convert Clients_Modal _id to ObjectId
+            pipeline: [
               {
-                $match: matchConditions // Match based on the conditions
-              },
-              {
-                $lookup: {
-                  from: 'users', // The users collection name
-                  let: { userId: { $toObjectId: "$add_by" } }, // Convert add_by to ObjectId
-                  pipeline: [
-                    { $match: { $expr: { $eq: ["$_id", "$$userId"] } } }
-                  ],
-                  as: 'addedByDetails'
-                }
-              },
-              {
-                $unwind: {
-                  path: '$addedByDetails',
-                  preserveNullAndEmptyArrays: true // Keeps clients without a matching user
-                }
-              },
-              {
-                $lookup: {
-                  from: 'planmanages', // Planmanage collection
-                  let: { clientId: { $toObjectId: "$_id" } }, // Convert Clients_Modal _id to ObjectId
-                  pipeline: [
-                    {
-                      $match: {
-                        $expr: {
-                          $eq: [{ $toObjectId: "$clientid" }, "$$clientId"] // Match clientid in planmanages
-                        }
-                      }
-                    }
-                  ],
-                  as: 'plans'
-                }
-              },
-              {
-                $lookup: {
-                  from: 'services', // Assuming services collection contains the service details
-                  localField: 'plans.serviceid', // Linking serviceid in planmanages
-                  foreignField: '_id', // Matching _id in services
-                  as: 'serviceDetails'
-                }
-              },
-              {
-                $addFields: {
-                  activePlans: {
-                    $filter: {
-                      input: "$plans",
-                      as: "plan",
-                      cond: { $gte: ["$$plan.enddate", new Date()] } // Active if enddate >= today
-                    }
-                  },
-                  expiredPlans: {
-                    $filter: {
-                      input: "$plans",
-                      as: "plan",
-                      cond: { $lt: ["$$plan.enddate", new Date()] } // Expired if enddate < today
-                    }
-                  },
-                  plansStatus: {
-                    $map: {
-                      input: "$plans",
-                      as: "plan",
-                      in: {
-                        planId: "$$plan._id", // Include plan ID
-                        serviceName: {
-                          $switch: {
-                            branches: [
-                              {
-                                case: {
-                                  $eq: [
-                                    { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                                    "66d2c3bebf7e6dc53ed07626" // Static ObjectId for "Cash"
-                                  ]
-                                },
-                                then: "Cash" // If serviceid matches, return "Cash"
-                              },
-                              {
-                                case: {
-                                  $eq: [
-                                    { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                                    "66dfede64a88602fbbca9b72" // Static ObjectId for "Future"
-                                  ]
-                                },
-                                then: "Future" // If serviceid matches, return "Future"
-                              },
-                              {
-                                case: {
-                                  $eq: [
-                                    { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                                    "66dfeef84a88602fbbca9b79" // Static ObjectId for "Option"
-                                  ]
-                                },
-                                then: "Option" // If serviceid matches, return "Option"
-                              },
-                              {
-                                case: {
-                                  $eq: [
-                                    { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                                    "67e12758a0a2be895da19550" // Static ObjectId for "Option"
-                                  ]
-                                },
-                                then: "Strategy" // If serviceid matches, return "Option"
-                              },
-                              {
-                                case: {
-                                  $eq: [
-                                    { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                                    "67e1279ba0a2be895da19551" // Static ObjectId for "Option"
-                                  ]
-                                },
-                                then: "Future Strategy" // If serviceid matches, return "Option"
-                              }
-                            ],
-                            default: "Unknown Service" // Default value if no match
-                          }
-                        },
-                        status: {
-                          $cond: {
-                            if: { $gte: ["$$plan.enddate", new Date()] }, // Active if enddate >= today
-                            then: "active", // Plan is active
-                            else: "expired" // Plan is expired
-                          }
-                        }
-                      }
-                    }
+                $match: {
+                  $expr: {
+                    $eq: [{ $toObjectId: "$clientid" }, "$$clientId"] // Match clientid in planmanages
                   }
                 }
-              },
-              {
-                $project: {
-                  _id: 1,
-                  FullName: 1,
-                  Email: 1,
-                  PhoneNo: 1,
-                  kyc_verification: 1,
-                  add_by: 1,
-                  createdAt: 1,
-                  updatedAt: 1,
-                  plansStatus: 1, // Include the plans status
-                  clientStatus: {
-                    $cond: {
-                      if: {
-                        $or: [
-                          { $eq: ["$plansStatus", null] }, // Check if plansStatus is null
-                          { $eq: [{ $size: "$plansStatus" }, 0] } // Check if plansStatus is an empty array
-                        ]
-                      },
-                      then: "NA", // Default to "NA" if plansStatus is null or empty
-                      else: {
-                        $cond: {
-                          if: {
-                            $gt: [
-                              {
-                                $size: {
-                                  $filter: {
-                                    input: "$plansStatus",
-                                    as: "plan",
-                                    cond: { $eq: ["$$plan.status", "active"] }
-                                  }
-                                }
-                              },
-                              0
+              }
+            ],
+            as: 'plans'
+          }
+        },
+        {
+          $lookup: {
+            from: 'services', // Assuming services collection contains the service details
+            localField: 'plans.serviceid', // Linking serviceid in planmanages
+            foreignField: '_id', // Matching _id in services
+            as: 'serviceDetails'
+          }
+        },
+        {
+          $addFields: {
+            activePlans: {
+              $filter: {
+                input: "$plans",
+                as: "plan",
+                cond: { $gte: ["$$plan.enddate", new Date()] } // Active if enddate >= today
+              }
+            },
+            expiredPlans: {
+              $filter: {
+                input: "$plans",
+                as: "plan",
+                cond: { $lt: ["$$plan.enddate", new Date()] } // Expired if enddate < today
+              }
+            },
+            plansStatus: {
+              $map: {
+                input: "$plans",
+                as: "plan",
+                in: {
+                  planId: "$$plan._id", // Include plan ID
+                  serviceName: {
+                    $switch: {
+                      branches: [
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "66d2c3bebf7e6dc53ed07626" // Static ObjectId for "Cash"
                             ]
                           },
-                          then: "active", // At least one "active" plan
-                          else: "expired" // No active plans, set to "expired"
+                          then: "Cash" // If serviceid matches, return "Cash"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "66dfede64a88602fbbca9b72" // Static ObjectId for "Future"
+                            ]
+                          },
+                          then: "Future" // If serviceid matches, return "Future"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "66dfeef84a88602fbbca9b79" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Option" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e12758a0a2be895da19550" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Strategy" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e1279ba0a2be895da19551" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Future Strategy" // If serviceid matches, return "Option"
                         }
-                      }
+                      ],
+                      default: "Unknown Service" // Default value if no match
+                    }
+                  },
+                  status: {
+                    $cond: {
+                      if: { $gte: ["$$plan.enddate", new Date()] }, // Active if enddate >= today
+                      then: "active", // Plan is active
+                      else: "expired" // Plan is expired
                     }
                   }
-      
                 }
-              },
-              ...(planStatus ? [{
-                $match: { "clientStatus": planStatus } // Match only clients with the specified status
-              }] : []),
-              {
-                $count: "totalCount" // Count the total number of matching clients
               }
-            ]);
-      */
+            }
+          }
+        },
+        {
+          $project: {
+            _id: 1,
+            FullName: 1,
+            Email: 1,
+            PhoneNo: 1,
+            kyc_verification: 1,
+            add_by: 1,
+            createdAt: 1,
+            updatedAt: 1,
+            plansStatus: 1, // Include the plans status
+            clientStatus: {
+              $cond: {
+                if: {
+                  $or: [
+                    { $eq: ["$plansStatus", null] }, // Check if plansStatus is null
+                    { $eq: [{ $size: "$plansStatus" }, 0] } // Check if plansStatus is an empty array
+                  ]
+                },
+                then: "NA", // Default to "NA" if plansStatus is null or empty
+                else: {
+                  $cond: {
+                    if: {
+                      $gt: [
+                        {
+                          $size: {
+                            $filter: {
+                              input: "$plansStatus",
+                              as: "plan",
+                              cond: { $eq: ["$$plan.status", "active"] }
+                            }
+                          }
+                        },
+                        0
+                      ]
+                    },
+                    then: "active", // At least one "active" plan
+                    else: "expired" // No active plans, set to "expired"
+                  }
+                }
+              }
+            }
+
+          }
+        },
+        ...(planStatus ? [{
+          $match: { "clientStatus": planStatus } // Match only clients with the specified status
+        }] : []),
+        {
+          $count: "totalCount" // Count the total number of matching clients
+        }
+      ]);
+*/
       // Extract the total count from the result
 
 
@@ -1124,7 +1119,7 @@ class Clients {
           $count: "totalCount" // Count the total number of matching clients
         }
       ]);
-
+  
       const totalClients = results.length > 0 ? results[0].totalCount : 0;
 
 
@@ -1404,190 +1399,190 @@ class Clients {
       ]);
 
 
-      /*
-            const results = await Clients_Modal.aggregate([
+/*
+      const results = await Clients_Modal.aggregate([
+        {
+          $match: matchConditions // Match based on the conditions
+        },
+        {
+          $lookup: {
+            from: 'users', // The users collection name
+            let: { userId: { $toObjectId: "$add_by" } }, // Convert add_by to ObjectId
+            pipeline: [
+              { $match: { $expr: { $eq: ["$_id", "$$userId"] } } }
+            ],
+            as: 'addedByDetails'
+          }
+        },
+        {
+          $unwind: {
+            path: '$addedByDetails',
+            preserveNullAndEmptyArrays: true // Keeps clients without a matching user
+          }
+        },
+        {
+          $lookup: {
+            from: 'planmanages', // Planmanage collection
+            let: { clientId: { $toObjectId: "$_id" } }, // Convert Clients_Modal _id to ObjectId
+            pipeline: [
               {
-                $match: matchConditions // Match based on the conditions
-              },
-              {
-                $lookup: {
-                  from: 'users', // The users collection name
-                  let: { userId: { $toObjectId: "$add_by" } }, // Convert add_by to ObjectId
-                  pipeline: [
-                    { $match: { $expr: { $eq: ["$_id", "$$userId"] } } }
-                  ],
-                  as: 'addedByDetails'
-                }
-              },
-              {
-                $unwind: {
-                  path: '$addedByDetails',
-                  preserveNullAndEmptyArrays: true // Keeps clients without a matching user
-                }
-              },
-              {
-                $lookup: {
-                  from: 'planmanages', // Planmanage collection
-                  let: { clientId: { $toObjectId: "$_id" } }, // Convert Clients_Modal _id to ObjectId
-                  pipeline: [
-                    {
-                      $match: {
-                        $expr: {
-                          $eq: [{ $toObjectId: "$clientid" }, "$$clientId"] // Match clientid in planmanages
-                        }
-                      }
-                    }
-                  ],
-                  as: 'plans'
-                }
-              },
-              {
-                $lookup: {
-                  from: 'services', // Assuming services collection contains the service details
-                  localField: 'plans.serviceid', // Linking serviceid in planmanages
-                  foreignField: '_id', // Matching _id in services
-                  as: 'serviceDetails'
-                }
-              },
-              {
-                $addFields: {
-                  activePlans: {
-                    $filter: {
-                      input: "$plans",
-                      as: "plan",
-                      cond: { $gte: ["$$plan.enddate", new Date()] } // Active if enddate >= today
-                    }
-                  },
-                  expiredPlans: {
-                    $filter: {
-                      input: "$plans",
-                      as: "plan",
-                      cond: { $lt: ["$$plan.enddate", new Date()] } // Expired if enddate < today
-                    }
-                  },
-                  plansStatus: {
-                    $map: {
-                      input: "$plans",
-                      as: "plan",
-                      in: {
-                        planId: "$$plan._id", // Include plan ID
-                        serviceName: {
-                          $switch: {
-                            branches: [
-                              {
-                                case: {
-                                  $eq: [
-                                    { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                                    "66d2c3bebf7e6dc53ed07626" // Static ObjectId for "Cash"
-                                  ]
-                                },
-                                then: "Cash" // If serviceid matches, return "Cash"
-                              },
-                              {
-                                case: {
-                                  $eq: [
-                                    { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                                    "66dfede64a88602fbbca9b72" // Static ObjectId for "Future"
-                                  ]
-                                },
-                                then: "Future" // If serviceid matches, return "Future"
-                              },
-                              {
-                                case: {
-                                  $eq: [
-                                    { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                                    "66dfeef84a88602fbbca9b79" // Static ObjectId for "Option"
-                                  ]
-                                },
-                                then: "Option" // If serviceid matches, return "Option"
-                              },
-                              {
-                                case: {
-                                  $eq: [
-                                    { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                                    "67e12758a0a2be895da19550" // Static ObjectId for "Option"
-                                  ]
-                                },
-                                then: "Strategy" // If serviceid matches, return "Option"
-                              },
-                              {
-                                case: {
-                                  $eq: [
-                                    { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                                    "67e1279ba0a2be895da19551" // Static ObjectId for "Option"
-                                  ]
-                                },
-                                then: "Future Strategy" // If serviceid matches, return "Option"
-                              }
-                            ],
-                            default: "Unknown Service" // Default value if no match
-                          }
-                        },
-                        status: {
-                          $cond: {
-                            if: { $gte: ["$$plan.enddate", new Date()] }, // Active if enddate >= today
-                            then: "active", // Plan is active
-                            else: "expired" // Plan is expired
-                          }
-                        }
-                      }
-                    }
+                $match: {
+                  $expr: {
+                    $eq: [{ $toObjectId: "$clientid" }, "$$clientId"] // Match clientid in planmanages
                   }
                 }
-              },
-              {
-                $project: {
-                  _id: 1,
-                  FullName: 1,
-                  Email: 1,
-                  PhoneNo: 1,
-                  kyc_verification: 1,
-                  add_by: 1,
-                  createdAt: 1,
-                  updatedAt: 1,
-                  plansStatus: 1, // Include the plans status
-                  clientStatus: {
-                    $cond: {
-                      if: {
-                        $or: [
-                          { $eq: ["$plansStatus", null] }, // Check if plansStatus is null
-                          { $eq: [{ $size: "$plansStatus" }, 0] } // Check if plansStatus is an empty array
-                        ]
-                      },
-                      then: "NA", // Default to "NA" if plansStatus is null or empty
-                      else: {
-                        $cond: {
-                          if: {
-                            $gt: [
-                              {
-                                $size: {
-                                  $filter: {
-                                    input: "$plansStatus",
-                                    as: "plan",
-                                    cond: { $eq: ["$$plan.status", "active"] }
-                                  }
-                                }
-                              },
-                              0
+              }
+            ],
+            as: 'plans'
+          }
+        },
+        {
+          $lookup: {
+            from: 'services', // Assuming services collection contains the service details
+            localField: 'plans.serviceid', // Linking serviceid in planmanages
+            foreignField: '_id', // Matching _id in services
+            as: 'serviceDetails'
+          }
+        },
+        {
+          $addFields: {
+            activePlans: {
+              $filter: {
+                input: "$plans",
+                as: "plan",
+                cond: { $gte: ["$$plan.enddate", new Date()] } // Active if enddate >= today
+              }
+            },
+            expiredPlans: {
+              $filter: {
+                input: "$plans",
+                as: "plan",
+                cond: { $lt: ["$$plan.enddate", new Date()] } // Expired if enddate < today
+              }
+            },
+            plansStatus: {
+              $map: {
+                input: "$plans",
+                as: "plan",
+                in: {
+                  planId: "$$plan._id", // Include plan ID
+                  serviceName: {
+                    $switch: {
+                      branches: [
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "66d2c3bebf7e6dc53ed07626" // Static ObjectId for "Cash"
                             ]
                           },
-                          then: "active", // At least one "active" plan
-                          else: "expired" // No active plans, set to "expired"
+                          then: "Cash" // If serviceid matches, return "Cash"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "66dfede64a88602fbbca9b72" // Static ObjectId for "Future"
+                            ]
+                          },
+                          then: "Future" // If serviceid matches, return "Future"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "66dfeef84a88602fbbca9b79" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Option" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e12758a0a2be895da19550" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Strategy" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e1279ba0a2be895da19551" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Future Strategy" // If serviceid matches, return "Option"
                         }
-                      }
+                      ],
+                      default: "Unknown Service" // Default value if no match
+                    }
+                  },
+                  status: {
+                    $cond: {
+                      if: { $gte: ["$$plan.enddate", new Date()] }, // Active if enddate >= today
+                      then: "active", // Plan is active
+                      else: "expired" // Plan is expired
                     }
                   }
-      
                 }
-              },
-              ...(planStatus ? [{
-                $match: { "clientStatus": planStatus } // Match only clients with the specified status
-              }] : []),
-              {
-                $count: "totalCount" // Count the total number of matching clients
               }
-            ]);
-      */
+            }
+          }
+        },
+        {
+          $project: {
+            _id: 1,
+            FullName: 1,
+            Email: 1,
+            PhoneNo: 1,
+            kyc_verification: 1,
+            add_by: 1,
+            createdAt: 1,
+            updatedAt: 1,
+            plansStatus: 1, // Include the plans status
+            clientStatus: {
+              $cond: {
+                if: {
+                  $or: [
+                    { $eq: ["$plansStatus", null] }, // Check if plansStatus is null
+                    { $eq: [{ $size: "$plansStatus" }, 0] } // Check if plansStatus is an empty array
+                  ]
+                },
+                then: "NA", // Default to "NA" if plansStatus is null or empty
+                else: {
+                  $cond: {
+                    if: {
+                      $gt: [
+                        {
+                          $size: {
+                            $filter: {
+                              input: "$plansStatus",
+                              as: "plan",
+                              cond: { $eq: ["$$plan.status", "active"] }
+                            }
+                          }
+                        },
+                        0
+                      ]
+                    },
+                    then: "active", // At least one "active" plan
+                    else: "expired" // No active plans, set to "expired"
+                  }
+                }
+              }
+            }
+
+          }
+        },
+        ...(planStatus ? [{
+          $match: { "clientStatus": planStatus } // Match only clients with the specified status
+        }] : []),
+        {
+          $count: "totalCount" // Count the total number of matching clients
+        }
+      ]);
+*/
       // Extract the total count from the result
 
 
@@ -1599,7 +1594,7 @@ class Clients {
           $count: "totalCount" // Count the total number of matching clients
         }
       ]);
-
+  
       const totalClients = results.length > 0 ? results[0].totalCount : 0;
 
 
@@ -2017,7 +2012,7 @@ class Clients {
         return res.json({ status: false, message: "Invalid Phone Number format" });
       }
 
-
+      
       if (!state) {
         return res.status(400).json({ status: false, message: "Please select state" });
       }
@@ -2755,7 +2750,7 @@ class Clients {
       const limit = 10;
       const skip = (page - 1) * limit;
       const clientSearchQuery = new RegExp(search, 'i');
-
+  
       const requestclients = await Requestclient_Modal.aggregate([
         {
           $match: { del: false }, // Filter out deleted records
@@ -2784,56 +2779,56 @@ class Clients {
           }
         },
         // Conditional Lookup for 'plan' and 'basket' based on 'type' field
-        // Lookup for Plans
-        {
-          $lookup: {
-            from: 'plans',
-            localField: 'id',
-            foreignField: '_id',
-            as: 'planDetails'
-          }
-        },
-        {
-          $unwind: {
-            path: '$planDetails',
-            preserveNullAndEmptyArrays: true
-          }
-        },
-        // Lookup for Plan Category (to get category title & service)
-        {
-          $lookup: {
-            from: 'plancategories',
-            localField: 'planDetails.category',
-            foreignField: '_id',
-            as: 'categoryDetails'
-          }
-        },
-        {
-          $unwind: {
-            path: '$categoryDetails',
-            preserveNullAndEmptyArrays: true
-          }
-        },
-        {
-          $addFields: {
-            serviceArray: {
-              $map: {
-                input: { $split: ["$categoryDetails.service", ","] }, // Split string into array
-                as: "serviceId",
-                in: { $toObjectId: "$$serviceId" } // Convert to ObjectId
-              }
+          // Lookup for Plans
+      {
+        $lookup: {
+          from: 'plans',
+          localField: 'id',
+          foreignField: '_id',
+          as: 'planDetails'
+        }
+      },
+      {
+        $unwind: {
+          path: '$planDetails',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      // Lookup for Plan Category (to get category title & service)
+      {
+        $lookup: {
+          from: 'plancategories',
+          localField: 'planDetails.category',
+          foreignField: '_id',
+          as: 'categoryDetails'
+        }
+      },
+      {
+        $unwind: {
+          path: '$categoryDetails',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $addFields: {
+          serviceArray: {
+            $map: {
+              input: { $split: ["$categoryDetails.service", ","] }, // Split string into array
+              as: "serviceId",
+              in: { $toObjectId: "$$serviceId" } // Convert to ObjectId
             }
           }
-        },
-        {
-          $lookup: {
-            from: 'services',
-            localField: 'serviceArray',
-            foreignField: '_id',
-            as: 'serviceDetails'
-          }
-        },
-        // Lookup for Baskets
+        }
+      },
+      {
+        $lookup: {
+          from: 'services',
+          localField: 'serviceArray',
+          foreignField: '_id',
+          as: 'serviceDetails'
+        }
+      },
+      // Lookup for Baskets
         {
           $lookup: {
             from: 'baskets',
@@ -2844,9 +2839,9 @@ class Clients {
         },
         {
           $addFields: {
-            planData: {
-              $cond: {
-                if: { $eq: ["$type", "plan"] },
+            planData: { 
+              $cond: { 
+                if: { $eq: ["$type", "plan"] }, 
                 then: {
                   title: "$planDetails.title",
                   categoryTitle: "$categoryDetails.title",
@@ -2857,19 +2852,19 @@ class Clients {
                       as: "service",
                       in: "$$service.title"
                     }
-                  }
+                  } 
                 },
-                else: null
-              }
+                else: null 
+              } 
             },
-            basketData: {
-              $cond: {
-                if: { $eq: ["$type", "basket"] },
-                then: { $map: { input: "$basketDetails", as: "basket", in: { title: "$$basket.title" } } },
-                else: []
-              }
+             basketData: { 
+              $cond: { 
+                if: { $eq: ["$type", "basket"] }, 
+                then: { $map: { input: "$basketDetails", as: "basket", in: { title: "$$basket.title" } } }, 
+                else: [] 
+              } 
+            }        
             }
-          }
         },
         {
           $project: {
@@ -2890,7 +2885,7 @@ class Clients {
         { $skip: skip },
         { $limit: parseInt(limit) }
       ]);
-
+  
       // Get the total count of matching records for pagination
       const totalCount = await Requestclient_Modal.aggregate([
         {
@@ -2918,10 +2913,10 @@ class Clients {
         },
         { $count: 'totalCount' }
       ]);
-
+  
       const totalItems = totalCount.length ? totalCount[0].totalCount : 0;
       const totalPages = Math.ceil(totalItems / limit);
-
+  
       return res.json({
         status: true,
         message: "Retrieved successfully",
@@ -2933,13 +2928,13 @@ class Clients {
           totalPages
         }
       });
-
+  
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: 'Error retrieving Requestclient data', error });
     }
   }
-
+  
 
   // async clientRequest(req, res) {
   //   try {
@@ -3096,18 +3091,18 @@ class Clients {
 
   async orderListDetail(req, res) {
     try {
-      const { clientid, signalid, page = 1, fromDate, toDate, ordertype, borkerid, search, segment } = req.body; // Default pagination values
+      const { clientid, signalid, page = 1 ,fromDate, toDate, ordertype, borkerid, search, segment} = req.body; // Default pagination values
       const limit = 10;
       const pageSize = parseInt(limit);
       const skip = (parseInt(page) - 1) * pageSize;
-
+  
       // Build dynamic match conditions
       const matchCondition = {};
       if (clientid) matchCondition.clientid = clientid;
       if (signalid) matchCondition.signalid = signalid;
       if (ordertype) matchCondition.ordertype = ordertype; // BUY or SELL
       if (borkerid) matchCondition.borkerid = borkerid;
-
+  
       // Filter by date range
       if (fromDate && toDate) {
         matchCondition.createdAt = {
@@ -3123,11 +3118,11 @@ class Clients {
           $lte: new Date(toDate)
         };
       }
+      
+  
 
 
-
-
-
+  
       const result = await Order_Modal.aggregate([
         {
           $match: matchCondition, // Dynamically match based on provided filters
@@ -3206,7 +3201,7 @@ class Clients {
           $limit: pageSize, // Limit documents per page
         },
       ]);
-
+  
       // Get total count for pagination metadata
       // const totalRecords = await Order_Modal.countDocuments(matchCondition);
 
@@ -3221,15 +3216,15 @@ class Clients {
         },
         {
           $lookup: {
-            from: "signals",
-            localField: "signalObjectId",
-            foreignField: "_id",
-            as: "signalDetails"
+              from: "signals",
+              localField: "signalObjectId",
+              foreignField: "_id",
+              as: "signalDetails"
           }
-        },
-        { $unwind: { path: "$signalDetails", preserveNullAndEmptyArrays: true } },
+      },
+      { $unwind: { path: "$signalDetails", preserveNullAndEmptyArrays: true } },
 
-        ...(segment ? [{ $match: { "signalDetails.segment": segment } }] : []),
+      ...(segment ? [{ $match: { "signalDetails.segment": segment } }] : []),
 
 
         {
@@ -3247,7 +3242,7 @@ class Clients {
           },
         },
       ];
-
+      
       // Add search filter if provided
       if (search) {
         countPipeline.push({
@@ -3260,13 +3255,13 @@ class Clients {
           },
         });
       }
-
+      
       // Count the documents
       countPipeline.push({ $count: "totalRecords" });
-
+      
       const countResult = await Order_Modal.aggregate(countPipeline);
       const totalRecords = countResult[0] ? countResult[0].totalRecords : 0;
-
+  
       return res.json({
         status: true,
         message: "Data retrieved successfully",
@@ -3286,20 +3281,20 @@ class Clients {
       });
     }
   }
-
+  
 
   async orderListDetailexport(req, res) {
     try {
-      const { clientid, signalid, page = 1, fromDate, toDate, ordertype, borkerid, search, segment } = req.body; // Default pagination values
-
-
+      const { clientid, signalid, page = 1 ,fromDate, toDate, ordertype, borkerid, search, segment} = req.body; // Default pagination values
+    
+  
       // Build dynamic match conditions
       const matchCondition = {};
       if (clientid) matchCondition.clientid = clientid;
       if (signalid) matchCondition.signalid = signalid;
       if (ordertype) matchCondition.ordertype = ordertype; // BUY or SELL
       if (borkerid) matchCondition.borkerid = borkerid;
-
+  
       // Filter by date range
       if (fromDate && toDate) {
         matchCondition.createdAt = {
@@ -3315,11 +3310,11 @@ class Clients {
           $lte: new Date(toDate)
         };
       }
+      
+  
 
 
-
-
-
+  
       const result = await Order_Modal.aggregate([
         {
           $match: matchCondition, // Dynamically match based on provided filters
@@ -3391,9 +3386,9 @@ class Clients {
             createdAt: -1, // Sort by creation date in descending order
           },
         },
-
+       
       ]);
-
+  
       // Get total count for pagination metadata
       // const totalRecords = await Order_Modal.countDocuments(matchCondition);
 
@@ -3412,7 +3407,7 @@ class Clients {
       });
     }
   }
-
+  
 
 
 
@@ -3420,46 +3415,46 @@ class Clients {
   async PlanCartList(req, res) {
     try {
       const { client_id } = req.params; // Assuming client_id is passed in URL parameters
-
+  
       // Validate input
       if (!client_id) {
         return res.status(400).json({
           status: false,
           message: 'Client ID is required.',
-          data: [],
+          data:[],
         });
       }
-
+  
       // Fetch cart items where client_id matches and status is false
       const cartItems = await Addtocart_Modal.find({
         client_id: client_id,
         status: false,
         basket_id: null, // Check for both null and empty string
       }).populate('plan_id', 'price validity')  // Populate plan details
-        .populate({
-          path: 'plan_id', // The path to the plan
-          populate: {
-            path: 'category', // The field in Plan model that references the Plancategory
-            select: 'title' // Select only the 'title' from Plancategory
-          }
-        });
-
+       .populate({
+        path: 'plan_id', // The path to the plan
+        populate: {
+          path: 'category', // The field in Plan model that references the Plancategory
+          select: 'title' // Select only the 'title' from Plancategory
+        }
+      });
+  
       // Check if cart is empty
       if (!cartItems.length) {
         return res.status(404).json({
           status: false,
           message: 'No items found in the cart for this client.',
-          data: [],
+          data:[],
         });
       }
-
+  
       // Return success response with cart items
       return res.status(200).json({
         status: true,
         message: 'Cart items retrieved successfully.',
         data: cartItems,
       });
-
+  
     } catch (error) {
       console.error('Error retrieving cart items:', error);
       return res.status(500).json({
@@ -3469,43 +3464,43 @@ class Clients {
       });
     }
   }
-
+  
   async BasketCartList(req, res) {
     try {
       const { client_id } = req.params; // Assuming client_id is passed in URL parameters
-
+     
       // Validate input
       if (!client_id) {
         return res.status(400).json({
           status: false,
           message: 'Client ID is required.',
-          data: [],
+          data:[],
         });
       }
-
+  
       // Fetch cart items where client_id matches and status is false
       const cartItems = await Addtocart_Modal.find({
         client_id: client_id,
         status: false,
         plan_id: null, // Check for both null and empty string
-      }).populate('basket_id', 'title	themename	full_price	basket_price	validity');
-
+      }).populate('basket_id','title	themename	full_price	basket_price	validity');
+  
       // Check if cart is empty
       if (!cartItems.length) {
         return res.status(404).json({
           status: false,
           message: 'No items found in the cart for this client.',
-          data: [],
+          data:[],
         });
       }
-
+  
       // Return success response with cart items
       return res.status(200).json({
         status: true,
         message: 'Cart items retrieved successfully.',
         data: cartItems,
       });
-
+  
     } catch (error) {
       console.error('Error retrieving cart items:', error);
       return res.status(500).json({
@@ -3518,7 +3513,7 @@ class Clients {
 
 
 
-
+  
   async getClientWithFilterwithplan(req, res) {
     try {
       const { status, kyc_verification, createdby, planStatus, search, add_by, page = 1 } = req.body;
@@ -3687,28 +3682,28 @@ class Clients {
         },
         {
           $lookup: {
-            from: 'addtocarts', // Join with addtocarts collection
-            let: { clientId: { $toObjectId: "$_id" } }, // Convert client _id to ObjectId
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: [{ $toObjectId: "$client_id" }, "$$clientId"] }, // Ensure both are ObjectId
-                      { $eq: ["$status", false] } // Only fetch records where status is false
-                    ]
+              from: 'addtocarts', // Join with addtocarts collection
+              let: { clientId: { $toObjectId: "$_id" } }, // Convert client _id to ObjectId
+              pipeline: [
+                  {
+                      $match: {
+                          $expr: {
+                              $and: [
+                                  { $eq: [{ $toObjectId: "$client_id" }, "$$clientId"] }, // Ensure both are ObjectId
+                                  { $eq: ["$status", false] } // Only fetch records where status is false
+                              ]
+                          }
+                      }
                   }
-                }
-              }
-            ],
-            as: 'cartItems'
+              ],
+              as: 'cartItems'
           }
-        },
-        {
+      },
+      {
           $addFields: {
-            hasPendingCart: { $gt: [{ $size: "$cartItems" }, 0] } // If cartItems > 0, set true; else false
+              hasPendingCart: { $gt: [{ $size: "$cartItems" }, 0] } // If cartItems > 0, set true; else false
           }
-        },
+      },      
         {
           $project: {
             _id: 1,
@@ -3793,190 +3788,190 @@ class Clients {
       ]);
 
 
-      /*
-            const results = await Clients_Modal.aggregate([
+/*
+      const results = await Clients_Modal.aggregate([
+        {
+          $match: matchConditions // Match based on the conditions
+        },
+        {
+          $lookup: {
+            from: 'users', // The users collection name
+            let: { userId: { $toObjectId: "$add_by" } }, // Convert add_by to ObjectId
+            pipeline: [
+              { $match: { $expr: { $eq: ["$_id", "$$userId"] } } }
+            ],
+            as: 'addedByDetails'
+          }
+        },
+        {
+          $unwind: {
+            path: '$addedByDetails',
+            preserveNullAndEmptyArrays: true // Keeps clients without a matching user
+          }
+        },
+        {
+          $lookup: {
+            from: 'planmanages', // Planmanage collection
+            let: { clientId: { $toObjectId: "$_id" } }, // Convert Clients_Modal _id to ObjectId
+            pipeline: [
               {
-                $match: matchConditions // Match based on the conditions
-              },
-              {
-                $lookup: {
-                  from: 'users', // The users collection name
-                  let: { userId: { $toObjectId: "$add_by" } }, // Convert add_by to ObjectId
-                  pipeline: [
-                    { $match: { $expr: { $eq: ["$_id", "$$userId"] } } }
-                  ],
-                  as: 'addedByDetails'
-                }
-              },
-              {
-                $unwind: {
-                  path: '$addedByDetails',
-                  preserveNullAndEmptyArrays: true // Keeps clients without a matching user
-                }
-              },
-              {
-                $lookup: {
-                  from: 'planmanages', // Planmanage collection
-                  let: { clientId: { $toObjectId: "$_id" } }, // Convert Clients_Modal _id to ObjectId
-                  pipeline: [
-                    {
-                      $match: {
-                        $expr: {
-                          $eq: [{ $toObjectId: "$clientid" }, "$$clientId"] // Match clientid in planmanages
-                        }
-                      }
-                    }
-                  ],
-                  as: 'plans'
-                }
-              },
-              {
-                $lookup: {
-                  from: 'services', // Assuming services collection contains the service details
-                  localField: 'plans.serviceid', // Linking serviceid in planmanages
-                  foreignField: '_id', // Matching _id in services
-                  as: 'serviceDetails'
-                }
-              },
-              {
-                $addFields: {
-                  activePlans: {
-                    $filter: {
-                      input: "$plans",
-                      as: "plan",
-                      cond: { $gte: ["$$plan.enddate", new Date()] } // Active if enddate >= today
-                    }
-                  },
-                  expiredPlans: {
-                    $filter: {
-                      input: "$plans",
-                      as: "plan",
-                      cond: { $lt: ["$$plan.enddate", new Date()] } // Expired if enddate < today
-                    }
-                  },
-                  plansStatus: {
-                    $map: {
-                      input: "$plans",
-                      as: "plan",
-                      in: {
-                        planId: "$$plan._id", // Include plan ID
-                        serviceName: {
-                          $switch: {
-                            branches: [
-                              {
-                                case: {
-                                  $eq: [
-                                    { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                                    "66d2c3bebf7e6dc53ed07626" // Static ObjectId for "Cash"
-                                  ]
-                                },
-                                then: "Cash" // If serviceid matches, return "Cash"
-                              },
-                              {
-                                case: {
-                                  $eq: [
-                                    { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                                    "66dfede64a88602fbbca9b72" // Static ObjectId for "Future"
-                                  ]
-                                },
-                                then: "Future" // If serviceid matches, return "Future"
-                              },
-                              {
-                                case: {
-                                  $eq: [
-                                    { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                                    "66dfeef84a88602fbbca9b79" // Static ObjectId for "Option"
-                                  ]
-                                },
-                                then: "Option" // If serviceid matches, return "Option"
-                              },
-                              {
-                                case: {
-                                  $eq: [
-                                    { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                                    "67e12758a0a2be895da19550" // Static ObjectId for "Option"
-                                  ]
-                                },
-                                then: "Strategy" // If serviceid matches, return "Option"
-                              },
-                              {
-                                case: {
-                                  $eq: [
-                                    { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                                    "67e1279ba0a2be895da19551" // Static ObjectId for "Option"
-                                  ]
-                                },
-                                then: "Future Strategy" // If serviceid matches, return "Option"
-                              }
-                            ],
-                            default: "Unknown Service" // Default value if no match
-                          }
-                        },
-                        status: {
-                          $cond: {
-                            if: { $gte: ["$$plan.enddate", new Date()] }, // Active if enddate >= today
-                            then: "active", // Plan is active
-                            else: "expired" // Plan is expired
-                          }
-                        }
-                      }
-                    }
+                $match: {
+                  $expr: {
+                    $eq: [{ $toObjectId: "$clientid" }, "$$clientId"] // Match clientid in planmanages
                   }
                 }
-              },
-              {
-                $project: {
-                  _id: 1,
-                  FullName: 1,
-                  Email: 1,
-                  PhoneNo: 1,
-                  kyc_verification: 1,
-                  add_by: 1,
-                  createdAt: 1,
-                  updatedAt: 1,
-                  plansStatus: 1, // Include the plans status
-                  clientStatus: {
-                    $cond: {
-                      if: {
-                        $or: [
-                          { $eq: ["$plansStatus", null] }, // Check if plansStatus is null
-                          { $eq: [{ $size: "$plansStatus" }, 0] } // Check if plansStatus is an empty array
-                        ]
-                      },
-                      then: "NA", // Default to "NA" if plansStatus is null or empty
-                      else: {
-                        $cond: {
-                          if: {
-                            $gt: [
-                              {
-                                $size: {
-                                  $filter: {
-                                    input: "$plansStatus",
-                                    as: "plan",
-                                    cond: { $eq: ["$$plan.status", "active"] }
-                                  }
-                                }
-                              },
-                              0
+              }
+            ],
+            as: 'plans'
+          }
+        },
+        {
+          $lookup: {
+            from: 'services', // Assuming services collection contains the service details
+            localField: 'plans.serviceid', // Linking serviceid in planmanages
+            foreignField: '_id', // Matching _id in services
+            as: 'serviceDetails'
+          }
+        },
+        {
+          $addFields: {
+            activePlans: {
+              $filter: {
+                input: "$plans",
+                as: "plan",
+                cond: { $gte: ["$$plan.enddate", new Date()] } // Active if enddate >= today
+              }
+            },
+            expiredPlans: {
+              $filter: {
+                input: "$plans",
+                as: "plan",
+                cond: { $lt: ["$$plan.enddate", new Date()] } // Expired if enddate < today
+              }
+            },
+            plansStatus: {
+              $map: {
+                input: "$plans",
+                as: "plan",
+                in: {
+                  planId: "$$plan._id", // Include plan ID
+                  serviceName: {
+                    $switch: {
+                      branches: [
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "66d2c3bebf7e6dc53ed07626" // Static ObjectId for "Cash"
                             ]
                           },
-                          then: "active", // At least one "active" plan
-                          else: "expired" // No active plans, set to "expired"
+                          then: "Cash" // If serviceid matches, return "Cash"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "66dfede64a88602fbbca9b72" // Static ObjectId for "Future"
+                            ]
+                          },
+                          then: "Future" // If serviceid matches, return "Future"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "66dfeef84a88602fbbca9b79" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Option" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e12758a0a2be895da19550" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Strategy" // If serviceid matches, return "Option"
+                        },
+                        {
+                          case: {
+                            $eq: [
+                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
+                              "67e1279ba0a2be895da19551" // Static ObjectId for "Option"
+                            ]
+                          },
+                          then: "Future Strategy" // If serviceid matches, return "Option"
                         }
-                      }
+                      ],
+                      default: "Unknown Service" // Default value if no match
+                    }
+                  },
+                  status: {
+                    $cond: {
+                      if: { $gte: ["$$plan.enddate", new Date()] }, // Active if enddate >= today
+                      then: "active", // Plan is active
+                      else: "expired" // Plan is expired
                     }
                   }
-      
                 }
-              },
-              ...(planStatus ? [{
-                $match: { "clientStatus": planStatus } // Match only clients with the specified status
-              }] : []),
-              {
-                $count: "totalCount" // Count the total number of matching clients
               }
-            ]);
-      */
+            }
+          }
+        },
+        {
+          $project: {
+            _id: 1,
+            FullName: 1,
+            Email: 1,
+            PhoneNo: 1,
+            kyc_verification: 1,
+            add_by: 1,
+            createdAt: 1,
+            updatedAt: 1,
+            plansStatus: 1, // Include the plans status
+            clientStatus: {
+              $cond: {
+                if: {
+                  $or: [
+                    { $eq: ["$plansStatus", null] }, // Check if plansStatus is null
+                    { $eq: [{ $size: "$plansStatus" }, 0] } // Check if plansStatus is an empty array
+                  ]
+                },
+                then: "NA", // Default to "NA" if plansStatus is null or empty
+                else: {
+                  $cond: {
+                    if: {
+                      $gt: [
+                        {
+                          $size: {
+                            $filter: {
+                              input: "$plansStatus",
+                              as: "plan",
+                              cond: { $eq: ["$$plan.status", "active"] }
+                            }
+                          }
+                        },
+                        0
+                      ]
+                    },
+                    then: "active", // At least one "active" plan
+                    else: "expired" // No active plans, set to "expired"
+                  }
+                }
+              }
+            }
+
+          }
+        },
+        ...(planStatus ? [{
+          $match: { "clientStatus": planStatus } // Match only clients with the specified status
+        }] : []),
+        {
+          $count: "totalCount" // Count the total number of matching clients
+        }
+      ]);
+*/
       // Extract the total count from the result
 
 
@@ -3988,7 +3983,7 @@ class Clients {
           $count: "totalCount" // Count the total number of matching clients
         }
       ]);
-
+  
       const totalClients = results.length > 0 ? results[0].totalCount : 0;
 
 
@@ -4183,28 +4178,28 @@ class Clients {
         },
         {
           $lookup: {
-            from: 'addtocarts', // Join with addtocarts collection
-            let: { clientId: { $toObjectId: "$_id" } }, // Convert client _id to ObjectId
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: [{ $toObjectId: "$client_id" }, "$$clientId"] }, // Ensure both are ObjectId
-                      { $eq: ["$status", false] } // Only fetch records where status is false
-                    ]
+              from: 'addtocarts', // Join with addtocarts collection
+              let: { clientId: { $toObjectId: "$_id" } }, // Convert client _id to ObjectId
+              pipeline: [
+                  {
+                      $match: {
+                          $expr: {
+                              $and: [
+                                  { $eq: [{ $toObjectId: "$client_id" }, "$$clientId"] }, // Ensure both are ObjectId
+                                  { $eq: ["$status", false] } // Only fetch records where status is false
+                              ]
+                          }
+                      }
                   }
-                }
-              }
-            ],
-            as: 'cartItems'
+              ],
+              as: 'cartItems'
           }
-        },
-        {
+      },
+      {
           $addFields: {
-            hasPendingCart: { $gt: [{ $size: "$cartItems" }, 0] } // If cartItems > 0, set true; else false
+              hasPendingCart: { $gt: [{ $size: "$cartItems" }, 0] } // If cartItems > 0, set true; else false
           }
-        },
+      },   
         {
           $project: {
             _id: 1,
@@ -4273,7 +4268,7 @@ class Clients {
                 }
               }
             },
-            hasPendingCart: 1
+            hasPendingCart:1
           }
         },
         ...(planStatus ? [{
@@ -4296,7 +4291,7 @@ class Clients {
         status: true,
         message: "Clients with their plan statuses fetched",
         data: result,
-
+        
       });
 
     } catch (error) {
@@ -4402,13 +4397,13 @@ class Clients {
       ];
 
       // Get the total count
-
+      
 
       // Now get the paginated result
       const result = await Freetrial_Modal.aggregate([
         ...totalCountPipeline.slice(0, -1), // Use the same pipeline but exclude $count for paginated results
         { $sort: { created_at: -1 } },
-
+        
       ]);
 
 
@@ -4416,7 +4411,7 @@ class Clients {
         status: true,
         message: "get",
         data: result,
-
+      
       });
 
     } catch (error) {
@@ -4426,7 +4421,7 @@ class Clients {
   }
 
 
-
+  
 
 }
 module.exports = new Clients();

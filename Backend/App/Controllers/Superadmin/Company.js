@@ -6,7 +6,7 @@ class CompanyController {
   // Create a new Company post
   async AddCompany(req, res) {
     try {
-      const { title, email, phone, key, url, theme_id } = req.body;
+      const { title, email, phone, key, url,theme_id } = req.body;
 
       if (!title) {
         return res
@@ -36,7 +36,7 @@ class CompanyController {
           .status(400)
           .json({ status: false, message: "Url is required" });
       }
-      if (!theme_id) {
+      if(!theme_id){
         return res.status(400).json({ status: false, message: "Theme is required" });
       }
 
@@ -58,7 +58,7 @@ class CompanyController {
         message: "Company added successfully",
       });
     } catch (error) {
-      console.log("Error adding Company:", error);
+      console.log("Error adding Company:", error);  
       return res
         .status(500)
         .json({ status: false, message: "Server error", data: [] });

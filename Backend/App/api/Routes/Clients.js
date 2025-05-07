@@ -4,9 +4,9 @@ const {AddClient,detailClient,loginClient,forgotPassword,resetPassword,changePas
 
 
 
-router.post('/api/client/add', AddClient);
+router.post('/api/client/add',AddClient);
 router.get('/api/client/detail/:id', detailClient);
-router.post('/api/client/login', loginClient);
+router.post('/api/client/login', loginClient); 
 router.post('/api/client/forgot-password', forgotPassword);
 router.post('/api/client/reset-password', resetPassword);
 router.post('/api/client/change-password', changePassword);
@@ -25,9 +25,9 @@ router.post('/api/client/requestpayout', requestPayout);
 router.post('/api/client/referearn', referEarn);
 router.post('/api/client/brokerlink', brokerLink);
 router.post('/api/client/deletebrokerlink', deleteBrokerLink);
-router.post('/api/client/addhelpdesk', addHelpDesk);
+router.post('/api/client/addhelpdesk',addHelpDesk);
 router.get('/api/client/helpdesk/:id', helpdeskList);
-router.post('/api/client/resend', resend);
+router.post('/api/client/resend',resend);
 router.post('/api/client/orderlist', orderList);
 router.post('/api/client/orderlistdetail', orderListDetail);
 router.post('/api/client/basketorderlist', basketOrderList);
