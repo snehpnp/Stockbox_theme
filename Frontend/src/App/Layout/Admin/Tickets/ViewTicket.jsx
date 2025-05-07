@@ -327,47 +327,55 @@ const ViewTicket = () => {
             <div className="card-body px-3">
               <h5 className="mb-0">Replies</h5>
 
-
-
-              <ul className="list-group list-group-flush review-list">
-                {messages?.messages?.map((item, index) => (
-                  <li key={index} className="list-group-item bg-transparent my-2  border shadow-lg">
-                    <div className="d-flex align-items-center justify-content-between">
-                      <div className="d-flex align-items-center">
-                        <img
-                          src="assets/images/avatar/1.png"
-                          alt="user avatar"
-                          className="rounded-circle"
-                          width={55}
-                          height={55}
-                        />
-                        <div className="ms-3">
-                          <h6 className="mb-0">
-                            {item?.client_id ? messages?.ticket?.client_id?.FullName : sendername[0]?.FullName}
-                          </h6>
-                          <p className="mb-0 small-font">{item?.message}</p>
+              <div
+                className="review-list"
+                style={{ maxHeight: '400px', overflowY: 'auto' }} 
+              >
+                <ul className="list-group list-group-flush">
+                  {messages?.messages?.map((item, index) => (
+                    <li
+                      key={index}
+                      className="list-group-item bg-transparent my-2 border shadow-lg"
+                    >
+                      <div className="d-flex align-items-center justify-content-between">
+                        <div className="d-flex align-items-center">
+                          <img
+                            src="assets/images/avatar/1.png"
+                            alt="user avatar"
+                            className="rounded-circle"
+                            width={55}
+                            height={55}
+                          />
+                          <div className="ms-3">
+                            <h6 className="mb-0">
+                              {item?.client_id
+                                ? messages?.ticket?.client_id?.FullName
+                                : sendername[0]?.FullName}
+                            </h6>
+                            <p className="mb-0 small-font">{item?.message}</p>
+                          </div>
+                        </div>
+                        <div>
+                          <small className="ms-4 small-font badge bg-info text-white">
+                            {fTimeOnly(item?.created_at)}
+                          </small>
+                          {item?.attachment && (
+                            <button
+                              onClick={() => handleDownload1(item)}
+                              className="border-0 bg-transparent p-0 d-flex align-items-center justify-content-end w-100"
+                              style={{ width: '35px', height: '35px' }}
+                            >
+                              <ArrowDownToLine size={22} />
+                            </button>
+                          )}
                         </div>
                       </div>
-                      <div>
-                        <small className="ms-4  small-font badge bg-info text-white">{fTimeOnly(item?.created_at)}</small>
-                        {messages.messages[index]?.attachment && (
-                          <button
-                            onClick={() => handleDownload1(item)}
-                            className="border-0 bg-transparent p-0 d-flex align-items-center justify-content-end w-100"
-                            style={{ width: '35px', height: '35px' }}
-                          >
-                            <ArrowDownToLine size={22} />
-                          </button>
-                        )}
-                      </div>
-
-
-                    </div>
-                  </li>
-                ))}
-              </ul>
-
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
+
 
           </div>
         </div>
