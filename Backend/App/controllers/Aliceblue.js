@@ -1401,7 +1401,7 @@ class Aliceblue {
 
                 let quantitys = quantity; // Declare quantitys outside the blocks
                 if(stockData.segment !== "C") {
-                    quantitys=  quantitys*stockData.lotsize;
+                    quantitys=  quantitys*stockData.lotsize*stock.lot;
                 }
                 
                 // ✅ Order Object
@@ -1571,7 +1571,10 @@ class Aliceblue {
                 }
     
                 let quantitys = quantity;
-                if (stock.segment !== "C") quantitys *= stockData.lotsize;
+                // if (stock.segment !== "C") quantitys *= stockData.lotsize;
+                if(stockData.segment !== "C") {
+                    quantitys=  quantitys*stockData.lotsize*stock.lot;
+                }
     
                 const dataorder = JSON.stringify([{
                     complexty: "regular",

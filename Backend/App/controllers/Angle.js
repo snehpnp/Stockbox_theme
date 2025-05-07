@@ -187,6 +187,11 @@ class Angle {
                 });
             }
 
+            let quantitys = quantity; // Declare quantitys outside the blocks
+            if(stock.segment !== "C") {
+                quantitys=  quantitys*stock.lotsize;
+            }
+
 
 
             var data = JSON.stringify({
@@ -201,10 +206,9 @@ class Angle {
                 "price": 0,
                 "squareoff": "0",
                 "stoploss": "0",
-                "quantity": quantity
+                "quantity": quantitys
             });
-
-
+           
 
 
 
@@ -227,14 +231,15 @@ class Angle {
                 data: data
             };
 
+           
 
             //  const response = await axios(config);
 
             axios(config)
                 .then(async (response) => {
+                    console.log("response.data",response.data);
 
                     if (response.data.message == 'SUCCESS') {
-
                         const finalExitQuantity = exitquantity && exitquantity > 0 ? exitquantity : quantity;
 
 
@@ -417,6 +422,12 @@ class Angle {
             }
 
             if (totalValue >= quantity) {
+
+                let quantitys = quantity; // Declare quantitys outside the blocks
+                if(stock.segment !== "C") {
+                    quantitys=  quantitys*stock.lotsize;
+                }
+
                 var data = JSON.stringify({
                     "variety": "NORMAL",
                     "tradingsymbol": stock.tradesymbol,
@@ -876,7 +887,6 @@ class Angle {
 
         try {
             const { id, quantity, price, version, basket_id, tradesymbol, instrumentToken, calltype, brokerid, howmanytimebuy } = item;
-
             const client = await Clients_Modal.findById(id);
             if (!client) {
                 return {
@@ -976,7 +986,6 @@ class Angle {
                 },
                 data: data
             };
-
 
 
             //  const response = await axios(config);
@@ -1154,37 +1163,39 @@ class Angle {
     async MultipleplaceOrder(req, res) {
         try {
             const { id, signalid, quantity } = req.body;
-    
+
             // ✅ Client Check
             const client = await Clients_Modal.findById(id);
             if (!client) {
                 return res.status(404).json({ status: false, message: "Client not found" });
             }
-    
+
             if (client.tradingstatus == 0) {
                 return res.status(404).json({ status: false, message: "Client Broker Not Login, Please Login With Broker" });
             }
-    
+
             // ✅ Signal Check
             const signal = await Signalsdata_Modal.findById(signalid);
             if (!signal) {
                 return res.status(404).json({ status: false, message: "Signal not found" });
             }
-    
+
             // ✅ Multiple Stocks Fetch (Ascending Order)
             const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
             if (stocks.length === 0) {
                 return res.status(404).json({ status: false, message: "No stock found for this signal" });
             }
-    
+
             // ✅ Authorization Data
             const authToken = client.authtoken;
-    
+
             let orderRecords = [];
             let failedOrders = []; // ❌ To Track Failed Orders
+
+
             for (let stock of stocks) {
                 let optiontype, exchange, producttype;
-    
+
                 if (stock.segment === "C") {
                     optiontype = "EQ";
                     exchange = "NSE";
@@ -1192,9 +1203,9 @@ class Angle {
                     optiontype = stock.segment === "F" ? "UT" : stock.optiontype;
                     exchange = "NFO";
                 }
-    
+
                 producttype = signal.callduration === "Intraday" ? "INTRADAY" : (stock.segment === "C" ? "DELIVERY" : "CARRYFORWARD");
-    
+
                 let stockData;
                 if (stock.segment === "C") {
                     stockData = await Stock_Modal.findOne({
@@ -1218,13 +1229,20 @@ class Angle {
                         strike: stock.strikeprice
                     });
                 }
-    
+
                 if (!stockData) {
                     failedOrders.push({ stock: stock.tradesymbol, message: "Stock not found" });
                 }
-    
+
+
+                let quantitys = quantity;
+                // if (stock.segment !== "C") quantitys *= stockData.lotsize;
+                if(stockData.segment !== "C") {
+                    quantitys=  quantitys*stockData.lotsize*stock.lot;
+                }
+
                 // ✅ Order Object
-                const orderData = {
+                const orderData = JSON.stringify({
                     "variety": "NORMAL",
                     "tradingsymbol": stockData.tradesymbol,
                     "symboltoken": stockData.instrument_token,
@@ -1236,9 +1254,12 @@ class Angle {
                     "price": 0,
                     "squareoff": "0",
                     "stoploss": "0",
-                    "quantity": quantity
-                };
-    
+                    "quantity": quantitys
+                });
+
+
+
+
                 let config = {
                     method: 'post',
                     url: 'https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/placeOrder',
@@ -1253,14 +1274,15 @@ class Angle {
                         'X-MACAddress': 'MAC_ADDRESS', // Replace with actual MAC address
                         'X-PrivateKey': client.apikey // Replace with actual API key
                     },
-                    data: JSON.stringify([orderData]) // Send order data as an array
+                    data: orderData  // Send order data as an array
                 };
-    
+
                 // Make the API call and await the response for each stock
                 const response = await axios(config);
-    
+                console.log("response",response.data);
+
                 if (response.data.message === 'SUCCESS') {
-                  
+
                     // Insert individual order record for each stock
                     orderRecords.push({
                         clientid: client._id,
@@ -1273,7 +1295,7 @@ class Angle {
                         ordertoken: stockData.instrument_token,
                         exchange: stockData.exchange
                     });
-    
+
                     // Insert the order records into the database after processing the current stock
                     await Order_Modal.insertMany(orderRecords);
                 } else {
@@ -1300,7 +1322,7 @@ class Angle {
                 successOrders: orderRecords,
                 failedOrders: failedOrders
             });
-    
+
         } catch (error) {
             return res.status(500).json({
                 status: false,
@@ -1308,43 +1330,43 @@ class Angle {
             });
         }
     }
-    
+
     async MultipleExitplaceOrder(req, res) {
         try {
             const { id, signalid, quantity } = req.body;
-    
+
             // ✅ Client Check
             const client = await Clients_Modal.findById(id);
             if (!client) {
                 return res.status(404).json({ status: false, message: "Client not found" });
             }
-    
+
             if (client.tradingstatus == 0) {
                 return res.status(404).json({ status: false, message: "Client Broker Not Login, Please Login With Broker" });
             }
-    
+
             // ✅ Signal Check
             const signal = await Signalsdata_Modal.findById(signalid);
             if (!signal) {
                 return res.status(404).json({ status: false, message: "Signal not found" });
             }
-    
+
             // ✅ Multiple Stocks Fetch (Ascending Order)
             const stocks = await Signalstock_Modal.find({ signal_id: signalid }).sort({ createdAt: 1 }).lean();
             if (stocks.length === 0) {
                 return res.status(404).json({ status: false, message: "No stock found for this signal" });
             }
-    
+
             // ✅ Authorization Data
             const authToken = client.authtoken;
-    
+
             let orderRecords = [];
             let failedOrders = [];
 
             
             for (let stock of stocks) {
                 let optiontype, exchange, producttype;
-    
+
                 if (stock.segment === "C") {
                     optiontype = "EQ";
                     exchange = "NSE";
@@ -1352,9 +1374,9 @@ class Angle {
                     optiontype = stock.segment === "F" ? "UT" : stock.optiontype;
                     exchange = "NFO";
                 }
-    
+
                 producttype = signal.callduration === "Intraday" ? "INTRADAY" : (stock.segment === "C" ? "DELIVERY" : "CARRYFORWARD");
-    
+
                 let stockData;
                 if (stock.segment === "C") {
                     stockData = await Stock_Modal.findOne({
@@ -1378,33 +1400,45 @@ class Angle {
                         strike: stock.strikeprice
                     });
                 }
-    
+
                 if (!stockData) {
                     failedOrders.push({ stock: stock.tradesymbol, message: "Stock not found" });
                 }
-    
+
                 let holdingData = { qty: 0 };
                 let positionData = { qty: 0 };
                 let totalValue = 0;
-    
+
                 try {
                     positionData = await CheckPosition(client.apikey, authToken, stock.segment, stockData.instrument_token, producttype, stock.calltype, stockData.tradesymbol);
-                } catch (error) {}
-    
+                } catch (error) { }
+
                 if (stock.segment === "C") {
                     try {
                         holdingData = await CheckHolding(client.apikey, authToken, stock.segment, stockData.instrument_token, producttype, stock.calltype);
-                    } catch (error) {}
-    
+                    } catch (error) { }
+
                     totalValue = Math.abs(positionData.qty) + holdingData.qty;
                 } else {
                     totalValue = Math.abs(positionData.qty);
                 }
-    
+
                 let calltypes = stock.calltype === 'BUY' ? "SELL" : "BUY";
-    
+
+
+
+
+
                 if (totalValue >= quantity) {
-                    const orderData = {
+
+
+                    let quantitys = quantity;
+                    // if (stock.segment !== "C") quantitys *= stockData.lotsize;
+                    if(stockData.segment !== "C") {
+                        quantitys=  quantitys*stockData.lotsize*stock.lot;
+                    }
+
+                    const orderData = JSON.stringify({
                         "variety": "NORMAL",
                         "tradingsymbol": stockData.tradesymbol,
                         "symboltoken": stockData.instrument_token,
@@ -1416,9 +1450,9 @@ class Angle {
                         "price": 0,
                         "squareoff": "0",
                         "stoploss": "0",
-                        "quantity": quantity
-                    };
-    
+                        "quantity": quantitys
+                    });
+
                     let config = {
                         method: 'post',
                         url: 'https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/placeOrder',
@@ -1433,14 +1467,14 @@ class Angle {
                             'X-MACAddress': 'MAC_ADDRESS',
                             'X-PrivateKey': client.apikey
                         },
-                        data: JSON.stringify([orderData])
+                        data: orderData
                     };
-    
+
                     // Make the API call and await the response for each stock
                     const response = await axios(config);
-    
+
                     if (response.data.message === 'SUCCESS') {
-                      
+
                         orderRecords.push({
                             clientid: client._id,
                             signalid: signal._id,
@@ -1452,7 +1486,7 @@ class Angle {
                             ordertoken: stockData.instrument_token,
                             exchange: stockData.exchange
                         });
-    
+
                         // Insert the order records into the database after processing the current stock
                         await Order_Modal.insertMany(orderRecords);
                     }
@@ -1478,7 +1512,7 @@ class Angle {
                 successOrders: orderRecords,
                 failedOrders: failedOrders
             });
-    
+
         } catch (error) {
             return res.status(500).json({
                 status: false,
@@ -1486,7 +1520,7 @@ class Angle {
             });
         }
     }
-    
+
 
 
 }

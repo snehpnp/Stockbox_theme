@@ -3779,7 +3779,10 @@ end.setHours(23, 59, 59, 999);
         let profitCount = 0;
         let lossCount = 0;
         let avgreturnpermonth = 0;
-
+        let totalDaysOfAllSignals = 0; // ✅ Declare outside the loop
+        let totalpercentagecount = 0;
+        let signalper = 0;
+        let totalpercentagecountavarage = 0;
         const [firstSignal, lastSignal] = await Promise.all([
           Signal_Modal.findOne({ del: 0, close_status: true, closeprice: { $ne: 0 }, service: serviceId }).sort({ created_at: 1 }),
           Signal_Modal.findOne({ del: 0, close_status: true, closeprice: { $ne: 0 }, service: serviceId }).sort({ created_at: -1 })
@@ -3851,7 +3854,44 @@ end.setHours(23, 59, 59, 999);
           }
 
 
+          if (signal.created_at && signal.closedate) { // ✅ Ensure correct field name
+            const createdDate = new Date(signal.created_at);
+            const closeDate = new Date(signal.closedate); // ✅ Corrected field name
+  
+            let signalDays = Math.ceil((closeDate - createdDate) / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+  
+            if (isNaN(signalDays) || signalDays < 1) {
+              signalDays = 1; // ✅ Ensure at least 1 day is counted
+            }
+  
+            totalDaysOfAllSignals += signalDays; // ✅ Accumulate instead of resetting
+  
+  
+  
+            if (signal.calltype == "BUY") {
+              signalper = (signal.closeprice - signal.price) / signal.price * 100;
+  
+            }
+            else {
+              signalper = (signal.price - signal.closeprice) / signal.price * 100;
+  
+            }
+            totalpercentagecount = signalper + totalpercentagecount;
+  
+          }
+
+
         });
+
+
+        totalpercentagecountavarage = totalpercentagecount / count;
+
+        const avgDaysPerSignal = count > 0
+        ? Math.round(totalDaysOfAllSignals / count)
+        : 1;
+
+
+
 
         const accuracy = (profitCount / count) * 100;
         let avgreturnpertrade = 0;
@@ -3883,7 +3923,9 @@ let avgreturnpermonthpercent = 0;
             accuracy,
             avgreturnpertrade,
             avgreturnpermonth,
-            avgreturnpermonthpercent
+            avgreturnpermonthpercent,
+            avgDaysPerSignal,
+            totalpercentagecountavarage,
           }
         };
       }
@@ -4299,8 +4341,7 @@ let avgreturnpermonthpercent = 0;
       });
     }
   }
-
-  async placeOrder(req, res) {
+async placeOrder(req, res) {
     try {
       const { basket_id, clientid, brokerid, investmentamount, type } = req.body;
 
@@ -4338,14 +4379,14 @@ let avgreturnpermonthpercent = 0;
 
       const latestStock = await Basketstock_Modal.findOne({ basket_id, status: 1 }).sort({ version: -1 });
       const latestVersion = latestStock ? latestStock.version : null;
-      
+
       if (!latestVersion) {
         return res.json({
           status: false,
           message: "No stocks found in the basket.",
         });
       }
-      
+
       // ✅ Step 2: Get only latest version's stocks
       const existingStocks = await Basketstock_Modal.find({ basket_id, version: latestVersion, status: 1 });
       // Get stocks for the basket
@@ -4378,9 +4419,12 @@ let avgreturnpermonthpercent = 0;
       let respo;
       let isFundChecked = false; // Flag to ensure we check funds only once
       // Iterate over each stock to calculate allocated amount and quantity
+
+let i=0;
       for (const stock of existingStocks) {
         const { tradesymbol, weightage, name } = stock;
-
+       
+i++;
         try {
           // Fetch stock data from Stock_Modal
           const stockData = await Stock_Modal.findOne({ tradesymbol });
@@ -4420,6 +4464,10 @@ let avgreturnpermonthpercent = 0;
 
           if (type == 1) {
             let howmanytimebuy = 1;
+
+           
+
+
             if (brokerid == 2) {
 
 
@@ -4443,6 +4491,8 @@ let avgreturnpermonthpercent = 0;
               const authToken = client.authtoken;
               const userId = client.alice_userid;
 
+
+              if(i==1) {
               const config = {
                 method: 'get',
                 url: `https://ant.aliceblueonline.com/rest/AliceBlueAPIService/api/limits/getRmsLimits`, // Construct the full URL
@@ -4455,20 +4505,20 @@ let avgreturnpermonthpercent = 0;
               const responseData = response.data;
 
               if (responseData[0].stat == 'Ok') {
-                // if (!isFundChecked) {
-                //   isFundChecked = true; // Set the flag to true
-                //   const net = parseFloat(responseData[0].net); // Convert responseData.net to a float
-                //  const total = parseFloat(totalAmount);
-                //   if (total >= net) {
-                //     return res.status(400).json({
-                //       status: false,
-                //       message: "Insufficient funds in your broker account.",
-                //     });
-                //   }
-                // }
+                if (!isFundChecked) {
+                  isFundChecked = true; // Set the flag to true
+                  const net = parseFloat(responseData[0].net); // Convert responseData.net to a float
+                 const total = parseFloat(totalAmount);
+                  if (total >= net) {
+                    return res.status(400).json({
+                      status: false,
+                      message: "Insufficient funds in your broker account.",
+                    });
+                  }
+                }
 
-
-
+              }
+            }
                 respo = await orderplace({
                   id: clientid,
                   basket_id: basket_id,
@@ -4483,7 +4533,7 @@ let avgreturnpermonthpercent = 0;
                 });
 
 
-              }
+            
 
 
             }
@@ -4507,10 +4557,10 @@ let avgreturnpermonthpercent = 0;
                   howmanytimebuy = (order.howmanytimebuy || 0) + 1; // Increment the `howmanytimebuy` value
                 }
               }
-
+            
               const authToken = client.authtoken;
               const userId = client.apikey;
-
+              if(i==1) {
               var config = {
                 method: 'get',
                 url: 'https://apiconnect.angelone.in/rest/secure/angelbroking/user/v1/getRMS',
@@ -4529,24 +4579,24 @@ let avgreturnpermonthpercent = 0;
 
 
               const response = await axios(config);
+
               if (response.data.message == 'SUCCESS') {
                 const responseData = response.data.data;
 
                 if (!isFundChecked) {
-                  isFundChecked = true; // Set the flag to true
-                  const net = parseFloat(responseData.net); // Convert responseData.net to a float
+                  isFundChecked = true; 
+                  const net = parseFloat(responseData.net); 
                   const total = parseFloat(totalAmount);
-
+                
                   if (total >= net) {
-                    return res.json({
+                    return res.status(400).json({
                       status: false,
                       message: "Insufficient funds in your broker account.",
                     });
                   }
                 }
-
-
-
+              }
+            }
                 respo = await angleorderplace({
                   id: clientid,
                   basket_id: basket_id,
@@ -4559,7 +4609,9 @@ let avgreturnpermonthpercent = 0;
                   calltype: "BUY",
                   howmanytimebuy // Increment version for the new stock order
                 });
-              }
+// console.log("respo",respo);
+
+             
 
             }
             else if (brokerid == 3) {
@@ -4581,7 +4633,7 @@ let avgreturnpermonthpercent = 0;
                   howmanytimebuy = (order.howmanytimebuy || 0) + 1; // Increment the `howmanytimebuy` value
                 }
               }
-
+              if(i==1) {
               var data2 = JSON.stringify({ "seg": "CASH", "exch": "NSE", "prod": "ALL" });
               const requestData = `jData=${data2}`;
 
@@ -4614,7 +4666,8 @@ let avgreturnpermonthpercent = 0;
                     });
                   }
                 }
-
+              }
+            }
 
                 respo = await kotakneoorderplace({
                   id: clientid,
@@ -4628,7 +4681,7 @@ let avgreturnpermonthpercent = 0;
                   calltype: "B",
                   howmanytimebuy // Increment version for the new stock order
                 });
-              }
+              
             }
             else if (brokerid == 4) {
 
@@ -4652,7 +4705,7 @@ let avgreturnpermonthpercent = 0;
 
               const authToken = client.authtoken;
               const userId = client.apikey;
-
+              if(i==1) {
               var config = {
                 method: 'post',
                 url: 'https://fund.markethubonline.com/middleware/api/v2/GetLimits',
@@ -4682,7 +4735,8 @@ let avgreturnpermonthpercent = 0;
                   }
                 }
 
-
+              }
+            }
 
                 respo = await markethuborderplace({
                   id: clientid,
@@ -4697,7 +4751,7 @@ let avgreturnpermonthpercent = 0;
                   howmanytimebuy // Increment version for the new stock order
                 });
 
-              }
+              
 
             }
             else if (brokerid == 5) {
@@ -4723,14 +4777,14 @@ let avgreturnpermonthpercent = 0;
               const authToken = client.authtoken;
               const apikey = client.apikey;
 
-            
+              if(i==1) {
               let config = {
                 method: 'get',
                 url: 'https://api.kite.trade/user/margins',
                 headers: {
-                    'Authorization': 'token ' + apikey + ':' + authToken
+                  'Authorization': 'token ' + apikey + ':' + authToken
                 },
-            };
+              };
 
 
               const response = await axios(config);
@@ -4752,7 +4806,8 @@ let avgreturnpermonthpercent = 0;
                   }
                 }
 
-
+              }
+            }
 
                 respo = await zerodhaorderplace({
                   id: clientid,
@@ -4767,7 +4822,7 @@ let avgreturnpermonthpercent = 0;
                   howmanytimebuy // Increment version for the new stock order
                 });
 
-              }
+             
 
             }
             else if (brokerid == 6) {
@@ -4793,7 +4848,7 @@ let avgreturnpermonthpercent = 0;
               const authToken = client.authtoken;
               const apikey = client.apikey;
 
-            
+              if(i==1) {
               let config = {
                 method: 'get',
                 maxBodyLength: Infinity,
@@ -4802,7 +4857,7 @@ let avgreturnpermonthpercent = 0;
                   Authorization: `Bearer ${authToken}`,
                 },
               };
-            
+
 
               const response = await axios(config);
 
@@ -4822,7 +4877,8 @@ let avgreturnpermonthpercent = 0;
                     });
                   }
                 }
-
+              }
+            }
 
 
                 respo = await upstoxorderplace({
@@ -4838,7 +4894,7 @@ let avgreturnpermonthpercent = 0;
                   howmanytimebuy // Increment version for the new stock order
                 });
 
-              }
+              
 
             }
 
@@ -4865,7 +4921,7 @@ let avgreturnpermonthpercent = 0;
               const authToken = client.authtoken;
               const apikey = client.apikey;
 
-            
+              if(i==1) {
               const config = {
                 method: 'get',
                 url: 'https://api.dhan.co/fundlimit',
@@ -4874,7 +4930,7 @@ let avgreturnpermonthpercent = 0;
                   'access-token': authtoken
                 }
               };
-          
+
 
 
               const response = await axios(config);
@@ -4898,7 +4954,8 @@ let avgreturnpermonthpercent = 0;
                   }
                 }
 
-
+              }
+            }
 
                 respo = await dhanorderplace({
                   id: clientid,
@@ -4913,7 +4970,7 @@ let avgreturnpermonthpercent = 0;
                   howmanytimebuy // Increment version for the new stock order
                 });
 
-              }
+            
 
             }
 
@@ -8491,10 +8548,28 @@ async SignalClientWithPlanCloseStrategy(req, res) {
         clientid: client_id,
         signalid: signal._id
       }).lean();
+
+
+      const updatedStockDetails = (stockMap[signal._id] || []).map(stock => {
+        let formattedExpiryDate = null;
+        if (stock.expirydate && /^\d{8}$/.test(stock.expirydate)) {
+          // Convert from 'ddmmyyyy' to 'yyyy-mm-dd'
+          const day = stock.expirydate.substring(0, 2);
+          const month = stock.expirydate.substring(2, 4);
+          const year = stock.expirydate.substring(4, 8);
+          formattedExpiryDate = `${year}-${month}-${day}`;
+        }
+        return {
+          ...stock,
+          expirydate_formatted: formattedExpiryDate // Add as a new field
+        };
+      });
+
+
     
       return {
         ...signal,
-        stockDetails: stockMap[signal._id] || [],
+        stockDetails: updatedStockDetails,
         report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
         isPurchased: !!order // ✅ true if purchased, false if not
       };
