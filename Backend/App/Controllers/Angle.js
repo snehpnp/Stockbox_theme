@@ -187,6 +187,11 @@ class Angle {
                 });
             }
 
+            let quantitys = quantity; // Declare quantitys outside the blocks
+            if(stock.segment !== "C") {
+                quantitys=  quantitys*stock.lotsize;
+            }
+
 
 
             var data = JSON.stringify({
@@ -201,10 +206,9 @@ class Angle {
                 "price": 0,
                 "squareoff": "0",
                 "stoploss": "0",
-                "quantity": quantity
+                "quantity": quantitys
             });
-
-
+           
 
 
 
@@ -227,14 +231,15 @@ class Angle {
                 data: data
             };
 
+           
 
             //  const response = await axios(config);
 
             axios(config)
                 .then(async (response) => {
+                    console.log("response.data",response.data);
 
                     if (response.data.message == 'SUCCESS') {
-
                         const finalExitQuantity = exitquantity && exitquantity > 0 ? exitquantity : quantity;
 
 
@@ -417,6 +422,12 @@ class Angle {
             }
 
             if (totalValue >= quantity) {
+
+                let quantitys = quantity; // Declare quantitys outside the blocks
+                if(stock.segment !== "C") {
+                    quantitys=  quantitys*stock.lotsize;
+                }
+
                 var data = JSON.stringify({
                     "variety": "NORMAL",
                     "tradingsymbol": stock.tradesymbol,
@@ -876,7 +887,6 @@ class Angle {
 
         try {
             const { id, quantity, price, version, basket_id, tradesymbol, instrumentToken, calltype, brokerid, howmanytimebuy } = item;
-
             const client = await Clients_Modal.findById(id);
             if (!client) {
                 return {
@@ -976,7 +986,6 @@ class Angle {
                 },
                 data: data
             };
-
 
 
             //  const response = await axios(config);
@@ -1182,6 +1191,8 @@ class Angle {
 
             let orderRecords = [];
             let failedOrders = []; // ❌ To Track Failed Orders
+
+
             for (let stock of stocks) {
                 let optiontype, exchange, producttype;
 
@@ -1223,8 +1234,18 @@ class Angle {
                     failedOrders.push({ stock: stock.tradesymbol, message: "Stock not found" });
                 }
 
+<<<<<<< HEAD
+=======
+
+                let quantitys = quantity;
+                // if (stock.segment !== "C") quantitys *= stockData.lotsize;
+                if(stockData.segment !== "C") {
+                    quantitys=  quantitys*stockData.lotsize*stock.lot;
+                }
+
+>>>>>>> f48f9072e4c7b532ec24005da327fec2f80a961a
                 // ✅ Order Object
-                const orderData = {
+                const orderData = JSON.stringify({
                     "variety": "NORMAL",
                     "tradingsymbol": stockData.tradesymbol,
                     "symboltoken": stockData.instrument_token,
@@ -1236,8 +1257,16 @@ class Angle {
                     "price": 0,
                     "squareoff": "0",
                     "stoploss": "0",
+<<<<<<< HEAD
                     "quantity": quantity
                 };
+=======
+                    "quantity": quantitys
+                });
+
+
+
+>>>>>>> f48f9072e4c7b532ec24005da327fec2f80a961a
 
                 let config = {
                     method: 'post',
@@ -1253,11 +1282,15 @@ class Angle {
                         'X-MACAddress': 'MAC_ADDRESS', // Replace with actual MAC address
                         'X-PrivateKey': client.apikey // Replace with actual API key
                     },
-                    data: JSON.stringify([orderData]) // Send order data as an array
+                    data: orderData  // Send order data as an array
                 };
 
                 // Make the API call and await the response for each stock
                 const response = await axios(config);
+<<<<<<< HEAD
+=======
+                console.log("response",response.data);
+>>>>>>> f48f9072e4c7b532ec24005da327fec2f80a961a
 
                 if (response.data.message === 'SUCCESS') {
 
@@ -1403,8 +1436,23 @@ class Angle {
 
                 let calltypes = stock.calltype === 'BUY' ? "SELL" : "BUY";
 
+<<<<<<< HEAD
+=======
+
+
+
+
+>>>>>>> f48f9072e4c7b532ec24005da327fec2f80a961a
                 if (totalValue >= quantity) {
-                    const orderData = {
+
+
+                    let quantitys = quantity;
+                    // if (stock.segment !== "C") quantitys *= stockData.lotsize;
+                    if(stockData.segment !== "C") {
+                        quantitys=  quantitys*stockData.lotsize*stock.lot;
+                    }
+
+                    const orderData = JSON.stringify({
                         "variety": "NORMAL",
                         "tradingsymbol": stockData.tradesymbol,
                         "symboltoken": stockData.instrument_token,
@@ -1416,8 +1464,13 @@ class Angle {
                         "price": 0,
                         "squareoff": "0",
                         "stoploss": "0",
+<<<<<<< HEAD
                         "quantity": quantity
                     };
+=======
+                        "quantity": quantitys
+                    });
+>>>>>>> f48f9072e4c7b532ec24005da327fec2f80a961a
 
                     let config = {
                         method: 'post',
@@ -1433,7 +1486,7 @@ class Angle {
                             'X-MACAddress': 'MAC_ADDRESS',
                             'X-PrivateKey': client.apikey
                         },
-                        data: JSON.stringify([orderData])
+                        data: orderData
                     };
 
                     // Make the API call and await the response for each stock

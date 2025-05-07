@@ -1407,7 +1407,7 @@ async  MultipleplaceOrder(req, res) {
 
             let quantitys = quantity; // Declare quantitys outside the blocks
             if(stock.segment !== "C") {
-                quantitys=  quantitys*stockData.lotsize;
+                quantitys=  quantitys*stockData.lotsize*stock.lot;
             }
           
 
@@ -1605,9 +1605,9 @@ async MultipleExitplaceOrder(req, res) {
 
                 let quantitys = quantity; // Declare quantitys outside the blocks
                 if(stock.segment !== "C") {
-                    quantitys=  quantitys*stockData.lotsize;
+                    quantitys=  quantitys*stockData.lotsize*stock.lot;
                 }
-
+              
 
 
                 let orderData =  JSON.stringify({
