@@ -188,7 +188,7 @@ const Ticket = () => {
           <input
             type="text"
             className="form-control ps-5 radius-10"
-            placeholder="Search Signal"
+            placeholder="Search Ticket"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />

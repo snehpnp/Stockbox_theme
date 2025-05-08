@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { GetClient } from "../../../Services/Admin/Admin";
+import { GetClient,  } from "../../../Services/Admin/Admin";
 import Table from "../../../Extracomponents/Table1";
 import {
     Eye,
@@ -15,8 +15,10 @@ import {
 import {
     GetSignallist,
     GetSignallistWithFilter,
+    GetSignallistWithFilterWithPlan,
     DeleteSignal,
     SignalCloseApi,
+    SignalCloseApiWithPlan,
     GetService,
     GetStockDetail,
     UpdatesignalReport,
@@ -36,6 +38,8 @@ const Signal = () => {
 
     const [viewMode, setViewMode] = useState("table");
     const token = localStorage.getItem("token");
+    const userid = localStorage.getItem('id');
+
     const [searchInput, setSearchInput] = useState("");
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -219,6 +223,7 @@ const Signal = () => {
                 stock: searchstock,
                 openstatus: "true",
                 search: searchInput,
+                add_by: userid
             };
             const response = await GetSignallist(data, token);
 
@@ -262,6 +267,7 @@ const Signal = () => {
                 stock: searchstock,
                 openstatus: "true",
                 search: searchInput,
+                add_by: userid
             };
             const response = await GetSignallist(data, token);
             if (response.status) {
@@ -315,9 +321,11 @@ const Signal = () => {
                 stock: searchstock,
                 closestatus: "false",
                 search: searchInput,
+                add_by: userid
+
             };
 
-            const response = await GetSignallistWithFilter(data, token);
+            const response = await GetSignallistWithFilterWithPlan(data, token);
 
             if (response && response.status) {
                 setTotalRows(response.pagination.totalRecords);
@@ -630,7 +638,7 @@ const Signal = () => {
                 exitprice: index === 3 ? closedata.exitprice : "",
             };
 
-            const response = await SignalCloseApi(data, token);
+            const response = await SignalCloseApiWithPlan(data, token);
 
             if (response && response.status) {
                 showCustomAlert("Success", "Signal Closed Successfully.");
@@ -1247,25 +1255,25 @@ const Signal = () => {
                                         )}
                                     </p>
 
-                                    {/* <div className="col-md-12">
-                                                    <label htmlFor="input11" className="form-label">
-                                                        Remark
-                                                    </label>
-                                                    <textarea
-                                                        className="form-control"
+                                    <div className="col-md-12">
+                                        <label htmlFor="input11" className="form-label">
+                                            Remark
+                                        </label>
+                                        <textarea
+                                            className="form-control"
 
-                                                        id="input11"
-                                                        placeholder="Remark ..."
-                                                        rows={3}
-                                                        value={closedata.close_description}
-                                                        onChange={(e) =>
-                                                            setClosedata({
-                                                                ...closedata,
-                                                                close_description: e.target.value,
-                                                            })
-                                                        }
-                                                    />
-                                                </div> */}
+                                            id="input11"
+                                            placeholder="Remark ..."
+                                            rows={3}
+                                            value={closedata.close_description}
+                                            onChange={(e) =>
+                                                setClosedata({
+                                                    ...closedata,
+                                                    close_description: e.target.value,
+                                                })
+                                            }
+                                        />
+                                    </div>
 
                                     <button
                                         type="submit"

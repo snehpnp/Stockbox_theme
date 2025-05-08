@@ -482,6 +482,22 @@ export async function SignalCloseApi(data, token) {
     }
 }
 
+// for signal close api 
+export async function SignalCloseApiWithPlan(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/closesignalwithplan`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
 
 
 // // basket list 
@@ -1636,6 +1652,24 @@ export async function UpdateCondition(data, token) {
 export async function PlanSubscription(data, token) {
     try {
         const res = await axios.post(`${Config.base_url}plan/addplansubscription`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+// add subscription
+
+export async function PlanSubscriptionAddtoCart(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}plan/addplansubscriptionaddtocart`, data, {
             headers: {
                 data: {},
                 'Authorization': `${token}`,
@@ -3693,6 +3727,20 @@ export async function GetSignalNotificationdata(signalid, token) {
 }
 
 
+export async function GetSignallistWithFilterWithPlan(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/listwithfilterwithplan`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
 
 // segment  list
 
@@ -3869,3 +3917,51 @@ export async function getUtmSource(token) {
         return err.response?.data || err.message;
     }
 }
+
+
+//   add signal by plan 
+
+export async function AddSignalByPlan(data, token) {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            if (key === 'report' && data[key]) {
+                formData.append(key, data[key]);
+            } else {
+                formData.append(key, data[key]);
+            }
+        }
+
+        const res = await axios.post(`${Config.base_url}signal/addsignalwithplan`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
+// get plan by service
+
+
+export async function getPlanbyservice(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/getplansbyservice`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+

@@ -17,6 +17,7 @@ import {
 import {
   GetSignallist,
   GetSignallistWithFilter,
+  GetSignallistWithFilterWithPlan,
   DeleteSignal,
   SignalCloseApi,
   GetService,
@@ -36,7 +37,7 @@ import Loader from "../../../../Utils/Loader";
 
 const Closesignal = () => {
 
-  
+
   const [activeTab, setActiveTab] = useState("table");
   const token = localStorage.getItem("token");
   const [searchInput, setSearchInput] = useState("");
@@ -244,7 +245,8 @@ const Closesignal = () => {
         search: searchInput,
       };
 
-      const response = await GetSignallistWithFilter(data, token);
+      // const response = await GetSignallistWithFilter(data, token);
+      const response = await GetSignallistWithFilterWithPlan(data, token);
       if (response && response.status) {
         let filterdata = response.data.filter(
           (item) => item.close_status === true
@@ -313,7 +315,7 @@ const Closesignal = () => {
 
   useEffect(() => {
     getAllSignal();
-  }, [filters, searchInput, searchstock, currentPage]);
+  }, [filters, searchInput, searchstock, currentPage, activeTab]);
 
 
 
