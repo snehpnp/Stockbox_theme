@@ -1491,7 +1491,8 @@ class Angle {
                         await Order_Modal.insertMany(orderRecords);
                     }
                 } else {
-                    failedOrders.push({ stock: stock.tradesymbol, message: "Stock not found" });
+                    failedOrders.push({ stock: stock.tradesymbol, message: `Insufficient quantity available for ${stockData.tradesymbol}` });
+
 
                     // return res.status(500).json({
                     //     status: false,

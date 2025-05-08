@@ -797,8 +797,8 @@ class List {
         }
         else {
 
-          const senderamount = (plan.price * settings.sender_earn) / 100;
-          const receiveramount = (plan.price * settings.receiver_earn) / 100;
+          const senderamount = ((plan.price-discount) * settings.sender_earn) / 100;
+          const receiveramount = ((plan.price-discount) * settings.receiver_earn) / 100;
 
           const results = new Refer_Modal({
             token: client.token,
@@ -828,8 +828,8 @@ class List {
 
       if (refertokens.length > 0) {
         for (const refertoken of refertokens) {
-          const senderamount = (plan.price * refertoken.senderearn) / 100;
-          const receiveramount = (plan.price * refertoken.receiverearn) / 100;
+          const senderamount = ((plan.price-discount) * refertoken.senderearn) / 100;
+          const receiveramount = ((plan.price-discount) * refertoken.receiverearn) / 100;
 
           refertoken.senderamount = senderamount;
           refertoken.receiveramount = receiveramount;
@@ -5907,103 +5907,7 @@ if (search && search.trim() !== '') {
             await newPlanManage.save();
         }
       }
-     /*
-      const planservice = plan.category?.service;
-      const planservices = planservice ? planservice.split(',') : [];
-      for (const serviceId of planservices) {
-        const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: serviceId }).exec();
-
-        if (existingPlan) {
-          // If the plan exists and the end date is still valid, extend it
-          if (existingPlan.enddate && existingPlan.enddate > new Date()) {
-            existingPlan.enddate.setMonth(existingPlan.enddate.getMonth() + monthsToAdd);
-          } else {
-            existingPlan.enddate = end;  // Set new end date if it has expired
-            existingPlan.startdate = start;
-          }
-
-
-          try {
-            const savedPlan = await Planmanage.updateOne(
-              { _id: existingPlan._id },  // Filter: find the document by its ID
-              {
-                $set: {
-                  enddate: existingPlan.enddate,  // Set the new end date
-                  startdate: existingPlan.startdate // Set the new start date
-                }
-              }  // Update fields
-            );
-            //  const savedPlan = await existingPlan.save();  
-            console.log("Plan updated successfully:", savedPlan);
-          } catch (error) {
-            // console.error("Error saving updated plan:", error);
-          }
-        } else {
-
-          ////////////////// 17/10/2024 ////////////////////////
-
-          const today = new Date(); // Aaj ki date
-          const existingPlans = await Planmanage.find({
-            clientid: client_id,
-            serviceid: serviceId,
-            enddate: { $gt: today } // End date must be greater than today's date
-          })
-            .sort({ enddate: -1 }) // Sort by `enddate` in descending order
-            .limit(1) // Get the top result
-            .exec();
-
-          if (existingPlans.length > 0) {
-            const existingEndDate = existingPlans[0].enddate; // Get the enddate of the existing plan
-            const newEndDate = end; // Assuming `end` is your new plan's end date
-
-            // Check if the new end date is greater than the existing end date
-            if (newEndDate > existingEndDate) {
-
-              const differenceInTime = newEndDate.getTime() - existingEndDate.getTime(); // Difference in milliseconds
-              const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24)); // Convert milliseconds to days
-
-              let differenceInMonths;
-
-              // Logic to determine the number of months
-              if (differenceInDays < 15) {
-                differenceInMonths = 0; // Less than a month
-              } else {
-                // Calculate the difference in months
-                differenceInMonths = differenceInDays / 30; // Convert days to months
-              }
-
-              // Round the months based on your requirement
-              if (differenceInMonths % 1 >= 0.5) {
-                monthsToAdd = Math.ceil(differenceInMonths); // Round up to the nearest whole number
-              } else {
-                monthsToAdd = Math.floor(differenceInMonths); // Round down to the nearest whole number
-              }
-
-            }
-            else {
-              monthsToAdd = 0;
-            }
-          }
-
-          ////////////////// 17/10/2024 ////////////////////////
-
-          const newPlanManage = new Planmanage({
-            clientid: client_id,
-            serviceid: serviceId,
-            startdate: start,
-            enddate: end,
-          });
-
-          try {
-            await newPlanManage.save();  // Save the new plan
-            console.log(`Added new record for service ID: ${serviceId}`);
-          } catch (error) {
-            // console.error("Error saving new plan:", error);
-          }
-        }
-
-      }
-      */
+   
 
       ////////////////// 17/10/2024 ////////////////////////
       const currentDate = new Date();
@@ -6244,7 +6148,7 @@ await sendEmail(mailOptions);
 
     }
 
-
+    planprice = planprice-discount;
 
     const updatedItems = await Addtocart_Modal.updateMany(
       { client_id: client_id, status: false, basket_id: null }, // Find all matching items
