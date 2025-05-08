@@ -24,6 +24,7 @@ const Mailtemplate_Modal = db.Mailtemplate;
 const PlanSubscription_Modal = db.PlanSubscription;
 const States = db.States;
 const City = db.City;
+const Addtocart_Modal = db.Addtocart;
 
 const { addBasketVolatilityData } = require("./Cron"); 
 const Basketghaphdata_Modal = require("../Models/Basketgraphdata");
@@ -2321,7 +2322,11 @@ if (pdfresponse.status === true) {
 
     }
 
-
+    const updatedItems = await Addtocart_Modal.updateMany(
+      { client_id: client_id, basket_id:basket_id, status: false, plan_id: null }, // Find all matching items
+      { $set: { status: true } } // Update status to true
+  );
+  
       // Respond with the created subscription
       return res.status(201).json({
         status: true,
