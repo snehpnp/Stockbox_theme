@@ -249,10 +249,10 @@ const ViewTicket = () => {
                       <div className="card-body">
 
                         <div className="row mb-3">
-                          <div className="col-6">
-                            <h6 className="mb-0"><b>Subject : </b></h6>
+                          <div className="col-3">
+                            <h6><b>Subject : </b></h6>
                           </div>
-                          <div className="col-6 text-end">
+                          <div className="col-9 text-start ps-0">
                             <p className="text-muted mb-0">{messages?.ticket?.subject}</p>
                           </div>
                         </div>
@@ -279,28 +279,28 @@ const ViewTicket = () => {
                       <div className="card-body">
 
                         <div className="row mb-3">
-                          <div className="col-6">
-                            <h6 className="mb-0"><b>Name </b></h6>
+                          <div className="col-4">
+                            <h6 className="mb-0"><b>Name :</b></h6>
                           </div>
-                          <div className="col-6">
+                          <div className="col-8">
                             <p className="text-muted mb-0">{messages?.ticket?.client_id?.FullName}</p>
                           </div>
                         </div>
 
                         <div className="row mb-3">
-                          <div className="col-6">
-                            <h6 className="mb-0"><b>Email </b></h6>
+                          <div className="col-4">
+                            <h6 className="mb-0"><b>Email :</b></h6>
                           </div>
-                          <div className="col-6">
+                          <div className="col-8">
                             <p className="text-muted mb-0">{messages?.ticket?.client_id?.Email}</p>
                           </div>
                         </div>
 
                         <div className="row">
-                          <div className="col-6">
-                            <h6 className="mb-0"><b>Phone Number </b></h6>
+                          <div className="col-4">
+                            <h6 className="mb-0"><b>Phone Number :</b></h6>
                           </div>
-                          <div className="col-6">
+                          <div className="col-8">
                             <p className="text-muted mb-0">{messages?.ticket?.client_id?.PhoneNo}</p>
                           </div>
                         </div>
@@ -329,7 +329,7 @@ const ViewTicket = () => {
 
               <div
                 className="review-list"
-                style={{ maxHeight: '400px', overflowY: 'auto' }} 
+                style={{ maxHeight: '400px', overflowY: 'auto' }}
               >
                 <ul className="list-group list-group-flush">
                   {messages?.messages?.map((item, index) => (
