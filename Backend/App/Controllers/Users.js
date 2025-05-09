@@ -385,10 +385,13 @@ class Users {
       }
 
       // Check if trying to activate but permission is null
-      if (status === '1' && (user.permission === null || user.permission === undefined)) {
+      if (
+        status === '1' &&
+        (!user.permissions || !Array.isArray(user.permissions) || user.permissions.length === 0)
+      ) {
         return res.status(400).json({
           status: false,
-          message: "Cannot activate user: permission is missing"
+          message: "permission is missing"
         });
       }
 
