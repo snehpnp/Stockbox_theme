@@ -1400,7 +1400,7 @@ const Client = () => {
 
       const response = await AllclientFilter(data, token);
       if (response.status) {
-        setClients(response.data);
+        setClients(response.data && response.data);
         setTotalRows(response.pagination.total);
       }
     } catch (error) {
@@ -1556,7 +1556,7 @@ const Client = () => {
         if (response.status) {
           showCustomAlert("error", "The Client has been successfully deleted.");
           setCurrentPage(1);
-          getAdminclient();
+          // getAdminclient();
         }
       } else {
         showCustomAlert("error", "The Client deletion was cancelled.");
@@ -1581,7 +1581,6 @@ const Client = () => {
         const response = await UpdateClientStatus(data, token);
         if (response.status) {
           showCustomAlert("success", "Status Changed");
-          setCurrentPage(1);
           getAdminclient();
         }
       } catch (error) {
@@ -1608,7 +1607,6 @@ const Client = () => {
       if (response && response.status) {
         showCustomAlert("success", response.message);
         setUpdatetitle({ plan_id: "", client_id: "", price: "" });
-        setCurrentPage(1);
         getAdminclient();
         handleCancel();
       } else {
@@ -1634,7 +1632,6 @@ const Client = () => {
       if (response && response.status) {
         showCustomAlert("Success", "Basket service updated successfully.");
         setBasketdetail({ basket_id: "", client_id: "", price: "" });
-        setCurrentPage(1);
         getAdminclient();
         handleCancel();
       } else {
