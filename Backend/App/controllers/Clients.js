@@ -3808,96 +3808,118 @@ class Clients {
     }
   }
 
-
   async getClientEmailsForMailing(req, res) {
     try {
-      const { clientType, selectedPlanId } = req.body;
-      const matchConditions = { del: 0 };
+      // Destructure query parameters for client status and plan category
+      const { clientStatus, planCategory } = req.body;
   
-      // Set up date for active/expired checking
-      const today = new Date();
+      // Validate client status (can be "all", "active", "expired", "nonsubscriber")
+      if (!clientStatus || !['all', 'active', 'expired', 'nonsubscriber'].includes(clientStatus)) {
+        return res.status(400).json({ message: 'Invalid client status' });
+      }
   
-      // Base match for clients
-      let clientStatusMatch = {};
+      // Validation: Ensure that planCategory is only provided for 'active' or 'expired' statuses
+      if ((clientStatus === 'active' || clientStatus === 'expired') && !planCategory) {
+        return res.status(400).json({ message: 'Plan category is required for active or expired status' });
+      }
   
-      if (clientType === "active") {
-        clientStatusMatch = {
-          plans: {
-            $elemMatch: { enddate: { $gte: today } }
-          }
-        };
-      } else if (clientType === "expired") {
-        clientStatusMatch = {
-          plans: {
-            $elemMatch: { enddate: { $lt: today } }
-          }
-        };
-      } else if (clientType === "nonsubscriber") {
-        clientStatusMatch = {
-          $or: [
-            { plans: { $exists: false } },
-            { plans: { $size: 0 } }
-          ]
+      let filter = {};
+  
+      // If clientStatus is "all", we will return all clients without applying any filters for subscriptions.
+      if (clientStatus === "all") {
+        filter = {
+          ActiveStatus: 1,   // Filter by ActiveStatus: 1
+          del: 0             // Filter by del: 0
         };
       }
-      // For 'all', we skip extra match
+      // If clientStatus is "active", filter based on subscription status and plan category
+      else if (clientStatus === "active") {
+        filter = {
+          "status": "active", 
+          "plan_end": { $gte: new Date() }, // Active plans (plan_end >= current date)
+          "plan_category_id": planCategory,  // Filter by selected plan category
+        };
+      } 
+      // If clientStatus is "expired", filter based on subscription status and plan category
+      else if (clientStatus === "expired") {
+        filter = {
+          "status": "active", 
+          "plan_end": { $lt: new Date() }, // Expired plans (plan_end < current date)
+          "plan_category_id": planCategory,  // Filter by selected plan category
+        };
+      } 
+      // If clientStatus is "nonsubscriber", filter out clients who do not have any active subscriptions
+      else if (clientStatus === "nonsubscriber") {
+        // Fetch clients who have no subscriptions at all (active or expired)
+        const subscribedClientIds = await PlanSubscription_Modal.distinct('client_id');
+        // Find clients who don't have a subscription (not in the subscribedClientIds)
+        filter = {
+          _id: { $nin: subscribedClientIds },
+          ActiveStatus: 1,   // Filter by ActiveStatus: 1
+          del: 0             // Filter by del: 0
+        };
+      }
   
-      const aggregationPipeline = [
-        { $match: matchConditions },
-        {
-          $lookup: {
-            from: 'planmanages',
-            let: { clientId: { $toObjectId: "$_id" } },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $eq: [{ $toObjectId: "$clientid" }, "$$clientId"]
-                  }
-                }
-              }
-            ],
-            as: 'plans'
+      // Fetch subscriptions based on the constructed filter
+      const subscriptions = await PlanSubscription_Modal.find(filter).populate("client_id");
+  
+      // To avoid duplicates, we will store the client emails in a Map (using client_id as the key)
+      const clientMap = new Map();
+  
+      // Loop through subscriptions and check if the plan is expired but renewed
+      for (const subscription of subscriptions) {
+        const clientId = subscription.client_id._id;
+        const email = subscription.client_id.Email;
+        const fullName = subscription.client_id.FullName;
+        const planEnd = new Date(subscription.plan_end);
+  
+        // If the client is already in the map, check if the current plan is later (more recent)
+        if (clientMap.has(clientId)) {
+          const existingPlanEnd = clientMap.get(clientId).plan_end;
+          if (planEnd > existingPlanEnd) {
+            // Replace with the newer plan if the current plan is more recent
+            clientMap.set(clientId, { _id: clientId, email, fullName, plan_end: planEnd });
           }
-        },
-        {
-          $match: clientType === "all" ? {} : clientStatusMatch
-        },
-        ...(selectedPlanId ? [
-          {
-            $match: {
-              "plans.serviceid": { $eq: selectedPlanId }
-            }
-          }
-        ] : []),
-        {
-          $project: {
-            _id: 1,
-            FullName: 1,
-            Email: 1
-          }
+        } else {
+          // If the client is not in the map, add the current plan
+          clientMap.set(clientId, { _id: clientId, email, fullName, plan_end: planEnd });
         }
-      ];
+      }
   
-      const clients = await Clients_Modal.aggregate(aggregationPipeline);
+      // Extract unique clients (email, fullName, _id) from the map
+      const uniqueClients = Array.from(clientMap.values()).map(item => ({
+        _id: item._id,
+        FullName: item.fullName,
+        Email: item.email
+      }));
   
-      return res.json({
-        status: true,
-        message: "Client list fetched for email sending",
-        data: clients
-      });
+      // If no subscriptions are found (for "nonsubscriber"), get all clients without plans
+      if (clientStatus === "nonsubscriber") {
+        // Apply filters for ActiveStatus: 1 and del: 0
+        const clientsWithoutSubscriptions = await Clients_Modal.find(filter).select("Email FullName _id");
+        return res.status(200).json({ clients: clientsWithoutSubscriptions });
+      }
+
+      if (clientStatus === "all") {
+        // Apply filters for ActiveStatus: 1 and del: 0
+        const clientsWithoutSubscriptions = await Clients_Modal.find(filter).select("Email FullName _id");
+        return res.status(200).json({ clients: clientsWithoutSubscriptions });
+      }
   
-    } catch (error) {
-      console.error("Error in getClientListForEmail:", error);
-      return res.json({
-        status: false,
-        message: "Server error",
-        data: []
-      });
+      // If no clients found
+      if (uniqueClients.length === 0) {
+        return res.status(404).json({ message: 'No client emails found' });
+      }
+  
+      // Return the list of unique clients (with _id, FullName, and Email)
+      return res.status(200).json({ clients: uniqueClients });
+  
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: 'Server error', error: err.message });
     }
   }
-
-
+  
   
 
 }

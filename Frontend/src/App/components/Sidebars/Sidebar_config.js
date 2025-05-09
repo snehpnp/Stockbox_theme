@@ -235,7 +235,7 @@ const Admin = [
   {
     label: "Send Mail To Client",
     icon: "Mails",
-    link: "/admin/view-mail",
+    link: "/admin/addmail-to-client",
     name: "SendMailToClient"
   },
   {
