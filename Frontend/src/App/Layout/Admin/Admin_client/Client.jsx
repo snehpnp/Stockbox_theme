@@ -1322,12 +1322,7 @@ const Client = () => {
     setStatuscreatedby("");
     setExpired("");
     setCurrentPage(1);
-    setFilters({
-      fromDate: '',
-      toDate: '',
-      service: '',
-      stock: '',
-  });
+
   };
 
 
@@ -1571,29 +1566,26 @@ const Client = () => {
 
 
   const handleSwitchChange = async (event, id) => {
-
-    const user_active_status = event.target.checked ? "1" : "0";
+    const originalChecked = event.target.checked;
+    const user_active_status = originalChecked ? "1" : "0";
     const data = { id, status: user_active_status };
 
-    try {
-      const result = await showCustomAlert("confirm", "Do you want to save the changes?");
-      const response = await updateStaffstatus(data, token);
-      if (response?.status) {
-        if (!event.target.checked) {
-          socket.emit("deactivestaff", { id, msg: "logout" });
+    const result = await showCustomAlert("confirm", "Do you want to save the changes?");
+    if (result.isConfirmed) {
+      try {
+        const response = await UpdateClientStatus(data, token);
+        if (response.status) {
+          showCustomAlert("success", "Status Changed");
+          setCurrentPage(1);
+          getAdminclient();
         }
-        showCustomAlert("success", response.message);
-      } else {
-        throw new Error(response.message);
+      } catch (error) {
+        showCustomAlert("error", "There was an error processing your request.");
       }
-    } catch (error) {
-      event.target.checked = !event.target.checked;
-      showCustomAlert("error", error.message, "There was an error processing your request.");
-    } finally {
-      getAdminclient();
+    } else {
+      event.target.checked = !originalChecked;
     }
   };
-
 
 
 
