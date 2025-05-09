@@ -640,6 +640,10 @@ class Clients {
         });
       }
 
+      const client = await Clients_Modal.findOne({
+        _id: id,
+      });
+
       const deletedClient = await Clients_Modal.findByIdAndUpdate(
         id,
         { del: 1 },
@@ -654,7 +658,7 @@ class Clients {
       }
 
       const titles = 'Important Update';
-      const message = `You have successfully deleted your account.`;
+      const message = `${client.FullName} ,You have successfully deleted your account.`;
       const resultnm = new Adminnotification_Modal({
         clientid: id,
         type: 'delete client',

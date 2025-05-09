@@ -106,7 +106,7 @@ router.get('/api/list/countsignalstatus', countSignalStatus);
 router.post('/api/list/planexpire', PlanExpire);
 router.post('/api/list/plansubscriptionexpire', PlanSubscriptionExpire);
 router.post('/api/list/basketexpire', BasketExpire);
-router.post('/api/list/addplanSubscriptionwithplan', addPlanSubscriptionWithPlan);
+router.post('/api/list/addplansubscriptionwithplan', addPlanSubscriptionWithPlan);
 
 
 module.exports = router;
