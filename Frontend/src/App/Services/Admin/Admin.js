@@ -4022,3 +4022,23 @@ export async function PlanSubscriptionWithPlan(data, token) {
         return err.response?.data || err.message;
     }
 }
+
+
+
+// client with send to mail 
+
+//Add main to client 
+
+export async function sendMailForClient(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}client/getclientemailsformailing`, data, {
+            headers: {
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}

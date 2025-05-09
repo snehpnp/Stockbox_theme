@@ -352,10 +352,10 @@ const DynamicForm = ({
                                   isMulti={field.multi}
                                   value={
                                     field.multi
-                                      ? field.options?.filter((option) =>
+                                      ? field.options.filter((option) =>
                                         (formik.values[field.name] || []).includes(option.value)
                                       )
-                                      : field.options?.find(
+                                      : field.options.find(
                                         (option) => option.value === formik.values[field.name]
                                       )
                                   }

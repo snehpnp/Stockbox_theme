@@ -3,7 +3,7 @@ import { useFormik } from 'formik';
 import Swal from 'sweetalert2';
 import DynamicForm from '../../../Extracomponents/FormicForm';
 import { useNavigate } from 'react-router-dom';
-import { SendBroadCast, GetService, sendMailToClient, getActivecategoryplan } from '../../../Services/Admin/Admin';
+import { SendBroadCast, GetService, sendMailToClient, getActivecategoryplan, sendMailForClient } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
@@ -11,10 +11,12 @@ const Addbroadcast = () => {
 
     const navigate = useNavigate();
     const [servicedata, setServicedata] = useState([]);
+    const [userdata, setUserdata] = useState([]);
 
     useEffect(() => {
         getservice();
     }, []);
+
 
 
 
@@ -38,6 +40,24 @@ const Addbroadcast = () => {
     };
 
 
+    const getUser = async () => {
+        try {
+            const data = { clientStatus: formik.values.type, planCategory: formik.values.service }
+            const response = await sendMailForClient(data, token);
+            console.log("data", response?.clients)
+            if (response) {
+                setUserdata(response?.clients);
+            } else {
+                setUserdata([])
+            }
+        } catch (error) {
+            console.error("Error fetching services:", error);
+        }
+    };
+
+
+    console.log("userdata", userdata)
+
 
     const validate = (values) => {
         let errors = {};
@@ -45,12 +65,14 @@ const Addbroadcast = () => {
         if (values.type !== "nonsubscribe" && values.type !== "all" && !values.service) {
             errors.service = "Please Select Service";
         }
-
+        if (!values.user) {
+            errors.user = "Please Select  User";
+        }
 
         if (!values.subject) {
             errors.subject = "Please Enter Subject";
         }
-        if (!values.message) {
+        if (values.message === "<p style=\"color: rgb(0, 0, 0); font-family: Arial;\"><br></p>") {
             errors.message = "Please Enter Message";
         }
         if (!values.type) {
@@ -65,16 +87,16 @@ const Addbroadcast = () => {
 
         const req = {
             usertype: values.type,
-            planid: (values.type === "all" || values.type === "nonsubscribe") ? "" : values.service,
+            planid: values.service,
             subject: values.subject,
             message: values.message,
-            selectedUserIds: ""
+            selectedUserIds: values.user
         };
 
         try {
             const response = await sendMailToClient(req, token);
             if (response.status) {
-                showCustomAlert("Success", response.message, navigate, "/admin/view-mail");
+                showCustomAlert("Success", "Mail Send Successfully",);
             } else {
                 showCustomAlert("error", response.message);
             }
@@ -92,7 +114,8 @@ const Addbroadcast = () => {
             service: "",
             subject: "",
             message: "",
-            type: ""
+            type: "",
+            user: ""
 
         },
         validate,
@@ -133,6 +156,24 @@ const Addbroadcast = () => {
             showWhen: (values) => !(values.type === "nonsubscriber" || values.type === "all")
         },
         {
+            name: "user",
+            label: "Select User",
+            type: "selectcheckbox",
+            label_size: 4,
+            col_size: 3,
+            multi: true,
+            disable: false,
+            options: [
+                { value: "all", label: "All" },
+                ...(Array.isArray(userdata) ? userdata.map((item) => ({
+                    value: item?._id,
+                    label: item?.FullName,
+                })) : [])
+            ],
+            star: true,
+        },
+
+        {
             name: "subject",
             label: "Subject",
             type: "text",
@@ -154,22 +195,29 @@ const Addbroadcast = () => {
 
     ];
 
+
+
+    useEffect(() => {
+        getUser();
+    }, [formik.values.type, formik.values.service]);
+
+
+
     return (
         <Content
             Page_title="Send Email to client"
             button_status={false}
             backbutton_status={true}
-            backForword={true}
+
         >
             <DynamicForm
                 fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
                 formik={formik}
                 // page_title="Add Broadcast"
                 btn_name="Send Email"
-                btn_name1="Cancel"
                 sumit_btn={true}
                 btnstatus={loading}
-                btn_name1_route={"/admin/view-mail"}
+                btn_name1_route={"/admin/addmail-to-client"}
                 additional_field={<></>}
             />
         </Content >
