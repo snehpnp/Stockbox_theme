@@ -1279,6 +1279,13 @@ class Dhan {
                 // ✅ Unique Correlation ID
                 const correlationId = crypto.randomBytes(12).toString('hex').substring(0, 25);
     
+
+                let quantitys = quantity; // Declare quantitys outside the blocks
+                if(stockData.segment !== "C") {
+                    quantitys=  quantitys*stockData.lotsize*stock.lot;
+                }
+                
+
                 let orderPayload = {
                     "dhanClientId": apikey,
                     "transactionType": stock.calltype,
@@ -1287,7 +1294,7 @@ class Dhan {
                     "orderType": "MARKET",
                     "validity": "DAY",
                     "securityId": stockData.instrument_token,
-                    "quantity": parseInt(quantity),
+                    "quantity": parseInt(quantitys),
                     "disclosedQuantity": 0,
                     "price": 0,
                     "triggerPrice": 0,
@@ -1456,7 +1463,12 @@ class Dhan {
                 if (totalValue >= quantity) {
                     // ✅ Unique Correlation ID
                     const correlationId = crypto.randomBytes(12).toString('hex').substring(0, 25);
-    
+                    let quantitys = quantity; // Declare quantitys outside the blocks
+                    if(stockData.segment !== "C") {
+                        quantitys=  quantitys*stockData.lotsize*stock.lot;
+                    }
+
+
                     let orderPayload = {
                         "dhanClientId": apikey,
                         "transactionType": calltypess,
@@ -1465,7 +1477,7 @@ class Dhan {
                         "orderType": "MARKET",
                         "validity": "DAY",
                         "securityId": stockData.instrument_token,
-                        "quantity": parseInt(quantity),
+                        "quantity": parseInt(quantitys),
                         "disclosedQuantity": 0,
                         "price": 0,
                         "triggerPrice": 0,

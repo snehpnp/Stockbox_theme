@@ -219,9 +219,9 @@ class Aliceblue {
                 });
             }
             let quantitys = quantity; // Declare quantitys outside the blocks
-            if(stock.segment !== "C") {
-                quantitys=  quantitys*stock.lotsize;
-            }
+            // if(stock.segment !== "C") {
+            //     quantitys=  quantitys*stock.lotsize;
+            // }
 
 
             var data = JSON.stringify([
@@ -445,9 +445,9 @@ class Aliceblue {
 
 
                 let quantitys = quantity; // Declare quantitys outside the blocks
-                if(stock.segment !== "C") {
-                    quantitys=  quantitys*stock.lotsize;
-                }
+                // if(stock.segment !== "C") {
+                //     quantitys=  quantitys*stock.lotsize;
+                // }
 
 
 

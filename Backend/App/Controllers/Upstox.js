@@ -258,9 +258,9 @@ class Upstox {
             }
             
             let quantitys = quantity; // Declare quantitys outside the blocks
-            if(stock.segment !== "C") {
-                quantitys=  quantitys*stock.lotsize;
-            }
+            // if(stock.segment !== "C") {
+            //     quantitys=  quantitys*stock.lotsize;
+            // }
 
 
 
@@ -525,9 +525,9 @@ let config = {
 
 
                 let quantitys = quantity; // Declare quantitys outside the blocks
-                if(stock.segment !== "C") {
-                    quantitys=  quantitys*stock.lotsize;
-                }
+                // if(stock.segment !== "C") {
+                //     quantitys=  quantitys*stock.lotsize;
+                // }
 
                 var data = JSON.stringify({
                     "quantity": quantitys,

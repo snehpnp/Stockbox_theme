@@ -188,9 +188,9 @@ class Angle {
             }
 
             let quantitys = quantity; // Declare quantitys outside the blocks
-            if(stock.segment !== "C") {
-                quantitys=  quantitys*stock.lotsize;
-            }
+            // if(stock.segment !== "C") {
+            //     quantitys=  quantitys*stock.lotsize;
+            // }
 
 
 
@@ -424,9 +424,9 @@ class Angle {
             if (totalValue >= quantity) {
 
                 let quantitys = quantity; // Declare quantitys outside the blocks
-                if(stock.segment !== "C") {
-                    quantitys=  quantitys*stock.lotsize;
-                }
+                // if(stock.segment !== "C") {
+                //     quantitys=  quantitys*stock.lotsize;
+                // }
 
                 var data = JSON.stringify({
                     "variety": "NORMAL",
