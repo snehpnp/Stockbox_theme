@@ -193,9 +193,6 @@ const AddSignal = () => {
         lot: values.lot,
         planid: values.planid
       };
-
-      console.log("req", req)
-
       try {
         const response = await AddSignalByPlan(req, token);
         if (response.status) {
