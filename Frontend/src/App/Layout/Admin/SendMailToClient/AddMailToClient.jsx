@@ -44,7 +44,7 @@ const Addbroadcast = () => {
         try {
             const data = { clientStatus: formik.values.type, planCategory: formik.values.service }
             const response = await sendMailForClient(data, token);
-            console.log("data", response?.clients)
+
             if (response) {
                 setUserdata(response?.clients);
             } else {
@@ -56,7 +56,7 @@ const Addbroadcast = () => {
     };
 
 
-    console.log("userdata", userdata)
+
 
 
     const validate = (values) => {
