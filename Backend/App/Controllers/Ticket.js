@@ -208,7 +208,7 @@ if (ticket && ticket.status === 0) {
           }
           // Fetch related messages
           let messages = await Ticketmessage_Modal.find({ ticket_id: ticketid, del: false })
-            .sort({ created_at: 1 }) // oldest to newest
+            .sort({ created_at: -1 }) // oldest to newest
             .lean();
 
             messages = messages.map(message => {
