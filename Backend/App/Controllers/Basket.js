@@ -294,16 +294,6 @@ class Basket {
       }
 
 
-  if(publishstatus==true) {
-      const checkpublishornot = await Basketstock_Modal.find({ basket_id, status: 1 });
-      if (checkpublishornot.length > 0) {
-      } else {
-        basket.status =true;
-        basket.publishstatus =true;
-        await basket.save();
-      }
-    }
-
       let totalAmount = 0;
 
       if (existingStocks && existingStocks.length > 0) {
@@ -417,6 +407,18 @@ class Basket {
         }
 
 
+        
+  if(publishstatus==true) {
+    const checkpublishornot = await Basketstock_Modal.find({ basket_id, status: 1 });
+    if (checkpublishornot.length > 0) {
+    } else {
+      basket.status =true;
+      basket.publishstatus =true;
+      await basket.save();
+    }
+  }
+
+
 
         const total_value = quantity * currentPrice;
 
@@ -528,15 +530,7 @@ const updatedBasket = await Basket_Modal.findByIdAndUpdate(
           }
   
           // Publish status check
-          if (publishstatus === true) {
-              const checkpublishornot = await Basketstock_Modal.find({ basket_id, status: 1 });
-              if (checkpublishornot.length === 0) {
-                  basket.status = true;
-                  basket.publishstatus = true;
-                  await basket.save();
-              }
-          }
-  
+       
           let totalAmount = existingStocks.length > 0 ? existingStocks.reduce((sum, stock) => sum + stock.total_value, 0) : basket.mininvamount;
           let remainingAmount = totalAmount;
   
@@ -608,6 +602,17 @@ const updatedBasket = await Basket_Modal.findByIdAndUpdate(
                 });
               }
 
+
+
+              if (publishstatus === true) {
+                const checkpublishornot = await Basketstock_Modal.find({ basket_id, status: 1 });
+                if (checkpublishornot.length === 0) {
+                    basket.status = true;
+                    basket.publishstatus = true;
+                    await basket.save();
+                }
+            }
+     
               const total_value = quantity * currentPrice;
   
               remainingAmount -= total_value;
@@ -690,16 +695,6 @@ const updatedBasket = await Basket_Modal.findByIdAndUpdate(
   
 
 
-      
-  if(publishstatus==true) {
-    const checkpublishornot = await Basketstock_Modal.find({ basket_id, status: 1 });
-    if (checkpublishornot.length > 0) {
-    } else {
-      basket.status =true;
-      basket.publishstatus =true;
-      await basket.save();
-    }
-  }
 
 
   // await Basketstock_Modal.deleteMany({ basket_id, version });
@@ -790,6 +785,22 @@ const updatedBasket = await Basket_Modal.findByIdAndUpdate(
       });
     }
   }
+
+
+
+
+      
+  if(publishstatus==true) {
+    const checkpublishornot = await Basketstock_Modal.find({ basket_id, status: 1 });
+    if (checkpublishornot.length > 0) {
+    } else {
+      basket.status =true;
+      basket.publishstatus =true;
+      await basket.save();
+    }
+  }
+
+
 
   // ✅ Jab yaha tak sab stocks valid hai, tab purane delete karo
   await Basketstock_Modal.deleteMany({ basket_id, version });
@@ -968,14 +979,7 @@ const updatedBasket = await Basket_Modal.findByIdAndUpdate(
         });
       }
   
-      if (publishstatus == true) {
-        const checkpublishornot = await Basketstock_Modal.find({ basket_id, status: 1 });
-        if (checkpublishornot.length === 0) {
-          basket.status = true;
-          basket.publishstatus = true;
-          await basket.save();
-        }
-      }
+     
   
       // await Basketstock_Modal.deleteMany({ basket_id, version });
   
@@ -1010,6 +1014,16 @@ const updatedBasket = await Basket_Modal.findByIdAndUpdate(
             status: false,
             message: `Quantity is zero for stock ${tradesymbol}. Cannot add stock.`,
           });
+        }
+      }
+
+
+      if (publishstatus == true) {
+        const checkpublishornot = await Basketstock_Modal.find({ basket_id, status: 1 });
+        if (checkpublishornot.length === 0) {
+          basket.status = true;
+          basket.publishstatus = true;
+          await basket.save();
         }
       }
     
@@ -1065,6 +1079,9 @@ const updatedBasket = await Basket_Modal.findByIdAndUpdate(
             message: `Quantity is zero for stock ${tradesymbol}. Cannot add stock.`,
           });
         }
+
+       
+
 
         const total_value = quantity * currentPrice;
         remainingAmount -= total_value;
