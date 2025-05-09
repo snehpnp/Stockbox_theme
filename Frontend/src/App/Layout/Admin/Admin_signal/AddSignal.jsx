@@ -286,7 +286,6 @@ const AddSignal = () => {
 
         const data2 = { serviceId: formik.values.segment };
         const planPriceResponse = await getPlanbyservice(data2);
-        console.log("planPriceResponse", planPriceResponse)
         if (planPriceResponse.status) {
           setPlanPrice(planPriceResponse.data);
 
