@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { GetClient,  } from "../../../Services/Admin/Admin";
+import { GetClient, } from "../../../Services/Admin/Admin";
 import Table from "../../../Extracomponents/Table1";
 import {
     Eye,
@@ -601,16 +601,14 @@ const Signal = () => {
             const data = {
                 id: serviceid._id,
                 closestatus: index === 1 ? checkstatus : "",
-                closetype:
-                    index === 0
-                        ? "1"
-                        : index === 1
-                            ? "2"
-                            : index === 2
-                                ? "3"
-                                : index === 3
-                                    ? "4"
-                                    : "5",
+                closetype: index === 0 ? "1"
+                    : index === 1
+                        ? "2"
+                        : index === 2
+                            ? "3"
+                            : index === 3
+                                ? "4"
+                                : "5",
                 close_description: closedata.close_description,
 
                 targethit1:
