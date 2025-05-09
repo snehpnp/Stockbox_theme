@@ -7,13 +7,15 @@ const ReusableModal = ({ show, onClose, title, body, footer, size = "md" }) => {
       show={show}
       onHide={onClose}
       centered
-      size={size} // Dynamically set the modal size
+      size={size}
       id="verticalycentered"
     >
       <Modal.Header closeButton>
         <Modal.Title className="heading-color">{title}</Modal.Title>
       </Modal.Header>
-      <Modal.Body>{body}</Modal.Body>
+      <Modal.Body style={{ maxHeight: "300px", overflowY: "auto" }}>
+        {body}
+      </Modal.Body>
       <Modal.Footer>{footer || null}</Modal.Footer>
     </Modal>
   );

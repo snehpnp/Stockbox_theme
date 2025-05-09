@@ -218,7 +218,7 @@ const Apiinfo = () => {
                                                 type="text"
                                                 className="form-control"
                                                 id="digioTemplateName"
-                                                disabled={kycstatus?.kyc === 1}
+                                                disabled={kycstatus?.kyc !== 0}
                                                 value={updateapi.digio_template_name}
                                                 onChange={(e) => setUpdateapi({ ...updateapi, digio_template_name: e.target.value })}
                                             />
@@ -232,7 +232,7 @@ const Apiinfo = () => {
                                                 type="text"
                                                 className="form-control"
                                                 id="digioClientId"
-                                                disabled={kycstatus?.kyc === 1}
+                                                disabled={kycstatus?.kyc !== 0}
                                                 value={updateapi.digio_client_id}
                                                 onChange={(e) => setUpdateapi({ ...updateapi, digio_client_id: e.target.value })}
                                             />
@@ -246,7 +246,7 @@ const Apiinfo = () => {
                                                 type="text"
                                                 className="form-control"
                                                 id="digioClientSecret"
-                                                disabled={kycstatus?.kyc === 1}
+                                                disabled={kycstatus?.kyc !== 0}
                                                 value={updateapi.digio_client_secret}
                                                 onChange={(e) => setUpdateapi({ ...updateapi, digio_client_secret: e.target.value })}
                                             />
@@ -259,7 +259,7 @@ const Apiinfo = () => {
                                     type="button"
                                     className="btn btn-primary mb-2"
                                     onClick={UpdateApi}
-                                    disabled={isButtonDisabled || kycstatus.kyc === 1}
+                                    disabled={isButtonDisabled || kycstatus.kyc !== 0}
                                 >
                                     Update
                                 </button>

@@ -160,6 +160,8 @@ const Staffpermission = () => {
             paymenthistory: false,
             planexpiry: false,
             perform: false,
+            broadcast:false,
+            ticket:false,
 
 
 
@@ -291,6 +293,9 @@ const Staffpermission = () => {
             formik.setFieldValue('paymenthistory', clients.includes('paymenthistory'));
             formik.setFieldValue('planexpiry', clients.includes('planexpiry'));
             formik.setFieldValue('perform', clients.includes('perform'));
+            formik.setFieldValue('broadcast', clients.includes('broadcast'));
+            formik.setFieldValue('ticket', clients.includes('ticket'));
+
 
 
             formik.setFieldValue('basketpermission', clients.includes('basketpermission'));
@@ -850,7 +855,7 @@ const Staffpermission = () => {
 
 
     useEffect(() => {
-        const permissions = ["paymenthistory", "planexpiry", "perform"];
+        const permissions = ["paymenthistory", "planexpiry", "perform","broadcast","ticket"];
 
         if (formik.values.otherpermission) {
             permissions.forEach(permission => formik.setFieldValue(permission, true));
@@ -865,7 +870,7 @@ const Staffpermission = () => {
     }, [formik.values.otherpermission]);
 
     useEffect(() => {
-        const permissions = ["paymenthistory", "planexpiry", "perform"];
+        const permissions = ["paymenthistory", "planexpiry", "perform","broadcast","ticket"];
 
         const anyChecked = permissions.some(permission => formik.values[permission]);
 
@@ -878,7 +883,9 @@ const Staffpermission = () => {
     }, [
         formik.values.paymenthistory,
         formik.values.planexpiry,
-        formik.values.perform
+        formik.values.perform,
+        formik.values.broadcast,
+        formik.values.ticket,
     ]);
 
 
@@ -1793,10 +1800,24 @@ const Staffpermission = () => {
             // check_box_true: formik.values.viewservice,
             check_box_true: formik.values.otherpermission || formik.values.perform ? true : false,
         },
-
-
-
-
+        {
+            name: 'broadcast',
+            label: 'Broadcast',
+            type: 'checkbox',
+            label_size: 12,
+            col_size: 2,
+            // check_box_true: formik.values.viewservice,
+            check_box_true: formik.values.otherpermission || formik.values.broadcast ? true : false,
+        },
+        {
+            name: 'ticket',
+            label: 'Ticket',
+            type: 'checkbox',
+            label_size: 12,
+            col_size: 2,
+            // check_box_true: formik.values.viewservice,
+            check_box_true: formik.values.otherpermission || formik.values.ticket ? true : false,
+        },
 
 
     ];
