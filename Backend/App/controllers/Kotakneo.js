@@ -1438,7 +1438,10 @@ async  MultipleplaceOrder(req, res) {
                 failedOrders.push({ stock: stock.tradesymbol, message: `Token not found for ${stockData.tradesymbol}, skipping order.` });
                 continue;
             }
-
+            let quantitys = quantity; // Declare quantitys outside the blocks
+            if(stockData.segment !== "C") {
+                quantitys=  quantitys*stockData.lotsize*stock.lot;
+            }
             // ✅ Prepare Order Data
             let orderData = JSON.stringify({
                 "am": "NO",
@@ -1449,7 +1452,7 @@ async  MultipleplaceOrder(req, res) {
                 "pf": "N",
                 "pr": stock.price,
                 "pt": "MKT",
-                "qt": quantity,
+                "qt": quantitys,
                 "rt": "DAY",
                 "tp": "0",
                 "ts": token,
@@ -1627,7 +1630,10 @@ async  MultipleExitplaceOrder(req, res) {
             }
 
             let calltype = signal.calltype === "BUY" ? "S" : "B";
-
+            let quantitys = quantity; // Declare quantitys outside the blocks
+            if(stockData.segment !== "C") {
+                quantitys=  quantitys*stockData.lotsize*stock.lot;
+            }
             // ✅ Prepare Order Data
             let data = JSON.stringify({
                 "am": "NO",
@@ -1638,7 +1644,7 @@ async  MultipleExitplaceOrder(req, res) {
                 "pf": "N",
                 "pr": stock.price,
                 "pt": "MKT",
-                "qt": quantity,
+                "qt": quantitys,
                 "rt": "DAY",
                 "tp": "0",
                 "ts": token,

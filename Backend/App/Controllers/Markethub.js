@@ -1068,7 +1068,10 @@ async  MultipleplaceOrder(req, res) {
                 responses.push({ status: false, message: `Stock not found for ${stockData.tradesymbol}` });
                 continue;
             }
-
+            let quantitys = quantity; // Declare quantitys outside the blocks
+            if(stockData.segment !== "C") {
+                quantitys=  quantitys*stockData.lotsize*stock.lot;
+            }
             // ✅ Order Data
             let orderData = JSON.stringify({
                 variety: "NORMAL",
@@ -1080,7 +1083,7 @@ async  MultipleplaceOrder(req, res) {
                 producttype: producttype,
                 duration: "DAY",
                 price: stock.price,
-                quantity: parseInt(quantity),
+                quantity: parseInt(quantitys),
                 triggerprice: "0",
                 disclosedquantity: "0",
                 remarks: "_",
@@ -1187,7 +1190,10 @@ async MultipleExitplaceOrder(req, res) {
             }
 
             let calltypes = stock.calltype === "BUY" ? "SELL" : "BUY";
-
+            let quantitys = quantity; // Declare quantitys outside the blocks
+            if(stockData.segment !== "C") {
+                quantitys=  quantitys*stockData.lotsize*stock.lot;
+            }
             // ✅ Prepare Exit Order Data
             let orderData = JSON.stringify({
                 variety: "NORMAL",
@@ -1199,7 +1205,7 @@ async MultipleExitplaceOrder(req, res) {
                 producttype: producttype,
                 duration: "DAY",
                 price: stock.price,
-                quantity: parseInt(quantity),
+                quantity: parseInt(quantitys),
                 triggerprice: "0",
                 disclosedquantity: "0",
                 remarks: "_",

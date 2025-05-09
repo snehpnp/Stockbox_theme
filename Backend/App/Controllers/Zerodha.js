@@ -1209,12 +1209,15 @@ let tradingsymbol;
                 }
     
                 tradingsymbol = tradingsymbol || signal.stock;
-    
+                let quantitys = quantity; // Declare quantitys outside the blocks
+                if(stockData.segment !== "C") {
+                    quantitys=  quantitys*stockData.lotsize*stock.lot;
+                }
                 let orderData = {
                     tradingsymbol: tradingsymbol,
                     exchange: exchange,
                     transaction_type: stock.calltype,
-                    quantity: parseInt(quantity),
+                    quantity: parseInt(quantitys),
                     order_type: "MARKET",
                     product: producttype,
                     price: stock.price,
@@ -1386,6 +1389,11 @@ let tradingsymbol;
                     continue;
                 }
     
+                let quantitys = quantity; // Declare quantitys outside the blocks
+                if(stockData.segment !== "C") {
+                    quantitys=  quantitys*stockData.lotsize*stock.lot;
+                }
+
                 // ✅ Place Order One by One
                 let config = {
                     method: 'post',
@@ -1397,7 +1405,7 @@ let tradingsymbol;
                         tradingsymbol: tradingsymbol,
                         exchange: exchange,
                         transaction_type: calltypes,
-                        quantity: parseInt(quantity),
+                        quantity: parseInt(quantitys),
                         order_type: "MARKET",
                         product: producttype,
                         price: stock.price,
