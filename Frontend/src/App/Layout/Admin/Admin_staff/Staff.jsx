@@ -182,16 +182,12 @@ const Staff = () => {
     const handleSwitchChange = async (event, id) => {
         const user_active_status = event.target.checked ? "1" : "0";
         const data = { id, status: user_active_status };
-
         try {
             const result = await showCustomAlert("confirm", "Do you want to save the changes?");
-            if (!result.isConfirmed) {
-                event.target.checked = !event.target.checked;
-                return;
-            }
+
             const response = await updateStaffstatus(data, token);
             if (response?.status) {
-                if (!event.target.checked) {
+                if (user_active_status === "0") {
                     socket.emit("deactivestaff", { id, msg: "logout" });
                 }
                 showCustomAlert("success", response.message);
@@ -199,12 +195,13 @@ const Staff = () => {
                 throw new Error(response.message);
             }
         } catch (error) {
-            event.target.checked = !event.target.checked;
+            event.target.checked = previousState;
             showCustomAlert("error", error.message, "There was an error processing your request.");
         } finally {
             getAdminclient();
         }
     };
+
 
 
     const columns = [
