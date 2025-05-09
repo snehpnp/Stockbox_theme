@@ -646,7 +646,7 @@ class Clients {
 
   async getClientWithFilter(req, res) {
     try {
-      const { status, kyc_verification, createdby, planStatus, search, add_by, page = 1 } = req.body;
+      const { status, kyc_verification, createdby, planStatus, search, add_by, fromDate, toDate, page = 1 } = req.body;
       const limit = 10;
       const skip = (parseInt(page) - 1) * parseInt(limit); // Calculate how many items to skip
       const limitValue = parseInt(limit);
@@ -670,7 +670,13 @@ class Clients {
         matchConditions.add_by = add_by;
       }
 
-
+      if (fromDate && toDate) {
+        const from = new Date(fromDate);
+        const to = new Date(toDate);
+        to.setHours(23, 59, 59, 999); // extend to end of the day
+      
+        matchConditions.createdAt = { $gte: from, $lte: to };
+      }
 
 
       if (search && search.trim() !== "") {
