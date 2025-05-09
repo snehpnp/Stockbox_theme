@@ -17,6 +17,7 @@ const Service_Modal = db.Service;
 const Requestclient_Modal = db.Requestclient;
 const Order_Modal = db.Order;
 const Addtocart_Modal = db.Addtocart;
+const Plancategory_Modal = db.Plancategory;
 
 
 
@@ -3926,7 +3927,111 @@ class Clients {
     }
   }
   
+  async getClientsByPlanExpiry(req, res) {
+    try {
+      const { dayOffset } = req.body;
   
+      // Validate dayOffset (can be -1, 0, 1, 3, etc.)
+      if (typeof dayOffset !== 'number') {
+        return res.status(400).json({ message: "dayOffset (number) is required", status: false });
+      }
+  
+      const currentDate = new Date();
+      currentDate.setHours(0, 0, 0, 0);
+  
+      const targetDateStart = new Date(currentDate);
+      targetDateStart.setDate(currentDate.getDate() + dayOffset);
+  
+      const targetDateEnd = new Date(targetDateStart);
+      targetDateEnd.setHours(23, 59, 59, 999);
+  
+      const latestSubs = await PlanSubscription_Modal.aggregate([
+        {
+          $match: {
+            del: false,
+            status: "active"
+          }
+        },
+        { $sort: { plan_end: -1 } },
+        {
+          $group: {
+            _id: {
+              client_id: "$client_id",
+              plan_category_id: "$plan_category_id"
+            },
+            latestSubscription: { $first: "$$ROOT" }
+          }
+        },
+        {
+          $replaceRoot: { newRoot: "$latestSubscription" }
+        },
+        {
+          $match: {
+            plan_end: { $gte: targetDateStart, $lte: targetDateEnd }
+          }
+        },
+        {
+          $lookup: {
+            from: "clients",  // your clients collection name (adjust if different)
+            localField: "client_id",
+            foreignField: "_id",
+            as: "client"
+          }
+        },
+        { $unwind: "$client" },
+        {
+          $lookup: {
+            from: "plancategories",  // your plancategory collection name (adjust if different)
+            localField: "plan_category_id",
+            foreignField: "_id",
+            as: "plan_category"
+          }
+        },
+        { $unwind: { path: "$plan_category", preserveNullAndEmptyArrays: true } }
+      ]);
+  
+      if (!latestSubs.length) {
+        return res.json({ message: "No subscriptions found for the given date range.", status: false });
+      }
+  
+      const clientMap = new Map();
+  
+      for (const sub of latestSubs) {
+        const clientIdStr = sub.client_id.toString();
+  
+        if (!clientMap.has(clientIdStr)) {
+          const planName = sub.plan_category ? sub.plan_category.title : 'Unknown';
+  
+          clientMap.set(clientIdStr, {
+            _id: sub.client._id,
+            FullName: sub.client.FullName || 'Unknown',
+            Email: sub.client.Email || 'Unknown',
+            PhoneNo: sub.client.PhoneNo || 'Unknown',
+            planName: planName
+          });
+        }
+      }
+  
+      const clientList = Array.from(clientMap.values());
+  
+      return res.json({
+        status: true,
+        dayOffset,
+        clientCount: clientList.length,
+        clients: clientList
+      });
+  
+    } catch (err) {
+      console.error("Error in getClientsByPlanExpiry:", err);
+      return res.status(500).json({ message: "Server Error", error: err.message, status: false });
+    }
+  }
+
+   
+  
+     
+  
+ 
 
 }
 module.exports = new Clients();

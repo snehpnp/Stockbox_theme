@@ -269,6 +269,55 @@ class Dashboard {
 
 
 
+      const dayOffsets = [-1, 0, 1];
+      const counts = {};
+  
+      for (const dayOffset of dayOffsets) {
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+  
+        const targetDateStart = new Date(currentDate);
+        targetDateStart.setDate(currentDate.getDate() + dayOffset);
+  
+        const targetDateEnd = new Date(targetDateStart);
+        targetDateEnd.setHours(23, 59, 59, 999);
+  
+        const latestSubs = await PlanSubscription_Modal.aggregate([
+          {
+            $match: {
+              del: false,
+              status: "active"
+            }
+          },
+          { $sort: { plan_end: -1 } },
+          {
+            $group: {
+              _id: {
+                client_id: "$client_id",
+                plan_category_id: "$plan_category_id"
+              },
+              latestSubscription: { $first: "$$ROOT" }
+            }
+          },
+          {
+            $replaceRoot: { newRoot: "$latestSubscription" }
+          },
+          {
+            $match: {
+              plan_end: { $gte: targetDateStart, $lte: targetDateEnd }
+            }
+          },
+          {
+            $group: {
+              _id: "$client_id"
+            }
+          }
+        ]);
+  
+        counts[dayOffset] = latestSubs.length;
+      }
+
+
 
       return res.json({
         status: true,
@@ -288,7 +337,8 @@ class Dashboard {
           inActiveFreetrial: totalInactiveClients,
           activePlanclient: activeCount,
           inActivePlanclient: inactiveCount,
-          Clientlist: result
+          Clientlist: result,
+          counts
         }
       });
 

@@ -1,7 +1,7 @@
 const router = require("express").Router()
 const { checkPermission } = require('../Middleware/permissionMiddleware');
 
-const {AddClient,getClient,updateClient,deleteClient,detailClient,statusChange,activeClient,processPayoutRequest,payoutList,freetrialList,deleteFreetrial,helpdeskList,deleteHelpdesk,myPlan,myService,deActiveClient,getClientWithFilter,freetrialListWithFilter,getClientWithFilterExcel,getDeleteClientWithFilter,clientRequest,deleteClientrequest,orderListDetail,PlanCartList,BasketCartList,getClientWithFilterwithplan,orderListDetailexport,getClientWithFilterExport,freetrialListWithFilterExport,getClientFive,getClientEmailsForMailing} = require('../Controllers/Clients')
+const {AddClient,getClient,updateClient,deleteClient,detailClient,statusChange,activeClient,processPayoutRequest,payoutList,freetrialList,deleteFreetrial,helpdeskList,deleteHelpdesk,myPlan,myService,deActiveClient,getClientWithFilter,freetrialListWithFilter,getClientWithFilterExcel,getDeleteClientWithFilter,clientRequest,deleteClientrequest,orderListDetail,PlanCartList,BasketCartList,getClientWithFilterwithplan,orderListDetailexport,getClientWithFilterExport,freetrialListWithFilterExport,getClientFive,getClientEmailsForMailing,getClientsByPlanExpiry} = require('../Controllers/Clients')
 
 
 
@@ -62,5 +62,7 @@ router.post('/client/freetriallistwithfilterexport', freetrialListWithFilterExpo
 
 
 router.post('/client/getclientemailsformailing', getClientEmailsForMailing);
+router.post('/client/getclientsbyplanexpiry', getClientsByPlanExpiry);
+
 
 module.exports = router;
