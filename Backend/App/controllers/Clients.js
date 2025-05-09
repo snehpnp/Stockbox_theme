@@ -249,7 +249,6 @@ class Clients {
         await sendEmail(mailOptions);
       });
 
-      // console.log("result", result)
       return res.json({
         status: true,
         message: "add",
@@ -923,192 +922,6 @@ class Clients {
         }
       ]);
 
-
-/*
-      const results = await Clients_Modal.aggregate([
-        {
-          $match: matchConditions // Match based on the conditions
-        },
-        {
-          $lookup: {
-            from: 'users', // The users collection name
-            let: { userId: { $toObjectId: "$add_by" } }, // Convert add_by to ObjectId
-            pipeline: [
-              { $match: { $expr: { $eq: ["$_id", "$$userId"] } } }
-            ],
-            as: 'addedByDetails'
-          }
-        },
-        {
-          $unwind: {
-            path: '$addedByDetails',
-            preserveNullAndEmptyArrays: true // Keeps clients without a matching user
-          }
-        },
-        {
-          $lookup: {
-            from: 'planmanages', // Planmanage collection
-            let: { clientId: { $toObjectId: "$_id" } }, // Convert Clients_Modal _id to ObjectId
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $eq: [{ $toObjectId: "$clientid" }, "$$clientId"] // Match clientid in planmanages
-                  }
-                }
-              }
-            ],
-            as: 'plans'
-          }
-        },
-        {
-          $lookup: {
-            from: 'services', // Assuming services collection contains the service details
-            localField: 'plans.serviceid', // Linking serviceid in planmanages
-            foreignField: '_id', // Matching _id in services
-            as: 'serviceDetails'
-          }
-        },
-        {
-          $addFields: {
-            activePlans: {
-              $filter: {
-                input: "$plans",
-                as: "plan",
-                cond: { $gte: ["$$plan.enddate", new Date()] } // Active if enddate >= today
-              }
-            },
-            expiredPlans: {
-              $filter: {
-                input: "$plans",
-                as: "plan",
-                cond: { $lt: ["$$plan.enddate", new Date()] } // Expired if enddate < today
-              }
-            },
-            plansStatus: {
-              $map: {
-                input: "$plans",
-                as: "plan",
-                in: {
-                  planId: "$$plan._id", // Include plan ID
-                  serviceName: {
-                    $switch: {
-                      branches: [
-                        {
-                          case: {
-                            $eq: [
-                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                              "66d2c3bebf7e6dc53ed07626" // Static ObjectId for "Cash"
-                            ]
-                          },
-                          then: "Cash" // If serviceid matches, return "Cash"
-                        },
-                        {
-                          case: {
-                            $eq: [
-                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                              "66dfede64a88602fbbca9b72" // Static ObjectId for "Future"
-                            ]
-                          },
-                          then: "Future" // If serviceid matches, return "Future"
-                        },
-                        {
-                          case: {
-                            $eq: [
-                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                              "66dfeef84a88602fbbca9b79" // Static ObjectId for "Option"
-                            ]
-                          },
-                          then: "Option" // If serviceid matches, return "Option"
-                        },
-                        {
-                          case: {
-                            $eq: [
-                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                              "67e12758a0a2be895da19550" // Static ObjectId for "Option"
-                            ]
-                          },
-                          then: "Strategy" // If serviceid matches, return "Option"
-                        },
-                        {
-                          case: {
-                            $eq: [
-                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                              "67e1279ba0a2be895da19551" // Static ObjectId for "Option"
-                            ]
-                          },
-                          then: "Future Strategy" // If serviceid matches, return "Option"
-                        }
-                      ],
-                      default: "Unknown Service" // Default value if no match
-                    }
-                  },
-                  status: {
-                    $cond: {
-                      if: { $gte: ["$$plan.enddate", new Date()] }, // Active if enddate >= today
-                      then: "active", // Plan is active
-                      else: "expired" // Plan is expired
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          $project: {
-            _id: 1,
-            FullName: 1,
-            Email: 1,
-            PhoneNo: 1,
-            kyc_verification: 1,
-            add_by: 1,
-            createdAt: 1,
-            updatedAt: 1,
-            plansStatus: 1, // Include the plans status
-            clientStatus: {
-              $cond: {
-                if: {
-                  $or: [
-                    { $eq: ["$plansStatus", null] }, // Check if plansStatus is null
-                    { $eq: [{ $size: "$plansStatus" }, 0] } // Check if plansStatus is an empty array
-                  ]
-                },
-                then: "NA", // Default to "NA" if plansStatus is null or empty
-                else: {
-                  $cond: {
-                    if: {
-                      $gt: [
-                        {
-                          $size: {
-                            $filter: {
-                              input: "$plansStatus",
-                              as: "plan",
-                              cond: { $eq: ["$$plan.status", "active"] }
-                            }
-                          }
-                        },
-                        0
-                      ]
-                    },
-                    then: "active", // At least one "active" plan
-                    else: "expired" // No active plans, set to "expired"
-                  }
-                }
-              }
-            }
-
-          }
-        },
-        ...(planStatus ? [{
-          $match: { "clientStatus": planStatus } // Match only clients with the specified status
-        }] : []),
-        {
-          $count: "totalCount" // Count the total number of matching clients
-        }
-      ]);
-*/
-      // Extract the total count from the result
 
 
       const results = await Clients_Modal.aggregate([
@@ -1881,7 +1694,6 @@ class Clients {
       });
 
     } catch (error) {
-      // console.log("Error fetching client details:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -1890,106 +1702,7 @@ class Clients {
     }
   }
 
-  /*
-    async updateClient(req, res) {
-      try {
-        const { id, FullName, Email, PhoneNo } = req.body;
-  
-  
-        if (!FullName) {
-          return res.json({ status: false, message: "Fullname is required" });
-        }
-  
-        if (!Email) {
-          return res.json({ status: false, message: "Email is required" });
-        } else if (!/^\S+@\S+\.\S+$/.test(Email)) {
-          return res.json({ status: false, message: "Invalid Email format" });
-        }
-  
-        if (!PhoneNo) {
-          return res.json({ status: false, message: "Phone Number is required" });
-        } else if (!/^\d{10}$/.test(PhoneNo)) {
-          return res.json({ status: false, message: "Invalid Phone Number format" });
-        }
-        // if (!password || password.length < 8 || 
-        //     !/[A-Z]/.test(password) || 
-        //     !/[a-z]/.test(password) || 
-        //     !/\d/.test(password) || 
-        //     !/[@$!%*?&#]/.test(password)) {
-        //   return res.status(400).json({ 
-        //     status: false, 
-        //     message: "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&#)" 
-        //   });
-        // }
-  
-  
-  
-  
-        const existingEmail = await Clients_Modal.findOne({ 
-          Email, 
-          _id: { $ne: id }, 
-          del: 0 // Only check active records
-        });
-        if (existingEmail) {
-          return res.status(400).json({ status: false, message: "Email is already in use" });
-        }
-        
-        const existingPhoneNo = await Clients_Modal.findOne({ 
-          PhoneNo, 
-          _id: { $ne: id }, 
-          del: 0 // Only check active records
-        });
-        if (existingPhoneNo) {
-          return res.status(400).json({ status: false, message: "Phone Number is already in use" });
-        }
-  
-  
-  
-        if (!id) {
-          return res.status(400).json({
-            status: false,
-            message: "Client ID is required",
-          });
-        }
-  
-        // Find the client by ID and update their details
-        const updatedClient = await Clients_Modal.findByIdAndUpdate(
-          id,
-          {
-            FullName,
-            Email,
-            PhoneNo,
-  
-          },
-          { new: true, runValidators: true } // Options: return the updated document and run validators
-        );
-  
-        // If the client is not found
-        if (!updatedClient) {
-          return res.status(404).json({
-            status: false,
-            message: "Client not found",
-          });
-        }
-  
-        // console.log("Updated Client:", updatedClient);
-        return res.json({
-          status: true,
-          message: "Client updated successfully",
-          data: updatedClient,
-        });
-  
-      } catch (error) {
-        // console.log("Error updating client:", error);
-        return res.status(500).json({
-          status: false,
-          message: "Server error",
-          error: error.message,
-        });
-      }
-    }
-  */
-
+ 
 
   async updateClient(req, res) {
     try {
@@ -2097,7 +1810,6 @@ class Clients {
         });
       }
 
-      //  const deletedClient = await Clients_Modal.findByIdAndDelete(id);
       const deletedClient = await Clients_Modal.findByIdAndUpdate(
         id,
         { del: 1 }, // Set del to true
@@ -2110,14 +1822,12 @@ class Clients {
         });
       }
 
-      // console.log("Deleted Client:", deletedClient);
       return res.json({
         status: true,
         message: "Client deleted successfully",
         data: deletedClient,
       });
     } catch (error) {
-      // console.log("Error deleting client:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -2160,7 +1870,6 @@ class Clients {
       });
 
     } catch (error) {
-      // console.log("Error updating status:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -2228,9 +1937,7 @@ class Clients {
           await sendFCMNotification(notificationTitle, notificationBody, tokens, "payout");
 
         }
-        // console.log('Notifications sent successfully');
       } catch (error) {
-        // console.error('Error sending notifications:', error);
       }
 
       return res.json({
@@ -2296,7 +2003,6 @@ class Clients {
       });
 
     } catch (error) {
-      console.error("Error during aggregation:", error); // Log the error
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -2368,7 +2074,6 @@ class Clients {
       });
 
     } catch (error) {
-      // console.error("Error fetching free trials:", error); // Log the error for debugging
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -2500,7 +2205,6 @@ class Clients {
       });
 
     } catch (error) {
-      // console.error("Error fetching free trials:", error); // Log the error for debugging
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -2541,7 +2245,6 @@ class Clients {
         data: deletedFreetrial,
       });
     } catch (error) {
-      // console.error("Error deleting freetrial:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -2590,7 +2293,6 @@ class Clients {
       });
 
     } catch (error) {
-      // console.error("Error fetching helpdesk:", error); // Log the error for debugging
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -2607,7 +2309,6 @@ class Clients {
         });
       }
 
-      //  const deletedClient = await Clients_Modal.findByIdAndDelete(id);
       const deletedHelpdesk = await Helpdesk_Modal.findByIdAndUpdate(
         id,
         { del: true }, // Set del to true
@@ -2620,14 +2321,12 @@ class Clients {
         });
       }
 
-      // console.log("Deleted Helpdesk:", deletedHelpdesk);
       return res.json({
         status: true,
         message: "Helpdesk deleted successfully",
         data: deletedHelpdesk,
       });
     } catch (error) {
-      // console.error("Error deleting Helpdesk:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -2678,7 +2377,6 @@ class Clients {
       });
 
     } catch (error) {
-      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -2737,7 +2435,6 @@ class Clients {
       });
 
     } catch (error) {
-      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -2745,7 +2442,6 @@ class Clients {
 
   async clientRequest(req, res) {
     try {
-      // Destructure query params
       const { page = 1, search } = req.body;
       const limit = 10;
       const skip = (page - 1) * limit;
@@ -2930,125 +2626,10 @@ class Clients {
       });
   
     } catch (error) {
-      console.error(error);
       return res.status(500).json({ message: 'Error retrieving Requestclient data', error });
     }
   }
   
-
-  // async clientRequest(req, res) {
-  //   try {
-  //     // Destructure query params
-  //     const { page = 1, search } = req.body;
-  //     const limit = 10;
-  //     const skip = (page - 1) * limit;
-  //     const clientSearchQuery = new RegExp(search, 'i');
-  //     const requestclients = await Requestclient_Modal.aggregate([
-  //       {
-  //         $match: {
-  //           del: false, // Filter out deleted records
-  //         },
-  //       },
-  //       {
-  //         $lookup: {
-  //           from: 'clients',
-  //           localField: 'clientid',
-  //           foreignField: '_id',
-  //           as: 'clientDetails'
-  //         }
-  //       },
-  //       {
-  //         $unwind: {
-  //           path: '$clientDetails',
-  //           preserveNullAndEmptyArrays: true
-  //         }
-  //       },
-  //       {
-  //         $match: {
-  //           $or: [
-  //             { 'clientDetails.FullName': clientSearchQuery },
-  //             { 'clientDetails.Email': clientSearchQuery },
-  //             { 'clientDetails.PhoneNo': clientSearchQuery }
-  //           ]
-  //         }
-  //       },
-  //       // Pagination
-  //       { $skip: skip },
-  //       { $limit: parseInt(limit) },
-  //       // Optionally, you can project specific fields to return only what you need
-  //       {
-  //         $project: {
-  //           _id: 1,
-  //           clientid: 1,
-  //           type: 1,
-  //           status: 1,
-  //           del: 1,
-  //           created_at: 1,
-  //           updated_at: 1,
-  //           FullName: "$clientDetails.FullName", // clientDetails ke andar se FullName le kar root pe
-  //           Email: "$clientDetails.Email",       // clientDetails ke andar se Email le kar root pe
-  //           PhoneNo: "$clientDetails.PhoneNo"
-  //         }
-  //       }
-  //     ]);
-
-  //     // Get the total count of matching records for pagination
-  //     const totalCount = await Requestclient_Modal.aggregate([
-  //       {
-  //         $match: {
-  //           del: false, // Filter out deleted records
-  //         },
-  //       },
-  //       {
-  //         $lookup: {
-  //           from: 'clients',
-  //           localField: 'clientid',
-  //           foreignField: '_id',
-  //           as: 'clientDetails'
-  //         }
-  //       },
-  //       {
-  //         $unwind: { path: '$clientDetails', preserveNullAndEmptyArrays: true }
-  //       },
-  //       {
-  //         $match: {
-  //           $or: [
-  //             { 'clientDetails.name': clientSearchQuery },
-  //             { 'clientDetails.email': clientSearchQuery },
-  //             { 'clientDetails.phone': clientSearchQuery }
-  //           ]
-  //         }
-  //       },
-  //       { $count: 'totalCount' }
-  //     ]);
-
-  //     const totalItems = totalCount.length ? totalCount[0].totalCount : 0;
-  //     const totalPages = Math.ceil(totalItems / limit);
-
-  //     // Return paginated result
-
-  //     return res.json({
-  //       status: true,
-  //       message: "retrieved successfully",
-  //       data: requestclients,
-  //       pagination: {
-  //         total: totalItems,
-  //         page: parseInt(page), // Current page
-  //         limit: parseInt(limit), // Items per page
-  //         totalPages // Total number of pages
-  //       }
-  //     });
-
-
-
-  //   } catch (error) {
-  //     console.error(error);
-  //     return res.status(500).json({ message: 'Error retrieving Requestclient data', error });
-  //   }
-
-  // }
-
-
   async deleteClientrequest(req, res) {
     try {
       const { id } = req.params; // Extract ID from URL params
@@ -3060,7 +2641,6 @@ class Clients {
         });
       }
 
-      //  const deletedClient = await Clients_Modal.findByIdAndDelete(id);
       const deletedClientrequest = await Requestclient_Modal.findByIdAndUpdate(
         id,
         { del: true }, // Set del to true
@@ -3073,14 +2653,12 @@ class Clients {
         });
       }
 
-      // console.log("Deleted Client:", deletedClient);
       return res.json({
         status: true,
         message: "deleted successfully",
         data: deletedClientrequest,
       });
     } catch (error) {
-      // console.log("Error deleting client:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -3456,7 +3034,6 @@ class Clients {
       });
   
     } catch (error) {
-      console.error('Error retrieving cart items:', error);
       return res.status(500).json({
         status: false,
         message: 'Something went wrong while retrieving cart items.',
@@ -3502,7 +3079,6 @@ class Clients {
       });
   
     } catch (error) {
-      console.error('Error retrieving cart items:', error);
       return res.status(500).json({
         status: false,
         message: 'Something went wrong while retrieving cart items.',
@@ -3786,193 +3362,6 @@ class Clients {
           $limit: limitValue // Pagination: Limit the result to 'limit' items
         }
       ]);
-
-
-/*
-      const results = await Clients_Modal.aggregate([
-        {
-          $match: matchConditions // Match based on the conditions
-        },
-        {
-          $lookup: {
-            from: 'users', // The users collection name
-            let: { userId: { $toObjectId: "$add_by" } }, // Convert add_by to ObjectId
-            pipeline: [
-              { $match: { $expr: { $eq: ["$_id", "$$userId"] } } }
-            ],
-            as: 'addedByDetails'
-          }
-        },
-        {
-          $unwind: {
-            path: '$addedByDetails',
-            preserveNullAndEmptyArrays: true // Keeps clients without a matching user
-          }
-        },
-        {
-          $lookup: {
-            from: 'planmanages', // Planmanage collection
-            let: { clientId: { $toObjectId: "$_id" } }, // Convert Clients_Modal _id to ObjectId
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $eq: [{ $toObjectId: "$clientid" }, "$$clientId"] // Match clientid in planmanages
-                  }
-                }
-              }
-            ],
-            as: 'plans'
-          }
-        },
-        {
-          $lookup: {
-            from: 'services', // Assuming services collection contains the service details
-            localField: 'plans.serviceid', // Linking serviceid in planmanages
-            foreignField: '_id', // Matching _id in services
-            as: 'serviceDetails'
-          }
-        },
-        {
-          $addFields: {
-            activePlans: {
-              $filter: {
-                input: "$plans",
-                as: "plan",
-                cond: { $gte: ["$$plan.enddate", new Date()] } // Active if enddate >= today
-              }
-            },
-            expiredPlans: {
-              $filter: {
-                input: "$plans",
-                as: "plan",
-                cond: { $lt: ["$$plan.enddate", new Date()] } // Expired if enddate < today
-              }
-            },
-            plansStatus: {
-              $map: {
-                input: "$plans",
-                as: "plan",
-                in: {
-                  planId: "$$plan._id", // Include plan ID
-                  serviceName: {
-                    $switch: {
-                      branches: [
-                        {
-                          case: {
-                            $eq: [
-                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                              "66d2c3bebf7e6dc53ed07626" // Static ObjectId for "Cash"
-                            ]
-                          },
-                          then: "Cash" // If serviceid matches, return "Cash"
-                        },
-                        {
-                          case: {
-                            $eq: [
-                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                              "66dfede64a88602fbbca9b72" // Static ObjectId for "Future"
-                            ]
-                          },
-                          then: "Future" // If serviceid matches, return "Future"
-                        },
-                        {
-                          case: {
-                            $eq: [
-                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                              "66dfeef84a88602fbbca9b79" // Static ObjectId for "Option"
-                            ]
-                          },
-                          then: "Option" // If serviceid matches, return "Option"
-                        },
-                        {
-                          case: {
-                            $eq: [
-                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                              "67e12758a0a2be895da19550" // Static ObjectId for "Option"
-                            ]
-                          },
-                          then: "Strategy" // If serviceid matches, return "Option"
-                        },
-                        {
-                          case: {
-                            $eq: [
-                              { $toString: "$$plan.serviceid" }, // Convert serviceid to string for comparison
-                              "67e1279ba0a2be895da19551" // Static ObjectId for "Option"
-                            ]
-                          },
-                          then: "Future Strategy" // If serviceid matches, return "Option"
-                        }
-                      ],
-                      default: "Unknown Service" // Default value if no match
-                    }
-                  },
-                  status: {
-                    $cond: {
-                      if: { $gte: ["$$plan.enddate", new Date()] }, // Active if enddate >= today
-                      then: "active", // Plan is active
-                      else: "expired" // Plan is expired
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          $project: {
-            _id: 1,
-            FullName: 1,
-            Email: 1,
-            PhoneNo: 1,
-            kyc_verification: 1,
-            add_by: 1,
-            createdAt: 1,
-            updatedAt: 1,
-            plansStatus: 1, // Include the plans status
-            clientStatus: {
-              $cond: {
-                if: {
-                  $or: [
-                    { $eq: ["$plansStatus", null] }, // Check if plansStatus is null
-                    { $eq: [{ $size: "$plansStatus" }, 0] } // Check if plansStatus is an empty array
-                  ]
-                },
-                then: "NA", // Default to "NA" if plansStatus is null or empty
-                else: {
-                  $cond: {
-                    if: {
-                      $gt: [
-                        {
-                          $size: {
-                            $filter: {
-                              input: "$plansStatus",
-                              as: "plan",
-                              cond: { $eq: ["$$plan.status", "active"] }
-                            }
-                          }
-                        },
-                        0
-                      ]
-                    },
-                    then: "active", // At least one "active" plan
-                    else: "expired" // No active plans, set to "expired"
-                  }
-                }
-              }
-            }
-
-          }
-        },
-        ...(planStatus ? [{
-          $match: { "clientStatus": planStatus } // Match only clients with the specified status
-        }] : []),
-        {
-          $count: "totalCount" // Count the total number of matching clients
-        }
-      ]);
-*/
-      // Extract the total count from the result
 
 
       const results = await Clients_Modal.aggregate([
@@ -4415,8 +3804,96 @@ class Clients {
       });
 
     } catch (error) {
-      // console.error("Error fetching free trials:", error); // Log the error for debugging
       return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
+
+
+  async getClientEmailsForMailing(req, res) {
+    try {
+      const { clientType, selectedPlanId } = req.body;
+      const matchConditions = { del: 0 };
+  
+      // Set up date for active/expired checking
+      const today = new Date();
+  
+      // Base match for clients
+      let clientStatusMatch = {};
+  
+      if (clientType === "active") {
+        clientStatusMatch = {
+          plans: {
+            $elemMatch: { enddate: { $gte: today } }
+          }
+        };
+      } else if (clientType === "expired") {
+        clientStatusMatch = {
+          plans: {
+            $elemMatch: { enddate: { $lt: today } }
+          }
+        };
+      } else if (clientType === "nonsubscriber") {
+        clientStatusMatch = {
+          $or: [
+            { plans: { $exists: false } },
+            { plans: { $size: 0 } }
+          ]
+        };
+      }
+      // For 'all', we skip extra match
+  
+      const aggregationPipeline = [
+        { $match: matchConditions },
+        {
+          $lookup: {
+            from: 'planmanages',
+            let: { clientId: { $toObjectId: "$_id" } },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: [{ $toObjectId: "$clientid" }, "$$clientId"]
+                  }
+                }
+              }
+            ],
+            as: 'plans'
+          }
+        },
+        {
+          $match: clientType === "all" ? {} : clientStatusMatch
+        },
+        ...(selectedPlanId ? [
+          {
+            $match: {
+              "plans.serviceid": { $eq: selectedPlanId }
+            }
+          }
+        ] : []),
+        {
+          $project: {
+            _id: 1,
+            FullName: 1,
+            Email: 1
+          }
+        }
+      ];
+  
+      const clients = await Clients_Modal.aggregate(aggregationPipeline);
+  
+      return res.json({
+        status: true,
+        message: "Client list fetched for email sending",
+        data: clients
+      });
+  
+    } catch (error) {
+      console.error("Error in getClientListForEmail:", error);
+      return res.json({
+        status: false,
+        message: "Server error",
+        data: []
+      });
     }
   }
 

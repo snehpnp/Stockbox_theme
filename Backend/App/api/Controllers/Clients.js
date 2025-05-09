@@ -476,20 +476,7 @@ class Clients {
         });
       }
 
-      // if (!confirmPassword) {
-      //   return res.status(400).json({
-      //     status: false,
-      //     message: "Please confirm your password",
-      //   });
-      // }
-
-      //if (newPassword !== confirmPassword) {
-      //  return res.status(400).json({
-      //    status: false,
-      //    message: "New password and confirm password do not match",
-      //  });
-      // }
-
+     
       // Find the user by reset token and check if the token is valid
       const client = await Clients_Modal.findOne({
         forgotPasswordToken: resetToken,
@@ -660,7 +647,6 @@ class Clients {
       );
 
       if (!deletedClient) {
-        console.error("No document found with this ID.");
         return res.status(404).json({
           status: false,
           message: "Client not found",
@@ -1629,7 +1615,6 @@ if (mailtemplate) {
       });
 
     } catch (error) {
-      // console.error("Error fetching helpdesk:", error); // Log the error for debugging
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -1675,7 +1660,6 @@ if (mailtemplate) {
 
       fs.readFile(templatePath, 'utf8', async (err, htmlTemplate) => {
         if (err) {
-          // console.error('Error reading HTML template:', err);
           return;
         }
 
@@ -1730,7 +1714,6 @@ else {
       });
     }
     } catch (error) {
-      // console.error("Error fetching :", error); // Log the error for debugging
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -1990,7 +1973,6 @@ else {
         data: ordersWithSignals
       });
     } catch (error) {
-    //  console.error("Error in getClientSignalOrders:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -2056,7 +2038,6 @@ else {
       });
   
     } catch (error) {
-   //   console.error("getClientTickets error:", error);
       return res.json({
         status: false,
         message: "Server Error",
@@ -2112,7 +2093,6 @@ else {
       });
   
     } catch (error) {
-   //   console.error("getTicketDetailById error:", error);
       return res.json({
         status: false,
         message: "Server Error",
@@ -2188,7 +2168,6 @@ else {
               });
       
           } catch (error) {
-              // console.log("Server error:", error);
               return res.json({ status: false, message: "Server error", data: [] });
           }
       }
@@ -2264,7 +2243,6 @@ else {
           });
       
         } catch (error) {
-      //    console.error("Add Ticket Error:", error);
           return res.json({
             status: false,
             message: "Server error",
@@ -2299,7 +2277,6 @@ else {
             return res.status(201).json({ success: true, message: "New UTM source added", data: newEntry });
           }
         } catch (error) {
-          console.error("Error in handleUtmSource:", error);
           return res.status(500).json({ success: false, message: "Server Error" });
         }
       }

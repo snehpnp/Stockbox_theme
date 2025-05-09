@@ -710,20 +710,16 @@ class List {
 
       if (license) {
         license.noofclient += monthsToAdd;
-        console.log('Month found, updating noofclient.', monthsToAdd);
       } else {
         license = new License_Modal({
           month: targetMonth,
           noofclient: monthsToAdd
         });
-        console.log('Month not found, inserting new record.');
       }
 
       try {
         await license.save();
-        console.log('License updated successfully.');
       } catch (error) {
-        // console.error('Error updating license:', error);
       }
 
 
@@ -819,7 +815,6 @@ class List {
             sender.wamount += senderamount;
             await sender.save();
           } else {
-            // console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
           }
 
         }
@@ -848,7 +843,6 @@ class List {
             sender.wamount += senderamount;
             await sender.save();
           } else {
-            // console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
           }
         }
       } else {
@@ -873,14 +867,6 @@ class List {
         await client.save();
       }
 
-      // if (settings.invoicestatus == 1) {
-        // const length = 6;
-        // const digits = '0123456789';
-        // let orderNumber = '';
-
-        // for (let i = 0; i < length; i++) {
-        //   orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
-        // }
 
         const invoicePrefix = settings.invoice;
         const invoiceStart = settings.invoicestart; 
@@ -1041,7 +1027,6 @@ if (pdfresponse.status === true) {
 
         fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
           if (err) {
-            // console.error('Error reading HTML template:', err);
             return;
           }
 
@@ -1084,7 +1069,6 @@ if (pdfresponse.status === true) {
       });
 
     } catch (error) {
-      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -1168,15 +1152,7 @@ if (pdfresponse.status === true) {
       // Save to the database
       const savedSubscription = await newSubscription.save();
 
-      // if (settings.invoicestatus == 1) {
-
-        // const length = 6;
-        // const digits = '0123456789';
-        // let orderNumber = '';
-
-        // for (let i = 0; i < length; i++) {
-        //   orderNumber += digits.charAt(Math.floor(Math.random() * digits.length));
-        // }
+    
 
         const invoicePrefix = settings.invoice;
         const invoiceStart = settings.invoicestart; 
@@ -1335,7 +1311,6 @@ if (pdfresponse.status === true) {
 
         fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
           if (err) {
-            // console.error('Error reading HTML template:', err);
             return;
           }
 
@@ -1590,7 +1565,6 @@ if (pdfresponse.status === true) {
 
       const { } = req.body;
 
-      //const result = await Coupon_Modal.find()
 
       const startOfToday = new Date();
       startOfToday.setHours(0, 0, 0, 0);
@@ -1652,7 +1626,6 @@ if (pdfresponse.status === true) {
 
       const { } = req.body;
 
-      //const result = await Coupon_Modal.find()
 
       const result = await Signal_Modal.find({ del: 0 });
 
@@ -1874,44 +1847,7 @@ if (pdfresponse.status === true) {
       const startDates = plans.map(plan => new Date(plan.startdate));
       const endDates = plans.map(plan => new Date(plan.enddate));
 
-      // const query = {
-      //   service: service_id,
-      //   close_status: false,
-      //   created_at: {
-      //     $gte: startDates[0], // Assuming all plans have the same startdate
-      //     $lte: endDates[0] // Assuming all plans have the same enddate
-      //   }
-      // };
-
-/*
-      const query = {
-        service: service_id,
-        close_status: false,
-      };
-
-      // Check if deliverystatus is true
-      if (client.deliverystatus === true) {
-        query.created_at = {
-          $lte: endDates[0], // Only keep the end date condition
-        };
-      } else {
-        query.created_at = {
-          $gte: startDates[0], // Include both start and end date conditions
-          $lte: endDates[0],
-        };
-      }
-
-
-      if (search && search.trim() !== '') {
-        query.$or = [
-          { tradesymbol: { $regex: search, $options: 'i' } },
-          { calltype: { $regex: search, $options: 'i' } },
-          { price: { $regex: search, $options: 'i' } },
-          { closeprice: { $regex: search, $options: 'i' } }
-        ];
-      }
-*/
-
+      
 
       let query = {
         service: service_id,
@@ -1955,16 +1891,7 @@ if (pdfresponse.status === true) {
         .skip(skip)
         .limit(limitValue)
         .lean();
-      /*
-         const signalsWithReportUrls = signals.map(signal => {
-      
-          return {
-              ...signal,
-              report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null 
-          };
-      });
-      */
-
+    
 
       const totalSignals = await Signal_Modal.countDocuments(query);
 
@@ -1974,40 +1901,6 @@ if (pdfresponse.status === true) {
           clientid: client_id,
           signalid: signal._id
         }).lean();
-
-
-        /*
-        
-        let lot = 0;
-        let tradesymbol ="";
-        if(signal.segment != "C")
-        {
-          if(signal.segment == "F")
-            {
-          const lots = await Stock_Modal.findOne({
-            segment: signal.segment,
-            expiry: signal.expirydate,
-            symbol: signal.stock
-          });
-          lot = lots.lotsize;
-          tradesymbol = lots.tradesymbol;
-        }
-        else
-        {
-          const query = Stock_Modal.findOne({
-            segment: signal.segment,
-            expiry: signal.expirydate,
-            symbol: signal.stock,
-            strike: signal.strikeprice,
-           
-          });
-          
-          const lots = await query.exec();
-          lot = lots.lotsize;
-          tradesymbol = lots.tradesymbol;
-        }
-        }
-        */
 
 
 
@@ -2036,7 +1929,6 @@ if (pdfresponse.status === true) {
       });
 
     } catch (error) {
-      // console.error("Error fetching signals:", error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -2064,48 +1956,7 @@ if (pdfresponse.status === true) {
       const startDates = plans.map(plan => new Date(plan.startdate));
       const endDates = plans.map(plan => new Date(plan.enddate));
 
-      // const query = {
-      //   service: service_id,
-      //   close_status: true,
-      //   created_at: {
-      //     $gte: startDates[0], // Assuming all plans have the same startdate
-      //     $lte: endDates[0] // Assuming all plans have the same enddate
-      //   }
-      // };
-
-
-/*
-
-      const query = {
-        service: service_id,
-        close_status: true,
-        closedate: {
-          $gte: startDates[0],
-        }
-      };
-
-      // Check if deliverystatus is true
-      if (client.deliverystatus === true) {
-        query.created_at = {
-          $lte: endDates[0], // Only keep the end date condition
-        };
-      } else {
-        query.created_at = {
-          $gte: startDates[0], // Include both start and end date conditions
-          $lte: endDates[0],
-        };
-      }
      
-      if (search && search.trim() !== '') {
-        query.$or = [
-          { tradesymbol: { $regex: search, $options: 'i' } },
-          { calltype: { $regex: search, $options: 'i' } },
-          { price: { $regex: search, $options: 'i' } },
-          { closeprice: { $regex: search, $options: 'i' } }
-        ];
-      }
-
-*/
 
 
       let query = {
@@ -2149,21 +2000,12 @@ if (pdfresponse.status === true) {
 
       const baseUrl = `https://${req.headers.host}`; // Construct the base URL
 
-      // const signals = await Signal_Modal.find(query).lean(); // Use lean() to return plain JavaScript objects
       const signals = await Signal_Modal.find(query)
         .sort({ closedate: -1 })
         .skip(skip)
         .limit(limitValue)
         .lean();
-      /*
-       const signalsWithReportUrls = signals.map(signal => {
       
-        return {
-            ...signal,
-            report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null 
-        };
-      });
-      */
 
       const totalSignals = await Signal_Modal.countDocuments(query);
 
@@ -2177,38 +2019,7 @@ if (pdfresponse.status === true) {
 
 
 
-        /*
-        
-        let lot = 0;
-        let tradesymbol ="";
-        if(signal.segment != "C")
-        {
-        if(signal.segment == "F")
-          {
-        const lots = await Stock_Modal.findOne({
-          segment: signal.segment,
-          expiry: signal.expirydate,
-          symbol: signal.stock
-        });
-        lot = lots.lotsize;
-        tradesymbol = lots.tradesymbol;
-        }
-        else
-        {
-        const query = Stock_Modal.findOne({
-          segment: signal.segment,
-          expiry: signal.expirydate,
-          symbol: signal.stock,
-          strike: signal.strikeprice,
-         
-        });
-        
-        const lots = await query.exec();
-        lot = lots.lotsize;
-        tradesymbol = lots.tradesymbol;
-        }
-        }
-        */
+      
 
         const orders = await Order_Modal.find({
           clientid: client_id,
@@ -2273,14 +2084,7 @@ if (pdfresponse.status === true) {
       const startDates = plans.map(plan => new Date(plan.startdate));
       const endDates = plans.map(plan => new Date(plan.enddate));
 
-      // const query = {
-      //   service: service_id,
-      //   close_status: true,
-      //   created_at: {
-      //     $gte: startDates[0], // Assuming all plans have the same startdate
-      //     $lte: endDates[0] // Assuming all plans have the same enddate
-      //   }
-      // };
+      
 
 
       const query = {
@@ -2323,7 +2127,6 @@ if (pdfresponse.status === true) {
       });
 
     } catch (error) {
-      // console.error("Error fetching signals:", error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -2340,21 +2143,7 @@ if (pdfresponse.status === true) {
       const limitValue = parseInt(limit);
 
 
-    /*  const query = {
-        service: service_id,
-        close_status: true,
-        closeprice: { $ne: 0 }
-      };
-
-      if (search && search.trim() !== '') {
-        query.$or = [
-          { tradesymbol: { $regex: search, $options: 'i' } },
-          { calltype: { $regex: search, $options: 'i' } },
-          { price: { $regex: search, $options: 'i' } },
-          { closeprice: { $regex: search, $options: 'i' } }
-        ];
-      }
-      */
+   
       let query = {
         service: service_id,
         close_status: true,
@@ -2413,7 +2202,6 @@ if (pdfresponse.status === true) {
         }
       });
     } catch (error) {
-      // console.error("Error fetching signals:", error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -2725,7 +2513,6 @@ if (pdfresponse.status === true) {
         data: result
       });
     } catch (error) {
-      // console.error("Error retrieving baskets:", error);
       res.status(500).json({
         status: false,
         message: "An error occurred while retrieving the baskets."
@@ -2871,9 +2658,7 @@ if (pdfresponse.status === true) {
         data: result, // Return the aggregated result
       });
     } catch (error) {
-      // console.error("Error fetching basket stock:", error);
 
-      // Handle any server errors gracefully
       return res.json({
         status: false,
         message: "Server error",
@@ -2989,9 +2774,7 @@ if (pdfresponse.status === true) {
         data: latestVersionStock,
       });
     } catch (error) {
-      // console.error("Error fetching basket stock:", error);
 
-      // Handle any server errors gracefully
       return res.json({
         status: false,
         message: "Server error",
@@ -3139,9 +2922,7 @@ if (pdfresponse.status === true) {
 
 
     } catch (error) {
-      // console.error("Error fetching basket stock:", error);
 
-      // Handle any server errors gracefully
       return res.json({
         status: false,
         message: "Server error",
@@ -3202,7 +2983,6 @@ if (pdfresponse.status === true) {
         data: orders,
       });
     } catch (error) {
-      // console.error("Error fetching orders:", error);
       return res.status(500).json({
         status: false,
         message: "Error fetching orders",
@@ -3495,11 +3275,7 @@ if (pdfresponse.status === true) {
 
       const freetrialDays = parseInt(settings.freetrial, 10); // or you can use +settings.freetrial
 
-      // const start = new Date();
-      // const end = new Date(start);
-      // end.setDate(start.getDate() + freetrialDays);  // Add 7 days to the start date
-      // end.setHours(23, 59, 59, 999);
-
+   
 
 const start = new Date(); // Current date
 const end = new Date(start);
@@ -3562,7 +3338,6 @@ end.setHours(23, 59, 59, 999);
       });
 
     } catch (error) {
-      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -3603,9 +3378,7 @@ end.setHours(23, 59, 59, 999);
       };
 
       if (activePlans.length > 0) {
-        // Active clients see:
-        //  • broadcasts for their subscribed services
-        //  • plus any broadcast tagged to service "All"
+      
         query.$or = [
           {
             type: 'active',
@@ -3613,9 +3386,7 @@ end.setHours(23, 59, 59, 999);
           }
         ];
       } else if (expiredPlans.length > 0) {
-        // Expired clients see:
-        //  • broadcasts for their expired services
-        //  • plus any broadcast tagged to service "All"
+       
         query.$or = [
           {
             type: 'expired',
@@ -3652,7 +3423,6 @@ end.setHours(23, 59, 59, 999);
       return res.status(200).json({ status: true, data: uniqueBroadcasts });
 
     } catch (error) {
-      // console.error("Error fetching broadcasts:", error);
       return res.status(500).json({ status: false, message: "Internal server error" });
     }
   }
@@ -3663,7 +3433,6 @@ end.setHours(23, 59, 59, 999);
     try {
       const { id } = req.params;
 
-      // Validate input
       if (!id) {
         return res.status(400).json({ status: false, message: 'Client ID is required' });
       }
@@ -3689,7 +3458,6 @@ end.setHours(23, 59, 59, 999);
       });
 
     } catch (error) {
-      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -3723,7 +3491,6 @@ end.setHours(23, 59, 59, 999);
       });
 
     } catch (error) {
-      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -3936,7 +3703,6 @@ let avgreturnpermonthpercent = 0;
       });
 
     } catch (error) {
-      // console.error("Error fetching signal details:", error);
 
       return res.status(500).json({
         status: false,
@@ -3954,7 +3720,6 @@ let avgreturnpermonthpercent = 0;
     try {
       const { id } = req.params;
 
-      // Validate input
       if (!id) {
         return res.status(400).json({ status: false, message: 'Client ID is required' });
       }
@@ -3995,11 +3760,9 @@ let avgreturnpermonthpercent = 0;
         }
       ]);
 
-      // Debug output for troubleshooting
 
 
 
-      // Respond with the retrieved subscriptions and client details
       return res.json({
         status: true,
         message: "Subscriptions and client details retrieved successfully",
@@ -4007,152 +3770,12 @@ let avgreturnpermonthpercent = 0;
       });
 
     } catch (error) {
-      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
 
 
 
-
-
-  /*
-    async Notification(req, res) {
-      try {
-        const { id } = req.params;
-        const { page = 1 } = req.query; 
-        let limit = 10;
-  
-        const today = new Date();
-  
-  
-  
-        const client = await Clients_Modal.findById(id).select('createdAt');
-        if (!client) {
-          return res.status(404).json({ status: false, message: "Client not found" });
-        }
-        const clientCreatedAt = client.createdAt;
-  
-        const activePlans = await Planmanage.find({
-          clientid: id,
-        startdate: { $lte: today },
-        enddate: { $gte: today }
-        }).select('serviceid');
-  
-  
-  
-        
-        const activeServiceIds = activePlans.map(plan => plan.serviceid);
-  
-        const result = await Notification_Modal.find({
-          createdAt: { $gte: clientCreatedAt }, 
-          $or: [
-            { clientid: id },
-            {
-              clientid: null,
-              $or: [
-                {
-                  type: { $in: ['close signal', 'open signal'] },
-                  segmentid: { $in: activeServiceIds } 
-                },
-                { type: { $nin: ['close signal', 'open signal'] } }
-              ]
-            },
-            {
-              clienttype: {
-                $in: [
-                  'active', 
-                  'expired', 
-                  'no subscribe', 
-                  'all'
-                ]
-              },
-              $or: [
-                { clienttype: 'active', segmentid: { $in: activeServiceIds } },
-                {
-                  clienttype: 'expired',
-                  segmentid: {
-                    $in: await Planmanage.find({
-                      clientid: id,
-                      startdate: { $lte: today },
-                      enddate: { $gte: today } 
-                    }).distinct('serviceid')
-                  }
-                },
-                {
-                  clienttype: 'nonsubscribe',
-                  segmentid: {
-                    $nin: await Planmanage.find({ clientid: id }).distinct('serviceid')
-                  }
-                },
-                { clienttype: 'all' }
-              ]
-            }
-          ]
-        })
-          .sort({ createdAt: -1 })
-          .skip((page - 1) * limit) 
-          .limit(parseInt(limit)); 
-  
-        const totalCount = await Notification_Modal.countDocuments({
-          createdAt: { $gte: clientCreatedAt }, 
-          $or: [
-            { clientid: id },
-            {
-              clientid: null,
-              $or: [
-                {
-                  type: { $in: ['close signal', 'open signal'] },
-                  segmentid: { $in: activeServiceIds }
-                },
-                { type: { $nin: ['close signal', 'open signal'] } }
-              ]
-            },
-            {
-              clienttype: {
-                $in: ['active', 'expired', 'no subscribe', 'all']
-              },
-              $or: [
-                { clienttype: 'active', segmentid: { $in: activeServiceIds } },
-                {
-                  clienttype: 'expired',
-                  segmentid: {
-                    $in: await Planmanage.find({
-                      clientid: id,
-                      enddate: { $lt: today }
-                    }).distinct('serviceid')
-                  }
-                },
-                {
-                  clienttype: 'nonsubscribe',
-                  segmentid: {
-                    $nin: await Planmanage.find({ clientid: id }).distinct('serviceid')
-                  }
-                },
-                { clienttype: 'all' }
-              ]
-            }
-          ]
-        });
-  
-        return res.json({
-          status: true,
-          message: "get",
-          data: result,
-          pagination: {
-            total: totalCount,
-            page: parseInt(page),
-            limit: parseInt(limit),
-            totalPages: Math.ceil(totalCount / limit)
-          }
-        });
-  
-      } catch (error) {
-        return res.json({ status: false, message: "Server error", data: [] });
-      }
-    }
-  
-  */
 
   async Notification(req, res) {
     try {
@@ -4168,12 +3791,7 @@ let avgreturnpermonthpercent = 0;
       }
       const clientCreatedAt = client.createdAt;
 
-      // Fetch active plans
-      // const activePlans = await Planmanage.find({
-      //   clientid: id,
-      //   startdate: { $lte: today },
-      //   enddate: { $gte: today }
-      // }).distinct('serviceid');
+      
 
       const activePlansData = await Planmanage.find({
         clientid: id,
@@ -4200,11 +3818,7 @@ let avgreturnpermonthpercent = 0;
       // Determine if client has no active or expired plans
       const noPlans = activePlans.length === 0 && expiredPlans.length === 0;
 
-      // Logging plan information for debugging
-      // console.log("Active Plans:", activePlans);
-      // console.log("Expired Plans:", expiredPlans);
-      // console.log("All Plans (No Subscription):", allPlans);
-
+     
       // Construct the query dynamically
       const queryConditions = {
         createdAt: { $gte: clientCreatedAt }, // Notifications created after client creation date
@@ -4274,7 +3888,6 @@ let avgreturnpermonthpercent = 0;
         }
       });
     } catch (error) {
-      // console.error(error);
       return res.status(500).json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -4390,7 +4003,6 @@ async placeOrder(req, res) {
       // ✅ Step 2: Get only latest version's stocks
       const existingStocks = await Basketstock_Modal.find({ basket_id, version: latestVersion, status: 1 });
       // Get stocks for the basket
-      // const existingStocks = await Basketstock_Modal.find({ basket_id }).sort({ version: -1 });
 
       const version = existingStocks.length > 0 ? existingStocks[0].version : 1;
 
@@ -4609,7 +4221,6 @@ i++;
                   calltype: "BUY",
                   howmanytimebuy // Increment version for the new stock order
                 });
-// console.log("respo",respo);
 
              
 
@@ -4977,7 +4588,6 @@ i++;
           }
 
         } catch (innerError) {
-          // console.error(`Error processing stock ${tradesymbol}:`, innerError);
           continue; // Skip this stock in case of an error
         }
       }
@@ -4997,7 +4607,6 @@ i++;
       }
 
     } catch (error) {
-      // console.error("Error placing order:", error);
       res.json({
         status: false,
         message: "An error occurred while placing the order.",
@@ -5203,7 +4812,6 @@ i++;
 
 
         } catch (innerError) {
-          // console.error(`Error processing stock ${tradesymbol}:`, innerError);
           continue; // Skip this stock in case of an error
         }
       }
@@ -5215,7 +4823,6 @@ i++;
 
 
     } catch (error) {
-      // console.error("Error placing order:", error);
       res.status(500).json({
         status: false,
         message: "An error occurred while placing the order.",
@@ -5274,8 +4881,6 @@ i++;
         data: groupedOrders
       });
     } catch (error) {
-      // Log the error and return a 500 response
-      // console.error("Error retrieving grouped orders:", error);
       res.status(500).json({
         status: false,
         message: "An error occurred while retrieving the grouped orders."
@@ -5357,7 +4962,6 @@ i++;
         data: livePrices
       });
     } catch (error) {
-      // console.error(error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -5386,7 +4990,6 @@ i++;
       });
 
     } catch (error) {
-      // console.error(error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -5416,7 +5019,6 @@ i++;
       });
 
     } catch (error) {
-      // console.error(error);
       return res.status(500).json({ status: false, message: 'Server error', data: [] });
     }
   }
@@ -5474,33 +5076,6 @@ i++;
       const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
 
      
-
-
-    //  const uniquePlanIds = [
-      //   ...new Set(planIds.filter(id => id !== null).map(id => id.toString()))
-      // ].map(id => new ObjectId(id));
-      
-/*
-      const query = {
-        service: service_id,
-        close_status: false,
-        $or: uniquePlanIds.map((planId, index) => ({
-          planid: planId.toString(), // Matching the planid with regex
-          created_at: { $lte: planEnds[index] }       // Checking if created_at is <= to planEnds
-        }))
-      };
-
-
-
-      if (search && search.trim() !== '') {
-        query.$or = [
-          { tradesymbol: { $regex: search, $options: 'i' } },
-          { calltype: { $regex: search, $options: 'i' } },
-          { price: { $regex: search, $options: 'i' } },
-          { closeprice: { $regex: search, $options: 'i' } }
-        ];
-      }
-*/
 
 
 const baseConditions = {
@@ -5574,7 +5149,6 @@ if (search && search.trim() !== '') {
       });
 
     } catch (error) {
-      // console.error("Error fetching signals:", error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -5664,11 +5238,7 @@ if (search && search.trim() !== '') {
         ]
       };
   
-      // Fetch notifications based on constructed query
-      // const result = await Notification_Modal.find(queryConditions)
-      //   .sort({ createdAt: -1 })
-      //   .skip((page - 1) * limit) // Pagination
-      //   .limit(parseInt(limit)); // Limit the number of records
+    
 
       const notifications = await Notification_Modal.find(queryConditions)
       .sort({ createdAt: -1 })
@@ -5793,15 +5363,7 @@ if (search && search.trim() !== '') {
         });
       }
 
-      // const length = 6;
-      // const digits = '0123456789';
-      // let orderNumbers = '';
-      // let orderNumber = '';
-
-      // for (let i = 0; i < length; i++) {
-      //   orderNumbers += digits.charAt(Math.floor(Math.random() * digits.length));
-      // }
-
+     
       
       const settings = await BasicSetting_Modal.findOne();
 
@@ -6263,195 +5825,7 @@ await sendEmail(mailOptions);
 
       await resultnm.save();
 
-      // if (plan.deliverystatus == true) {
-      //   client.deliverystatus = true;
-      //   await client.save();
-      // }
-
-      // if (settings.invoicestatus == 1) {
-      /*     24/03/2025 
-
-        let payment_type;
-        if (orderid) {
-          payment_type = "Online";
-        }
-        else {
-          payment_type = "Offline";
-
-        }
-
-        const templatePath = path.join(__dirname, '../../../template', 'invoicenew.html');
-        let htmlContent = fs.readFileSync(templatePath, 'utf8');
-
-
-
-        let planDetailsHtml = '';
-        let sno = 1;
-        for (const plan_id of plan_ids) {
-          const plan = await Plan_Modal.findById(plan_id)
-            .populate('category')
-            .exec();
-
-            const validityMapping = {
-              '1 month': 1,
-              '2 months': 2,
-              '3 months': 3,
-              '6 months': 6,
-              '9 months': 9,
-              '1 year': 12,
-              '2 years': 24,
-              '3 years': 36,
-              '4 years': 48,
-              '5 years': 60
-            };
-      
-            const monthsToAdd = validityMapping[plan.validity];
-            if (monthsToAdd === undefined) {
-              return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
-            }
-      
-            const start = new Date();
-            const end = new Date(start);
-            end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
-            end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
-      
-            const numberOfPlans = plan_ids.length;
-            const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
-      
-      
-            let total = plan.price-discountPerPlan; // Use let for reassignable variables
-            let totalgst = 0;
-            
-            if (settings.gst > 0 && settings.gststatus==1) {
-              totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
-              total = total + totalgst;
-            }
-
-            let sgst = 0, cgst = 0, igst = 0;
-
-            if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() === "") {
-                sgst = totalgst / 2;
-                cgst = totalgst / 2;
-            } else {
-                igst = totalgst;
-            }
-
-
-
-          planDetailsHtml += `
-           <tr>
-               <td style="border: 1px solid black; padding: 10px; text-align: center;height: 100px;">${sno}</td>
-               <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.category.title}</td>
-               <td style="border: 1px solid black; padding: 10px; text-align: center;">1</td>
-               <td style="border: 1px solid black; padding: 10px; text-align: center;">${plan.price}</td>
-               <td style="border: 1px solid black; padding: 10px; text-align: center;">${discountPerPlan}</td>
-               <td style="border: 1px solid black; padding: 10px; text-align: center;">${sgst}</td>
-               <td style="border: 1px solid black; padding: 10px; text-align: center;">${cgst}</td>
-               <td style="border: 1px solid black; padding: 10px; text-align: center;">${igst}</td>
-               <td style="border: 1px solid black; padding: 10px; text-align: center;">${total}</td>
-            </tr>`;
-
-            sno++;
-        }
-
-
-        const todays = new Date(); 
-        const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
-        const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
-
-
-        htmlContent = htmlContent
-          .replace(/{{orderNumber}}/g, `INV-${orderNumber}`)
-          .replace(/{{created_at}}/g, formatDate(todays))
-          .replace(/{{payment_type}}/g, payment_type)
-          .replace(/{{clientname}}/g, client.FullName)
-          .replace(/{{email}}/g, client.Email)
-          .replace(/{{PhoneNo}}/g, client.PhoneNo)
-          .replace(/{{plan_details}}/g, planDetailsHtml)
-          .replace(/{{company_email}}/g, settings.email_address)
-          .replace(/{{company_phone}}/g, settings.contact_number)
-          .replace(/{{company_address}}/g, settings.address)
-          .replace(/{{company_website_title}}/g, settings.website_title)
-          .replace(/{{gstin}}/g, settings.gstin)
-          .replace(/{{state}}/g, client.state)
-          .replace(/{{logo}}/g, logo)
-          .replace(/{{simage}}/g, simage)
-          .replace(/{{total}}/g, price)
-          .replace(/{{plantype}}/g, "Plan")
-          .replace(/{{discount}}/g, discount);
-
-
-        const browser = await puppeteer.launch({
-          args: ['--no-sandbox', '--disable-setuid-sandbox']
-        });
-        const page = await browser.newPage();
-        await page.setContent(htmlContent);
-
-        // Define the path to save the PDF
-        const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'invoice');
-        const pdfPath = path.join(pdfDir, `INV-${orderNumber}.pdf`);
-
-        // Generate PDF and save to the specified path
-        await page.pdf({
-          path: pdfPath,
-          format: 'A4',
-          printBackground: true,
-          margin: {
-            top: '20mm',
-            right: '10mm',
-            bottom: '50mm',
-            left: '10mm',
-          },
-        });
-
-        await browser.close();
-
-   
-
-        if (settings.invoicestatus == 1) {
-        const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
-        if (!mailtemplate || !mailtemplate.mail_body) {
-          throw new Error('Mail template not found');
-        }
-
-        const templatePaths = path.join(__dirname, '../../../template', 'mailtemplate.html');
-
-        fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
-          if (err) {
-            // console.error('Error reading HTML template:', err);
-            return;
-          }
-
-          let finalMailBody = mailtemplate.mail_body
-            .replace('{clientName}', `${client.FullName}`);
-
-          const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
-
-          // Replace placeholders with actual values
-          const finalHtml = htmlTemplate
-            .replace(/{{company_name}}/g, settings.website_title)
-            .replace(/{{body}}/g, finalMailBody)
-            .replace(/{{logo}}/g, logo);
-
-          const mailOptions = {
-            to: client.Email,
-            from: `${settings.from_name} <${settings.from_mail}>`,
-            subject: `${mailtemplate.mail_subject}`,
-            html: finalHtml,
-            attachments: [
-              {
-                filename: `INV-${orderNumber}.pdf`, // PDF file name
-                path: pdfPath, // Path to the PDF file
-              }
-            ]
-          };
-
-          // Send email
-          await sendEmail(mailOptions);
-        });
-
-      }
-      */
+    
       // Return success response
       return res.status(201).json({
         status: true,
@@ -6464,6 +5838,482 @@ await sendEmail(mailOptions);
     }
   }
   
+
+
+  
+  async addPlanSubscriptionWithPlan(req, res) {
+    try {
+      const { plan_ids, client_id, price, discount, orderid, coupon_code } = req.body;
+
+      // Validate input
+      if (!plan_ids || !Array.isArray(plan_ids) || plan_ids.length === 0 || !client_id) {
+          return res.status(400).json({ status: false, message: 'Missing required fields' });
+      }
+
+
+      const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+
+      if (!client) {
+        return res.status(404).json({ 
+          status: false, 
+          message: 'Client not found.' 
+        });
+      }
+
+     
+      
+      const settings = await BasicSetting_Modal.findOne();
+
+     let sno=0;
+     let planprice =0;
+      for (const plan_id of plan_ids) {
+
+       sno++;
+    
+
+
+     const invoicePrefix = settings.invoice;
+     const invoiceStart = settings.invoicestart; 
+     const basketCount = await BasketSubscription_Modal.countDocuments({});
+     const planCount = await PlanSubscription_Modal.countDocuments({});
+     const totalCount = basketCount + planCount;
+     const invoiceNumber = invoiceStart + totalCount;
+     const formattedNumber = invoiceNumber < 10 ? `0${invoiceNumber}` : `${invoiceNumber}`;
+     const orderNumber = `${invoicePrefix}${formattedNumber}`;
+
+
+      // Fetch the plan and populate the category
+      const plan = await Plan_Modal.findById(plan_id)
+        .populate('category')
+        .exec();
+
+      if (!plan) {
+        return res.status(404).json({ status: false, message: 'Plan not found' });
+      }
+    
+
+
+      const activePlan = await PlanSubscription_Modal.findOne({
+        plan_category_id: plan.category._id,
+        client_id: client_id,
+        plan_end: { $gte: new Date() } // Ensure the plan is not expired
+      }).sort({ plan_end: -1 }); // Sort by end date to get the most recent one
+      
+      // If there is an active plan, set the new plan's start date to the end date of the existing active plan
+      
+
+
+      // Map plan validity to months
+      const validityMapping = {
+        '1 month': 1,
+        '2 months': 2,
+        '3 months': 3,
+        '6 months': 6,
+        '9 months': 9,
+        '1 year': 12,
+        '2 years': 24,
+        '3 years': 36,
+        '4 years': 48,
+        '5 years': 60
+      };
+
+      const monthsToAdd = validityMapping[plan.validity];
+      if (monthsToAdd === undefined) {
+        return res.status(400).json({ status: false, message: 'Invalid plan validity period' });
+      }
+
+      let start = new Date();  // Use let instead of const to allow reassigning
+
+      if (activePlan) {
+        start = new Date(activePlan.plan_end); // Start the new plan right after the previous one ends
+      }
+      const end = new Date(start);
+      end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
+      end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+
+
+      const planservice = plan.category?.service;
+      const planservices = planservice ? planservice.split(',') : [];
+      for (const serviceId of planservices) {
+        const existingPlan = await Planmanage.findOne({ clientid: client_id, serviceid: serviceId }).exec();
+
+        if (existingPlan) {
+
+          if (new Date(existingPlan.enddate) < end) {
+            existingPlan.enddate = end;
+            await existingPlan.save();
+          }
+        }
+        else
+        {
+          const newPlanManage = new Planmanage({
+            clientid: client_id,
+            serviceid: serviceId,
+            startdate: start,
+            enddate: end,
+          });
+            await newPlanManage.save();
+        }
+      }
+   
+
+      ////////////////// 17/10/2024 ////////////////////////
+      const currentDate = new Date();
+      const targetMonth = `${String(currentDate.getMonth() + 1).padStart(2, '0')}${currentDate.getFullYear()}`;
+
+      let license = await License_Modal.findOne({ month: targetMonth }).exec();
+
+
+      if (license) {
+        license.noofclient += monthsToAdd;
+      } else {
+        license = new License_Modal({
+          month: targetMonth,
+          noofclient: monthsToAdd
+        });
+        console.log('Month not found, inserting new record.');
+      }
+
+      try {
+        await license.save();
+        console.log('License updated successfully.');
+      } catch (error) {
+        // console.error('Error updating license:', error);
+      }
+
+
+      const numberOfPlans = plan_ids.length;
+      const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
+
+      ////////////////// 17/10/2024 ////////////////////////
+
+      let total = plan.price-discountPerPlan; // Use let for reassignable variables
+      let totalgst = 0;
+      
+      if (settings.gst > 0 && settings.gststatus==1) {
+        totalgst = (total * settings.gst) / 100; // Use settings.gst instead of gst
+        total = total + totalgst;
+      }
+
+
+      // Create a new plan subscription record
+      const newSubscription = new PlanSubscription_Modal({
+        plan_id,
+        plan_category_id: plan.category._id,
+        client_id,
+        total: total,
+        plan_price: plan.price,
+        discount: discountPerPlan,
+        gstamount:totalgst,
+        gst: settings.gst,
+        coupon: coupon_code,
+        plan_start: start,
+        plan_end: end,
+        validity: plan.validity,
+        orderid: orderid,
+       // ordernumber:`${orderNumberName}`,
+       // invoice:`${orderNumber}.pdf`,
+      });
+
+      // Save the subscription
+      const savedSubscription = await newSubscription.save();
+
+
+      
+
+
+///////////24/03/2025 /////////////////////
+
+
+
+        let payment_type;
+        if (orderid) {
+          payment_type = "Online";
+        }
+        else {
+          payment_type = "Offline";
+
+        }
+
+        const templatePath = path.join(__dirname, '../../../template', 'invoice.html');
+        let htmlContent = fs.readFileSync(templatePath, 'utf8');
+
+
+
+        let sgst = 0, cgst = 0, igst = 0, pergstsc = settings.gst/2, pergstt = settings.gst;
+
+if (client.state.toLowerCase() === settings.state.toLowerCase() || client.state.toLowerCase() ==="") {
+    sgst = totalgst / 2;
+    cgst = totalgst / 2;
+    pergstsc = settings.gst/ 2;
+} else {
+    igst = totalgst;
+    pergstt = settings.gst;
+}
+
+
+
+const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+const simage = `https://${req.headers.host}/uploads/basicsetting/${settings.simage}`;
+let clientstateid;
+let settingsstateid;
+if(client.state) {
+const clientstate = await States.findOne({name:client.state});
+
+if(clientstate) {
+  clientstateid = clientstate.id;
+ }
+}
+
+if(settings.state) {
+  const settingsstate = await States.findOne({name:settings.state});
+  
+  if(settingsstate) {
+    settingsstateid = settingsstate.id;
+    }  
+  }
+
+        htmlContent = htmlContent
+          .replace(/{{orderNumber}}/g, `${orderNumber}`)
+          .replace(/{{created_at}}/g, formatDate(savedSubscription.created_at))
+          .replace(/{{payment_type}}/g, payment_type)
+          .replace(/{{clientname}}/g, client.FullName)
+          .replace(/{{email}}/g, client.Email)
+          .replace(/{{PhoneNo}}/g, client.PhoneNo)
+          .replace(/{{validity}}/g, savedSubscription.validity)
+          .replace(/{{plan_end}}/g, formatDate(savedSubscription.plan_end))
+          .replace(/{{plan_price}}/g, savedSubscription.plan_price.toFixed(2))
+          .replace(/{{total}}/g, savedSubscription.total.toFixed(2))
+          .replace(/{{discount}}/g, savedSubscription.discount.toFixed(2))
+          .replace(/{{orderid}}/g, savedSubscription.orderid)
+          .replace(/{{planname}}/g, plan.category.title)
+          .replace(/{{plantype}}/g, "Plan")
+          .replace(/{{company_email}}/g, settings.email_address)
+          .replace(/{{company_phone}}/g, settings.contact_number)
+          .replace(/{{company_address}}/g, settings.address)
+          .replace(/{{company_website_title}}/g, settings.website_title)
+          .replace(/{{invoicetnc}}/g, settings.invoicetnc)
+          .replace(/{{gstin}}/g, settings.gstin)
+          .replace(/{{gstamount}}/g, totalgst.toFixed(2))
+          .replace(/{{state}}/g, client.state)
+          .replace(/{{gst}}/g, settings.gst)
+          .replace(/{{sgst}}/g, sgst.toFixed(2))
+          .replace(/{{cgst}}/g, cgst.toFixed(2))
+          .replace(/{{igst}}/g, igst.toFixed(2))
+          .replace(/{{logo}}/g, logo)
+          .replace(/{{simage}}/g, simage)
+          .replace(/{{pergstsc}}/g, pergstsc)
+          .replace(/{{pergstt}}/g, pergstt)
+          .replace(/{{saccode}}/g, settings.saccode)
+          .replace(/{{bstate}}/g, settings.state)
+          .replace(/{{panno}}/g, client.panno ?? 'NA')
+          .replace(/{{city}}/g, client.city)
+          .replace(/{{statecode}}/g, clientstateid)
+          .replace(/{{settingstatecode}}/g, settingsstateid)
+          .replace(/{{ttotal}}/g, (plan.price - discount).toFixed(2))
+          .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total.toFixed(2)))
+          .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
+
+
+
+const pdfresponse =  await generatePDF({
+  htmlContent,
+  fileName: `${orderNumber}.pdf`,
+  folderPath: 'uploads/invoice',
+  baseBackPath: '../../../',  
+  headerTemplate: "",
+  footerTemplate: ""
+});
+
+
+if (pdfresponse.status === true) {
+
+
+  savedSubscription.ordernumber = `${orderNumberName}`;
+  savedSubscription.invoice = `${orderNumber}.pdf`;
+  const updatedSubscription = await savedSubscription.save();
+}
+
+
+if (settings.invoicestatus == 1) {
+const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'invoice' }); // Use findOne if you expect a single document
+if (!mailtemplate || !mailtemplate.mail_body) {
+throw new Error('Mail template not found');
+}
+
+const templatePaths = path.join(__dirname, '../../../template', 'mailtemplate.html');
+
+fs.readFile(templatePaths, 'utf8', async (err, htmlTemplate) => {
+if (err) {
+// console.error('Error reading HTML template:', err);
+return;
+}
+
+let finalMailBody = mailtemplate.mail_body
+.replace('{clientName}', `${client.FullName}`);
+
+const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+
+// Replace placeholders with actual values
+const finalHtml = htmlTemplate
+.replace(/{{company_name}}/g, settings.website_title)
+.replace(/{{body}}/g, finalMailBody)
+.replace(/{{logo}}/g, logo);
+
+const mailOptions = {
+to: client.Email,
+from: `${settings.from_name} <${settings.from_mail}>`,
+subject: `${mailtemplate.mail_subject}`,
+html: finalHtml,
+...(pdfresponse.status === true && {
+  attachments: [
+    {
+      filename: `${orderNumber}.pdf`,
+      path: pdfresponse.path, // Path from the response of PDF generation
+    }
+  ]
+})
+};
+
+// Send email
+await sendEmail(mailOptions);
+
+});
+
+}
+
+      planprice = planprice+plan.price;
+
+    }
+
+    planprice = planprice-discount;
+
+    const updatedItems = await Addtocart_Modal.updateMany(
+      { client_id: client_id, status: false, basket_id: null }, // Find all matching items
+      { $set: { status: true } } // Update status to true
+  );
+  
+
+      if (coupon_code) {
+        const resultc = await Coupon_Modal.findOne({
+          del: false,
+          status: true,
+          code: coupon_code
+        });
+
+
+        if (resultc) {
+
+          // Check if limitation is greater than 0 before decrementing
+          if (resultc.limitation > 0) {
+            const updatedResult = await Coupon_Modal.findByIdAndUpdate(
+              resultc._id,
+              { $inc: { limitation: -1 } }, // Decrease limitation by 1
+              { new: true } // Return the updated document
+            );
+          }
+
+        }
+      }
+
+
+      if (client.freetrial == 0) {
+        client.freetrial = 1;
+        await client.save();
+      }
+
+
+      const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
+
+      if (client.refer_status && client.token) {
+        if (refertokens.length > 0) {
+        }
+        else {
+
+          const senderamount = (planprice * settings.sender_earn) / 100;
+          const receiveramount = (planprice * settings.receiver_earn) / 100;
+
+          const results = new Refer_Modal({
+            token: client.token,
+            user_id: client._id,
+            senderearn: settings.sender_earn,
+            receiverearn: settings.receiver_earn,
+            senderamount: senderamount,
+            receiveramount: receiveramount,
+            status: 1
+          })
+          await results.save();
+
+          client.wamount += receiveramount;
+          await client.save();
+          const sender = await Clients_Modal.findOne({ refer_token: client.token, del: 0, ActiveStatus: 1 });
+
+          if (sender) {
+            sender.wamount += senderamount;
+            await sender.save();
+          } else {
+            // console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
+          }
+
+        }
+
+      }
+
+      if (refertokens.length > 0) {
+        for (const refertoken of refertokens) {
+          const senderamount = (planprice * refertoken.senderearn) / 100;
+          const receiveramount = (planprice * refertoken.receiverearn) / 100;
+
+          refertoken.senderamount = senderamount;
+          refertoken.receiveramount = receiveramount;
+          refertoken.status = 1;
+
+          await refertoken.save();
+
+          // Update client's wallet amount
+          client.wamount += receiveramount;
+          await client.save();
+
+          // Update sender's wallet amount
+          const sender = await Clients_Modal.findOne({ refer_token: refertoken.token, del: 0, ActiveStatus: 1 });
+
+          if (sender) {
+            sender.wamount += senderamount;
+            await sender.save();
+          } else {
+            // console.error(`Sender not found or inactive for user_id: ${refertoken.user_id}`);
+          }
+        }
+      } else {
+        console.log('No referral tokens found.');
+      }
+
+      const adminnotificationTitle = "Important Update";
+      const adminnotificationBody = `Congratulations! ${client.FullName} successfully purchased the Plan`;
+      const resultnm = new Adminnotification_Modal({
+        clientid: client._id,
+        segmentid: "",
+        type: 'plan purchase',
+        title: adminnotificationTitle,
+        message: adminnotificationBody
+      });
+
+
+      await resultnm.save();
+
+    
+      // Return success response
+      return res.status(201).json({
+        status: true,
+        message: 'Subscription added successfully',
+      });
+
+    } catch (error) {
+      // console.error(error);
+      return res.status(500).json({ status: false, message: 'Server error', data: [] });
+    }
+  }
   
   async PurchasedBasketList(req, res) {
     try {
@@ -6640,7 +6490,6 @@ await sendEmail(mailOptions);
         data: result,
       });
     } catch (error) {
-      // console.error('Error retrieving purchased baskets:', error);
       res.status(500).json({
         status: false,
         message: 'An error occurred while retrieving purchased baskets.',
@@ -6671,14 +6520,6 @@ await sendEmail(mailOptions);
         const settings = await BasicSetting_Modal.findOne();
   
   
-        // const length = 6;
-        // const digits = '0123456789';
-        // let orderNumbers = '';
-        // let orderNumber = '';
-  
-        // for (let i = 0; i < length; i++) {
-        //   orderNumbers += digits.charAt(Math.floor(Math.random() * digits.length));
-        // }
   
        let sno=0;
        
@@ -7168,7 +7009,6 @@ if (pdfresponse.status === true) {
       });
   
     } catch (error) {
-      console.error('Error retrieving cart items:', error);
       return res.status(500).json({
         status: false,
         message: 'Something went wrong while retrieving cart items.',
@@ -7210,7 +7050,6 @@ if (pdfresponse.status === true) {
       });
   
     } catch (error) {
-      console.error("Error deleting cart item:", error);
       return res.status(500).json({
         status: false,
         message: "Something went wrong while deleting the cart item.",
@@ -7333,7 +7172,6 @@ if (search && search.trim() !== '') {
       });
 
     } catch (error) {
-      // console.error("Error fetching signals:", error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -7588,26 +7426,7 @@ const avgDaysPerSignal = count > 0
       const skip = (parseInt(page) - 1) * parseInt(limit);
       const limitValue = parseInt(limit);
   
-      // Base query
-     /* const query = {
-        service: service_id,
-        close_status: true,
-        closeprice: { $ne: 0 }
-      };
-  
-      if (callduration) {
-        query.callduration = callduration;
-      }
-  
-      // Agar search filter exist karta hai to query me add karein
-      if (search && search.trim() !== '') {
-        query.$or = [
-          { tradesymbol: { $regex: search, $options: 'i' } },
-          { calltype: { $regex: search, $options: 'i' } },
-          { price: { $regex: search, $options: 'i' } },
-          { closeprice: { $regex: search, $options: 'i' } }
-        ];
-      } */
+    
 
         let query = {
           service: service_id,
@@ -7725,154 +7544,7 @@ async checkClientToken(req, res) {
       return res.status(500).json({ message: "Something went wrong.", error: error.message });
   }
 }
-/*
-async LatestSignalsWithoutActivePlan(req, res) {
-  try {
-    const { client_id } = req.body;
-    const limit = 10;
 
-    // Fetch all subscriptions
-    const subscriptions = await PlanSubscription_Modal.find({ client_id });
-
-    // Extract active plan IDs and their end dates
-    const activePlanIds = subscriptions
-      .filter(sub => sub.status === "active" && new Date(sub.plan_end) >= new Date())
-      .map(sub => sub.plan_category_id)
-      .filter(id => id != null);
-
-    // Convert plan IDs to strings for comparison
-    const activePlanIdStrings = activePlanIds.map(id => id.toString());
-
-    // Fetch all non-active plan signals based on client_id only
-    const exclusionQuery = {
-      close_status: false,
-      planid: { $nin: [...activePlanIdStrings, null, ""] }
-    };
-
-    const latestSignals = await Signal_Modal.find(exclusionQuery)
-      .sort({ created_at: -1 })
-      .lean();
-
-    const protocol = req.protocol;
-    const baseUrl = `${protocol}://${req.headers.host}`;
-
-    // Attach report URLs and purchase details, limiting to 2 signals per plan
-    let signalsWithDetails = [];
-    const planSignalCount = {}; // Track how many signals per plan
-
-    for (const signal of latestSignals) {
-      const planId = signal.planid ? signal.planid.toString() : "noPlan";
-      if (!planSignalCount[planId]) {
-        planSignalCount[planId] = 0;
-      }
-
-      if (planSignalCount[planId] < 2) {
-        const order = await Order_Modal.findOne({
-          clientid: client_id,
-          signalid: signal._id
-        }).lean();
-
-        signalsWithDetails.push({
-          ...signal,
-          report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
-          purchased: order ? true : false,
-          order_quantity: order ? order.quantity : 0
-        });
-
-        planSignalCount[planId]++;
-      }
-
-      if (signalsWithDetails.length >= limit) break; // Stop after 10 signals total
-    }
-
-    return res.json({
-      status: true,
-      message: "Latest 10 signals retrieved successfully, limiting 2 signals per plan.",
-      data: signalsWithDetails,
-   
-    });
-  } catch (error) {
-    console.error("Error fetching signals:", error);
-    return res.json({ status: false, message: "Server error", data: [] });
-  }
-}
-*/
-/*
-async LatestSignalsWithoutActivePlan(req, res) {
-  try {
-    const { client_id } = req.body;
-    // const limit = 10;
-
-    // Step 1: Fetch all subscriptions for the client
-    const subscriptions = await PlanSubscription_Modal.find({ client_id });
-
-    // Step 2: Extract active plan IDs
-    const activePlanIds = subscriptions
-      .filter(sub => sub.status === "active" && new Date(sub.plan_end) >= new Date())
-      .map(sub => sub.plan_category_id)
-      .filter(id => id != null)
-      .map(id => id.toString());
-
-    // Step 3: Exclude signals from active plans
-    const exclusionQuery = {
-      close_status: false,
-      planid: { $nin: [...activePlanIds, null, ""] }
-    };
-
-    // Step 4: Fetch signals, sorted by creation date
-    const latestSignals = await Signal_Modal.find(exclusionQuery)
-      .sort({ created_at: -1 })
-      .lean();
-
-    // Step 5: Group by callduration and limit to 2 per callduration
-    const protocol = req.protocol;
-    const baseUrl = `${protocol}://${req.headers.host}`;
-
-    let signalsWithDetails = [];
-    const callDurationCount = {}; // Track how many signals per callduration
-
-    for (const signal of latestSignals) {
-      const callduration = signal.callduration ? signal.callduration.toString() : "noDuration";
-
-      // Initialize count for this callduration
-      if (!callDurationCount[callduration]) {
-        callDurationCount[callduration] = 0;
-      }
-
-      // Add up to 2 signals per callduration
-      if (callDurationCount[callduration] < 2) {
-        // Check if the signal was purchased
-        const order = await Order_Modal.findOne({
-          clientid: client_id,
-          signalid: signal._id
-        }).lean();
-
-        signalsWithDetails.push({
-          ...signal,
-          report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
-          purchased: !!order,
-          order_quantity: order ? order.quantity : 0
-        });
-
-        callDurationCount[callduration]++;
-      }
-
-      // Stop after reaching the overall limit
-      // if (signalsWithDetails.length >= limit) break;
-    }
-
-    // Step 6: Return processed signals
-    return res.json({
-      status: true,
-      message: "Latest signals fetched successfully, showing 2 signals per callduration.",
-      data: signalsWithDetails
-    });
-  } catch (error) {
-    console.error("Error fetching signals:", error);
-    return res.json({ status: false, message: "Server error", data: [] });
-  }
-}
-*/
 async LatestSignalsWithoutActivePlan(req, res) {
   try {
     const { client_id } = req.body;
@@ -7950,7 +7622,6 @@ async LatestSignalsWithoutActivePlan(req, res) {
       data: signalsWithDetails
     });
   } catch (error) {
-    console.error("Error fetching signals:", error);
     return res.json({ status: false, message: "Server error", data: [] });
   }
 }
@@ -7967,7 +7638,6 @@ async getBasketGraphData(req, res) {
   }
 
   // Fetch data from Basketstock_Modal using basket_id
-  // const basketData = await Basketghaphdata_Modal.find({ basket_id }).limit(limit).lean();
   const basketData = await Basketghaphdata_Modal.find({ basket_id })
     .sort({ created_at: -1 }) // Sorting in DESC order by created_at
     .limit(limit)
@@ -8030,7 +7700,6 @@ async  getLivePrices(req, res) {
 
     // 🔥 Step 1: Count how many stocks exist in the basket
     const basketStocks = await Basketstock_Modal.find({ basket_id: basket_id, del: false });
-    console.log("basketStocks:", basketStocks);
     const totalStocks = basketStocks.length;
 
     if (totalStocks === 0) {
@@ -8087,7 +7756,6 @@ async  getLivePrices(req, res) {
     });
 
   } catch (error) {
-    console.error("❌ Error fetching live prices for basket stocks:", error.message);
     return res.status(500).json({
       status: false,
       message: "Server error",
@@ -8238,26 +7906,7 @@ async SignalClientWithPlanStrategy(req, res) {
     const planIds = subscriptions.map(sub => sub.plan_category_id).filter(id => id != null);
     const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
 
-    // const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
-
-  /*  const query = {
-      close_status: false,
-      $or: uniquePlanIds.map((planId, index) => ({
-        planid: planId.toString(),
-        created_at: { $lte: planEnds[index] }
-      }))
-    };
-
-    // 🔹 Search Query
-    if (search && search.trim() !== '') {
-      query.$or = [
-        { stock: { $regex: search, $options: 'i' } },
-        { strategy_name: { $regex: search, $options: 'i' } },
-        { callduration: { $regex: search, $options: 'i' } },
-        // { closeprice: { $regex: search, $options: 'i' } }
-      ];
-    } */
-
+    
       let query = {
         close_status: false,
         $or: planIds.map((planId, index) => ({
@@ -8310,13 +7959,7 @@ async SignalClientWithPlanStrategy(req, res) {
       stockMap[stock.signal_id].push(stock);
     });
 
-    // 🔹 Attach Stock Details to Signals
-    // const finalSignals = signals.map(signal => ({
-    //   ...signal,
-    //   stockDetails: stockMap[signal._id] || [],
-    //   report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null // Full report URL
-    // }));
-
+    
 
     const finalSignals = await Promise.all(signals.map(async (signal) => {
       const order = await Order_Modal.findOne({
@@ -8345,7 +7988,6 @@ async SignalClientWithPlanStrategy(req, res) {
     });
 
   } catch (error) {
-    // console.error("Error fetching signals:", error);
     return res.json({ status: false, message: "Server error", data: [] });
   }
 }
@@ -8370,25 +8012,7 @@ async SignalClientWithPlanCloseStrategy(req, res) {
     const planStarts = subscriptions.map(sub => new Date(sub.plan_start));
     const planEnds = subscriptions.map(sub => new Date(sub.plan_end));
 
-   // const uniquePlanIds = [...new Set(planIds.map(id => id.toString()))].map(id => new ObjectId(id));
-
-   /* const query = {
-      close_status: true,
-      $or: uniquePlanIds.map((planId, index) => ({
-        planid: planId.toString(), // Matching the planid with regex
-        created_at: { $lte: planEnds[index] },  
-       // closedate: { $gte: planStarts[index] }      // Checking if created_at is <= to planEnds
-      }))
-    };
-    // 🔹 Search Query
-    if (search && search.trim() !== '') {
-      query.$or = [
-        { stock: { $regex: search, $options: 'i' } },
-        { strategy_name: { $regex: search, $options: 'i' } },
-        { callduration: { $regex: search, $options: 'i' } },
-        // { closeprice: { $regex: search, $options: 'i' } }
-      ];
-    } */
+   
 
       let query = {
         close_status: true,
@@ -8493,7 +8117,6 @@ async SignalClientWithPlanCloseStrategy(req, res) {
     });
 
   } catch (error) {
-    console.error("Error fetching signals:", error);
     return res.json({ status: false, message: "Server error", data: [] });
   }
 }
@@ -8504,7 +8127,6 @@ async  getAllStates(req, res) {
       const states = await States.find({}).toArray(); // MongoDB native driver ka use ho raha hai
       res.status(200).json(states);
   } catch (error) {
-      console.error("Error fetching states:", error);
       res.status(500).json({ error: "Something went wrong" });
   }
 }
@@ -8516,7 +8138,6 @@ async getCityByStates(req, res) {
     const cities = await City.find({ state: stateName }).toArray(); // nativ
     res.status(200).json(cities);
   } catch (error) {
-    console.error("Error fetching cities:", error);
     res.status(500).json({ error: "Something went wrong" });
   }
 }
@@ -8534,7 +8155,6 @@ async countSignalStatus(req, res) {
       openstrategy:openCountstrategy,
     });
   } catch (error) {
-    console.error("Error fetching signal counts:", error);
     res.status(500).json({ error: "Something went wrong" });
   }
 }
@@ -8634,7 +8254,6 @@ async PlanExpire(req, res) {
     return res.json({ reminders,status: true });
 
   } catch (error) {
-    console.error("PlanExpire error:", error);
     return res.status(500).json({ message: "Server Error", error,status: false });
   }
 }
@@ -8729,7 +8348,6 @@ async PlanSubscriptionExpire(req, res) {
     return res.json({ reminders,status: false });
 
   } catch (err) {
-    // console.error("PlanSubscriptionExpire error:", err);
     return res.status(500).json({ message: "Server Error", error: err.message,status: false });
   }
 }
@@ -8761,10 +8379,8 @@ async BasketExpire(req, res) {
       enddate: { $gte: r.start, $lte: r.end }
     }));
 
-    console.log("orConds", orConds);
 
     const subs = await BasketSubscription_Modal.find({ $or: orConds });
-    console.log("subs", subs);
     if (!subs.length) {
       return res.json({ message: "No basket subscriptions expiring in range.", status: false });
     }
@@ -8829,7 +8445,6 @@ async BasketExpire(req, res) {
     return res.json({ reminders, status: true });
 
   } catch (error) {
-    console.error("BasketExpire error:", error);
     return res.status(500).json({ message: "Server Error", error: error.message, status: false });
   }
 }
