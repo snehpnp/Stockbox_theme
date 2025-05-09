@@ -1272,8 +1272,8 @@ const Client = () => {
   });
 
   const [filters, setFilters] = useState({
-    from: '',
-    to: '',
+    fromDate: '',
+    toDate: '',
     service: '',
     stock: '',
 });
@@ -1305,7 +1305,7 @@ const Client = () => {
 
   useEffect(() => {
     getAdminclient();
-  }, [searchInput, searchkyc, statuscreatedby, currentPage, expired,filters.from,filters.to]);
+  }, [searchInput, searchkyc, statuscreatedby, currentPage, expired,filters.fromDate,filters.toDate]);
 
 
 
@@ -1388,6 +1388,8 @@ const Client = () => {
                     ? "NA"
                     : "",
         add_by: "",
+        fromDate:filters.fromDate,
+        toDate:filters.toDate,
       };
 
       const response = await AllclientFilter(data, token);
@@ -1909,9 +1911,9 @@ const Client = () => {
                 <label>From date</label>
                 <input
                   type="date"
-                  name="from"
+                  name="fromDate"
                   className="form-control radius-10"
-                  value={filters.from}
+                  value={filters.fromDate}
                   onChange={handleFilterChange}
                 />
               </div>
@@ -1919,11 +1921,11 @@ const Client = () => {
                 <label>To Date</label>
                 <input
                   type="date"
-                  name="to"
+                  name="toDate"
                   className="form-control radius-10"
-                  value={filters.to}
+                  value={filters.toDate}
                   onChange={handleFilterChange}
-                  min={filters.from}
+                  min={filters.fromDate}
                 />
               </div>
               <div className="col-sm-6 col-md-1">
