@@ -1271,6 +1271,13 @@ const Client = () => {
     price: "",
   });
 
+  const [filters, setFilters] = useState({
+    fromDate: '',
+    toDate: '',
+    service: '',
+    stock: '',
+});
+
 
 
 
@@ -1298,7 +1305,7 @@ const Client = () => {
 
   useEffect(() => {
     getAdminclient();
-  }, [searchInput, searchkyc, statuscreatedby, currentPage, expired]);
+  }, [searchInput, searchkyc, statuscreatedby, currentPage, expired,filters.fromDate,filters.toDate]);
 
 
 
@@ -1381,6 +1388,8 @@ const Client = () => {
                     ? "NA"
                     : "",
         add_by: "",
+        fromDate:filters.fromDate,
+        toDate:filters.toDate,
       };
 
       const response = await AllclientFilter(data, token);
@@ -1524,6 +1533,11 @@ const Client = () => {
   const Clientdetail = async (row) => {
     navigate("/admin/client/clientdetail/" + row._id, { state: { row } });
   };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+};
 
 
 
@@ -1847,7 +1861,7 @@ const Client = () => {
               </div>
             </div>
             <div className="row">
-              <div className="col-sm-6  col-md-4 mb-3">
+              <div className="col-sm-6 col-md-2 mb-3">
                 <div>
                   <label htmlFor="kycSelect">Select Kyc</label>
                   <select
@@ -1862,7 +1876,7 @@ const Client = () => {
                   </select>
                 </div>
               </div>
-              <div className="col-sm-6 col-md-4 mb-3">
+              <div className="col-sm-6 col-md-2 mb-3">
                 <div>
                   <label htmlFor="kycSelect">Select CreatedBy</label>
                   <select
@@ -1877,7 +1891,7 @@ const Client = () => {
                   </select>
                 </div>
               </div>
-              <div className="col-sm-6 col-md-3 mb-3">
+              <div className="col-sm-6 col-md-2 mb-3">
                 <div>
                   <label htmlFor="kycSelect">Select Client</label>
                   <select
@@ -1892,6 +1906,27 @@ const Client = () => {
                     <option value="NA">N/A</option>
                   </select>
                 </div>
+              </div>
+              <div className="col-md-2 mb-3">
+                <label>From date</label>
+                <input
+                  type="date"
+                  name="fromDate"
+                  className="form-control radius-10"
+                  value={filters.fromDate}
+                  onChange={handleFilterChange}
+                />
+              </div>
+              <div className="col-md-2 mb-3">
+                <label>To Date</label>
+                <input
+                  type="date"
+                  name="toDate"
+                  className="form-control radius-10"
+                  value={filters.toDate}
+                  onChange={handleFilterChange}
+                  min={filters.fromDate}
+                />
               </div>
               <div className="col-sm-6 col-md-1">
                 <div className="refresh-icon">
