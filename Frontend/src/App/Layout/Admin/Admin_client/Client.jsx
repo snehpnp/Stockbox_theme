@@ -1785,7 +1785,7 @@ const Client = () => {
   ];
 
 
-  
+
 
   return (
     <div>
@@ -1847,7 +1847,7 @@ const Client = () => {
               </div>
             </div>
             <div className="row">
-              <div className="col-sm-6 col-md-4 mb-3">
+              <div className="col-sm-6  col-md-4 mb-3">
                 <div>
                   <label htmlFor="kycSelect">Select Kyc</label>
                   <select

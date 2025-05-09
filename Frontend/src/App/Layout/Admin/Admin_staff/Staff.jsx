@@ -140,11 +140,11 @@ const Staff = () => {
                 "confirm",
                 "Do you want to delete this Employee member? This action cannot be undone."
             );
-    
+
             if (!result.isConfirmed) return;
-    
+
             socket.emit("deactivestaff", { id: _id, msg: "logout" });
-    
+
             const response = await deleteStaff(_id, token);
             if (response.status) {
                 showCustomAlert("success", "Employee successfully deleted!");
@@ -156,7 +156,7 @@ const Staff = () => {
             showCustomAlert("error", "There was an error deleting the Employee.");
         }
     };
-    
+
 
 
 
@@ -194,13 +194,13 @@ const Staff = () => {
                 if (!event.target.checked) {
                     socket.emit("deactivestaff", { id, msg: "logout" });
                 }
-                showCustomAlert("success", "Status Changed!");
+                showCustomAlert("success", response.message);
             } else {
-                throw new Error("Failed to update status");
+                throw new Error(response.message);
             }
         } catch (error) {
             event.target.checked = !event.target.checked;
-            showCustomAlert("error", "Status Change Failed", "There was an error processing your request.");
+            showCustomAlert("error", error.message, "There was an error processing your request.");
         } finally {
             getAdminclient();
         }
