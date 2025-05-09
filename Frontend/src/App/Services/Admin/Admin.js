@@ -4042,3 +4042,23 @@ export async function sendMailForClient(data, token) {
         return err.response?.data || err.message;
     }
 }
+
+
+
+// get today,yesterday , tommaro expiry data 
+
+
+export async function GetDayExpirydata(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}client/getclientsbyplanexpiry`, data, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}

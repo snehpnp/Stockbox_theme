@@ -93,6 +93,9 @@ import AddMailToClient from '../Layout/Admin/SendMailToClient/AddMailToClient';
 import ViewMail from '../Layout/Admin/SendMailToClient/ViewMail';
 import UpdateMail from '../Layout/Admin/SendMailToClient/UpdateMail'
 import UtmSource from '../Layout/Admin/UTM_Source/Utmource'
+import TodayExpirydata from "../Layout/Admin/Admin_dashboard/TodayExpirydata";
+import YesterdayExpirydata from "../Layout/Admin/Admin_dashboard/YesterdayExpirydata";
+import TommarrowExpirydata from "../Layout/Admin/Admin_dashboard/TommarrowExpirydata";
 
 
 
@@ -231,11 +234,17 @@ export default function App() {
       <Route path="/tickets" element={<Tickets />} />
       <Route path="/viewticket/:id" element={<ViewTicket />} />
 
-      <Route path="/addmail-to-client" element={<AddMailToClient/>} />
-      <Route path="/view-mail" element={<ViewMail/>} />
-      <Route path="/update-mail" element={<UpdateMail/>} />
+      <Route path="/addmail-to-client" element={<AddMailToClient />} />
+      <Route path="/view-mail" element={<ViewMail />} />
+      <Route path="/update-mail" element={<UpdateMail />} />
 
       <Route path="/utm-source" element={<UtmSource />} />
+
+
+      <Route path="/todayExpiry-data" element={<TodayExpirydata />} />
+      <Route path="/yesterdayExpiry-data" element={<YesterdayExpirydata />} />
+      <Route path="/tomorrowExpiry-data" element={<TommarrowExpirydata />} />
+
 
     </Routes>
   );

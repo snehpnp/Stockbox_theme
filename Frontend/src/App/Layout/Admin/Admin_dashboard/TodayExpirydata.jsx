@@ -1,32 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { GetPlanexpiryCount } from '../../../Services/Admin/Admin';
-import Table from '../../../Extracomponents/Table1';
+import { GetDayExpirydata } from '../../../Services/Admin/Admin';
+import Table from '../../../Extracomponents/Table';
 import Content from '../../../components/Contents/Content';
 
 
 
-const PlanExpirymonthDetail = () => {
+const TodayExpirydata = () => {
 
     const location = useLocation()
-    const item = location?.state?.row
+    const item = location?.state?.clientStatus
+
 
 
     const navigate = useNavigate();
 
     const [clients, setClients] = useState([]);
     const [searchInput, setSearchInput] = useState("");
-    const [viewpage, setViewpage] = useState({});
-    const [ForGetCSV, setForGetCSV] = useState([])
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalRows, setTotalRows] = useState(0);
 
-    const handlePageChange = (page) => {
-        setCurrentPage(page);
-    };
+
 
     const token = localStorage.getItem('token');
     const userid = localStorage.getItem('id');
@@ -34,27 +27,17 @@ const PlanExpirymonthDetail = () => {
 
     const resethandle = () => {
         setSearchInput("")
-        setStartDate("")
-        setEndDate("")
-
 
     }
 
 
-    const monthCode = item?.month?.slice(0, 2);
-    const year = item?.month?.slice(2)
-
-
-
-
     const gethistory = async () => {
         try {
-            const data = { page: currentPage, month: monthCode, year: year, search: searchInput }
-            const response = await GetPlanexpiryCount(data, token);
+            const data = { dayOffset: item }
+            const response = await GetDayExpirydata(data, token);
             if (response.status) {
-                let filteredData = response.data;
-
-                setTotalRows(response.totalRecords)
+                console.log("response.data", response.clients)
+                let filteredData = response.clients;
                 setClients(filteredData);
             }
         } catch (error) {
@@ -66,38 +49,33 @@ const PlanExpirymonthDetail = () => {
 
     useEffect(() => {
         gethistory();
-    }, [searchInput, location, currentPage]);
+    }, [searchInput]);
 
 
     const columns = [
-        {
-            name: 'S.No',
-            selector: (row, index) => (currentPage - 1) * 10 + index + 1,
-            sortable: false,
-            width: '100px',
-        },
+
         {
             name: 'Name',
-            selector: row => row.client_name,
+            selector: row => row.FullName,
             sortable: true,
             width: '200px',
         },
         {
             name: 'Email',
-            selector: row => row.email,
+            selector: row => row.Email,
             sortable: true,
             width: '300px',
         },
         {
             name: 'Phone',
-            selector: row => row.phone,
+            selector: row => row.PhoneNo,
             sortable: true,
             width: '200px',
         },
 
         {
-            name: 'Total Month',
-            selector: row => row?.totalMonths,
+            name: 'Plan Name',
+            selector: row => row?.planName,
             sortable: true,
             width: '200px',
         },
@@ -108,14 +86,9 @@ const PlanExpirymonthDetail = () => {
 
 
 
-
-
-
-
-
     return (
         <Content
-            Page_title="Monthly Detail"
+            Page_title="Today Expiry Details"
             button_status={false}
             backbutton_status={true}
             backForword={true}
@@ -148,9 +121,7 @@ const PlanExpirymonthDetail = () => {
                             <Table
                                 columns={columns}
                                 data={clients}
-                                totalRows={totalRows}
-                                currentPage={currentPage}
-                                onPageChange={handlePageChange}
+
                             />
                         </div>
                     </div>
@@ -160,4 +131,4 @@ const PlanExpirymonthDetail = () => {
     );
 };
 
-export default PlanExpirymonthDetail;
+export default TodayExpirydata;

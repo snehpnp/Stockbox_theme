@@ -8,7 +8,7 @@ import ReactApexChart from "react-apexcharts";
 import { Bar, Pie } from "react-chartjs-2";
 
 const Dashboard1 = ({ monthexpiry }) => {
-  const role = localStorage.getItem("Role")?.toLowerCase(); 
+  const role = localStorage.getItem("Role")?.toLowerCase();
 
   const currentMonthYear = new Date().toLocaleString("en-US", {
     month: "long",
@@ -173,6 +173,33 @@ const Dashboard1 = ({ monthexpiry }) => {
       progress: 55,
       visible: true,
       color: labelColors["Total Inactive Free Clients"],
+    },
+    {
+      link: `/${role}/todayExpiry-data`,
+      state: { clientStatus: 0 },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.counts?.["0"],
+      label: "Today Expiry Data",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+    },
+    {
+      link: `/${role}/yesterdayExpiry-data`,
+      state: { clientStatus: -1 },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.counts?.["-1"],
+      label: "Yesterday Expiry Data",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+    },
+    {
+      link: `/${role}/tomorrowExpiry-data`,
+      state: { clientStatus: 1 },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.counts?.["1"],
+      label: "Tomorrow Expiry Data",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
     },
   ];
 

@@ -3,7 +3,7 @@ import { fDateTime, fDateMonth } from "../../../Utils/Date_formate";
 import { Link } from "react-router-dom";
 
 const DashboardCards = ({ monthexpiry }) => {
-  const role = localStorage.getItem("Role")?.toLowerCase(); 
+  const role = localStorage.getItem("Role")?.toLowerCase();
 
   const currentMonthYear = new Date().toLocaleString("en-US", {
     month: "long",
@@ -17,13 +17,13 @@ const DashboardCards = ({ monthexpiry }) => {
       value1:
         monthexpiry?.monthexpiry?.length > 0
           ? monthexpiry?.monthexpiry?.some(
-              (item) => fDateMonth(item?.month) === currentMonthYear
-            )
+            (item) => fDateMonth(item?.month) === currentMonthYear
+          )
             ? monthexpiry?.monthexpiry.reduce((acc, item) => {
-                return fDateMonth(item?.month) === currentMonthYear
-                  ? acc + (item.noofclient || 0)
-                  : acc;
-              }, 0)
+              return fDateMonth(item?.month) === currentMonthYear
+                ? acc + (item.noofclient || 0)
+                : acc;
+            }, 0)
             : 0
           : 0,
 
@@ -126,6 +126,33 @@ const DashboardCards = ({ monthexpiry }) => {
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.inActiveFreetrial,
       label: "Total Inactive Free Clients",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+    },
+    {
+      link: `/${role}/todayExpiry-data`,
+      state: { clientStatus: 0 },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.counts?.["0"],
+      label: "Today Expiry Data",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+    },
+    {
+      link: `/${role}/yesterdayExpiry-data`,
+      state: { clientStatus: -1 },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.counts?.["-1"],
+      label: "Yesterday Expiry Data",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+    },
+    {
+      link: `/${role}/tomorrowExpiry-data`,
+      state: { clientStatus: 1 },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.counts?.["1"],
+      label: "Tomorrow Expiry Data",
       icon: "bx bx-wifi-2 fs-3",
       progress: 55,
     },
