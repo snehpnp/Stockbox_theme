@@ -56,7 +56,11 @@ const Addbroadcast = () => {
     };
 
 
-
+    const stripHtml = (html) => {
+        const div = document.createElement("div");
+        div.innerHTML = html;
+        return div.textContent || div.innerText || "";
+      };
 
 
     const validate = (values) => {
@@ -72,11 +76,15 @@ const Addbroadcast = () => {
         if (!values.subject) {
             errors.subject = "Please Enter Subject";
         }
-        if (values.message === "<p style=\"color: rgb(0, 0, 0); font-family: Arial;\"><br></p>") {
-            errors.message = "Please Enter Message";
-        }
+        // if (values.message === "<p style=\"color: rgb(0, 0, 0); font-family: Arial;\"><br></p>") {
+        //     errors.message = "Please Enter Message";
+        // }
         if (!values.type) {
             errors.type = "Please Select Type";
+        }
+        const plainText = stripHtml(values.message).trim();
+        if (!plainText) {
+            errors.message = "Please Enter a Valid Message";
         }
 
         return errors;
@@ -92,6 +100,9 @@ const Addbroadcast = () => {
             message: values.message,
             selectedUserIds: values.user
         };
+
+        // console.log(req);
+        // return
 
         try {
             const response = await sendMailToClient(req, token);
