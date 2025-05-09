@@ -1223,10 +1223,14 @@ import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 const Client = () => {
+
+
   useEffect(() => {
     getbasketlist();
     getcategoryplanlist();
   }, []);
+
+
 
   const location = useLocation();
   const clientStatus = location?.state?.clientStatus;
@@ -1267,6 +1271,9 @@ const Client = () => {
     price: "",
   });
 
+
+
+
   useEffect(() => {
     if (clientStatus == 1) {
       setheader("Active Client");
@@ -1279,17 +1286,28 @@ const Client = () => {
     }
   }, [clientStatus]);
 
+
+
+
   useEffect(() => {
     setCurrentPage(1);
   }, [searchInput, searchkyc, statuscreatedby, expired]);
+
+
+
 
   useEffect(() => {
     getAdminclient();
   }, [searchInput, searchkyc, statuscreatedby, currentPage, expired]);
 
+
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+
+
+
 
   const resethandle = () => {
     setSearchkyc("");
@@ -1298,6 +1316,9 @@ const Client = () => {
     setExpired("");
     setCurrentPage(1);
   };
+
+
+
 
   const handleDownload = (row) => {
     const url = `${image_baseurl}uploads/pdf/${row.pdf}`;
@@ -1309,15 +1330,17 @@ const Client = () => {
     document.body.removeChild(link);
   };
 
+
+
   const handleTabChange = (index) => {
     setCheckedIndex(index);
   };
 
 
-  
   const showModal = () => {
     setIsModalVisible(true);
   };
+
 
 
 
@@ -1577,6 +1600,9 @@ const Client = () => {
     setLoading(false);
   };
 
+
+
+
   const UpdateBasketservice = async () => {
     try {
       const data = {
@@ -1598,6 +1624,9 @@ const Client = () => {
       showCustomAlert("error", "There was an error updating the Basket.");
     }
   };
+
+
+
 
   const columns = [
     {
@@ -1754,6 +1783,9 @@ const Client = () => {
       width: "165px",
     },
   ];
+
+
+  
 
   return (
     <div>
