@@ -1322,7 +1322,12 @@ const Client = () => {
     setStatuscreatedby("");
     setExpired("");
     setCurrentPage(1);
-
+    setFilters({
+      fromDate: '',
+      toDate: '',
+      service: '',
+      stock: '',
+    });
   };
 
 
