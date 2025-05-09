@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Table from '../../../Extracomponents/Table1';
 import { Settings2, Eye, SquarePen, Trash2, Download, ArrowDownToLine } from 'lucide-react';
-import { FreeClientList, FreeClientListWithFilter, PlanSubscription, BasketSubscription, DeleteFreeClient, getcategoryplan, getplanlist, getPlanbyUser, BasketAllActiveList, BasketListbyUser } from '../../../Services/Admin/Admin';
+import { FreeClientList, FreeClientListWithFilter, PlanSubscriptionWithPlan, PlanSubscription, BasketSubscription, DeleteFreeClient, getcategoryplan, getplanlist, getPlanbyUser, BasketAllActiveList, BasketListbyUser } from '../../../Services/Admin/Admin';
 import { Tooltip } from 'antd';
 import { image_baseurl } from '../../../../Utils/config';
 import { fDate, fDateTime } from '../../../../Utils/Date_formate';
@@ -294,8 +294,9 @@ const Freeclient = () => {
     const Updateplansubscription = async () => {
         setLoading(true);
         try {
-            const data = { plan_id: updatetitle.plan_id, client_id: client._id, price: updatetitle.price };
-            const response = await PlanSubscription(data, token);
+            const data = { plan_id: updatetitle.plan_id, client_id: client?.clientDetails?._id, price: updatetitle.price };
+            // const response = await PlanSubscription(data, token);
+            const response = await PlanSubscriptionWithPlan(data, token);
 
             if (response && response.status) {
                 showCustomAlert("Success", response.message);

@@ -16,8 +16,8 @@ import {
 } from "lucide-react";
 import {
   GetSignallist,
+  GetSignallistWithExport,
   GetSignallistWithFilter,
-  GetSignallistWithFilterWithPlan,
   DeleteSignal,
   SignalCloseApi,
   GetService,
@@ -112,7 +112,8 @@ const Closesignal = () => {
         closestatus: "true",
         search: searchInput,
       };
-      const response = await GetSignallist(data, token);
+      // const response = await GetSignallist(data, token);
+      const response = await GetSignallistWithExport(data, token);
       if (response.status) {
         if (response.data?.length > 0) {
           let filterdata = response.data.filter(
@@ -168,7 +169,8 @@ const Closesignal = () => {
       };
 
 
-      const response = await GetSignallist(data, token);
+      // const response = await GetSignallist(data, token);
+      const response = await GetSignallistWithExport(data, token);
       if (response.status) {
         if (response.data?.length > 0) {
           let filterdata = response.data.filter(
@@ -245,8 +247,7 @@ const Closesignal = () => {
         search: searchInput,
       };
 
-      // const response = await GetSignallistWithFilter(data, token);
-      const response = await GetSignallistWithFilterWithPlan(data, token);
+      const response = await GetSignallistWithFilter(data, token);
       if (response && response.status) {
         let filterdata = response.data.filter(
           (item) => item.close_status === true
@@ -315,7 +316,7 @@ const Closesignal = () => {
 
   useEffect(() => {
     getAllSignal();
-  }, [filters, searchInput, searchstock, currentPage, activeTab]);
+  }, [filters, searchInput, searchstock, currentPage]);
 
 
 
@@ -396,7 +397,7 @@ const Closesignal = () => {
     },
     {
       name: "Suggested Quantity/Lot",
-      selector: (row) => row.lot,
+      selector: (row) => row.lot || "-",
       sortable: true,
       width: "250px",
     },
@@ -405,7 +406,7 @@ const Closesignal = () => {
       selector: (row) => (
         <div>
           {" "}
-          <IndianRupee />
+          <IndianRupee style={{ width: "18px" }} />
           {(row?.price)}
         </div>
       ),
@@ -421,7 +422,7 @@ const Closesignal = () => {
             "N/A"
           ) : (
             <>
-              <IndianRupee />
+              <IndianRupee style={{ width: "18px" }} />
               {(row?.closeprice)}
             </>
           )}

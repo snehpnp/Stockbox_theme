@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import {
     GetSignallist,
+    GetSignallistWithExport,
     GetSignallistWithFilter,
     GetSignallistWithFilterWithPlan,
     DeleteSignal,
@@ -23,6 +24,7 @@ import {
     GetStockDetail,
     UpdatesignalReport,
     SendSignalNotification,
+    SendSignalNotificationWithPlan,
     GetSignalNotificationdata,
 } from "../../../Services/Admin/Admin";
 import { fDateTimeH } from "../../../../Utils/Date_formate";
@@ -225,7 +227,8 @@ const Signal = () => {
                 search: searchInput,
                 add_by: userid
             };
-            const response = await GetSignallist(data, token);
+            // const response = await GetSignallist(data, token);
+            const response = await GetSignallistWithExport(data, token);
 
             if (response.status) {
                 if (response.data?.length > 0) {
@@ -269,7 +272,8 @@ const Signal = () => {
                 search: searchInput,
                 add_by: userid
             };
-            const response = await GetSignallist(data, token);
+            // const response = await GetSignallist(data, token);
+            const response = await GetSignallistWithExport(data, token);
             if (response.status) {
                 if (response.data?.length > 0) {
                     let filterdata = response.data.filter(
@@ -905,7 +909,8 @@ const Signal = () => {
     const SendSignaldata = async () => {
         try {
             const data = { signalid: serviceid, message: signalnotification.message };
-            const response = await SendSignalNotification(data, token);
+            // const response = await SendSignalNotification(data, token);
+            const response = await SendSignalNotificationWithPlan(data, token);
 
             if (response && response.status) {
                 showCustomAlert("Success", response.message);

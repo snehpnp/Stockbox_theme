@@ -374,6 +374,28 @@ export async function GetSignallist(data, token) {
     }
 }
 
+export async function GetSignallistWithExport(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/listwithfilterwithplanexport`, data, {
+            headers: {
+                'Authorization': token,
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            params: {
+                from: data.from,
+                to: data.to,
+                service: data.service,
+                stock: data.stock
+            }
+        });
+
+        return res?.data;
+    } catch (error) {
+        console.log("Error fetching signals:", error.response ? error.response.data : error.message);
+    }
+
+}
+
 
 // get client signal detail
 
@@ -3317,6 +3339,24 @@ export async function UpdatesignalReport(data, token) {
     }
 }
 
+// sSend notification signal 
+
+export async function SendSignalNotificationWithPlan(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/sendsignalnotificationwithplan`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
 
 
 // get plan expiry month detail
@@ -3965,3 +4005,20 @@ export async function getPlanbyservice(data, token) {
     }
 }
 
+// add plan
+
+export async function PlanSubscriptionWithPlan(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}plan/addplansubscriptionwithplan`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}

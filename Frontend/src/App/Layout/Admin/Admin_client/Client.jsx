@@ -1201,6 +1201,7 @@ import {
   deleteClient,
   UpdateClientStatus,
   PlanSubscription,
+  PlanSubscriptionWithPlan,
   getActivecategoryplan,
   getplanlist,
   BasketSubscription,
@@ -1526,7 +1527,8 @@ const Client = () => {
         client_id: client._id,
         price: updatetitle.price,
       };
-      const response = await PlanSubscription(data, token);
+      // const response = await PlanSubscription(data, token);
+      const response = await PlanSubscriptionWithPlan(data, token);
       if (response && response.status) {
         showCustomAlert("success", response.message);
         setUpdatetitle({ plan_id: "", client_id: "", price: "" });
