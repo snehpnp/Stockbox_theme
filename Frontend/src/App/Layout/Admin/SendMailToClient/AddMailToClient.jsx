@@ -104,8 +104,8 @@ const Addbroadcast = () => {
             name: "type",
             label: "Select Type",
             type: "select",
-            label_size: 6,
-            col_size: 4,
+            label_size: 4,
+            col_size: 3,
             disable: false,
             options: [
                 { value: "all", label: "All" },
@@ -119,8 +119,8 @@ const Addbroadcast = () => {
             name: "service",
             label: "Select Plan",
             type: "select",
-            label_size: 6,
-            col_size: 4,
+            label_size: 4,
+            col_size: 3,
             disable: false,
             options: [
                 { value: "all", label: "All" },
@@ -136,8 +136,8 @@ const Addbroadcast = () => {
             name: "subject",
             label: "Subject",
             type: "text",
-            label_size: 12,
-            col_size: 4,
+            label_size: 4,
+            col_size: 3,
             disable: false,
             star: true
         },

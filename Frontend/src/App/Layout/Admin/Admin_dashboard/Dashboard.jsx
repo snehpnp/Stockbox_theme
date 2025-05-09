@@ -22,7 +22,7 @@ const Dashbord = () => {
   const [clients, setClients] = useState([]);
   const [monthexpiry, setMonthexpiry] = useState([]);
 
-  //state for loading
+
   const [loading, setLoading] = useState(true);
 
   const currentMonthYear = new Date().toLocaleString("en-US", {
