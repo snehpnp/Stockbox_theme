@@ -48,7 +48,8 @@ import {
   MessageCircle,
   CircleFadingArrowUp,
   Ticket,
-  Mails
+  Mails,
+  Facebook
 } from "lucide-react";
 
 import { Link, useLocation } from "react-router-dom";
@@ -344,7 +345,8 @@ const IconComponent = ({ icon }) => {
     MessageCircle,
     CircleFadingArrowUp,
     Ticket,
-    Mails
+    Mails,
+    Facebook
 
   };
 

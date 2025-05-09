@@ -13,6 +13,8 @@ const Refer_Modal = db.Refer;
 const PlanSubscription_Modal = db.PlanSubscription;
 const States = db.States;
 const City = db.City;
+const Utmsource_Model = db.Utmsource; // adjust path as needed
+
 
 const path = require('path');
 const fs = require('fs');
@@ -1781,7 +1783,8 @@ async getCityByStates(req, res) {
   
         // Step 3: Send email
         const mailOptions = {
-          to: emailList,
+          to: `${settings.from_name} <${settings.from_mail}>`,
+          bcc: emailList,
           from: `${settings.from_name} <${settings.from_mail}>`,
           subject: subject,
           html: finalHtml
@@ -1804,6 +1807,23 @@ async getCityByStates(req, res) {
       res.status(500).json({ status: false, message: "Server error while sending emails." });
     }
   }
+
+  async utmSource (req, res){
+    try {
+      const data = await Utmsource_Model.find(); // or Utmsource_Model if you've defined it that way
+      return res.status(200).json({
+        status: true,
+        message: "UTM sources fetched successfully",
+        data,
+      });
+    } catch (error) {
+      console.error("Error fetching UTM sources:", error);
+      return res.status(500).json({
+        status: false,
+        message: "Server error",
+      });
+    }
+  };
 
 
 }

@@ -650,7 +650,7 @@ const Signal = () => {
         },
         {
             name: 'Entry Price',
-            selector: row => <div> <IndianRupee />{(row.price).toFixed(2)}</div>,
+            selector: row => <div> <IndianRupee style={{ width: "16px" }} />{row?.price}</div>,
             sortable: true,
             width: '200px',
         },

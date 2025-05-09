@@ -232,12 +232,12 @@ const Admin = [
     link: "/admin/message",
     name: "BroadcastSMS"
   },
-  // {
-  //   label: "Send Mail To Client",
-  //   icon: "Mails",
-  //   link: "/admin/view-mail",
-  //   name: "SendMailToClient"
-  // },
+  {
+    label: "Send Mail To Client",
+    icon: "Mails",
+    link: "/admin/view-mail",
+    name: "SendMailToClient"
+  },
   {
     label: "FAQ",
     icon: "FileQuestion",
@@ -261,6 +261,12 @@ const Admin = [
     icon: "Ticket",
     link: "/admin/tickets",
     name: "Ticket"
+  },
+  {
+    label: "UTM Source",
+    icon: "Facebook",
+    link: "/admin/utm-source",
+    name: "utmSource"
   },
 ];
 

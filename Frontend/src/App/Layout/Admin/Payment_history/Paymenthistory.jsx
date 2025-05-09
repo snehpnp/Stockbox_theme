@@ -63,6 +63,7 @@ const History = () => {
         setSearchInput("")
         setStartDate("")
         setEndDate("")
+        setCurrentPage(1);
 
 
     }
@@ -110,6 +111,7 @@ const History = () => {
 
     const gethistory = async () => {
         try {
+            setIsLoading(true)
             const data = { page: currentPage, fromDate: startDate, toDate: endDate, search: searchInput }
             const response = await getPayementhistorywithfilter(data, token);
             if (response.status) {
@@ -124,6 +126,9 @@ const History = () => {
         setIsLoading(false)
     };
 
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [searchInput])
 
 
     useEffect(() => {
@@ -415,20 +420,20 @@ const History = () => {
                                 </div>
                             </div>
                         </div>
-                        {isLoading ? <Loader/>: clients.length >0 ? (
-                        <div className="table-responsive">
-                            <Table
-                                columns={columns}
-                                data={clients}
-                                totalRows={totalRows}
-                                currentPage={currentPage}
-                                onPageChange={handlePageChange}
-                            />
-                        </div>
-                        ):(
+                        {isLoading ? <Loader /> : clients.length > 0 ? (
+                            <div className="table-responsive">
+                                <Table
+                                    columns={columns}
+                                    data={clients}
+                                    totalRows={totalRows}
+                                    currentPage={currentPage}
+                                    onPageChange={handlePageChange}
+                                />
+                            </div>
+                        ) : (
                             <div className="text-center mt-5">
-                            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
-                          </div>
+                                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                            </div>
                         )}
                     </div>
                 </div>

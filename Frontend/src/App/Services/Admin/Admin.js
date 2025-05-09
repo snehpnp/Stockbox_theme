@@ -374,6 +374,28 @@ export async function GetSignallist(data, token) {
     }
 }
 
+export async function GetSignallistWithExport(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/listwithfilterwithplanexport`, data, {
+            headers: {
+                'Authorization': token,
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            params: {
+                from: data.from,
+                to: data.to,
+                service: data.service,
+                stock: data.stock
+            }
+        });
+
+        return res?.data;
+    } catch (error) {
+        console.log("Error fetching signals:", error.response ? error.response.data : error.message);
+    }
+
+}
+
 
 // get client signal detail
 
@@ -481,6 +503,22 @@ export async function SignalCloseApi(data, token) {
         return err.response?.data || err.message;
     }
 }
+
+// for signal close api 
+export async function SignalCloseApiWithPlan(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/closesignalwithplan`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
 
 
 
@@ -1636,6 +1674,24 @@ export async function UpdateCondition(data, token) {
 export async function PlanSubscription(data, token) {
     try {
         const res = await axios.post(`${Config.base_url}plan/addplansubscription`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+// add subscription
+
+export async function PlanSubscriptionAddtoCart(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}plan/addplansubscriptionaddtocart`, data, {
             headers: {
                 data: {},
                 'Authorization': `${token}`,
@@ -3283,6 +3339,24 @@ export async function UpdatesignalReport(data, token) {
     }
 }
 
+// sSend notification signal 
+
+export async function SendSignalNotificationWithPlan(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/sendsignalnotificationwithplan`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
 
 
 // get plan expiry month detail
@@ -3693,6 +3767,20 @@ export async function GetSignalNotificationdata(signalid, token) {
 }
 
 
+export async function GetSignallistWithFilterWithPlan(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/listwithfilterwithplan`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
 
 // segment  list
 
@@ -3849,6 +3937,88 @@ export async function sendMailToClient(data, token) {
 
         return res?.data;
     } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
+//UTM Source data 
+
+export async function getUtmSource(token) {
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/utmsource`, {
+            headers: {
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
+//   add signal by plan 
+
+export async function AddSignalByPlan(data, token) {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            if (key === 'report' && data[key]) {
+                formData.append(key, data[key]);
+            } else {
+                formData.append(key, data[key]);
+            }
+        }
+
+        const res = await axios.post(`${Config.base_url}signal/addsignalwithplan`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
+// get plan by service
+
+
+export async function getPlanbyservice(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/getplansbyservice`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+// add plan
+
+export async function PlanSubscriptionWithPlan(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}plan/addplansubscriptionwithplan`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
         return err.response?.data || err.message;
     }
 }

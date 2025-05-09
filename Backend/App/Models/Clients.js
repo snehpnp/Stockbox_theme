@@ -196,6 +196,11 @@ const clientsModel = new Schema({
         trim: true,
         default: null
     },
+    utmSource: {
+        type: String,
+        trim: true,
+        default: null
+    },
 
 }, {
     timestamps: true

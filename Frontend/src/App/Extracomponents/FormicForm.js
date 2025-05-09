@@ -9,6 +9,7 @@ import "react-quill/dist/quill.snow.css";
 import DropdownMultiselect from "react-multiselect-dropdown-bootstrap";
 import Swal from "sweetalert2";
 import JoditEditor from 'jodit-react';
+import Select from "react-select";
 
 
 const DynamicForm = ({
@@ -327,6 +328,56 @@ const DynamicForm = ({
                               ) : null}
                             </div>
                           </div>
+                        </>
+                      ) : field.type === "selectcheckbox" ? (
+                        <>
+
+                          <div className={`col-lg-${field.col_size}`}>
+                            <div className="input-block row mb-3">
+                              <label
+                                className={`col-lg-${title === "forlogin" ? 3 : title === "update_theme" ? 12 : 7
+                                  } col-form-label p-0 mx-3`}
+                                htmlFor={field.name}
+                              >
+                                {field.label}
+                                {field.star ? <span className="text-danger">*</span> : ""}
+                              </label>
+                              <div className="col-lg-12">
+                                <Select
+                                  id={field.name}
+                                  name={field.name}
+                                  options={field.options}
+                                  isDisabled={field.disable}
+                                  isSearchable={true}
+                                  isMulti={field.multi}
+                                  value={
+                                    field.multi
+                                      ? field.options?.filter((option) =>
+                                        (formik.values[field.name] || []).includes(option.value)
+                                      )
+                                      : field.options?.find(
+                                        (option) => option.value === formik.values[field.name]
+                                      )
+                                  }
+                                  onChange={(selectedOption) => {
+                                    const value = field.multi
+                                      ? selectedOption.map((opt) => opt.value)
+                                      : selectedOption?.value;
+
+                                    formik.setFieldValue(field.name, value || (field.multi ? [] : ""));
+                                  }}
+                                />
+                                {formik.touched[field.name] &&
+                                  formik.errors[field.name] ? (
+                                  <div style={{ color: "red" }}>
+                                    {formik.errors[field.name]}
+                                  </div>
+                                ) : null}
+                              </div>
+                            </div>
+                          </div>
+
+
                         </>
                       ) : field.type === "text2" ? (
                         <>

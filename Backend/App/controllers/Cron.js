@@ -14,6 +14,7 @@ const Liveprice_Modal = db.Liveprice;
 
 const { createGunzip } = require("zlib");
 const { pipeline } = require("stream/promises");
+const { sendEmail } = require('../Utils/emailService');
 
 
 
@@ -818,7 +819,7 @@ async function PlanExpire(req, res) {
                 $lt: futureDates[0]  // less than 5 days from now
             }
         });
-    
+
         // Iterate over each expiring plan
         for (const plan of plans) {
             const planEndDate = new Date(plan.enddate);
@@ -849,7 +850,7 @@ async function PlanExpire(req, res) {
             const titles = 'Plan Expiry Notification';
 
             const client = await Clients_Modal.findById(plan.clientid); // Fetch the client
-    
+
             if (daysRemaining === 5) {
                 message = `Reminder ${client.FullName}, ${serviceName} Plan will expire in 5 days.`;
             } else if (daysRemaining === 3) {
@@ -887,12 +888,38 @@ async function PlanExpire(req, res) {
                 await resultnm.save();
             
 
-    
                     if (client && client.devicetoken) {
+
                         const tokens = [client.devicetoken];
-                        await sendFCMNotification(title, message,tokens,"plan expire");
+
+                        await sendFCMNotification(titles, message,tokens,"plan expire");
                        
                     }
+
+                    const settings = await BasicSetting_Modal.findOne();
+
+                    const emailList = client.Email; // Or however you structure your recipient list
+                    const subject = "Plan Expiry Notification";
+  
+                    // Read email template
+                    const templatePath = path.join(__dirname, '../../template', 'mailtemplate.html');
+                    const htmlTemplate = fs.readFileSync(templatePath, 'utf8'); // Use sync here in loop context
+              
+                    // Replace placeholders
+                    const finalHtml = htmlTemplate
+                      .replace(/{{company_name}}/g, settings.website_title)
+                      .replace(/{{body}}/g, message)
+                      .replace(/{{logo}}/g, `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`);
+
+                    const mailOptions = {
+                      to: emailList,
+                      from: `${settings.from_name} <${settings.from_mail}>`,
+                      subject: subject,
+                      html: finalHtml
+                    };
+
+                    await sendEmail(mailOptions); // Your existing async email sending function
+
                         
                 } catch (error) {
                 }

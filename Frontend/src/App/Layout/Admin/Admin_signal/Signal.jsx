@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { GetClient } from "../../../Services/Admin/Admin";
+import { GetClient,  } from "../../../Services/Admin/Admin";
 import Table from "../../../Extracomponents/Table1";
 import {
     Eye,
@@ -14,13 +14,17 @@ import {
 } from "lucide-react";
 import {
     GetSignallist,
+    GetSignallistWithExport,
     GetSignallistWithFilter,
+    GetSignallistWithFilterWithPlan,
     DeleteSignal,
     SignalCloseApi,
+    SignalCloseApiWithPlan,
     GetService,
     GetStockDetail,
     UpdatesignalReport,
     SendSignalNotification,
+    SendSignalNotificationWithPlan,
     GetSignalNotificationdata,
 } from "../../../Services/Admin/Admin";
 import { fDateTimeH } from "../../../../Utils/Date_formate";
@@ -36,6 +40,8 @@ const Signal = () => {
 
     const [viewMode, setViewMode] = useState("table");
     const token = localStorage.getItem("token");
+    const userid = localStorage.getItem('id');
+
     const [searchInput, setSearchInput] = useState("");
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -219,8 +225,10 @@ const Signal = () => {
                 stock: searchstock,
                 openstatus: "true",
                 search: searchInput,
+                add_by: userid
             };
-            const response = await GetSignallist(data, token);
+            // const response = await GetSignallist(data, token);
+            const response = await GetSignallistWithExport(data, token);
 
             if (response.status) {
                 if (response.data?.length > 0) {
@@ -262,8 +270,10 @@ const Signal = () => {
                 stock: searchstock,
                 openstatus: "true",
                 search: searchInput,
+                add_by: userid
             };
-            const response = await GetSignallist(data, token);
+            // const response = await GetSignallist(data, token);
+            const response = await GetSignallistWithExport(data, token);
             if (response.status) {
                 if (response.data?.length > 0) {
                     let filterdata = response.data.filter(
@@ -315,9 +325,11 @@ const Signal = () => {
                 stock: searchstock,
                 closestatus: "false",
                 search: searchInput,
+                add_by: userid
+
             };
 
-            const response = await GetSignallistWithFilter(data, token);
+            const response = await GetSignallistWithFilterWithPlan(data, token);
 
             if (response && response.status) {
                 setTotalRows(response.pagination.totalRecords);
@@ -630,7 +642,7 @@ const Signal = () => {
                 exitprice: index === 3 ? closedata.exitprice : "",
             };
 
-            const response = await SignalCloseApi(data, token);
+            const response = await SignalCloseApiWithPlan(data, token);
 
             if (response && response.status) {
                 showCustomAlert("Success", "Signal Closed Successfully.");
@@ -897,7 +909,8 @@ const Signal = () => {
     const SendSignaldata = async () => {
         try {
             const data = { signalid: serviceid, message: signalnotification.message };
-            const response = await SendSignalNotification(data, token);
+            // const response = await SendSignalNotification(data, token);
+            const response = await SendSignalNotificationWithPlan(data, token);
 
             if (response && response.status) {
                 showCustomAlert("Success", response.message);
@@ -1247,25 +1260,25 @@ const Signal = () => {
                                         )}
                                     </p>
 
-                                    {/* <div className="col-md-12">
-                                                    <label htmlFor="input11" className="form-label">
-                                                        Remark
-                                                    </label>
-                                                    <textarea
-                                                        className="form-control"
+                                    <div className="col-md-12">
+                                        <label htmlFor="input11" className="form-label">
+                                            Remark
+                                        </label>
+                                        <textarea
+                                            className="form-control"
 
-                                                        id="input11"
-                                                        placeholder="Remark ..."
-                                                        rows={3}
-                                                        value={closedata.close_description}
-                                                        onChange={(e) =>
-                                                            setClosedata({
-                                                                ...closedata,
-                                                                close_description: e.target.value,
-                                                            })
-                                                        }
-                                                    />
-                                                </div> */}
+                                            id="input11"
+                                            placeholder="Remark ..."
+                                            rows={3}
+                                            value={closedata.close_description}
+                                            onChange={(e) =>
+                                                setClosedata({
+                                                    ...closedata,
+                                                    close_description: e.target.value,
+                                                })
+                                            }
+                                        />
+                                    </div>
 
                                     <button
                                         type="submit"

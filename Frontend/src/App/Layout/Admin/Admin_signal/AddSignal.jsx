@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import { AddSignalByAdmin, GetSegmentList, getstockbyservice, getexpirydate, getstockStrickprice } from '../../../Services/Admin/Admin';
+import { AddSignalByAdmin, GetSignallistWithFilterWithPlan, GetSegmentList, getstockbyservice, getPlanbyservice, getexpirydate, getstockStrickprice } from '../../../Services/Admin/Admin';
 import { useNavigate } from 'react-router-dom';
 import Content from '../../../components/Contents/Content';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
@@ -14,6 +14,9 @@ const AddSignal = () => {
   const navigate = useNavigate();
   const user_id = localStorage.getItem('id');
   const token = localStorage.getItem('token');
+
+  const [planPrice, setPlanPrice] = useState([]);
+
 
 
   const [loading, setLoading] = useState(false);
@@ -147,7 +150,7 @@ const AddSignal = () => {
       if (values.segment === "O" && !values.strikeprice) {
         errors.strikeprice = 'Please Select Strike Price';
       }
- 
+
       if (!values.entrytype) {
         errors.entrytype = 'Please Select Entry Type';
       }
@@ -252,6 +255,7 @@ const AddSignal = () => {
 
 
   useEffect(() => {
+
     const fetchStockData = async () => {
 
       const data = { segment: formik.values.segment, symbol: searchItem };
@@ -278,14 +282,26 @@ const AddSignal = () => {
         } else {
           console.log("Failed to fetch strike price", strikePriceResponse);
         }
+
+
+        const data2 = { serviceId: formik.values.segment };
+        const planPriceResponse = await getPlanbyservice(data2);
+        if (planPriceResponse.status) {
+          setPlanPrice(planPriceResponse.data);
+
+        } else {
+          console.log("Failed to fetch service", planPriceResponse);
+        }
+
       } catch (error) {
         console.log("Error fetching stock or expiry date:", error);
       }
+
+
     };
 
     fetchStockData();
   }, [formik.values.segment, searchItem, formik.values.expiry, formik.values.optiontype]);
-
 
 
 
@@ -301,6 +317,19 @@ const AddSignal = () => {
       label_size: 12,
       col_size: 6,
       star: true
+    },
+    {
+      name: 'planid',
+      label: 'Plan',
+      type: 'selectcheckbox',
+      label_size: 12,
+      multi: true,
+      col_size: 6,
+      star: true,
+      options: planPrice?.map((item) => ({
+        label: item.title,
+        value: item._id,
+      })),
     },
     {
       name: 'expiry',

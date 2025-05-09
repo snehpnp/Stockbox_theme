@@ -92,6 +92,8 @@ import EditBasketStockPublish from "../Layout/Admin/Admin_basket/EditBasketStock
 import AddMailToClient from '../Layout/Admin/SendMailToClient/AddMailToClient';
 import ViewMail from '../Layout/Admin/SendMailToClient/ViewMail';
 import UpdateMail from '../Layout/Admin/SendMailToClient/UpdateMail'
+import UtmSource from '../Layout/Admin/UTM_Source/Utmource'
+
 
 
 export default function App() {
@@ -232,6 +234,8 @@ export default function App() {
       <Route path="/addmail-to-client" element={<AddMailToClient/>} />
       <Route path="/view-mail" element={<ViewMail/>} />
       <Route path="/update-mail" element={<UpdateMail/>} />
+
+      <Route path="/utm-source" element={<UtmSource />} />
 
     </Routes>
   );

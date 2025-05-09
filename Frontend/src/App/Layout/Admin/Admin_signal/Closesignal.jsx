@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import {
   GetSignallist,
+  GetSignallistWithExport,
   GetSignallistWithFilter,
   DeleteSignal,
   SignalCloseApi,
@@ -36,7 +37,7 @@ import Loader from "../../../../Utils/Loader";
 
 const Closesignal = () => {
 
-  
+
   const [activeTab, setActiveTab] = useState("table");
   const token = localStorage.getItem("token");
   const [searchInput, setSearchInput] = useState("");
@@ -111,7 +112,8 @@ const Closesignal = () => {
         closestatus: "true",
         search: searchInput,
       };
-      const response = await GetSignallist(data, token);
+      // const response = await GetSignallist(data, token);
+      const response = await GetSignallistWithExport(data, token);
       if (response.status) {
         if (response.data?.length > 0) {
           let filterdata = response.data.filter(
@@ -167,7 +169,8 @@ const Closesignal = () => {
       };
 
 
-      const response = await GetSignallist(data, token);
+      // const response = await GetSignallist(data, token);
+      const response = await GetSignallistWithExport(data, token);
       if (response.status) {
         if (response.data?.length > 0) {
           let filterdata = response.data.filter(
@@ -394,7 +397,7 @@ const Closesignal = () => {
     },
     {
       name: "Suggested Quantity/Lot",
-      selector: (row) => row.lot,
+      selector: (row) => row.lot || "-",
       sortable: true,
       width: "250px",
     },
@@ -403,7 +406,7 @@ const Closesignal = () => {
       selector: (row) => (
         <div>
           {" "}
-          <IndianRupee />
+          <IndianRupee style={{ width: "18px" }} />
           {(row?.price)}
         </div>
       ),
@@ -419,7 +422,7 @@ const Closesignal = () => {
             "N/A"
           ) : (
             <>
-              <IndianRupee />
+              <IndianRupee style={{ width: "18px" }} />
               {(row?.closeprice)}
             </>
           )}

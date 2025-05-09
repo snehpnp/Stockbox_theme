@@ -49,7 +49,7 @@ const AddUser = () => {
     }
     if (!values.city) {
       errors.city = "Please Select City";
-    }
+    } 
 
     return errors;
   };

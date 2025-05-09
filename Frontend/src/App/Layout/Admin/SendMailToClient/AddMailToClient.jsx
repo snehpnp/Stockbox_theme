@@ -3,7 +3,7 @@ import { useFormik } from 'formik';
 import Swal from 'sweetalert2';
 import DynamicForm from '../../../Extracomponents/FormicForm';
 import { useNavigate } from 'react-router-dom';
-import { SendBroadCast, GetService,sendMailToClient } from '../../../Services/Admin/Admin';
+import { SendBroadCast, GetService, sendMailToClient } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
@@ -42,7 +42,7 @@ const Addbroadcast = () => {
     const validate = (values) => {
         let errors = {};
 
-        if (values.type !== "nonsubscribe" && values.type !== "All" && !values.service) {
+        if (values.type !== "nonsubscribe" && values.type !== "all" && !values.service) {
             errors.service = "Please Select Service";
         }
 
@@ -60,32 +60,32 @@ const Addbroadcast = () => {
         return errors;
     };
 
-	const onSubmit = async (values) => {
-		setLoading(true);
-	
-		const req = {
-			usertype: values.type,
-			planid: (values.type === "All" || values.type === "nonsubscribe") ? "" : values.service,
-			subject: values.subject,
-			message: values.message,
-			selectedUserIds: "680c7217a44e60e46147109d"
-		};
-	
-		try {
-			const response = await sendMailToClient(req, token);
-			if (response.status) {
-				showCustomAlert("Success", response.message, navigate, "/admin/view-mail");
-			} else {
-				showCustomAlert("error", response.message);
-			}
-		} catch (error) {
-			showCustomAlert("error", "An unexpected error occurred. Please try again later.");
-		} finally {
-			setLoading(false);
-		}
-	};
-	
-	
+    const onSubmit = async (values) => {
+        setLoading(true);
+
+        const req = {
+            usertype: values.type,
+            planid: (values.type === "all" || values.type === "nonsubscribe") ? "" : values.service,
+            subject: values.subject,
+            message: values.message,
+            selectedUserIds: ""
+        };
+
+        try {
+            const response = await sendMailToClient(req, token);
+            if (response.status) {
+                showCustomAlert("Success", response.message, navigate, "/admin/view-mail");
+            } else {
+                showCustomAlert("error", response.message);
+            }
+        } catch (error) {
+            showCustomAlert("error", "An unexpected error occurred. Please try again later.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
 
     const formik = useFormik({
         initialValues: {
@@ -108,10 +108,10 @@ const Addbroadcast = () => {
             col_size: 4,
             disable: false,
             options: [
-                { value: "All", label: "All" },
+                { value: "all", label: "All" },
                 { value: "active", label: "Active" },
                 { value: "expired", label: "Expired" },
-                { value: "nonsubscribe", label: "Non Subscribe" },
+                { value: "nonsubscriber", label: "Non Subscriber" },
             ],
             star: true
         },
@@ -123,14 +123,14 @@ const Addbroadcast = () => {
             col_size: 4,
             disable: false,
             options: [
-                { value: "All", label: "All" },
+                { value: "all", label: "All" },
                 ...servicedata?.map((item) => ({
                     value: item?._id,
                     label: item?.title,
                 }))
             ],
             star: true,
-            showWhen: (values) => !(values.type === "nonsubscribe" || values.type === "All")
+            showWhen: (values) => !(values.type === "nonsubscribe" || values.type === "all")
         },
         {
             name: "subject",
@@ -165,7 +165,7 @@ const Addbroadcast = () => {
                 fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
                 formik={formik}
                 // page_title="Add Broadcast"
-                btn_name="Add Broadcast"
+                btn_name="Send Email"
                 btn_name1="Cancel"
                 sumit_btn={true}
                 btnstatus={loading}

@@ -87,6 +87,10 @@ const Client = () => {
         }
     }, [clientStatus, clients])
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchInput, searchkyc, statuscreatedby, expired]);
+
 
 
     const handleDownload = (row) => {
@@ -150,6 +154,7 @@ const Client = () => {
         setSearchInput("")
         setStatuscreatedby("")
         setExpired("")
+        setCurrentPage(1);
 
 
     }
@@ -252,6 +257,7 @@ const Client = () => {
 
     const getAdminclient = async () => {
         try {
+            setIsLoading(true)
             const data = {
                 page: currentPage,
                 kyc_verification: searchkyc,
@@ -270,7 +276,9 @@ const Client = () => {
         } catch (error) {
             console.error("Error fetching clients:", error);
         }
-        setIsLoading(false)
+        finally {
+            setIsLoading(false)
+        }
     };
 
 
@@ -467,31 +475,31 @@ const Client = () => {
         },
 
         {
-            name: 'Client Segment',
-            cell: row => (
-                <>
-                    {Array.isArray(row?.plansStatus) && row.plansStatus.length > 0 ? (
-                        row.plansStatus.map((item, index) => (
-                            <span
+            name: "Client Segment",
+            cell: (row) => {
+                if (!Array.isArray(row?.plansStatus) || row.plansStatus.length === 0) {
+                    return <span>N/A</span>;
+                }
+                return (
+                    <div style={{ display: "flex", flexWrap: "wrap" }}>
+                        {row.plansStatus.map((item, index) => (
+                            <div
                                 key={index}
                                 style={{
-                                    color: item.status === 'active' ? 'green' : item.status === 'expired' ? 'red' : 'inherit',
-                                    marginRight: '5px',
+                                    marginBottom: "5px",
+                                    color: item.status === "active" ? "green" : item.status === "expired" ? "red" : "inherit",
                                 }}
                             >
                                 {item.serviceName || "N/A"}
-                            </span>
-                        ))
-                    ) : (
-                        <span>N/A</span>
-                    )}
-                </>
-            ),
+                                {index < row.plansStatus.length - 1 ? " , " : ""}
+                            </div>
+                        ))}
+                    </div>
+                );
+            },
             sortable: true,
-            width: '200px',
-        }
-
-        ,
+            width: "200px",
+        },
         {
             name: 'Phone No',
             selector: row => row.PhoneNo,
@@ -813,7 +821,7 @@ const Client = () => {
                                                         <input
                                                             style={{
                                                                 border: "1px solid #ddd",
-                                                                margin: "0 8px 1px",
+                                                                margin: "5px 8px 1px",
                                                             }}
                                                             className="form-check-input"
                                                             type="radio"
@@ -861,6 +869,7 @@ const Client = () => {
                                                                                 width: "13px",
                                                                                 marginTop: "0.52rem",
                                                                                 border: "1px solid #ddd",
+                                                                                margin: "5px 2px 5px",
                                                                             }}
                                                                             className="form-check-input"
                                                                             type="radio"
@@ -941,7 +950,7 @@ const Client = () => {
                                                                                             <IndianRupee style={{ width: "15px", height: "15px" }} /> {item.price}
                                                                                         </span>
 
-                                                                                       
+
                                                                                     </div>
                                                                                     <div className="d-flex justify-content-between">
                                                                                         <strong>Validity:</strong>
@@ -991,6 +1000,8 @@ const Client = () => {
                                                                         width: "13px",
                                                                         marginTop: "0.52rem",
                                                                         border: "1px solid #ddd",
+                                                                        margin: "5px 2px 5px",
+
                                                                     }}
                                                                     className="form-check-input"
                                                                     type="radio"

@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { UpdateClient } from '../../../Services/Admin/Admin';
+import { UpdateClient, GetAllStates, GetAllCities } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
-
 
 
 const EditClient = () => {
@@ -15,65 +14,61 @@ const EditClient = () => {
   const location = useLocation();
   const { row } = location.state;
 
-  const indianStates = [
-    { name: "Andhra Pradesh" },
-    { name: "Arunachal Pradesh" },
-    { name: "Assam" },
-    { name: "Bihar" },
-    { name: "Chhattisgarh" },
-    { name: "Goa" },
-    { name: "Gujarat" },
-    { name: "Haryana" },
-    { name: "Himachal Pradesh" },
-    { name: "Jharkhand" },
-    { name: "Karnataka" },
-    { name: "Kerala" },
-    { name: "Madhya Pradesh" },
-    { name: "Maharashtra" },
-    { name: "Manipur" },
-    { name: "Meghalaya" },
-    { name: "Mizoram" },
-    { name: "Nagaland" },
-    { name: "Odisha" },
-    { name: "Punjab" },
-    { name: "Rajasthan" },
-    { name: "Sikkim" },
-    { name: "Tamil Nadu" },
-    { name: "Telangana" },
-    { name: "Tripura" },
-    { name: "Uttar Pradesh" },
-    { name: "Uttarakhand" },
-    { name: "West Bengal" }
-  ];
+
+  const [selectedState, setSelectedState] = useState("");
+
+
+  const [state, setState] = useState([])
+  const [city, setCity] = useState([])
 
 
 
   const user_id = localStorage.getItem("id");
   const token = localStorage.getItem("token");
 
+
+
+
   const validate = (values) => {
     let errors = {};
 
+    const numberRegex = /[0-9]/;
+
+    const specialCharRegex = /[^a-zA-Z\s]/;
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+    const onlyNumbersRegex = /^[0-9]+$/;
+
+    const phoneRegex = /^[0-9]{10}$/;
+
     if (!values.FullName) {
       errors.FullName = "Please Enter Full Name";
+    } else if (numberRegex.test(values.FullName)) {
+      errors.FullName = "Full Name should not contain numbers";
+    } else if (specialCharRegex.test(values.FullName)) {
+      errors.FullName = "Full Name should not contain special characters";
     }
     if (!values.Email) {
       errors.Email = "Please Enter Email";
+    } else if (onlyNumbersRegex.test(values.Email)) {
+      errors.Email = "Email should not contain only numbers";
+    } else if (!emailRegex.test(values.Email)) {
+      errors.Email = "Please Enter a valid Email";
     }
-    // if (!values.UserName) {
-    //   errors.UserName = "Please enter Username";
-    // }
+
     if (!values.PhoneNo) {
       errors.PhoneNo = "Please Enter Phone Number";
+    } else if (!phoneRegex.test(values.PhoneNo)) {
+      errors.PhoneNo = "Phone Number should be exactly 10 digits";
     }
+
     if (!values.state) {
       errors.state = "Please Select State";
     }
-
-    // if (!values.password) {
-    //   errors.password = "Please Enter Password";
-    // }
-
+    if (!values.city) {
+      errors.city = "Please Select City";
+    }
 
     return errors;
   };
@@ -81,19 +76,20 @@ const EditClient = () => {
   const onSubmit = async (values) => {
     const req = {
       FullName: values.FullName,
-      // UserName: values.UserName,
       Email: values.Email,
       PhoneNo: values.PhoneNo,
-      // password: values.password,
-      id: row._id,
       state: values.state,
+      city: values.city,
+      id: row._id,
     };
 
     try {
       const response = await UpdateClient(req, token);
+
+
       if (response.status) {
         showCustomAlert("Success", response.message, navigate, "/employee/client");
-      }else {
+      } else {
         if (response.error.status === false) {
           showCustomAlert("error", response.error.message);
         } else if (response.error.status === false) {
@@ -107,6 +103,7 @@ const EditClient = () => {
     }
   };
 
+
   const formik = useFormik({
     initialValues: {
       FullName: row?.FullName || "",
@@ -114,6 +111,7 @@ const EditClient = () => {
       Email: row?.Email || "",
       PhoneNo: row?.PhoneNo || "",
       state: row?.state || "",
+      city: row?.city || "",
 
     },
     validate,
@@ -127,8 +125,10 @@ const EditClient = () => {
       type: "text",
       star: true,
       label_size: 6,
-      col_size: 4,
+      col_size: 3,
       disable: false,
+      star: true
+
     },
     // {
     //   name: "UserName",
@@ -144,30 +144,48 @@ const EditClient = () => {
       type: "text",
       star: true,
       label_size: 12,
-      col_size: 4,
+      col_size: 3,
       disable: false,
+      star: true
+
     },
     {
       name: "PhoneNo",
       label: "Phone Number",
       type: "text3",
       label_size: 12,
-      col_size: 4,
+      col_size: 3,
       disable: false,
+      star: true
     },
     {
       name: "state",
       label: "Select State",
       type: 'select',
-      options: indianStates?.map((item) => ({
-          label: item.name, 
-          value: item.name,
+      options: state?.map((item) => ({
+        label: item.name,
+        value: item.name,
       })),
       label_size: 12,
-      col_size: 4,
+      col_size: 3,
       disable: false,
       star: true
-  }
+    },
+    {
+      name: "city",
+      label: "Select City",
+      type: 'select',
+      options: city?.map((item) => ({
+        label: item.city,
+        value: item.city,
+      })),
+      label_size: 12,
+      col_size: 3,
+      disable: false,
+      star: true
+
+    },
+
     // {
     //   name: "password",
     //   label: "Password",
@@ -178,14 +196,57 @@ const EditClient = () => {
     // },
   ];
 
+
+
+  const getStatedata = async () => {
+    try {
+      const response = await GetAllStates(token);
+      if (response) {
+        setState(response);
+
+      }
+    } catch (error) {
+      console.log("error");
+    }
+  }
+
+
+
+  const getCitydata = async () => {
+    try {
+      const response = await GetAllCities(formik.values.state, token);
+      if (response) {
+        setCity(response);
+
+      }
+    } catch (error) {
+      console.error("Error fetching cities:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (formik.values.state) {
+      getCitydata();
+    }
+  }, [formik.values.state]);
+
+
+
+
+  useEffect(() => {
+    getStatedata()
+  }, [])
+
+
+
+
   return (
     <Content
-        Page_title="Update Client"
-        button_status={false}
-        backbutton_status={true}
-        backForword={true}
-      >
-    
+      Page_title="Update Client"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
       <DynamicForm
         fields={fields}
         btn_name="Update Client"
@@ -193,10 +254,13 @@ const EditClient = () => {
         formik={formik}
         sumit_btn={true}
         btn_name1_route={"/employee/client"}
-        additional_field={<></>}
+        additional_field={<>
+
+
+        </>}
       />
-    
     </Content>
+
   );
 };
 

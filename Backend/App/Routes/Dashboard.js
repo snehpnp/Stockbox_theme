@@ -2,7 +2,7 @@ const router = require("express").Router()
 const cors = require('cors');
 
 
-const { getcount, getLicense, pastPerformance, pastPerformances, CloseSignal, PlanExipreList, CloseSignalWithFilter, PlanExipreListWithFilter, CompanyStatus, Notification, statusChangeNotifiction, totalClient, NotificationList,allStatusChangeNotifiction,pastPerformancewithtype,CloseSignalwithtype,referEarn,PlanExipreListWithFilterExport,CloseSignalWithFilterExport,getMonthlySubscriptionCounts,getMonthlyProfitLoss,getDailyProfitLoss,getAllStates,getCityByStates, sendMailToClient } = require('../Controllers/Dashboard')
+const { getcount, getLicense, pastPerformance, pastPerformances, CloseSignal, PlanExipreList, CloseSignalWithFilter, PlanExipreListWithFilter, CompanyStatus, Notification, statusChangeNotifiction, totalClient, NotificationList,allStatusChangeNotifiction,pastPerformancewithtype,CloseSignalwithtype,referEarn,PlanExipreListWithFilterExport,CloseSignalWithFilterExport,getMonthlySubscriptionCounts,getMonthlyProfitLoss,getDailyProfitLoss,getAllStates,getCityByStates, sendMailToClient,utmSource } = require('../Controllers/Dashboard')
 
 router.get('/dashboard/getcount', getcount);
 router.post('/dashboard/getlicense', getLicense);
@@ -38,6 +38,7 @@ router.get('/dashboard/getdailyprofitloss/:id', getDailyProfitLoss);
 router.get('/dashboard/getstates', getAllStates);
 router.get('/dashboard/getcitybystates/:stateName', getCityByStates);
 router.post('/dashboard/sendmailtoclient', sendMailToClient);
+router.get('/dashboard/utmsource', utmSource);
 
 
 
