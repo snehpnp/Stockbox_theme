@@ -1313,20 +1313,28 @@ const Client = () => {
     setCheckedIndex(index);
   };
 
+
+  
   const showModal = () => {
     setIsModalVisible(true);
   };
+
+
 
   const handleCancel = () => {
     setIsModalVisible(false);
     setSelectcategory("");
   };
 
+
+
   const handleCategoryChange = (categoryId) => {
     setSelectcategory(categoryId);
     setSelectedPlanId(null);
     setUpdatetitle("");
   };
+
+
 
   const getAdminclient = async () => {
     try {
@@ -1366,6 +1374,7 @@ const Client = () => {
     }
 
   };
+
 
   const getexportfile = async () => {
     try {
@@ -1423,6 +1432,9 @@ const Client = () => {
     }
   };
 
+
+
+
   const getcategoryplanlist = async () => {
     try {
       const response = await getActivecategoryplan(token);
@@ -1433,6 +1445,9 @@ const Client = () => {
       console.log("error");
     }
   };
+
+
+
 
   const getplanlistassinstatus = async (_id) => {
     try {
@@ -1445,6 +1460,9 @@ const Client = () => {
     }
   };
 
+
+
+
   const getActiveBasketdetail = async (_id) => {
     try {
       const response = await BasketListbyUser(_id, token);
@@ -1455,6 +1473,8 @@ const Client = () => {
       console.log("error");
     }
   };
+
+
 
   const getbasketlist = async () => {
     try {
@@ -1467,6 +1487,9 @@ const Client = () => {
     }
   };
 
+
+
+
   const updateClient = async (row) => {
     navigate("/admin/client/updateclient/" + row._id, { state: { row } });
   };
@@ -1478,6 +1501,9 @@ const Client = () => {
   const Clientdetail = async (row) => {
     navigate("/admin/client/clientdetail/" + row._id, { state: { row } });
   };
+
+
+
 
   const DeleteClient = async (_id) => {
     try {
@@ -1496,6 +1522,10 @@ const Client = () => {
       showCustomAlert("error", "There was an error deleting the Client.");
     }
   };
+
+
+
+
 
   const handleSwitchChange = async (event, id) => {
     const originalChecked = event.target.checked;
@@ -1518,6 +1548,9 @@ const Client = () => {
       event.target.checked = !originalChecked;
     }
   };
+
+
+
 
   const Updateplansubscription = async () => {
     setLoading(true);

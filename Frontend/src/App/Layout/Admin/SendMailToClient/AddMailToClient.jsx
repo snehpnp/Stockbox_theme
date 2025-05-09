@@ -3,7 +3,7 @@ import { useFormik } from 'formik';
 import Swal from 'sweetalert2';
 import DynamicForm from '../../../Extracomponents/FormicForm';
 import { useNavigate } from 'react-router-dom';
-import { SendBroadCast, GetService, sendMailToClient } from '../../../Services/Admin/Admin';
+import { SendBroadCast, GetService, sendMailToClient, getActivecategoryplan } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
@@ -28,7 +28,7 @@ const Addbroadcast = () => {
 
     const getservice = async () => {
         try {
-            const response = await GetService(token);
+            const response = await getActivecategoryplan(token);
             if (response.status) {
                 setServicedata(response.data);
             }
@@ -117,7 +117,7 @@ const Addbroadcast = () => {
         },
         {
             name: "service",
-            label: "Select Service",
+            label: "Select Plan",
             type: "select",
             label_size: 6,
             col_size: 4,
@@ -130,7 +130,7 @@ const Addbroadcast = () => {
                 }))
             ],
             star: true,
-            showWhen: (values) => !(values.type === "nonsubscribe" || values.type === "all")
+            showWhen: (values) => !(values.type === "nonsubscriber" || values.type === "all")
         },
         {
             name: "subject",
