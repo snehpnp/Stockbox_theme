@@ -82,7 +82,6 @@ import ClientOrderlist from "../Layout/Admin/ClientOrderlist/ClientOrderlist";
 import Changepass from "../Layout/Auth/Changepass";
 import ReferAndEarnlist from "../Layout/Admin/BasicSetting/ReferAndEarnlist";
 import PlanExpirymonthDetail from "../Layout/Admin/PlanExpiryMonth/PlanExpirymonthDetail";
-import SignalStrategy from "../Layout/Admin/Admin_signal/SignalStrategy";
 import PopupDescription from "../Layout/Admin/BasicSetting/PopupDescription";
 import SmsTemplate from "../Layout/Admin/BasicSetting/SmsTemplate";
 import SMSProvider from "../Layout/Admin/BasicSetting/SMSProvider";
@@ -96,6 +95,8 @@ import UtmSource from '../Layout/Admin/UTM_Source/Utmource'
 import TodayExpirydata from "../Layout/Admin/Admin_dashboard/TodayExpirydata";
 import YesterdayExpirydata from "../Layout/Admin/Admin_dashboard/YesterdayExpirydata";
 import TommarrowExpirydata from "../Layout/Admin/Admin_dashboard/TommarrowExpirydata";
+import MultipleSignal from "../Layout/Admin/Admin_signal/MultipleSignal";
+import MultipleSignaldetail from "../Layout/Admin/Admin_signal/MultipleSignaldetail";
 
 
 
@@ -157,7 +158,8 @@ export default function App() {
       <Route path="/addsignal" element={<AddSignal />} />
       <Route path="/signaldetaile/:id" element={<Signaldetail />} />
       <Route path="/closesignal" element={<Closesignal />} />
-      <Route path="/signalstrategy" element={<SignalStrategy />} />
+      <Route path="/multiplesignal" element={<MultipleSignal />} />
+      <Route path="/multipleSignaldetail/:id" element={<MultipleSignaldetail />} />
 
 
       <Route path="/staff" element={<Staff />} />

@@ -3358,6 +3358,74 @@ export async function SendSignalNotificationWithPlan(data, token) {
 }
 
 
+// get multiple Stratege signal  data 
+
+export async function GetOpenMultipleSignaldata(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/getsignalslistwithfilte`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+//
+
+//get multiple Stratege data
+
+
+export async function CloseMultipleStrategydata(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/closesignalwithstock`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// edit multiple signal startegy 
+
+export async function Updatemultiplesignalpdf(data, token) {
+    const formData = new FormData();
+    formData.append('report', data.report);
+    formData.append('id', data.id);
+    formData.append('description', data.description);
+
+    try {
+        const res = await axios.post(`${Config.base_url}signal/updatereports`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
 
 // get plan expiry month detail
 
@@ -3812,6 +3880,95 @@ export async function GetStrategySegmentList(token) {
         return err;
     }
 }
+
+
+
+// /service/liststratrgy
+
+
+export async function ServiceListStratrgy(token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}service/liststratrgy`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return { error: err.response?.data || err.message };
+    }
+}
+
+
+
+/// stock Stratege
+
+export async function StockListStratrgy(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}stock/getstockbyservicestratrgy`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+// multiple signal 
+
+
+export async function MultipleSignaldata(data, token) {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            if (key === 'report' && data[key]) {
+                formData.append(key, data[key]);
+            } else if (key === 'stocks') {
+                formData.append(key, JSON.stringify(data[key]));
+            } else {
+                formData.append(key, data[key]?.toString() || "");
+            }
+        }
+
+        const res = await axios.post(`${Config.base_url}signal/addsignalwithstock`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// get multiple signal startegy 
+
+// get signal detailperuser
+export async function GetmultipleSignalstrategy(_id, token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}signal/detailstrategy/${_id}`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return { error: err.response?.data || err.message };
+    }
+}
+
 
 
 // get help message

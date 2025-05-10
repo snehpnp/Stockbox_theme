@@ -244,12 +244,12 @@ const Admin = [
     link: "/admin/faq",
     name: "FAQ"
   },
-  {
-    label: "Help Center",
-    icon: "HelpingHand",
-    link: "/admin/help",
-    name: "HelpCenter"
-  },
+  // {
+  //   label: "Help Center",
+  //   icon: "HelpingHand",
+  //   link: "/admin/help",
+  //   name: "HelpCenter"
+  // },
   {
     label: "Policy",
     icon: "Wrench",

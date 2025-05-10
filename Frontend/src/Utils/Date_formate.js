@@ -178,3 +178,23 @@ export const isToday = (date) => {
   );
 }
 
+
+
+export const signalfDateTime = (rawDate) => {
+  if (!rawDate || rawDate.length !== 8) return '-';
+
+  const day = rawDate.slice(0, 2);
+  const month = rawDate.slice(2, 4);
+  const year = rawDate.slice(4);
+
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  const monthName = months[parseInt(month, 10) - 1];
+
+  if (!monthName) return '-';
+
+  return `${day} ${monthName} ${year}`;
+};
