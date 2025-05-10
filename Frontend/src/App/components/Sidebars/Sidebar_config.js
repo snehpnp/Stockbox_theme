@@ -589,7 +589,19 @@ const Employee = [
     icon: "HelpingHand",
     link: "/employee/faq",
     name: "FAQ"
-  }
+  },
+  {
+    label: "Broadcast SMS",
+    icon: "MessageCircleMore",
+    link: "/employee/message",
+    name: "BroadcastSMS"
+  },
+  {
+    label: "Ticket",
+    icon: "Ticket",
+    link: "/employee/tickets",
+    name: "Ticket"
+  },
 ];
 
 
