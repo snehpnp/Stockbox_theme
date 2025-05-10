@@ -392,7 +392,7 @@ const User = [
 
   {
     name: "HelpDesk",
-    label: "Help Desk",
+    label: "Ticket",
     icon: "HelpingHand",
     link: "/user/help-desk",
     children: [],

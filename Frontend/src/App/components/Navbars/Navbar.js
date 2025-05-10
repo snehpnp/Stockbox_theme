@@ -468,7 +468,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       />
                     </div>
                   </div>
-                ) : (
+                ) : Role === "USER" ? (
                   <div className="d-flex">
                     <span className="switch-label p-1">Login with API:</span>
                     <div
@@ -489,7 +489,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       />
                     </div>
                   </div>
-                )}
+                ) : ""}
 
                 {Role === "ADMIN" ? (
                   <div className="dropdown">
