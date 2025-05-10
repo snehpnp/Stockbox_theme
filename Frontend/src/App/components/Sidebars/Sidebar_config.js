@@ -391,7 +391,7 @@ const User = [
   },
 
   {
-    name: "HelpDesk",
+    name: "Ticket",
     label: "Ticket",
     icon: "HelpingHand",
     link: "/user/help-desk",
