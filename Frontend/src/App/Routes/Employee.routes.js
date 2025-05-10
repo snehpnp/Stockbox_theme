@@ -40,7 +40,7 @@ import Freeclient from '../Layout/Employee/StaffClient/Freeclient';
 import Editfreeclient from '../Layout/Employee/StaffClient/Editfreeclient';
 import AddClient from '../Layout/Employee/StaffClient/Addclient';
 import AddStock from '../Layout/Employee/Basket/AddStock';
-import Dashbord from '../Layout/Admin/Admin_dashboard/Dashboard';
+import Dashbord from '../Layout/Employee/Dashboard/Dashboard';
 import Planexpirymonth from '../Layout/Admin/PlanExpiryMonth/Planexpirymonth';
 import PlanExpirymonthDetail from '../Layout/Employee/PlanExpiryMonth/PlanExpirymonthDetail';
 
@@ -61,7 +61,7 @@ export default function Employee() {
 	const userid = localStorage.getItem('id');
 
 	const [permission, setPermission] = useState([]);
-	console.log("permission kya aa rhe hai",permission)
+	console.log("permission kya aa rhe hai", permission)
 
 	const [isToggled, setIsToggled] = useState(false);
 	const [isSidebarHovered, setIsSidebarHovered] = useState(false);
@@ -150,7 +150,7 @@ export default function Employee() {
 			{permission.includes("paymenthistory") ? <Route path="/paymenthistory" element={<History />} /> : ""}
 			{permission.includes("planexpiry") ? <Route path="/planexpiry" element={<Planexpiry />} /> : ""}
 			<Route path="/planexpirymonth" element={<Planexpirymonth />} />
-			<Route path="/planExpirymonthDetail" element={<PlanExpirymonthDetail/>} />
+			<Route path="/planExpirymonthDetail" element={<PlanExpirymonthDetail />} />
 			<Route path="/paymentrequest" element={<PaymentRequest />} />
 			{permission.includes("perform") ? <Route path="/perform" element={<Perform />} /> : ""}
 
@@ -173,12 +173,12 @@ export default function Employee() {
 			{permission.includes("viewfreeclient") ? <Route path="/freeclient" element={<Freeclient />} /> : ""}
 			{permission.includes("editfreeclient") ? <Route path="/editfreeclient/:id" element={<Editfreeclient />} /> : ""}
 
-			{permission.includes("ticket")?<Route path="/tickets" element={<Tickets />} />:""}
-			{permission.includes("ticket")?<Route path="/viewticket/:id" element={<ViewTicket />} />:""}
+			{permission.includes("ticket") ? <Route path="/tickets" element={<Tickets />} /> : ""}
+			{permission.includes("ticket") ? <Route path="/viewticket/:id" element={<ViewTicket />} /> : ""}
 
-			{permission.includes("broadcast")?<Route path="/message" element={<Message />} />:""}
-			{permission.includes("broadcast")?<Route path="/addbroadcast" element={<Addbroadcast />} />:""}
-			{permission.includes("broadcast")?<Route path="/updatebroadcast" element={<Updatebroadcast />} />:""}
+			{permission.includes("broadcast") ? <Route path="/message" element={<Message />} /> : ""}
+			{permission.includes("broadcast") ? <Route path="/addbroadcast" element={<Addbroadcast />} /> : ""}
+			{permission.includes("broadcast") ? <Route path="/updatebroadcast" element={<Updatebroadcast />} /> : ""}
 
 
 

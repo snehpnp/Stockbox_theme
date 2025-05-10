@@ -1,85 +1,43 @@
 import React, { useEffect, useState } from 'react'
-import { getDashboarddetail, getExpiryByMonth } from '../../../Services/Admin'
-import { GetClient } from '../../../Services/Admin';
-import { fDateTime, fDateMonth } from '../../../Utils/Date_formate';
-import Table from '../../../components/Table';
-import { getstaffperuser } from '../../../Services/Admin';
+import { getDashboarddetail, getExpiryByMonth } from '../../../Services/Admin/Admin'
+import { GetClient } from '../../../Services/Admin/Admin';
+import { fDateTime, fDateMonth } from '../../../../Utils/Date_formate';
+import Table from '../../../Extracomponents/Table';
+import { getstaffperuser } from '../../../Services/Admin/Admin';
 import { Link } from 'react-router-dom';
-import Loader from '../../../Utils/Loader';
+import Loader from '../../../../Utils/Loader';
+
+
+
 
 
 const Dashbord = () => {
 
 
-    const currentMonthYear = new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
 
     useEffect(() => {
-        getdetail()
-        getAdminclient()
         getpermissioninfo()
-        getExpirydata()
     }, [])
+
+
 
 
     const token = localStorage.getItem('token');
     const userid = localStorage.getItem('id');
 
-    const [data, setData] = useState([])
-    const [clients, setClients] = useState([]);
     const [permission, setPermission] = useState([]);
-    const [monthexpiry, setMonthexpiry] = useState([]);
+
 
     // state for loader
     const [isLoader, setIsLoader] = useState(true)
-
-
-    const getdetail = async () => {
-        try {
-            const response = await getDashboarddetail(token);
-            if (response.status) {
-
-                setData(response.data)
-            }
-        } catch (error) {
-            console.log("Error fetching services:", error);
-        }
-        setIsLoader(false)
-    };
-
-
-
-    const getExpirydata = async () => {
-        try {
-            const response = await getExpiryByMonth(token);
-            if (response.status) {
-                setMonthexpiry(response.data)
-            }
-        } catch (error) {
-            console.log("Error fetching services:", error);
-        }
-        setIsLoader(false)
-    };
-
-    const getAdminclient = async () => {
-        try {
-            const response = await GetClient(token);
-            if (response.status) {
-                const topClients = response.data.slice(0, 5);
-                setClients(topClients);
-            }
-        } catch (error) {
-            console.log("error");
-        }
-        setIsLoader(false)
-    }
-
 
 
     const getpermissioninfo = async () => {
         try {
             const response = await getstaffperuser(userid, token);
             if (response.status) {
-                setPermission(response.data.permissions);
+                console.log("response.data", response.data)
+                setPermission(response.data);
             }
         } catch (error) {
             console.log("error", error);
@@ -89,139 +47,115 @@ const Dashbord = () => {
 
 
 
-
-
-
-
-    const columns = [
-        {
-            name: 'S.No',
-            selector: (row, index) => index + 1,
-            sortable: false,
-            width: '100px',
-        },
-        {
-            name: 'Full Name',
-            selector: row => row.FullName,
-            sortable: true,
-            width: '200px',
-        },
-        {
-            name: 'Email',
-            selector: row => row.Email,
-            sortable: true,
-            width: '400px',
-
-        },
-        {
-            name: 'Plan Status',
-            cell: row => {
-                const hasActive = row?.plansStatus?.some(item => item.status === 'active');
-                const hasExpired = row?.plansStatus?.some(item => item.status === 'expired');
-
-                let statusText = 'N/A';
-                let color = 'red';
-
-                if (hasActive) {
-                    statusText = 'Active';
-                    color = 'green';
-                } else if (hasExpired) {
-                    statusText = 'Expired';
-                    color = 'orange';
-                }
-
-                return (
-                    <span style={{ color }}>
-                        {statusText}
-                    </span>
-                );
-            },
-            sortable: true,
-            width: '200px',
-        },
-
-        {
-            name: 'Client Segment',
-            cell: row => (
-                <>
-                    {Array.isArray(row?.plansStatus) && row.plansStatus.length > 0 ? (
-                        row.plansStatus.map((item, index) => (
-                            <span
-                                key={index}
-                                style={{
-                                    color: item.status === 'active' ? 'green' : item.status === 'expired' ? 'red' : 'inherit',
-                                    marginRight: '5px',
-                                }}
-                            >
-                                {item.serviceName || "N/A"}
-                            </span>
-                        ))
-                    ) : (
-                        <span>N/A</span>
-                    )}
-                </>
-            ),
-            sortable: true,
-            width: '200px',
-        },
-        {
-            name: 'Phone No',
-            selector: row => row.PhoneNo,
-            sortable: true,
-            width: '200px',
-        },
-
-
-        {
-            name: 'Created By',
-            selector: row => row.addedByDetails?.FullName ?? (row.clientcome === 1 ? "WEB" : "APP"),
-            sortable: true,
-            width: '165px',
-        },
-
-        {
-            name: 'CreatedAt',
-            selector: row => fDateTime(row.createdAt),
-            sortable: true,
-
-        },
-
-    ];
-
-
-
     return (
-        <div>
+        <div style={{ padding: "30px", backgroundColor: "#f0f2f5", minHeight: "100vh", fontFamily: "Segoe UI, sans-serif" }}>
             {isLoader ? (
                 <Loader />
-            ) : (<>
+            ) : (
+                <>
 
-                <div className="page-content">
+                    <div
+                        style={{
+                            backgroundColor: "#ffffff",
+                            borderRadius: "16px",
+                            padding: "30px",
+                            marginBottom: "40px",
+                            boxShadow: "0 8px 24px rgba(0, 0, 0, 0.08)",
+                            position: "relative",
+                        }}
+                    >
+                        {/* Accent Header Bar */}
+                        <div style={{ height: "6px", width: "100px", backgroundColor: "#007bff", borderRadius: "4px", marginBottom: "20px" }}></div>
 
-                    <div className="card radius-10">
-                        <div className="card-body">
-                            <div className="d-flex align-items-center">
-                                <div>
-                                    <h5 className="mb-0">Recent Client</h5>
-                                </div>
-
+                        {/* Avatar + Name */}
+                        <div style={{ display: "flex", alignItems: "center", marginBottom: "30px" }}>
+                            <div
+                                style={{
+                                    backgroundColor: "#007bff",
+                                    color: "#fff",
+                                    borderRadius: "50%",
+                                    width: "60px",
+                                    height: "60px",
+                                    fontSize: "22px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    marginRight: "20px",
+                                }}
+                            >
+                                {permission?.FullName?.[0] || "U"}
                             </div>
-                            <hr />
+                            <div>
+                                <h2 style={{ margin: "0", fontSize: "22px", color: "#333" }}>{permission?.FullName || "N/A"}</h2>
+                                <p style={{ margin: "4px 0", color: "#777" }}>{permission?.Role == 2 ? "EMPLOYEE" : ""}</p>
+                            </div>
+                        </div>
 
-                            {permission.includes("viewclient") ? <Table
-                                columns={columns}
-                                data={clients}
-                            /> : ""}
-
+                        {/* Profile Details */}
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "30px" }}>
+                            <div style={{ flex: "1 1 30%" }}>
+                                <span style={{ color: "#555", fontWeight: "600" }}>👤 Username</span>
+                                <p style={{ margin: "6px 0", color: "#222" }}>{permission?.UserName || "N/A"}</p>
+                            </div>
+                            <div style={{ flex: "1 1 30%" }}>
+                                <span style={{ color: "#555", fontWeight: "600" }}>📧 Email</span>
+                                <p style={{ margin: "6px 0", color: "#222" }}>{permission?.Email || "N/A"}</p>
+                            </div>
+                            <div style={{ flex: "1 1 30%" }}>
+                                <span style={{ color: "#555", fontWeight: "600" }}>📞 Phone</span>
+                                <p style={{ margin: "6px 0", color: "#222" }}>{permission?.PhoneNo || "N/A"}</p>
+                            </div>
                         </div>
                     </div>
 
-                </div>
+                    {/* Permissions Section */}
+                    <div
+                        style={{
+                            backgroundColor: "#ffffff",
+                            borderRadius: "16px",
+                            padding: "30px",
+                            boxShadow: "0 8px 24px rgba(0, 0, 0, 0.08)",
+                        }}
+                    >
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                            <h2 style={{ color: "#333", margin: "0" }}>🛡️ Permissions</h2>
+                        </div>
 
-            </>)}
+                        {permission?.permissions.length > 0 ? (
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
+                                {permission?.permissions
+                                    ?.filter((perm) => perm !== "userPermissions || planpermission",) // Filter out the permission you want to ignore
+                                    .map((perm, index) => (
+                                        <span
+                                            key={index}
+                                            style={{
+                                                backgroundColor: "#17a2b8",
+                                                color: "#fff",
+                                                borderRadius: "20px",
+                                                padding: "8px 16px",
+                                                fontSize: "14px",
+                                                fontWeight: "500",
+                                                boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                                            }}
+                                        >
+                                            {perm}
+                                        </span>
+                                    ))}
 
+                            </div>
+                        ) : (
+                            <p style={{ color: "#999" }}>No permissions assigned</p>
+                        )}
+                    </div>
+
+                </>
+            )}
         </div>
-    )
+    );
+
+
+
+
 }
 
 export default Dashbord
