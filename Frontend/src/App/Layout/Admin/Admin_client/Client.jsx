@@ -217,7 +217,7 @@ const Client = () => {
 
       const response = await AllclientFilter(data, token);
       if (response.status) {
-        setClients(response.data && response.data);
+        setClients(response.data);
         setTotalRows(response.pagination.total);
       } else {
         setClients([])

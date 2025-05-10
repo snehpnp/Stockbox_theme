@@ -257,10 +257,10 @@ const Admin = [
     name: "Policy"
   },
   {
-    label: "Ticket",
-    icon: "Ticket",
+    label: "Help Disk",
+    icon: "Help Disk",
     link: "/admin/tickets",
-    name: "Ticket"
+    name: "HelpDisk"
   },
   {
     label: "UTM Source",
@@ -391,8 +391,8 @@ const User = [
   },
 
   {
-    name: "Ticket",
-    label: "Ticket",
+    name: "Help Disk",
+    label: "Help Disk",
     icon: "HelpingHand",
     link: "/user/help-desk",
     children: [],
@@ -597,10 +597,10 @@ const Employee = [
     name: "BroadcastSMS"
   },
   {
-    label: "Ticket",
-    icon: "Ticket",
+    label: "Help Disk",
+    icon: "Help Disk",
     link: "/employee/tickets",
-    name: "Ticket"
+    name: "HelpDisk"
   },
 ];
 
