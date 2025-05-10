@@ -784,6 +784,11 @@ class List {
         client.freetrial = 1;
         await client.save();
       }
+          if (client.kyc_verification == 0) {
+        client.kyc_verification = 2;
+        await client.save();
+      }
+
 
 
       const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
@@ -1344,6 +1349,12 @@ if (pdfresponse.status === true) {
           await sendEmail(mailOptions);
         });
 
+      }
+
+
+         if (client.kyc_verification == 0) {
+        client.kyc_verification = 2;
+        await client.save();
       }
       // Respond with the created subscription
       return res.status(201).json({
@@ -5745,7 +5756,10 @@ await sendEmail(mailOptions);
         client.freetrial = 1;
         await client.save();
       }
-
+   if (client.kyc_verification == 0) {
+        client.kyc_verification = 2;
+        await client.save();
+      }
 
       const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
 
@@ -6222,7 +6236,10 @@ await sendEmail(mailOptions);
         client.freetrial = 1;
         await client.save();
       }
-
+   if (client.kyc_verification == 0) {
+        client.kyc_verification = 2;
+        await client.save();
+      }
 
       const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
 
@@ -6794,7 +6811,10 @@ if (pdfresponse.status === true) {
         { $set: { status: true } } // Update status to true
     );
     
-  
+    if (client.kyc_verification == 0) {
+        client.kyc_verification = 2;
+        await client.save();
+      }
      
         return res.status(201).json({
           status: true,

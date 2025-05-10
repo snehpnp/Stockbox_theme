@@ -12,6 +12,14 @@ async function generatePDF({
 }) {
   try {
 
+ if (typeof headerTemplate !== 'string' || headerTemplate.trim() === '') {
+    headerTemplate = '<div style="height:0;"></div>';
+  }
+
+  if (typeof footerTemplate !== 'string' || footerTemplate.trim() === '') {
+    footerTemplate = '<div style="height:0;"></div>';
+  }
+
 
     const browser = await puppeteer.launch({
       headless: 'new',
