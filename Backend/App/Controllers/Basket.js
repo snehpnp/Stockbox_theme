@@ -2013,7 +2013,10 @@ if (pdfresponse.status === true) {
 
       }
 
-
+  if (client.kyc_verification == 0) {
+        client.kyc_verification = 2;
+        await client.save();
+      }
       // Respond with the created subscription
       return res.status(201).json({
         status: true,
@@ -2343,6 +2346,12 @@ if (pdfresponse.status === true) {
       { client_id: client_id, basket_id:basket_id, status: false, plan_id: null }, // Find all matching items
       { $set: { status: true } } // Update status to true
   );
+
+
+    if (client.kyc_verification == 0) {
+        client.kyc_verification = 2;
+        await client.save();
+      }
   
       // Respond with the created subscription
       return res.status(201).json({

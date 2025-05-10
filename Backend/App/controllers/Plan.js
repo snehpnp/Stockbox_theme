@@ -652,7 +652,10 @@ if (settings.gst > 0 && settings.gststatus==1) {
        }
 
 
-
+  if (client.kyc_verification == 0) {
+        client.kyc_verification = 2;
+        await client.save();
+      }
 
        const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
  
@@ -1417,7 +1420,10 @@ const orderNumberName = `${invoicePrefix}/${financialYear}/${formattedNumber}`;
       await client.save();
        }
 
-
+  if (client.kyc_verification == 0) {
+        client.kyc_verification = 2;
+        await client.save();
+      }
 
        const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
  

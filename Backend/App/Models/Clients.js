@@ -50,7 +50,7 @@ const clientsModel = new Schema({
     },
     kyc_verification: {
         type: Number, // changed to Number
-        enum: [1, 0],
+        enum: [1, 0, 2],
         default: 0
     },
     pdf: {
