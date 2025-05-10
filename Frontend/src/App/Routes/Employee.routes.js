@@ -44,6 +44,12 @@ import Dashbord from '../Layout/Admin/Admin_dashboard/Dashboard';
 import Planexpirymonth from '../Layout/Admin/PlanExpiryMonth/Planexpirymonth';
 import PlanExpirymonthDetail from '../Layout/Employee/PlanExpiryMonth/PlanExpirymonthDetail';
 
+import Message from '../Layout/Employee/Broadcast/Message'
+import Updatebroadcast from '../Layout/Employee/Broadcast/Updatebroadcast'
+import Addbroadcast from '../Layout/Employee/Broadcast/Addbroadcast'
+
+import Tickets from '../Layout/Employee/Tickets/Tickets'
+import ViewTicket from '../Layout/Employee/Tickets/ViewTicket'
 
 
 export default function Employee() {
@@ -55,6 +61,7 @@ export default function Employee() {
 	const userid = localStorage.getItem('id');
 
 	const [permission, setPermission] = useState([]);
+	console.log("permission kya aa rhe hai",permission)
 
 	const [isToggled, setIsToggled] = useState(false);
 	const [isSidebarHovered, setIsSidebarHovered] = useState(false);
@@ -165,6 +172,13 @@ export default function Employee() {
 			{permission.includes("viewdetail") ? <Route path="/client/clientdetail/:id" element={<Viewclientdetail />} /> : ""}
 			{permission.includes("viewfreeclient") ? <Route path="/freeclient" element={<Freeclient />} /> : ""}
 			{permission.includes("editfreeclient") ? <Route path="/editfreeclient/:id" element={<Editfreeclient />} /> : ""}
+
+			{permission.includes("ticket")?<Route path="/tickets" element={<Tickets />} />:""}
+			{permission.includes("ticket")?<Route path="/viewticket/:id" element={<ViewTicket />} />:""}
+
+			{permission.includes("broadcast")?<Route path="/message" element={<Message />} />:""}
+			{permission.includes("broadcast")?<Route path="/addbroadcast" element={<Addbroadcast />} />:""}
+			{permission.includes("broadcast")?<Route path="/updatebroadcast" element={<Updatebroadcast />} />:""}
 
 
 

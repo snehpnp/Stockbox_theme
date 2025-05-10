@@ -254,6 +254,8 @@ const Client = () => {
                     ? "NA"
                     : "",
         add_by: "",
+        fromDate: filters.fromDate,
+        toDate: filters.toDate,
       };
 
       const response = await getclientExportfile(data, token);

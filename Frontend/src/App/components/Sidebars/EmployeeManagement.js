@@ -15,7 +15,9 @@ export const permissionMapping = {
     "allbaskethistory": ["SubscriptionHistory"],
     "viewfreeclient": ["FreeTrialClient"],
     "paymenthistory": ["PaymentHistory"],
-    "planexpiry": ["ClientPlanExpiry"]
+    "planexpiry": ["ClientPlanExpiry"],
+    "ticket":["Ticket"],
+    "broadcast":["BroadcastSMS"]
 };
 
 
