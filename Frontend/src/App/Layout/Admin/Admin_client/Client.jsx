@@ -1237,7 +1237,7 @@ const Client = () => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
-  // State definitions
+
   const [category, setCategory] = useState([]);
   const [checkedIndex, setCheckedIndex] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -1258,6 +1258,8 @@ const Client = () => {
   const [getBasket, setGetBasket] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(false);
+
+
 
   const [basketdetail, setBasketdetail] = useState({
     basket_id: "",
