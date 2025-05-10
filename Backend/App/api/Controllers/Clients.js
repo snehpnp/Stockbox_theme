@@ -657,8 +657,9 @@ class Clients {
         });
       }
 
+
       const titles = 'Important Update';
-      const message = `${client.FullName} ,You have successfully deleted your account.`;
+      const message = `${client.FullName} ,has successfully deleted the account.`;
       const resultnm = new Adminnotification_Modal({
         clientid: id,
         type: 'delete client',
