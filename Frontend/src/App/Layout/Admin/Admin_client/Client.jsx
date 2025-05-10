@@ -1402,6 +1402,8 @@ const Client = () => {
       if (response.status) {
         setClients(response.data && response.data);
         setTotalRows(response.pagination.total);
+      } else {
+        setClients([])
       }
     } catch (error) {
       console.error("Error fetching clients:", error);
