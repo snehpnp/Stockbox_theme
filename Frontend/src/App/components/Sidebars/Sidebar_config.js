@@ -258,7 +258,7 @@ const Admin = [
   },
   {
     label: "Help Disk",
-    icon: "Help Disk",
+    icon: "Ticket",
     link: "/admin/tickets",
     name: "HelpDisk"
   },
@@ -393,7 +393,7 @@ const User = [
   {
     name: "Help Disk",
     label: "Help Disk",
-    icon: "HelpingHand",
+    icon: "Ticket",
     link: "/user/help-desk",
     children: [],
   },
@@ -598,7 +598,7 @@ const Employee = [
   },
   {
     label: "Help Disk",
-    icon: "Help Disk",
+    icon: "Ticket",
     link: "/employee/tickets",
     name: "HelpDisk"
   },
