@@ -291,29 +291,7 @@ const Generalsettings = () => {
 
                                         </div>
 
-                                        {/* <div className="row mb-3 align-items-center">
-                                            <label htmlFor="simage" className="col-sm-3 col-form-label">
-                                                <b>Signature Image</b>
-                                            </label>
-                                            <div className="col-sm-8">
-                                                <input
-                                                    name="simage"
-                                                    type="file"
-                                                    accept="image/*"
-                                                    className="form-control"
-                                                    onChange={(event) => setFieldValue("simage", event.currentTarget.files[0])}
 
-                                                />
-                                            </div>
-                                            <div className="col-sm-1">
-                                                {clients[0].simage && (
-                                                    <div className="file-preview">
-                                                        <img src={`${image_baseurl}uploads/basicsetting/${clients[0].simage}`} alt="simage Preview" className="image-preview" />
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                        </div> */}
 
                                         <div className="row mb-3 align-items-center">
                                             <label htmlFor="address" className="col-sm-3 col-form-label">
