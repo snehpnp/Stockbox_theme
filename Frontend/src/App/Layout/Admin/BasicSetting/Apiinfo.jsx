@@ -169,8 +169,8 @@ const Apiinfo = () => {
                                             onChange={(e) => handleSwitchChange(e.target.value)}
                                         >
                                             <option value={0}>None</option>
-                                            <option value={1}>After Payment</option>
-                                            <option value={2}>Before Payment</option>
+                                            <option value={2}>After Payment</option>
+                                            <option value={1}>Before Payment</option>
                                         </select>
 
                                     </div>
