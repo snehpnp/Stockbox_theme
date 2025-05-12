@@ -50,6 +50,8 @@ import Addbroadcast from '../Layout/Employee/Broadcast/Addbroadcast'
 
 import Tickets from '../Layout/Employee/Tickets/Tickets'
 import ViewTicket from '../Layout/Employee/Tickets/ViewTicket'
+import MultipleSignaldetail from '../Layout/Employee/Signal/MultipleSignaldetail';
+import MultipleSignal from '../Layout/Employee/Signal/MultipleSignal';
 
 
 export default function Employee() {
@@ -164,6 +166,10 @@ export default function Employee() {
 			{permission.includes("addsignal") ? <Route path="/addsignal" element={<AddSignal />} /> : ""}
 			{permission.includes("signaldetail") ? <Route path="/signaldetaile/:id" element={<Signaldetail />} /> : ""}
 			{permission.includes("viewsignal") ? <Route path="/closesignal" element={<Closesignal />} /> : ""}
+
+			{permission.includes("Strategy") ? <Route path="/multiplesignal" element={<MultipleSignal />} /> : ""}
+			{permission.includes("Strategy") ? <Route path="/multipleSignaldetail/:id" element={<MultipleSignaldetail />} /> : ""}
+
 
 
 			{permission.includes("viewclient") ? <Route path="/client" element={<Client />} /> : ""}

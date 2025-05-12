@@ -91,6 +91,7 @@ const Staffpermission = () => {
             signaldetail: false,
             addsignal: false,
             Signalpermission: false,
+            Strategy: false,
 
             // Staffpermission: false,
             // addstaff: false,
@@ -160,8 +161,8 @@ const Staffpermission = () => {
             paymenthistory: false,
             planexpiry: false,
             perform: false,
-            broadcast:false,
-            ticket:false,
+            broadcast: false,
+            ticket: false,
 
 
 
@@ -218,6 +219,7 @@ const Staffpermission = () => {
             // formik.setFieldValue('deletesignal', clients.includes('deletesignal'));
             formik.setFieldValue('signalstatus', clients.includes('signalstatus'));
             formik.setFieldValue('ownsignal', clients.includes('ownsignal'));
+            formik.setFieldValue('Strategy', clients.includes('Strategy'));
 
 
 
@@ -415,7 +417,7 @@ const Staffpermission = () => {
 
 
     useEffect(() => {
-        const signalPermissions = ["signalstatus", "viewsignal", "signaldetail", "addsignal", "editsignal"];
+        const signalPermissions = ["signalstatus", "viewsignal", "signaldetail", "addsignal", "editsignal", "Strategy"];
 
         if (formik.values.Signalpermission) {
             signalPermissions.forEach(permission => formik.setFieldValue(permission, true));
@@ -437,7 +439,8 @@ const Staffpermission = () => {
             formik.values.ownsignal ||
             formik.values.signaldetail ||
             formik.values.addsignal ||
-            formik.values.editsignal;
+            formik.values.editsignal ||
+            formik.values.Strategy
 
         if (anySignalChecked) {
             formik.setFieldValue("viewsignal", true);
@@ -448,7 +451,8 @@ const Staffpermission = () => {
             formik.values.signalstatus &&
             formik.values.signaldetail &&
             formik.values.addsignal &&
-            formik.values.editsignal;
+            formik.values.editsignal &&
+            formik.values.Strategy
 
         formik.setFieldValue("Signalpermission", allSignalPermissionsChecked);
     }, [
@@ -457,6 +461,7 @@ const Staffpermission = () => {
         formik.values.signaldetail,
         formik.values.addsignal,
         formik.values.editsignal,
+        formik.values.Strategy,
     ]);
 
 
@@ -855,7 +860,7 @@ const Staffpermission = () => {
 
 
     useEffect(() => {
-        const permissions = ["paymenthistory", "planexpiry", "perform","broadcast","ticket"];
+        const permissions = ["paymenthistory", "planexpiry", "perform", "broadcast", "ticket"];
 
         if (formik.values.otherpermission) {
             permissions.forEach(permission => formik.setFieldValue(permission, true));
@@ -870,7 +875,7 @@ const Staffpermission = () => {
     }, [formik.values.otherpermission]);
 
     useEffect(() => {
-        const permissions = ["paymenthistory", "planexpiry", "perform","broadcast","ticket"];
+        const permissions = ["paymenthistory", "planexpiry", "perform", "broadcast", "ticket"];
 
         const anyChecked = permissions.some(permission => formik.values[permission]);
 
@@ -1116,7 +1121,7 @@ const Staffpermission = () => {
             label_size: 12,
             col_size: 2,
             // check_box_true: formik.values.viewservice,
-            check_box_true: formik.values.Signalpermission || formik.values.ownsignal || formik.values.signalstatus || formik.values.editsignal || formik.values.signaldetail || formik.values.addsignal || formik.values.viewsignal ? true : false,
+            check_box_true: formik.values.Signalpermission || formik.values.ownsignal || formik.values.signalstatus || formik.values.editsignal || formik.values.signaldetail || formik.values.addsignal || formik.values.Strategy || formik.values.viewsignal ? true : false,
         },
         {
             name: 'ownsignal',
@@ -1173,6 +1178,15 @@ const Staffpermission = () => {
             col_size: 2,
             // check_box_true: formik.values.deleteservice,
             check_box_true: formik.values.Signalpermission || formik.values.signalstatus ? true : false,
+        },
+        {
+            name: 'Strategy',
+            label: 'Strategy',
+            type: 'checkbox',
+            label_size: 12,
+            col_size: 2,
+            // check_box_true: formik.values.deleteservice,
+            check_box_true: formik.values.Signalpermission || formik.values.Strategy ? true : false,
         },
 
         {
