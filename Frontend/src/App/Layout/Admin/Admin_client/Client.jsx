@@ -37,8 +37,10 @@ import Table from "../../../Extracomponents/Table1";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
-const Client = () => {
 
+
+
+const Client = () => {
 
   useEffect(() => {
     getbasketlist();

@@ -58,71 +58,33 @@ const Basket = () => {
 
 
 
-  // const handleSwitchChange = async (event, id) => {
-  //   const originalChecked = true;
-  //   const user_active_status = originalChecked
-  //   const data = { id: id, status: user_active_status };
-
-  //   const result = await Swal.fire({
-  //     title: "Do you want to save the changes?",
-  //     showCancelButton: true,
-  //     confirmButtonText: "Save",
-  //     cancelButtonText: "Cancel",
-  //     allowOutsideClick: false,
-  //   });
-
-  //   if (result.isConfirmed) {
-  //     try {
-  //       const response = await Basketstatus(data, token);
-
-  //       if (response.status) {
-  //         Swal.fire({
-  //           title: "Saved!",
-  //           icon: "success",
-  //           timer: 1000,
-  //           timerProgressBar: true,
-  //         });
-  //         setTimeout(() => {
-  //           Swal.close();
-  //         }, 1000);
-  //       }
-  //       getbasketlist();
-  //     } catch (error) {
-  //       Swal.fire(
-  //         "Error",
-  //         "There was an error processing your request.",
-  //         "error"
-  //       );
-  //     }
-  //   } else if (result.dismiss === Swal.DismissReason.cancel) {
-  //     event.target.checked = !originalChecked;
-  //     getbasketlist();
-  //   }
-  // };
-
-
-
 
 
   const handleSwitchChange = async (event, id) => {
-    const originalChecked = true;
-    const user_active_status = originalChecked
-    const data = { id: id, status: user_active_status };
-    const confirmed = await showCustomAlert("confirm", "Do you want to save the changes ?");
-    if (!confirmed) return;
+    const user_active_status = true;
+    const data = { id, status: user_active_status };
 
     try {
+      const result = await showCustomAlert("confirm", "Do you want to save the changes?");
+      if (!result?.isConfirmed) {
+        event.target.checked = !event.target.checked;
+        return;
+      }
+
       const response = await Basketstatus(data, token);
-      if (response.status) {
-        showCustomAlert("Success", "Publish Stock Successfully ")
-        getbasketlist();
+      if (response?.status) {
+        showCustomAlert("success", response.message);
       } else {
-        showCustomAlert("error", response.message)
+        throw new Error(response.message);
       }
     } catch (error) {
-      showCustomAlert("error", "There was an error processing your request.")
+      event.target.checked = !event.target.checked;
+      showCustomAlert("error", error.message, "There was an error processing your request.");
+    } finally {
+      getbasketlist();
     }
   };
+
 
 
 
@@ -275,7 +237,7 @@ const Basket = () => {
               >
                 <Plus />
               </Link>
-            </Tooltip> : ""} 
+            </Tooltip> : ""}
 
           <Tooltip title="view">
             <Link
