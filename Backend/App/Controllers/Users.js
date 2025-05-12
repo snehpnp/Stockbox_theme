@@ -74,7 +74,7 @@ class Users {
         PhoneNo: PhoneNo,
         password: hashedPassword,
         add_by: add_by,
-
+        
       });
 
       await result.save();
@@ -364,7 +364,7 @@ class Users {
   async statusChange(req, res) {
     try {
       const { id, status } = req.body;
-
+  
       // Validate status
       const validStatuses = ['1', '0'];
       if (!validStatuses.includes(status)) {
@@ -373,17 +373,17 @@ class Users {
           message: "Invalid status value"
         });
       }
-
+  
       // Find the user first
       const user = await Users_Modal.findById(id);
-
+  
       if (!user) {
         return res.status(404).json({
           status: false,
           message: "User not found"
         });
       }
-
+  
       // Check if trying to activate but permission is null
       if (
         status === '1' &&
@@ -394,17 +394,17 @@ class Users {
           message: "permission is missing"
         });
       }
-
+  
       // Update the status
       user.ActiveStatus = status;
       const result = await user.save();
-
+  
       return res.json({
         status: true,
         message: "Status updated successfully",
         data: result
       });
-
+  
     } catch (error) {
       return res.status(500).json({
         status: false,
@@ -413,7 +413,7 @@ class Users {
       });
     }
   }
-
+  
 
   async updateUserPermissions(req, res) {
     try {
