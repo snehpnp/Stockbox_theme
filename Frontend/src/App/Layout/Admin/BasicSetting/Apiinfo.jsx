@@ -168,7 +168,7 @@ const Apiinfo = () => {
                                             value={kycstatus?.kyc}
                                             onChange={(e) => handleSwitchChange(e.target.value)}
                                         >
-                                            <option value={0}>None</option>
+                                            {/* <option value={0}>None</option> */}
                                             <option value={2}>After Payment</option>
                                             <option value={1}>Before Payment</option>
                                         </select>

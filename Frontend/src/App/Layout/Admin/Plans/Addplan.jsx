@@ -48,9 +48,21 @@ const Addplan = () => {
         if (!values.description || values.description === "<p><br></p>") {
             errors.description = "Please Enter Description";
         }
-        if (!values.price) {
-            errors.price = "Please Enter Price";
+        if (isFreeTrialZero == 1) {
+            if (values.price === "" || values.price === null || values.price === undefined) {
+                errors.price = "Please Enter Price";
+            } else if (isNaN(values.price) || Number(values.price) < 0) {
+                errors.price = "Price must be 0 or more";
+            }
+        } else if (isFreeTrialZero == 0) {
+            if (values.price === "" || values.price === null || values.price === undefined) {
+                errors.price = "Please Enter Price";
+            } else if (isNaN(values.price) || Number(values.price) <= 0) {
+                errors.price = "Price must be greater than 0";
+            }
         }
+
+
         if (values.price && values.price < 0) {
             errors.price = "Please Enter Price Greater Than 0";
         }
