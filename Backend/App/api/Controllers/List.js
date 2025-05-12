@@ -581,6 +581,13 @@ class List {
 
       // Map plan validity to months
       const validityMapping = {
+        '1 day': 1,
+        '2 days': 2,
+        '3 days': 3,
+        '4 days': 4,
+        '5 days': 5,
+        '6 days': 6,
+        '7 days': 7,
         '1 month': 1,
         '2 months': 2,
         '3 months': 3,
@@ -601,7 +608,15 @@ class List {
       const start = new Date();
       const end = new Date(start);
       end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
-      end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+
+if (plan.validity.includes('day')) {
+  end.setDate(start.getDate() + monthsToAdd); // Add days
+} else {
+  end.setMonth(start.getMonth() + monthsToAdd); // Add months
+}
+
+
+    //  end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
 
       // Split the services in the category if they exist
       const planservice = plan.category?.service;
@@ -702,6 +717,10 @@ class List {
       }
 
       ////////////////// 17/10/2024 ////////////////////////
+      if (plan.validity.includes('day')) { 
+        
+      }
+      else { 
       const currentDate = new Date();
       const targetMonth = `${String(currentDate.getMonth() + 1).padStart(2, '0')}${currentDate.getFullYear()}`;
 
@@ -722,7 +741,7 @@ class List {
       } catch (error) {
       }
 
-
+    }
 
       let total = plan.price-discount; // Use let for reassignable variables
       let totalgst = 0;
@@ -5430,6 +5449,13 @@ if (search && search.trim() !== '') {
 
       // Map plan validity to months
       const validityMapping = {
+        '1 day': 1,
+        '2 days': 2,
+        '3 days': 3,
+        '4 days': 4,
+        '5 days': 5,
+        '6 days': 6,
+        '7 days': 7,
         '1 month': 1,
         '2 months': 2,
         '3 months': 3,
@@ -5454,7 +5480,14 @@ if (search && search.trim() !== '') {
       }
       const end = new Date(start);
       end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
-      end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+
+if (plan.validity.includes('day')) {
+  end.setDate(start.getDate() + monthsToAdd); // Add days
+} else {
+  end.setMonth(start.getMonth() + monthsToAdd); // Add months
+}
+
+     // end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
 
 
       const planservice = plan.category?.service;
@@ -5483,6 +5516,11 @@ if (search && search.trim() !== '') {
    
 
       ////////////////// 17/10/2024 ////////////////////////
+
+      if (plan.validity.includes('day')) {
+      }
+      else {
+
       const currentDate = new Date();
       const targetMonth = `${String(currentDate.getMonth() + 1).padStart(2, '0')}${currentDate.getFullYear()}`;
 
@@ -5506,7 +5544,7 @@ if (search && search.trim() !== '') {
         // console.error('Error updating license:', error);
       }
 
-
+    }
       const numberOfPlans = plan_ids.length;
       const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));
 
@@ -5920,6 +5958,13 @@ await sendEmail(mailOptions);
 
       // Map plan validity to months
       const validityMapping = {
+        '1 day': 1,
+        '2 days': 2,
+        '3 days': 3,
+        '4 days': 4,
+        '5 days': 5,
+        '6 days': 6,
+        '7 days': 7,
         '1 month': 1,
         '2 months': 2,
         '3 months': 3,
@@ -5944,7 +5989,15 @@ await sendEmail(mailOptions);
       }
       const end = new Date(start);
       end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
-      end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
+
+if (plan.validity.includes('day')) {
+  end.setDate(start.getDate() + monthsToAdd); // Add days
+} else {
+  end.setMonth(start.getMonth() + monthsToAdd); // Add months
+}
+
+
+    //  end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
 
 
       const planservice = plan.category?.service;
@@ -5973,6 +6026,11 @@ await sendEmail(mailOptions);
    
 
       ////////////////// 17/10/2024 ////////////////////////
+
+      if (plan.validity.includes('day')) {
+
+      }
+      else { 
       const currentDate = new Date();
       const targetMonth = `${String(currentDate.getMonth() + 1).padStart(2, '0')}${currentDate.getFullYear()}`;
 
@@ -5995,7 +6053,7 @@ await sendEmail(mailOptions);
       } catch (error) {
         // console.error('Error updating license:', error);
       }
-
+    }
 
       const numberOfPlans = plan_ids.length;
       const discountPerPlan = parseFloat((discount / numberOfPlans).toFixed(2));

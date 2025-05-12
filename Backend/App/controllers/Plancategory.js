@@ -181,6 +181,7 @@ class Plancategory {
           title: 1,
           add_by: 1,
           status: 1,
+          freetrial_status: 1,
           created_at: 1,
           updated_at: 1,
           servicesDetails: {
