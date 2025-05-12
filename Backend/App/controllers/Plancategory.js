@@ -211,6 +211,99 @@ class Plancategory {
 
 
 
+  async activePlancategorys(req, res) {
+  
+    try {
+
+    
+      const { } = req.body;
+
+    //  const result = await Plancategory_Modal.find()
+   const result = await Plancategory_Modal.aggregate([
+  {
+    $match: { del: false, status: true }
+  },
+  {
+    $addFields: {
+      serviceIds: {
+        $map: {
+          input: { $split: ['$service', ','] },
+          as: 'serviceId',
+          in: {
+            $cond: {
+              if: { $eq: [{ $strLenCP: '$$serviceId' }, 24] },
+              then: { $toObjectId: '$$serviceId' },
+              else: null
+            }
+          }
+        }
+      }
+    }
+  },
+  // Lookup plans linked to this category
+  {
+    $lookup: {
+      from: 'plans',
+      localField: '_id',
+      foreignField: 'category',
+      as: 'plans'
+    }
+  },
+  // Apply your required filter
+  {
+    $match: {
+      $or: [
+        { freetrial_status: 0 },
+        { $and: [ { freetrial_status: 1 }, { plans: { $eq: [] } } ] }
+      ]
+    }
+  },
+  // Lookup services
+  {
+    $lookup: {
+      from: 'services',
+      localField: 'serviceIds',
+      foreignField: '_id',
+      as: 'servicesDetails'
+    }
+  },
+  // Projection
+  {
+    $project: {
+      _id: 1,
+      title: 1,
+      add_by: 1,
+      status: 1,
+      freetrial_status: 1,
+      created_at: 1,
+      updated_at: 1,
+      servicesDetails: {
+        _id: 1,
+        title: 1
+      }
+    }
+  },
+  {
+    $sort: { created_at: -1 }
+  }
+]);
+
+
+      return res.json({
+        status: true,
+        message: "get",
+        data:result
+      });
+
+    } catch (error) {
+      // console.log("error",error)
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  
+  }
+
+
+
   async detailPlancategory(req, res) {
     try {
         // Extract ID from request parameters
