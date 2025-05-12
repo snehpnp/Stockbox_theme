@@ -422,6 +422,7 @@ class List {
           $project: {
             title: 1,
             plans: 1,
+            freetrial_status: 1,
             services: 1,
           },
         },
@@ -622,7 +623,8 @@ class List {
                     $and: [
                       { $eq: ['$_id', '$$categoryId'] },
                       { $eq: ['$del', false] },
-                      { $eq: ['$status', true] }
+                      { $eq: ['$status', true] },
+                      { $eq: ['$freetrial_status', 0] } 
                     ]
                   }
                 }
@@ -637,6 +639,8 @@ class List {
             preserveNullAndEmptyArrays: false // Exclude plans with no matching category
           }
         },
+
+
         {
           $lookup: {
             from: 'services',
