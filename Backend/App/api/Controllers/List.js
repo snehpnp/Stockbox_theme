@@ -439,6 +439,172 @@ class List {
   }
   
 
+
+  async getPlansByPlancategoryIds(req, res) {
+    try {
+
+      const { id } = req.params;
+      const client = await Clients_Modal.findById(id); 
+           if (!client) {
+                    return res.status(404).json({ message: "Client not found" });
+                }
+
+
+      const pipeline = [
+        // Match all plancategories
+        {
+          $match: {
+            del: false,
+            status: true,
+            ...(client.freetrial === 1 && { freetrial_status: 0 })
+          },
+        },
+        {
+           $sort: { freetrial_status: -1 } // sort categories by title ascending
+         },
+        // Lookup to get associated plans
+        {
+          $lookup: {
+            from: "plans",
+            let: { categoryId: "$_id" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ["$category", "$$categoryId"] },
+                      { $eq: ["$status", "active"] },
+                      { $eq: ["$del", false] },
+                    ],
+                  },
+                },
+              },
+              {
+                $addFields: {
+                  pricePerMonth: {
+                    $cond: {
+                      if: { $ne: ["$validity", null] },
+                      then: {
+                        $divide: [
+                          "$price",
+                          {
+                            $switch: {
+                              branches: [
+                                { case: { $eq: ["$validity", "1 month"] }, then: 1 },
+                                { case: { $eq: ["$validity", "2 months"] }, then: 2 },
+                                { case: { $eq: ["$validity", "3 months"] }, then: 3 },
+                                { case: { $eq: ["$validity", "6 months"] }, then: 6 },
+                                { case: { $eq: ["$validity", "9 months"] }, then: 9 },
+                                { case: { $eq: ["$validity", "1 year"] }, then: 12 },
+                                { case: { $eq: ["$validity", "2 years"] }, then: 24 },
+                                { case: { $eq: ["$validity", "3 years"] }, then: 36 },
+                                { case: { $eq: ["$validity", "4 years"] }, then: 48 },
+                                { case: { $eq: ["$validity", "5 years"] }, then: 60 },
+                              ],
+                              default: 1,
+                            },
+                          },
+                        ],
+                      },
+                      else: "$price",
+                    },
+                  },
+                },
+              },
+              {
+                $sort: { pricePerMonth: 1 },
+              },
+              {
+                $project: {
+                  _id: 1,
+                  title: 1,
+                  description: 1,
+                  price: 1,
+                  validity: 1,
+                  pricePerMonth: 1,
+                },
+              },
+            ],
+            as: "plans",
+          },
+        },
+        // Remove categories where plans are empty
+        {
+          $match: {
+            plans: { $ne: [] },
+          },
+        },
+        // Lookup to get associated services
+        {
+          $lookup: {
+            from: "services",
+            let: {
+              serviceIds: {
+                $filter: {
+                  input: { $split: ["$service", ","] },
+                  as: "id",
+                  cond: { $eq: [{ $strLenCP: "$$id" }, 24] },
+                },
+              },
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      {
+                        $in: [
+                          "$_id",
+                          {
+                            $map: {
+                              input: "$$serviceIds",
+                              as: "id",
+                              in: { $toObjectId: "$$id" },
+                            },
+                          },
+                        ],
+                      },
+                      { $eq: ["$status", true] },
+                      { $eq: ["$del", false] },
+                    ],
+                  },
+                },
+              },
+              {
+                $project: {
+                  _id: 1,
+                  title: 1,
+                },
+              },
+            ],
+            as: "services",
+          },
+        },
+        // Final projection
+        {
+          $project: {
+            title: 1,
+            plans: 1,
+            freetrial_status: 1, // include freetrial_status in the output
+            services: 1,
+          },
+        },
+      ];
+      const result = await Plancategory_Modal.aggregate(pipeline);
+  
+      return res.json({
+        status: true,
+        message: "Data retrieved successfully",
+        data: result,
+      });
+    } catch (error) {
+      return res.json({ status: false, message: "Server error", data: [] });
+    }
+  }
+  
+
+
+
   async getallPlan(req, res) {
     try {
       const plans = await Plan_Modal.aggregate([
