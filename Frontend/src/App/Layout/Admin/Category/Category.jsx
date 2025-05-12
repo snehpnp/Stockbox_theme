@@ -134,7 +134,7 @@ const Category = () => {
 
 
     // Update status
-    
+
     const handleSwitchChange = async (event, id) => {
         const user_active_status = event.target.checked ? "true" : "false";
         const data = { id: id, status: user_active_status };
@@ -188,6 +188,8 @@ const Category = () => {
             }
         });
     };
+
+
 
     const columns = [
 
@@ -341,20 +343,23 @@ const Category = () => {
                                     body={
                                         <>
                                             <div className="row">
-                                                <div className="form-check form-switch form-check-info">
-                                                    <input
-                                                        id="freetrial_toggle"
-                                                        className="form-check-input toggleswitch"
-                                                        type="checkbox"
-                                                        checked={title.freetrial_status}
-                                                        onChange={(e) =>
-                                                            setTitle({ ...title, freetrial_status: e.target.checked })
-                                                        }
-                                                    />
-                                                    <label
-                                                        htmlFor="freetrial_toggle"
-                                                        className="checktoggle checkbox-bg"
-                                                    ></label>
+                                                <div className="col-md-12 d-flex justify-content-between">
+                                                    <label htmlFor="freetrial_status">Freetrial Status</label>
+                                                    <div className="form-check form-switch form-check-info">
+                                                        <input
+                                                            id="freetrial_toggle"
+                                                            className="form-check-input toggleswitch"
+                                                            type="checkbox"
+                                                            checked={title.freetrial_status}
+                                                            onChange={(e) =>
+                                                                setTitle({ ...title, freetrial_status: e.target.checked })
+                                                            }
+                                                        />
+                                                        <label
+                                                            htmlFor="freetrial_toggle"
+                                                            className="checktoggle checkbox-bg"
+                                                        ></label>
+                                                    </div>
                                                 </div>
 
                                                 <div className="col-md-12">
