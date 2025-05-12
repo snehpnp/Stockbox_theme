@@ -781,6 +781,22 @@ class List {
 
 if (plan.validity.includes('day')) {
   end.setDate(start.getDate() + monthsToAdd); // Add days
+
+  const freetrialDays = parseInt(plan.validity);
+ let addedDays = 0;
+
+    while (addedDays < freetrialDays) {
+      const dayOfWeek = end.getDay(); // 0 = Sunday, 6 = Saturday
+      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+        addedDays++;
+      }
+
+      if (addedDays < freetrialDays) {
+        end.setDate(end.getDate() + 1);
+      }
+    }
+
+
 } else {
   end.setMonth(start.getMonth() + monthsToAdd); // Add months
 }
@@ -5664,6 +5680,24 @@ if (search && search.trim() !== '') {
 
 if (plan.validity.includes('day')) {
   end.setDate(start.getDate() + monthsToAdd); // Add days
+
+  const freetrialDays = parseInt(plan.validity);
+ let addedDays = 0;
+
+    while (addedDays < freetrialDays) {
+      const dayOfWeek = end.getDay(); // 0 = Sunday, 6 = Saturday
+      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+        addedDays++;
+      }
+
+      if (addedDays < freetrialDays) {
+        end.setDate(end.getDate() + 1);
+      }
+    }
+
+
+
+
 } else {
   end.setMonth(start.getMonth() + monthsToAdd); // Add months
 }
@@ -6198,6 +6232,22 @@ await sendEmail(mailOptions);
 
 if (plan.validity.includes('day')) {
   end.setDate(start.getDate() + monthsToAdd); // Add days
+  const freetrialDays = parseInt(plan.validity);
+ let addedDays = 0;
+
+    while (addedDays < freetrialDays) {
+      const dayOfWeek = end.getDay(); // 0 = Sunday, 6 = Saturday
+      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+        addedDays++;
+      }
+
+      if (addedDays < freetrialDays) {
+        end.setDate(end.getDate() + 1);
+      }
+    }
+
+
+
 } else {
   end.setMonth(start.getMonth() + monthsToAdd); // Add months
 }
