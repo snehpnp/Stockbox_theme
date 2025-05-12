@@ -82,7 +82,7 @@ class BroadcastController {
                 })
                 .select("devicetoken");
               }
-              if (type === "expired") {
+              else if (type === "expired") {
                 // 1) Build Planmanage filter
                 const planFilter = {
                   enddate: { $lt: today }
