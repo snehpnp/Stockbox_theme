@@ -6,7 +6,7 @@ class Plancategory {
 
     async AddPlancategory(req, res) {
         try {
-            const { title,service,add_by } = req.body;
+            const { title,service,add_by,freetrial_status } = req.body;
 
             if (!title) {
               return res.json({ status: false, message: "Title is required" });
@@ -46,6 +46,7 @@ class Plancategory {
                 title,
                 service:services,
                 add_by,
+                freetrial_status
             });
     
             await result.save();

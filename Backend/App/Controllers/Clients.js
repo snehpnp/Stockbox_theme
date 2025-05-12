@@ -644,7 +644,6 @@ class Clients {
 
 
 
-
   async getClientWithFilter(req, res) {
     try {
       const { status, kyc_verification, createdby, planStatus, search, add_by, fromDate, toDate, page = 1 } = req.body;
@@ -961,6 +960,8 @@ class Clients {
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
+
+
 
 
 
