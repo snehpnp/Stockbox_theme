@@ -916,6 +916,25 @@ export async function getActivecategoryplan(token) {
 
 
 
+// category active plan 
+
+export async function getActivecategoryplans(token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}plancategory/activeplancategorys`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return { error: err.response?.data || err.message };
+    }
+}
+
+
+
+
 // plan category add 
 
 export async function Addplancategory(data, token) {

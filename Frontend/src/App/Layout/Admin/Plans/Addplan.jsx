@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
 import { useNavigate } from 'react-router-dom';
-import { Addplanbyadmin, getcategoryplan, getplanlist, getActivecategoryplan } from '../../../Services/Admin/Admin';
+import { Addplanbyadmin, getcategoryplan, getplanlist, getActivecategoryplan, getActivecategoryplans } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
@@ -24,7 +24,7 @@ const Addplan = () => {
 
     const getcategoryplanlist = async () => {
         try {
-            const response = await getActivecategoryplan(token);
+            const response = await getActivecategoryplans(token);
             if (response.status) {
                 setClients(response.data);
             }
