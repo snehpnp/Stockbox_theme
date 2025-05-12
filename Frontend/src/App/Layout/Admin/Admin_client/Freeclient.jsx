@@ -435,7 +435,7 @@ const Freeclient = () => {
                         {row.clientDetails?.kyc_verification === "1" ? <Download onClick={() => handleDownload(row)} /> : ""}
 
                     </Tooltip> */}
-                    <Tooltip placement="top" overlay="Package Assign">
+                    {/* <Tooltip placement="top" overlay="Package Assign">
                         <span onClick={(e) => {
                             showModal(true);
                             setClientid(row);
@@ -445,7 +445,7 @@ const Freeclient = () => {
                             style={{ cursor: 'pointer' }}>
                             <Settings2 style={{ color: "orange" }} />
                         </span>
-                    </Tooltip>
+                    </Tooltip> */}
 
                     <Tooltip title="Update">
                         <SquarePen className='ms-2' onClick={() => updateClient(row)} style={{ color: "#6f42c1" }} />

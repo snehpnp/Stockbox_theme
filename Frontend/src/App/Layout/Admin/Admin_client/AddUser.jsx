@@ -49,7 +49,7 @@ const AddUser = () => {
     }
     if (!values.city) {
       errors.city = "Please Select City";
-    } 
+    }
 
     return errors;
   };
@@ -263,7 +263,7 @@ const AddUser = () => {
           additional_field={<>
 
 
-            <div className={`col-lg-6`}>
+            {/* <div className={`col-lg-6`}>
               <div className="input-block row">
 
                 <label htmlFor="freetrial" className={`col-lg-12 col-form-label`}>
@@ -285,7 +285,7 @@ const AddUser = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
           </>}
 
