@@ -1,6 +1,6 @@
 const router = require("express").Router()
 
-const {Blogslist,Newslist,Bannerlist,Plancategorysist,getPlansByPlancategoryId,addPlanSubscription,myPlan,Couponlist,Signallist,applyCoupon,showSignalsToClients,Servicelist,Faqlist,detailContent,showSignalsToClientsClose,BasketList,pastPerformance,addBasketSubscription,getallPlan,addFreeTrail,BroadcastList,myFreetrial,basicSetting,pastPerformances,myService,CloseSignal,showSignalsToClientsCloses,Notification,Bank,Qrcode,BlogslistwithPagination,NewslistwithPagination,Refer,BasketLists,BasketstockList,myBasketPlan,placeOrder,exitPlaceOrder,checkBasketSell,BasketListss,BasketstockLists,getLivePrice,MyPorfolio,BasketstockListBalance,getBasketVersionOrder,Logout,addRequest,SignalClientWithPlan,NotificationWithPlan,getCompanyAndBseData,addPlanSubscriptionAddToCart,PurchasedBasketList,addBasketSubscriptionAddToCart,AddToCartPlan,AddToCartBasket,PlanCartList,BasketCartList,DeleteCartItem,SignalClientWithPlanClose,getStockrating,SignalLatest,pastPerformancewithtype,CloseSignalwithtype,updatePerformanceStatus,checkClientToken,applyCouponwithplan,LatestSignalsWithoutActivePlan,getBasketGraphData,BasketSubscriptionCount,getLivePrices,getLivePriceCash,SignalClientWithPlanStrategy,SignalClientWithPlanCloseStrategy,getAllStates,getCityByStates,countSignalStatus,PlanExpire,PlanSubscriptionExpire,BasketExpire,addPlanSubscriptionWithPlan} = require('../Controllers/List')
+const {Blogslist,Newslist,Bannerlist,Plancategorysist,getPlansByPlancategoryId,addPlanSubscription,myPlan,Couponlist,Signallist,applyCoupon,showSignalsToClients,Servicelist,Faqlist,detailContent,showSignalsToClientsClose,BasketList,pastPerformance,addBasketSubscription,getallPlan,addFreeTrail,BroadcastList,myFreetrial,basicSetting,pastPerformances,myService,CloseSignal,showSignalsToClientsCloses,Notification,Bank,Qrcode,BlogslistwithPagination,NewslistwithPagination,Refer,BasketLists,BasketstockList,myBasketPlan,placeOrder,exitPlaceOrder,checkBasketSell,BasketListss,BasketstockLists,getLivePrice,MyPorfolio,BasketstockListBalance,getBasketVersionOrder,Logout,addRequest,SignalClientWithPlan,NotificationWithPlan,getCompanyAndBseData,addPlanSubscriptionAddToCart,PurchasedBasketList,addBasketSubscriptionAddToCart,AddToCartPlan,AddToCartBasket,PlanCartList,BasketCartList,DeleteCartItem,SignalClientWithPlanClose,getStockrating,SignalLatest,pastPerformancewithtype,CloseSignalwithtype,updatePerformanceStatus,checkClientToken,applyCouponwithplan,LatestSignalsWithoutActivePlan,getBasketGraphData,BasketSubscriptionCount,getLivePrices,getLivePriceCash,SignalClientWithPlanStrategy,SignalClientWithPlanCloseStrategy,getAllStates,getCityByStates,countSignalStatus,PlanExpire,PlanSubscriptionExpire,BasketExpire,addPlanSubscriptionWithPlan,getPlansByPlancategoryIds} = require('../Controllers/List')
 
 
 router.get('/api/list/blogs',Blogslist);
@@ -12,6 +12,8 @@ router.get('/api/list/newspagination', NewslistwithPagination);
 router.get('/api/list/banner', Bannerlist); 
 router.get('/api/list/plancategory', Plancategorysist); 
 router.get('/api/list/planbycategory', getPlansByPlancategoryId); 
+router.get('/api/list/planbycategorys/:id', getPlansByPlancategoryIds); 
+
 router.get('/api/list/getallplan', getallPlan); 
 
 
