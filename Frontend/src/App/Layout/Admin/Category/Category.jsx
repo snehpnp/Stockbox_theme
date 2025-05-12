@@ -20,7 +20,6 @@ const Category = () => {
     const [searchInput, setSearchInput] = useState("");
     const [selectedServices, setSelectedServices] = useState([]);
 
-    //set state for loding
     const [isLoading, setIsLoading] = useState(true)
 
     const [showAddModal, setShowAddModal] = useState(false);
@@ -35,7 +34,8 @@ const Category = () => {
     const [title, setTitle] = useState({
         title: "",
         add_by: "",
-        service: ""
+        service: "",
+        freetrial_status: ""
     });
 
     const token = localStorage.getItem('token');
@@ -44,7 +44,7 @@ const Category = () => {
 
 
 
-    // Getting services
+
     const getcategory = async () => {
         try {
             const response = await getcategoryplan(token);
@@ -108,13 +108,13 @@ const Category = () => {
     // Add service
     const addcategory = async () => {
         try {
+            const data = { title: title.title, add_by: userid, service: title.service, freetrial_status: title.freetrial_status ? 1 : 0 };
 
-            const data = { title: title.title, add_by: userid, service: title.service };
             const response = await Addplancategory(data, token);
             if (response && response.status) {
                 showCustomAlert("Success", response.message || 'Category added successfully.')
                 setShowAddModal(false)
-                setTitle({ title: "", add_by: "", service: "" });
+                setTitle({ title: "", add_by: "", service: "", freetrial_status: "" });
                 getcategory();
 
                 const modal = document.getElementById('exampleModal');
@@ -338,6 +338,22 @@ const Category = () => {
                                     body={
                                         <>
                                             <div className="row">
+                                                <div className="form-check form-switch form-check-info">
+                                                    <input
+                                                        id="freetrial_toggle"
+                                                        className="form-check-input toggleswitch"
+                                                        type="checkbox"
+                                                        checked={title.freetrial_status}
+                                                        onChange={(e) =>
+                                                            setTitle({ ...title, freetrial_status: e.target.checked })
+                                                        }
+                                                    />
+                                                    <label
+                                                        htmlFor="freetrial_toggle"
+                                                        className="checktoggle checkbox-bg"
+                                                    ></label>
+                                                </div>
+
                                                 <div className="col-md-12">
                                                     <label htmlFor="service">Segment</label>
                                                     <span className="text-danger">*</span>
