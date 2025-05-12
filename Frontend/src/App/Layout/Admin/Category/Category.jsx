@@ -131,7 +131,10 @@ const Category = () => {
         }
     };
 
+
+
     // Update status
+    
     const handleSwitchChange = async (event, id) => {
         const user_active_status = event.target.checked ? "true" : "false";
         const data = { id: id, status: user_active_status };
