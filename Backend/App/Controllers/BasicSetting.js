@@ -5,6 +5,7 @@ const path = require("path");
 const BasicSetting_Modal = db.BasicSetting;
 const Activitylogs_Modal = db.Activitylogs;
 const ThemeModal = db.ThemeModal;
+const Clients_Modal = db.Clients;
 
 class BasicSetting {
   async AddBasicSetting(req, res) {
@@ -69,6 +70,16 @@ class BasicSetting {
         } = req.body;
 
         const existingSetting = await BasicSetting_Modal.findOne({});
+
+
+
+if (existingSetting && existingSetting.kyc == 2 && (kyc == 0 || kyc == 1)) {
+  await Clients_Modal.updateMany(
+    { kyc_verification: 2 },
+    { $set: { kyc_verification: 0 } }
+  );
+}
+
 
         const favicon = req.files["favicon"]
           ? req.files["favicon"][0].filename

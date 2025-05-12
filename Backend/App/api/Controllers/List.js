@@ -718,7 +718,8 @@ if (plan.validity.includes('day')) {
 
       ////////////////// 17/10/2024 ////////////////////////
       if (plan.validity.includes('day')) { 
-        
+   
+
       }
       else { 
       const currentDate = new Date();
@@ -797,17 +798,27 @@ if (plan.validity.includes('day')) {
       }
 
  
+   if (plan.validity.includes('day')) { 
+         if (client.freetrial == 0) {
+      const newSubscriptionfree = new Freetrial_Modal({
+        clientid: client_id,
+        startdate: start,
+        enddate: end,
+      });
 
+      const savedSubscriptionfree = await newSubscriptionfree.save();
+    }
+  }
 
       if (client.freetrial == 0) {
         client.freetrial = 1;
         await client.save();
       }
-          if (client.kyc_verification == 0) {
-        client.kyc_verification = 2;
-        await client.save();
-      }
 
+       if (!plan.validity.toLowerCase().includes('day') && client.kyc_verification === 0 && settings.kyc === 2) {
+         client.kyc_verification = 2;
+         await client.save();
+       }
 
 
       const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
@@ -1371,7 +1382,7 @@ if (pdfresponse.status === true) {
       }
 
 
-         if (client.kyc_verification == 0) {
+         if (client.kyc_verification == 0  && settings.kyc === 2) {
         client.kyc_verification = 2;
         await client.save();
       }
@@ -5757,6 +5768,31 @@ await sendEmail(mailOptions);
 
       planprice = planprice+plan.price;
 
+  if (!plan.validity.toLowerCase().includes('day') && client.kyc_verification === 0 && settings.kyc === 2) {
+         client.kyc_verification = 2;
+         await client.save();
+       }
+
+
+   if (plan.validity.includes('day')) { 
+         if (client.freetrial == 0) {
+      const newSubscriptionfree = new Freetrial_Modal({
+        clientid: client_id,
+        startdate: start,
+        enddate: end,
+      });
+
+      const savedSubscriptionfree = await newSubscriptionfree.save();
+    }
+  }
+
+      if (client.freetrial == 0) {
+        client.freetrial = 1;
+        await client.save();
+      }
+
+
+   
     }
 
     planprice = planprice-discount;
@@ -5790,14 +5826,14 @@ await sendEmail(mailOptions);
       }
 
 
-      if (client.freetrial == 0) {
-        client.freetrial = 1;
-        await client.save();
-      }
-   if (client.kyc_verification == 0) {
-        client.kyc_verification = 2;
-        await client.save();
-      }
+      // if (client.freetrial == 0) {
+      //   client.freetrial = 1;
+      //   await client.save();
+      // }
+  //  if (client.kyc_verification == 0) {
+  //       client.kyc_verification = 2;
+  //       await client.save();
+  //     }
 
       const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
 
@@ -6257,6 +6293,30 @@ await sendEmail(mailOptions);
 
       planprice = planprice+plan.price;
 
+ if (!plan.validity.toLowerCase().includes('day') && client.kyc_verification === 0 && settings.kyc === 2) {
+         client.kyc_verification = 2;
+         await client.save();
+       }
+      
+      
+   if (plan.validity.includes('day')) { 
+         if (client.freetrial == 0) {
+      const newSubscriptionfree = new Freetrial_Modal({
+        clientid: client_id,
+        startdate: start,
+        enddate: end,
+      });
+
+      const savedSubscriptionfree = await newSubscriptionfree.save();
+    }
+  }
+
+      if (client.freetrial == 0) {
+        client.freetrial = 1;
+        await client.save();
+      }
+
+
     }
 
     planprice = planprice-discount;
@@ -6290,14 +6350,14 @@ await sendEmail(mailOptions);
       }
 
 
-      if (client.freetrial == 0) {
-        client.freetrial = 1;
-        await client.save();
-      }
-   if (client.kyc_verification == 0) {
-        client.kyc_verification = 2;
-        await client.save();
-      }
+      // if (client.freetrial == 0) {
+      //   client.freetrial = 1;
+      //   await client.save();
+      // }
+  //  if (client.kyc_verification == 0) {
+  //       client.kyc_verification = 2;
+  //       await client.save();
+  //     }
 
       const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
 
@@ -6858,7 +6918,11 @@ if (pdfresponse.status === true) {
 
    }
 
-
+ if (client.kyc_verification === 0 && settings.kyc === 2) {
+         client.kyc_verification = 2;
+         await client.save();
+       }
+     
 
         
       }
@@ -6869,11 +6933,9 @@ if (pdfresponse.status === true) {
         { $set: { status: true } } // Update status to true
     );
     
-    if (client.kyc_verification == 0) {
-        client.kyc_verification = 2;
-        await client.save();
-      }
-     
+  
+
+      
         return res.status(201).json({
           status: true,
           message: 'Subscription added successfully',
