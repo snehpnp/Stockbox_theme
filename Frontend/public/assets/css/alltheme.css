@@ -2052,3 +2052,15 @@ svg.lucide.lucide-x.text-danger {
 {
   transition: none !important;
 }
+.permission-badge{
+    background-color: var(--headSidebarFontActiveCol, white) !important;
+    border-radius: 5px !important;
+    border-color: var(--BtnSecBorderColor, black) !important;
+    color: var(--BtnSecTxtCol) !important;
+    font-size: 12px;
+    padding: 5px 11px;
+    border-width: 1px;
+    border-style: solid;
+    text-transform: capitalize;
+    
+}
