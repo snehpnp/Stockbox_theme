@@ -72,10 +72,15 @@ const Basket = () => {
   }
 
 
+  useEffect(() => {
+    getpermissioninfo()
+
+  }, [])
+
 
   useEffect(() => {
     getbasketlist()
-    getpermissioninfo()
+
   }, [searchInput, currentPage])
 
 

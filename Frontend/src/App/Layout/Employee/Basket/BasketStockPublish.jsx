@@ -5,7 +5,7 @@ import { Tooltip } from 'antd';
 // import Table from "../../../components/Table";
 import Table from '../../../Extracomponents/Table1';
 
-import { BasketAllActiveList, BasketAllActiveListbyfilter, changestatusrebalance, deletebasket, Basketstatusofdetail } from "../../../Services/Admin/Admin";
+import { BasketAllActiveList, BasketAllActiveListbyfilter, changestatusrebalance, deletebasket, Basketstatusofdetail, getstaffperuser } from "../../../Services/Admin/Admin";
 import { fDate } from "../../../../Utils/Date_formate";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
@@ -16,12 +16,14 @@ const BasketStockPublish = () => {
   const navigate = useNavigate();
   const [clients, setClients] = useState([]);
   const token = localStorage.getItem("token");
+  const userid = localStorage.getItem('id');
 
 
   const [searchInput, setSearchInput] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
+  const [permission, setPermission] = useState([]);
 
 
   const [isLoading, setIsLoading] = useState(true)
@@ -49,6 +51,27 @@ const BasketStockPublish = () => {
     setIsLoading(false)
   };
 
+
+
+
+  const getpermissioninfo = async () => {
+    try {
+      const response = await getstaffperuser(userid, token);
+
+
+      if (response.status) {
+        setPermission(response.data.permissions);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  }
+
+
+  useEffect(() => {
+    getpermissioninfo();
+
+  }, []);
 
 
 
@@ -201,7 +224,7 @@ const BasketStockPublish = () => {
           WebkitBoxOrient: 'vertical',
           maxWidth: '200px',
           textAlign: 'left',
-          whiteSpace: 'normal', 
+          whiteSpace: 'normal',
         }}>
           {stripHtml(row.description)}
         </div>
@@ -215,7 +238,7 @@ const BasketStockPublish = () => {
       sortable: true,
 
     },
-    {
+    permission.includes("basketActivestatus") && {
       name: 'Active Status',
       selector: row => (
         <div className="form-check form-switch form-check-info">
@@ -235,7 +258,7 @@ const BasketStockPublish = () => {
       sortable: true,
       width: '180px',
     },
-    {
+    permission.includes("Rebalancestatus") && {
       name: 'Rebalancing',
       selector: row => (
 
@@ -262,7 +285,7 @@ const BasketStockPublish = () => {
       name: "Actions",
       cell: (row) => (
         <div className="w-100">
-          {row.rebalancestatus === false ? (
+          {permission.includes("Rebalancebutton") && row.rebalancestatus === false ? (
             row?.stockstatus == 0 ? (
               <Tooltip title="Rebalance">
                 <RotateCcw
@@ -279,9 +302,9 @@ const BasketStockPublish = () => {
               </Tooltip>
             )
           ) : null}
-          <Tooltip title="view">
+          {permission.includes("basketdetail") && <Tooltip title="view">
             <Eye onClick={() => viewdetailpage(row)} />
-          </Tooltip>
+          </Tooltip>}
           {/* <Tooltip title="Edit">
             <Link
               to={`editbasket/${row._id}`}
