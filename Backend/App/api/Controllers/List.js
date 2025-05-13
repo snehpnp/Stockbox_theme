@@ -1727,6 +1727,7 @@ if (pdfresponse.status === true) {
             coupon: { $first: '$coupon' }, // Keep the discount
             plan_start: { $first: '$plan_start' }, // Keep the plan_start
             plan_end: { $first: '$plan_end' },
+            validity: { $first: '$validity' },
             created_at: { $first: '$created_at' },
             orderid: { $first: '$orderid' },
             gstamount: { $first: '$gstamount' },
@@ -1753,6 +1754,7 @@ if (pdfresponse.status === true) {
             coupon: 1,
             plan_start: 1, // Plan start date
             plan_end: 1,
+            validity: 1,
             orderid: 1,
             gstamount: 1,
             gst: 1,
