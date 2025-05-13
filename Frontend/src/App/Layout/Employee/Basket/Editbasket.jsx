@@ -3,9 +3,9 @@ import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Updatebasket, Viewbasket } from '../../../Services/Admin/Admin';
+import { image_baseurl } from '../../../../Utils/config';
 import Content from '../../../components/Contents/Content';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
-
 
 const Editbasket = () => {
 
@@ -67,7 +67,6 @@ const Editbasket = () => {
 
   const validate = (values) => {
 
-
     let errors = {};
 
     if (!values.title) {
@@ -78,11 +77,11 @@ const Editbasket = () => {
       errors.themename = "Please Enter Theme Name";
     }
     if (values.full_price && values.full_price <= values.basket_price) {
-      errors.full_price = "Please Enter Greater Basket Price";
+      errors.full_price = "Please Enter Greater Discounted/Net Basket price";
     }
 
     if (!values.basket_price) {
-      errors.basket_price = "Please Enter Basket Price";
+      errors.basket_price = "Please Enter Discounted/Net Basket price";
     }
     if (!values.mininvamount) {
       errors.mininvamount = "Please Enter Minimum Investment Amount";
@@ -121,11 +120,12 @@ const Editbasket = () => {
       errors.methodology = "Please Enter Methodology";
     }
 
+
     return errors;
   };
 
   const onSubmit = async (values) => {
-
+    setLoading(!loading)
     const req = {
       title: values.title,
       id: data._id,
@@ -148,8 +148,6 @@ const Editbasket = () => {
 
     try {
       const response = await Updatebasket(req, token);
-
-      // return
 
       if (response.status) {
         showCustomAlert("Success", response.message, navigate, "/employee/basket");
@@ -212,7 +210,7 @@ const Editbasket = () => {
     },
     {
       name: "full_price",
-      label: "Price",
+      label: "Actual Basket Price",
       type: "number",
       label_size: 12,
       col_size: 6,
@@ -222,7 +220,7 @@ const Editbasket = () => {
 
     {
       name: "basket_price",
-      label: "Basket Price",
+      label: "Discounted/Net Basket price",
       type: "number",
       label_size: 12,
       col_size: 6,
@@ -251,7 +249,9 @@ const Editbasket = () => {
         { value: "Monthly", label: "Monthly" },
         { value: "Quarterly", label: "Quarterly" },
         { value: "Half Yearly", label: "Half Yearly" },
-        { value: "Yearly", label: "Yearly" }
+        { value: "Yearly", label: "Yearly" },
+        { value: "Market Condition", label: "Market Condition" },
+        { value: "Need basis", label: "Need basis" }
       ],
     },
 
@@ -316,10 +316,13 @@ const Editbasket = () => {
       name: "image",
       label: "Upload Image",
       type: "file3",
-      image: true,
       label_size: 12,
       col_size: 6,
       disable: false,
+      image: true,
+      imageWidth: "60px",
+      imageHeight: "auto",
+      src: `${image_baseurl}/uploads/basket/${data.image}`,
       star: true
     },
     {
@@ -369,11 +372,11 @@ const Editbasket = () => {
         btn_name="Edit Basket"
         btn_name1="Cancel"
         sumit_btn={true}
+        btnstatus={loading}
         btn_name1_route={"/employee/basket"}
         additional_field={<></>}
 
       />
-
     </Content>
   );
 };

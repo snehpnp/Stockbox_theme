@@ -48,22 +48,22 @@ const Dashbord = () => {
 
 
     return (
-<>
-                 <div className="page-content">
+        <>
+            <div className="page-content">
 
                 <div className="page-breadcrumb  mb-3">
-                     <div
+                    <div
                         style={{
-                          
+
                             padding: "30px",
-                           
+
                         }}
                     >
                         {/* Accent Header Bar */}
 
 
                         {/* Avatar + Name */}
-                        <div style={{ display: "flex", alignItems: "center",  }}>
+                        <div style={{ display: "flex", alignItems: "center", }}>
                             <div
                                 style={{
                                     backgroundColor: "#007bff",
@@ -85,7 +85,7 @@ const Dashbord = () => {
                                 <p style={{ margin: "4px 0", color: "#777" }}>{permission?.Role == 2 ? "EMPLOYEE" : ""}</p>
                             </div>
                         </div>
-<hr/>
+                        <hr />
                         {/* Profile Details */}
                         <div style={{ display: "flex", flexWrap: "wrap", gap: "30px" }}>
                             <div style={{ flex: "1 1 30%" }}>
@@ -94,11 +94,11 @@ const Dashbord = () => {
                             </div>
                             <div style={{ flex: "1 1 30%" }}>
                                 <span style={{ color: "#555", fontWeight: "600" }}> Email: </span>
-                               {permission?.Email || "N/A"}
+                                {permission?.Email || "N/A"}
                             </div>
                             <div style={{ flex: "1 1 30%" }}>
                                 <span style={{ color: "#555", fontWeight: "600" }}> Phone: </span>
-                               {permission?.PhoneNo || "N/A"}
+                                {permission?.PhoneNo || "N/A"}
                             </div>
                         </div>
                     </div>
@@ -108,52 +108,52 @@ const Dashbord = () => {
                     <div className="card-body">
                         <div className="d-lg-flex align-items-center mb-4 gap-3">
 
-                          <div style={{ padding: "30px"}}>
-            {isLoader ? (
-                <Loader />
-            ) : (
-                <>
+                            <div style={{ padding: "30px" }}>
+                                {isLoader ? (
+                                    <Loader />
+                                ) : (
+                                    <>
 
-                  
 
-                    {/* Permissions Section */}
-                    <div
-                       
-                    >
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                            <h2 style={{ color: "#333", margin: "0" }}>🛡️ Permissions</h2>
-                        </div>
-<hr/>
-                        {permission?.permissions.length > 0 ? (
-                            <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
-                                {permission?.permissions
-                                    ?.filter((perm) => perm !== "userPermissions || planpermission",) // Filter out the permission you want to ignore
-                                    .map((perm, index) => (
-                                        <span
-                                        className="permission-badge"
-                                            key={index}
-                                         
+
+                                        {/* Permissions Section */}
+                                        <div
+
                                         >
-                                            {perm}
-                                        </span>
-                                    ))}
+                                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                                                <h2 style={{ color: "#333", margin: "0" }}>🛡️ Permissions</h2>
+                                            </div>
+                                            <hr />
+                                            {permission?.permissions.length > 0 ? (
+                                                <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
+                                                    {permission?.permissions
+                                                        ?.filter((perm) => perm !== "userPermissions" && perm !== "planpermission")
+                                                        .map((perm, index) => (
+                                                            <span
+                                                                className="permission-badge"
+                                                                key={index}
 
+                                                            >
+                                                                {perm}
+                                                            </span>
+                                                        ))}
+
+                                                </div>
+                                            ) : (
+                                                <p style={{ color: "#999" }}>No permissions assigned</p>
+                                            )}
+                                        </div>
+
+                                    </>
+                                )}
                             </div>
-                        ) : (
-                            <p style={{ color: "#999" }}>No permissions assigned</p>
-                        )}
-                    </div>
-
-                </>
-            )}
-        </div>  
                         </div>
 
-                       
+
                     </div>
                 </div>
             </div>
-       
+
         </>
     );
 

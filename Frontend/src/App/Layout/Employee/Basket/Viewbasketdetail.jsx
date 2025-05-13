@@ -298,12 +298,12 @@ const Viewbasketdetail = () => {
       }
     } catch (error) {
       console.log("error");
-    } 
+    }
   };
 
 
   const updateStock = async (stock) => {
-    navigate("/employee/editstock" , { state: { stock } })
+    navigate("/employee/editstock", { state: { stock } })
   }
 
 
@@ -399,7 +399,7 @@ const Viewbasketdetail = () => {
                               )}
                               <Modal show={showModal} onHide={closeModal} centered>
                                 <Modal.Header closeButton>
-                                  <Modal.Title style={{color:"black"}}>Image</Modal.Title>
+                                  <Modal.Title style={{ color: "black" }}>Image</Modal.Title>
                                 </Modal.Header>
                                 <Modal.Body>
                                   {values[field.name] ? (
@@ -447,9 +447,9 @@ const Viewbasketdetail = () => {
                                   <h6>Version {version} ({fDate(versionStocks[0]?.created_at)})</h6>
 
                                   <div className="d-flex align-items-center">
-                                    <div title="View Rationale">
+                                    {stockdata[0]?.comment && <div title="View Rationale">
                                       <Eye className="cursor-pointer me-2" onClick={() => setViewRationale(true)} />
-                                    </div>
+                                    </div>}
 
                                     {versionStocks[0].status === 0 ? (
                                       <Tooltip title="Update All">

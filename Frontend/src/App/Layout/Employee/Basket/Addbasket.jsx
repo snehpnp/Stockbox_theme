@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { Addbasketplan } from '../../../Services/Admin/Admin';
+import { Link } from 'react-router-dom';
 import Content from '../../../components/Contents/Content';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
-
-
 
 const AddBasket = () => {
 
@@ -32,11 +30,11 @@ const AddBasket = () => {
     }
 
     if (values.full_price && values.full_price <= values.basket_price) {
-      errors.full_price = "Please Enter Greater Basket Price";
+      errors.full_price = "Please Enter Greater Discounted/Net Basket Price";
     }
 
     if (!values.basket_price) {
-      errors.basket_price = "Please Enter Basket Price";
+      errors.basket_price = "Please Enter Discounted/Net Basket Price";
     }
 
     // if (!values.accuracy) {
@@ -70,7 +68,6 @@ const AddBasket = () => {
     if (!values.description) {
       errors.description = "Please Enter Description";
     }
-
     if (!values.type) {
       errors.type = "Please Enter Type";
     }
@@ -102,7 +99,7 @@ const AddBasket = () => {
       frequency: values.frequency,
       validity: values.validity,
       next_rebalance_date: values.next_rebalance_date,
-      cagr: values.cagr,
+      // cagr: values.cagr,
       full_price: values.full_price || 0,
       type: values.type,
       image: values.image,
@@ -139,7 +136,7 @@ const AddBasket = () => {
       frequency: "",
       validity: "",
       next_rebalance_date: "",
-      cagr: "",
+      // cagr: "",
       full_price: "",
       type: "",
       image: "",
@@ -175,7 +172,7 @@ const AddBasket = () => {
     },
     {
       name: "full_price",
-      label: "Price",
+      label: "Actual Basket Price",
       type: "number",
       label_size: 12,
       col_size: 6,
@@ -185,13 +182,15 @@ const AddBasket = () => {
 
     {
       name: "basket_price",
-      label: "Basket Price",
+      label: "Discounted/Net Basket Price",
       type: "number",
       label_size: 12,
       col_size: 6,
       disable: false,
       star: true
+
     },
+
     {
       name: "mininvamount",
       label: "Minimun Investment Amount",
@@ -214,7 +213,9 @@ const AddBasket = () => {
         { value: "Monthly", label: "Monthly" },
         { value: "Quarterly", label: "Quarterly" },
         { value: "Half Yearly", label: "Half Yearly" },
-        { value: "Yearly", label: "Yearly" }
+        { value: "Yearly", label: "Yearly" },
+        { value: "Market Condition", label: "Market Condition" },
+        { value: "Need basis", label: "Need basis" }
       ],
     },
     {
@@ -232,15 +233,15 @@ const AddBasket = () => {
       ],
       star: true
     },
-    {
-      name: "cagr",
-      label: "CAGR",
-      type: "number",
-      label_size: 12,
-      col_size: 6,
-      disable: false,
-      star: true
-    },
+    // {
+    //   name: "cagr",
+    //   label: "CAGR",
+    //   type: "number",
+    //   label_size: 12,
+    //   col_size: 6,
+    //   disable: false,
+    //   star: true
+    // },
     {
       name: "next_rebalance_date",
       label: "Rebalance Date",
@@ -294,7 +295,7 @@ const AddBasket = () => {
     },
     {
       name: "rationale",
-      label: "Rational",
+      label: "Rationale",
       type: "ckeditor",
       label_size: 12,
       col_size: 12,
@@ -317,15 +318,16 @@ const AddBasket = () => {
 
   return (
     <Content
-        Page_title="Add Basket"
-        button_status={false}
-        backbutton_status={true}
-        backForword={true}
-      >
+      Page_title="Add Basket"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
+
       <DynamicForm
         fields={fields}
         formik={formik}
-        // page_title="Add Basket"
+
         btn_name="Add Basket"
         btn_name1="Cancel"
         sumit_btn={true}
@@ -334,8 +336,8 @@ const AddBasket = () => {
         additional_field={<></>}
 
       />
-      </Content>
-  
+
+    </Content>
   );
 };
 

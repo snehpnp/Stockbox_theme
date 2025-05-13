@@ -1,22 +1,18 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { UpdateClient } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
-
 const Editfreeclient = () => {
 
-
+  const { id } = useParams()
   const navigate = useNavigate();
   const location = useLocation();
   const { row } = location.state;
-
-
 
   const user_id = localStorage.getItem("id");
   const token = localStorage.getItem("token");
@@ -26,20 +22,29 @@ const Editfreeclient = () => {
 
     if (!values.FullName) {
       errors.FullName = "Please Enter Full Name";
+    } else if (!/^[A-Za-z\s]+$/.test(values.FullName)) {
+      errors.FullName = "Full Name should contain only alphabetic characters";
+    } else if (values.FullName.length < 3) {
+      errors.FullName = "Full Name should be at least 3 characters long";
+    } else if (values.FullName.length > 50) {
+      errors.FullName = "Full Name should not exceed 50 characters";
     }
+
     if (!values.Email) {
       errors.Email = "Please Enter Email";
+    } else if (
+      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(values.Email)
+    ) {
+      errors.Email = "Please Enter a Valid Email Address";
     }
-    // if (!values.UserName) {
-    //   errors.UserName = "Please enter Username";
-    // }
+
     if (!values.PhoneNo) {
       errors.PhoneNo = "Please Enter Phone Number";
+    } else if (!/^\d{10}$/.test(values.PhoneNo)) {
+      errors.PhoneNo = "Phone Number should be exactly 10 digits";
+    } else if (!/^[6-9]\d{9}$/.test(values.PhoneNo)) {
+      errors.PhoneNo = "Phone Number should start with digits 6-9";
     }
-    // if (!values.password) {
-    //   errors.password = "Please Enter Password";
-    // }
-
 
     return errors;
   };
@@ -51,9 +56,8 @@ const Editfreeclient = () => {
       Email: values.Email,
       PhoneNo: values.PhoneNo,
       // password: values.password,
-      id: row._id,
-    };
-
+      id: id,
+    }
     try {
       const response = await UpdateClient(req, token);
       if (response.status) {
@@ -87,6 +91,7 @@ const Editfreeclient = () => {
       label_size: 12,
       col_size: 4,
       disable: false,
+      star: true
     },
     // {
     //   name: "UserName",
@@ -104,6 +109,7 @@ const Editfreeclient = () => {
       label_size: 12,
       col_size: 4,
       disable: false,
+      star: true
     },
     {
       name: "PhoneNo",
@@ -125,12 +131,12 @@ const Editfreeclient = () => {
 
   return (
     <Content
-        Page_title="Update Client"
-        button_status={false}
-        backbutton_status={true}
-        backForword={true}
-      >
-   
+      Page_title="Update Free Client"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
+
       <DynamicForm
         fields={fields}
         btn_name="Update Client"
@@ -140,8 +146,8 @@ const Editfreeclient = () => {
         btn_name1_route={"/employee/freeclient"}
         additional_field={<></>}
       />
-    
     </Content>
+
   );
 };
 

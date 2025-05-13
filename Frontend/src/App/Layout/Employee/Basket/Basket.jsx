@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, RefreshCcw, Trash2, SquarePen, IndianRupee, X, Plus, RotateCcw } from 'lucide-react';
@@ -11,32 +10,50 @@ import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
+
 const Basket = () => {
 
-  useEffect(() => {
-    getpermissioninfo()
-  }, [])
 
+  const token = localStorage.getItem("token");
   const userid = localStorage.getItem('id');
 
+
   const navigate = useNavigate();
+
+
   const [clients, setClients] = useState([]);
-  const token = localStorage.getItem("token");
   const [stockdata, setStockdata] = useState({})
 
   const [searchInput, setSearchInput] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
-  const [permission, setPermission] = useState([]);
 
-  //state for loading
   const [isLoading, setIsLoading] = useState(true)
+  const [permission, setPermission] = useState([]);
 
 
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+
+
+
+  // Fetch basket list
+  const getbasketlist = async () => {
+    try {
+      const data = { page: currentPage, search: searchInput || "" }
+      const response = await BasketAllList(data, token);
+
+      if (response.status) {
+        setClients(response.data);
+        setTotalRows(response.pagination.totalRecords);
+      }
+    } catch (error) {
+      console.log("error");
+    }
+    setIsLoading(false)
   };
 
 
@@ -56,48 +73,37 @@ const Basket = () => {
 
 
 
-
-  // Fetch basket list
-  const getbasketlist = async () => {
-    try {
-      const data = { page: currentPage, search: searchInput || "" }
-      const response = await BasketAllList(data, token);
-      if (response.status) {
-        setClients(response.data);
-        setTotalRows(response.pagination.total);
-      }
-    } catch (error) {
-      console.log("error");
-    }
-    setIsLoading(false)
-  };
-
-
-
   useEffect(() => {
     getbasketlist()
+    getpermissioninfo()
   }, [searchInput, currentPage])
 
 
 
-  const handleSwitchChange = async (event, id) => {
-    const originalChecked = true;
-    const user_active_status = originalChecked
-    const data = { id: id, status: user_active_status };
 
-    const confirmed = await showCustomAlert("confirm", "Do you want to save the changes ?");
-    if (!confirmed) return;
+
+  const handleSwitchChange = async (event, id) => {
+    const user_active_status = true;
+    const data = { id, status: user_active_status };
 
     try {
+      const result = await showCustomAlert("confirm", "Do you want to save the changes?");
+      if (!result?.isConfirmed) {
+        event.target.checked = !event.target.checked;
+        return;
+      }
+
       const response = await Basketstatus(data, token);
-      if (response.status) {
-        showCustomAlert("Success", "Publish Stock Successfully ")
-        getbasketlist();
+      if (response?.status) {
+        showCustomAlert("success", response.message);
       } else {
-        showCustomAlert("error", response.message)
+        throw new Error(response.message);
       }
     } catch (error) {
-      showCustomAlert("error", "There was an error processing your request.")
+      event.target.checked = !event.target.checked;
+      showCustomAlert("error", error.message, "There was an error processing your request.");
+    } finally {
+      getbasketlist();
     }
   };
 
@@ -135,19 +141,23 @@ const Basket = () => {
   const Deletebasket = async (_id) => {
     try {
       const result = await showCustomAlert("confirm", "Do you want to delete this item? This action cannot be undone.");
-      if (!result.isConfirmed) return
+
+      if (!result.isConfirmed) return;
+
       const response = await deletebasket(_id, token);
-      if (response.status) {
-        showCustomAlert("Success", "The item has been successfully deleted.")
+
+      if (response?.status) {
+        showCustomAlert("success", "The item has been successfully deleted.");
         getbasketlist();
       } else {
-        showCustomAlert("error", response.message)
+        showCustomAlert("error", response?.message || "Failed to delete item.");
       }
     } catch (error) {
-      showCustomAlert("error", "There was an error deleting the item.")
-
+      console.error("Delete error:", error);
+      showCustomAlert("error", "There was an error deleting the item.");
     }
   };
+
 
 
   function stripHtml(html) {
@@ -158,8 +168,6 @@ const Basket = () => {
 
 
 
-
-  // Columns for DataTable
   const columns = [
     {
       name: 'S.No',
@@ -205,8 +213,6 @@ const Basket = () => {
       wrap: true,
       width: '200px',
     },
-
-
     {
       name: "Validity",
       selector: (row) => row.validity,
@@ -217,8 +223,14 @@ const Basket = () => {
       name: "Stock Quantity",
       selector: (row) => row.stock_details?.length || 0,
       sortable: true,
-      width: "180px",
+      width: "200px",
     },
+    // {
+    //   name: "Type",
+    //   selector: (row) => row.type,
+    //   sortable: true,
+    //   width: '150px',
+    // },
     {
       name: "Created date",
       selector: row => fDate(row.created_at),
@@ -229,64 +241,62 @@ const Basket = () => {
       permission.includes("addstock") ||
       permission.includes("basketdetail") ||
       permission.includes("editstock") ||
-      permission.includes("deletebasket") ?
-      {
-        name: "Actions",
-        cell: (row) => (
-          <div className="w-100">
-            {permission.includes("publishstock") && (
-              row.stock_details.length > 0 ? (
-                <Tooltip title="Published Stock">
-                  <RotateCcw
-                    checked={row.status}
-                    onClick={(event) => handleSwitchChange(event, row._id)}
-                  />
-                </Tooltip>
-              ) : ""
-            )}
+      permission.includes("deletebasket") ? {
+      name: "Actions",
+      cell: (row) => (
+        <div className="w-100 d-flex align-items-center gap-1">
 
-            {permission.includes("addstock") && (
-              row.stock_details?.length <= 0 ? (
-                <Tooltip title="Add Stock">
-                  <Link
-                    to={`/employee/addstock/${row._id}`}
-                    className="btn px-2"
-                  >
-                    <Plus />
-                  </Link>
-                </Tooltip>
-              ) : null
-            )}
-
-            {permission.includes("basketdetail") &&
-              <Tooltip title="view">
-                <Link
-                  to={`/employee/viewdetail/${row._id}`}
-                  className="btn px-2"
-                >
-                  <Eye />
-                </Link>
-              </Tooltip>}
-
-            {permission.includes("editstock") && <Tooltip title="Edit">
-              <Link
-                to={`editbasket/${row._id}`}
+          {permission.includes("publishstock") && row.stock_details.length > 0 && (
+            <Tooltip title="Published Stock">
+              <button
                 className="btn px-2"
+                onClick={(event) => handleSwitchChange(event, row._id)}
               >
+                <RotateCcw checked={row.status} />
+              </button>
+            </Tooltip>
+          )}
+
+
+          {permission.includes("addstock") && row.stock_details?.length <= 0 && (
+            <Tooltip title="Add Stock">
+              <Link to={`/employee/addstock/${row._id}`} className="btn px-2">
+                <Plus />
+              </Link>
+            </Tooltip>
+          )}
+
+
+          {permission.includes("basketdetail") && (
+            <Tooltip title="View">
+              <Link to={`/employee/viewdetail/${row._id}`} className="btn px-2">
+                <Eye />
+              </Link>
+            </Tooltip>
+          )}
+
+
+          {permission.includes("editstock") && (
+            <Tooltip title="Edit">
+              <Link to={`editbasket/${row._id}`} className="btn px-2">
                 <SquarePen />
               </Link>
-            </Tooltip>}
+            </Tooltip>
+          )}
 
-            {permission.includes("deletebasket") && <button
-              className="btn px-2"
-              onClick={() => Deletebasket(row._id)}
-            >
-              <Trash2 />
-            </button>}
-          </div>
-        ),
-        width: "220px"
-      } : "",
+
+          {permission.includes("deletebasket") && (
+            <Tooltip title="Delete">
+              <button className="btn px-2" onClick={() => Deletebasket(row._id)}>
+                <Trash2 />
+              </button>
+            </Tooltip>
+          )}
+        </div>
+
+      ),
+      width: "220px"
+    } : "",
   ];
 
 
@@ -325,23 +335,22 @@ const Basket = () => {
                 <i className="bx bx-search" />
               </span>
             </div>
-            {permission.includes("addbasket") && <div className="ms-sm-auto  ms-0 mt-2 mt-sm-0">
+            {permission.includes("addbasket") && <div className="ms-auto mt-2 mt-sm-0">
               <Link to="/employee/addbasket" className="btn btn-primary">
                 <i className="bx bxs-plus-square" aria-hidden="true" />
                 Add Basket
               </Link>
             </div>}
             {/* <div className="ms-2">
-              <Link to="/employee/basket/rebalancing" className="btn btn-primary">
+              <Link to="/admin/basket/rebalancing" className="btn btn-primary">
                 <i className="bx bxs-plus-square" aria-hidden="true" />
                 RebBalancing
               </Link>
             </div> */}
           </div>
-
           {isLoading ? (
             <Loader />
-          ) : (
+          ) : clients.length > 0 ? (
             <>
               <Table
                 columns={columns}
@@ -351,6 +360,10 @@ const Basket = () => {
                 onPageChange={handlePageChange}
               />
             </>
+          ) : (
+            <div className="text-center mt-5">
+              <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+            </div>
           )}
         </div>
       </div>

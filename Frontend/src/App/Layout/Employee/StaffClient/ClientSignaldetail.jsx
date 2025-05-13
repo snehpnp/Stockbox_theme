@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Table from '../../../Extracomponents/Table1';
 import { RefreshCcw, IndianRupee } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { GetSignallist, GetSignallistWithFilter, GetService, GetStockDetail, GetClientSignaldetail, Getclientsignaltoexport } from '../../../Services/Admin/Admin';
 import { fDateTimeH, fDateTimeSuffix } from '../../../../Utils/Date_formate'
 import { exportToCSV } from '../../../../Utils/ExportData';
@@ -259,7 +258,7 @@ const ClientSignaldetail = () => {
                                     <nav aria-label="breadcrumb">
                                         <ol className="breadcrumb mb-0 p-0">
                                             <li className="breadcrumb-item">
-                                                <Link to="/admin/dashboard">
+                                                <Link to="/employee/dashboard">
                                                     <i className="bx bx-home-alt" />
                                                 </Link>
                                             </li>
@@ -269,7 +268,7 @@ const ClientSignaldetail = () => {
                             </div>
                         </div>
                         <div className="col-md-6 d-flex justify-content-end">
-                            <Link to="/admin/client">
+                            <Link to="/employee/client">
                                 <Tooltip title="Back">
                                     <i className="lni lni-arrow-left-circle" style={{ fontSize: "2rem", color: "#000" }} />
                                 </Tooltip>

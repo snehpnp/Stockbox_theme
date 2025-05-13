@@ -63,7 +63,7 @@ const AllBasketHistory = () => {
         setSearchInput("")
         setStartDate("")
         setEndDate("")
-
+        setCurrentPage(1);
 
     }
 
@@ -123,10 +123,15 @@ const AllBasketHistory = () => {
     };
 
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchInput]);
+
 
     useEffect(() => {
         gethistory();
     }, [searchInput, startDate, endDate, currentPage]);
+
 
 
 
@@ -183,17 +188,18 @@ const AllBasketHistory = () => {
 
         {
             name: 'Plan Amount',
-            selector: row => <div> <IndianRupee style={{ width: "18px" }} />{(row.plan_price).toFixed(2)}</div>,
+            selector: row => <div> <IndianRupee />{(row.plan_price).toFixed(2)}</div>,
             sortable: true,
             width: '200px',
         },
         {
             name: 'GST',
             selector: row => row?.total || "-",
-            cell: row => <div>{(row?.total).toFixed(2)} <span style={{ fontSize: "12px" }}>({row?.gst}% Gst Included)</span></div>,
+            cell: row => <div>{row?.total} <span style={{ fontSize: "12px" }}>({row?.gst}% Gst Included)</span></div>,
             sortable: true,
             width: '250px',
         },
+
 
         // {
         //     name: 'Coupon Id',
@@ -204,7 +210,7 @@ const AllBasketHistory = () => {
 
         {
             name: 'Total',
-            selector: row => <div> <IndianRupee style={{ width: "16px" }} />{(row.total).toFixed(2)}</div>,
+            selector: row => <div> <IndianRupee />{(row.total).toFixed(2)}</div>,
             sortable: true,
             width: '200px',
         },
@@ -272,7 +278,6 @@ const AllBasketHistory = () => {
                     </div>
                 </div>
                 <hr />
-
                 <div className="card">
                     <div className="card-body">
                         <div className="d-lg-flex align-items-center mb-4 gap-3 justify-content-between">
@@ -340,9 +345,10 @@ const AllBasketHistory = () => {
                                 </div>
                             </div>
                         </div>
+
                         {isLoading ? (
                             <Loader />
-                        ) : (
+                        ) : clients.length > 0 ? (
                             <>
 
                                 <div className="table-responsive">
@@ -355,6 +361,10 @@ const AllBasketHistory = () => {
                                     />
                                 </div>
                             </>
+                        ) : (
+                            <div className="text-center mt-5">
+                                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                            </div>
                         )}
                     </div>
                 </div>

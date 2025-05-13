@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import { updateStockList,getstocklistById } from "../../../Services/Admin/Admin";
+import { updateStockList, getstocklistById } from "../../../Services/Admin/Admin";
 import { Tooltip } from 'antd';
 import axios from "axios";
 import * as Config from "../../../../Utils/config";
