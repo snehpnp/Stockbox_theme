@@ -25,8 +25,8 @@ class Upstox {
                var tokenCode = req.query.code;
                let email = decodeURIComponent(req.query.state || "");
                email = email.replace(/\s/g, "+"); 
-               if (tokenCode != undefined) {
-   
+
+
                    const client = await Clients_Modal.findOne({ Email: email,ActiveStatus:1,del:0 });
    
                    if (!client) {
@@ -43,6 +43,9 @@ class Upstox {
    
                      
                    }
+
+               if (tokenCode != undefined) {
+   
    
    
                    var hosts = req.headers.host;

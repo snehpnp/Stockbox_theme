@@ -1415,7 +1415,7 @@ async function calculateCAGRForBasketsClient(req, res) {
         }, 0);
 
         // Calculate current price
-        const currentPrice = stock_details.reduce((sum, stock) => {
+        let currentPrice = stock_details.reduce((sum, stock) => {
             return sum + (stock.livePrice * stock.quantity);
         }, 0);
         currentPrice = currentPrice + (remaining_amount || 0);  // If remaining_amount is undefined, treat it as 0
