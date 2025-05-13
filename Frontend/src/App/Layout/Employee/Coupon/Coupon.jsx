@@ -109,7 +109,7 @@ const Coupon = () => {
 
 
     const updatecoupon = async (row) => {
-        navigate("/admin/coupon/updatecoupon/" + row._id, { state: { row } })
+        navigate("/employee/coupon/updatecoupon/" + row._id, { state: { row } })
     }
 
     const DeleteCouponbyadmin = async (_id) => {
@@ -393,7 +393,7 @@ const Coupon = () => {
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb mb-0 p-0">
                                     <li className="breadcrumb-item">
-                                        <Link to="/admin/dashboard">
+                                        <Link to="/employee/dashboard">
                                             <i className="bx bx-home-alt" />
                                         </Link>
                                     </li>
@@ -419,7 +419,7 @@ const Coupon = () => {
                                 </div>
                                 {permission.includes("addcoupon") && <div className="ms-auto">
                                     <Link
-                                        to="/admin/addcoupon"
+                                        to="/employee/addcoupon"
                                         className="btn btn-primary"
                                     >
                                         <i
