@@ -180,7 +180,10 @@ const Staff = () => {
     // update status
 
     const handleSwitchChange = async (event, id) => {
+
         const user_active_status = event.target.checked ? "1" : "0";
+
+
         const data = { id, status: user_active_status };
 
         try {
