@@ -25,7 +25,6 @@ const Message = () => {
 
 
 
-
     const [isLoading, setIsLoading] = useState(true)
 
 
@@ -135,12 +134,13 @@ const Message = () => {
                                                                     <h4 className="card-title text-muted">
                                                                         <span>
                                                                             {matchedServices.length > 0 ? (
-                                                                                matchedServices.some(service => ["C", "O", "F"].includes(service.segment)) ? (
+                                                                                matchedServices.some(service => ["C", "O", "F", "OS"].includes(service.segment)) ? (
                                                                                     matchedServices.map((service, idx) => (
                                                                                         <span key={idx}>
                                                                                             {service.segment === "C" && <span>CASH </span>}
                                                                                             {service.segment === "O" && <span>OPTION </span>}
                                                                                             {service.segment === "F" && <span>FUTURE </span>}
+                                                                                            {service.segment === "OS" && <span>Strategy</span>}
                                                                                         </span>
                                                                                     ))
                                                                                 ) : (

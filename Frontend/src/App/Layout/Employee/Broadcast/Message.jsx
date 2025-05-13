@@ -22,7 +22,7 @@ const Message = () => {
 
     const [servicedata, setServicedata] = useState({});
     const [chatMessages, setChatMessages] = useState([]);
-    console.log("chatMessages", chatMessages);
+
 
 
 
@@ -46,7 +46,6 @@ const Message = () => {
     const sendmessagedetail = async () => {
         try {
             const response = await getBroadCastmessage(token);
-            console.log("response", response)
             if (response.status) {
                 setChatMessages(response.data);
             }
@@ -136,12 +135,13 @@ const Message = () => {
                                                                     <h4 className="card-title text-muted">
                                                                         <span>
                                                                             {matchedServices.length > 0 ? (
-                                                                                matchedServices.some(service => ["C", "O", "F"].includes(service.segment)) ? (
+                                                                                matchedServices.some(service => ["C", "O", "F", "OS"].includes(service.segment)) ? (
                                                                                     matchedServices.map((service, idx) => (
                                                                                         <span key={idx}>
                                                                                             {service.segment === "C" && <span>CASH </span>}
                                                                                             {service.segment === "O" && <span>OPTION </span>}
                                                                                             {service.segment === "F" && <span>FUTURE </span>}
+                                                                                            {service.segment === "OS" && <span>Strategy</span>}
                                                                                         </span>
                                                                                     ))
                                                                                 ) : (
