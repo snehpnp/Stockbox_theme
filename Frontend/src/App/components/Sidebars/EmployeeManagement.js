@@ -16,8 +16,8 @@ export const permissionMapping = {
     "viewfreeclient": ["FreeTrialClient"],
     "paymenthistory": ["PaymentHistory"],
     "planexpiry": ["ClientPlanExpiry"],
-    "ticket":["Ticket"],
-    "broadcast":["BroadcastSMS"]
+    "ticket": ["HelpDisk"],
+    "broadcast": ["BroadcastSMS"]
 };
 
 
