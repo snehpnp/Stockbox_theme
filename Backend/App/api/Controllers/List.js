@@ -779,25 +779,22 @@ class List {
       const end = new Date(start);
       end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
 
+
 if (plan.validity.includes('day')) {
-  end.setDate(start.getDate() + monthsToAdd); // Add days
+  // monthsToAdd is the number of days from your mapping
+  const totalDays =  parseInt(plan.validity);
+  let added = 0;
 
-  const freetrialDays = parseInt(plan.validity);
- let addedDays = 0;
-
-    while (addedDays < freetrialDays) {
-      const dayOfWeek = end.getDay(); // 0 = Sunday, 6 = Saturday
-      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-        addedDays++;
-      }
-
-      if (addedDays < freetrialDays) {
-        end.setDate(end.getDate() + 1);
-      }
+  // Loop forward one calendar day at a time,
+  // only counting Mon–Fri toward your total
+  while (added < totalDays) {
+    end.setDate(end.getDate() + 1);
+    const dow = end.getDay();
+    if (dow !== 0 && dow !== 6) {
+      added++;
     }
-
-
-} else {
+  }
+}  else {
   end.setMonth(start.getMonth() + monthsToAdd); // Add months
 }
 
@@ -5678,27 +5675,22 @@ if (search && search.trim() !== '') {
       const end = new Date(start);
       end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
 
+
 if (plan.validity.includes('day')) {
-  end.setDate(start.getDate() + monthsToAdd); // Add days
+  // monthsToAdd is the number of days from your mapping
+  const totalDays =  parseInt(plan.validity);
+  let added = 0;
 
-  const freetrialDays = parseInt(plan.validity);
- let addedDays = 0;
-
-    while (addedDays < freetrialDays) {
-      const dayOfWeek = end.getDay(); // 0 = Sunday, 6 = Saturday
-      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-        addedDays++;
-      }
-
-      if (addedDays < freetrialDays) {
-        end.setDate(end.getDate() + 1);
-      }
+  // Loop forward one calendar day at a time,
+  // only counting Mon–Fri toward your total
+  while (added < totalDays) {
+    end.setDate(end.getDate() + 1);
+    const dow = end.getDay();
+    if (dow !== 0 && dow !== 6) {
+      added++;
     }
-
-
-
-
-} else {
+  }
+}  else {
   end.setMonth(start.getMonth() + monthsToAdd); // Add months
 }
 
@@ -6230,25 +6222,22 @@ await sendEmail(mailOptions);
       const end = new Date(start);
       end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
 
+
 if (plan.validity.includes('day')) {
-  end.setDate(start.getDate() + monthsToAdd); // Add days
-  const freetrialDays = parseInt(plan.validity);
- let addedDays = 0;
+  // monthsToAdd is the number of days from your mapping
+  const totalDays =  parseInt(plan.validity);
+  let added = 0;
 
-    while (addedDays < freetrialDays) {
-      const dayOfWeek = end.getDay(); // 0 = Sunday, 6 = Saturday
-      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-        addedDays++;
-      }
-
-      if (addedDays < freetrialDays) {
-        end.setDate(end.getDate() + 1);
-      }
+  // Loop forward one calendar day at a time,
+  // only counting Mon–Fri toward your total
+  while (added < totalDays) {
+    end.setDate(end.getDate() + 1);
+    const dow = end.getDay();
+    if (dow !== 0 && dow !== 6) {
+      added++;
     }
-
-
-
-} else {
+  }
+}  else {
   end.setMonth(start.getMonth() + monthsToAdd); // Add months
 }
 
