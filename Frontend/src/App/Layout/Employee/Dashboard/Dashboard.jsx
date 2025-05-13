@@ -127,14 +127,15 @@ const Dashbord = () => {
                                             {permission?.permissions.length > 0 ? (
                                                 <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
                                                     {permission?.permissions
-                                                        ?.filter((perm) => perm !== "userPermissions" && perm !== "planpermission")
+                                                        ?.filter((perm) => perm !== "userPermissions" && perm !== "planpermission" && perm !== "Signalpermission" && perm !== "newspermission" &&
+                                                            perm !== "bannerpermission")
                                                         .map((perm, index) => (
                                                             <span
                                                                 className="permission-badge"
                                                                 key={index}
 
                                                             >
-                                                                {perm}
+                                                                {perm.charAt(0).toUpperCase() + perm.slice(1)}
                                                             </span>
                                                         ))}
 

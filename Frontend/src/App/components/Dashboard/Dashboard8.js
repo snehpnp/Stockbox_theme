@@ -146,7 +146,7 @@ const Dashboard1 = ({ monthexpiry }) => {
       state: { clientStatus: 0 },
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.counts?.["0"],
-      label: "Today Expiry Data",
+      label: "Today's Expiry Data",
       icon: "bx bx-wifi-2 fs-3",
       progress: 55,
     },

@@ -9,8 +9,14 @@ import Loader from '../../../../Utils/Loader';
 
 
 
-
 const Planexpiry = () => {
+
+
+
+    useEffect(() => {
+        fetchAdminServices();
+    }, []);
+
 
 
     const token = localStorage.getItem('token');
@@ -28,6 +34,8 @@ const Planexpiry = () => {
     //state for loading
     const [isLoading, setIsLoading] = useState(true)
 
+
+
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
@@ -39,17 +47,21 @@ const Planexpiry = () => {
                 setServiceList(response.data);
             }
         } catch (error) {
-            console.error('Error fetching services:', error);
+            console.log('Error fetching services:', error);
         }
     };
 
+
+
+
     const getClientData = async () => {
         try {
+            setIsLoading(true)
             const data = {
                 page: currentPage,
                 serviceid: searchStock,
                 startdate: startDate,
-                endddate: endDate,
+                enddate: endDate,
                 search: searchInput,
             };
             const response = await getclientPlanexpirywithfilter(data, token);
@@ -58,9 +70,11 @@ const Planexpiry = () => {
                 setTotalRows(response.pagination.total);
             }
         } catch (error) {
-            console.error('Error fetching client data:', error);
+            console.log('Error fetching client data:', error);
         }
-        setIsLoading(false)
+        finally {
+            setIsLoading(false)
+        }
     };
 
 
@@ -69,7 +83,14 @@ const Planexpiry = () => {
 
     const getexportfile = async () => {
         try {
-            const response = await getclientPlanexpiry(token);
+            const data = {
+                page: currentPage,
+                serviceid: searchStock,
+                startdate: startDate,
+                enddate: endDate,
+                search: searchInput,
+            };
+            const response = await getclientPlanexpiry(data, token);
             if (response.status) {
                 if (response.data?.length > 0) {
                     const csvArr = response.data?.map((item) => ({
@@ -77,18 +98,19 @@ const Planexpiry = () => {
                         Email: item.clientEmail || '',
                         PhoneNo: item.clientMobile || '',
                         Segment: item.serviceTitle || '',
-                        StartDate: fDateTime(item.startdate) || '',
-                        EndDate: fDateTime(item.enddate) || '',
+                        startdate: fDateTime(item.startdate) || '',
+                        enddate: fDateTime(item.enddate) || '',
                     }));
+
                     exportToCSV(csvArr, 'Client Plan Expiry')
                 } else {
                     console.log("No data available.");
                 }
             } else {
-                console.error("Failed to fetch data:", response.status);
+                console.log("Failed to fetch data:", response.status);
             }
         } catch (error) {
-            console.error("Error fetching clients:", error);
+            console.log("Error fetching clients:", error);
         }
     };
 
@@ -104,14 +126,14 @@ const Planexpiry = () => {
     };
 
     useEffect(() => {
-        fetchAdminServices();
-    }, []);
-
+        setCurrentPage(1);
+    }, [searchInput, searchStock, startDate, endDate]);
 
 
     useEffect(() => {
         getClientData();
     }, [searchInput, searchStock, currentPage, startDate, endDate]);
+
 
 
 
@@ -154,12 +176,14 @@ const Planexpiry = () => {
         },
     ];
 
+
+
     return (
         <div className="page-content">
             <div className="page-breadcrumb  d-flex align-items-center mb-3">
                 <div className="breadcrumb-title pe-3">Plan Expiry</div>
                 <div className="ps-3">
-                    <Link to="/admin/dashboard">
+                    <Link to="/employee/dashboard">
                         <i className="bx bx-home-alt" />
                     </Link>
                 </div>
@@ -167,7 +191,7 @@ const Planexpiry = () => {
             <hr />
             <div className="card">
                 <div className="card-body">
-                    <div className="d-sm-flex align-items-center mb-4 gap-3">
+                    <div className="d-lg-flex align-items-center mb-4 gap-3">
                         <div className="position-relative">
                             <input
                                 type="text"
@@ -183,12 +207,12 @@ const Planexpiry = () => {
 
 
                         <div
-                            className="ms-sm-auto mt-2 mt-md-0"
+                            className="ms-2"
                             onClick={(e) => getexportfile()}
                         >
                             <button
                                 type="button"
-                                className="btn btn-primary "
+                                className="btn btn-primary float-end"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 title="Export To Excel"
@@ -196,7 +220,6 @@ const Planexpiry = () => {
 
                             >
                                 <i className="bx bxs-download" aria-hidden="true"></i>
-
                                 Export-Excel
                             </button>
                         </div>
@@ -204,8 +227,8 @@ const Planexpiry = () => {
 
 
                     </div>
-                    <div className="row ">
-                        <div className="col-md-3 mb-3">
+                    <div className="row mb-2">
+                        <div className="col-md-3">
                             <label>Select From Date</label>
                             <input
                                 type="date"
@@ -214,7 +237,7 @@ const Planexpiry = () => {
                                 value={startDate}
                             />
                         </div>
-                        <div className="col-md-3 mb-3">
+                        <div className="col-md-3">
                             <label>Select To Date</label>
                             <input
                                 type="date"
@@ -223,7 +246,7 @@ const Planexpiry = () => {
                                 value={endDate}
                             />
                         </div>
-                        <div className="col-md-3 ">
+                        <div className="col-md-3">
                             <label>Select Service</label>
                             <select
                                 className="form-control radius-10"
@@ -238,14 +261,14 @@ const Planexpiry = () => {
                                 ))}
                             </select>
                         </div>
-                        <div className="col-md-3 mb-3 justify-content-between d-flex align-items-center mt-3">
+                        <div className="col-md-3 d-flex align-items-center mt-3">
                             <RefreshCcw className="refresh-icon" onClick={resetFilters} />
                         </div>
                     </div>
 
                     {isLoading ? (
                         <Loader />
-                    ) : (
+                    ) : clients.length > 0 ? (
                         <>
                             <Table
                                 columns={columns}
@@ -255,7 +278,12 @@ const Planexpiry = () => {
                                 onPageChange={handlePageChange}
                             />
                         </>
+                    ) : (
+                        <div className="text-center mt-5">
+                            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                        </div>
                     )}
+
                 </div>
             </div>
         </div>

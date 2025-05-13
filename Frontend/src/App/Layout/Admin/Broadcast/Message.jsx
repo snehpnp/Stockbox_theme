@@ -22,7 +22,7 @@ const Message = () => {
 
     const [servicedata, setServicedata] = useState({});
     const [chatMessages, setChatMessages] = useState([]);
-    console.log("chatMessages", chatMessages);
+
 
 
 
@@ -46,7 +46,6 @@ const Message = () => {
     const sendmessagedetail = async () => {
         try {
             const response = await getBroadCastmessage(token);
-            console.log("response", response)
             if (response.status) {
                 setChatMessages(response.data);
             }
