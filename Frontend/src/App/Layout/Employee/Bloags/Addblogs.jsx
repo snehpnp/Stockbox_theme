@@ -3,8 +3,11 @@ import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
 import { useNavigate } from 'react-router-dom';
 import { Addblogsbyadmin } from '../../../Services/Admin/Admin';
+
+import { Link } from 'react-router-dom';
 import Content from '../../../components/Contents/Content';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+
 
 
 const Addblogs = () => {
@@ -15,8 +18,9 @@ const Addblogs = () => {
 
     const user_id = localStorage.getItem("id");
     const token = localStorage.getItem("token");
-
     const [loading, setLoading] = useState(false);
+
+
 
 
 
@@ -24,13 +28,13 @@ const Addblogs = () => {
         let errors = {};
 
         if (!values.title) {
-            errors.title = "Please enter Title";
+            errors.title = "Please Enter Title";
         }
         if (!values.description) {
-            errors.description = "Please enter Description";
+            errors.description = "Please Enter Description";
         }
         if (!values.image) {
-            errors.image = "Please enter Image";
+            errors.image = "Please Select Image";
         }
 
 
@@ -38,7 +42,7 @@ const Addblogs = () => {
     };
 
     const onSubmit = async (values) => {
-        setLoading(!loading);
+        setLoading(!loading)
         const req = {
             title: values.title,
             description: values.description,
@@ -53,13 +57,13 @@ const Addblogs = () => {
             } else {
                 showCustomAlert("error", response.message)
                 setLoading(false)
+
             }
         } catch (error) {
             setLoading(false)
             showCustomAlert("error", "An unexpected error occurred. Please try again later.")
         }
     };
-
 
     const formik = useFormik({
         initialValues: {
@@ -86,6 +90,7 @@ const Addblogs = () => {
             name: "image",
             label: "Upload Image",
             type: "file2",
+            image: true,
             label_size: 12,
             col_size: 6,
             disable: false,
@@ -112,7 +117,7 @@ const Addblogs = () => {
             <DynamicForm
                 fields={fields}
                 formik={formik}
-                // page_title="Add Blog"
+
                 btn_name="Add Blog"
                 btn_name1="Cancel"
                 sumit_btn={true}
@@ -121,7 +126,6 @@ const Addblogs = () => {
                 additional_field={<></>}
             />
         </Content>
-
 
     );
 };

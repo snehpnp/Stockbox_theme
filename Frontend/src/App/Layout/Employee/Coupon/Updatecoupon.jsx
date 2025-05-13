@@ -38,7 +38,7 @@ const Updatecoupon = () => {
     }
   };
 
-  // Fetch the services to populate the select dropdown
+
   const getService = async () => {
     try {
       const response = await GetService(token);
