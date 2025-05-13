@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from "formik";
 import DynamicForm from "../../../Extracomponents/FormicForm";
+import Swal from "sweetalert2";
 import { useLocation, useNavigate } from "react-router-dom";
 import { updateCouponbyadmin, GetService } from "../../../Services/Admin/Admin";
 import Content from '../../../components/Contents/Content';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
-
-
 
 
 const Updatecoupon = () => {
@@ -121,11 +120,12 @@ const Updatecoupon = () => {
       limitation: values.limitation,
       id: row._id,
     };
-
+    ;
 
 
     try {
       const response = await updateCouponbyadmin(req, token);
+
 
       if (response.status) {
         showCustomAlert("Success", response.message, navigate, "/employee/coupon")
@@ -148,7 +148,7 @@ const Updatecoupon = () => {
       enddate: row?.enddate ? new Date(row.enddate).toISOString().split("T")[0] : "",
       minpurchasevalue: row?.minpurchasevalue || "",
       mincouponvalue: row?.mincouponvalue || "",
-      limitation: row?.limitation || "",
+      limitation: row?.totallimitation || "",
       service: row?.service ? row?.service : "",
       id: "",
     },
