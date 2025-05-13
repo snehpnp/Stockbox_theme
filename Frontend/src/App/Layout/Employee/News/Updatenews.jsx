@@ -7,8 +7,6 @@ import { image_baseurl } from '../../../../Utils/config';
 import Content from '../../../components/Contents/Content';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
-
-
 const Updatenews = () => {
 
 
@@ -26,7 +24,7 @@ const Updatenews = () => {
         initialValues: {
             title: client?.title || "",
             description: client?.description || "",
-            image: client?.image || "",
+            image: client?.image ? client?.image : "",
             id: "",
         },
 
@@ -43,14 +41,14 @@ const Updatenews = () => {
                 if (response.status) {
                     showCustomAlert("Success", response.message, navigate, "/employee/news")
                 } else {
-                    showCustomAlert("error", response.message, navigate, "/employee/news")
+                    showCustomAlert("error", response.message)
+
                 }
             } catch (error) {
                 showCustomAlert("error", "An unexpected error occurred. Please try again later.")
             }
         },
     });
-
 
 
 
@@ -91,11 +89,11 @@ const Updatenews = () => {
 
     return (
         <Content
-        Page_title="Update News"
-        button_status={false}
-        backbutton_status={true}
-        backForword={true}
-      >
+            Page_title="Update News"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
             <DynamicForm
                 fields={fields}
                 formik={formik}

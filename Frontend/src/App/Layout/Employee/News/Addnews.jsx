@@ -16,7 +16,10 @@ const Addnews = () => {
     const user_id = localStorage.getItem("id");
     const token = localStorage.getItem("token");
 
+
     const [loading, setLoading] = useState(false);
+
+
 
 
 
@@ -85,6 +88,7 @@ const Addnews = () => {
             name: "image",
             label: "Upload Image",
             type: "file2",
+            image: true,
             label_size: 12,
             col_size: 6,
             disable: false,
@@ -111,7 +115,7 @@ const Addnews = () => {
             <DynamicForm
                 fields={fields}
                 formik={formik}
-                // page_title="Add News"
+
                 btn_name="Add News"
                 btn_name1="Cancel"
                 sumit_btn={true}
