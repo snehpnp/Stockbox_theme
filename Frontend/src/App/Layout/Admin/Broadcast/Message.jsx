@@ -10,12 +10,16 @@ import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 const Message = () => {
+
+
     const navigate = useNavigate();
 
     useEffect(() => {
         getservice();
         sendmessagedetail();
     }, []);
+
+
 
     const token = localStorage.getItem('token');
     const userid = localStorage.getItem('id');
@@ -53,6 +57,9 @@ const Message = () => {
         }
         setIsLoading(false)
     };
+
+
+
 
     const DeleteMessage = async (_id) => {
         try {
