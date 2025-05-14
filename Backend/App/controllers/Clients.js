@@ -2086,137 +2086,145 @@ class Clients {
     }
   }
 
+async freetrialListWithFilter(req, res) {
+  try {
+    const { freestatus, search, page = 1 } = req.body; // Extract page and limit from the request body with default values
+    let limit = 10;
+    const skip = (parseInt(page) - 1) * parseInt(limit); // Calculate the number of items to skip based on page and limit
+    const today = new Date(); // Get today's date
 
-  async freetrialListWithFilter(req, res) {
-    try {
-      const { freestatus, search, page = 1 } = req.body; // Extract page and limit from the request body with default values
-      let limit = 10;
-      const skip = (parseInt(page) - 1) * parseInt(limit); // Calculate the number of items to skip based on page and limit
-      const today = new Date(); // Get today's date
+    // Search filter
+    const searchMatch = search && search.trim() !== "" ? {
+      $or: [
+        { "clientDetails.FullName": { $regex: search, $options: "i" } },
+        { "clientDetails.Email": { $regex: search, $options: "i" } },
+        { "clientDetails.PhoneNo": { $regex: search, $options: "i" } }
+      ]
+    } : {};
 
+    // Status filter
+    const statussMatch = {
+      "clientDetails.ActiveStatus": 1,
+      "clientDetails.del": 0
+    };
 
-      const searchMatch = search && search.trim() !== "" ? {
-        $or: [
-          { "clientDetails.FullName": { $regex: search, $options: "i" } },
-          { "clientDetails.Email": { $regex: search, $options: "i" } },
-          { "clientDetails.PhoneNo": { $regex: search, $options: "i" } }
-        ]
-      } : {};
+    const finalFilter = {
+      ...searchMatch,
+      ...statussMatch
+    };
 
+    // Filter by freestatus (active or expired)
+    const statusMatch = freestatus && freestatus.trim() !== "" ? {
+      status: freestatus // Match only the given status (active or expired)
+    } : {};
 
-      const statussMatch = {
-        "clientDetails.ActiveStatus": 1,
-        "clientDetails.del": 0
-      };
-
-      const finalFilter = {
-        ...searchMatch,
-        ...statussMatch
-      };
-
-      const statusMatch = freestatus && freestatus.trim() !== "" ? {
-        status: freestatus // Match only the given status (active or expired)
-      } : {};
-
-
-
-      const totalCountPipeline = [
-        {
-          $match: { del: false } // Only active free trials
-        },
-        {
-          $addFields: {
-            clientid: { $toObjectId: "$clientid" } // Convert clientid to ObjectId
-          }
-        },
-        {
-          $lookup: {
-            from: 'clients',
-            localField: 'clientid',
-            foreignField: '_id',
-            as: 'clientDetails'
-          }
-        },
-        {
-          $unwind: {
-            path: '$clientDetails',
-            preserveNullAndEmptyArrays: true
-          }
-        },
-        {
-          $match: finalFilter // Apply the search filter dynamically
-        },
-        {
-          $lookup: {
-            from: 'plansubscriptions',
-            localField: 'clientid', // Converted clientid in Freetrial_Modal
-            foreignField: 'client_id',
-            as: 'subscriptionDetails'
-          }
-        },
-        {
-          $addFields: {
-            subscriptionCount: { $size: "$subscriptionDetails" } // Check subscription array size
-          }
-        },
-        {
-          $match: {
-            subscriptionCount: 0 // Only clients without any subscriptions
-          }
-        },
-        {
-          $addFields: {
-            status: {
-              $cond: {
-                if: { $gte: ["$enddate", today] }, // Check if enddate is today or later
-                then: "active",
-                else: "expired"
-              }
+    // Updated pipeline for total count calculation
+    const totalCountPipeline = [
+      {
+        $match: { del: false } // Only active free trials
+      },
+      {
+        $addFields: {
+          clientid: { $toObjectId: "$clientid" } // Convert clientid to ObjectId
+        }
+      },
+      {
+        $lookup: {
+          from: 'clients',
+          localField: 'clientid',
+          foreignField: '_id',
+          as: 'clientDetails'
+        }
+      },
+      {
+        $unwind: {
+          path: '$clientDetails',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $match: finalFilter // Apply the search filter dynamically
+      },
+      {
+        $lookup: {
+          from: 'plansubscriptions',
+          localField: 'clientid', // Converted clientid in Freetrial_Modal
+          foreignField: 'client_id',
+          as: 'subscriptionDetails'
+        }
+      },
+      {
+        $addFields: {
+          subscriptionCount: { $size: "$subscriptionDetails" } // Count number of subscriptions
+        }
+      },
+      {
+        $match: {
+          subscriptionCount: 1 // Only clients with 1 subscription
+        }
+      },
+      {
+        $addFields: {
+          status: {
+            $cond: {
+              if: { $gte: ["$enddate", today] }, // Check if enddate is today or later
+              then: "active",
+              else: "expired"
             }
           }
-        },
-        {
-          $match: statusMatch // Filter by freestatus
-        },
-        {
-          $count: "totalCount" // Count the total number of matching documents
         }
-      ];
-
-      // Get the total count
-      const totalCountResult = await Freetrial_Modal.aggregate([
-        ...totalCountPipeline,
-        { $count: "totalCount" } // Count the total number of matching documents
-      ]);
-      const totalCount = totalCountResult[0] ? totalCountResult[0].totalCount : 0;
-
-
-      // Now get the paginated result
-      const result = await Freetrial_Modal.aggregate([
-        ...totalCountPipeline.slice(0, -1), // Use the same pipeline but exclude $count for paginated results
-        { $sort: { created_at: -1 } },
-        { $skip: skip },
-        { $limit: parseInt(limit) }
-      ]);
-
-
-      return res.json({
-        status: true,
-        message: "get",
-        data: result,
-        pagination: {
-          totalRecords: totalCount,
-          totalPages: Math.ceil(totalCount / limit),
-          page: parseInt(page),
-          limit: parseInt(limit)
+      },
+      {
+        $match: statusMatch // Filter by freestatus (active/expired)
+      },
+      {
+        $addFields: {
+          planValidity: {
+            $subtract: ["$enddate", "$startdate"] // Calculate the validity period
+          }
         }
-      });
+      },
+      {
+        $match: {
+          planValidity: { $gte: 86400000, $lte: 604800000 } // Validity between 1 day (86400000 ms) and 7 days (604800000 ms)
+        }
+      },
+      {
+        $count: "totalCount" // Count the total number of matching documents
+      }
+    ];
 
-    } catch (error) {
-      return res.json({ status: false, message: "Server error", data: [] });
-    }
+    // Get the total count
+    const totalCountResult = await Freetrial_Modal.aggregate([
+      ...totalCountPipeline,
+      { $count: "totalCount" } // Count the total number of matching documents
+    ]);
+    const totalCount = totalCountResult[0] ? totalCountResult[0].totalCount : 0;
+
+    // Now get the paginated result
+    const result = await Freetrial_Modal.aggregate([
+      ...totalCountPipeline.slice(0, -1), // Use the same pipeline but exclude $count for paginated results
+      { $sort: { created_at: -1 } },
+      { $skip: skip },
+      { $limit: parseInt(limit) }
+    ]);
+
+    return res.json({
+      status: true,
+      message: "get",
+      data: result,
+      pagination: {
+        totalRecords: totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        page: parseInt(page),
+        limit: parseInt(limit)
+      }
+    });
+
+  } catch (error) {
+    return res.json({ status: false, message: "Server error", data: [] });
   }
-
+}
 
 
 
