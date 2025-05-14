@@ -3322,8 +3322,21 @@ if (pdfresponse.status === true) {
       const count = signals.length;
       if (count === 0) {
         return res.status(404).json({
-          status: false,
-          message: "No signals found"
+          status: true,
+          message: "No signals found",
+           data: {
+          count: count || 0,
+          totalProfit: 0,
+          totalLoss:  0,
+          profitCount:  0,
+          lossCount:  0,
+          accuracy:  0,
+          avgreturnpertrade:  0,
+          avgreturnpermonth: 0,
+          totalpercentagecountavarage:0,
+          avgDaysPerSignal:0,
+
+        }
         });
       }
 
@@ -3353,8 +3366,21 @@ if (pdfresponse.status === true) {
 
       if (!firstSignal || !lastSignal) {
         return res.status(404).json({
-          status: false,
-          message: "No signals found"
+          status: true,
+          message: "No signals found",
+          data: {
+          count: count || 0,
+          totalProfit: 0,
+          totalLoss:  0,
+          profitCount:  0,
+          lossCount:  0,
+          accuracy:  0,
+          avgreturnpertrade:  0,
+          avgreturnpermonth: 0,
+          totalpercentagecountavarage:0,
+          avgDaysPerSignal:0,
+
+        }
         });
       }
 
@@ -7638,8 +7664,20 @@ if (search && search.trim() !== '') {
   
       if (count === 0) {
         return res.status(404).json({
-          status: false,
+          status: true,
           message: "No signals found",
+           data: {
+          count:0,
+          totalProfit:0,
+          totalLoss:0,
+          profitCount:0,
+          lossCount:0,
+          accuracy:0,
+          avgreturnpertrade:0,
+          avgreturnpermonth:0,
+          avgDaysPerSignal:0,
+          totalpercentagecountavarage:0,
+        },
         });
       }
   
@@ -7661,6 +7699,18 @@ if (search && search.trim() !== '') {
         return res.status(404).json({
           status: false,
           message: "No signals found",
+            data: {
+          count:0,
+          totalProfit:0,
+          totalLoss:0,
+          profitCount:0,
+          lossCount:0,
+          accuracy:0,
+          avgreturnpertrade:0,
+          avgreturnpermonth:0,
+          avgDaysPerSignal:0,
+          totalpercentagecountavarage:0,
+        },
         });
       }
   
@@ -7901,34 +7951,45 @@ async checkClientToken(req, res) {
       return res.status(500).json({ message: "Something went wrong.", error: error.message });
   }
 }
-
 async LatestSignalsWithoutActivePlan(req, res) {
   try {
     const { client_id } = req.body;
     const limit = 10;
 
     // Step 1: Fetch all subscriptions for the client
-    const subscriptions = await PlanSubscription_Modal.find({ client_id });
+    const subscriptions = await PlanSubscription_Modal.find({ client_id }).populate("plan_id");
 
-    // Step 2: Extract active plan IDs
+    // Step 2: Identify active non-free-trial plans
     const activePlanIds = subscriptions
-      .filter(sub => sub.status === "active" && new Date(sub.plan_end) >= new Date())
-      .map(sub => sub.plan_category_id)
-      .filter(id => id != null)
-      .map(id => id.toString());
+      .filter(sub => {
+        const isActive = sub.status === "active" && new Date(sub.plan_end) >= new Date();
+        const isFreeTrial =
+          sub.plan_id &&
+          sub.plan_id.subscriptionCount === 1 &&
+          (sub.plan_id.validity === "1 Day" ||
+            sub.plan_id.validity === "2 Days" ||
+            sub.plan_id.validity === "3 Days" ||
+             sub.plan_id.validity === "4 Days" ||
+            sub.plan_id.validity === "5 Days" ||
+             sub.plan_id.validity === "6 Days" ||
+            sub.plan_id.validity === "7 Days");
 
-    // Step 3: Exclude signals from active plans
+        return isActive && !isFreeTrial;
+      })
+      .map(sub => sub.plan_category_id?.toString())
+      .filter(id => !!id);
+
+    // Step 3: Exclude signals from active or free trial plans
     const exclusionQuery = {
       close_status: false,
       planid: { $nin: [...activePlanIds, null, ""] }
     };
 
-    // Step 4: Fetch all relevant signals
     const latestSignals = await Signal_Modal.find(exclusionQuery)
       .sort({ created_at: -1 })
       .lean();
 
-    // Step 5: Define the priority order for call durations
+    // Step 4: Define the priority order for call durations
     const priorityOrder = [
       "Multi Bagger",
       "Long Term",
@@ -7938,12 +7999,10 @@ async LatestSignalsWithoutActivePlan(req, res) {
       "Intraday"
     ];
 
-    // Step 6: Sort signals according to the priority and limit 2 per type
     const protocol = req.protocol;
     const baseUrl = `${protocol}://${req.headers.host}`;
 
     let signalsWithDetails = [];
-    const callDurationCount = {}; // Track how many signals per call duration
 
     for (const type of priorityOrder) {
       const filteredSignals = latestSignals.filter(
@@ -7953,7 +8012,6 @@ async LatestSignalsWithoutActivePlan(req, res) {
       for (let i = 0; i < Math.min(2, filteredSignals.length); i++) {
         const signal = filteredSignals[i];
 
-        // Check if the signal was purchased
         const order = await Order_Modal.findOne({
           clientid: client_id,
           signalid: signal._id
@@ -7961,7 +8019,9 @@ async LatestSignalsWithoutActivePlan(req, res) {
 
         signalsWithDetails.push({
           ...signal,
-          report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null,
+          report_full_path: signal.report
+            ? `${baseUrl}/uploads/report/${signal.report}`
+            : null,
           purchased: !!order,
           order_quantity: order ? order.quantity : 0
         });
@@ -7972,13 +8032,13 @@ async LatestSignalsWithoutActivePlan(req, res) {
       if (signalsWithDetails.length >= limit) break;
     }
 
-    // Step 7: Return processed signals
     return res.json({
       status: true,
       message: "Latest signals fetched successfully with 2 signals per call duration in priority order.",
       data: signalsWithDetails
     });
   } catch (error) {
+    console.error(error);
     return res.json({ status: false, message: "Server error", data: [] });
   }
 }
