@@ -154,9 +154,9 @@ const AddSignal = () => {
         errors.planid = 'Please Select Plan';
       }
 
-      // if (!values.lot) {
-      //   errors.lot = 'Please Enter Lot';
-      // }
+      if (!values.lot) {
+        errors.lot = 'Please Enter Lot';
+      }
       if (values.lot && values.lot <= 0) {
         errors.lot = 'Please Enter Greater Than Zero';
       }

@@ -439,11 +439,26 @@ export async function Getclientsignaltoexport(data, token) {
 
 
 
-// getsignal by signal filter
+// // getsignal by signal filter
+
+// export async function GetSignallistWithFilter(data, token) {
+//     try {
+//         const res = await axios.post(`${Config.base_url}signal/listwithfilter`, data, {
+//             headers: {
+//                 data: {},
+//                 'Authorization': `${token}`,
+//             },
+//         });
+//         return res?.data;
+//     } catch (err) {
+//         return err.response?.data || err.message;
+//     }
+// }
+
 
 export async function GetSignallistWithFilter(data, token) {
     try {
-        const res = await axios.post(`${Config.base_url}signal/listwithfilter`, data, {
+        const res = await axios.post(`${Config.base_url}signal/listwithfilterwithplan`, data, {
             headers: {
                 data: {},
                 'Authorization': `${token}`,
@@ -454,6 +469,7 @@ export async function GetSignallistWithFilter(data, token) {
         return err.response?.data || err.message;
     }
 }
+
 
 
 // get signal detailperuser
