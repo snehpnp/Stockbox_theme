@@ -776,27 +776,29 @@ class List {
       }
 
       const start = new Date();
-      const end = new Date(start);
-      end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
-
+      
+const end = new Date(start);
 
 if (plan.validity.includes('day')) {
-  // monthsToAdd is the number of days from your mapping
-  const totalDays =  parseInt(plan.validity);
+  const totalDays = parseInt(plan.validity, 10);
   let added = 0;
 
-  // Loop forward one calendar day at a time,
-  // only counting Mon–Fri toward your total
+  // Loop forward one calendar day at a time, counting only weekdays
   while (added < totalDays) {
-    end.setDate(end.getDate() + 1);
     const dow = end.getDay();
     if (dow !== 0 && dow !== 6) {
       added++;
     }
+    if (added < totalDays) {
+      end.setDate(end.getDate() + 1);
+    }
   }
-}  else {
-  end.setMonth(start.getMonth() + monthsToAdd); // Add months
+} else {
+  end.setMonth(start.getMonth() + monthsToAdd); // Month logic
 }
+
+// Always set end time to the end of the day
+end.setHours(23, 59, 59, 999); 
 
 
     //  end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
@@ -5674,27 +5676,29 @@ if (search && search.trim() !== '') {
       if (activePlan) {
         start = new Date(activePlan.plan_end); // Start the new plan right after the previous one ends
       }
-      const end = new Date(start);
-      end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
 
+const end = new Date(start);
 
 if (plan.validity.includes('day')) {
-  // monthsToAdd is the number of days from your mapping
-  const totalDays =  parseInt(plan.validity);
+  const totalDays = parseInt(plan.validity, 10);
   let added = 0;
 
-  // Loop forward one calendar day at a time,
-  // only counting Mon–Fri toward your total
+  // Loop forward one calendar day at a time, counting only weekdays
   while (added < totalDays) {
-    end.setDate(end.getDate() + 1);
     const dow = end.getDay();
     if (dow !== 0 && dow !== 6) {
       added++;
     }
+    if (added < totalDays) {
+      end.setDate(end.getDate() + 1);
+    }
   }
-}  else {
-  end.setMonth(start.getMonth() + monthsToAdd); // Add months
+} else {
+  end.setMonth(start.getMonth() + monthsToAdd); // Month logic
 }
+
+// Always set end time to the end of the day
+end.setHours(23, 59, 59, 999); 
 
      // end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
 
@@ -6221,27 +6225,29 @@ await sendEmail(mailOptions);
       if (activePlan) {
         start = new Date(activePlan.plan_end); // Start the new plan right after the previous one ends
       }
-      const end = new Date(start);
-      end.setHours(23, 59, 59, 999);  // Set end date to the end of the day
-
+     
+const end = new Date(start);
 
 if (plan.validity.includes('day')) {
-  // monthsToAdd is the number of days from your mapping
-  const totalDays =  parseInt(plan.validity);
+  const totalDays = parseInt(plan.validity, 10);
   let added = 0;
 
-  // Loop forward one calendar day at a time,
-  // only counting Mon–Fri toward your total
+  // Loop forward one calendar day at a time, counting only weekdays
   while (added < totalDays) {
-    end.setDate(end.getDate() + 1);
     const dow = end.getDay();
     if (dow !== 0 && dow !== 6) {
       added++;
     }
+    if (added < totalDays) {
+      end.setDate(end.getDate() + 1);
+    }
   }
-}  else {
-  end.setMonth(start.getMonth() + monthsToAdd); // Add months
+} else {
+  end.setMonth(start.getMonth() + monthsToAdd); // Month logic
 }
+
+// Always set end time to the end of the day
+end.setHours(23, 59, 59, 999); 
 
 
     //  end.setMonth(start.getMonth() + monthsToAdd);  // Add the plan validity duration
