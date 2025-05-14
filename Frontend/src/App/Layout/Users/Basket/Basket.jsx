@@ -70,7 +70,7 @@ function Basket() {
   };
 
 
-  
+
 
   const getkeybydata = async () => {
     try {
@@ -78,7 +78,7 @@ function Basket() {
       if (response.status) {
         setOnlinePaymentStatus(response.data[0].paymentstatus);
         setOfflinePaymentStatus(response.data[0].officepaymenystatus);
-        
+
       }
     } catch (error) {
       console.error("Error fetching coupons:", error);
@@ -237,7 +237,7 @@ function Basket() {
                         <b className="">High Risk</b>
                       </li>
                       <li className="list-group-item border-bottom-0">
-                        {item?.isSubscribed === true || item?.isActive === true ? (
+                        {item?.isSubscribed === true && item?.isActive === true ? (
                           <button
                             // to="/user/basketdetail"
                             state={{ item }}
