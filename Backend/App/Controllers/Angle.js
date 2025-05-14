@@ -237,7 +237,6 @@ class Angle {
 
             axios(config)
                 .then(async (response) => {
-                    console.log("response.data",response.data);
 
                     if (response.data.message == 'SUCCESS') {
                         const finalExitQuantity = exitquantity && exitquantity > 0 ? exitquantity : quantity;
@@ -1279,7 +1278,6 @@ class Angle {
 
                 // Make the API call and await the response for each stock
                 const response = await axios(config);
-                console.log("response",response.data);
 
                 if (response.data.message === 'SUCCESS') {
 
@@ -1297,7 +1295,7 @@ class Angle {
                     });
 
                     // Insert the order records into the database after processing the current stock
-                    await Order_Modal.insertMany(orderRecords);
+                    // await Order_Modal.insertMany(orderRecords);
                 } else {
                     // return res.status(500).json({
                     //     status: false,
@@ -1315,6 +1313,10 @@ class Angle {
             //     data: orderRecords
             // });
 
+if (orderRecords.length > 0) {
+    await Order_Modal.insertMany(orderRecords);
+      
+}
 
             return res.json({
                 status: true,
@@ -1488,7 +1490,7 @@ class Angle {
                         });
 
                         // Insert the order records into the database after processing the current stock
-                        await Order_Modal.insertMany(orderRecords);
+                        // await Order_Modal.insertMany(orderRecords);
                     }
                 } else {
                     failedOrders.push({ stock: stock.tradesymbol, message: `Insufficient quantity available for ${stockData.tradesymbol}` });
@@ -1507,6 +1509,10 @@ class Angle {
             //     data: orderRecords
             // });
 
+if (orderRecords.length > 0) {
+    await Order_Modal.insertMany(orderRecords);
+      
+}
             return res.json({
                 status: true,
                 message: `Orders Processed: ${orderRecords.length} Success, ${failedOrders.length} Failed`,
