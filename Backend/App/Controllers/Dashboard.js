@@ -319,6 +319,36 @@ class Dashboard {
 
 
 
+const startOfMonth = new Date();
+startOfMonth.setDate(1);
+startOfMonth.setHours(0, 0, 0, 0);
+
+const endOfMonth = new Date(startOfMonth);
+endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+endOfMonth.setDate(0);
+endOfMonth.setHours(23, 59, 59, 999);
+
+    const resultfree = await PlanSubscription_Modal.aggregate([
+      {
+        $match: {
+          status: 'active',
+          del: false,
+          created_at: {
+            $gte: startOfMonth,
+            $lte: endOfMonth
+          },
+          validity: { $regex: /day(s)?$/i } // match "day" or "days"
+        }
+      },
+      {
+        $count: "total"
+      }
+    ]);
+
+    const totalfree = resultfree.length > 0 ? resultfree[0].total : 0;
+
+
+
       return res.json({
         status: true,
         message: "Count retrieved successfully",
@@ -338,7 +368,8 @@ class Dashboard {
           activePlanclient: activeCount,
           inActivePlanclient: inactiveCount,
           Clientlist: result,
-          counts
+          counts,
+          totalfreetrial: totalfree,
         }
       });
 
@@ -1874,6 +1905,152 @@ async getCityByStates(req, res) {
       });
     }
   };
+
+    async getMonthlyDayBasedPlanCount (req, res){
+    try {
+    const result = await PlanSubscription_Modal.aggregate([
+      {
+        $match: {
+          status: 'active',
+          del: false,
+          validity: { $regex: /day(s)?$/i }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$created_at" },
+            month: { $month: "$created_at" }
+          },
+          total: { $sum: 1 }
+        }
+      },
+      {
+        $sort: {
+          "_id.year": 1,
+          "_id.month": 1
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          month: {
+            $concat: [
+              {
+                $arrayElemAt: [
+                  [
+                    "", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                  ],
+                  "$_id.month"
+                ]
+              },
+              " ",
+              { $toString: "$_id.year" }
+            ]
+          },
+          total: 1
+        }
+      }
+    ]);
+
+    res.json(result);
+  } catch (err) {
+    console.error("Error in monthly count:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+  };
+
+    async getFreetrialClientsByMonth (req, res){
+  try {
+    const year = parseInt(req.query.year);
+    const month = parseInt(req.query.month);
+
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+
+    const data = await PlanSubscription_Modal.aggregate([
+      {
+        $match: {
+          created_at: { $gte: startDate, $lte: endDate },
+          status: "active",
+          del: false,
+          validity: { $regex: /day(s)?$/i }
+        }
+      },
+      // Join clients
+      {
+        $lookup: {
+          from: "clients",
+          localField: "client_id",
+          foreignField: "_id",
+          as: "client"
+        }
+      },
+      { $unwind: "$client" },
+
+      // Join plancategories
+      {
+        $lookup: {
+          from: "plancategories",
+          localField: "plan_category_id",
+          foreignField: "_id",
+          as: "plancategory"
+        }
+      },
+      { $unwind: "$plancategory" },
+
+      // Join services from plancategory.service array
+       {
+    $addFields: {
+      serviceIds: {
+        $map: {
+          input: { $split: ["$plancategory.service", ","] },
+          as: "id",
+          in: { $toObjectId: "$$id" }
+        }
+      }
+    }
+  },
+
+  // Step 2: Lookup from services collection
+  {
+    $lookup: {
+      from: "services",
+      localField: "serviceIds",
+      foreignField: "_id",
+      as: "services"
+    }
+  },
+
+
+      {
+        $project: {
+          fullName: "$client.FullName",
+          email: "$client.Email",
+          phoneNo: "$client.PhoneNo",
+          plan_start: 1,
+          plan_end: 1,
+          validity: 1,
+          plan_title: "$plancategory.title",
+          services: {
+            $map: {
+              input: "$services",
+              as: "s",
+              in: "$$s.title"
+            }
+          }
+        }
+      }
+    ]);
+
+    res.json(data);
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 
 
 }
