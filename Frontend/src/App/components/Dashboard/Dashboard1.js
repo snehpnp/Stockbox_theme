@@ -156,6 +156,14 @@ const DashboardCards = ({ monthexpiry }) => {
       icon: "bx bx-wifi-2 fs-3",
       progress: 55,
     },
+    {
+      link: `/${role}/CurrentMonth-freeTrial`,
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.totalfreetrial,
+      label: "Current Month Free Trial",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+    },
   ];
 
   return (
