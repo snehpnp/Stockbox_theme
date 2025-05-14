@@ -271,17 +271,17 @@ class Dashboard {
 
       const dayOffsets = [-1, 0, 1];
       const counts = {};
-  
+
       for (const dayOffset of dayOffsets) {
         const currentDate = new Date();
         currentDate.setHours(0, 0, 0, 0);
-  
+
         const targetDateStart = new Date(currentDate);
         targetDateStart.setDate(currentDate.getDate() + dayOffset);
-  
+
         const targetDateEnd = new Date(targetDateStart);
         targetDateEnd.setHours(23, 59, 59, 999);
-  
+
         const latestSubs = await PlanSubscription_Modal.aggregate([
           {
             $match: {
@@ -313,9 +313,39 @@ class Dashboard {
             }
           }
         ]);
-  
+
         counts[dayOffset] = latestSubs.length;
       }
+
+
+
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+
+      const endOfMonth = new Date(startOfMonth);
+      endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+      endOfMonth.setDate(0);
+      endOfMonth.setHours(23, 59, 59, 999);
+
+      const resultfree = await PlanSubscription_Modal.aggregate([
+        {
+          $match: {
+            status: 'active',
+            del: false,
+            created_at: {
+              $gte: startOfMonth,
+              $lte: endOfMonth
+            },
+            validity: { $regex: /day(s)?$/i } // match "day" or "days"
+          }
+        },
+        {
+          $count: "total"
+        }
+      ]);
+
+      const totalfree = resultfree.length > 0 ? resultfree[0].total : 0;
 
 
 
@@ -338,7 +368,8 @@ class Dashboard {
           activePlanclient: activeCount,
           inActivePlanclient: inactiveCount,
           Clientlist: result,
-          counts
+          counts,
+          totalfreetrial: totalfree,
         }
       });
 
@@ -417,7 +448,7 @@ class Dashboard {
   async pastPerformance(req, res) {
     try {
       const { id } = req.params;
-  
+
       // Query all closed signals for the service ID
       const signals = await Signal_Modal.find({
         del: 0,
@@ -425,7 +456,7 @@ class Dashboard {
         closeprice: { $ne: 0 },
         service: new mongoose.Types.ObjectId(id)
       });
-  
+
       const count = signals.length;
       if (count === 0) {
         return res.status(404).json({
@@ -433,13 +464,13 @@ class Dashboard {
           message: "No signals found"
         });
       }
-  
+
       let totalProfit = 0;
       let totalLoss = 0;
       let profitCount = 0;
       let lossCount = 0;
       let avgreturnpermonth = 0;
-  
+
       // Get first and last signals based on created_at
       const [firstSignal, lastSignal] = await Promise.all([
         Signal_Modal.findOne({
@@ -453,36 +484,36 @@ class Dashboard {
           service: new mongoose.Types.ObjectId(id)
         }).sort({ created_at: -1 })
       ]);
-  
+
       if (!firstSignal || !lastSignal) {
         return res.status(404).json({
           status: false,
           message: "No signals found"
         });
       }
-  
+
       const firstCreatedAt = new Date(firstSignal.created_at);
       const lastCreatedAt = new Date(lastSignal.created_at);
-  
+
       // Calculate the number of months between the two dates
       const monthsBetween = (lastCreatedAt.getFullYear() - firstCreatedAt.getFullYear()) * 12 +
-                            (lastCreatedAt.getMonth() - firstCreatedAt.getMonth()) + 1;
-                            console.log('monthsBetween',monthsBetween);
+        (lastCreatedAt.getMonth() - firstCreatedAt.getMonth()) + 1;
+      console.log('monthsBetween', monthsBetween);
 
       signals.forEach(signal => {
         const entryPrice = parseFloat(signal.price);
         const exitPrice = parseFloat(signal.closeprice);
         const callType = signal.calltype;
-  
+
         if (!isNaN(entryPrice) && !isNaN(exitPrice)) {
           let profitOrLoss = 0;
-  
+
           if (callType === "BUY") {
             profitOrLoss = exitPrice - entryPrice;
           } else if (callType === "SELL") {
             profitOrLoss = entryPrice - exitPrice;
           }
-  
+
           if (profitOrLoss >= 0) {
             if (id === "66dfede64a88602fbbca9b72" || id === "66dfeef84a88602fbbca9b79") {
               totalProfit += profitOrLoss * signal.lotsize;
@@ -500,13 +531,13 @@ class Dashboard {
           }
         }
       });
-  
+
       const accuracy = (profitCount / count) * 100;
       const avgreturnpertrade = (totalProfit - totalLoss) / count;
       avgreturnpermonth = monthsBetween > 0
         ? (totalProfit - totalLoss) / monthsBetween
         : totalProfit - totalLoss;
-  
+
       return res.json({
         status: true,
         message: "Past performance data fetched successfully",
@@ -530,7 +561,7 @@ class Dashboard {
       });
     }
   }
-  
+
   async pastPerformances(req, res) {
     try {
       // Define fixed service IDs
@@ -1052,61 +1083,61 @@ class Dashboard {
         closeprice: { $ne: 0 },
         service: new mongoose.Types.ObjectId(id),
       };
-  
+
       // Agar callduration available ho, to usko filter me add karein
       if (callDurationValue !== null) {
         query.callduration = callDurationValue;
       }
-  
+
       // Signals fetch karein
       const signals = await Signal_Modal.find(query);
       const count = signals.length;
-  
+
       if (count === 0) {
         return res.status(404).json({
           status: false,
           message: "No signals found",
         });
       }
-  
+
       let totalProfit = 0;
       let totalLoss = 0;
       let profitCount = 0;
       let lossCount = 0;
       let avgreturnpermonth = 0;
-  
+
       const [firstSignal, lastSignal] = await Promise.all([
         Signal_Modal.findOne(query).sort({ created_at: 1 }),
         Signal_Modal.findOne(query).sort({ created_at: -1 }),
       ]);
-  
+
       if (!firstSignal || !lastSignal) {
         return res.status(404).json({
           status: false,
           message: "No signals found",
         });
       }
-  
+
       const firstCreatedAt = firstSignal.created_at;
       const lastCreatedAt = lastSignal.created_at;
-  
+
       const startYear = firstCreatedAt.getFullYear();
       const startMonth = firstCreatedAt.getMonth();
       const endYear = lastCreatedAt.getFullYear();
       const endMonth = lastCreatedAt.getMonth();
-  
+
       const yearDifference = endYear - startYear;
       const monthDifference = endMonth - startMonth;
       const monthsBetween = yearDifference * 12 + monthDifference;
-  
+
       signals.forEach((signal) => {
         const entryPrice = parseFloat(signal.price);
         const exitPrice = parseFloat(signal.closeprice);
         const callType = signal.calltype;
-  
+
         if (!isNaN(entryPrice) && !isNaN(exitPrice)) {
           let profitOrLoss = callType === "BUY" ? exitPrice - entryPrice : entryPrice - exitPrice;
-  
+
           if (profitOrLoss >= 0) {
             totalProfit += ["66dfede64a88602fbbca9b72", "66dfeef84a88602fbbca9b79"].includes(id)
               ? profitOrLoss * signal.lotsize
@@ -1120,11 +1151,11 @@ class Dashboard {
           }
         }
       });
-  
+
       const accuracy = (profitCount / count) * 100;
       const avgreturnpertrade = (totalProfit - totalLoss) / count;
       avgreturnpermonth = monthsBetween > 0 ? (totalProfit - totalLoss) / monthsBetween : totalProfit - totalLoss;
-  
+
       return res.json({
         status: true,
         message: "Past performance data fetched successfully",
@@ -1147,16 +1178,16 @@ class Dashboard {
       });
     }
   }
-  
+
 
   async CloseSignalwithtype(req, res) {
     try {
       const { service_id, search, page = 1, callduration } = req.body;
-  
+
       const limit = 10;
       const skip = (parseInt(page) - 1) * parseInt(limit);
       const limitValue = parseInt(limit);
-  
+
       // Base query
       const query = {
         del: 0,
@@ -1164,12 +1195,12 @@ class Dashboard {
         close_status: true,
         closeprice: { $ne: 0 }
       };
-  
+
       // Agar callduration exist karta hai to query me add karein
       if (callduration) {
         query.callduration = callduration;
       }
-  
+
       // Agar search filter exist karta hai to query me add karein
       if (search && search.trim() !== '') {
         query.$or = [
@@ -1179,24 +1210,24 @@ class Dashboard {
           { closeprice: { $regex: search, $options: 'i' } }
         ];
       }
-  
+
       // Fetch signals and sort by createdAt in descending order
       const signals = await Signal_Modal.find(query)
         .sort({ created_at: -1 })
         .skip(skip)
         .limit(limitValue)
         .lean();
-  
+
       const protocol = req.protocol; // 'http' or 'https'
       const baseUrl = `${protocol}://${req.headers.host}`; // Base URL for constructing report path
-  
+
       const signalsWithReportUrls = signals.map(signal => ({
         ...signal,
         report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null
       }));
-  
+
       const totalSignals = await Signal_Modal.countDocuments(query);
-  
+
       return res.json({
         status: true,
         message: "Signals retrieved successfully",
@@ -1218,62 +1249,62 @@ class Dashboard {
       const { clientName, page = 1 } = req.body; // Extract filter and pagination from the body
       const limit = 10;
       const skip = (page - 1) * limit; // Calculate skip for pagination
-  
+
       // Find clients matching the provided name (case-insensitive)
       let clientIds = [];
       if (clientName) {
         const clients = await Clients_Modal.find({
           FullName: { $regex: clientName, $options: "i" } // Case-insensitive search
         }).select('_id'); // Only select client IDs
-  
+
         clientIds = clients.map(client => client._id.toString());
       }
-  
+
       // Build filter for Refer_Modal
       const filter = clientName
         ? { user_id: { $in: clientIds } }
         : {}; // If no clientName is provided, fetch all data
-  
+
       // Get total records for pagination
       const totalRecords = await Refer_Modal.countDocuments(filter);
-  
+
       // Fetch referral data with filter, pagination, and sorting
       const result = await Refer_Modal.find(filter)
         .sort({ created_at: -1 })
         .skip(skip)
         .limit(limit);
-  
+
       // Process result to attach client name and amount type
       const processedResult = await Promise.all(result.map(async (entry) => {
         let amountType = null;
         let clientName = null;
-  
+
         const userClient = await Clients_Modal.findById(entry.user_id);
         const tokenClient = await Clients_Modal.findOne({ refer_token: entry.token });
-  
+
         if (userClient) {
           clientName = userClient.FullName || "";
-  
+
           amountType = {
             type: 'receiver',
             amount: entry.receiveramount
           };
         } else if (tokenClient) {
           clientName = tokenClient.FullName || "";
-  
+
           amountType = {
             type: 'sender',
             amount: entry.senderamount
           };
         }
-  
+
         return {
           ...entry.toObject(),
           amountType,
           clientName
         };
       }));
-  
+
       // Respond with processed result and pagination metadata
       return res.json({
         status: true,
@@ -1291,8 +1322,8 @@ class Dashboard {
       return res.status(500).json({ status: false, message: "Server error", data: [] });
     }
   }
-  
-  
+
+
   async PlanExipreListWithFilterExport(req, res) {
     try {
       const { serviceid, startdate, enddate, search } = req.body;
@@ -1353,8 +1384,8 @@ class Dashboard {
       // Fetch paginated plans that match the filter
       const plans = await Planmanage.find(filter)
         .sort({ enddate: -1 })
-        // .skip((page - 1) * limit)
-        // .limit(parseInt(limit));
+      // .skip((page - 1) * limit)
+      // .limit(parseInt(limit));
 
       // Get total count of matching plans for pagination metadata
       // const totalCount = await Planmanage.countDocuments(filter);
@@ -1379,7 +1410,7 @@ class Dashboard {
         status: true,
         message: "get",
         data: enrichedPlans,
-     
+
       });
     } catch (error) {
       return res.json({ status: false, message: "Server error", data: [] });
@@ -1390,7 +1421,7 @@ class Dashboard {
     try {
       const { service_id } = req.body;
       // Calculate the number of records to skip based on the page and limit
-   
+
 
       // Define the query for closed signals by service
       const query = {
@@ -1404,7 +1435,7 @@ class Dashboard {
 
       // Fetch signals with pagination and sorting
       const signals = await Signal_Modal.find(query)
-        .sort({ created_at: -1 }) ;
+        .sort({ created_at: -1 });
 
       // Calculate total pages
 
@@ -1413,14 +1444,14 @@ class Dashboard {
         status: true,
         message: "Signals retrieved successfully",
         data: signals,
-      
+
       });
     } catch (error) {
       // console.error("Error fetching signals:", error);
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
-  
+
   async getMonthlySubscriptionCounts(req, res) {
     try {
       // Extract data from request body
@@ -1428,28 +1459,28 @@ class Dashboard {
       const limit = 10;
       const pageNumber = parseInt(page);
       const pageSize = parseInt(limit);
-  
+
       // Default to current month and year if not provided
       const selectedYear = year ? parseInt(year) : new Date().getFullYear();
       const selectedMonth = month ? parseInt(month) - 1 : new Date().getMonth(); // Adjust for zero-based month index
-  
+
       // Get first and last day of the selected month in UTC
       const firstDayOfMonth = new Date(Date.UTC(selectedYear, selectedMonth, 1, 0, 0, 0));
       const firstDayOfNextMonth = new Date(Date.UTC(selectedYear, selectedMonth + 1, 1, 0, 0, 0));
-  
-  
+
+
       // Define mapping for validity conversion
       const validityMapping = {
         "1 month": 1, "2 months": 2, "3 months": 3, "6 months": 6,
         "9 months": 9, "1 year": 12, "2 years": 24, "3 years": 36,
         "4 years": 48, "5 years": 60
       };
-  
+
       // Fetch subscriptions for the selected month
       const subscriptions = await PlanSubscription_Modal.find({
         created_at: { $gte: firstDayOfMonth, $lt: firstDayOfNextMonth }
       }).select("client_id validity");
-  
+
       if (!subscriptions.length) {
         return res.status(200).json({
           status: true,
@@ -1458,22 +1489,22 @@ class Dashboard {
           totalRecords: 0
         });
       }
-  
+
       // Process subscriptions & calculate total months per client
       const clientSubscriptions = {};
       for (const sub of subscriptions) {
         const clientId = sub.client_id.toString();
         const months = validityMapping[sub.validity] || 0; // Convert validity to months
-  
+
         if (!clientSubscriptions[clientId]) {
           clientSubscriptions[clientId] = { client_id: clientId, totalMonths: 0 };
         }
         clientSubscriptions[clientId].totalMonths += months;
       }
-  
+
       // Fetch client details (name, email, phone) using client IDs
       const clientIds = Object.keys(clientSubscriptions);
-  
+
       // Search filter (if search query is provided)
       let searchFilter = {};
       if (search) {
@@ -1485,16 +1516,16 @@ class Dashboard {
           ]
         };
       }
-  
+
       // Fetch total count before pagination
       const totalRecords = await Clients_Modal.countDocuments({ _id: { $in: clientIds }, ...searchFilter });
-  
+
       // Fetch paginated client data
       const clients = await Clients_Modal.find({ _id: { $in: clientIds }, ...searchFilter })
         .select("FullName Email PhoneNo")
         .skip((pageNumber - 1) * pageSize)
         .limit(pageSize);
-  
+
       // Merge client details with subscriptions
       const finalData = clients.map(client => ({
         client_id: client._id,
@@ -1503,7 +1534,7 @@ class Dashboard {
         phone: client.PhoneNo,
         totalMonths: clientSubscriptions[client._id.toString()].totalMonths
       }));
-  
+
       return res.status(200).json({
         status: true,
         message: `Monthly subscription counts retrieved successfully for ${selectedMonth + 1}-${selectedYear}`,
@@ -1512,106 +1543,106 @@ class Dashboard {
         currentPage: pageNumber,
         totalPages: Math.ceil(totalRecords / pageSize)
       });
-  
+
     } catch (error) {
       console.error("Error fetching monthly subscription counts:", error);
       return res.status(500).json({ status: false, message: "Server error", data: [] });
     }
   }
-  
+
   async getMonthlyProfitLoss(req, res) {
     try {
-        const { id } = req.params;
-        const now = new Date();
-        const currentYear = now.getFullYear();
-        const currentMonth = now.getMonth() + 1; // Get current month (1-12)
+      const { id } = req.params;
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1; // Get current month (1-12)
 
-        // Define time ranges in ASC order
-        const timeRanges = {
-            "1_month": Array.from({ length: 1 }, (_, i) => `${currentYear}-${currentMonth - i}`),
-            "3_months": Array.from({ length: 3 }, (_, i) => `${currentYear}-${currentMonth - i}`),
-            "6_months": Array.from({ length: 6 }, (_, i) => `${currentYear}-${currentMonth - i}`),
-            "12_months": Array.from({ length: 12 }, (_, i) => `${currentYear}-${currentMonth - i}`)
-        };
+      // Define time ranges in ASC order
+      const timeRanges = {
+        "1_month": Array.from({ length: 1 }, (_, i) => `${currentYear}-${currentMonth - i}`),
+        "3_months": Array.from({ length: 3 }, (_, i) => `${currentYear}-${currentMonth - i}`),
+        "6_months": Array.from({ length: 6 }, (_, i) => `${currentYear}-${currentMonth - i}`),
+        "12_months": Array.from({ length: 12 }, (_, i) => `${currentYear}-${currentMonth - i}`)
+      };
 
-        const results = {};
+      const results = {};
 
-        for (const [key, months] of Object.entries(timeRanges)) {
-            const signals = await Signal_Modal.find({
-                del: 0,
-                close_status: true,
-                service: new mongoose.Types.ObjectId(id),
-                created_at: { 
-                    $gte: new Date(currentYear, currentMonth - months.length, 1),
-                    $lte: now
-                }
-            }).sort({ created_at: 1 }); // Sort in ASC order (Jan -> Feb -> Mar...)
+      for (const [key, months] of Object.entries(timeRanges)) {
+        const signals = await Signal_Modal.find({
+          del: 0,
+          close_status: true,
+          service: new mongoose.Types.ObjectId(id),
+          created_at: {
+            $gte: new Date(currentYear, currentMonth - months.length, 1),
+            $lte: now
+          }
+        }).sort({ created_at: 1 }); // Sort in ASC order (Jan -> Feb -> Mar...)
 
-            let monthlyData = {};
-            let totalNetProfit = 0;
-            let monthCount = 0;
+        let monthlyData = {};
+        let totalNetProfit = 0;
+        let monthCount = 0;
 
-            signals.forEach(signal => {
-                const entryPrice = parseFloat(signal.price);
-                const exitPrice = parseFloat(signal.closeprice);
-                const callType = signal.calltype;
-                const monthKey = `${signal.created_at.getFullYear()}-${signal.created_at.getMonth() + 1}`;
+        signals.forEach(signal => {
+          const entryPrice = parseFloat(signal.price);
+          const exitPrice = parseFloat(signal.closeprice);
+          const callType = signal.calltype;
+          const monthKey = `${signal.created_at.getFullYear()}-${signal.created_at.getMonth() + 1}`;
 
-                if (!isNaN(entryPrice) && !isNaN(exitPrice) && months.includes(monthKey)) {
-                    let profitOrLoss = (callType === "BUY") ? (exitPrice - entryPrice) : (entryPrice - exitPrice);
-                    if (id === "66dfede64a88602fbbca9b72" || id === "66dfeef84a88602fbbca9b79") {
-                        profitOrLoss *= signal.lotsize;
-                    }
+          if (!isNaN(entryPrice) && !isNaN(exitPrice) && months.includes(monthKey)) {
+            let profitOrLoss = (callType === "BUY") ? (exitPrice - entryPrice) : (entryPrice - exitPrice);
+            if (id === "66dfede64a88602fbbca9b72" || id === "66dfeef84a88602fbbca9b79") {
+              profitOrLoss *= signal.lotsize;
+            }
 
-                    if (!monthlyData[monthKey]) {
-                        monthlyData[monthKey] = { totalProfit: 0, totalLoss: 0, netProfit: 0 };
-                        monthCount++; // Count unique months
-                    }
+            if (!monthlyData[monthKey]) {
+              monthlyData[monthKey] = { totalProfit: 0, totalLoss: 0, netProfit: 0 };
+              monthCount++; // Count unique months
+            }
 
-                    if (profitOrLoss >= 0) {
-                        monthlyData[monthKey].totalProfit += profitOrLoss;
-                    } else {
-                        monthlyData[monthKey].totalLoss += Math.abs(profitOrLoss);
-                    }
+            if (profitOrLoss >= 0) {
+              monthlyData[monthKey].totalProfit += profitOrLoss;
+            } else {
+              monthlyData[monthKey].totalLoss += Math.abs(profitOrLoss);
+            }
 
-                    monthlyData[monthKey].netProfit = monthlyData[monthKey].totalProfit - monthlyData[monthKey].totalLoss;
-                }
-            });
-
-            // Calculate overall net profit and average monthly profit
-            totalNetProfit = Object.values(monthlyData).reduce((sum, month) => sum + month.netProfit, 0);
-            const avgMonthlyProfit = monthCount > 0 ? totalNetProfit / monthCount : 0;
-
-            results[key] = {
-                months: Object.fromEntries(Object.entries(monthlyData).sort()), // Sort months ASC
-                totalNetProfit,
-                avgMonthlyProfit
-            };
-        }
-
-        return res.json({
-            status: true,
-            message: "Monthly profit/loss data fetched successfully",
-            data: results
+            monthlyData[monthKey].netProfit = monthlyData[monthKey].totalProfit - monthlyData[monthKey].totalLoss;
+          }
         });
+
+        // Calculate overall net profit and average monthly profit
+        totalNetProfit = Object.values(monthlyData).reduce((sum, month) => sum + month.netProfit, 0);
+        const avgMonthlyProfit = monthCount > 0 ? totalNetProfit / monthCount : 0;
+
+        results[key] = {
+          months: Object.fromEntries(Object.entries(monthlyData).sort()), // Sort months ASC
+          totalNetProfit,
+          avgMonthlyProfit
+        };
+      }
+
+      return res.json({
+        status: true,
+        message: "Monthly profit/loss data fetched successfully",
+        data: results
+      });
 
     } catch (error) {
-        return res.status(500).json({
-            status: false,
-            message: "Server error",
-            error: error.message
-        });
+      return res.status(500).json({
+        status: false,
+        message: "Server error",
+        error: error.message
+      });
     }
-}
+  }
 
-async getDailyProfitLoss(req, res) {
-  try {
+  async getDailyProfitLoss(req, res) {
+    try {
       const { id } = req.params;
       const { month, year } = req.query;
 
       // Ensure month and year are provided and valid
       if (!month || !year || isNaN(month) || isNaN(year)) {
-          return res.status(400).json({ status: false, message: "Valid month and year are required!" });
+        return res.status(400).json({ status: false, message: "Valid month and year are required!" });
       }
 
       const parsedMonth = parseInt(month, 10); // Convert string to integer
@@ -1619,7 +1650,7 @@ async getDailyProfitLoss(req, res) {
 
       // Validate month range (1-12)
       if (parsedMonth < 1 || parsedMonth > 12) {
-          return res.status(400).json({ status: false, message: "Invalid month value!" });
+        return res.status(400).json({ status: false, message: "Invalid month value!" });
       }
 
       // Corrected date logic (months are 0-based in JavaScript)
@@ -1627,18 +1658,18 @@ async getDailyProfitLoss(req, res) {
       const endDate = new Date(parsedYear, parsedMonth, 0, 23, 59, 59); // Last day of the month
 
       const signals = await Signal_Modal.find({
-          del: 0,
-          close_status: true,
-          service: new mongoose.Types.ObjectId(id),
-          created_at: { $gte: startDate, $lte: endDate }
+        del: 0,
+        close_status: true,
+        service: new mongoose.Types.ObjectId(id),
+        created_at: { $gte: startDate, $lte: endDate }
       }).sort({ created_at: 1 });
 
       if (!signals.length) {
-          return res.json({
-              status: true,
-              message: `No data found for ${month}-${year}`,
-              data: {}
-          });
+        return res.json({
+          status: true,
+          message: `No data found for ${month}-${year}`,
+          data: {}
+        });
       }
 
       let dailyData = {};
@@ -1651,132 +1682,132 @@ async getDailyProfitLoss(req, res) {
       const protocol = req.protocol; // Will be 'http' or 'https'
       const baseUrl = `https://${req.headers.host}`; // Construct the base URL
       signals.forEach((signal, index) => {
-          const entryPrice = parseFloat(signal.price);
-          const exitPrice = parseFloat(signal.closeprice);
-          const callType = signal.calltype;
-          const entryDate = new Date(signal.created_at);
-          const exitDate = new Date(signal.closed_at || signal.created_at); // Use created_at if closed_at is null
-          const dayKey = `${entryDate.getDate()}-${entryDate.getMonth() + 1}-${entryDate.getFullYear()}`;
-          let profitOrLoss = 0;
-          let gainLossPercentage = 0;
+        const entryPrice = parseFloat(signal.price);
+        const exitPrice = parseFloat(signal.closeprice);
+        const callType = signal.calltype;
+        const entryDate = new Date(signal.created_at);
+        const exitDate = new Date(signal.closed_at || signal.created_at); // Use created_at if closed_at is null
+        const dayKey = `${entryDate.getDate()}-${entryDate.getMonth() + 1}-${entryDate.getFullYear()}`;
+        let profitOrLoss = 0;
+        let gainLossPercentage = 0;
 
-          if (!isNaN(entryPrice) && !isNaN(exitPrice)) {
-              profitOrLoss = (callType === "BUY") ? (exitPrice - entryPrice) : (entryPrice - exitPrice);
-              gainLossPercentage = ((profitOrLoss / entryPrice) * 100).toFixed(2);
+        if (!isNaN(entryPrice) && !isNaN(exitPrice)) {
+          profitOrLoss = (callType === "BUY") ? (exitPrice - entryPrice) : (entryPrice - exitPrice);
+          gainLossPercentage = ((profitOrLoss / entryPrice) * 100).toFixed(2);
 
-              if (id === "66dfede64a88602fbbca9b72" || id === "66dfeef84a88602fbbca9b79") {
-                  profitOrLoss *= signal.lotsize;
-              }
-
-              if (!dailyData[dayKey]) {
-                  dailyData[dayKey] = { totalProfit: 0, totalLoss: 0, netProfit: 0 };
-              }
-
-              if (profitOrLoss >= 0) {
-                  dailyData[dayKey].totalProfit += profitOrLoss;
-                  profitableCalls++;
-              } else {
-                  dailyData[dayKey].totalLoss += Math.abs(profitOrLoss);
-                  lossCalls++;
-              }
-
-              dailyData[dayKey].netProfit = dailyData[dayKey].totalProfit - dailyData[dayKey].totalLoss;
-              totalProfit += profitOrLoss >= 0 ? profitOrLoss : 0;
-              totalLoss += profitOrLoss < 0 ? Math.abs(profitOrLoss) : 0;
-
-              signalList.push({
-                  sno: index + 1,
-                  stockName: signal.tradesymbol,
-                  entryType: callType,
-                  entryDate: entryDate.toISOString().split("T")[0],
-                  entryPrice: entryPrice,
-                  exitDate: exitDate.toISOString().split("T")[0],
-                  exitPrice: exitPrice,
-                  netGainLossPercent: `${gainLossPercentage}%`,
-                  description: signal.description,
-                  report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null, // Append full report URL
-
-              });
+          if (id === "66dfede64a88602fbbca9b72" || id === "66dfeef84a88602fbbca9b79") {
+            profitOrLoss *= signal.lotsize;
           }
+
+          if (!dailyData[dayKey]) {
+            dailyData[dayKey] = { totalProfit: 0, totalLoss: 0, netProfit: 0 };
+          }
+
+          if (profitOrLoss >= 0) {
+            dailyData[dayKey].totalProfit += profitOrLoss;
+            profitableCalls++;
+          } else {
+            dailyData[dayKey].totalLoss += Math.abs(profitOrLoss);
+            lossCalls++;
+          }
+
+          dailyData[dayKey].netProfit = dailyData[dayKey].totalProfit - dailyData[dayKey].totalLoss;
+          totalProfit += profitOrLoss >= 0 ? profitOrLoss : 0;
+          totalLoss += profitOrLoss < 0 ? Math.abs(profitOrLoss) : 0;
+
+          signalList.push({
+            sno: index + 1,
+            stockName: signal.tradesymbol,
+            entryType: callType,
+            entryDate: entryDate.toISOString().split("T")[0],
+            entryPrice: entryPrice,
+            exitDate: exitDate.toISOString().split("T")[0],
+            exitPrice: exitPrice,
+            netGainLossPercent: `${gainLossPercentage}%`,
+            description: signal.description,
+            report_full_path: signal.report ? `${baseUrl}/uploads/report/${signal.report}` : null, // Append full report URL
+
+          });
+        }
       });
 
 
-   // Sorting dailyData by date in ASC order
-   const sortedDailyData = Object.keys(dailyData)
-   .map(dateStr => {
-       const [day, month, year] = dateStr.split("-").map(Number);
-       return { dateStr, dateObj: new Date(year, month - 1, day) };
-   })
-   .sort((a, b) => a.dateObj - b.dateObj) // सही क्रम में Sort करें
-   .reduce((acc, item) => {
-       acc[item.dateStr] = dailyData[item.dateStr];
-       return acc;
-   }, {});
+      // Sorting dailyData by date in ASC order
+      const sortedDailyData = Object.keys(dailyData)
+        .map(dateStr => {
+          const [day, month, year] = dateStr.split("-").map(Number);
+          return { dateStr, dateObj: new Date(year, month - 1, day) };
+        })
+        .sort((a, b) => a.dateObj - b.dateObj) // सही क्रम में Sort करें
+        .reduce((acc, item) => {
+          acc[item.dateStr] = dailyData[item.dateStr];
+          return acc;
+        }, {});
 
 
       return res.json({
-          status: true,
-          message: `Daily profit/loss and signal details for ${month}-${year}`,
-          data: {
-              totalSignals,
-              profitableCalls,
-              lossCalls,
-              totalProfit,
-              totalLoss,
-              netProfit: totalProfit - totalLoss,
-              dailyData: sortedDailyData, // Sort by date (ASC)
-              signalList
-          }
+        status: true,
+        message: `Daily profit/loss and signal details for ${month}-${year}`,
+        data: {
+          totalSignals,
+          profitableCalls,
+          lossCalls,
+          totalProfit,
+          totalLoss,
+          netProfit: totalProfit - totalLoss,
+          dailyData: sortedDailyData, // Sort by date (ASC)
+          signalList
+        }
       });
 
-  } catch (error) {
+    } catch (error) {
       return res.status(500).json({
-          status: false,
-          message: "Server error",
-          error: error.message
+        status: false,
+        message: "Server error",
+        error: error.message
       });
+    }
   }
-}
 
-async  getAllStates(req, res) {
-  try {
+  async getAllStates(req, res) {
+    try {
       const states = await States.find({}).toArray(); // MongoDB native driver ka use ho raha hai
       res.status(200).json(states);
-  } catch (error) {
+    } catch (error) {
       console.error("Error fetching states:", error);
       res.status(500).json({ error: "Something went wrong" });
+    }
   }
-}
 
-async getCityByStates(req, res) {
-  try {
-    const stateName = decodeURIComponent(req.params.stateName); // "Madhya Pradesh"
-    
-    const cities = await City.find({ state: stateName }).toArray(); // nativ
-    res.status(200).json(cities);
-  } catch (error) {
-    console.error("Error fetching cities:", error);
-    res.status(500).json({ error: "Something went wrong" });
+  async getCityByStates(req, res) {
+    try {
+      const stateName = decodeURIComponent(req.params.stateName); // "Madhya Pradesh"
+
+      const cities = await City.find({ state: stateName }).toArray(); // nativ
+      res.status(200).json(cities);
+    } catch (error) {
+      console.error("Error fetching cities:", error);
+      res.status(500).json({ error: "Something went wrong" });
+    }
   }
-}
 
 
   async sendMailToClient(req, res) {
     try {
       const { usertype, planid, subject, message, selectedUserIds } = req.body;
       const today = new Date();
-      const query = { del:0,ActiveStatus:1 };
+      const query = { del: 0, ActiveStatus: 1 };
       if (selectedUserIds && Array.isArray(selectedUserIds) && selectedUserIds.length > 0) {
         query._id = { $in: selectedUserIds };
-        console.log("query",query);
+        console.log("query", query);
       }
       const allClients = await Clients_Modal.find(query).select("Email devicetoken");
-  
+
       const finalUsers = [];
-  
+
       for (const client of allClients) {
         const subscriptions = await PlanSubscription_Modal.find({ client_id: client._id });
-  
+
         let status = "nonsubscriber";
         const hasActive = subscriptions.some(
           sub => new Date(sub.plan_start) <= today && new Date(sub.plan_end) >= today
@@ -1784,10 +1815,10 @@ async getCityByStates(req, res) {
         const hasExpired = subscriptions.some(
           sub => new Date(sub.plan_end) < today
         );
-  
+
         if (hasActive) status = "active";
         else if (hasExpired) status = "expired";
-  
+
         if (
           usertype === "all" ||
           (usertype === "active" && status === "active") ||
@@ -1803,11 +1834,11 @@ async getCityByStates(req, res) {
           finalUsers.push(client);
         }
       }
-  
+
       if (finalUsers.length === 0) {
         return res.status(404).json({ status: false, message: "No users found for selected criteria." });
       }
-  
+
       const emailList = finalUsers
         .map(user => user.Email)
         .filter(email => !!email);
@@ -1824,13 +1855,13 @@ async getCityByStates(req, res) {
           console.error('Error reading HTML template:', err);
           return;
         }
-  
+
         // Replace placeholders with actual values
         const finalHtml = htmlTemplate
           .replace(/{{company_name}}/g, settings.website_title)
           .replace(/{{body}}/g, message)
           .replace(/{{logo}}/g, `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`);
-  
+
         // Step 3: Send email
         const mailOptions = {
           to: `${settings.from_name} <${settings.from_mail}>`,
@@ -1839,7 +1870,7 @@ async getCityByStates(req, res) {
           subject: subject,
           html: finalHtml
         };
-  
+
         sendEmail(mailOptions)
           .then(() => {
             res.json({
@@ -1858,7 +1889,7 @@ async getCityByStates(req, res) {
     }
   }
 
-  async utmSource (req, res){
+  async utmSource(req, res) {
     try {
       const data = await Utmsource_Model.find(); // or Utmsource_Model if you've defined it that way
       return res.status(200).json({
@@ -1874,6 +1905,152 @@ async getCityByStates(req, res) {
       });
     }
   };
+
+  async getMonthlyDayBasedPlanCount(req, res) {
+    try {
+      const result = await PlanSubscription_Modal.aggregate([
+        {
+          $match: {
+            status: 'active',
+            del: false,
+            validity: { $regex: /day(s)?$/i }
+          }
+        },
+        {
+          $group: {
+            _id: {
+              year: { $year: "$created_at" },
+              month: { $month: "$created_at" }
+            },
+            total: { $sum: 1 }
+          }
+        },
+        {
+          $sort: {
+            "_id.year": 1,
+            "_id.month": 1
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            month: {
+              $concat: [
+                {
+                  $arrayElemAt: [
+                    [
+                      "", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                    ],
+                    "$_id.month"
+                  ]
+                },
+                " ",
+                { $toString: "$_id.year" }
+              ]
+            },
+            total: 1
+          }
+        }
+      ]);
+
+      res.json(result);
+    } catch (err) {
+      console.error("Error in monthly count:", err);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };
+
+  async getFreetrialClientsByMonth(req, res) {
+    try {
+      const year = parseInt(req.query.year);
+      const month = parseInt(req.query.month);
+
+      const startDate = new Date(year, month - 1, 1);
+      const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+
+      const data = await PlanSubscription_Modal.aggregate([
+        {
+          $match: {
+            created_at: { $gte: startDate, $lte: endDate },
+            status: "active",
+            del: false,
+            validity: { $regex: /day(s)?$/i }
+          }
+        },
+        // Join clients
+        {
+          $lookup: {
+            from: "clients",
+            localField: "client_id",
+            foreignField: "_id",
+            as: "client"
+          }
+        },
+        { $unwind: "$client" },
+
+        // Join plancategories
+        {
+          $lookup: {
+            from: "plancategories",
+            localField: "plan_category_id",
+            foreignField: "_id",
+            as: "plancategory"
+          }
+        },
+        { $unwind: "$plancategory" },
+
+        // Join services from plancategory.service array
+        {
+          $addFields: {
+            serviceIds: {
+              $map: {
+                input: { $split: ["$plancategory.service", ","] },
+                as: "id",
+                in: { $toObjectId: "$$id" }
+              }
+            }
+          }
+        },
+
+        // Step 2: Lookup from services collection
+        {
+          $lookup: {
+            from: "services",
+            localField: "serviceIds",
+            foreignField: "_id",
+            as: "services"
+          }
+        },
+
+
+        {
+          $project: {
+            fullName: "$client.FullName",
+            email: "$client.Email",
+            phoneNo: "$client.PhoneNo",
+            plan_start: 1,
+            plan_end: 1,
+            validity: 1,
+            plan_title: "$plancategory.title",
+            services: {
+              $map: {
+                input: "$services",
+                as: "s",
+                in: "$$s.title"
+              }
+            }
+          }
+        }
+      ]);
+
+      res.json(data);
+    } catch (err) {
+      console.error("Error:", err);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  };
+
 
 
 }
