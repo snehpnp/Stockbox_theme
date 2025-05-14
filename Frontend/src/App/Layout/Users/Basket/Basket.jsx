@@ -14,7 +14,11 @@ import Kyc from "../Profile/Kyc";
 import ReusableModal from "../../../components/Models/ReusableModal";
 
 
+
 function Basket() {
+
+
+
   const location = useLocation();
   const newActiveTab = location?.state?.activeTab || {};
 
@@ -43,8 +47,6 @@ function Basket() {
 
 
 
-
-
   useEffect(() => {
     if (activeTab === "allbasket") {
       getbasketdata();
@@ -53,10 +55,13 @@ function Basket() {
     }
   }, [activeTab, isLoading]);
 
+
+
   useEffect(() => {
     getkeybydata();
 
   }, []);
+
 
 
   const handleShowModal = (item) => {
@@ -68,7 +73,6 @@ function Basket() {
       // setShowModal(true);
     }
   };
-
 
 
 
