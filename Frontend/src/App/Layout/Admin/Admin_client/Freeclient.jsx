@@ -428,41 +428,41 @@ const Freeclient = () => {
             sortable: true,
             width: '220px',
         },
-        {
-            name: 'Actions',
-            selector: (row) => (
-                <>
-                    {/* <Tooltip placement="top" overlay="Kyc Agreement">
+        // {
+        //     name: 'Actions',
+        //     selector: (row) => (
+        //         <>
+        //             {/* <Tooltip placement="top" overlay="Kyc Agreement">
 
-                        {row.clientDetails?.kyc_verification === "1" ? <Download onClick={() => handleDownload(row)} /> : ""}
+        //                 {row.clientDetails?.kyc_verification === "1" ? <Download onClick={() => handleDownload(row)} /> : ""}
 
-                    </Tooltip> */}
-                    {/* <Tooltip placement="top" overlay="Package Assign">
-                        <span onClick={(e) => {
-                            showModal(true);
-                            setClientid(row);
-                            getplanlistassinstatus(row._id);
-                            getActiveBasketdetail(row._id);
-                        }}
-                            style={{ cursor: 'pointer' }}>
-                            <Settings2 style={{ color: "orange" }} />
-                        </span>
-                    </Tooltip> */}
+        //             </Tooltip> */}
+        //             {/* <Tooltip placement="top" overlay="Package Assign">
+        //                 <span onClick={(e) => {
+        //                     showModal(true);
+        //                     setClientid(row);
+        //                     getplanlistassinstatus(row._id);
+        //                     getActiveBasketdetail(row._id);
+        //                 }}
+        //                     style={{ cursor: 'pointer' }}>
+        //                     <Settings2 style={{ color: "orange" }} />
+        //                 </span>
+        //             </Tooltip> */}
 
-                    <Tooltip title="Update">
-                        <SquarePen className='ms-2' onClick={() => updateClient(row)} style={{ color: "#6f42c1" }} />
-                    </Tooltip>
-                    {/* <Tooltip title="delete">
-                        <Trash2 onClick={() => DeleteClient(row._id)} />
+        //             <Tooltip title="Update">
+        //                 <SquarePen className='ms-2' onClick={() => updateClient(row)} style={{ color: "#6f42c1" }} />
+        //             </Tooltip>
+        //             {/* <Tooltip title="delete">
+        //                 <Trash2 onClick={() => DeleteClient(row._id)} />
 
-                    </Tooltip> */}
-                </>
-            ),
-            ignoreRowClick: true,
-            allowOverflow: true,
-            button: true,
-            width: '165px',
-        }
+        //             </Tooltip> */}
+        //         </>
+        //     ),
+        //     ignoreRowClick: true,
+        //     allowOverflow: true,
+        //     button: true,
+        //     width: '165px',
+        // }
     ];
 
 
