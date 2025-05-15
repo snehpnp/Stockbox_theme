@@ -25,6 +25,7 @@ const Utmsource_Model = db.Utmsource; // adjust path as needed
 const { sendSMS } = require('../../Utils/smsHelper');
 const upload = require('../../Utils/multerHelper'); 
 const { generatePDF } = require('../../Utils/pdfGenerator');
+const { sendFCMNotification } = require('../../Controllers/Pushnotification'); // Adjust if necessary
 
 class Clients {
 
@@ -2167,6 +2168,24 @@ else {
               // Save the result to the database
               await result.save();
   
+
+
+
+  const adminnotificationTitle = "Important Update";
+      const adminnotificationBody = `${client.FullName} replied on ticket #${ticket.ticketnumber}`;
+      const newNotification  = new Adminnotification_Modal({
+        clientid: client._id,
+        segmentid: result._id,
+        type: 'help request',
+        title: adminnotificationTitle,
+        message: adminnotificationBody
+      });
+
+
+      await newNotification .save();
+
+
+
   
               return res.json({
                   status: true,
@@ -2241,6 +2260,23 @@ else {
           });
       
           await newTicket.save();
+
+
+  const adminnotificationTitle = "Important Update";
+      const adminnotificationBody = `New Help Request received from ${client.FullName}`;
+      const newNotification  = new Adminnotification_Modal({
+        clientid: client_id,
+        segmentid: newTicket._id,
+        type: 'help request',
+        title: adminnotificationTitle,
+        message: adminnotificationBody
+      });
+
+
+      await newNotification .save();
+
+
+
       
           return res.json({
             status: true,
