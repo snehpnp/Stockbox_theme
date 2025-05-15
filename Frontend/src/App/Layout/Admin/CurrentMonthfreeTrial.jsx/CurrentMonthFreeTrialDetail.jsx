@@ -16,33 +16,20 @@ const CurrentMonthFreeTrialDetail = () => {
 
     const [clients, setClients] = useState([]);
     const [searchInput, setSearchInput] = useState("");
-    const [viewpage, setViewpage] = useState({});
-    const [ForGetCSV, setForGetCSV] = useState([])
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalRows, setTotalRows] = useState(0);
+    const [allsearchInput, setAllSearchInput] = useState([]);
 
-    const handlePageChange = (page) => {
-        setCurrentPage(page);
-    };
+
+
 
     const token = localStorage.getItem('token');
     const userid = localStorage.getItem('id');
 
 
-    const resethandle = () => {
-        setSearchInput("")
-        setStartDate("")
-        setEndDate("")
 
 
-    }
-
-
-    const monthName = item?.month?.split(' ')[0]; 
-    const monthNumber = new Date(`${monthName} 1, 2000`).getMonth() + 1; 
+    const monthName = item?.month?.split(' ')[0];
+    const monthNumber = new Date(`${monthName} 1, 2000`).getMonth() + 1;
 
     const year = item?.month?.slice(3)
 
@@ -54,8 +41,9 @@ const CurrentMonthFreeTrialDetail = () => {
             const response = await FreeTrialDetail(data, token);
             if (response) {
                 let filteredData = response;
-                setTotalRows(response.totalRecords)
                 setClients(filteredData);
+                setAllSearchInput(response)
+
             }
         } catch (error) {
             console.log("Error fetching services:", error);
@@ -63,19 +51,25 @@ const CurrentMonthFreeTrialDetail = () => {
     };
 
 
+    useEffect(() => {
+        const filteredData = allsearchInput?.filter((item) =>
+            !searchInput ||
+            item?.fullName.toLowerCase().includes(searchInput.toLowerCase()) ||
+            item?.email.toLowerCase().includes(searchInput.toLowerCase()) ||
+            item?.plan_title.toLowerCase().includes(searchInput.toLowerCase()) ||
+            item?.phoneNo.toLowerCase().includes(searchInput.toLowerCase())
+        );
+        setClients(filteredData);
+    }, [searchInput, allsearchInput]);
+
 
     useEffect(() => {
         gethistory();
-    }, [searchInput, location, currentPage]);
+    }, [location]);
 
 
     const columns = [
-        {
-            name: 'S.No',
-            selector: (row, index) => (currentPage - 1) * 10 + index + 1,
-            sortable: false,
-            width: '100px',
-        },
+
         {
             name: 'Name',
             selector: row => row.fullName,
