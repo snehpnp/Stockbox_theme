@@ -230,7 +230,7 @@ const Service = () => {
 
         handler: async function (response1) {
           const data = {
-            plan_id: item?._id,
+            plan_ids: Array.isArray(item) ? item.map(i => i._id) : [item._id],
             client_id: userid,
             coupon_code: appliedCoupon?.code || 0,
             orderid: response1?.razorpay_payment_id,
@@ -265,10 +265,6 @@ const Service = () => {
       console.error("Subscription error:", error);
     }
   };
-
-
-
-
 
 
 
