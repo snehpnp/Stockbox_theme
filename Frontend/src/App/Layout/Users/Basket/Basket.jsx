@@ -5,14 +5,14 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   GetBasketService,
   BasketPurchaseList,
-
+  GetUserData
 } from "../../../Services/UserService/User";
 import { basicsettinglist } from "../../../Services/Admin/Admin";
 import { loadScript } from "../../../../Utils/Razorpayment";
 import Loader from "../../../../Utils/Loader";
 import Kyc from "../Profile/Kyc";
 import ReusableModal from "../../../components/Models/ReusableModal";
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 function Basket() {
@@ -59,18 +59,32 @@ function Basket() {
 
   useEffect(() => {
     getkeybydata();
+    fetchUserData();
 
   }, []);
+
+
+  const fetchUserData = async () => {
+    try {
+      const userData = await GetUserData(userid, token);
+      if (userData && userData.data) {
+        setUserdata(userData.data)
+
+      }
+    } catch (error) {
+      showCustomAlert("error", "Failed to load user data. Please refresh and try again.");
+    }
+  }
+
 
 
 
   const handleShowModal = (item) => {
 
-    if (kycStatus == 2 && userdata?.kyc_verification == 0) {
+    if (kycStatus == 1 && userdata?.kyc_verification == 0) {
       setViewModel2(true)
     } else {
-      // setSelectedPlanDetails(item);
-      // setShowModal(true);
+      handelRedirect(item);
     }
   };
 
@@ -82,6 +96,8 @@ function Basket() {
       if (response.status) {
         setOnlinePaymentStatus(response.data[0].paymentstatus);
         setOfflinePaymentStatus(response.data[0].officepaymenystatus);
+        setKycStatus(response?.data[0].kyc)
+
 
       }
     } catch (error) {
@@ -185,7 +201,7 @@ function Basket() {
               <div className="col-md-12 col-lg-6 mb-4" key={item?.id}>
                 <div className="card radius-10 overflow-hidden shadow"
                   style={{ minHeight: "253px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
-                  onClick={() => handelRedirect(item)}
+                  onClick={() => handleShowModal(item)}
                 >
                   <div className="card-body pb-0">
                     <div className="d-flex ">

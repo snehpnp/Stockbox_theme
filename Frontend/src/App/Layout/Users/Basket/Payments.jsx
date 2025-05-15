@@ -49,7 +49,7 @@ const Payments = () => {
 
     const handleShowModal = (item) => {
 
-        if (kycStatus == 2 && userdata?.kyc_verification == 0) {
+        if (kycStatus == 1 && userdata?.kyc_verification == 0) {
             setViewModel2(true)
         } else {
             AddbasketSubscribeplan()
