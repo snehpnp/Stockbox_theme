@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Contnet from '../Content';
+import Contnet from '../Contents/Content';
 
 function ClassicForm() {
   const [formData, setFormData] = useState({

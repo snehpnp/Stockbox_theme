@@ -19,14 +19,20 @@
     "node-cron": "^3.0.3",
     "node-datetime": "^2.1.2",
     "nodemailer": "^6.9.14",
+<<<<<<< HEAD
     "nodemon": "^3.1.10",
     "number-to-words": "^1.2.4",
+=======
+>>>>>>> 91ef5d404ab3adb906f6e0e42d21a709b503563b
     "papaparse": "^5.4.1",
     "pdfkit": "^0.15.0",
     "puppeteer": "^23.4.1",
     "querystring": "^0.2.1",
     "socket.io": "^4.8.1",
+<<<<<<< HEAD
     "socket.io-client": "^4.8.1",
+=======
+>>>>>>> 91ef5d404ab3adb906f6e0e42d21a709b503563b
     "ws": "^8.18.0",
     "xlsx": "^0.18.5"
   }

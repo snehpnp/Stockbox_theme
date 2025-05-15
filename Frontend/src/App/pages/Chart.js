@@ -1,5 +1,5 @@
 import React from 'react';
-import Content from '../components/Content';
+import Content from '../components/Contents/Content';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   BarChart, Bar,

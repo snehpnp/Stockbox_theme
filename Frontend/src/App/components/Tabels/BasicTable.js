@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa'; // Using React Icons for edit and delete
-import Contnet from '../Content';
+import Contnet from '../Contents/Content';
 
 // Sample data for the table
 const initialData = [

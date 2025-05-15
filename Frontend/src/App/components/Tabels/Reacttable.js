@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useTable, usePagination } from 'react-table';
-import Contnet from '../Content';
+import Contnet from '../Contents/Content';
 import { FaEdit, FaTrash } from 'react-icons/fa'; // सुनिश्चित करें कि react-icons स्थापित है
 
 const dummyData = [

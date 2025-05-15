@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Make sure Bootstrap CSS is imported
 import { Button, Form, Pagination, Row, Col } from 'react-bootstrap'; // Importing components from react-bootstrap
-import Contnet from '../Content';
+import Contnet from '../Contents/Content';
 
 const BorderedTable = () => {
   const [isToggled, setIsToggled] = useState(false); // State for the toggle

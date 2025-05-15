@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import Login from "../pages/Login";
+// import Login from "../pages/Login";
 import Settings from "../pages/Settings";
 import Home from "../pages/Home";
 import Dashboard from "../components/Dashboard/DashbaordMain";
@@ -22,8 +22,15 @@ import Chart from "../pages/Chart";
 import Theme from "../pages/Themes/Theme";
 import AddTheme from "../pages/Themes/AddTheme";
 import Edittheme from "../pages/Themes/EditTheme";
-import Modals from '../components/Modals';
-import Services from '../pages/Services'
+import Modals from '../components/Models/Modals';
+
+import Login from "../Layout/Auth/Login";
+import Company from '../Layout/Superadmin/Company/Company'
+import Trade from "../pages/Trade";
+import Basket from "../pages/Basket/Basket";
+import Registration from "../Layout/Auth/Registration";
+import Forgetpassword from "../Layout/Auth/Forgetpassword";
+import Forgetpassworduser from "../Layout/Auth/Forgetpassworduser";
 
 export default function App() {
 
@@ -32,6 +39,9 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/registration" element={<Registration />} />
+      <Route path="/forget" element={<Forgetpassword />} />
+      <Route path="/forget-user" element={<Forgetpassworduser />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="/home" element={<Home />} />
       <Route path="/" element={<Dashboard />} />
@@ -54,7 +64,14 @@ export default function App() {
       <Route path="/add-theme" element={<AddTheme />} />
       <Route path="/edit-theme/:id" element={<Edittheme />} />
       <Route path="/modals" element={<Modals />} />
-      <Route path="/services" element={<Services />} />
+
+      <Route path="/trades" element={<Trade />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/basket" element={<Basket />} />
+
+
+      <Route path="/company" element={<Company />} />
     </Routes>
   );
 }
+
