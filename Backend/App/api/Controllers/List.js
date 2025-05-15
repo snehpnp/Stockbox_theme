@@ -5291,11 +5291,53 @@ i++;
 
       if (!existingPlan) {
         // Fetch last 5 signal IDs for the given service_id
-        const lastFiveSignals = await Signal_Modal.find({ service: service_id,close_status: false })
-            .sort({ created_at: -1 })
-            .limit(5)
-            .lean();
-        
+        // const lastFiveSignals = await Signal_Modal.find({ service: service_id,close_status: false })
+        //     .sort({ created_at: -1 })
+        //     .limit(5)
+        //     .lean();
+     const lastFiveSignals = await Signal_Modal.aggregate([
+  {
+    $match: { close_status: false, service: service_id }
+  },
+  {
+    $addFields: {
+      planidObj: { $toObjectId: "$planid" }
+    }
+  },
+  {
+    $lookup: {
+      from: "plancategories",
+      localField: "planidObj",
+      foreignField: "_id",
+      as: "plancategory"
+    }
+  },
+  { $unwind: "$plancategory" },
+  {
+    $lookup: {
+      from: "plans",
+      localField: "plancategory._id",
+      foreignField: "category",
+      as: "plan"
+    }
+  },
+  { $unwind: "$plan" },
+  {
+    $match: {
+      "plan.validity": {
+        $nin: ["1 day", "2 days", "3 days", "4 days", "5 days", "6 days", "7 days"]
+      }
+    }
+  },
+  {
+    $sort: { created_at: -1 }
+  },
+  {
+    $limit: 5
+  }
+]);
+
+
         return res.json({
             status: true,
             message: "Returning last 5 signals due to no existing plan",
