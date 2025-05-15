@@ -97,7 +97,9 @@ import YesterdayExpirydata from "../Layout/Admin/Admin_dashboard/YesterdayExpiry
 import TommarrowExpirydata from "../Layout/Admin/Admin_dashboard/TommarrowExpirydata";
 import MultipleSignal from "../Layout/Admin/Admin_signal/MultipleSignal";
 import MultipleSignaldetail from "../Layout/Admin/Admin_signal/MultipleSignaldetail";
-import CurrentMonthfreeTrial from "../Layout/Admin/Admin_dashboard/CurrentMonthfreeTrial";
+import CurrentMonthfreeTrial from "../Layout/Admin/CurrentMonthfreeTrial.jsx/CurrentMonthfreeTrial";
+import CurrentMonthFreeTrialDetail from "../Layout/Admin/CurrentMonthfreeTrial.jsx/CurrentMonthFreeTrialDetail";
+
 
 
 
@@ -249,6 +251,7 @@ export default function App() {
       <Route path="/tomorrowExpiry-data" element={<TommarrowExpirydata />} />
 
       <Route path="/CurrentMonth-freeTrial" element={<CurrentMonthfreeTrial />} />
+      <Route path="/freeTrial-detail" element={<CurrentMonthFreeTrialDetail />} />
 
     </Routes>
   );

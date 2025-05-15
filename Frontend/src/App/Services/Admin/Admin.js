@@ -3485,6 +3485,8 @@ export async function getExpiryByMonth(token) {
 
 
 
+
+
 // get all notification list 
 
 
@@ -4248,6 +4250,49 @@ export async function GetDayExpirydata(data, token) {
             },
         });
 
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+
+//  free trial 
+
+export async function CurrentMonthfreeTrialdata(token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/getmonthlydaybasedplancount`, {
+            headers: {
+                data: {},
+                // 'Authorization': `${token}`,
+                "Content-Type": "application/json"
+            },
+        });
+
+        return res?.data;
+
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+
+export async function FreeTrialDetail({ month, year }, token) {
+    try {
+        const res = await axios.get(
+            `${Config.base_url}dashboard/getfreetrialclientsbymonth?month=${month}&year=${year}`,
+            {
+                headers: {
+                    'Authorization': token
+                }
+            }
+        );
 
         return res?.data;
     } catch (err) {
