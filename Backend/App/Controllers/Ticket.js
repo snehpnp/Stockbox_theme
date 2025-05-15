@@ -55,11 +55,63 @@ class TicketController {
             await result.save();
 
             const ticket = await Ticket_Modal.findById(ticket_id);
+            console.log("ticket",ticket);
+   const client = await Clients_Modal.findById(ticket.client_id);
+               console.log("client",client);
 
 if (ticket && ticket.status === 0) {
     ticket.status = 1;
     await ticket.save();
+
+         
+
+
+  const notificationTitle = 'Important Update';
+            const notificationBody =`Your Help Request ticket ID #${ticket.ticketnumber} has been responded to by Admin`;
+              const newNotification = new Notification_Modal({
+                segmentid:ticket._id,
+                type:'help request',
+                title: notificationTitle,
+                message: notificationBody,
+                clientid:client._id,
+            });
+    
+            await newNotification.save();
+
+          try {
+             const tokens = [client.devicetoken];
+              await sendFCMNotification(notificationTitle, notificationBody, tokens,"help request");
+            } catch (error) {
+           
+            }
 }
+else
+{
+
+  
+  const notificationTitle = 'Important Update';
+            const notificationBody =`Admin replied on ticket ID #${ticket.ticketnumber}`;
+              const newNotification = new Notification_Modal({
+                segmentid:ticket._id,
+                type:'help request',
+                title: notificationTitle,
+                message: notificationBody,
+                clientid:client._id,
+            });
+    
+            await newNotification.save();
+
+          try {
+              const tokens = [client.devicetoken];
+              await sendFCMNotification(notificationTitle, notificationBody, tokens,"help request");
+            } catch (error) {
+           
+            }
+
+}
+
+
+
 
             return res.json({
                 status: true,
@@ -299,7 +351,35 @@ if (ticket && ticket.status === 0) {
                     message: "Ticket not found"
                 });
             }
-      
+if(parsedStatus===2) {
+
+              const client = await Clients_Modal.findById(result.client_id);
+
+  const notificationTitle = 'Important Update';
+            const notificationBody =`Ticket ID #${result.ticketnumber} has been closed by the admin. If you need further assistance, please create a new Request@`;
+              const newNotification = new Notification_Modal({
+                segmentid:result._id,
+                type:'help request',
+                title: notificationTitle,
+                message: notificationBody,
+                clientid:client._id,
+            });
+
+            await newNotification.save();
+
+          try {
+
+              const tokens = [client.devicetoken];
+              await sendFCMNotification(notificationTitle, notificationBody, tokens,"help request");
+
+            } catch (error) {
+           
+            }
+          }
+
+
+
+
             return res.json({
                 status: true,
                 message: "Status updated successfully",
