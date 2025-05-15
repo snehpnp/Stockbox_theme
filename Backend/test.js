@@ -2,7 +2,7 @@ const io = require("socket.io-client");
 
 const socket = io("ws://185.209.75.192:5000");
 
-// 1
+
 socket.on("connect", () => {
     console.log("✅ Connected to server:", socket.id);
 
