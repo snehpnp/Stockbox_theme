@@ -2,6 +2,16 @@
 
 **🚀 Automatic Trading Platform**
 
+---
+
+#test aj
+
+## Developers 👩‍💻👨‍💻
+
+- [**Sneh Jaiswal**](https://github.com/snehpnp)
+- [**Neha Sharma**](https://github.com/NehaSharma3496)
+
+---
 
 ## 📝 Project Description
 
