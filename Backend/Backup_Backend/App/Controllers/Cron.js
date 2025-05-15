@@ -1,0 +1,2352 @@
+const db = require("../Models");
+const multer = require('multer');
+const xlsx = require('xlsx');
+const csv = require('csv-parser');
+const path = require('path');
+const axios = require('axios');
+const Papa = require('papaparse');
+const fs = require('fs');
+var dateTime = require('node-datetime');
+const cron = require('node-cron');
+const WebSocket = require('ws');
+var CryptoJS = require("crypto-js");
+const Liveprice_Modal = db.Liveprice;
+
+const { createGunzip } = require("zlib");
+const { pipeline } = require("stream/promises");
+const { sendEmail } = require('../Utils/emailService');
+
+
+
+const Stock_Modal = db.Stock;
+const Clients_Modal = db.Clients;
+const Signal_Modal = db.Signal;
+const BasicSetting_Modal = db.BasicSetting;
+const Notification_Modal = db.Notification;
+const Planmanage = db.Planmanage;
+const Basket_Modal = db.Basket;
+const Order_Modal = db.Order;
+const Basketghaphdata_Modal = db.Basketgraphdata;
+const Basketstock_Modal = db.Basketstock;
+
+
+//const JsonFile = require("../../uploads/json/config.json");
+const { sendFCMNotification } = require('./Pushnotification'); 
+const Adminnotification_Modal = db.Adminnotification;
+
+
+let ws;
+const url = "wss://ws1.aliceblueonline.com/NorenWS/"
+/*
+cron.schedule('0 7 * * *', async () => {
+    await DeleteTokenAliceToken();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
+
+cron.schedule('0 8 * * *', async () => {
+    await AddBulkStockCron();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
+
+cron.schedule('0 6 * * *', async () => {
+    await downloadKotakNeotoken();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
+
+
+cron.schedule('15 6 * * *', async () => {
+    await downloadZerodhatoken();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
+
+
+cron.schedule('30 6 * * *', async () => {
+    await downloadAndExtractUpstox();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
+
+cron.schedule('0 4 * * *', async () => {
+    await TradingStatusOff();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
+
+
+cron.schedule('0 17 * * *', async () => {
+    await calculateCAGRForBaskets();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
+
+
+cron.schedule('0 16 * * *', async () => {
+    await processPendingOrders();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
+
+
+cron.schedule('0 18 * * *', async () => {
+    await processPendingOrdersBasket();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
+
+cron.schedule('30 16 * * *', async () => {
+    await addBasketgraphdata();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
+
+cron.schedule('30 17 * * *', async () => {
+await addBasketVolatilityData();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
+
+
+cron.schedule('0 9 * * *', async () => {
+    await PlanExpire();
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
+
+*/
+
+// cron.schedule(`${JsonFile.cashexpiretime} ${JsonFile.cashexpirehours} * * *`, async () => {
+//     await CheckExpireSignalCash();
+
+// }, {
+//     scheduled: true,
+//     timezone: "Asia/Kolkata"
+// });
+
+// // Schedule for future option expiry
+// cron.schedule(`${JsonFile.foexpiretime} ${JsonFile.foexpirehours} * * *`, async () => {
+//     await CheckExpireSignalFutureOption();
+// }, {
+//     scheduled: true,
+//     timezone: "Asia/Kolkata"
+// });
+
+
+const jsonFilePath = path.join(__dirname, "../../uploads/json/config.json");
+
+let JsonFile = require(jsonFilePath); 
+let cashExpireCron;
+let foExpireCron;
+
+function reloadCronJobs() {
+  if (cashExpireCron) cashExpireCron.stop();
+  if (foExpireCron) foExpireCron.stop();
+
+  cashExpireCron = cron.schedule(
+    `${JsonFile.cashexpiretime} ${JsonFile.cashexpirehours} * * *`,
+    async () => {
+    //   console.log("Running CheckExpireSignalCash...");
+      await CheckExpireSignalCash();
+    },
+    {
+      scheduled: true,
+      timezone: "Asia/Kolkata",
+    }
+  );
+
+//   console.log(
+//     `Cash Expiry Cron rescheduled with time: ${JsonFile.cashexpiretime} and hour: ${JsonFile.cashexpirehours}`
+//   );
+
+  foExpireCron = cron.schedule(
+    `${JsonFile.foexpiretime} ${JsonFile.foexpirehours} * * *`,
+    async () => {
+    //   console.log("Running CheckExpireSignalFutureOption...");
+      await CheckExpireSignalFutureOption();
+    },
+    {
+      scheduled: true,
+      timezone: "Asia/Kolkata",
+    }
+  );
+
+//   console.log(
+//     `Future Option Expiry Cron rescheduled with time: ${JsonFile.foexpiretime} and hour: ${JsonFile.foexpirehours}`
+//   );
+}
+
+reloadCronJobs();
+
+fs.watch(jsonFilePath, (eventType) => {
+  if (eventType === "change") {
+    // console.log("Config file updated. Reloading cron jobs...");
+    delete require.cache[require.resolve(jsonFilePath)]; // Clear the cache
+    JsonFile = require(jsonFilePath); // Reload the JSON file
+    reloadCronJobs(); // Reload all cron jobs
+  }
+});
+
+
+
+
+
+async function AddBulkStockCron(req, res) {
+    try {
+      const config = {
+          method: 'get',
+          url: 'https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json',
+      };
+  
+      const response = await axios(config);
+
+
+      if (response.data.length > 0) {
+  
+  
+          const filteredDataO = response.data.filter(element =>
+              (element.instrumenttype === 'OPTIDX' || element.instrumenttype === 'OPTSTK') &&
+              element.exch_seg === "NFO" && element.name != ""
+          );
+
+
+        //   const filteredDataOO = filteredDataO.filter(element =>
+        //     (element.instrumenttype === 'OPTIDX' || element.instrumenttype === 'OPTSTK') &&
+        //     element.exch_seg === "NFO" && element.name == "RELIANCE" &&  element.expiry=='28NOV2024'
+            
+        // );
+
+// console.log(filteredDataOO);
+         
+          const filteredDataF = response.data.filter(element =>
+              (element.instrumenttype === 'FUTSTK' || element.instrumenttype === 'FUTIDX') &&
+              element.exch_seg === "NFO" && element.name != ""
+          );
+  
+          // const filteredDataMF = response.data.filter(element =>
+          //     element.instrumenttype === 'FUTCOM' && element.name != ""
+          // );
+          // const filteredDataMO = response.data.filter(element =>
+          //     (element.instrumenttype === 'OPTFUT' || element.instrumenttype === 'OPTCOM') && element.name != ""
+          // );
+          // const filteredDataCO = response.data.filter(element =>
+          //     element.instrumenttype === 'OPTCUR' && element.name != ""
+          // );
+          // const filteredDataCF = response.data.filter(element =>
+          //     element.instrumenttype === 'FUTCUR' && element.name != ""
+          // );
+          const filteredDataC = response.data.filter(element =>
+              (element.symbol.slice(-3) === '-EQ' || element.symbol.slice(-3) === '-BE') && element.name != ""
+          );
+  
+          // const filteredDataBO = response.data.filter(element =>
+          //     (element.instrumenttype === 'OPTIDX' || element.instrumenttype === 'OPTSTK') &&
+          //     element.exch_seg === "BFO" && element.name != ""
+          // );
+  
+          // const filteredDataBF = response.data.filter(element =>
+          //     (element.instrumenttype === 'FUTSTK' || element.instrumenttype === 'FUTIDX') &&
+          //     element.exch_seg === "BFO" && element.name != ""
+          // );
+          // const filteredDataBC = response.data.filter(element =>
+          //     element.instrumenttype === "" && element.exch_seg === "BSE" && element.name != ""
+          // );
+  
+          // console.log("filteredDataBC", filteredDataBC.length)
+      
+          // Segment O -OPTION
+          const userDataSegment_O = await createUserDataArray(filteredDataO, "O");
+          console.log("O")
+          await insertData(userDataSegment_O);
+        //   console.log("O")
+          // Segment F - FUTURE
+          const userDataSegment_F = await createUserDataArray(filteredDataF, "F");
+          await insertData(userDataSegment_F);
+          console.log("F")
+          // Segment C -CASH
+          const userDataSegment_C = await createUserDataArray(filteredDataC, "C");
+          await insertData(userDataSegment_C);
+          console.log("C")
+  
+  
+          // Segment MF MCX FUTURE
+          // const userDataSegment_MF = await createUserDataArray(filteredDataMF, "MF");
+          // await insertData(userDataSegment_MF);
+          // console.log("MF")
+          // // Segment MO  MCX OPTION
+          // const userDataSegment_MO = createUserDataArray(filteredDataMO, "MO");
+          // await insertData(userDataSegment_MO);
+          // console.log("MO")
+  
+  
+  
+  
+          // Segment CO CURRENCY OPTION
+          // const userDataSegment_CO = await createUserDataArray(filteredDataCO, "CO");
+          // await insertData(userDataSegment_CO);
+          // console.log("CO")
+  
+          // // Segment CF  CURRENCY FUTURE
+          // const userDataSegment_CF = await createUserDataArray(filteredDataCF, "CF");
+          // await insertData(userDataSegment_CF);
+          // console.log("CF")
+  
+          // // Segment BF
+          // const userDataSegment_BF = await createUserDataArray(filteredDataBF, "BF");
+          // await insertData(userDataSegment_BF);
+          // console.log("BF")
+          // // Segment BO
+          // const userDataSegment_BO = await createUserDataArray(filteredDataBO, "BO");
+          // await insertData(userDataSegment_BO);
+          // console.log("BO")
+  
+          // // Segment BC
+          // const userDataSegment_BC = await createUserDataArray(filteredDataBC, "BC");
+          // await insertData(userDataSegment_BC);
+          // console.log("BC")
+          
+  
+    
+          res.json({ 
+            status: true, 
+        });
+      } else {
+        res.json({ 
+            status: true, 
+        });
+      }
+  } catch (error) {
+    res.json({ 
+        status: false, 
+    });
+  }
+  }
+  
+const DeleteTokenAliceToken = async (req, res) => {
+    // const pipeline = [
+    //     {
+    //         $addFields: {
+    //             expiryDate: {
+    //                 $dateFromString: {
+    //                     dateString: {
+    //                         $concat: [
+    //                             { $substr: ["$expiry", 4, 4] }, // Year
+    //                             "-",
+    //                             { $substr: ["$expiry", 2, 2] }, // Month
+    //                             "-",
+    //                             { $substr: ["$expiry", 0, 2] } // Day
+    //                         ]
+    //                     },
+    //                     format: "%Y-%m-%d"
+    //                 }
+    //             }
+    //         }
+    //     },
+    //     {
+    //         $match: {
+    //             expiryDate: { $lt: new Date() }
+    //         }
+    //     },
+    //     {
+    //         $group: {
+    //             _id: null,
+    //             idsToDelete: { $push: "$_id" } // Collecting all matching _id values
+    //         }
+    //     },
+    //     {
+    //         $project: {
+    //             _id: 0,
+    //             idsToDelete: 1
+    //         }
+    //     },
+  
+    // ];
+
+
+    const pipeline = [
+        {
+            $match: {
+                expiry: { $type: "string", $ne: "", $regex: /^[0-9]{8}$/ } // Ensures expiry is exactly 8 digits (DDMMYYYY)
+            }
+        },
+        {
+            $addFields: {
+                expiryDate: {
+                    $dateFromString: {
+                        dateString: {
+                            $concat: [
+                                { $substr: ["$expiry", 4, 4] }, // Year (YYYY)
+                                "-",
+                                { $substr: ["$expiry", 2, 2] }, // Month (MM)
+                                "-",
+                                { $substr: ["$expiry", 0, 2] } // Day (DD)
+                            ]
+                        },
+                        format: "%Y-%m-%d",
+                        onError: null, // If conversion fails, set expiryDate to null
+                        onNull: null
+                    }
+                }
+            }
+        },
+        {
+            $match: {
+                expiryDate: { $lt: new Date() } // Delete expired tokens
+            }
+        },
+        {
+            $group: {
+                _id: null,
+                idsToDelete: { $push: "$_id" } // Collecting all matching _id values
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                idsToDelete: 1
+            }
+        }
+    ];
+
+    const result = await Stock_Modal.aggregate(pipeline)
+    if (result.length > 0) {
+        const idsToDelete = result.map(item => item._id);
+        await Stock_Modal.deleteMany({ _id: { $in: result[0].idsToDelete } });
+        res.json({ 
+            status: true, 
+            message: `${result[0].idsToDelete.length} expired tokens deleted.` 
+        });
+    } else {
+        res.json({ 
+            status: true, 
+            message: 'No expired tokens found.' 
+        });
+       }
+  
+  }
+  
+  function createUserDataArray(data, segment) {
+    let count = 0
+    return data.map(element => {
+        //   count++
+        //   console.log("element.symbol",element , "count - ",count)
+        // if (!element.name) {
+        //     console.log(`Skipping element with empty name: ${element}`);
+        //     console.log(`token: ${element.token}`);
+        //     return null;
+        // }
+        const option_type = element.symbol.slice(-2);
+        const expiry_s = dateTime.create(element.expiry);
+        const expiry = expiry_s.format('dmY');
+        const strike_s = parseInt(element.strike);
+        const strike = parseInt(strike_s.toString().slice(0, -2));
+        const day_start = element.expiry.slice(0, 2);
+        const moth_str = element.expiry.slice(2, 5);
+        const year_end = element.expiry.slice(-2);
+        const Dat = new Date(element.expiry);
+        const moth_count = Dat.getMonth() + 1;
+  
+        const tradesymbol_m_w = `${element.name}${year_end}${moth_count}${day_start}${strike}${option_type}`;
+  
+        return {
+            symbol: element.name,
+            // expiry: expiry,
+            // expiry_month_year: expiry.slice(2),
+            // expiry_date: expiry.slice(0, -6),
+            // expiry_str: element.expiry,
+            expiry: segment === "C" ? null : expiry,
+            expiry_date: segment === "C" ? null : expiry.slice(0, -6),
+            expiry_month_year: segment === "C" ? null : expiry.slice(2),
+            expiry_str: segment === "C" ? null : element.expiry,
+            strike: strike,
+            option_type: option_type,
+            segment: segment,  // Default segment
+            instrument_token: element.token,
+            lotsize: element.lotsize,
+            tradesymbol: element.symbol,
+            tradesymbol_m_w: tradesymbol_m_w,
+            exch_seg: element.exch_seg
+        }; 
+    });
+  }
+  async function insertData(dataArray) {
+    //console.log("dataArray ",dataArray)
+    try {
+        const existingTokens = await Stock_Modal.distinct("instrument_token", {});
+        const filteredDataArray = dataArray.filter(userData => {
+            return !existingTokens.includes(userData.instrument_token);
+        });
+        await Stock_Modal.insertMany(filteredDataArray);
+    } catch (error) {
+        // console.log("Error in insertData:", error)
+    }
+  
+  }
+
+
+
+  async function TradingStatusOff(req, res) {
+        try {
+        // Find active clients
+        const result = await Clients_Modal.find({ del: 0, ActiveStatus: 1 });
+        
+        // Update trading status for each active client
+        if (result.length > 0) {
+            const updateResult = await Clients_Modal.updateMany(
+                { del: 0, ActiveStatus: 1 },
+                { $set: { tradingstatus: 0 } }
+            );
+
+            // console.log(`Updated trading status for ${updateResult.modifiedCount} active clients.`);
+        } else {
+            // console.log('No active clients found to update.');
+            
+        }
+
+
+        const existingSetting = await BasicSetting_Modal.findOne({});
+        if (!existingSetting) {
+        }
+
+        if (existingSetting) {
+            existingSetting.brokerloginstatus = 0;
+            await existingSetting.save();
+            // console.log(`Updated trading status ....`);
+        } 
+
+
+        return res.send("Done");
+
+
+    } catch (error) {
+        return res.send("error",error);
+
+        // console.log('Error updating trading status:', error);
+    }
+}
+
+
+
+
+async function CheckExpireSignalCash(req, res) {
+    try {
+
+        const today = new Date();
+        const signals = await Signal_Modal.find({
+            del: 0,
+            close_status: false,
+            segment: "C",
+            callduration:"Intraday",
+          });
+
+
+          for (const signal of signals) {
+            try {
+                // Get the CPrice for each signal's stock symbol
+                const cPrice = await returnstockcloseprice(signal.stock);
+                // Update the signal with close_status and close_price
+                await Signal_Modal.updateOne(
+                    { _id: signal._id },
+                    { $set: { close_status: true, closeprice: cPrice, closedate: today } }
+                );
+            } catch (error) {
+                // console.log(`Failed to update signal for ${signal.stock}:`, error.message);
+            }
+        }
+
+        return;
+      
+    } catch (error) {
+        // console.log('Error:', error);
+        return;
+
+    } 
+}
+
+
+async function CheckExpireSignalFutureOption(req, res) {
+    try {
+
+        const existingSetting = await BasicSetting_Modal.findOne({});
+
+        if (!existingSetting.brokerloginstatus) {
+            // console.log("Broker not Login");
+          return;
+         
+        }
+
+
+
+        const today = new Date();
+        const formattedToday = `${String(today.getDate()).padStart(2, '0')}${String(today.getMonth() + 1).padStart(2, '0')}${today.getFullYear()}`;
+
+        // Fetch signals based on criteria
+        const signals = await Signal_Modal.aggregate([
+            {
+                $match: {
+                    del: 0,
+                    close_status: false,
+                    segment: { $in: ["F", "O"] },
+                 $or: [
+                    { expirydate: formattedToday },
+                    { callduration: "Intraday" }
+                ]
+                }
+            },
+            {
+                $lookup: {
+                    from: "stocks",  // Stock details collection
+                    localField: "tradesymbol",
+                    foreignField: "tradesymbol",
+                    as: "stockDetails"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$stockDetails",
+                    preserveNullAndEmptyArrays: true
+                }
+            }
+        ]);
+
+        // Generate channel string for the socket connection
+        const channelStradd = signals
+            .map(signal => `NFO|${signal.stockDetails?.instrument_token || ''}`)
+            .join('#');
+        // Check if we have any valid signals
+        if (!channelStradd) {
+            return;
+        }
+
+        // Socket session setup parameters
+        const userid = existingSetting.aliceuserid;
+        const userSession1 = existingSetting.authtoken;  // Replace with actual token
+        const type = { loginType: "API" };
+
+        try {
+            const response = await axios.post(
+                `https://ant.aliceblueonline.com/rest/AliceBlueAPIService/api/ws/createSocketSess`,
+                type,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${userid} ${userSession1}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+
+            if (response.data.stat === "Ok") {
+                // If session creation is successful, open socket connection
+                await openSocketConnection(channelStradd, userid, userSession1);
+
+                return;
+            } else {
+                return;
+            }
+        } catch (sessionError) {
+            return;
+        }
+
+    } catch (error) {
+        return;
+    }
+}
+
+async function openSocketConnection(channelList, userid, userSession1) {
+
+  ws = new WebSocket(url);
+  ws.onopen = function () {
+    var encrcptToken = CryptoJS.SHA256(CryptoJS.SHA256(userSession1).toString()).toString();
+    var initCon = {
+      susertoken: encrcptToken,
+      t: "c",
+      actid: userid + "_" + "API",
+      uid: userid + "_" + "API",
+      source: "API"
+    }
+    ws.send(JSON.stringify(initCon))
+  };
+
+  ws.onmessage = async function (msg) {
+    const response = JSON.parse(msg.data)
+    if (response.lp != undefined) {
+      const Cprice = response.lp;
+
+
+      const today = new Date();
+      const formattedToday = `${String(today.getDate()).padStart(2, '0')}${String(today.getMonth() + 1).padStart(2, '0')}${today.getFullYear()}`;
+    
+      const stock = await Stock_Modal.findOne({ instrument_token: response.tk });
+
+
+      
+      await Signal_Modal.updateOne(
+        {
+            $or: [
+                { tradesymbol: stock.tradesymbol, expirydate: formattedToday, close_status: false },
+                { tradesymbol: stock.tradesymbol, callduration: "Intraday", close_status: false }
+            ]
+        },
+        { $set: { close_status: true, closeprice: Cprice, closedate: today } }
+    );
+
+    }
+    if (response.s === 'OK') {
+
+      let json = {
+      k: channelList,
+      t: 't'
+      };
+      
+      await ws.send(JSON.stringify(json))
+      }
+
+  };
+
+  ws.onerror = function (error) {
+    // console.log(`WebSocket error: ${error}`);
+  };
+
+  ws.onclose = async function () {
+    
+  };
+
+}
+  
+async function returnstockcloseprice(symbol) {
+    try {
+        if (!symbol) {
+         //   throw new Error("Symbol is required.");
+        }
+
+        const csvFilePath = "https://docs.google.com/spreadsheets/d/1wwSMDmZuxrDXJsmxSIELk1O01F0x1-0LEpY03iY1tWU/export?format=csv";
+        const { data } = await axios.get(csvFilePath);
+        
+        // Return a promise that resolves with the CPrice after parsing
+        return new Promise((resolve, reject) => {
+            Papa.parse(data, {
+                header: true,
+                complete: (result) => {
+                    let sheetData = result.data;
+
+                    // Map symbol names as needed
+                    sheetData.forEach(item => {
+                        switch (item.SYMBOL) {
+                            case "NIFTY_BANK":
+                                item.SYMBOL = "BANKNIFTY";
+                                break;
+                            case "NIFTY_50":
+                                item.SYMBOL = "NIFTY";
+                                break;
+                            case "NIFTY_FIN_SERVICE":
+                                item.SYMBOL = "FINNIFTY";
+                                break;
+                        }
+                    });
+
+                    // Find the requested symbol and return its CPrice
+                   // const stockData = sheetData.find(item => item.SYMBOL === symbol);
+
+                      const stockData = sheetData.find(item => 
+                        item.SYMBOL === symbol.trim() || 
+                        item.SYMBOL === `NSE:${symbol.trim()}`
+                    );
+
+                    // console.log("Searching for Symbol:", symbol.trim());
+                    // console.log("Matched Stock Data:", stockData);
+
+                    if (stockData && stockData.CPrice && stockData.CPrice !== "#N/A") {
+                        resolve(stockData.CPrice);
+                    } else {
+                        reject(new Error("CPrice unavailable or symbol not found."));
+                    }
+                },
+                error: (error) => {
+                    reject(error);
+                }
+            });
+        });
+    } catch (error) {
+        // console.log("Error in returnstockcloseprice:", error.message);
+       // throw error;
+       return;
+    }
+}
+
+
+async function PlanExpire(req, res) {
+    try {
+        // Get the current date at midnight (start of the day)
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0); // Set to start of the day (midnight)
+    
+        // Calculate the future dates (5, 3, and 1 days later)
+        const futureDates = [
+            new Date(currentDate),
+            new Date(currentDate),
+            new Date(currentDate)
+        ];
+    
+        futureDates[0].setDate(currentDate.getDate() + 5); // 5 days later
+        futureDates[1].setDate(currentDate.getDate() + 3); // 3 days later
+        futureDates[2].setDate(currentDate.getDate() + 1); // 1 day later
+    
+        // Normalize each date to midnight (00:00:00)
+        futureDates.forEach(date => {
+            date.setHours(0, 0, 0, 0); // Resetting to midnight for each date
+        });
+    
+      
+    
+        // Find plans with `enddate` within the range of the future dates (5, 3, or 1 days)
+        const plans = await Planmanage.find({
+            enddate: { 
+                $gte: futureDates[2], // greater than or equal to 1 day from now
+                $lt: futureDates[0]  // less than 5 days from now
+            }
+        });
+
+        // Iterate over each expiring plan
+        for (const plan of plans) {
+            const planEndDate = new Date(plan.enddate);
+            planEndDate.setHours(0, 0, 0, 0); // Normalize the plan's end date to midnight
+    
+            const timeDifference = planEndDate - currentDate;
+            const daysRemaining = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+         
+
+
+            if (plan.serviceid == "66d2c3bebf7e6dc53ed07626") {
+                serviceName = "Cash";
+              
+              } else if (plan.serviceid == "66dfeef84a88602fbbca9b79") {
+                serviceName = "Option";
+              } 
+              else if (plan.serviceid == "67e12758a0a2be895da19550") {
+                serviceName = "Strategy";
+              } 
+              else if (plan.serviceid == "67e1279ba0a2be895da19551") {
+                serviceName = "Future Strategy";
+              } 
+              else {
+                serviceName = "Future";
+              }
+              
+            let message;
+            const titles = 'Plan Expiry Notification';
+
+            const client = await Clients_Modal.findById(plan.clientid); // Fetch the client
+
+            if (daysRemaining === 5) {
+                message = `Reminder ${client.FullName}, ${serviceName} Plan will expire in 5 days.`;
+            } else if (daysRemaining === 3) {
+                message = `Reminder ${client.FullName}, ${serviceName} Plan will expire in 3 days.`;
+            } else if (daysRemaining === 1) {
+                message = `Reminder ${client.FullName}, ${serviceName} Plan will expire tomorrow.`;
+            }
+    
+             if (message) {
+                try {
+              
+                  
+                  const resultn = new Notification_Modal({
+                    clientid: plan.clientid,
+                    segmentid:plan._id,
+                    type:"plan expire",
+                    title: titles,
+                    message: message
+                });
+    
+                await resultn.save();
+
+
+
+
+                const resultnm = new Adminnotification_Modal({
+                    clientid:plan.clientid,
+                    segmentid:plan._id,
+                    type:'plan expire',
+                    title: titles,
+                    message: message
+                });
+            
+            
+                await resultnm.save();
+            
+
+                    if (client && client.devicetoken) {
+
+                        const tokens = [client.devicetoken];
+
+                        await sendFCMNotification(titles, message,tokens,"plan expire");
+                       
+                    }
+
+                    const settings = await BasicSetting_Modal.findOne();
+
+                    const emailList = client.Email; // Or however you structure your recipient list
+                    const subject = "Plan Expiry Notification";
+  
+                    // Read email template
+                    const templatePath = path.join(__dirname, '../../template', 'mailtemplate.html');
+                    const htmlTemplate = fs.readFileSync(templatePath, 'utf8'); // Use sync here in loop context
+              
+                    // Replace placeholders
+                    const finalHtml = htmlTemplate
+                      .replace(/{{company_name}}/g, settings.website_title)
+                      .replace(/{{body}}/g, message)
+                      .replace(/{{logo}}/g, `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`);
+
+                    const mailOptions = {
+                      to: emailList,
+                      from: `${settings.from_name} <${settings.from_mail}>`,
+                      subject: subject,
+                      html: finalHtml
+                    };
+
+                    await sendEmail(mailOptions); // Your existing async email sending function
+
+                        
+                } catch (error) {
+                }
+            }
+        }
+    
+        return res.send("Done");
+
+
+    } catch (error) {
+        // console.log('An unexpected error occurred:', error);
+        return res.send("error",error);
+
+    }
+}
+
+
+
+
+async function downloadKotakNeotoken(req, res) {
+    try {
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed, so add 1
+        const day = currentDate.getDate().toString().padStart(2, '0');
+
+        // Format the date
+        const formattedDate = `${year}-${month}-${day}`;
+
+        const TokenUrl = [
+            {
+                url: `https://lapi.kotaksecurities.com/wso2-scripmaster/v1/prod/${formattedDate}/transformed/nse_fo.csv`,
+                key: "KOTAK_NFO"
+            },
+            {
+                url: `https://lapi.kotaksecurities.com/wso2-scripmaster/v1/prod/${formattedDate}/transformed/nse_cm.csv`,
+                key: "KOTAK_NSE"
+            },
+        ];
+
+        // Use Promise.all to handle all download requests concurrently
+        const downloadPromises = TokenUrl.map((data) => {
+            const filePath = path.join(__dirname, '../../', 'tokenkotakneo', `${data.key}.csv`);
+            const fileUrl = data.url;
+            
+            return axios({
+                method: 'get',
+                url: fileUrl,
+                responseType: 'stream',
+            })
+                .then((response) => {
+                    return new Promise((resolve, reject) => {
+                        const writer = fs.createWriteStream(filePath);
+                        response.data.pipe(writer);
+                        writer.on('finish', resolve);
+                        writer.on('error', reject);
+                    });
+                })
+                .catch((error) => {
+                    // console.log(`Error downloading file from ${fileUrl}:`, error);
+                  //  throw new Error(`Error downloading file from ${fileUrl}`);
+                });
+        });
+
+        // Wait for all downloads to complete
+        await Promise.all(downloadPromises);
+
+        // Send the response once all files are downloaded
+        return res.send("Done");
+
+
+    } catch (error) {
+        // console.log('An unexpected error occurred:', error);
+        return res.send("error",error);
+
+    }
+}
+
+
+
+
+async function downloadZerodhatoken(req, res) {
+    try {
+       
+        const TokenUrl = [
+            {
+                url: `https://api.kite.trade/instruments`,
+                key: "Zerodha"
+            },
+
+        ];
+
+        // Use Promise.all to handle all download requests concurrently
+        const downloadPromises = TokenUrl.map((data) => {
+            const filePath = path.join(__dirname, '../../', 'tokenzerodha', `${data.key}.csv`);
+            const fileUrl = data.url;
+            
+            return axios({
+                method: 'get',
+                url: fileUrl,
+                responseType: 'stream',
+            })
+                .then((response) => {
+                    return new Promise((resolve, reject) => {
+                        const writer = fs.createWriteStream(filePath);
+                        response.data.pipe(writer);
+                        writer.on('finish', resolve);
+                        writer.on('error', reject);
+                    });
+                })
+                .catch((error) => {
+                    // console.log(`Error downloading file from ${fileUrl}:`, error);
+                  //  throw new Error(`Error downloading file from ${fileUrl}`);
+                });
+        });
+
+        // Wait for all downloads to complete
+        await Promise.all(downloadPromises);
+
+        // Send the response once all files are downloaded
+        return res.send("Done");
+
+
+    } catch (error) {
+        // console.log('An unexpected error occurred:', error);
+        return res.send("error",error);
+
+    }
+}
+
+
+async function downloadAndExtractUpstox(req, res) {
+    try {
+        const url = "https://assets.upstox.com/market-quote/instruments/exchange/complete.csv.gz";
+
+        // Create a folder to store the extracted file
+        const outputFolder = path.join(__dirname, "../../tokenupstox");
+      
+
+        if (!fs.existsSync(outputFolder)) {
+            fs.mkdirSync(outputFolder, { recursive: true });
+        }
+
+        // Define the extracted file path
+        const extractedFilePath = path.join(outputFolder, "complete.csv");
+
+        // Download and extract in a single stream
+        const response = await axios({
+            method: "get",
+            url: url,
+            responseType: "stream",
+        });
+
+        await pipeline(response.data, createGunzip(), fs.createWriteStream(extractedFilePath));
+
+        // Send success response
+        return res.send("Done");
+
+    } catch (err) {
+        console.error("Error:", err);
+        return res.send("Not Done");
+    }
+}
+
+
+
+
+async function calculateCAGRForBaskets(req, res) {
+ 
+
+
+    const result = await Basket_Modal.aggregate([
+        {
+            $match: {
+                del: false,
+            }
+        },
+        // Lookup for latest stocks
+        {
+            $lookup: {
+                from: "basketstocks",
+                let: { basketId: { $toString: "$_id" } },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$basket_id", "$$basketId"] },
+                                    { $eq: ["$status", 1] }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: "$basket_id",
+                            maxVersion: { $max: "$version" }
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "basketstocks",
+                            let: { basketId: "$_id", maxVer: "$maxVersion" },
+                            pipeline: [
+                                {
+                                    $match: {
+                                        $expr: {
+                                            $and: [
+                                                { $eq: ["$basket_id", "$$basketId"] },
+                                                { $eq: ["$version", "$$maxVer"] },
+                                                { $eq: ["$status", 1] }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ],
+                            as: "latestStocks"
+                        }
+                    },
+                    { $unwind: "$latestStocks" },
+                    { $replaceRoot: { newRoot: "$latestStocks" } },
+                    {
+                        $lookup: {
+                            from: "stocks",
+                            localField: "tradesymbol",
+                            foreignField: "tradesymbol",
+                            as: "stock_info"
+                        }
+                    },
+                    {
+                        $unwind: {
+                            path: "$stock_info",
+                            preserveNullAndEmptyArrays: true
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "stockliveprices",
+                            localField: "stock_info.instrument_token",
+                            foreignField: "token",
+                            as: "live_price_info"
+                        }
+                    },
+                    {
+                        $unwind: {
+                            path: "$live_price_info",
+                            preserveNullAndEmptyArrays: true
+                        }
+                    },
+                    {
+                        $addFields: {
+                            livePrice: {
+                                $ifNull: ["$live_price_info.lp", "$price"] // Live price or fallback to price
+                            }
+                        }
+                    }
+                ],
+                as: "stock_details"
+            }
+        },
+        // Lookup for version 1 stocks (for starting price)
+        {
+            $lookup: {
+                from: "basketstocks",
+                let: { basketId: { $toString: "$_id" } },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$basket_id", "$$basketId"] },
+                                    { $eq: ["$version", 1] },
+                                    { $eq: ["$status", 1] },
+                                    { $eq: ["$del", false] }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                as: "version1_stocks"
+            }
+        },
+        {
+            $project: {
+                basket_id: "$_id",
+                title: 1,
+                created_at: 1,
+                stock_details: {
+                    $filter: {
+                        input: "$stock_details",
+                        as: "stock",
+                        cond: { $eq: ["$$stock.del", false] }
+                    }
+                },
+                version1_stocks: 1
+            }
+        }
+    ]);
+
+    const currentDate = new Date();
+
+    for (const basket of result) {
+        const { stock_details, version1_stocks, created_at, _id, remaining_amount  } = basket;
+
+        // Calculate starting price
+        // const startingPrice = stock_details.reduce((sum, stock) => {
+        //     return sum + (stock.price * stock.quantity);
+        // }, 0);
+
+        const startingPrice = version1_stocks.reduce((sum, stock) => {
+            return sum + (stock.price * stock.quantity);
+        }, 0);
+
+        // Calculate current price
+        let currentPrice = stock_details.reduce((sum, stock) => {
+            return sum + (stock.livePrice * stock.quantity);
+        }, 0);
+      
+        currentPrice = currentPrice + (remaining_amount || 0);  // If remaining_amount is undefined, treat it as 0
+        // Calculate years difference
+        const createdAt = new Date(created_at);
+        const years = (currentDate - createdAt) / (1000 * 60 * 60 * 24 * 365.25); // Approximate years
+
+        // Calculate CAGR
+        let cagr = 0;
+        if (years >= 1 && startingPrice > 0) {
+            cagr = ((Math.pow(currentPrice / startingPrice, 1 / years) - 1) * 100).toFixed(2);
+        }
+        else
+        {
+            if (startingPrice > 0) {
+                    cagr = (((currentPrice - startingPrice) / startingPrice) * 100).toFixed(2);
+                }
+                else 
+                {
+                    cagr = 0;
+                }
+        }
+
+        // Update the basket with the calculated CAGR
+        await Basket_Modal.updateOne(
+            { _id },
+            { $set: { cagr_live: cagr ? parseFloat(cagr) : 0 } }
+        );
+    }
+    
+    return res.send("Done");
+}
+
+
+
+
+async function calculateCAGRForBasketsClient(req, res) {
+ 
+
+    const result = await Basket_Modal.aggregate([
+        {
+            $match: {
+                del: false,
+            }
+        },
+        // Lookup for latest stocks
+        {
+            $lookup: {
+                from: "basketstocks",
+                let: { basketId: { $toString: "$_id" } },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$basket_id", "$$basketId"] },
+                                    { $eq: ["$status", 1] }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: "$basket_id",
+                            maxVersion: { $max: "$version" }
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "basketstocks",
+                            let: { basketId: "$_id", maxVer: "$maxVersion" },
+                            pipeline: [
+                                {
+                                    $match: {
+                                        $expr: {
+                                            $and: [
+                                                { $eq: ["$basket_id", "$$basketId"] },
+                                                { $eq: ["$version", "$$maxVer"] },
+                                                { $eq: ["$status", 1] }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ],
+                            as: "latestStocks"
+                        }
+                    },
+                    { $unwind: "$latestStocks" },
+                    { $replaceRoot: { newRoot: "$latestStocks" } },
+                    {
+                        $lookup: {
+                            from: "stocks",
+                            localField: "tradesymbol",
+                            foreignField: "tradesymbol",
+                            as: "stock_info"
+                        }
+                    },
+                    {
+                        $unwind: {
+                            path: "$stock_info",
+                            preserveNullAndEmptyArrays: true
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "stockliveprices",
+                            localField: "stock_info.instrument_token",
+                            foreignField: "token",
+                            as: "live_price_info"
+                        }
+                    },
+                    {
+                        $unwind: {
+                            path: "$live_price_info",
+                            preserveNullAndEmptyArrays: true
+                        }
+                    },
+                    {
+                        $addFields: {
+                            livePrice: {
+                                $ifNull: ["$live_price_info.lp", "$price"] // Live price or fallback to price
+                            }
+                        }
+                    }
+                ],
+                as: "stock_details"
+            }
+        },
+        // Lookup for version 1 stocks (for starting price)
+        {
+            $lookup: {
+                from: "basketstocks",
+                let: { basketId: { $toString: "$_id" } },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$basket_id", "$$basketId"] },
+                                    { $eq: ["$version", 1] },
+                                    { $eq: ["$status", 1] },
+                                    { $eq: ["$del", false] }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                as: "version1_stocks"
+            }
+        },
+        {
+            $project: {
+                basket_id: "$_id",
+                title: 1,
+                created_at: 1,
+                stock_details: {
+                    $filter: {
+                        input: "$stock_details",
+                        as: "stock",
+                        cond: { $eq: ["$$stock.del", false] }
+                    }
+                },
+                version1_stocks: 1
+            }
+        }
+    ]);
+
+
+    const currentDate = new Date();
+
+    for (const basket of result) {
+        const { stock_details,version1_stocks, created_at, _id, remaining_amount } = basket;
+
+        // Calculate starting price
+        const startingPrice = version1_stocks.reduce((sum, stock) => {
+            return sum + (stock.price * stock.quantity);
+        }, 0);
+
+        // Calculate current price
+        let currentPrice = stock_details.reduce((sum, stock) => {
+            return sum + (stock.livePrice * stock.quantity);
+        }, 0);
+        currentPrice = currentPrice + (remaining_amount || 0);  // If remaining_amount is undefined, treat it as 0
+
+        // Calculate years difference
+        const createdAt = new Date(created_at);
+        const years = (currentDate - createdAt) / (1000 * 60 * 60 * 24 * 365.25); // Approximate years
+        let stockSymbol = stock_details.length > 0 ? stock_details[0].tradesymbol : null;
+        const stocksym = await Stock_Modal.findOne({ tradesymbol: stockSymbol });
+        // Calculate CAGR
+        let cagr = 0;
+        if (years >= 1 && startingPrice > 0) {
+
+            // const { price: currentPrice, prev_close } = await getCurrentPrice(stocksym.symbol);
+            cagr = ((Math.pow(currentPrice / startingPrice, 1 / years) - 1) * 100).toFixed(2);
+        }
+        else
+        {
+            if (startingPrice > 0) {
+                // const { price: currentPrice, prev_close } = await getCurrentPrice(stocksym.symbol);  
+                    cagr = (((currentPrice - startingPrice) / startingPrice) * 100).toFixed(2);
+
+                }
+                else 
+                {
+                    cagr = 0;
+                }
+        }
+
+        // Update the basket with the calculated CAGR
+        await Basket_Modal.updateOne(
+            { _id },
+            { $set: { cagr_live: cagr ? parseFloat(cagr) : 0 } }
+        );
+    }
+    
+    return res.send("Done");
+}
+
+
+
+////////////////////////// auto respose for order //////////////////////////
+async function handleExpiredToken(client, order, error) {
+    console.error(`Error processing order ${order.orderid} for client ${client._id}:`, error.message);
+
+    // order.status = -1;
+    // await order.save();
+
+}
+
+// Fetch order for Alice Blue broker
+async function fetchAliceBlueOrder(client, order) {
+    const authToken = client.authtoken;
+    const userId = client.apikey;
+
+    const data = JSON.stringify({ "nestOrderNumber": order.orderid });
+
+    const config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://ant.aliceblueonline.com/rest/AliceBlueAPIService/api/placeOrder/orderHistory',
+        headers: {
+            'Authorization': `Bearer ${userId} ${authToken}`,
+            'Content-Type': 'application/json',
+        },
+        data: data
+    };
+
+    return await axios(config);
+}
+
+async function fetchAngelOneOrder(client, order) {
+    const authToken = client.authtoken;
+    const userId = client.apikey;
+
+    const config = {
+        method: 'get',
+        url: `https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/details/${order.uniqueorderid}`,
+        headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-UserType': 'USER',
+            'X-SourceID': 'WEB',
+            'X-ClientLocalIP': 'CLIENT_LOCAL_IP',
+            'X-ClientPublicIP': 'CLIENT_PUBLIC_IP',
+            'X-MACAddress': 'MAC_ADDRESS',
+            'X-PrivateKey': userId,
+        },
+    };
+
+    return await axios(config);
+}
+
+async function fetchKotakOrder(client, order) {
+    const authToken = client.authtoken;
+    const userId = client.apikey;
+
+    const data_orderHistory = qs.stringify({
+        jData: '{"nOrdNo":"' + order.orderid + '"}',
+    });
+    const url = `https://gw-napi.kotaksecurities.com/Orders/2.0/quick/order/history?sId=${client.hserverid}`;
+
+    const config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: url,
+        headers: {
+            accept: "application/json",
+            Sid: client.kotakneo_sid,
+            Auth: client.authtoken,
+            "neo-fin-key": "neotradeapi",
+            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization: "Bearer " + client.oneTimeToken,
+        },
+        data: data_orderHistory,
+    };
+
+    return await axios(config);
+}
+
+async function fetchMarketHubOrder(client, order) {
+    const authToken = client.authtoken;
+
+    const data = JSON.stringify({ "orderId": order.orderid });
+
+    const config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://fund.markethubonline.com/middleware/api/v2/OrderHistory',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`,
+        },
+        data: data
+    };
+
+    return await axios(config);
+}
+
+
+async function fetchZerodhaOrder(client, order) {
+    const authToken = client.authtoken;
+    const apikey = client.apikey;
+
+   
+    var config = {
+        method: 'get',
+        url: 'https://api.kite.trade/orders/' + order.orderid,
+        headers: {
+            'Authorization': 'token ' + apikey + ':' + authToken
+        }
+    };
+
+
+    return await axios(config);
+}
+
+
+
+async function fetchUpstoxOrder(client, order) {
+    const authToken = client.authtoken;
+    const apikey = client.apikey;
+
+   
+
+
+    var config = {
+        method: 'get',
+        url: 'https://api-v2.upstox.com/order/details',
+        headers: {
+           Authorization: `Bearer ${authToken}`,
+        },
+        params: {
+           order_id: order.orderid
+       }
+    };
+
+    return await axios(config);
+}
+
+
+
+
+async function fetchDhanOrder(client, order) {
+    const authToken = client.authtoken;
+    const apikey = client.apikey;
+
+   
+    var config = {
+        method: 'get',
+        url: 'https://api.dhan.co/orders/' + order.orderid,
+        headers: {
+            'access-token': authToken,
+            'Content-Type': 'application/json'
+        },
+    };
+
+   
+
+    return await axios(config);
+}
+
+
+
+async function processPendingOrders(req, res) {
+    const summary = { processed: 0, failed: 0, skipped: 0, errors: [] };
+
+    try {
+        // Set start and end of the current day
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+
+        // Fetch orders for the day with status 0
+        const orders = await Order_Modal.find({
+            status: 0,
+            createdAt: { $gte: startOfDay, $lt: endOfDay }
+        });
+
+        if (!orders.length) {
+            return res.json({ 
+                status: true, 
+                message: "No pending orders to process.",
+                summary: summary
+            });
+        }
+
+        // Process each order
+        await Promise.all(orders.map(async (order) => {
+            try {
+                const client = await Clients_Modal.findById(order.clientid);
+
+                if (!client || client.tradingstatus === 0) {
+                    summary.skipped += 1;
+                    return; // Skip this order
+                }
+
+                let response;
+
+                switch (order.borkerid) {
+                    case 2:
+                        response = await fetchAliceBlueOrder(client, order);
+                        break;
+                    case 1:
+                        response = await fetchAngelOneOrder(client, order);
+                        break;
+                    case 3:
+                        response = await fetchKotakOrder(client, order);
+                        break;
+                    case 4:
+                        response = await fetchMarketHubOrder(client, order);
+                        break;
+                    case 5:
+                        response = await fetchZerodhaOrder(client, order);
+                        break;
+                    case 6:
+                        response = await fetchUpstoxOrder(client, order);
+                        break;
+                    case 7:
+                        response = await fetchDhanOrder(client, order);
+                        break;
+                    default:
+                        summary.skipped += 1;
+                        return; // Skip this order
+                }
+
+                // Update the order data and status
+                order.data = response.data;
+                order.status = 1;
+                await order.save();
+
+                summary.processed += 1;
+            } catch (error) {
+                if (error.response && error.response.status === 401) {
+                    // Handle expired token
+                    await handleExpiredToken(client, order, error);
+                } else {
+                    console.error(`Error processing order ${order.orderid}:`, error.message);
+                    summary.errors.push({ orderid: order.orderid, error: error.message });
+                }
+                summary.failed += 1;
+            }
+        }));
+
+        // Send summary response after all processing is complete
+        return res.json({ 
+            status: true, 
+            message: "Processing completed.",
+            summary: summary 
+        });
+
+    } catch (error) {
+        console.error("Error in processPendingOrders:", error.message);
+        return res.status(500).json({ 
+            status: false, 
+            message: "An error occurred while processing orders.", 
+            error: error.message 
+        });
+    }
+}
+
+
+
+
+async function processPendingOrdersBasket(req, res) {
+    const summary = { processed: 0, failed: 0, skipped: 0, errors: [] };
+
+    try {
+        // Set start and end of the current day
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+
+        // Fetch orders for the day with status 0
+        const orders = await Basketstock_Modal.find({
+            status: 0,
+            createdAt: { $gte: startOfDay, $lt: endOfDay }
+        });
+
+        if (!orders.length) {
+            return res.json({ 
+                status: true, 
+                message: "No pending orders to process.",
+                summary: summary
+            });
+        }
+
+        // Process each order
+        await Promise.all(orders.map(async (order) => {
+            try {
+                const client = await Clients_Modal.findById(order.clientid);
+
+                if (!client || client.tradingstatus === 0) {
+                    summary.skipped += 1;
+                    return; // Skip this order
+                }
+
+                let response;
+
+                switch (order.borkerid) {
+                    case 2:
+                        response = await fetchAliceBlueOrder(client, order);
+                        break;
+                    case 1:
+                        response = await fetchAngelOneOrder(client, order);
+                        break;
+                    case 3:
+                        response = await fetchKotakOrder(client, order);
+                        break;
+                    case 4:
+                        response = await fetchMarketHubOrder(client, order);
+                        break;
+                    case 5:
+                        response = await fetchZerodhaOrder(client, order);
+                        break;
+                    case 6:
+                        response = await fetchUpstoxOrder(client, order);
+                        break;
+                    case 7:
+                        response = await fetchDhanOrder(client, order);
+                        break;
+                    default:
+                        summary.skipped += 1;
+                        return; // Skip this order
+                }
+
+                // Update the order data and status
+                order.data = response.data;
+                order.status = 1;
+                await order.save();
+
+                summary.processed += 1;
+            } catch (error) {
+                if (error.response && error.response.status === 401) {
+                    // Handle expired token
+                    await handleExpiredToken(client, order, error);
+                } else {
+                    console.error(`Error processing order ${order.orderid}:`, error.message);
+                    summary.errors.push({ orderid: order.orderid, error: error.message });
+                }
+                summary.failed += 1;
+            }
+        }));
+
+        // Send summary response after all processing is complete
+        return res.json({ 
+            status: true, 
+            message: "Processing completed.",
+            summary: summary 
+        });
+
+    } catch (error) {
+        console.error("Error in processPendingOrders:", error.message);
+        return res.status(500).json({ 
+            status: false, 
+            message: "An error occurred while processing orders.", 
+            error: error.message 
+        });
+    }
+}
+
+
+// Fetch current price from the API with error handling
+async function getCurrentPrice(tradesymbol) {
+    try {
+    
+        // Make API request
+        const response = await axios.get('http://stockboxapis.cmots.com/api/BseNseDelayedData/NSE');
+
+        // Access the stock data array from the response
+        const stockData = response.data.data; // Assuming data is under 'data'
+   
+        if (Array.isArray(stockData)) {
+            // Find the stock with the matching SYMBOL
+            const stock = stockData.find(item => item.SYMBOL === tradesymbol);
+            
+
+            return stock 
+                ? { price: stock.price, prev_close: stock.prev_close, co_code: stock.co_code } 
+                : { price: 0, prev_close: 0, co_code: null };
+        } else {
+            return { price: 0, prev_close: 0, co_code: null }; // Return default values if data format is unexpected
+        }
+
+    } catch (error) {
+        return { price: 0, prev_close: 0, co_code: null }; // Return default values in case of an error
+    }
+}
+
+async function addBasketgraphdata(req, res) {
+    try {
+        // Step 1: Get the latest version for each basket_id
+        const latestVersions = await Basketstock_Modal.aggregate([
+            {
+                $group: {
+                    _id: "$basket_id",
+                    latestVersion: { $max: "$version" }
+                }
+            }
+        ]);
+
+        if (latestVersions.length === 0) {
+            return res.json({ status: false, message: "No basket versions found", data: [] });
+        }
+
+        // Step 2: Build a filter query for all latest versions with status = 1
+        const versionFilters = latestVersions.map((basket) => ({
+            basket_id: basket._id,
+            version: basket.latestVersion,
+            status: 1
+        }));
+
+        // Step 3: Fetch all stocks matching the latest version and status = 1
+        const stocks = await Basketstock_Modal.find({ $or: versionFilters }).lean();
+
+        // Step 4: Calculate total profit/loss and profit/loss percentage for each basket
+        const basketProfitLossMap = {};
+        const basketProfitLossPercentageMap = {};
+        const basketStockTypes = {};
+
+
+        for (const stock of stocks) {
+
+            const { basket_id, price, quantity, tradesymbol, name, type } = stock;
+
+            const basket = await Basket_Modal.findById(basket_id);
+            if (!basket) {
+                console.log(`Basket not found for ID: ${basket_id}, skipping...`);
+                continue; // ✅ Continue loop instead of returning
+            }
+            // Fetch current price and prev_close
+            const { price: currentPrice, prev_close, co_code  } = await getCurrentPrice(name);
+            // Calculate profit/loss
+            const profitLoss = (currentPrice - prev_close) * quantity;
+
+            // Calculate profit/loss percentage (if prev_close is not 0)
+            let profitLossPercentage = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+
+            // Aggregate profit/loss and percentage by basket_id
+            if (!basketProfitLossMap[basket_id]) {
+                basketProfitLossMap[basket_id] = 0;
+                basketProfitLossPercentageMap[basket_id] = 0;
+                basketStockTypes[basket_id] = new Set(); // Initialize stock types set
+            }
+            basketProfitLossMap[basket_id] += profitLoss;
+            basketProfitLossPercentageMap[basket_id] = profitLossPercentage; // Storing latest percentage
+            basketStockTypes[basket_id].add(type); // Add stock type to set
+        }
+
+
+
+        let profitLossPercentageMapApi = {}; // ✅ Store API-based percentages for each basket
+        let profitLossSymbolMapApi = {}; // ✅ Correctly placed outside the loop
+for (const [basket_id, stockTypeSet] of Object.entries(basketStockTypes)) {
+
+
+    const basket = await Basket_Modal.findById(basket_id).lean();
+    
+    if (!basket) {
+        console.log(`Skipping missing basket: ${basket_id}`);
+        continue;
+    }
+
+
+    const typesArray = Array.from(stockTypeSet);
+
+    let profitLossPercentageapi = 0; // Initialize per basket
+    let symbolgraph = "";
+
+    if(basket.stockname) {
+
+        symbolgraph = basket.stockname; 
+        const { price: currentPrice, prev_close } = await getCurrentPrice(basket.stockname);
+        profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+
+    }
+    else {
+
+
+    if (typesArray.includes("Small Cap") && typesArray.includes("Mid Cap") && typesArray.includes("Large Cap")) {
+        symbolgraph = "NFT500MULT"; 
+        const { price: currentPrice, prev_close } = await getCurrentPrice('NFT500MULT');
+        profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+
+    } else if (typesArray.includes("Small Cap") && typesArray.includes("Mid Cap")) {
+        symbolgraph = "MIDSMAL400"; 
+        const { price: currentPrice, prev_close } = await getCurrentPrice('MIDSMAL400');
+        profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+
+    } else if (typesArray.includes("Mid Cap") && typesArray.includes("Large Cap")) {
+        symbolgraph = "LMIDCAP250"; 
+        const { price: currentPrice, prev_close } = await getCurrentPrice('LMIDCAP250');
+        profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+
+    } else if (typesArray.includes("Small Cap")) {
+        symbolgraph = "CNXSMALLCA"; 
+        const { price: currentPrice, prev_close } = await getCurrentPrice('CNXSMALLCA');
+        profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+   
+    } else if (typesArray.includes("Large Cap")) {
+        symbolgraph = "CNX100"; 
+        const { price: currentPrice, prev_close } = await getCurrentPrice('CNX100');
+        profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+   
+    } else {
+        symbolgraph = "NMIDCAP150"; 
+        const { price: currentPrice, prev_close } = await getCurrentPrice('NMIDCAP150');
+        profitLossPercentageapi = prev_close !== 0 ? ((currentPrice - prev_close) / prev_close) * 100 : 0;
+   
+    }
+
+}
+
+    // ✅ Store API-based profit loss percentage per basket_id
+    profitLossPercentageMapApi[basket_id] = profitLossPercentageapi;
+    profitLossSymbolMapApi[basket_id] = symbolgraph; 
+}
+
+
+        // Step 5: Insert profit/loss and percentage only if today's record doesn't exist
+        const basketProfitLoss = [];
+
+        for (const [basket_id, totalProfitLoss] of Object.entries(basketProfitLossMap)) {
+            basketProfitLoss.push({
+                basket_id: basket_id,
+                profitloss: totalProfitLoss.toFixed(2),
+                profitlosspercentage: basketProfitLossPercentageMap[basket_id].toFixed(2),
+                apiprofitloss: profitLossPercentageMapApi[basket_id]?.toFixed(2) || "0.00", 
+                stockname: profitLossSymbolMapApi[basket_id] || "UNKNOWN", 
+                created_at: new Date(),
+                updated_at: new Date()
+            });
+        }
+
+        // Insert new records if any
+        if (basketProfitLoss.length > 0) {
+            await Basketghaphdata_Modal.insertMany(basketProfitLoss);
+        }
+
+        return res.json({
+            status: true,
+            message: "Profit/Loss inserted successfully for baskets without today's record",
+            data: basketProfitLoss
+        });
+
+    } catch (error) {
+        return res.json({ status: false, message: "Server error", data: [] });
+    }
+}
+
+
+async function addBasketVolatilityData(req, res) {
+    try {
+        // Step 1: Get the latest version for each basket_id
+        const latestVersions = await Basketstock_Modal.aggregate([
+            {
+                $group: {
+                    _id: "$basket_id",
+                    latestVersion: { $max: "$version" }
+                }
+            }
+        ]);
+
+        // Step 2: Build a filter query for all latest versions with status = 1
+        const versionFilters = latestVersions.map((basket) => ({
+            basket_id: basket._id,
+            version: basket.latestVersion,
+            status: 1
+        }));
+
+        // Step 3: Fetch all stocks matching the latest version and status = 1
+        const stocks = await Basketstock_Modal.find({ $or: versionFilters }).lean();
+
+        // Step 4: Calculate total portfolio value and weighted beta for each basket
+        const basketVolatilityMap = {};
+
+        for (const stock of stocks) {
+            const { basket_id, quantity, name } = stock;
+
+            // Fetch current closing price (prev_close will be considered as the closing price)
+            const { price: currentPrice, prev_close, co_code  } = await getCurrentPrice(name);
+
+
+            const beta = await getBetaByCoCode(co_code);
+
+            if (beta === null) {
+                continue; // Skip if beta is not available
+            }
+            // Calculate total stock value
+            const stockValue = quantity * prev_close;
+
+            // Store stock values for each basket
+            if (!basketVolatilityMap[basket_id]) {
+                basketVolatilityMap[basket_id] = {
+                    totalPortfolioValue: 0,
+                    weightedBetaSum: 0
+                };
+            }
+
+            basketVolatilityMap[basket_id].totalPortfolioValue += stockValue;
+            basketVolatilityMap[basket_id].weightedBetaSum += (beta * stockValue);
+        }
+
+
+        // Step 5: Calculate portfolio beta and determine volatility level
+        const basketVolatilityData = [];
+
+        for (const [basket_id, data] of Object.entries(basketVolatilityMap)) {
+            const { totalPortfolioValue, weightedBetaSum } = data;
+
+            // Calculate Portfolio Beta
+            const portfolioBeta = totalPortfolioValue !== 0 ? weightedBetaSum / totalPortfolioValue : 0;
+
+
+            // Determine Portfolio Volatility Level
+            let volatilityLevel = "Low";
+            if (portfolioBeta > 1.30) {
+                volatilityLevel = "High";
+            } else if (portfolioBeta > 0.75) {
+                volatilityLevel = "Medium";
+            }
+
+            basketVolatilityData.push({
+                basket_id: basket_id,
+                portfolio_beta: portfolioBeta.toFixed(4),
+                volatility_level: volatilityLevel,
+                created_at: new Date(),
+                updated_at: new Date()
+            });
+
+            await Basket_Modal.updateOne(
+                { _id: basket_id },
+                { $set: { type: volatilityLevel } }
+            );
+        
+    
+
+        }
+
+      
+        if (res) {
+            return res.json({ status: true, message: "Portfolio Volatility inserted successfully", data: basketVolatilityData });
+        }
+
+        return { success: true, data: basketVolatilityData };
+
+    } catch (error) {
+
+        if (res) {
+            return res.status(500).json({ status: false, message: "Server error", error: error.message });
+        }
+
+        return { success: false, error: error.message };
+    }
+}
+
+
+
+async function getBetaByCoCode(co_code) {
+    try {
+        const apiUrl = `http://stockboxapis.cmots.com/api/BetaStockWise/NSE/-/${co_code}`;
+        const response = await axios.get(apiUrl);
+
+        if (response.data.success && Array.isArray(response.data.data)) {
+            const stockInfo = response.data.data.find(item => item.co_code === co_code);
+            return stockInfo ? stockInfo.Beta : 0;
+        }
+        return 0;
+    } catch (error) {
+        console.error(`Error fetching Beta for co_code: ${co_code}`, error);
+        return 0;
+    }
+}
+
+async function getCurrentPrices(req, res) {
+    try {
+        const { tradesymbol } = req.params;
+
+        // Fetch stock data
+        const stockResponse = await axios.get('http://stockboxapis.cmots.com/api/BseNseDelayedData/NSE');
+        const stockData = stockResponse.data.data; // Assuming 'data' holds the stock array
+
+        let stock = null;
+        let mcaptype = null;
+
+        if (Array.isArray(stockData)) {
+            stock = stockData.find(item => item.SYMBOL === tradesymbol);
+        }
+
+        // Default basketVolatilityData
+        let basketVolatilityData = {
+            price: 0,
+            prev_close: 0,
+            co_code: null,
+            mcaptype: null
+        };
+
+        if (stock) {
+            const { price, prev_close, co_code } = stock;
+            basketVolatilityData = { price, prev_close, co_code, mcaptype: null };
+
+            if (co_code) {
+                // Fetch company master data
+                const companyMasterResponse = await axios.get("http://stockboxapis.cmots.com/api/CompanyMaster");
+                const companyMasterData = companyMasterResponse.data.data; // Assuming company data is in 'data'
+
+                if (Array.isArray(companyMasterData)) {
+                    // Find company by co_code
+                    const company = companyMasterData.find(item => item.co_code === co_code);
+                    if (company) {
+                        basketVolatilityData.mcaptype = company.mcaptype || null;
+                    }
+                }
+            }
+        }
+
+        return res.json({
+            status: true,
+            message: "Price get successfully",
+            data: basketVolatilityData
+        });
+
+    } catch (error) {
+        // console.error("Error fetching data:", error);
+        return res.status(500).json({
+            status: false,
+            message: "Internal Server Error",
+            data: null
+        });
+    }
+}
+
+
+
+async function updateAllStockPrices(req, res) {
+    try {
+
+        // 🔥 Fetch stock data from API
+        const stockResponse = await axios.get('http://stockboxapis.cmots.com/api/BseNseDelayedData/NSE');
+        const stockData = stockResponse.data?.data || [];
+
+        if (!Array.isArray(stockData)) {
+            return res.status(500).json({ status: false, message: "Invalid API response", data: null });
+        }
+
+        // 🔄 Process each stock
+        for (const stock of stockData) {
+            const { SYMBOL, price } = stock;
+            if (!SYMBOL || !price) continue; // Skip if missing data
+
+            // ✅ Find matching stock in `Stock_Modal`
+            const stocksym = await Stock_Modal.findOne({ symbol: SYMBOL,segment:"C" });
+
+            if (!stocksym) {
+                // console.log(`❌ No matching token found for SYMBOL: ${SYMBOL}`);
+                continue; // Skip if no matching stock
+            }
+
+            const token = stocksym.instrument_token; // Get the token
+
+            const curtime = new Date().getHours().toString().padStart(2, '0') + 
+                            new Date().getMinutes().toString().padStart(2, '0');
+
+            // ✅ Check if token exists in `stockliveprices`
+            const existingStock = await Liveprice_Modal.findOne({ token });
+
+            if (existingStock) {
+                // 🔄 Update existing stock price
+                await Liveprice_Modal.updateOne(
+                    { token },
+                    { $set: { lp: price, curtime, updatedAt: new Date() } }
+                );
+                // console.log(`🔄 Updated token ${token}: ${price}`);
+            } else {
+                // ➕ Insert new stock price record
+                await Liveprice_Modal.create({
+                    token,
+                    lp: price,
+                    exc: "NSE",
+                    curtime,
+                    ft: "1234566"
+                });
+                // console.log(`✅ Inserted new token ${token}: ${price} :${curtime}`);
+            }
+        }
+
+        // console.log("✅ Stock prices updated successfully!");
+        return res.json({ status: true, message: "Stock data updated successfully" });
+
+    } catch (error) {
+        // console.error("❌ Error updating stock prices:", error.message);
+        return res.status(500).json({ status: false, message: "Internal Server Error", data: null });
+    }
+}
+
+
+
+async function updateStockPricesFromSheet(req, res) {
+    try {
+        // 🔥 Fetch CSV from Google Sheets
+        const csvResponse = await axios.get(
+            'https://docs.google.com/spreadsheets/d/1wwSMDmZuxrDXJsmxSIELk1O01F0x1-0LEpY03iY1tWU/export?format=csv'
+        );
+
+        const csvData = csvResponse.data;
+
+        // 🔄 Parse CSV using PapaParse
+        const result = Papa.parse(csvData, {
+            header: true,
+            skipEmptyLines: true,
+        });
+
+        let stocks = result.data.map(row => ({
+            symbol: row.SYMBOL.replace(/^NSE:/, ''), // 🔥 Remove "NSE:"
+            price: parseFloat(row.CPrice)
+        })).filter(stock => stock.symbol && !isNaN(stock.price));
+
+        // ✅ Replace special SYMBOL names
+        stocks = stocks.map(stock => {
+            switch (stock.symbol) {
+                case "NIFTY_BANK":
+                    stock.symbol = "BANKNIFTY";
+                    break;
+                case "NIFTY_50":
+                    stock.symbol = "NIFTY";
+                    break;
+                case "NIFTY_FIN_SERVICE":
+                    stock.symbol = "FINNIFTY";
+                    break;
+            }
+            return stock;
+        });
+
+        if (stocks.length === 0) {
+            return res.status(400).json({ status: false, message: "No valid stock data found" });
+        }
+
+        const curtime = new Date().getHours().toString().padStart(2, '0') +
+            new Date().getMinutes().toString().padStart(2, '0');
+
+        // 🔄 Process each stock
+        for (const stock of stocks) {
+            const { symbol, price } = stock;
+
+            // ✅ Find matching stock in `Stock_Modal`
+            const stockRecord = await Stock_Modal.findOne({ symbol, segment: "C" });
+
+            if (!stockRecord) {
+                // console.log(`❌ No matching token found for SYMBOL: ${symbol}`);
+                continue;
+            }
+
+            const token = stockRecord.instrument_token;
+
+            // ✅ Check if token exists in `Liveprice_Modal`
+            const existingStock = await Liveprice_Modal.findOne({ token });
+
+            if (existingStock) {
+                // 🔄 Update existing stock price
+                await Liveprice_Modal.updateOne(
+                    { token },
+                    { $set: { lp: price, curtime, updatedAt: new Date() } }
+                );
+                // console.log(`🔄 Updated token ${token}: ${price}`);
+            } else {
+                // ➕ Insert new stock price record
+                await Liveprice_Modal.create({
+                    token,
+                    lp: price,
+                    exc: "NSE",
+                    curtime,
+                    ft: "1234566"
+                });
+                // console.log(`✅ Inserted new token ${token}: ${price}`);
+            }
+        }
+
+        // console.log("✅ Stock prices updated successfully!");
+        return res.json({ status: true, message: "Stock data updated successfully" });
+
+    } catch (error) {
+        // console.error("❌ Error updating stock prices:", error.message);
+        return res.status(500).json({ status: false, message: "Internal Server Error" });
+    }
+}
+
+
+
+  module.exports = { AddBulkStockCron,DeleteTokenAliceToken,TradingStatusOff,CheckExpireSignalCash,CheckExpireSignalFutureOption,PlanExpire,downloadKotakNeotoken,calculateCAGRForBaskets,processPendingOrders,downloadZerodhatoken,downloadAndExtractUpstox,addBasketgraphdata,addBasketVolatilityData,getCurrentPrices,processPendingOrdersBasket,calculateCAGRForBasketsClient,updateAllStockPrices,updateStockPricesFromSheet };
