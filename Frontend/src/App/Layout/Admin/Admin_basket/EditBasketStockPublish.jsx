@@ -188,15 +188,12 @@ const EditBasketStockPublish = () => {
 	});
 
 	useEffect(() => {
-		if (!formik.values.image) { // Check if image is null or empty
+		if (!formik.values.image) {
 			formik.setFieldError('image', 'Please Upload an image');
 		} else {
-			formik.setFieldError('image', ''); // Clear error if image is selected
+			formik.setFieldError('image', '');
 		}
-	}, [formik.values.image]); // This effect will run when image value changes
-
-
-
+	}, [formik.values.image]);
 
 
 
