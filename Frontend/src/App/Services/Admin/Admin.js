@@ -506,9 +506,24 @@ export async function DeleteSignal(_id, token) {
 
 
 // for signal close api 
+// export async function SignalCloseApi(data, token) {
+//     try {
+//         const res = await axios.post(`${Config.base_url}signal/closesignal`, data, {
+//             headers: {
+//                 data: {},
+//                 'Authorization': `${token}`,
+//             },
+//         });
+//         return res?.data;
+//     } catch (err) {
+//         return err.response?.data || err.message;
+//     }
+// }
+
+
 export async function SignalCloseApi(data, token) {
     try {
-        const res = await axios.post(`${Config.base_url}signal/closesignal`, data, {
+        const res = await axios.post(`${Config.base_url}signal/closesignalwithplan`, data, {
             headers: {
                 data: {},
                 'Authorization': `${token}`,
@@ -519,6 +534,9 @@ export async function SignalCloseApi(data, token) {
         return err.response?.data || err.message;
     }
 }
+
+
+
 
 // for signal close api 
 export async function SignalCloseApiWithPlan(data, token) {
