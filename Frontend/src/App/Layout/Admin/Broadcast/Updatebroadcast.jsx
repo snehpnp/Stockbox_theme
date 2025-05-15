@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SendBroadCast, GetService, UpdateCastmessage } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Updatebroadcast = () => {
     const location = useLocation();
@@ -43,44 +43,25 @@ const Updatebroadcast = () => {
         },
 
         onSubmit: async (values) => {
-            const req = {
+            const data = {
                 message: values.message,
                 id: item._id,
                 subject: values.subject,
-                service: values.service.join(','),
+                service: Array.isArray(values.service) ? values.service.join(',') : values.service,
                 type: values.type,
             };
 
             try {
-                const response = await UpdateCastmessage(req, token);
+                const response = await UpdateCastmessage(data, token);
+
+
                 if (response.status) {
-                    Swal.fire({
-                        title: "Update Successful!",
-                        text: response.message,
-                        icon: "success",
-                        timer: 1500,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        navigate("/admin/message");
-                    }, 1500);
+                    showCustomAlert("Success", response.message, navigate, "/admin/message")
                 } else {
-                    Swal.fire({
-                        title: "Alert",
-                        text: response.message,
-                        icon: "warning",
-                        timer: 1500,
-                        timerProgressBar: true,
-                    });
+                    showCustomAlert("error", response.message)
                 }
             } catch (error) {
-                Swal.fire({
-                    title: "Error",
-                    text: "An unexpected error occurred. Please try again later.",
-                    icon: "error",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
+                showCustomAlert("error", "An unexpected error occurred. Please try again later.")
             }
         },
     });
@@ -94,7 +75,7 @@ const Updatebroadcast = () => {
             col_size: 4,
             disable: false,
             options: [
-                // { value: "all", label: "All" },
+                { value: "All", label: "All" },
                 { value: "active", label: "Active" },
                 { value: "expired", label: "Expired" },
                 { value: "nonsubscribe", label: "Non Subscribe" },
@@ -108,12 +89,15 @@ const Updatebroadcast = () => {
             label_size: 6,
             col_size: 4,
             disable: false,
-            options: servicedata?.map((item) => ({
-                label: item?.title,
-                value: item?._id,
-            })),
+            options: [
+                { value: "All", label: "All" },
+                ...servicedata?.map((item) => ({
+                    value: item?._id,
+                    label: item?.title,
+                }))
+            ],
             star: true,
-            showWhen: (values) => values.type !== "nonsubscribe"
+            showWhen: (values) => !(values.type === "nonsubscribe" || values.type === "All")
         },
         {
             name: "subject",
@@ -148,7 +132,6 @@ const Updatebroadcast = () => {
                 <DynamicForm
                     fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
                     formik={formik}
-                    page_title="Update Broadcast"
                     btn_name="Update Broadcast"
                     btn_name1="Cancel"
                     sumit_btn={true}

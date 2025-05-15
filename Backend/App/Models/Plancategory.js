@@ -26,7 +26,12 @@ const PlancategorySchema = new Schema({
     del: {
         type: Boolean,
         default: false
-    }
+    },
+     freetrial_status: {
+       type: Number,
+        enum: [1, 0],
+        default: 0
+    },
 }, {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 });

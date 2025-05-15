@@ -63,7 +63,7 @@ const AllBasketHistory = () => {
         setSearchInput("")
         setStartDate("")
         setEndDate("")
-
+        setCurrentPage(1);
 
     }
 
@@ -122,6 +122,10 @@ const AllBasketHistory = () => {
         setIsLoading(false)
     };
 
+
+        useEffect(() => {
+            setCurrentPage(1); 
+        }, [searchInput]);
 
 
     useEffect(() => {
@@ -184,10 +188,18 @@ const AllBasketHistory = () => {
 
         {
             name: 'Plan Amount',
-            selector: row => <div> <IndianRupee />{row.plan_price}</div>,
+            selector: row => <div> <IndianRupee />{(row.plan_price).toFixed(2)}</div>,
             sortable: true,
             width: '200px',
         },
+        {
+            name: 'GST',
+            selector: row => row?.total || "-",
+            cell: row => <div>{row?.total} <span style={{ fontSize: "12px" }}>({row?.gst}% Gst Included)</span></div>,
+            sortable: true,
+            width: '250px',
+        },
+
 
         // {
         //     name: 'Coupon Id',
@@ -198,7 +210,7 @@ const AllBasketHistory = () => {
 
         {
             name: 'Total',
-            selector: row => <div> <IndianRupee />{row.total}</div>,
+            selector: row => <div> <IndianRupee />{(row.total).toFixed(2)}</div>,
             sortable: true,
             width: '200px',
         },
@@ -336,7 +348,7 @@ const AllBasketHistory = () => {
 
                         {isLoading ? (
                             <Loader />
-                        ) : (
+                        ) : clients.length > 0 ?(
                             <>
 
                                 <div className="table-responsive">
@@ -349,6 +361,10 @@ const AllBasketHistory = () => {
                                     />
                                 </div>
                             </>
+                        ):(
+                            <div className="text-center mt-5">
+                            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                          </div>
                         )}
                     </div>
                 </div>

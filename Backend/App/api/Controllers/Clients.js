@@ -17,7 +17,15 @@ const Order_Modal = db.Order;
 const Signal_Modal = db.Signal;
 const Adminnotification_Modal = db.Adminnotification;
 const Basketorder_Modal = db.Basketorder;
+const Smstemplate_Modal = db.Smstemplate;
+const Ticket_Modal = db.Ticket;
+const Ticketmessage_Modal = db.Ticketmessage;
+const Utmsource_Model = db.Utmsource; // adjust path as needed
 
+const { sendSMS } = require('../../Utils/smsHelper');
+const upload = require('../../Utils/multerHelper'); 
+const { generatePDF } = require('../../Utils/pdfGenerator');
+const { sendFCMNotification } = require('../../Controllers/Pushnotification'); // Adjust if necessary
 
 class Clients {
 
@@ -27,7 +35,7 @@ class Clients {
     try {
 
 
-      const { FullName, Email, PhoneNo, password, token } = req.body;
+      const { FullName, Email, PhoneNo, password, token, state, city, utmSource="" } = req.body;
 
       if (!FullName) {
         return res.status(400).json({ status: false, message: "Please enter fullname" });
@@ -53,6 +61,16 @@ class Clients {
           status: false,
           message: "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&#)"
         });
+      }
+
+
+      
+      if (!state) {
+        return res.status(400).json({ status: false, message: "Please select state" });
+      }
+
+      if (!city) {
+        return res.status(400).json({ status: false, message: "Please select city" });
       }
 
       if (token) {
@@ -102,6 +120,7 @@ class Clients {
       }
 
 
+ 
 
       let refer_tokenss = referCode + refer_token;
       const refer_tokens = token || crypto.randomBytes(10).toString('hex'); // Use the provided token or generate a new one
@@ -113,6 +132,9 @@ class Clients {
         refer_token: refer_tokenss,
         token: refer_tokens,
         refer_status: token ? (settings.refer_status || 0) : 0,
+        state,
+        city,
+        utmSource,
         del: 0,
       });
 
@@ -182,18 +204,36 @@ class Clients {
         await sendEmail(mailOptions);
       });
 
+      if(settings.smsprovider =='1')
+      {
+
+        const smstemplate = await Smstemplate_Modal.findOne({ sms_type: "otp" });
+        let message = smstemplate.sms_body.replace(/{#var#}/g, resetToken);
+        let templateId = smstemplate.templateid;
+        await sendSMS(result.PhoneNo,message,templateId);
 
 
+  return res.json({
+    status: true,
+    otp: resetToken,
+    otpmobile: otpmobile,
+    email: Email,
+    PhoneNo: PhoneNo,
+    message: "OTP has been sent to your mobile/email. Please check your mobile/email.",
+  });
 
+      }
+      else {
 
       return res.json({
         status: true,
         otp: resetToken,
         otpmobile: otpmobile,
         email: Email,
+        PhoneNo: PhoneNo,
         message: "OTP has been sent to your email. Please check your email.",
       });
-
+    }
     } catch (error) {
 
       return res.json({
@@ -245,7 +285,7 @@ class Clients {
 
   async loginClient(req, res) {
     try {
-      const { UserName, password, devicetoken } = req.body;  // Extract password here
+      const { UserName, password, devicetoken="" } = req.body;  // Extract password here
 
       if (!UserName) {
         return res.json({ status: false, message: "Please enter Email/phone number" });
@@ -295,11 +335,13 @@ class Clients {
           Email: client.Email,
           PhoneNo: client.PhoneNo,
           id: client.id,
+          createdAt: client.createdAt,
           token: token,
+          kyc_verification: client.kyc_verification,
           angleredirecturl: `https://${req.headers.host}/backend/angle/getaccesstoken?key=${client._id}`,
-          aliceredirecturl: `https://${req.headers.host}/backend/aliceblue/getaccesstoken?key=${client._id}`,
+          aliceredirecturl: `https://${req.headers.host}/backend/aliceblue/getaccesstoken`,
           zerodharedirecturl : `https://${req.headers.host}/backend/zerodha/getaccesstoken?key=${client.Email}`,
-          upstoxredirecturl : `https://${req.headers.host}/backend/upstox/getaccesstoken&state=${client.Email}`
+          upstoxredirecturl : `https://${req.headers.host}/backend/upstox/getaccesstoken`
         },
       });
     } catch (error) {
@@ -321,7 +363,8 @@ class Clients {
 
 
       // Find the user by email
-      const client = await Clients_Modal.findOne({ Email });
+      const client = await Clients_Modal.findOne({ Email, del: 0 });
+      // const client = await Clients_Modal.findOne({ Email });
       if (!client) {
         return res.status(404).json({
           status: false,
@@ -378,8 +421,27 @@ class Clients {
         };
         // Send email
         await sendEmail(mailOptions);
+       
       });
 
+
+        if(settings.smsprovider =='1')
+          {
+    
+            const smstemplate = await Smstemplate_Modal.findOne({ sms_type: "otp" });
+            let message = smstemplate.sms_body.replace(/{#var#}/g, resetToken);
+            let templateId = smstemplate.templateid;
+            await sendSMS(client.PhoneNo,message,templateId);
+    
+
+
+  return res.json({
+    status: true,
+    message: "OTP has been sent to your mobile/email. Please check your mobile/email.",
+  });
+
+      }
+      else {
 
 
 
@@ -387,9 +449,8 @@ class Clients {
         status: true,
         message: 'OTP has been sent to your email. Please check your email.',
       });
-
+    }
     } catch (error) {
-      console.log("Error in forgotPassword:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -417,24 +478,12 @@ class Clients {
         });
       }
 
-      // if (!confirmPassword) {
-      //   return res.status(400).json({
-      //     status: false,
-      //     message: "Please confirm your password",
-      //   });
-      // }
-
-      //if (newPassword !== confirmPassword) {
-      //  return res.status(400).json({
-      //    status: false,
-      //    message: "New password and confirm password do not match",
-      //  });
-      // }
-
+     
       // Find the user by reset token and check if the token is valid
       const client = await Clients_Modal.findOne({
         forgotPasswordToken: resetToken,
-        forgotPasswordTokenExpiry: { $gt: Date.now() } // Token should not be expired
+        forgotPasswordTokenExpiry: { $gt: Date.now() },
+        del:0
       });
 
 
@@ -462,7 +511,6 @@ class Clients {
       });
 
     } catch (error) {
-      console.log("Error in resetPassword:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -525,7 +573,6 @@ class Clients {
       });
 
     } catch (error) {
-      console.log("Error in changePassword:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -576,7 +623,6 @@ class Clients {
       });
 
     } catch (error) {
-      console.log("Error in updateProfile:", error);
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -596,6 +642,10 @@ class Clients {
         });
       }
 
+      const client = await Clients_Modal.findOne({
+        _id: id,
+      });
+
       const deletedClient = await Clients_Modal.findByIdAndUpdate(
         id,
         { del: 1 },
@@ -603,16 +653,15 @@ class Clients {
       );
 
       if (!deletedClient) {
-        console.error("No document found with this ID.");
         return res.status(404).json({
           status: false,
           message: "Client not found",
         });
       }
-      console.log("Updated Client:", deletedClient);
+
 
       const titles = 'Important Update';
-      const message = `You have successfully deleted your account.`;
+      const message = `${client.FullName} ,has successfully deleted the account.`;
       const resultnm = new Adminnotification_Modal({
         clientid: id,
         type: 'delete client',
@@ -631,7 +680,24 @@ class Clients {
         data: deletedClient,
       });
     } catch (error) {
-      console.log("Error deleting client:", error);
+      return res.status(500).json({
+        status: false,
+        message: "Server error",
+        error: error.message,
+      });
+    }
+  }
+
+  
+  async clientDelete(req, res) {
+    try {
+     
+
+      return res.json({
+        status: true,
+        message: "Client deleted successfully",
+      });
+    } catch (error) {
       return res.status(500).json({
         status: false,
         message: "Server error",
@@ -653,14 +719,15 @@ class Clients {
 
       // Find the user by reset token and check if the token is valid
       const client = await Clients_Modal.findOne({
-        Email: email
+        Email: email,
+        del:0
       });
 
 
       if (!client) {
         return res.status(400).json({
           status: false,
-          message: "Something went wrong",
+          message: "Client not found",
         });
       }
 
@@ -862,11 +929,30 @@ class Clients {
       const datetime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}${ampm}`;
 
       // PDF generation section
-      const templatePath = path.join(__dirname, '../../../template', 'kyc-agreement-template.html');
-      let htmlContent = fs.readFileSync(templatePath, 'utf8');
+      // const templatePath = path.join(__dirname, '../../../template', 'kyc-agreement-template.html');
+      // let htmlContent = fs.readFileSync(templatePath, 'utf8');
+
+      let htmlContent = settings.pdf_template || '';
+      let pdf_header = settings.pdf_header || '<div style="height:0;"></div>';
+      let pdf_footer = settings.pdf_footer || '<div style="height:0;"></div>';
+
+
+      let state;
+      let city;
+      
+      if(client.state)
+      {
+        state = client.state;
+      }
+      
+      if(client.city)
+        {
+          city = client.city;
+        }
+
 
       // Replace placeholders with actual values
-      htmlContent = htmlContent
+       htmlContent = htmlContent
         .replace(/{{name}}/g, name)
         .replace(/{{email}}/g, email)
         .replace(/{{phone}}/g, phone)
@@ -874,24 +960,51 @@ class Clients {
         .replace(/{{datetime}}/g, datetime)
         .replace(/{{company_name}}/g, company_name)
         .replace(/{{company_address}}/g, company_address)
+        .replace(/{{state}}/g, state)
+        .replace(/{{city}}/g, city)
         .replace(/{{aadhaarno}}/g, aadhaarno);
 
-      // const browser = await puppeteer.launch();
+
+        const pdfresponse = await generatePDF({
+          htmlContent,
+          fileName: `kyc-agreement-${phone}.pdf`,
+          folderPath: 'uploads/pdf',
+          baseBackPath: '../../../',  
+          headerTemplate: pdf_header,
+          footerTemplate: pdf_footer
+        });
+
+       
+ // If the PDF generation is not successful, return an error response
+ if (pdfresponse.status !== true) {
+  return res.status(400).json({
+    status: false,
+    message: 'Error in PDF generation',
+  });
+}
+
+
+
+
+
+      /*
       const browser = await puppeteer.launch({
+        headless: 'new',
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
       const page = await browser.newPage();
       await page.setContent(htmlContent);
 
-      // Define the path to save the PDF
       const pdfDir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads`, 'pdf');
       const pdfPath = path.join(pdfDir, `kyc-agreement-${phone}.pdf`);
 
-      // Generate PDF and save to the specified path
       await page.pdf({
         path: pdfPath,
         format: 'A4',
         printBackground: true,
+        displayHeaderFooter: true,  // Ensure footer is enabled
+        headerTemplate: pdf_header,
+        footerTemplate: pdf_footer,
         margin: {
           top: '20mm',
           right: '10mm',
@@ -901,7 +1014,7 @@ class Clients {
       });
 
       await browser.close();
-
+*/
       // Update client with new information
       client.panno = panno;
       client.aadhaarno = aadhaarno;
@@ -927,17 +1040,17 @@ class Clients {
 
       // Make the POST request to Digio API using Axios
       const response = await axios.post(
-        'https://api.digio.in/client/kyc/v2/request/with_template',
-        payload,
-        {
-          headers: {
-            'Authorization': `Basic ${authToken}`,
-            'Content-Type': 'application/json'
-          },
-          timeout: 300000,
-        }
-      );
-
+               'https://api.digio.in/client/kyc/v2/request/with_template',
+               payload,
+               {
+                 headers: {
+                   'Authorization': `Basic ${authToken}`,
+                   'Content-Type': 'application/json'
+                 },
+                 timeout: 300000,
+               }
+             );
+            
 
       const resData = response.data;
 
@@ -949,7 +1062,8 @@ class Clients {
         const data = {
           kid,
           customer_identifier,
-          gid
+          gid,
+          refid
         };
         return res.json(data); // Ensure only one response is sent
       } else {
@@ -957,9 +1071,12 @@ class Clients {
       }
 
     } catch (error) {
-      console.error('Error in submitting KYC:', error.message);
-      return res.status(500).json({ error: 'CURL request failed', details: error.message });
-    }
+      return res.status(500).json({
+        status: false,
+        error: 'Error during PDF generation or API request',
+        message: error?.response?.data?.message || error?.message || 'Unknown error',
+      });
+  }
 
   }
 
@@ -1007,23 +1124,27 @@ class Clients {
     });
 
     // Prepare the request body for signing
+    const noof_pdf_pages = settings.noof_pdf_pages; // Number of pages in the PDF
+
+    // Generate sign_coordinates dynamically
+    const signCoordinates = {};
+    signCoordinates[client.PhoneNo] = {}; // Initialize the phone number key
+    
+    for (let i = 1; i <= noof_pdf_pages; i++) {
+        signCoordinates[client.PhoneNo][i] = [{ llx: 290, lly: 170, urx: 520, ury: 70 }];
+    }
+    
     const requestBody = {
-      signers: [{
-        identifier: client.PhoneNo,
-        aadhaar_id: client.aadhaarno,
-        reason: 'Contract'
-      }],
-      sign_coordinates: {
-        [client.PhoneNo]: {
-          "1": [{ llx: 315, lly: 160, urx: 600, ury: 60 }],
-          "2": [{ llx: 315, lly: 160, urx: 600, ury: 60 }],
-          "3": [{ llx: 315, lly: 160, urx: 600, ury: 60 }]
-        }
-      },
-      expire_in_days: 10,
-      display_on_page: "custom",
-      notify_signers: true,
-      send_sign_link: true
+        signers: [{
+            identifier: client.PhoneNo,
+            aadhaar_id: client.aadhaarno,
+            reason: 'Contract'
+        }],
+        sign_coordinates: signCoordinates, // Use dynamically generated object
+        expire_in_days: 10,
+        display_on_page: "custom",
+        notify_signers: true,
+        send_sign_link: true
     };
 
     // Add the request payload to the form
@@ -1060,8 +1181,13 @@ class Clients {
       });
 
     } catch (error) {
-      console.error('Error uploading document:', error.response ? error.response.data : error.message);
-      return res.status(400).json({ error: 'Error uploading document to Digio' });
+
+      return res.status(500).json({
+        status: false,
+        error: 'Error during PDF generation or API request',
+        message: error?.response?.data?.message || error?.message || 'Unknown error',
+      });
+   
     }
   }
   async downloadDocument(req, res) {
@@ -1128,6 +1254,32 @@ class Clients {
 
       await resultnm.save();
 
+
+//////////////////// send mail sign document ///////////// 
+const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'kyc' });
+if (mailtemplate) {
+  let finalMailBody = mailtemplate.mail_body.replace(/{clientName}/g, client.FullName);
+       
+    const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+    const finalHtml = finalMailBody
+        .replace(/{{company_name}}/g, settings.website_title)
+        .replace(/{{body}}/g, finalMailBody)
+        .replace(/{{logo}}/g, logo);
+
+    const mailOptions = {
+        to: client.Email,
+        from: `${settings.from_name} <${settings.from_mail}>`,
+        subject: `${mailtemplate.mail_subject}`,
+        html: finalHtml,
+       attachments: [{ filename: fileName, path: tempPath }]
+    };
+
+    await sendEmail(mailOptions);
+}
+
+//////////////////// send mail sign document ///////////// 
+
+
       // Return the file name or path for further use
       res.json({
         status: true,
@@ -1135,10 +1287,10 @@ class Clients {
         message: 'Document downloaded and saved successfully'
       });
     } catch (error) {
-      console.error('Error downloading the document:', error);
+      
       return res.status(500).json({
         status: false,
-        message: 'Failed to download the document',
+        message: error?.response?.data?.message || error?.message || 'Unknown error',
         error: error.message || 'An unknown error occurred'
       });
     }
@@ -1150,28 +1302,28 @@ class Clients {
 
       // Validate input
       if (!clientId) {
-        return res.json({ status: false, message: 'Invalid client ID' });
+        return res.status(400).json({ status: false, message: 'Invalid client ID' });
       }
       if (amount <= 0) {
-        return res.json({ status: false, message: 'Enter Invalid Amount' });
+        return res.status(400).json({ status: false, message: 'Enter Invalid Amount' });
       }
 
       // Fetch the client record
       const client = await Clients_Modal.findOne({ _id: clientId, del: 0, ActiveStatus: 1 });
 
       if (!client) {
-        return res.json({ status: false, message: 'Client not found or inactive.' });
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
       }
 
       // Check if the requested amount is below the minimum withdrawal limit
       const minimumWithdrawal = 500;
       if (amount < minimumWithdrawal) {
-        return res.json({ status: false, message: `Minimum withdrawal amount is ${minimumWithdrawal}.` });
+        return res.status(400).json({ status: false, message: `Minimum withdrawal amount is ${minimumWithdrawal}.` });
       }
 
       // Check if the client has enough wamount
       if (client.wamount < amount) {
-        return res.json({ status: false, message: 'Insufficient funds in wallet.' });
+        return res.status(400).json({ status: false, message: 'Insufficient funds in wallet.' });
       }
 
       // Deduct the amount from client's wamount
@@ -1209,7 +1361,7 @@ class Clients {
       });
 
     } catch (error) {
-      console.error('Error processing payout request:', error);
+      // console.error('Error processing payout request:', error);
       return res.status(500).json({ status: false, message: 'Server error while processing payout request.' });
     }
   }
@@ -1259,7 +1411,7 @@ class Clients {
         // Check if user_id matched, show receiveramount
         if (entry.user_id.toString() === id.toString()) {
           // Fetch the client based on the token
-          const relatedClient = await Clients_Modal.findOne({ refer_token: entry.token });
+          const relatedClient = await Clients_Modal.findOne({ refer_token: entry.token, del: 0, ActiveStatus: 1 });
           clientName = relatedClient ? relatedClient.FullName : "";
 
           amountType = {
@@ -1332,7 +1484,7 @@ class Clients {
         url = `https://kite.zerodha.com/connect/login?v=3&api_key=${apikey}`;
       }
       else if (brokerid == 6) {
-        url = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=124c6797-b28d-47b1-91e5-6c26f7cb9a02&redirect_uri=https://${hosts}/backend/upstox/getaccesstoken&state=${client.Email}`;
+        url = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=${client.apikey}&redirect_uri=https://${hosts}/backend/upstox/getaccesstoken&state=${client.Email}`;
       }
       else {
         url = `https://ant.aliceblueonline.com/?appcode=${apikey}`;
@@ -1433,6 +1585,8 @@ class Clients {
         message: messages
       });
 
+      await resultnm.save();
+
       return res.json({
         status: true,
         message: "Data add successfully.",
@@ -1452,8 +1606,11 @@ class Clients {
     try {
 
       const { id } = req.params; // Extract client_id from query parameters
-      console.log("Client ID:", id); // Log the client_id for debugging
+      const client = await Clients_Modal.findOne({ _id: id, del: 0, ActiveStatus: 1 });
 
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+      }
       // Step 1: Fetch helpdesk entries for the specified client_id
       const result = await Helpdesk_Modal.find({ client_id: id });
 
@@ -1465,7 +1622,6 @@ class Clients {
       });
 
     } catch (error) {
-      console.error("Error fetching helpdesk:", error); // Log the error for debugging
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -1476,19 +1632,31 @@ class Clients {
     try {
 
       const { email } = req.body;
+
+      const client = await Clients_Modal.findOne({
+        Email: email,
+        del:0
+      });
+
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found' });
+      }
+
       const resetToken = Math.floor(100000 + Math.random() * 900000);
 
 
       const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'client_verification_mail' }); // Use findOne if you expect a single document
       if (!mailtemplate || !mailtemplate.mail_body) {
-        throw new Error('Mail template not found');
+     //   throw new Error('Mail template not found');
+        return res.status(404).json({ status: false, message: 'Mail template not found' });
       }
 
 
 
       const settings = await BasicSetting_Modal.findOne();
       if (!settings || !settings.smtp_status) {
-        throw new Error('SMTP settings are not configured or are disabled');
+        // throw new Error('SMTP settings are not configured or are disabled');
+        return res.status(404).json({ status: false, message: 'SMTP settings are not configured or are disabled' });
       }
 
 
@@ -1499,7 +1667,6 @@ class Clients {
 
       fs.readFile(templatePath, 'utf8', async (err, htmlTemplate) => {
         if (err) {
-          console.error('Error reading HTML template:', err);
           return;
         }
 
@@ -1525,6 +1692,26 @@ class Clients {
       });
 
 
+      if(settings.smsprovider =='1')
+        {
+         
+
+          const smstemplate = await Smstemplate_Modal.findOne({ sms_type: "otp" });
+          let message = smstemplate.sms_body.replace(/{#var#}/g, resetToken);
+          let templateId = smstemplate.templateid;
+          await sendSMS(client.PhoneNo,message,templateId);
+  
+    
+
+  return res.json({
+    status: true,
+    otp: resetToken,
+    email: email,
+    message: "OTP has been sent to your mobile/email. Please check your mobile/email.",
+  });
+
+      }
+else {
 
       return res.json({
         status: true,
@@ -1532,9 +1719,8 @@ class Clients {
         email: email,
         message: "OTP has been sent to your email. Please check your email.",
       });
-
+    }
     } catch (error) {
-      console.error("Error fetching :", error); // Log the error for debugging
       return res.json({ status: false, message: "Server error", data: [] });
     }
   }
@@ -1543,6 +1729,13 @@ class Clients {
     try {
 
       const { clientid } = req.body;
+
+
+      const client = await Clients_Modal.findOne({ _id: clientid, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+      }
 
       const todayStart = new Date();
       todayStart.setHours(0, 0, 0, 0);
@@ -1623,6 +1816,13 @@ class Clients {
 
       const { clientid, signalid } = req.body;
 
+      const client = await Clients_Modal.findOne({ _id: clientid, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+      }
+
+
       const result = await Order_Modal.aggregate([
         {
           $match: {
@@ -1681,6 +1881,13 @@ class Clients {
     try {
 
       const { clientid } = req.body;
+
+      const client = await Clients_Modal.findOne({ _id: clientid, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+      }
+
       const result = await Basketorder_Modal.find({ clientid: clientid });
 
       return res.json({
@@ -1694,6 +1901,429 @@ class Clients {
   }
 
 
+  async getClientSignalOrders(req, res) {
+    try {
+      const { clientid, signalid } = req.body;
+
+
+  
+      if (!clientid) {
+        return res.status(400).json({ status: false, message: "clientid is required", data: [] });
+      }
+  
+      const client = await Clients_Modal.findOne({ _id: clientid, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return res.status(404).json({ status: false, message: 'Client not found or inactive.' });
+      }
+
+      const matchStage = { clientid };
+      if (signalid) matchStage.signalid = signalid;
+  
+      const ordersWithSignals = await Order_Modal.aggregate([
+        { $match: matchStage },
+        {
+          $addFields: {
+            signalObjectId: { $toObjectId: "$signalid" }
+          }
+        },
+        {
+          $lookup: {
+            from: "signalsdatas",
+            localField: "signalObjectId",
+            foreignField: "_id",
+            as: "signalDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$signalDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $project: {
+            orderid: 1,
+            uniqueorderid: 1,
+            quantity: 1,
+            status: 1,
+            borkerid: 1,
+            ordertype: 1,
+            signalid: 1,
+            createdAt: 1,
+            signalDetails: 1,
+            data: {
+              $cond: {
+                if: {
+                  $and: [
+                    { $eq: [{ $type: "$data" }, "object"] }, // Check if "data" is an object
+                    { $eq: [{ $type: "$data.stat" }, "null"] }, // Check if "stat" is null
+                    { $eq: [{ $type: "$data.emsg" }, "null"] } // Check if "emsg" is null
+                  ]
+                },
+                then: null, // If all are null, set data to null
+                else: "$data" // Else, retain the original "data"
+              }
+            }
+          }
+        },
+        {
+          $sort: {
+            createdAt: -1
+          }
+        }
+      ]);
+  
+      return res.json({
+        status: true,
+        message: "Orders with signal data fetched successfully",
+        data: ordersWithSignals
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: false,
+        message: "Server error",
+        data: []
+      });
+    }
+  }
+
+
+  async getTickets(req, res) {
+    try {
+      const { page = 1, clientId } = req.body;
+      const limit = 10;
+      const skip = (parseInt(page) - 1) * limit;
+  
+  
+      if (!clientId) {
+        return res.json({
+          status: false,
+          message: "Unauthorized. Client not found.",
+        });
+      }
+
+      const client = await Clients_Modal.findOne({ _id: clientId, del: 0, ActiveStatus: 1 });
+
+      if (!client) {
+        return res.json({ status: false, message: 'Client not found or inactive.' });
+      }
+  
+      // Total count for pagination
+      const total = await Ticket_Modal.countDocuments({
+        client_id: clientId,
+        del: false
+      });
+  
+      // Fetch paginated tickets
+      let tickets = await Ticket_Modal.find({
+        client_id: clientId,
+        del: false
+      })
+        .sort({ created_at: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean();
+
+        const BASE_URL = `https://${req.headers.host}/uploads/ticket/`; // Construct the base URL
+
+        tickets = tickets.map(ticket => {
+          if (ticket.attachment) {
+            ticket.attachment = BASE_URL + ticket.attachment;
+          }
+          return ticket;
+        });
+  
+      return res.json({
+        status: true,
+        data: tickets,
+        pagination: {
+          total,
+          page: parseInt(page),
+          pages: Math.ceil(total / limit)
+        }
+      });
+  
+    } catch (error) {
+      return res.json({
+        status: false,
+        message: "Server Error",
+        error: error.message
+      });
+    }
+  }
+  
+  async  detailTicket(req, res) {
+    try {
+      const { ticketid } = req.params;
+  
+      if (!ticketid) {
+        return res.json({
+          status: false,
+          message: "ticketid is required",
+        });
+      }
+      let ticket = await Ticket_Modal.findOne({ _id: ticketid, del: false }).lean();
+
+      if (!ticket) {
+        return res.json({
+          status: false,
+          message: "Ticket not found",
+        });
+      }
+      
+      const BASE_URL = `https://${req.headers.host}/uploads/ticket/`;
+      
+      if (ticket.attachment) {
+        ticket.attachment = BASE_URL + ticket.attachment;
+      }
+      
+      // Fetch related messages
+      let messages = await Ticketmessage_Modal.find({ ticket_id: ticketid, del: false })
+        .sort({ created_at: -1 }) // oldest to newest
+        .lean();
+      
+      messages = messages.map(message => {
+        if (message.attachment) {
+          message.attachment = BASE_URL + message.attachment;
+        }
+        return message;
+      });
+    
+  
+      return res.json({
+        status: true,
+        data: {
+          ticket,
+          messages
+        }
+      });
+  
+    } catch (error) {
+      return res.json({
+        status: false,
+        message: "Server Error",
+        error: error.message
+      });
+    }
+  }
+
+    async rePly(req, res) {
+          try {
+              
+              // Handle the image upload
+              await new Promise((resolve, reject) => {
+                  upload('ticket').fields([{ name: 'attachment', maxCount: 1 }])(req, res, (err) => {
+                      if (err) {
+                          // console.log('File upload error:', err);
+                          return reject(err);
+                      }
+  
+                      // if (!req.files || !req.files['attachment']) {
+                         
+                      //     return res.status(400).json({ status: false, message: "No file uploaded." });
+                      //   }
+  
+  
+                      resolve();
+                  });
+              });
+      
+              // After the upload is successful, proceed with the rest of the logic
+              const { ticket_id, message, client_id } = req.body;
+  
+              if (!ticket_id) {
+                  return res.json({ status: false, message: "Ticket Id is required" });
+                }
+                if (!message) {
+                  return res.json({ status: false, message: "Message is required" });
+                }
+                if (!client_id) {
+                  return res.json({ status: false, message: "Client Id is required" });
+                }
+                const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+                if (!client) {
+                  return res.json({ status: false, message: 'Client not found or inactive.' });
+                }
+
+                const ticket = await Ticket_Modal.findOne({ _id: ticket_id, del: false });
+
+                if (!ticket) {
+                  return res.json({ status: false, message: 'Ticket not found' });
+                }
+      
+
+  
+              const attachment = req.files['attachment'] ? req.files['attachment'][0].filename : null;
+      
+              // Create a new News record
+              const result = new Ticketmessage_Modal({
+                  ticket_id: ticket_id,
+                  client_id: client_id,
+                  message: message,
+                  attachment: attachment,
+              });
+              
+              // Save the result to the database
+              await result.save();
+  
+
+
+
+  const adminnotificationTitle = "Important Update";
+      const adminnotificationBody = `${client.FullName} replied on ticket #${ticket.ticketnumber}`;
+      const newNotification  = new Adminnotification_Modal({
+        clientid: client._id,
+        segmentid: result._id,
+        type: 'help request',
+        title: adminnotificationTitle,
+        message: adminnotificationBody
+      });
+
+
+      await newNotification .save();
+
+
+
+  
+              return res.json({
+                  status: true,
+                  message: "reply successfully",
+              });
+      
+          } catch (error) {
+              return res.json({ status: false, message: "Server error", data: [] });
+          }
+      }
+  
+      
+      async addTicket(req, res) {
+        try {
+          // File upload
+          await new Promise((resolve, reject) => {
+            upload('ticket').fields([{ name: 'attachment', maxCount: 1 }])(req, res, (err) => {
+              if (err) return reject(err);
+              resolve();
+            });
+          });
+      
+          const { subject, message, client_id } = req.body;
+      
+          if (!subject || !message || !client_id) {
+            return res.json({
+              status: false,
+              message: "Subject, Message, and Client ID are required"
+            });
+          }
+          
+          const client = await Clients_Modal.findOne({ _id: client_id, del: 0, ActiveStatus: 1 });
+
+          if (!client) {
+            return res.json({ status: false, message: 'Client not found or inactive.' });
+          }
+
+
+         
+          const existingOpenTicket = await Ticket_Modal.findOne({
+            client_id,
+            status: { $in: [0, 1] },  // Match if status is 0 OR 1
+            del: false
+          });
+      
+          if (existingOpenTicket) {
+            return res.json({
+              status: false,
+              message: "An open ticket already exists. Please wait for a response before creating a new one.",
+              ticket_id: existingOpenTicket.ticketnumber
+            });
+          }
+      
+          const attachment = req.files && req.files['attachment']
+            ? req.files['attachment'][0].filename
+            : null;
+      
+          // Generate ticket number
+          const prefix = "TKT";
+          const timestamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 12);
+          const randomStr = Math.random().toString(36).substr(2, 5).toUpperCase();
+          const ticketnumber = `${prefix}-${timestamp}-${randomStr}`;
+      
+          // Create ticket
+          const newTicket = new Ticket_Modal({
+            client_id,
+            subject,
+            message,
+            attachment,
+            ticketnumber,
+            status: 0, // assuming 'false' means ticket is open
+          });
+      
+          await newTicket.save();
+
+
+  const adminnotificationTitle = "Important Update";
+      const adminnotificationBody = `New Help Request received from ${client.FullName}`;
+      const newNotification  = new Adminnotification_Modal({
+        clientid: client_id,
+        segmentid: newTicket._id,
+        type: 'help request',
+        title: adminnotificationTitle,
+        message: adminnotificationBody
+      });
+
+
+      await newNotification .save();
+
+
+
+      
+          return res.json({
+            status: true,
+            message: "Ticket added successfully",
+            data: newTicket
+          });
+      
+        } catch (error) {
+          return res.json({
+            status: false,
+            message: "Server error",
+            error: error.message
+          });
+        }
+      }
+      
+
+      async  handleUtmSource(req, res) {
+        try {
+          const { type } = req.body;
+      
+          if (!type) {
+            return res.status(400).json({ success: false, message: "Type is required" });
+          }
+      
+          // Try to find the existing record
+          const existing = await Utmsource_Model.findOne({ type: type.trim() });
+      
+          if (existing) {
+            // Increment count
+            existing.utmcount += 1;
+            await existing.save();
+            return res.status(200).json({ success: true, message: "UTM count updated", data: existing });
+          } else {
+            // Create new record
+            const newEntry = await Utmsource_Model.create({
+              type: type.trim(),
+              utmcount: 1
+            });
+            return res.status(201).json({ success: true, message: "New UTM source added", data: newEntry });
+          }
+        } catch (error) {
+          return res.status(500).json({ success: false, message: "Server Error" });
+        }
+      }
+
+  
 
 }
 module.exports = new Clients();

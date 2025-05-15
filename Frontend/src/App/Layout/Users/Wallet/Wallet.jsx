@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import { GetUserData, GetWithdrawRequest, GetReferEarning, GetPayoutDetail } from "../../../Services/UserService/User";
-import Swal from 'sweetalert2';
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import { fDateTime, fDateTimeH } from "../../../../Utils/Date_formate";
 
 
 
@@ -17,7 +17,7 @@ const Wallet = () => {
   const [activeTab, setActiveTab] = useState("earning");
   const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState({});
-  const [eraning, setEarning] = useState({});
+  const [earning, setEarning] = useState({});
   const [payout, setPayout] = useState({});
 
   const [request, setRequest] = useState({
@@ -43,9 +43,9 @@ const Wallet = () => {
   const getEarning = async () => {
     try {
       const response = await GetReferEarning(userid, token);
+
       if (response.status) {
         setEarning(response.data);
-        console.log(response.data)
       }
     } catch (error) {
       console.log("error", error);
@@ -77,7 +77,7 @@ const Wallet = () => {
       getPayoutdata();
     }
 
-  }, []);
+  }, [activeTab]);
 
 
 
@@ -86,31 +86,38 @@ const Wallet = () => {
       const data = { clientId: userid, amount: request.amount };
       const response = await GetWithdrawRequest(data, token);
 
-      if (response.status) {
-        Swal.fire({
-          title: 'Success!',
-          text: response.message || 'Your withdrawal request has been processed successfully.',
-          icon: 'success',
-          confirmButtonText: 'OK'
-        });
+      if (response.status !== 400) {
+
+        showCustomAlert("Success", response.data.message || 'Your withdrawal request has been processed successfully.')
         setRequest({ clientId: "", amount: "" });
       } else {
-        Swal.fire({
-          title: 'Error!',
-          text: response.message || 'There was an issue processing your withdrawal request.',
-          icon: 'error',
-          confirmButtonText: 'Try Again'
-        });
+        showCustomAlert("error", response.response.data.message || 'There was an issue processing your withdrawal request.')
+
       }
     } catch (error) {
-      Swal.fire({
-        title: 'Error!',
-        text: 'An unexpected error occurred. Please try again later.',
-        icon: 'error',
-        confirmButtonText: 'OK'
-      });
+      showCustomAlert("error", 'An unexpected error occurred. Please try again later.')
+
     }
   };
+
+
+  // const withdrawRequest = async () => {
+  //   try {
+  //     const data = { clientId: userid, amount: request.amount };
+  //     const response = await GetWithdrawRequest(data, token);
+
+  //     // yahan pahucha matlab status 2xx hi hai
+  //     if (response.status) {
+  //       console.log("response for ceck")
+  //       showCustomAlert("Success", response.message || 'Your withdrawal request has been processed successfully.');
+  //       setRequest({ clientId: "", amount: "" });
+  //     }
+  //   } catch (error) {
+  //     // error.response exist kare to uska message dikhao
+  //     const message = error?.response?.data?.message || 'There was an issue processing your withdrawal request.';
+  //     showCustomAlert("error", message);
+  //   }
+  // };
 
 
 
@@ -137,7 +144,7 @@ const Wallet = () => {
                 boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.1)",
               }}
             >
-              {data.FullName ? data.FullName.charAt(0).toUpperCase() : "U"}
+              {data?.FullName ? data?.FullName.charAt(0).toUpperCase() : "U"}
             </div>
             <div>
               <h5 className="mb-0">{data?.FullName}</h5>
@@ -196,19 +203,29 @@ const Wallet = () => {
                     <table className="table table-striped">
                       <thead className="table-light">
                         <tr>
-                          <th>clientName</th>
-                          <th>Recieve</th>
-                          <th>Recieve</th>
-                          <th>Sender</th>
-                          <th>Reciver Amount</th>
+                          <th>Name</th>
+                          <th>Earning Amount</th>
+                          <th>Status</th>
+                          <th>Date</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>₹ 0.00</td>
-                          <td>2021-10-07T12:11:00.000Z</td>
-                        </tr>
+                        {earning.length > 0 ? (
+                          earning.map((item, index) => (
+                            <tr key={index}>
+                              <td>{item.clientName || "-"}</td>
+                              <td>{item.amountType?.amount || "-"}</td>
+                              <td>{item.status ? "Completed" : "Pending"}</td>
+
+                              <td>{fDateTime(item.created_at)}</td>
+
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="5">No Data Found</td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   )}
@@ -217,17 +234,35 @@ const Wallet = () => {
                     <table className="table table-striped">
                       <thead className="table-light">
                         <tr>
-                          <th>Transaction ID</th>
-                          <th>Amount</th>
+                          <th>Price</th>
+                          <th>Transaction</th>
+                          <th>Status</th>
                           <th>Date</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>₹ 0.00</td>
-                          <td>2021-10-07T12:11:00.000Z</td>
-                        </tr>
+                        {payout.length > 0 ? (
+                          payout.map((item, index) => (
+
+                            <tr>
+                              <td>₹{item.amount}</td>
+                              <td>{item.transaction ? item.transaction : "-"}</td>
+                              <td>
+                                {item.status === 0
+                                  ? "Pending"
+                                  : item.status === 1
+                                    ? "Success"
+                                    : "Reject"}
+                              </td>
+
+                              <td>{fDateTime(item.created_at)}</td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="5">No Data Found</td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   )}

@@ -2,7 +2,7 @@ const router = require("express").Router()
 const cors = require('cors');
 
 
-const { getcount, getLicense, pastPerformance, pastPerformances, CloseSignal, PlanExipreList, CloseSignalWithFilter, PlanExipreListWithFilter, CompanyStatus, Notification, statusChangeNotifiction, totalClient, NotificationList,allStatusChangeNotifiction,pastPerformancewithtype,CloseSignalwithtype,referEarn } = require('../Controllers/Dashboard')
+const { getcount, getLicense, pastPerformance, pastPerformances, CloseSignal, PlanExipreList, CloseSignalWithFilter, PlanExipreListWithFilter, CompanyStatus, Notification, statusChangeNotifiction, totalClient, NotificationList,allStatusChangeNotifiction,pastPerformancewithtype,CloseSignalwithtype,referEarn,PlanExipreListWithFilterExport,CloseSignalWithFilterExport,getMonthlySubscriptionCounts,getMonthlyProfitLoss,getDailyProfitLoss,getAllStates,getCityByStates, sendMailToClient,utmSource,getMonthlyDayBasedPlanCount,getFreetrialClientsByMonth} = require('../Controllers/Dashboard')
 
 router.get('/dashboard/getcount', getcount);
 router.post('/dashboard/getlicense', getLicense);
@@ -27,5 +27,22 @@ router.get('/dashboard/past-performance-type/:id/:callduration?', pastPerformanc
 router.post('/dashboard/closesignalwithtype', CloseSignalwithtype);
 
 router.post('/dashboard/referearn', referEarn);
+
+
+router.post('/dashboard/planexiprelistwithfilterexport', PlanExipreListWithFilterExport);
+router.post('/dashboard/closesignalwithfilterexport', CloseSignalWithFilterExport);
+
+router.post('/dashboard/getmonthlysubscriptioncounts', getMonthlySubscriptionCounts);
+router.get('/dashboard/getmonthlyprofitloss/:id', getMonthlyProfitLoss);
+router.get('/dashboard/getdailyprofitloss/:id', getDailyProfitLoss);
+router.get('/dashboard/getstates', getAllStates);
+router.get('/dashboard/getcitybystates/:stateName', getCityByStates);
+router.post('/dashboard/sendmailtoclient', sendMailToClient);
+router.get('/dashboard/utmsource', utmSource);
+
+router.get('/dashboard/getmonthlydaybasedplancount', getMonthlyDayBasedPlanCount);
+router.get('/dashboard/getfreetrialclientsbymonth', getFreetrialClientsByMonth);
+
+
 
 module.exports = router;

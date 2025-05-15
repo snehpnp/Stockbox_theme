@@ -4,6 +4,7 @@ import { getconsitionlist, Addtermscondition, UpdateCondition, changeconditionst
 import Table from '../../../components/Table';
 import { SquarePen, Trash2, PanelBottomOpen } from 'lucide-react';
 import Swal from 'sweetalert2';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Condition = () => {
 
@@ -142,13 +143,8 @@ const Condition = () => {
     const handleSwitchChange = async (event, id) => {
         const user_active_status = event.target.checked ? "true" : "false";
         const data = { id: id, status: user_active_status };
-        const result = await Swal.fire({
-            title: "Do you want to save the changes?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
+        const result = await showCustomAlert('confirm', 'Do you want to save the changes?')
+        
 
         if (result.isConfirmed) {
             try {
@@ -186,14 +182,8 @@ const Condition = () => {
 
     const DeleteService = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this ? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert('confirm', 'Do you want to delete this ? This action cannot be undone.')
+            
 
             if (result.isConfirmed) {
                 const response = await Deleteservices(_id, token);

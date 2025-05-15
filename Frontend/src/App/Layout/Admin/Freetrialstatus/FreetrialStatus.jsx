@@ -5,6 +5,9 @@ import { Link } from 'react-router-dom';
 import Table from '../../../Extracomponents/Table';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import ExportToExcel from '../../../../Utils/ExportCSV';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+import Loader from '../../../../Utils/Loader';
+
 
 const FreetrialStatus = () => {
   const token = localStorage.getItem('token');
@@ -17,6 +20,9 @@ const FreetrialStatus = () => {
   });
   const [initialFreeTrial, setInitialFreeTrial] = useState('1');
   const [disableUpdate, setDisableUpdate] = useState(true);
+
+  //state for loading
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getApidetail();
@@ -41,6 +47,7 @@ const FreetrialStatus = () => {
   const getstatusdetail = async () => {
     try {
       const response = await basicsettinglist(token);
+
       if (response?.status && response?.data) {
         const defaultTrial = response.data.length > 0 ? response.data[0].freetrial : '1';
         setAddStatus((prevState) => ({ ...prevState, freetrial: defaultTrial }));
@@ -65,6 +72,8 @@ const FreetrialStatus = () => {
     } catch (error) {
       console.log('Error fetching free trial status:', error);
     }
+    setIsLoading(false)
+
   };
 
   const UpdateClientstatus = async () => {
@@ -76,25 +85,13 @@ const FreetrialStatus = () => {
       const response = await addfreeClient(data, token);
 
       if (response?.status) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Free Trial Update Successful!',
-          text: 'Your Free Trial Status updated successfully.',
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("Success", "Your Free Trial Status updated successfully.")
         setInitialFreeTrial(addStatus.freetrial);
         setDisableUpdate(true);
         getApidetail();
       }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Update Failed',
-        text: 'There was an error updating the API information. Please try again.',
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert("error", 'There was an error updating the API information. Please try again.')
     }
   };
 
@@ -169,8 +166,8 @@ const FreetrialStatus = () => {
                   Select days
                 </option>
                 {[...Array(7)].map((_, index) => (
-                  <option key={index + 1} value={index + 1}>
-                    {index + 1} day{index > 0 ? 's' : ''}
+                  <option key={index} value={index}>
+                    {index} day{index > 0 ? 's' : ''}
                   </option>
                 ))}
               </select>
@@ -189,16 +186,26 @@ const FreetrialStatus = () => {
                 fileName="All Users"
               />
             </div>
-            <div className="table-responsive  d-flex justify-content-center">
-              <Table
-                columns={columns}
-                data={data}
-                pagination
-                striped
-                highlightOnHover
-                dense
-              />
-            </div>
+
+
+            {isLoading ? (
+              <Loader />
+            ) : data.length > 0 ? (
+              <div className="table-responsive  d-flex justify-content-center">
+                <Table
+                  columns={columns}
+                  data={data}
+                  pagination
+                  striped
+                  highlightOnHover
+                  dense
+                />
+              </div>
+            ) : (
+              <div className="text-center mt-5">
+                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -129,6 +129,41 @@ const Dashboard1 = ({ data }) => {
       route: "/admin/allLicence?filter=1",
       visible: true
     },
+    {
+      link: `/${role}/todayExpiry-data`,
+      state: { clientStatus: 0 },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.counts?.["0"],
+      label: "Today's Expiry Data",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+    },
+    {
+      link: `/${role}/yesterdayExpiry-data`,
+      state: { clientStatus: -1 },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.counts?.["-1"],
+      label: "Yesterday Expiry Data",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+    },
+    {
+      link: `/${role}/tomorrowExpiry-data`,
+      state: { clientStatus: 1 },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.counts?.["1"],
+      label: "Tomorrow Expiry Data",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+    },
+    {
+      link: `/${role}/CurrentMonth-freeTrial`,
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.totalfreetrial,
+      label: "Current Month Free Trial",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+    },
 
   ]
 

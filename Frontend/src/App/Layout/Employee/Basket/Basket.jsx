@@ -1,42 +1,59 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, RefreshCcw, Trash2, SquarePen, IndianRupee, X, Plus, RotateCcw } from 'lucide-react';
-import Swal from "sweetalert2";
 import { Tooltip } from 'antd';
 // import Table from "../../../components/Table";
 import Table from '../../../Extracomponents/Table1';
 import { BasketAllList, deletebasket, Basketstatus, changestatusrebalance, getstocklistById, getstaffperuser } from "../../../Services/Admin/Admin";
 import { fDate } from "../../../../Utils/Date_formate";
 import Loader from "../../../../Utils/Loader";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+
 
 
 const Basket = () => {
 
-  useEffect(() => {
-    getpermissioninfo()
-  }, [])
 
+  const token = localStorage.getItem("token");
   const userid = localStorage.getItem('id');
 
+
   const navigate = useNavigate();
+
+
   const [clients, setClients] = useState([]);
-  const token = localStorage.getItem("token");
   const [stockdata, setStockdata] = useState({})
 
   const [searchInput, setSearchInput] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
-  const [permission, setPermission] = useState([]);
 
-  //state for loading
   const [isLoading, setIsLoading] = useState(true)
+  const [permission, setPermission] = useState([]);
 
 
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+
+
+
+  // Fetch basket list
+  const getbasketlist = async () => {
+    try {
+      const data = { page: currentPage, search: searchInput || "" }
+      const response = await BasketAllList(data, token);
+
+      if (response.status) {
+        setClients(response.data);
+        setTotalRows(response.pagination.totalRecords);
+      }
+    } catch (error) {
+      console.log("error");
+    }
+    setIsLoading(false)
   };
 
 
@@ -55,68 +72,42 @@ const Basket = () => {
   }
 
 
+  useEffect(() => {
+    getpermissioninfo()
 
-
-  // Fetch basket list
-  const getbasketlist = async () => {
-    try {
-      const data = { page: currentPage, search: searchInput || "" }
-      const response = await BasketAllList(data, token);
-      if (response.status) {
-        setClients(response.data);
-        setTotalRows(response.pagination.total);
-      }
-    } catch (error) {
-      console.log("error");
-    }
-    setIsLoading(false)
-  };
-
+  }, [])
 
 
   useEffect(() => {
     getbasketlist()
+
   }, [searchInput, currentPage])
 
 
 
+
+
   const handleSwitchChange = async (event, id) => {
-    const originalChecked = true;
-    const user_active_status = originalChecked
-    const data = { id: id, status: user_active_status };
+    const user_active_status = true;
+    const data = { id, status: user_active_status };
 
-    const result = await Swal.fire({
-      title: "Do you want to save the changes?",
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      cancelButtonText: "Cancel",
-      allowOutsideClick: false,
-    });
-
-    if (result.isConfirmed) {
-      try {
-        const response = await Basketstatus(data, token);
-        if (response.status) {
-          Swal.fire({
-            title: "Saved!",
-            icon: "success",
-            timer: 1000,
-            timerProgressBar: true,
-          });
-          setTimeout(() => {
-            Swal.close();
-          }, 1000);
-        }
-        getbasketlist();
-      } catch (error) {
-        Swal.fire(
-          "Error",
-          "There was an error processing your request.",
-          "error"
-        );
+    try {
+      const result = await showCustomAlert("confirm", "Do you want to save the changes?");
+      if (!result?.isConfirmed) {
+        event.target.checked = !event.target.checked;
+        return;
       }
-    } else if (result.dismiss === Swal.DismissReason.cancel) {
-      event.target.checked = !originalChecked;
+
+      const response = await Basketstatus(data, token);
+      if (response?.status) {
+        showCustomAlert("success", response.message);
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error) {
+      event.target.checked = !event.target.checked;
+      showCustomAlert("error", error.message, "There was an error processing your request.");
+    } finally {
       getbasketlist();
     }
   };
@@ -130,39 +121,19 @@ const Basket = () => {
     const originalChecked = event.target.checked;
     const user_active_status = originalChecked
     const data = { id: id, status: user_active_status };
-    const result = await Swal.fire({
-      title: "Do you want to save the changes?",
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      cancelButtonText: "Cancel",
-      allowOutsideClick: false,
-    });
+    const confirmed = await showCustomAlert("confirm", "Do you want to save the changes ?");
 
-    if (result.isConfirmed) {
-      try {
-        const response = await changestatusrebalance(data, token);
-        if (response.status) {
-          Swal.fire({
-            title: "Saved!",
-            icon: "success",
-            timer: 1000,
-            timerProgressBar: true,
-          });
-          setTimeout(() => {
-            Swal.close();
-          }, 1000);
-        }
-        getbasketlist();
-      } catch (error) {
-        Swal.fire(
-          "Error",
-          "There was an error processing your request.",
-          "error"
-        );
+    if (!confirmed) return
+    try {
+      const response = await changestatusrebalance(data, token);
+      if (response.status) {
+        showCustomAlert("Success", "Publish Stock Successfully ")
+      } else {
+        showCustomAlert("error", response.message)
       }
-    } else if (result.dismiss === Swal.DismissReason.cancel) {
-      event.target.checked = !originalChecked;
       getbasketlist();
+    } catch (error) {
+      showCustomAlert("error", "There was an error processing your request.")
     }
   };
 
@@ -174,43 +145,24 @@ const Basket = () => {
 
   const Deletebasket = async (_id) => {
     try {
-      const result = await Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to delete this item? This action cannot be undone.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel",
-      });
+      const result = await showCustomAlert("confirm", "Do you want to delete this item? This action cannot be undone.");
 
-      if (result.isConfirmed) {
-        const response = await deletebasket(_id, token);
-        if (response.status) {
-          Swal.fire({
-            title: "Deleted!",
-            text: "The item has been successfully deleted.",
-            icon: "success",
-            confirmButtonText: "OK",
-          });
-          getbasketlist();
-        }
+      if (!result.isConfirmed) return;
+
+      const response = await deletebasket(_id, token);
+
+      if (response?.status) {
+        showCustomAlert("success", "The item has been successfully deleted.");
+        getbasketlist();
       } else {
-        Swal.fire({
-          title: "Cancelled",
-          text: "The item deletion was cancelled.",
-          icon: "info",
-          confirmButtonText: "OK",
-        });
+        showCustomAlert("error", response?.message || "Failed to delete item.");
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error deleting the item.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      console.error("Delete error:", error);
+      showCustomAlert("error", "There was an error deleting the item.");
     }
   };
+
 
 
   function stripHtml(html) {
@@ -221,8 +173,6 @@ const Basket = () => {
 
 
 
-
-  // Columns for DataTable
   const columns = [
     {
       name: 'S.No',
@@ -268,8 +218,6 @@ const Basket = () => {
       wrap: true,
       width: '200px',
     },
-
-
     {
       name: "Validity",
       selector: (row) => row.validity,
@@ -280,70 +228,80 @@ const Basket = () => {
       name: "Stock Quantity",
       selector: (row) => row.stock_details?.length || 0,
       sortable: true,
-      width: "180px",
+      width: "200px",
+    },
+    // {
+    //   name: "Type",
+    //   selector: (row) => row.type,
+    //   sortable: true,
+    //   width: '150px',
+    // },
+    {
+      name: "Created date",
+      selector: row => fDate(row.created_at),
+      sortable: true,
+      width: '250px',
     },
     permission.includes("publishstock") ||
       permission.includes("addstock") ||
       permission.includes("basketdetail") ||
       permission.includes("editstock") ||
-      permission.includes("deletebasket") ?
-      {
-        name: "Actions",
-        cell: (row) => (
-          <div className="w-100">
-            {permission.includes("publishstock") && (
-              row.stock_details.length > 0 ? (
-                <Tooltip title="Published Stock">
-                  <RotateCcw
-                    checked={row.status}
-                    onClick={(event) => handleSwitchChange(event, row._id)}
-                  />
-                </Tooltip>
-              ) : ""
-            )}
+      permission.includes("deletebasket") ? {
+      name: "Actions",
+      cell: (row) => (
+        <div className="w-100 d-flex align-items-center gap-1">
 
-            {permission.includes("addstock") && (
-              row.stock_details?.length <= 0 ? (
-                <Tooltip title="Add Stock">
-                  <Link
-                    to={`/employee/addstock/${row._id}`}
-                    className="btn px-2"
-                  >
-                    <Plus />
-                  </Link>
-                </Tooltip>
-              ) : null
-            )}
-
-            {permission.includes("basketdetail") &&
-              <Tooltip title="view">
-                <Link
-                  to={`/employee/viewdetail/${row._id}`}
-                  className="btn px-2"
-                >
-                  <Eye />
-                </Link>
-              </Tooltip>}
-
-            {permission.includes("editstock") && <Tooltip title="Edit">
-              <Link
-                to={`editbasket/${row._id}`}
+          {permission.includes("publishstock") && row.stock_details.length > 0 && (
+            <Tooltip title="Published Stock">
+              <button
                 className="btn px-2"
+                onClick={(event) => handleSwitchChange(event, row._id)}
               >
+                <RotateCcw checked={row.status} />
+              </button>
+            </Tooltip>
+          )}
+
+
+          {permission.includes("addstock") && row.stock_details?.length <= 0 && (
+            <Tooltip title="Add Stock">
+              <Link to={`/employee/addstock/${row._id}`} className="btn px-2">
+                <Plus />
+              </Link>
+            </Tooltip>
+          )}
+
+
+          {permission.includes("basketdetail") && (
+            <Tooltip title="View">
+              <Link to={`/employee/viewdetail/${row._id}`} className="btn px-2">
+                <Eye />
+              </Link>
+            </Tooltip>
+          )}
+
+
+          {permission.includes("editstock") && (
+            <Tooltip title="Edit">
+              <Link to={`editbasket/${row._id}`} className="btn px-2">
                 <SquarePen />
               </Link>
-            </Tooltip>}
+            </Tooltip>
+          )}
 
-            {permission.includes("deletebasket") && <button
-              className="btn px-2"
-              onClick={() => Deletebasket(row._id)}
-            >
-              <Trash2 />
-            </button>}
-          </div>
-        ),
-        width: "220px"
-      } : "",
+
+          {permission.includes("deletebasket") && (
+            <Tooltip title="Delete">
+              <button className="btn px-2" onClick={() => Deletebasket(row._id)}>
+                <Trash2 />
+              </button>
+            </Tooltip>
+          )}
+        </div>
+
+      ),
+      width: "220px"
+    } : "",
   ];
 
 
@@ -366,7 +324,7 @@ const Basket = () => {
           </nav>
         </div>
       </div>
-      
+
       <div className="card">
         <div className="card-body">
           <div className="d-sm-flex align-items-center mb-4 gap-3">
@@ -382,23 +340,22 @@ const Basket = () => {
                 <i className="bx bx-search" />
               </span>
             </div>
-            {permission.includes("addbasket") && <div className="ms-sm-auto  ms-0 mt-2 mt-sm-0">
+            {permission.includes("addbasket") && <div className="ms-auto mt-2 mt-sm-0">
               <Link to="/employee/addbasket" className="btn btn-primary">
                 <i className="bx bxs-plus-square" aria-hidden="true" />
                 Add Basket
               </Link>
             </div>}
             {/* <div className="ms-2">
-              <Link to="/employee/basket/rebalancing" className="btn btn-primary">
+              <Link to="/admin/basket/rebalancing" className="btn btn-primary">
                 <i className="bx bxs-plus-square" aria-hidden="true" />
                 RebBalancing
               </Link>
             </div> */}
           </div>
-
           {isLoading ? (
             <Loader />
-          ) : (
+          ) : clients.length > 0 ? (
             <>
               <Table
                 columns={columns}
@@ -408,6 +365,10 @@ const Basket = () => {
                 onPageChange={handlePageChange}
               />
             </>
+          ) : (
+            <div className="text-center mt-5">
+              <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+            </div>
           )}
         </div>
       </div>

@@ -56,6 +56,7 @@ const Planexpiry = () => {
 
     const getClientData = async () => {
         try {
+            setIsLoading(true)
             const data = {
                 page: currentPage,
                 serviceid: searchStock,
@@ -71,9 +72,9 @@ const Planexpiry = () => {
         } catch (error) {
             console.log('Error fetching client data:', error);
         }
-
+        finally{
         setIsLoading(false)
-
+        }
     };
 
 
@@ -82,7 +83,14 @@ const Planexpiry = () => {
 
     const getexportfile = async () => {
         try {
-            const response = await getclientPlanexpiry(token);
+            const data = {
+                page: currentPage,
+                serviceid: searchStock,
+                startdate: startDate,
+                enddate: endDate,
+                search: searchInput,
+            };
+            const response = await getclientPlanexpiry(data, token);
             if (response.status) {
                 if (response.data?.length > 0) {
                     const csvArr = response.data?.map((item) => ({
@@ -117,8 +125,9 @@ const Planexpiry = () => {
         setCurrentPage(1);
     };
 
-
-
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchInput, searchStock, startDate, endDate]);
 
 
     useEffect(() => {
@@ -259,7 +268,7 @@ const Planexpiry = () => {
 
                     {isLoading ? (
                         <Loader />
-                    ) : (
+                    ) : clients.length > 0 ? (
                         <>
                             <Table
                                 columns={columns}
@@ -269,6 +278,10 @@ const Planexpiry = () => {
                                 onPageChange={handlePageChange}
                             />
                         </>
+                    ) : (
+                        <div className="text-center mt-5">
+                            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                        </div>
                     )}
 
                 </div>

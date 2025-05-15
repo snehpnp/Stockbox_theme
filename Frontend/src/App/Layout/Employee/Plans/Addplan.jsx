@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-import { Addplanbyadmin, getcategoryplan, getplanlist, getActivecategoryplan } from '../../../Services/Admin/Admin';
+import { Addplanbyadmin, getcategoryplan, getplanlist, getActivecategoryplan, getActivecategoryplans } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
-
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 const Addplan = () => {
@@ -16,6 +15,7 @@ const Addplan = () => {
     const token = localStorage.getItem("token");
     const [clients, setClients] = useState([]);
     const [plan, setPlan] = useState([]);
+    const [isFreeTrialZero, setIsFreeTrialZero] = useState("");
 
     const [loading, setLoading] = useState(false);
 
@@ -24,7 +24,7 @@ const Addplan = () => {
 
     const getcategoryplanlist = async () => {
         try {
-            const response = await getActivecategoryplan(token);
+            const response = await getActivecategoryplans(token);
             if (response.status) {
                 setClients(response.data);
             }
@@ -48,9 +48,21 @@ const Addplan = () => {
         if (!values.description || values.description === "<p><br></p>") {
             errors.description = "Please Enter Description";
         }
-        if (!values.price) {
-            errors.price = "Please Enter Price";
+        if (isFreeTrialZero == 1) {
+            if (values.price === "" || values.price === null || values.price === undefined) {
+                errors.price = "Please Enter Price";
+            } else if (isNaN(values.price) || Number(values.price) < 0) {
+                errors.price = "Price must be 0 or more";
+            }
+        } else if (isFreeTrialZero == 0) {
+            if (values.price === "" || values.price === null || values.price === undefined) {
+                errors.price = "Please Enter Price";
+            } else if (isNaN(values.price) || Number(values.price) <= 0) {
+                errors.price = "Price must be greater than 0";
+            }
         }
+
+
         if (values.price && values.price < 0) {
             errors.price = "Please Enter Price Greater Than 0";
         }
@@ -65,8 +77,8 @@ const Addplan = () => {
     };
 
     const onSubmit = async (values) => {
-        setLoading(!loading);
-        console.log("values", values.Status)
+        setLoading(!loading)
+
         const req = {
             title: "",
             description: values.description,
@@ -74,7 +86,7 @@ const Addplan = () => {
             validity: values.validity,
             category: values.category,
             add_by: user_id,
-            deliverystatus: values.Status === 1 ? true : values.Status == 0 ? false : ""
+            // deliverystatus: values.Status === 1 ? true : values.Status == 0 ? false : ""
         };
 
         try {
@@ -82,35 +94,14 @@ const Addplan = () => {
 
 
             if (response.status) {
-                Swal.fire({
-                    title: "Create Successful!",
-                    text: response.message,
-                    icon: "success",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
-                setTimeout(() => {
-                    navigate("/employee/plan");
-                }, 1500);
+                showCustomAlert('Success', "Create Successful!", navigate, "/employee/plan")
             } else {
-                Swal.fire({
-                    title: "Error",
-                    text: response.message,
-                    icon: "error",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
+                showCustomAlert('error', response.message)
                 setLoading(false)
             }
         } catch (error) {
             setLoading(false)
-            Swal.fire({
-                title: "Error",
-                text: "An unexpected error occurred. Please try again later.",
-                icon: "error",
-                timer: 1500,
-                timerProgressBar: true,
-            });
+            showCustomAlert('error', "An unexpected error occurred. Please try again later.")
         }
     };
 
@@ -122,12 +113,24 @@ const Addplan = () => {
             validity: "",
             category: "",
             add_by: "",
-            Status: ""
+            // Status: ""
         },
         validate,
         onSubmit,
     });
 
+
+    useEffect(() => {
+        const matchedClient = clients.find(
+            (item) => item._id === formik.values.category
+        );
+
+        if (matchedClient && matchedClient.freetrial_status == 1) {
+            setIsFreeTrialZero(1);
+        } else {
+            setIsFreeTrialZero(0);
+        }
+    }, [formik.values.category, clients]);
 
 
 
@@ -154,14 +157,22 @@ const Addplan = () => {
             label_size: 12,
             col_size: 3,
             disable: false,
-            options: [
-                { value: "1 month", label: "1 Month" },
-                { value: "3 months", label: "3 Months" },
-                { value: "6 months", label: "6 Months" },
-                { value: "1 year", label: "1 Year" }
-            ].filter((option) => {
-                return !plan.some((item) => item?.validity === option.value);
-            }),
+            options: isFreeTrialZero == 0
+                ? [
+                    { value: "1 month", label: "1 Month" },
+                    { value: "3 months", label: "3 Months" },
+                    { value: "6 months", label: "6 Months" },
+                    { value: "1 year", label: "1 Year" }
+                ]
+                : [
+                    { value: "1 day", label: "1 day" },
+                    { value: "2 days", label: "2 days" },
+                    { value: "3 days", label: "3 days" },
+                    { value: "4 days", label: "4 days" },
+                    { value: "5 days", label: "5 days" },
+                    { value: "6 days", label: "6 days" },
+                    { value: "7 days", label: "7 days" }
+                ].filter(option => !plan.some(item => item?.validity === option.value)),
             star: true
         },
         {
@@ -173,15 +184,15 @@ const Addplan = () => {
             disable: false,
             star: true
         },
-        {
-            name: "Status",
-            label: "Plan Delivery status ",
-            type: "togglebtn",
-            label_size: 12,
-            col_size: 3,
-            disable: false,
-            star: true
-        },
+        // {
+        //     name: "Status",
+        //     label: "Plan Delivery status ",
+        //     type: "togglebtn",
+        //     label_size: 12,
+        //     col_size: 3,
+        //     disable: false,
+        //     star: true
+        // },
         {
             name: "description",
             label: "Description",
@@ -221,23 +232,24 @@ const Addplan = () => {
     return (
         <Content
             Page_title="Add New Package"
-            button_status={false}
             backbutton_status={true}
-            backForword={true}
-        >
-            <DynamicForm
-                fields={fields}
-                formik={formik}
-                page_title="Add New Package"
-                btn_name="Add Package"
-                btn_name1="Cancel"
-                sumit_btn={true}
-                btnstatus={loading}
-                btn_name1_route={"/employee/plan"}
-                additional_field={<></>}
-            />
-        </Content>
+            backbutton_title={"Back"}
+            button_status={false}
+            button_title="Add Package">
+            <div >
+                <DynamicForm
+                    fields={fields}
+                    formik={formik}
 
+                    btn_name="Add Package"
+                    btn_name1="Cancel"
+                    sumit_btn={true}
+                    btnstatus={loading}
+                    btn_name1_route={"/employee/plan"}
+                    additional_field={<></>}
+                />
+            </div>
+        </Content>
     );
 };
 

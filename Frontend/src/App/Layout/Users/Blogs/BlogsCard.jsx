@@ -1,18 +1,21 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const BlogCard = ({ blog }) => {
   return (
  
      <div className="col-md-4 mb-3">
-     <div className="card">
+     <div className="card h-100">
       <img src={blog.image} alt="blog" style={styles.image} />
       <div style={styles.content}>
+      <small style={styles.date}>
+          {new Date(blog.created_at).toLocaleDateString()}
+        </small>
         <h3 style={styles.title}>{blog.title}</h3>
         <p dangerouslySetInnerHTML={{ __html: blog.description }} />
         {/* <p style={styles.description}>{blog.description}</p> */}
-        <small style={styles.date}>
-          {new Date(blog.created_at).toLocaleDateString()}
-        </small>
+       
+        <Link to="/user/blogdetail" className="btn btn-primary">Read More</Link>
       </div>
     </div>
      </div>

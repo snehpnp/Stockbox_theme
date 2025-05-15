@@ -1,4 +1,4 @@
-import { format, formatDistanceToNow } from 'date-fns';
+import { format, formatDistanceToNow, isValid } from 'date-fns';
 // import Holidays from "date-holidays"
 
 
@@ -14,8 +14,16 @@ export function fDate(date) {
 }
 
 export function fDateTime(date) {
-  return format(new Date(date), 'dd MMM yyyy ');
+  return format(new Date(date), 'dd MMM yyyy');
 }
+
+
+export function fTimeOnly(date) {
+  const d = new Date(date);
+  if (!isValid(d)) return '';
+  return format(d, 'hh:mm a');
+}
+
 
 export function fDateMonth(monthYear) {
 
@@ -170,3 +178,23 @@ export const isToday = (date) => {
   );
 }
 
+
+
+export const signalfDateTime = (rawDate) => {
+  if (!rawDate || rawDate.length !== 8) return '-';
+
+  const day = rawDate.slice(0, 2);
+  const month = rawDate.slice(2, 4);
+  const year = rawDate.slice(4);
+
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  const monthName = months[parseInt(month, 10) - 1];
+
+  if (!monthName) return '-';
+
+  return `${day} ${monthName} ${year}`;
+};

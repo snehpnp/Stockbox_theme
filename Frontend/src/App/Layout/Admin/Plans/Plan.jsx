@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getplanlist, getcategoryplan, Deleteplan, changeplanstatus, getActivecategoryplan } from '../../../Services/Admin/Admin';
 import { fDateTime } from '../../../../Utils/Date_formate';
-import Swal from 'sweetalert2';
 import Loader from '../../../../Utils/Loader'
 import Content from '../../../components/Contents/Content';
 import ReusableModal from '../../../components/Models/ReusableModal';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+
 
 
 
@@ -15,11 +16,15 @@ const Plan = () => {
 
     const [clients, setClients] = useState([]);
     const [category, setCategory] = useState([]);
+
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
     const token = localStorage.getItem('token');
 
     const [isLoading, setIsLoading] = useState(true)
     const [showViewModal, setShowViewModal] = useState(false);
+
+    const [visibleCount, setVisibleCount] = useState(10);
+    const [expanded, setExpanded] = useState(false);
 
 
 
@@ -54,6 +59,7 @@ const Plan = () => {
     const getAdminclient = async () => {
         try {
             const response = await getplanlist(token);
+
             if (response.status) {
                 setClients(response.data);
             }
@@ -66,41 +72,19 @@ const Plan = () => {
 
     const Deleteplanbyadmin = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this plan? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert("confirm", "Do you want to delete this plan? This action cannot be undone.");
 
             if (result.isConfirmed) {
                 const response = await Deleteplan(_id, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The plan has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
+                    showCustomAlert('Success', 'The plan has been successfully deleted.')
                     getAdminclient();
                 }
             } else {
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The plan deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
+                showCustomAlert('info', 'The plan deletion was cancelled.')
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the plan.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert('error', 'There was an error deleting the plan.')
         }
     };
 
@@ -111,39 +95,24 @@ const Plan = () => {
         const user_active_status = originalChecked ? "active" : "inactive";
         const data = { id: id, status: user_active_status };
 
-        const result = await Swal.fire({
-            title: "Do you want Changes The Pakage Status?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
+        const result = await showCustomAlert('confirm', 'Do you want Changes The Pakage Status?')
+        // console.log("result.isConfirmed",result.isConfirmed);
+        // return
+        
 
         if (result.isConfirmed) {
             try {
                 const response = await changeplanstatus(data, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: "Saved!",
-                        icon: "Status changed successfully!",
-                        timer: 1000,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1000);
+                    showCustomAlert('Success', 'The plan status has been successfully updated.')
                 }
                 getcategoryplanlist();
                 getAdminclient();
 
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+                showCustomAlert('error', 'There was an error updating the plan status.')
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
             event.target.checked = !originalChecked;
             getcategoryplanlist();
         }
@@ -167,15 +136,28 @@ const Plan = () => {
 
 
 
+    // Show all categories with animation
+    const loadAll = () => {
+        setExpanded(true);
+        setVisibleCount(category.length);
+    };
+
+    // Show only first 10 categories with animation
+    const showLess = () => {
+        setExpanded(false);
+        setTimeout(() => setVisibleCount(10), 300); // Animation ke baad count update karega
+    };
+
     return (
         <Content Page_title="Package" route="/admin/addplan"
             button_status={true} button_title="Add Package">
 
 
-            <ul className="nav nav-pills  mb-1" role="tablist">
+            <ul className="nav nav-pills mb-1 d-flex align-items-center" role="tablist">
+                {/* "All" Tab */}
                 <li className="nav-item" role="presentation">
                     <a
-                        className={`nav-link ${selectedCategoryId === 'all' ? 'active' : 'No data'}`}
+                        className={`nav-link ${selectedCategoryId === 'all' ? 'active' : ''}`}
                         onClick={() => setSelectedCategoryId('all')}
                         role="tab"
                         aria-selected={selectedCategoryId === 'all'}
@@ -186,10 +168,12 @@ const Plan = () => {
                         </div>
                     </a>
                 </li>
-                {category.map((cat) => (
+
+                {/* Category Tabs */}
+                {category.slice(0, visibleCount).map((cat) => (
                     <li className="nav-item" role="presentation" key={cat._id}>
                         <a
-                            className={`nav-link ${cat._id === selectedCategoryId ? 'active' : 'No Data'}`}
+                            className={`nav-link ${cat._id === selectedCategoryId ? 'active' : ''}`}
                             onClick={() => setSelectedCategoryId(cat._id)}
                             role="tab"
                             aria-selected={cat._id === selectedCategoryId}
@@ -201,13 +185,26 @@ const Plan = () => {
                         </a>
                     </li>
                 ))}
+
+                {/* Load More/Less Button */}
+                {category.length > 10 && (
+                    <li className="nav-item d-flex align-items-center gap-1">
+                        {visibleCount < category.length && (
+                            <button className="nav-link p-0" onClick={loadAll}>🔽</button>  // Show all categories
+                        )}
+                        {visibleCount > 10 && (
+                            <button className="nav-link p-0" onClick={showLess}>🔼</button>  // Show only 10 categories
+                        )}
+                    </li>
+                )}
             </ul>
+
             <hr />
 
             {isLoading ? (
                 <Loader />
 
-            ) : (
+            ) : filteredClients.length > 0 ? (
 
                 <div className="tab-content">
                     <div className="tab-pane fade active show">
@@ -362,6 +359,10 @@ const Plan = () => {
                             )}
                         </div>
                     </div>
+                </div>
+            ) : (
+                <div className="text-center mt-5">
+                    <img src="/assets/images/norecordfound.png" alt="No Records Found" />
                 </div>
             )}
 

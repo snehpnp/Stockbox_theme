@@ -91,6 +91,7 @@ const Staffpermission = () => {
             signaldetail: false,
             addsignal: false,
             Signalpermission: false,
+            Strategy: false,
 
             // Staffpermission: false,
             // addstaff: false,
@@ -160,6 +161,8 @@ const Staffpermission = () => {
             paymenthistory: false,
             planexpiry: false,
             perform: false,
+            broadcast: false,
+            ticket: false,
 
 
 
@@ -216,6 +219,7 @@ const Staffpermission = () => {
             // formik.setFieldValue('deletesignal', clients.includes('deletesignal'));
             formik.setFieldValue('signalstatus', clients.includes('signalstatus'));
             formik.setFieldValue('ownsignal', clients.includes('ownsignal'));
+            formik.setFieldValue('Strategy', clients.includes('Strategy'));
 
 
 
@@ -291,6 +295,9 @@ const Staffpermission = () => {
             formik.setFieldValue('paymenthistory', clients.includes('paymenthistory'));
             formik.setFieldValue('planexpiry', clients.includes('planexpiry'));
             formik.setFieldValue('perform', clients.includes('perform'));
+            formik.setFieldValue('broadcast', clients.includes('broadcast'));
+            formik.setFieldValue('ticket', clients.includes('ticket'));
+
 
 
             formik.setFieldValue('basketpermission', clients.includes('basketpermission'));
@@ -314,132 +321,230 @@ const Staffpermission = () => {
 
 
 
+    // useEffect(() => {
+    //     if (formik.values.userPermissions == true) {
+    //         formik.setFieldValue('addclient', true);
+    //         formik.setFieldValue('viewclient', true);
+    //         formik.setFieldValue('Ownclient', false);
+    //         formik.setFieldValue('viewdetail', true);
+    //         formik.setFieldValue('editclient', true);
+    //         // formik.setFieldValue('deleteclient', true);
+    //         formik.setFieldValue('clientchangestatus', true);
+    //         formik.setFieldValue('assignPackage', true);
+    //     }
+    //     else {
+    //         formik.setFieldValue('addclient', false);
+    //         formik.setFieldValue('viewclient', false);
+    //         // formik.setFieldValue('Ownclient', true);
+    //         formik.setFieldValue('viewdetail', false);
+    //         formik.setFieldValue('editclient', false);
+    //         // formik.setFieldValue('deleteclient', false);
+    //         formik.setFieldValue('clientchangestatus', false);
+    //         formik.setFieldValue('assignPackage', false);
+    //     }
+
+    // }, [formik.values.userPermissions])
+
+
+
+
+
+    // useEffect(() => {
+    //     if (formik.values.addclient || formik.values.editclient || formik.values.clientchangestatus || formik.values.assignPackage || formik.values.Ownclient) {
+    //         formik.setFieldValue('viewclient', true);
+    //     }
+    // }, [formik.values.addclient, formik.values.editclient, formik.values.clientchangestatus, formik.values.assignPackage, formik.values.Ownclient]);
+
+
+
+
+
+
+
+
+
     useEffect(() => {
-        if (formik.values.userPermissions == true) {
-            formik.setFieldValue('addclient', true);
+        const permissions = ["addclient", "viewclient", "viewdetail", "editclient", "clientchangestatus", "assignPackage"];
+
+        if (formik.values.userPermissions) {
+            permissions.forEach(permission => formik.setFieldValue(permission, true));
+        } else {
+            const anyPermissionChecked = permissions.some(permission => formik.values[permission]);
+
+            if (!anyPermissionChecked) {
+
+                permissions.forEach(permission => formik.setFieldValue(permission, false));
+            }
+        }
+    }, [formik.values.userPermissions]);
+
+
+
+
+
+
+
+    useEffect(() => {
+        const anyPermissionChecked =
+            formik.values.addclient ||
+            formik.values.editclient ||
+            formik.values.clientchangestatus ||
+            formik.values.assignPackage ||
+            formik.values.Ownclient ||
+            formik.values.viewdetail;
+
+        if (anyPermissionChecked) {
             formik.setFieldValue('viewclient', true);
-            formik.setFieldValue('Ownclient', false);
-            formik.setFieldValue('viewdetail', true);
-            formik.setFieldValue('editclient', true);
-            // formik.setFieldValue('deleteclient', true);
-            formik.setFieldValue('clientchangestatus', true);
-            formik.setFieldValue('assignPackage', true);
-        }
-        else {
-            formik.setFieldValue('addclient', false);
-            formik.setFieldValue('viewclient', false);
-            // formik.setFieldValue('Ownclient', true);
-            formik.setFieldValue('viewdetail', false);
-            formik.setFieldValue('editclient', false);
-            // formik.setFieldValue('deleteclient', false);
-            formik.setFieldValue('clientchangestatus', false);
-            formik.setFieldValue('assignPackage', false);
         }
 
-    }, [formik.values.userPermissions])
+        const allPermissionsChecked =
+            formik.values.addclient &&
+            formik.values.editclient &&
+            formik.values.viewdetail &&
+            formik.values.clientchangestatus &&
+            formik.values.assignPackage;
 
-
+        formik.setFieldValue('userPermissions', allPermissionsChecked);
+    }, [
+        formik.values.addclient,
+        formik.values.editclient,
+        formik.values.clientchangestatus,
+        formik.values.assignPackage,
+        formik.values.Ownclient,
+        formik.values.viewdetail
+    ]);
 
 
 
     useEffect(() => {
-        if (formik.values.addclient || formik.values.editclient || formik.values.clientchangestatus || formik.values.assignPackage || formik.values.Ownclient) {
-            formik.setFieldValue('viewclient', true);
-        }
-    }, [formik.values.addclient, formik.values.editclient, formik.values.clientchangestatus, formik.values.assignPackage, formik.values.Ownclient]);
+        const signalPermissions = ["signalstatus", "viewsignal", "signaldetail", "addsignal", "editsignal", "Strategy"];
 
+        if (formik.values.Signalpermission) {
+            signalPermissions.forEach(permission => formik.setFieldValue(permission, true));
+            formik.setFieldValue("ownsignal", false);
+        } else {
+            const anySignalChecked = signalPermissions.some(permission => formik.values[permission]);
+
+            if (!anySignalChecked) {
+                signalPermissions.forEach(permission => formik.setFieldValue(permission, false));
+            }
+        }
+    }, [formik.values.Signalpermission]);
 
 
 
     useEffect(() => {
-        if (formik.values.Signalpermission == true) {
-            formik.setFieldValue('signalstatus', true);
-            formik.setFieldValue('ownsignal', false);
-            formik.setFieldValue('viewsignal', true);
-            formik.setFieldValue('signaldetail', true);
-            formik.setFieldValue('addsignal', true);
-            formik.setFieldValue('editsignal', true);
-            // formik.setFieldValue('deletesignal', true);
+        const anySignalChecked =
+            formik.values.signalstatus ||
+            formik.values.ownsignal ||
+            formik.values.signaldetail ||
+            formik.values.addsignal ||
+            formik.values.editsignal ||
+            formik.values.Strategy
 
-        }
-        else {
-            formik.setFieldValue('signalstatus', false);
-            // formik.setFieldValue('ownsignal', false);
-            formik.setFieldValue('viewsignal', false);
-            formik.setFieldValue('signaldetail', false);
-            formik.setFieldValue('addsignal', false);
-            formik.setFieldValue('editsignal', false);
-            // formik.setFieldValue('deletesignal', false);
-
+        if (anySignalChecked) {
+            formik.setFieldValue("viewsignal", true);
         }
 
-    }, [formik.values.Signalpermission])
+
+        const allSignalPermissionsChecked =
+            formik.values.signalstatus &&
+            formik.values.signaldetail &&
+            formik.values.addsignal &&
+            formik.values.editsignal &&
+            formik.values.Strategy
+
+        formik.setFieldValue("Signalpermission", allSignalPermissionsChecked);
+    }, [
+        formik.values.signalstatus,
+        formik.values.ownsignal,
+        formik.values.signaldetail,
+        formik.values.addsignal,
+        formik.values.editsignal,
+        formik.values.Strategy,
+    ]);
 
 
     useEffect(() => {
-        if (formik.values.signalstatus || formik.values.ownsignal || formik.values.signaldetail || formik.values.addsignal || formik.values.editsignal) {
-            formik.setFieldValue('viewsignal', true);
+        const categoryPermissions = ["categorystatus", "viewcategory", "addcategory", "editcategory"];
+
+        if (formik.values.categorypermission) {
+            categoryPermissions.forEach(permission => formik.setFieldValue(permission, true));
+        } else {
+            const anyCategoryChecked = categoryPermissions.some(permission => formik.values[permission]);
+
+            if (!anyCategoryChecked) {
+                categoryPermissions.forEach(permission => formik.setFieldValue(permission, false));
+            }
         }
-    }, [formik.values.signalstatus, formik.values.signaldetail, formik.values.addsignal, formik.values.editsignal, formik.values.ownsignal]);
-
-
-
-
-    useEffect(() => {
-        if (formik.values.categorypermission == true) {
-            formik.setFieldValue('categorystatus', true);
-            formik.setFieldValue('viewcategory', true);
-            formik.setFieldValue('addcategory', true);
-            formik.setFieldValue('editcategory', true);
-            // formik.setFieldValue('deletecategory', true);
-
-        }
-        else {
-            formik.setFieldValue('categorystatus', false);
-            formik.setFieldValue('viewcategory', false);
-            formik.setFieldValue('addcategory', false);
-            formik.setFieldValue('editcategory', false);
-            // formik.setFieldValue('deletecategory', false);
-
-        }
-
-    }, [formik.values.categorypermission])
-
-
-    useEffect(() => {
-        if (formik.values.categorystatus || formik.values.addcategory || formik.values.editcategory) {
-            formik.setFieldValue('viewcategory', true);
-        }
-    }, [formik.values.categorystatus, formik.values.addcategory, formik.values.editcategory]);
+    }, [formik.values.categorypermission]);
 
 
 
     useEffect(() => {
-        if (formik.values.planpermission == true) {
-            formik.setFieldValue('addplan', true);
-            formik.setFieldValue('editplan', true);
-            // formik.setFieldValue('deleteplan', true);
-            formik.setFieldValue('viewplan', true);
-            formik.setFieldValue('planstatus', true);
+        const anyCategoryChecked =
+            formik.values.categorystatus ||
+            formik.values.addcategory ||
+            formik.values.editcategory;
 
-        }
-        else {
-            formik.setFieldValue('addplan', false);
-            formik.setFieldValue('editplan', false);
-            // formik.setFieldValue('deleteplan', false);
-            formik.setFieldValue('viewplan', false);
-            formik.setFieldValue('planstatus', false);
-
+        if (anyCategoryChecked) {
+            formik.setFieldValue("viewcategory", true);
         }
 
-    }, [formik.values.planpermission])
+
+
+        const allCategoryPermissionsChecked =
+            formik.values.categorystatus &&
+            formik.values.addcategory &&
+            formik.values.editcategory;
+
+        formik.setFieldValue("categorypermission", allCategoryPermissionsChecked);
+    }, [
+        formik.values.categorystatus,
+        formik.values.addcategory,
+        formik.values.editcategory,
+    ]);
+
 
 
     useEffect(() => {
-        if (formik.values.addplan || formik.values.editplan || formik.values.planstatus) {
-            formik.setFieldValue('viewplan', true);
+        const planPermissions = ["addplan", "editplan", "viewplan", "planstatus"];
+
+        if (formik.values.planpermission) {
+            planPermissions.forEach(permission => formik.setFieldValue(permission, true));
+        } else {
+            const anyPlanChecked = planPermissions.some(permission => formik.values[permission]);
+
+            if (!anyPlanChecked) {
+                planPermissions.forEach(permission => formik.setFieldValue(permission, false));
+            }
         }
-    }, [formik.values.addplan, formik.values.editplan, formik.values.planstatus]);
+    }, [formik.values.planpermission]);
+
+
+    useEffect(() => {
+        const anyPlanChecked =
+            formik.values.addplan ||
+            formik.values.editplan ||
+            formik.values.planstatus;
+
+        if (anyPlanChecked) {
+            formik.setFieldValue("viewplan", true);
+        }
+
+
+        const allPlanPermissionsChecked =
+            formik.values.addplan &&
+            formik.values.editplan &&
+            formik.values.planstatus;
+
+        formik.setFieldValue("planpermission", allPlanPermissionsChecked);
+    }, [
+        formik.values.addplan,
+        formik.values.editplan,
+        formik.values.planstatus,
+    ]);
+
 
 
 
@@ -462,7 +567,7 @@ const Staffpermission = () => {
 
     //     }
 
-    // }, [formik.values.Staffpermission])
+    // }, [formik.values.Staffpermission]) 
 
 
     useEffect(() => {
@@ -474,157 +579,254 @@ const Staffpermission = () => {
 
 
     useEffect(() => {
-        if (formik.values.bannerpermission == true) {
-            formik.setFieldValue('addbanner', true);
-            formik.setFieldValue('editbanner', true);
-            formik.setFieldValue('viewbanner', true);
-            formik.setFieldValue('deletebanner', true);
-            formik.setFieldValue('bannerstatus', true);
+        const bannerPermissions = ["addbanner", "editbanner", "viewbanner", "deletebanner", "bannerstatus"];
 
+        if (formik.values.bannerpermission) {
+
+            bannerPermissions.forEach(permission => formik.setFieldValue(permission, true));
+        } else {
+
+            const anyBannerChecked = bannerPermissions.some(permission => formik.values[permission]);
+
+            if (!anyBannerChecked) {
+                bannerPermissions.forEach(permission => formik.setFieldValue(permission, false));
+            }
         }
-        else {
-            formik.setFieldValue('addbanner', false);
-            formik.setFieldValue('editbanner', false);
-            formik.setFieldValue('viewbanner', false);
-            formik.setFieldValue('deletebanner', false);
-            formik.setFieldValue('bannerstatus', false);
+    }, [formik.values.bannerpermission]);
 
+
+    useEffect(() => {
+        const anyBannerChecked =
+            formik.values.addbanner ||
+            formik.values.editbanner ||
+            formik.values.bannerstatus ||
+            formik.values.deletebanner;
+
+        if (anyBannerChecked) {
+            formik.setFieldValue("viewbanner", true);
         }
 
-    }, [formik.values.bannerpermission])
+
+        const allBannerPermissionsChecked =
+            formik.values.addbanner &&
+            formik.values.editbanner &&
+            formik.values.bannerstatus &&
+            formik.values.deletebanner;
+
+        formik.setFieldValue("bannerpermission", allBannerPermissionsChecked);
+    }, [
+        formik.values.addbanner,
+        formik.values.editbanner,
+        formik.values.bannerstatus,
+        formik.values.deletebanner,
+    ]);
 
 
 
     useEffect(() => {
-        if (formik.values.addbanner || formik.values.editbanner || formik.values.bannerstatus || formik.values.deletebanner) {
-            formik.setFieldValue('viewbanner', true);
+        const couponPermissions = [
+            "addcoupon",
+            "editcoupon",
+            "viewcoupon",
+            "coupondetail",
+            "deletecoupon",
+            "couponstatus"
+        ];
+
+        if (formik.values.couponpermission) {
+
+            couponPermissions.forEach(permission => formik.setFieldValue(permission, true));
+        } else {
+            const anyCouponChecked = couponPermissions.some(permission => formik.values[permission]);
+
+            if (!anyCouponChecked) {
+                couponPermissions.forEach(permission => formik.setFieldValue(permission, false));
+            }
         }
-    }, [formik.values.addbanner, formik.values.editbanner, formik.values.bannerstatus, formik.values.deletebanner]);
-
-
+    }, [formik.values.couponpermission]);
 
 
     useEffect(() => {
-        if (formik.values.couponpermission == true) {
-            formik.setFieldValue('addcoupon', true);
-            formik.setFieldValue('editcoupon', true);
-            formik.setFieldValue('viewcoupon', true);
-            formik.setFieldValue('coupondetail', true);
-            formik.setFieldValue('deletecoupon', true);
-            formik.setFieldValue('couponstatus', true);
+        const anyCouponChecked =
+            formik.values.addcoupon ||
+            formik.values.editcoupon ||
+            formik.values.coupondetail ||
+            formik.values.deletecoupon;
 
-        }
-        else {
-            formik.setFieldValue('addcoupon', false);
-            formik.setFieldValue('editcoupon', false);
-            formik.setFieldValue('viewcoupon', false);
-            formik.setFieldValue('coupondetail', false);
-            formik.setFieldValue('deletecoupon', false);
-            formik.setFieldValue('couponstatus', false);
-
+        if (anyCouponChecked) {
+            formik.setFieldValue("viewcoupon", true);
         }
 
-    }, [formik.values.couponpermission])
 
+        const allCouponPermissionsChecked =
+            formik.values.addcoupon &&
+            formik.values.editcoupon &&
+            formik.values.coupondetail &&
+            formik.values.deletecoupon &&
+            formik.values.couponstatus;
 
-    useEffect(() => {
-        if (formik.values.addcoupon || formik.values.editcoupon || formik.values.coupondetail || formik.values.coupondetail || formik.values.deletecoupon) {
-            formik.setFieldValue('viewcoupon', true);
-        }
-    }, [formik.values.addcoupon, formik.values.editcoupon, formik.values.coupondetail, formik.values.coupondetail, formik.values.deletecoupon]);
-
-
-
-
-
-    useEffect(() => {
-        if (formik.values.blogspermission == true) {
-            formik.setFieldValue('addblogs', true);
-            formik.setFieldValue('editblogs', true);
-            formik.setFieldValue('viewblogs', true);
-            formik.setFieldValue('blogdetail', true);
-            formik.setFieldValue('deleteblogs', true);
-            formik.setFieldValue('blogsstatus', true);
-
-        }
-        else {
-            formik.setFieldValue('addblogs', false);
-            formik.setFieldValue('editblogs', false);
-            formik.setFieldValue('viewblogs', false);
-            formik.setFieldValue('blogdetail', false);
-            formik.setFieldValue('deleteblogs', false);
-            formik.setFieldValue('blogsstatus', false);
-
-        }
-
-    }, [formik.values.blogspermission])
-
-
-    useEffect(() => {
-        if (formik.values.addblogs || formik.values.editblogs || formik.values.blogdetail || formik.values.blogsstatus || formik.values.blogdetail) {
-            formik.setFieldValue('viewblogs', true);
-        }
-    }, [formik.values.addblogs, formik.values.editblogs, formik.values.blogdetail, formik.values.blogsstatus, formik.values.blogdetail]);
-
-
-
-    useEffect(() => {
-        if (formik.values.faqpermission == true) {
-            formik.setFieldValue('addfaq', true);
-            formik.setFieldValue('editfaq', true);
-            formik.setFieldValue('viewfaq', true);
-            formik.setFieldValue('deletefaq', true);
-            formik.setFieldValue('faqstatus', true);
-
-        }
-        else {
-            formik.setFieldValue('addfaq', false);
-            formik.setFieldValue('editfaq', false);
-            formik.setFieldValue('viewfaq', false);
-            formik.setFieldValue('deletefaq', false);
-            formik.setFieldValue('faqstatus', false);
-
-        }
-
-    }, [formik.values.faqpermission])
-
-
-
-    useEffect(() => {
-        if (formik.values.addfaq || formik.values.editfaq || formik.values.faqstatus || formik.values.deletefaq) {
-            formik.setFieldValue('viewfaq', true);
-        }
-    }, [formik.values.addfaq, formik.values.editfaq, formik.values.faqstatus, formik.values.deletefaq]);
+        formik.setFieldValue("couponpermission", allCouponPermissionsChecked);
+    }, [
+        formik.values.addcoupon,
+        formik.values.editcoupon,
+        formik.values.coupondetail,
+        formik.values.deletecoupon,
+        formik.values.couponstatus
+    ]);
 
 
 
 
     useEffect(() => {
-        if (formik.values.newspermission == true) {
-            formik.setFieldValue('addnews', true);
-            formik.setFieldValue('editnews', true);
-            formik.setFieldValue('viewnews', true);
-            formik.setFieldValue('deletenews', true);
-            formik.setFieldValue('newsstatus', true);
+        const blogPermissions = [
+            "addblogs",
+            "editblogs",
+            "viewblogs",
+            "blogdetail",
+            "deleteblogs",
+            "blogsstatus"
+        ];
 
+        if (formik.values.blogspermission) {
+            blogPermissions.forEach(permission => formik.setFieldValue(permission, true));
+        } else {
+            const anyBlogChecked = blogPermissions.some(permission => formik.values[permission]);
+
+            if (!anyBlogChecked) {
+                blogPermissions.forEach(permission => formik.setFieldValue(permission, false));
+            }
         }
-        else {
-            formik.setFieldValue('addnews', false);
-            formik.setFieldValue('editnews', false);
-            formik.setFieldValue('viewnews', false);
-            formik.setFieldValue('deletenews', false);
-            formik.setFieldValue('newsstatus', false);
+    }, [formik.values.blogspermission]);
 
-        }
-
-    }, [formik.values.newspermission])
 
 
     useEffect(() => {
-        if (formik.values.addnews || formik.values.editnews || formik.values.newsstatus || formik.values.deletenews) {
-            formik.setFieldValue('viewnews', true);
+        const anyBlogChecked =
+            formik.values.addblogs ||
+            formik.values.editblogs ||
+            formik.values.blogdetail ||
+            formik.values.deleteblogs ||
+            formik.values.blogsstatus;
+
+        if (anyBlogChecked) {
+            formik.setFieldValue("viewblogs", true);
         }
-    }, [formik.values.addnews, formik.values.editnews, formik.values.newsstatus, formik.values.deletenews]);
+
+        const allBlogPermissionsChecked =
+            formik.values.addblogs &&
+            formik.values.editblogs &&
+            formik.values.blogdetail &&
+            formik.values.deleteblogs &&
+            formik.values.blogsstatus;
+
+        formik.setFieldValue("blogspermission", allBlogPermissionsChecked);
+    }, [
+        formik.values.addblogs,
+        formik.values.editblogs,
+        formik.values.blogdetail,
+        formik.values.deleteblogs,
+        formik.values.blogsstatus
+    ]);
+
+
+
+    useEffect(() => {
+        const faqPermissions = [
+            "addfaq",
+            "editfaq",
+            "viewfaq",
+            "deletefaq",
+            "faqstatus"
+        ];
+
+        if (formik.values.faqpermission) {
+
+            faqPermissions.forEach(permission => formik.setFieldValue(permission, true));
+        } else {
+
+            const anyFaqChecked = faqPermissions.some(permission => formik.values[permission]);
+
+            if (!anyFaqChecked) {
+                faqPermissions.forEach(permission => formik.setFieldValue(permission, false));
+            }
+        }
+    }, [formik.values.faqpermission]);
+
+
+    useEffect(() => {
+        const anyFaqChecked =
+            formik.values.addfaq ||
+            formik.values.editfaq ||
+            formik.values.faqstatus ||
+            formik.values.deletefaq;
+
+        if (anyFaqChecked) {
+            formik.setFieldValue("viewfaq", true);
+        }
+
+        const allFaqPermissionsChecked =
+            formik.values.addfaq &&
+            formik.values.editfaq &&
+            formik.values.faqstatus &&
+            formik.values.deletefaq;
+
+        formik.setFieldValue("faqpermission", allFaqPermissionsChecked);
+    }, [
+        formik.values.addfaq,
+        formik.values.editfaq,
+        formik.values.faqstatus,
+        formik.values.deletefaq
+    ]);
+
+
+
+
+    useEffect(() => {
+        const newsPermissions = [
+            "addnews",
+            "editnews",
+            "viewnews",
+            "deletenews",
+            "newsstatus"
+        ];
+
+        if (formik.values.newspermission) {
+            newsPermissions.forEach(permission => formik.setFieldValue(permission, true));
+        } else {
+            const anyNewsChecked = newsPermissions.some(permission => formik.values[permission]);
+
+            if (!anyNewsChecked) {
+                newsPermissions.forEach(permission => formik.setFieldValue(permission, false));
+            }
+        }
+    }, [formik.values.newspermission]);
+
+
+    useEffect(() => {
+        const anyNewsChecked =
+            formik.values.addnews ||
+            formik.values.editnews ||
+            formik.values.newsstatus ||
+            formik.values.deletenews;
+
+        if (anyNewsChecked) {
+            formik.setFieldValue("viewnews", true);
+        }
+
+
+        const allNewsPermissionsChecked =
+            formik.values.addnews &&
+            formik.values.editnews &&
+            formik.values.newsstatus &&
+            formik.values.deletenews;
+
+        formik.setFieldValue("newspermission", allNewsPermissionsChecked);
+    }, [
+        formik.values.addnews,
+        formik.values.editnews,
+        formik.values.newsstatus,
+        formik.values.deletenews
+    ]);
 
 
 
@@ -658,83 +860,89 @@ const Staffpermission = () => {
 
 
     useEffect(() => {
-        if (formik.values.otherpermission == true) {
-            formik.setFieldValue('paymenthistory', true);
-            formik.setFieldValue('planexpiry', true);
-            formik.setFieldValue('perform', true);
+        const permissions = ["paymenthistory", "planexpiry", "perform", "broadcast", "ticket"];
 
+        if (formik.values.otherpermission) {
+            permissions.forEach(permission => formik.setFieldValue(permission, true));
+        } else {
 
+            const anyChecked = permissions.some(permission => formik.values[permission]);
 
+            if (!anyChecked) {
+                permissions.forEach(permission => formik.setFieldValue(permission, false));
+            }
         }
-        else {
-            formik.setFieldValue('paymenthistory', false);
-            formik.setFieldValue('planexpiry', false);
-            formik.setFieldValue('perform', false);
+    }, [formik.values.otherpermission]);
 
+    useEffect(() => {
+        const permissions = ["paymenthistory", "planexpiry", "perform", "broadcast", "ticket"];
 
+        const anyChecked = permissions.some(permission => formik.values[permission]);
 
+        if (anyChecked) {
+            formik.setFieldValue("otherpermission", true);
         }
 
-    }, [formik.values.otherpermission])
-
-
-    // useEffect(() => {
-    //     if (formik.values.paymenthistory || formik.values.planexpiry ||  formik.values.perform  ) {
-    //         formik.setFieldValue('otherpermission', true);
-    //     }
-    // }, [formik.values.paymenthistory ,formik.values.planexpiry ,formik.values.perform ]);
+        const allChecked = permissions.every(permission => formik.values[permission]);
+        formik.setFieldValue("otherpermission", allChecked);
+    }, [
+        formik.values.paymenthistory,
+        formik.values.planexpiry,
+        formik.values.perform,
+        formik.values.broadcast,
+        formik.values.ticket,
+    ]);
 
 
 
     useEffect(() => {
-        if (formik.values.basketpermission == true) {
-            formik.setFieldValue('addbasket', true);
-            formik.setFieldValue('editbasket', true);
-            formik.setFieldValue('deletebasket', true);
-            formik.setFieldValue('basketActivestatus', true);
-            formik.setFieldValue('Rebalancestatus', true);
-            formik.setFieldValue('Rebalancebutton', true);
-            formik.setFieldValue('Subscriptionhistory', true);
-            formik.setFieldValue('publishstock', true);
-            formik.setFieldValue('vewbasket', true);
-            formik.setFieldValue('basketdetail', true);
-            formik.setFieldValue('addstock', true);
-            formik.setFieldValue('editstock', true);
-            formik.setFieldValue('allbaskethistory', true);
+        const permissions = [
+            "addbasket", "editbasket", "deletebasket", "basketActivestatus",
+            "Rebalancestatus", "Rebalancebutton", "Subscriptionhistory",
+            "publishstock", "vewbasket", "basketdetail", "addstock",
+            "editstock", "allbaskethistory"
+        ];
 
+        if (formik.values.basketpermission) {
+            permissions.forEach(permission => formik.setFieldValue(permission, true));
+        } else {
+            const anyChecked = permissions.some(permission => formik.values[permission]);
 
-
+            if (!anyChecked) {
+                permissions.forEach(permission => formik.setFieldValue(permission, false));
+            }
         }
-        else {
-            formik.setFieldValue('addbasket', false);
-            formik.setFieldValue('editbasket', false);
-            formik.setFieldValue('deletebasket', false);
-            formik.setFieldValue('basketActivestatus', false);
-            formik.setFieldValue('Rebalancestatus', false);
-            formik.setFieldValue('Rebalancebutton', false);
-            formik.setFieldValue('Subscriptionhistory', false);
-            formik.setFieldValue('publishstock', false);
-            formik.setFieldValue('vewbasket', false);
-            formik.setFieldValue('basketdetail', false);
-            formik.setFieldValue('addstock', false);
-            formik.setFieldValue('editstock', false);
-            formik.setFieldValue('allbaskethistory', false);
+    }, [formik.values.basketpermission]);
 
-
-        }
-
-    }, [formik.values.basketpermission])
 
 
     useEffect(() => {
-        if (formik.values.addbasket || formik.values.allbaskethistory || formik.values.editstock || formik.values.addstock || formik.values.basketdetail || formik.values.editbasket || formik.values.deletebasket || formik.values.basketActivestatus || formik.values.Rebalancestatus
-            || formik.values.Rebalancebutton || formik.values.Subscriptionhistory || formik.values.publishstock
-        ) {
-            formik.setFieldValue('vewbasket', true);
-        }
-    }, [formik.values.addbasket, formik.values.editbasket, formik.values.deletebasket, formik.values.basketActivestatus, formik.values.Rebalancestatus
-        , formik.values.Rebalancebutton, formik.values.allbaskethistory, formik.values.editstock, formik.values.addstock, formik.values.basketdetail, formik.values.Subscriptionhistory, formik.values.publishstock]);
+        const permissions = [
+            "addbasket", "editbasket", "deletebasket", "basketActivestatus",
+            "Rebalancestatus", "Rebalancebutton", "Subscriptionhistory",
+            "publishstock", "vewbasket", "basketdetail", "addstock",
+            "editstock", "allbaskethistory"
+        ];
 
+        const anyChecked = [
+            formik.values.addbasket, formik.values.editbasket, formik.values.deletebasket,
+            formik.values.basketActivestatus, formik.values.Rebalancestatus, formik.values.Rebalancebutton,
+            formik.values.Subscriptionhistory, formik.values.publishstock, formik.values.basketdetail,
+            formik.values.addstock, formik.values.editstock, formik.values.allbaskethistory
+        ].some(value => value);
+
+        if (anyChecked) {
+            formik.setFieldValue("vewbasket", true);
+        }
+
+        const allChecked = permissions.every(permission => formik.values[permission]);
+        formik.setFieldValue("basketpermission", allChecked);
+    }, [
+        formik.values.addbasket, formik.values.editbasket, formik.values.deletebasket,
+        formik.values.basketActivestatus, formik.values.Rebalancestatus, formik.values.Rebalancebutton,
+        formik.values.Subscriptionhistory, formik.values.publishstock, formik.values.vewbasket,
+        formik.values.basketdetail, formik.values.addstock, formik.values.editstock, formik.values.allbaskethistory
+    ]);
 
 
 
@@ -913,7 +1121,7 @@ const Staffpermission = () => {
             label_size: 12,
             col_size: 2,
             // check_box_true: formik.values.viewservice,
-            check_box_true: formik.values.Signalpermission || formik.values.ownsignal || formik.values.signalstatus || formik.values.editsignal || formik.values.signaldetail || formik.values.addsignal || formik.values.viewsignal ? true : false,
+            check_box_true: formik.values.Signalpermission || formik.values.ownsignal || formik.values.signalstatus || formik.values.editsignal || formik.values.signaldetail || formik.values.addsignal || formik.values.Strategy || formik.values.viewsignal ? true : false,
         },
         {
             name: 'ownsignal',
@@ -970,6 +1178,15 @@ const Staffpermission = () => {
             col_size: 2,
             // check_box_true: formik.values.deleteservice,
             check_box_true: formik.values.Signalpermission || formik.values.signalstatus ? true : false,
+        },
+        {
+            name: 'Strategy',
+            label: 'Strategy',
+            type: 'checkbox',
+            label_size: 12,
+            col_size: 2,
+            // check_box_true: formik.values.deleteservice,
+            check_box_true: formik.values.Signalpermission || formik.values.Strategy ? true : false,
         },
 
         {
@@ -1597,10 +1814,24 @@ const Staffpermission = () => {
             // check_box_true: formik.values.viewservice,
             check_box_true: formik.values.otherpermission || formik.values.perform ? true : false,
         },
-
-
-
-
+        {
+            name: 'broadcast',
+            label: 'Broadcast',
+            type: 'checkbox',
+            label_size: 12,
+            col_size: 2,
+            // check_box_true: formik.values.viewservice,
+            check_box_true: formik.values.otherpermission || formik.values.broadcast ? true : false,
+        },
+        {
+            name: 'ticket',
+            label: 'Ticket',
+            type: 'checkbox',
+            label_size: 12,
+            col_size: 2,
+            // check_box_true: formik.values.viewservice,
+            check_box_true: formik.values.otherpermission || formik.values.ticket ? true : false,
+        },
 
 
     ];
@@ -1614,7 +1845,7 @@ const Staffpermission = () => {
         >
             <DynamicForm
                 fields={fields}
-                page_title="Edit Permission"
+                // page_title="Edit Permission"
                 btn_name="Edit Permission"
                 btn_name1="Cancel"
                 sumit_btn={true}

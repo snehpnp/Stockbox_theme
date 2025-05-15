@@ -11,6 +11,7 @@ import { fDate, fDateTime } from '../../../../Utils/Date_formate';
 import io from 'socket.io-client';
 import { soket_url } from '../../../../Utils/config';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+import Loader from '../../../../Utils/Loader';
 
 const Staff = () => {
 
@@ -25,6 +26,9 @@ const Staff = () => {
     const [searchInput, setSearchInput] = useState("");
     const [allsearchInput, setAllSearchInput] = useState([]);
 
+    //state for loading
+    const [isLoading, setIsLoading] = useState(true);
+
     const token = localStorage.getItem('token');
 
 
@@ -38,6 +42,8 @@ const Staff = () => {
         } catch (error) {
             console.log("error");
         }
+        setIsLoading(false)
+
     }
 
 
@@ -130,22 +136,27 @@ const Staff = () => {
 
     const DeleteStaff = async (_id) => {
         try {
-            showCustomAlert("confirm", "Do you want to delete this Employee member? This action cannot be undone.", navigate, null, async () => {
-                try {
-                    socket.emit("deactivestaff", { id: _id, msg: "logout" });
-                    const response = await deleteStaff(_id, token);
-                    if (response.status) {
-                        showCustomAlert("success", "Employee successfully deleted!", navigate, null);
-                        getAdminclient();
-                    }
-                } catch (error) {
-                    showCustomAlert("error", "There was an error deleting the Employee.", navigate, null);
-                }
-            });
+            const result = await showCustomAlert(
+                "confirm",
+                "Do you want to delete this Employee member? This action cannot be undone."
+            );
+
+            if (!result.isConfirmed) return;
+
+            socket.emit("deactivestaff", { id: _id, msg: "logout" });
+
+            const response = await deleteStaff(_id, token);
+            if (response.status) {
+                showCustomAlert("success", "Employee successfully deleted!");
+                getAdminclient();
+            } else {
+                throw new Error("Deletion failed");
+            }
         } catch (error) {
-            showCustomAlert("error", "There was an error with the confirmation process.");
+            showCustomAlert("error", "There was an error deleting the Employee.");
         }
     };
+
 
 
 
@@ -171,30 +182,36 @@ const Staff = () => {
     const handleSwitchChange = async (event, id) => {
 
         const user_active_status = event.target.checked ? "1" : "0";
-        const data = { id: id, status: user_active_status }
-        const result = showCustomAlert("confirm", "Do you want to save the changes?")
-        if (result) {
-            try {
-                const response = await updateStaffstatus(data, token)
-                if (response.status) {
 
-                    if (!event.target.checked) {
-                        socket.emit("deactivestaff", { id: id, msg: "logout" });
-                    }
-                    showCustomAlert("Success", "Status Changed!")
 
-                }
-                getAdminclient();
-            } catch (error) {
-                showCustomAlert("Success", "Status Changed!", "There was an error processing your request.")
+        const data = { id, status: user_active_status };
 
+        try {
+            const result = await showCustomAlert("confirm", "Do you want to save the changes?");
+            if (!result?.isConfirmed) {
+                event.target.checked = !event.target.checked;
+                return;
             }
-        } else {
-            event.target.checked = !user_active_status
+
+            const response = await updateStaffstatus(data, token);
+            if (response?.status) {
+                if (!event.target.checked) {
+                    socket.emit("deactivestaff", { id, msg: "logout" });
+                }
+                showCustomAlert("success", response.message);
+            } else {
+                throw new Error(response.message);
+            }
+        } catch (error) {
+            event.target.checked = !event.target.checked;
+            showCustomAlert("error", error.message, "There was an error processing your request.");
+        } finally {
             getAdminclient();
         }
-
     };
+
+
+
 
 
     const columns = [
@@ -301,6 +318,10 @@ const Staff = () => {
     ];
 
 
+
+
+
+
     return (
         <div>
             <div>
@@ -361,11 +382,17 @@ const Staff = () => {
                                     </div>
                                 </div>
 
-
-                                <Table
-                                    columns={columns}
-                                    data={clients}
-                                />
+                                {isLoading ? (
+                                    <Loader />
+                                ) : clients?.length > 0 ? (
+                                    <Table
+                                        columns={columns}
+                                        data={clients}
+                                    />) : (
+                                    <div className="text-center mt-5">
+                                        <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

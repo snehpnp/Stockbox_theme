@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { UserLoginApi } from "../../Services/Auth/Login";
 import { image_baseurl } from "../../../Utils/config";
@@ -36,9 +35,15 @@ const Userlogin = () => {
     setIsLoading(false);
 
     if (ResData.status) {
+  
       localStorage.setItem("token", ResData.data?.token);
       localStorage.setItem("id", ResData.data?.id);
       localStorage.setItem("Role", "USER");
+      localStorage.setItem("aliceredirecturl", ResData.data?.aliceredirecturl);
+      localStorage.setItem("angleredirecturl", ResData.data?.angleredirecturl);
+      localStorage.setItem("upstoxredirecturl", ResData.data?.upstoxredirecturl);
+      localStorage.setItem("zerodharedirecturl", ResData.data?.zerodharedirecturl);
+
       showCustomAlert("success", "Login successful!", navigate, "/user/dashboard")
     } else {
       showCustomAlert("error", ResData.message, navigate, null)
@@ -76,6 +81,7 @@ const Userlogin = () => {
       });
 
       if (ResData.status) {
+
         localStorage.setItem("token", ResData.data?.token);
         localStorage.setItem("id", ResData.data?.id);
         localStorage.setItem("Role", "USER");
@@ -197,7 +203,7 @@ const Userlogin = () => {
 
                                 <div className="col-md-6 ">
                                   <p className="mb-0">
-                                    <Link to="/forget">Forgot Password?</Link>
+                                    <Link to="/forget-user">Forgot Password?</Link>
                                   </p>
                                 </div>
 

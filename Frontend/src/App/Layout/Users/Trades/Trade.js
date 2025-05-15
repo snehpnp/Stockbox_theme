@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import {
   GetSignalClient,
@@ -8,12 +8,18 @@ import {
   GetCloseSignalClient,
   PlaceOrderApi,
   GetUserData,
-  ExitPlaceOrderData
+  ExitPlaceOrderData,
+  GetNsePriceData
 } from "../../../Services/UserService/User";
-import { fDate } from "../../../../Utils/Date_formate";
+
+import { fDate, fDateTimeH } from "../../../../Utils/Date_formate";
 import { image_baseurl } from "../../../../Utils/config";
-import Swal from "sweetalert2";
+
 import Loader from "../../../../Utils/Loader";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import { Eye } from "lucide-react";
+
+
 
 
 function Trade() {
@@ -22,6 +28,9 @@ function Trade() {
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
+  const location = useLocation();
+  const signalType = location.state?.type;
+
   const [isLoading, setIsLoading] = useState(true)
 
   const [model, setModel] = useState(false);
@@ -29,10 +38,15 @@ function Trade() {
   const [viewModel, setViewModel] = useState(false);
   const [exitModel, setExitModel] = useState(false);
   const [service, setService] = useState([]);
+
   const [tradeData, setTradeData] = useState({ live: [], close: [] });
+  const [showModal, setShowModal] = useState(false);
   const [description, setDescription] = useState("");
+  const [avoidDescription, setAvoidDescription] = useState("");
+
   const [brokerstatus, setBrokerstatus] = useState([])
-  const [targetEnabled, setTargetEnabled] = React.useState(false);
+  const [targetEnabled, setTargetEnabled] = useState(1);
+  const [checkdata, setCheckdata] = useState([])
 
 
 
@@ -44,8 +58,11 @@ function Trade() {
     tsprice: "",
     tsstatus: "",
     slprice: "",
-    exitquantity: ""
+    exitquantity: "",
+    lotsize: ""
   })
+
+
 
 
   const [exitorderdata, setExitOrderdata] = useState({
@@ -53,7 +70,35 @@ function Trade() {
     signalid: "",
     quantity: "",
     price: "",
+    entrytype: ""
   })
+
+
+
+
+  const UpdateExitdata = (item) => {
+    setExitModel(true)
+    setExitOrderdata({
+      ...item,
+      price: item.price,
+      quantity: item.order_quantity,
+    });
+  };
+
+
+
+  const UpdateData = (item) => {
+    setModel(true);
+    setOrderdata({
+      ...item,
+      price: item.price,
+      tsprice: Math.max(item.tag1 || 0, item.tag2 || 0, item.tag3 || 0),
+      slprice: item.stoploss,
+      quantity: item.order_quantity == 0 ? "" : item.order_quantity,
+      exitquantity: item.order_quantity,
+      lotsize: item.lotsize
+    });
+  };
 
 
 
@@ -62,17 +107,30 @@ function Trade() {
   );
 
 
-
   const [selectedTab, setSelectedTab] = useState("live");
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+
+
+
+
   useEffect(() => {
     fetchServiceData();
     fetchData();
     fetchuserDetail()
+    getnsedata()
   }, [selectedService]);
+
+  useEffect(() => {
+    if (signalType) {
+      setSelectedTab("close")
+    }
+  }, [])
+
+
+
 
   useEffect(() => {
     fetchData();
@@ -97,8 +155,6 @@ function Trade() {
 
 
 
-
-
   const fetchServiceData = async () => {
     try {
       const response = await GetServicedata(token);
@@ -108,6 +164,24 @@ function Trade() {
       console.error("Error fetching services:", error);
     }
   };
+
+
+
+
+  const getnsedata = async () => {
+    try {
+      const response = await GetNsePriceData(token);
+      const checkdata = response?.data?.data?.map((item) => {
+        return item
+      })
+      setCheckdata(checkdata)
+
+    } catch (error) {
+      console.error("Error fetching services:", error);
+    }
+  };
+
+
 
 
 
@@ -129,38 +203,24 @@ function Trade() {
       const data = {
         id: userid,
         signalid: calltypedata?._id,
-        quantity: orderdata?.quantity,
+        quantity: orderdata.segment === "C" ? orderdata?.quantity : orderdata?.quantity * orderdata?.lotsize,
         price: orderdata?.price,
         tsprice: orderdata?.tsprice,
         tsstatus: targetEnabled,
         slprice: orderdata?.slprice,
-        exitquantity: orderdata?.exitquantity,
+        exitquantity: orderdata?.quantity,
       };
 
       const response = await PlaceOrderApi(data, token, brokerstatus);
 
       if (response.status) {
-        Swal.fire({
-          icon: "success",
-          title: response.message || "Order Placed Successfully!",
-          text: "Your order has been placed successfully.",
-          confirmButtonText: "OK",
-        });
+        showCustomAlert("Success", response.message || "Order Placed Successfully!")
       } else {
-        Swal.fire({
-          icon: "error",
-          title: response.message || "Order Failed",
-          text: "Failed to place the order. Please try again.",
-          confirmButtonText: "Retry",
-        });
+        showCustomAlert("error", response.message || "Failed to place the order. Please try again.")
       }
     } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "An error occurred while placing the order. Please check your network or try again later.",
-        confirmButtonText: "Retry",
-      });
+      showCustomAlert("error", "An error occurred while placing the order. Please check your network or try again later.")
+
     }
   };
 
@@ -175,31 +235,14 @@ function Trade() {
         price: exitorderdata?.price,
 
       };
-
       const response = await ExitPlaceOrderData(data, token, brokerstatus);
-
       if (response.status) {
-        Swal.fire({
-          icon: "success",
-          title: response.message || "Order Exit Successfully!",
-          text: "Your order has been Exit  successfully.",
-          confirmButtonText: "OK",
-        });
+        showCustomAlert("Success", response.message || "Order Exit Successfully!")
       } else {
-        Swal.fire({
-          icon: "error",
-          title: response.message || "Order Failed",
-          text: "Failed to place the order. Please try again.",
-          confirmButtonText: "Retry",
-        });
+        showCustomAlert("error", response.message || "Order Failed")
       }
     } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "An error occurred while placing the order. Please check your network or try again later.",
-        confirmButtonText: "Retry",
-      });
+      showCustomAlert("error", "An error occurred while placing the order. Please check your network or try again later.")
     }
   };
 
@@ -216,6 +259,7 @@ function Trade() {
         search: "",
       };
       const response = await GetSignalClient(data, token);
+
       if (response.status) {
         setTradeData((prev) => ({ ...prev, live: response.data }));
         setTotalPages(response.pagination?.totalPages || 1);
@@ -238,6 +282,8 @@ function Trade() {
         search: "",
       };
       const response = await GetCloseSignalClient(data, token);
+
+
       if (response.status) {
         setTradeData((prev) => ({ ...prev, close: response.data }));
         setTotalPages(response.pagination?.totalPages || 1);
@@ -252,45 +298,201 @@ function Trade() {
 
 
   const handleDownload = (item) => {
-    const url = `${image_baseurl}uploads/report/${item.report}`;
-    const link = document.createElement("a");
-    link.href = url;
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    if (item.report == null) {
+      showCustomAlert("error", "No Data Available To See")
+      return
+    } else {
+      const url = `${image_baseurl}uploads/report/${item.report}`;
+      const link = document.createElement("a");
+      link.href = url;
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
+
+
+
+  const calculatePnL = (item) => {
+    if (!item || !item.price || !item.calltype) return "N/A";
+
+    const entryPrice = parseFloat(item.price);
+    const targetPrice = item.closeprice ? parseFloat(item.closeprice) : parseFloat(item.targetprice1);
+    const callType = item.calltype.toUpperCase();
+
+    if (isNaN(entryPrice) || isNaN(targetPrice)) return "N/A";
+
+    let profitLossPercentage = 0;
+
+    if (callType === "BUY") {
+      profitLossPercentage = ((targetPrice - entryPrice) / entryPrice) * 100;
+    } else if (callType === "SELL") {
+      profitLossPercentage = ((entryPrice - targetPrice) / entryPrice) * 100;
+    } else {
+      return "Invalid Call Type";
+    }
+
+    return profitLossPercentage.toFixed(2) + "%";
+  };
+
+
+
+  const PotentialLeftButton = (item) => {
+    if (!item || !checkdata) return null;
+    const matchedStock = checkdata?.find(stock => stock?.SYMBOL === item?.stock);
+    const entryPrice = parseFloat(matchedStock?.price) || 0;
+
+
+    const targetPrices = [
+      parseFloat(item?.tag1) || 0,
+      parseFloat(item?.tag2) || 0,
+      parseFloat(item?.tag3) || 0
+    ].filter(price => price > 0);
+
+    let potentialLeft = 0;
+
+    if (item?.calltype === "BUY") {
+      const highestTarget = Math.max(...targetPrices);
+      potentialLeft = highestTarget - entryPrice;
+
+    } else if (item?.calltype === "SELL") {
+      const lowestTarget = Math.min(...targetPrices);
+      potentialLeft = entryPrice - lowestTarget;
+
+
+    }
+
+    const potentialPercentage = ((potentialLeft / entryPrice) * 100).toFixed(2);
+    return <div>{potentialPercentage}</div>;
+
+
+  };
+
+  const formatTradeSymbol = (symbol) => {
+    if (!symbol) return "Trade Symbol";
+    return symbol.replace(/^([A-Z]+)(\d{2}[A-Z]{3}\d{2})([A-Z]+)$/, '$1 $2 $3');
+  };
+
+
 
 
 
   const renderTradeCard = (item) => (
     <div className="row" key={item._id}>
       <div className="col-md-12">
-        <div className="trade-card shadow">
-          <div className="row">
+        <div className="trade-card shadow" style={{ backgroundColor: "#dcedf2" }}>
+          <div className="row mb-3">
+            <div className="col-lg-3">
+              <span className="date-btn">
+                <i class="fa-solid fa-calendar me-3"></i>
+                <b>{fDateTimeH(item?.created_at)}</b>
+              </span>
+            </div>
+            {selectedTab === "live" && <div className="col-lg-3">
+              <button className="btn btn-secondary" style={{ borderRadius: "20px", padding: "0px 10px", fontSize: "15px" }}>
+                Sugg. Qty : {item?.lot}
+              </button>
+            </div>}
+
+            <div className={`${selectedTab === "live" ? "col-lg-3" : "offset-5 col-lg-2"} `}>
+              <button className="btn btn-secondary" style={{ borderRadius: "20px", padding: "0px 10px", fontSize: "15px" }}>
+                {item?.callduration}
+              </button>
+            </div>
+
+
+
+            {selectedTab === "live" ?
+              <div className="col-lg-3 text-end">
+                <button className="btn btn-success d-flex " style={{ marginLeft: "40px", padding: "0px 10px", fontSize: "15px" }}>
+                  Potential Left : {PotentialLeftButton(item)}%
+                </button>
+              </div> :
+              <div className="col-lg-2 text-end ">
+                <button className={`btn btn-success ${parseFloat(calculatePnL(item)) >= 0 ? "btn-success" : "btn-danger"}`} style={{ padding: "0px 10px", fontSize: "15px" }}>
+                  P&L : {calculatePnL(item)}
+                </button>
+              </div>
+            }
+          </div>
+
+          <div className="row bg-white">
+
             <div className="col-md-2 d-flex align-items-center">
               <div className="trade-header">
-                <div>
-                  <span className="trade-time tradetime1">
-                    <b>{fDate(item?.created_at)}</b>
+
+                <div className="mb-3">
+                  <span className="trade-type">
+                    Hold Duration :{" "}
+                    <span className="trade-type1">
+                      {service?.find((srv) => srv?._id === item?.service)?.title}
+                    </span>
+                    <span style={{ color: "red" }}>
+
+                      {item?.close_description && <>
+                        {" (Avoid) "}
+                        <Eye
+                          onClick={() => {
+                            setShowModal(true);
+                            setAvoidDescription(item?.close_description
+
+                            );
+                          }}
+                          style={{ cursor: "pointer", marginLeft: "5px" }}
+                        />
+                      </>}
+
+                    </span>
+                    <br />
+                    {
+                      item?.callduration === "Intraday" ? "Intraday" :
+                        item?.callduration === "Short Term" ? "(15-30 days)" :
+                          item?.callduration === "Medium Term" ? "(Above 3 months)" :
+                            "(Above 1 year)"
+                    }
                   </span>
                 </div>
-                <div className="mb-3">
-                  <span className="trade-type">{item?.callduration}</span>
-                </div>
-                <div>
+
+                {/* <div>
                   <span className="trade-type1">
                     {service?.find((srv) => srv?._id === item?.service)?.title}
                   </span>
-                </div>
+                  <span style={{ color: "red" }}>
+                  
+                    {item?.close_description &&  <>
+                        {" (Avoid) "}
+                        <Eye
+                          onClick={() => {
+                            setShowModal(true);
+                            setAvoidDescription(item?.close_description
+                           
+                            );
+                          }}
+                          style={{ cursor: "pointer", marginLeft: "5px" }}
+                        />
+                      </>}
+                 
+                  </span>
+
+                </div> */}
               </div>
             </div>
 
             <div className="col-md-12 col-lg-7">
               <div className="trade-content">
                 <div className="d-sm-flex justify-content-between tradehead mb-3">
-                  <h3>{item.tradesymbol || "Trade Symbol"}</h3>
-                  <span>{item?.stock}</span>
+                  <h3>{formatTradeSymbol(item.tradesymbol)}</h3>
+                  <h5>
+                    Closed Target :{" "}
+                    {item.targethit3 === "1" ? item.targetprice3
+                      : item.targethit2 === "1" ? item.targetprice2
+                        : item.targethit1 === "1" ? item.targetprice1
+                          : "--"}
+                  </h5>
+
+                  {selectedTab !== "live" && (
+                    <span><b>Entry Type</b>: {item?.calltype} {item?.entrytype}</span>)}
                 </div>
                 <div className="trade-details row justify-content-center">
                   {[
@@ -298,13 +500,13 @@ function Trade() {
                     ...(selectedTab === "close"
                       ? [{ label: "Exit Price", value: item?.closeprice || "--" }]
                       : []),
-                    { label: "Call Type", value: item?.calltype || "15-30 days" },
+                    ...(selectedTab === "live" ? [{ label: "Entry Type", value: `${item?.calltype} ${item?.entrytype}` }] : []),
                     { label: "Stoploss", value: item?.stoploss || "--" },
-                    { label: "Target", value: item?.tag1 || "--" },
-                    { label: "Target", value: item?.tag2 || "--" },
-                    { label: "Target", value: item?.tag3 || "--" },
+                    { label: "Target1", value: item?.tag1 || "--" },
+                    { label: "Target2", value: item?.tag2 || "--" },
+                    { label: "Target3", value: item?.tag3 || "--" },
 
-                  ].map((detail, idx) => (
+                  ]?.map((detail, idx) => (
                     <div
                       className={`col-md-${idx < 2 ? 4 : 4} d-flex justify-content-md-${idx < 2 ? "start" : "start"
                         }`}
@@ -326,27 +528,50 @@ function Trade() {
 
                 {selectedTab === "close" ? (
                   <button
-                    className="btn btn-primary w-100 my-1"
+                    className="btn w-100 my-1"
+                    style={{
+                      backgroundColor:
+                        item?.purchased === false || new Date(item?.created_at) > new Date()
+                          ? "#ccc"
+                          : "#0d6efd",
+                      color: "black",
+                      border: "1px solid black",
+                    }}
                     disabled={
-                      item?.purchased === false ||
-                      new Date(item?.created_at) > new Date()
+                      item?.purchased === false || new Date(item?.created_at) > new Date()
                     }
-                    onClick={() => { setExitModel(true); setCalltypedata(item) }}
-                  >
-                    EXIT
-                  </button>
-                ) : (
-                  <button
-                    className="btn btn-primary w-100 my-1"
                     onClick={() => {
-                      setModel(true);
+                      if (brokerstatus === 0) {
+                        showCustomAlert("error", "Client Broker Not Login, Please Login With Broker.");
+                        return;
+                      }
+                      UpdateExitdata(item);
                       setCalltypedata(item);
                     }}
                   >
-                    {item?.calltype}
+                    {item?.purchased === false || new Date(item?.created_at) > new Date()
+                      ? "Trade Closed"
+                      : "EXIT"}
                   </button>
-                )}
 
+                ) : (
+                  <button
+                    className="btn w-100 my-1"
+                    onClick={() => {
+                      if (brokerstatus === 0) {
+                        showCustomAlert("error", "Client Broker Not Login, Please Login With Broker.");
+                        return;
+                      }
+                      setCalltypedata(item);
+                      UpdateData(item)
+                    }}
+                    style={{ backgroundColor: item?.calltype ? "green" : "red", color: "white" }}
+                  >
+                    {`BUY${item?.purchased ? " (Add more)" : ""}`}
+
+                  </button>
+
+                )}
 
                 <button
                   className="btn btn-secondary w-100 my-1"
@@ -359,19 +584,32 @@ function Trade() {
                   View Detail
                 </button>
                 <button
-                  className="btn btn-secondary w-100 my-1"
+                  className="btn w-100 my-1"
+                  style={{
+                    backgroundColor: item?.report ? "green" : "#ccc",
+                    color: item?.report ? "white" : "black",
+                    border: "1px solid black",
+                  }}
                   onClick={() => handleDownload(item)}
+                  disabled={!item?.report} // Button disabled if report is not available
                 >
                   View Analysis
                 </button>
-                <Link to="/user/broker-response">
-                  <button className="btn btn-secondary w-100 my-1">
-                    Broker Response
-                  </button>
-                </Link>
+
+
+
+                {item?.purchased && (
+                  <Link to="/user/broker-response">
+                    <button className="btn btn-secondary w-100 my-1">
+                      Broker Response
+                    </button>
+                  </Link>
+                )}
               </div>
             </div>
           </div>
+
+
         </div>
       </div>
     </div>
@@ -391,11 +629,11 @@ function Trade() {
 
 
   return (
-    <Content Page_title="Trade" button_title="Add Trade" button_status={false}>
+    <Content Page_title="Trades" button_title="Add Trade" button_status={false}>
       <div className="page-content">
         <div>
           <label htmlFor="planSelect" className="mb-1">
-            Plans For You
+            Trades for you
           </label>
           <div className="col-lg-4 d-flex">
             <select
@@ -405,7 +643,8 @@ function Trade() {
               onChange={(e) => setSelectedService(e.target.value)}
             >
               {service?.map((item) => (
-                <option key={item?._id} value={item?._id}>
+
+                <option key={item._id} value={item._id}>
                   {item?.title}
                 </option>
               ))}
@@ -418,15 +657,18 @@ function Trade() {
           role="tablist"
         >
           {[
-            { tab: "live", icon: "bx-home", label: "Live Trade" },
-            { tab: "close", icon: "bx-user-pin", label: "Close Trade" },
-          ].map(({ tab, icon, label }) => (
+            { tab: "live", label: "Live Trade" },
+            { tab: "close", label: "Close Trade" },
+            // { tab: "live", icon: "bx-home", label: "Live Trade" },
+            // { tab: "close", icon: "bx-user-pin", label: "Close Trade" },
+          ]?.map(({ tab, icon, label }) => (
             <li className="nav-item" role="presentation" key={tab}>
               <a
                 className={`nav-link ${selectedTab === tab ? "btn-primary active" : ""
                   }`}
                 onClick={() => setSelectedTab(tab)}
                 role="tab"
+                style={{ cursor: "pointer" }}
               >
                 <div className="d-flex align-items-center">
                   <div className="tab-icon">
@@ -445,8 +687,7 @@ function Trade() {
         </ul>
 
         <div className="tab-content">
-          {isLoading ?
-            <Loader /> : tradeData[selectedTab]?.map(renderTradeCard)}
+          {isLoading ? <Loader /> : tradeData[selectedTab]?.map(renderTradeCard)}
         </div>
         <div className="pagination-controls d-flex justify-content-between mt-3">
           <button
@@ -472,7 +713,19 @@ function Trade() {
       <ReusableModal
         show={model}
         onClose={() => setModel(false)}
-        title={<span>{calltypedata?.calltype}</span>}
+        title={<span>{calltypedata?.tradesymbol}</span>}
+        // title={
+        //   <span>
+        //     {calltypedata?.segment === "C"
+        //       ? "CASH"
+        //       : calltypedata?.segment === "O"
+        //       ? "OPTION"
+        //       : calltypedata?.segment === "F"
+        //       ? "FUTURE"
+        //       : ""}
+        //   </span>
+        // }
+
         body={
           <form className="row g-3">
             <div className="col-md-12">
@@ -490,7 +743,7 @@ function Trade() {
                 }}
               />
             </div>
-            <div className="col-md-12">
+            {orderdata?.segment === "C" && <div className="col-md-12">
               <label htmlFor="inputQuantity" className="form-label">
                 Quantity
               </label>
@@ -504,13 +757,54 @@ function Trade() {
                   setOrderdata({ ...orderdata, quantity: e.target.value });
                 }}
               />
-            </div>
+            </div>}
+
+            {orderdata?.segment !== "C" && (
+              <div className="col-md-6">
+                <label htmlFor="inputLotsize" className="form-label">
+                  Quantity (LotSize : {orderdata?.lotsize})
+                </label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="inputLotsize"
+                  placeholder="Lot Size"
+                  value={orderdata?.lotsize}
+                  disabled
+                />
+              </div>
+            )}
+
+
+            {orderdata?.segment != "C" &&
+              <div className="col-md-1 d-flex align-items-end justify-content-center">
+                <span style={{ fontSize: "1.5rem" }}>*</span>
+              </div>}
+
+            {orderdata?.segment != "C" &&
+              <div className="col-md-5">
+                <label htmlFor="inputQuantity" className="form-label">
+
+                </label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="inputQuantity"
+                  placeholder="Quantity"
+                  // value={orderdata?.quantity}
+                  onChange={(e) =>
+                    setOrderdata({ ...orderdata, quantity: e.target.value })
+                  }
+                />
+              </div>}
+
 
             <div className="col-md-12">
               <div className="row">
                 <div className="col-md-6">
                   <div className="form-check">
                     <input
+
                       className="form-check-input"
                       type="checkbox"
                       id="targetCheckbox"
@@ -545,7 +839,7 @@ function Trade() {
                 className="form-control"
                 id="sharedInput"
                 placeholder={targetEnabled === 1 ? "Target Price" : targetEnabled === 2 ? "Stoploss Price" : "Select Target/Stoploss"}
-                disabled={targetEnabled === 0}
+                disabled={targetEnabled === 0 || targetEnabled === 1}
                 value={targetEnabled === 1 ? orderdata.tsprice : targetEnabled === 2 ? orderdata.slprice : ""}
                 onChange={(e) => {
                   if (targetEnabled === 1) {
@@ -558,16 +852,17 @@ function Trade() {
             </div>
             <div className="col-md-12">
               <label htmlFor="inputQuantity" className="form-label">
-                Exit Price
+                Exit Quantity
               </label>
               <input
+                disabled
                 type="number"
                 className="form-control"
                 id="inputQuantity"
                 placeholder="Quantity"
-                value={orderdata?.exitquantity}
+                value={orderdata?.segment == "C" ? orderdata?.quantity : ""}
                 onChange={(e) => {
-                  setOrderdata({ ...orderdata, exitquantity: e.target.value });
+                  setOrderdata({ ...orderdata, quantity: e.target.value });
                 }}
               />
             </div>
@@ -615,6 +910,22 @@ function Trade() {
               />
             </div>
             <div className="col-md-12">
+              <label htmlFor="inputName" className="form-label">
+                Entry Type
+              </label>
+              <input
+                disabled
+                type="string"
+                className="form-control"
+                id="inputName"
+                placeholder=""
+                value={exitorderdata?.calltype}
+                onChange={(e) => {
+                  setExitOrderdata({ ...exitorderdata, calltype: e.target.value });
+                }}
+              />
+            </div>
+            <div className="col-md-12">
               <label htmlFor="inputQuantity" className="form-label">
                 Quantity
               </label>
@@ -658,8 +969,17 @@ function Trade() {
         title={<span>Detail</span>}
         body={<div dangerouslySetInnerHTML={{ __html: description }} />}
       />
+
+
+      <ReusableModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        title="Description"
+        body={<p>{avoidDescription || "No description available."}</p>}
+      />
     </Content>
   );
 }
 
 export default Trade;
+

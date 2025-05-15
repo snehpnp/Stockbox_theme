@@ -12,8 +12,7 @@ import {
   DeleteClient,
   DeleteDematAccount,
 } from "../../../Services/UserService/User";
-
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 
@@ -32,6 +31,9 @@ const Profiles = () => {
     newPassword: false,
     confirmPassword: false,
   });
+  
+
+  // const [dmateStatus, setDemateStatus] = useState(0);
 
 
 
@@ -53,10 +55,10 @@ const Profiles = () => {
       const errors = {};
 
       if (!values.currentPassword) {
-        errors.currentPassword = "Please enter your current password";
+        errors.currentPassword = "Please Enter your current password";
       }
       if (!values.newPassword) {
-        errors.newPassword = "Please enter a new password";
+        errors.newPassword = "Please Enter a new password";
       } else {
         if (values.newPassword.length < 8) {
           errors.newPassword = "Password must be at least 8 characters long";
@@ -76,7 +78,7 @@ const Profiles = () => {
       }
 
       if (!values.confirmPassword) {
-        errors.confirmPassword = "Please confirm your new password";
+        errors.confirmPassword = "Please Confirm your new password";
       } else if (values.newPassword !== values.confirmPassword) {
         errors.confirmPassword = "Passwords do not match";
       }
@@ -91,18 +93,14 @@ const Profiles = () => {
           localStorage.getItem("token")
         );
         if (response.status) {
-          Swal.fire("Success", "Password changed successfully!", "success");
+          showCustomAlert("Success", "Password changed successfully!")
           setShowModal(false);
           resetForm();
         } else {
-          Swal.fire(
-            "Error",
-            response.message || "Error changing password",
-            "error"
-          );
+          showCustomAlert("error", response.message)
         }
       } catch (error) {
-        Swal.fire("Error", "Something went wrong!", "error");
+        showCustomAlert("error", "Something went wrong!")
       }
     },
   });
@@ -112,9 +110,11 @@ const Profiles = () => {
 
   const getuserdetail = async () => {
     try {
-      const response = await GetUserData(userid, token);
+      const response = await GetUserData(userid, token);      
+
       if (response.status) {
         setUserDetail(response.data);
+        // setDemateStatus(response?.data?.dlinkstatus)
       }
     } catch (error) {
       console.log("error", error);
@@ -130,7 +130,7 @@ const Profiles = () => {
   const UpdateProfileInfo = async () => {
     try {
       if (!userDetail.FullName) {
-        Swal.fire("Error", "Please enter Full Name", "error");
+        showCustomAlert("error", "Please enter Full Name")
         return;
       }
 
@@ -141,7 +141,7 @@ const Profiles = () => {
       const response = await UpdateUserProfile(Data, token);
       if (response.status) {
         setUserDetail(response.data);
-        Swal.fire("Success", "Profile updated successfully!", "success");
+        showCustomAlert("Success", "Profile updated successfully!")
       }
     } catch (error) {
       console.log("error", error);
@@ -170,7 +170,7 @@ const Profiles = () => {
       if (!email) return;
 
       if (email !== userDetail.Email) {
-        Swal.fire("Error", "Email does not match", "error");
+        showCustomAlert("error", "Email does not match");
         return;
       }
 
@@ -203,28 +203,26 @@ const Profiles = () => {
       });
 
       if (isCancelled) {
-        Swal.fire("Cancelled", "Account deletion was cancelled.", "info");
+        showCustomAlert("error", "Account deletion was cancelled.");
         return;
       }
 
-      const response = await DeleteClient(userDetail._id, token);
+      const response = await DeleteClient(userid, token);
+      // return
       if (response.status) {
-        Swal.fire("Deleted!", "Your account has been deleted.", "success");
+        showCustomAlert("Success", "Your account has been deleted.",);
         localStorage.removeItem("token");
         window.location.href = "/login";
       } else {
-        Swal.fire(
-          "Error!",
+        showCustomAlert(
+          "error!",
           response.message || "Something went wrong.",
-          "error"
         );
       }
     } catch (error) {
-      console.error("Error deleting account:", error);
-      Swal.fire(
-        "Error!",
-        "Failed to delete account. Try again later.",
-        "error"
+      showCustomAlert(
+        "error!",
+        "Failed to delete account. Try again later."
       );
     }
   };
@@ -232,31 +230,22 @@ const Profiles = () => {
 
 
   const DeleteDematAccountApi = async () => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this action!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!"
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          console.log("userDetail._id", userid);
-          const response = await DeleteDematAccount({ id: userid }, token);
-          if (response.status) {
-            Swal.fire("Deleted!", "Your account has been deleted.", "success");
-          } else {
-            Swal.fire("Error!", response.message || "Something went wrong.", "error");
-          }
-        } catch (error) {
-          console.error("Error deleting account:", error);
-          Swal.fire("Error!", "Failed to delete account. Try again later.", "error");
+    const result = await showCustomAlert("confirm", "You won't be able to revert this action!")
+    if (result.isConfirmed) {
+      try {
+        const response = await DeleteDematAccount({ id: userid }, token);
+        if (response.status) {
+          showCustomAlert("Deleted!", "Your account has been deleted.", "success");
+        } else {
+          showCustomAlert("error", response.message || "Something went wrong.");
         }
+      } catch (error) {
+
+        showCustomAlert("error", "Failed to delete account. Try again later.");
       }
-    });
+    }
   };
+
 
 
 
@@ -294,18 +283,26 @@ const Profiles = () => {
                 <li className="list-group-item">
                   <Link to="/user/wallet">Wallet</Link>
                 </li>
-                <li className="list-group-item">
+                {/* <li className="list-group-item">
                   <Link to="/user/payment-history">Payment History</Link>
+                </li> */}
+                <li className="list-group-item">
+                  <Link
+                    to="/user/basket"
+                    state={{ activeTab: 'basket' }}
+                  >My Basket Subscription</Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="">My Basket Subscription</Link>
+                  <Link to="/user/kyc">User Kyc</Link>
                 </li>
-                <li className="list-group-item">
-                  <Link to="" onClick={(e) => DeleteDematAccountApi()}
-                    className="btn btn-secondary w-100">
-                    Delete Demat Account
-                  </Link>
-                </li>
+                {userDetail?.dlinkstatus === 1 &&
+                  <li className="list-group-item">
+                    <Link to="" onClick={(e) => DeleteDematAccountApi()}
+                      className="btn btn-secondary w-100">
+                      Delete Demat Account
+                    </Link>
+                  </li>
+                }
                 <li className="list-group-item">
                   <Link
                     to=""
@@ -334,7 +331,7 @@ const Profiles = () => {
                       defaultValue={userDetail?.FullName}
                       onChange={(e) => {
                         if (!e.target.value) {
-                          Swal.fire("Error", "Please enter Full Name", "error");
+                          showCustomAlert("error", "Please enter Full Name");
                           return;
                         }
                         setUserDetail({
@@ -390,37 +387,43 @@ const Profiles = () => {
         title="Change Password"
         body={
           <form onSubmit={formik.handleSubmit}>
-            {["currentPassword", "newPassword", "confirmPassword"].map(
-              (field, index) => (
+            {["currentPassword", "newPassword", "confirmPassword"].map((field, index) => {
+              const hasError = formik.touched[field] && formik.errors[field]; // Check if error exists
+              return (
                 <div className="mb-3 position-relative" key={index}>
                   <input
                     type={showPassword[field] ? "text" : "password"}
                     className="form-control"
-                    placeholder={field.replace(/([A-Z])/g, " $1").trim()}
+                    placeholder={field
+                      .replace(/([A-Z])/g, " $1")
+                      .trim()
+                      .replace(/^./, (str) => str.toUpperCase())}
                     {...formik.getFieldProps(field)}
+                    style={{ paddingRight: "40px" }} // To prevent overlap of eye icon
                   />
+                  {/* Eye Icon: Upar shift hoga agar error hai */}
                   <span
-                    className="position-absolute end-0 top-50 translate-middle-y me-3 cursor-pointer"
+                    className="position-absolute"
+                    style={{
+                      right: "10px",
+                      top: hasError ? "30%" : "50%", // Jab error ho to 40%, warna 50%
+                      transform: "translateY(-50%)",
+                      cursor: "pointer",
+                      transition: "top 0.2s ease-in-out", // Smooth animation
+                    }}
                     onClick={() => togglePassword(field)}
                   >
-                    {showPassword[field] ? (
-                      <EyeOff size={20} />
-                    ) : (
-                      <Eye size={20} />
-                    )}
+                    {showPassword[field] ? <Eye size={20} /> : <EyeOff size={20} />}
                   </span>
-                  {formik.touched[field] && formik.errors[field] && (
-                    <div className="text-danger">{formik.errors[field]}</div>
+                  {/* Error Message */}
+                  {hasError && (
+                    <div className="text-danger mt-1">{formik.errors[field]}</div>
                   )}
                 </div>
-              )
-            )}
+              );
+            })}
             <div className="d-flex justify-content-end">
-              <button
-                type="button"
-                className="btn btn-secondary me-2"
-                onClick={() => setShowModal(false)}
-              >
+              <button type="button" className="btn btn-secondary me-2" onClick={() => setShowModal(false)}>
                 Cancel
               </button>
               <button type="submit" className="btn btn-primary">
@@ -428,6 +431,7 @@ const Profiles = () => {
               </button>
             </div>
           </form>
+
         }
       />
     </Content>

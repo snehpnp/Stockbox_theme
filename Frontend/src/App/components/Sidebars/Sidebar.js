@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Tooltip } from "antd";
 import { SuperAdmin, Admin, User, Employee } from "../Sidebars/Sidebar_config";
+import { getstaffperuser } from "../../Services/Admin/Admin";
+import { permissionMapping } from "./EmployeeManagement";
 
 import {
   UserRoundPlus,
@@ -39,12 +41,27 @@ import {
   FileQuestion,
   CircleUserRound,
   Bell,
-  Puzzle
+  Puzzle,
+  Handshake,
+  ClipboardX,
+  GitCompare,
+  MessageCircle,
+  CircleFadingArrowUp,
+  Ticket,
+  Mails,
+  Facebook
 } from "lucide-react";
 
 import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
+
+  const userid = localStorage.getItem('id');
+  const token = localStorage.getItem('token');
+
+
+
+  const [permission, setPermission] = useState([]);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isTopbar, setIsTopbar] = useState(false);
   const [openTab, setOpenTab] = useState(null);
@@ -54,11 +71,15 @@ const Sidebar = () => {
     localStorage.getItem("Role") == "SUPERADMIN"
       ? SuperAdmin
       : localStorage.getItem("Role") == "ADMIN"
-      ? Admin
-      : localStorage.getItem("Role") == "USER"
-      ? User
-      : Employee
+        ? Admin
+        : localStorage.getItem("Role") == "USER"
+          ? User
+          : Employee
   );
+
+  useEffect(() => {
+    getPermissionInfo()
+  }, [])
 
   useEffect(() => {
     if (theme && theme.sidebarPosition === "Header") {
@@ -87,9 +108,6 @@ const Sidebar = () => {
     padding: isTopbar ? "0 20px" : "10px",
   };
 
-
-
-
   useEffect(() => {
     if (isTopbar) {
       document.body.classList.add("sidebar-horizontal-container");
@@ -100,15 +118,9 @@ const Sidebar = () => {
     }
   }, [isTopbar]);
 
-
-
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
-
-
-
-
 
   useEffect(() => {
     if (isCollapsed) {
@@ -122,7 +134,52 @@ const Sidebar = () => {
 
 
 
-  
+  async function getPermissionInfo() {
+    try {
+      const response = await getstaffperuser(userid, token);
+      if (response?.status && Array.isArray(response.data?.permissions)) {
+        setPermission(response.data.permissions);
+      }
+    } catch (error) {
+      console.error("Error fetching permissions:", error);
+    }
+  }
+
+
+
+  useEffect(() => {
+    if (permission.length > 0) {
+      const filteredRoutes = routes.map(route => {
+        if (route.children) {
+          const filteredChildren = route.children.filter(child =>
+            permission.some(perm =>
+              permissionMapping[perm]?.includes(child.name)
+            )
+          );
+
+          if (filteredChildren.length > 0) {
+            return { ...route, children: filteredChildren };
+          }
+        } else {
+          return permission.some(perm =>
+            permissionMapping[perm]?.includes(route.name)
+          ) ? route : null;
+        }
+        return null;
+      }).filter(route => route !== null);
+
+      const dashboardRoute = routes.find(route => route.name === "Dashboard");
+      if (dashboardRoute && !filteredRoutes.some(route => route.name === "Dashboard")) {
+        filteredRoutes.unshift(dashboardRoute);
+      }
+
+      setRoutes(filteredRoutes);
+    }
+  }, [permission]);
+
+
+
+
   return (
     <>
       <div
@@ -163,9 +220,8 @@ const Sidebar = () => {
                     {/* Parent Tab */}
                     <div
                       onClick={() => tab.children && toggleSubmenu(tab.name)}
-                      className={`sidebar-color sidebar-link ${
-                        location.pathname === tab.link ? "active" : ""
-                      }`}
+                      className={`sidebar-color sidebar-link ${location.pathname === tab.link ? "active" : ""
+                        }`}
                       style={{
                         display: "flex",
                         alignItems: "center",
@@ -177,9 +233,8 @@ const Sidebar = () => {
                     >
                       <Link
                         to={tab.link}
-                        className={`sidebar-color sidebar-link ${
-                          location.pathname === tab.link ? "active" : ""
-                        }`}
+                        className={`sidebar-color sidebar-link ${location.pathname === tab.link ? "active" : ""
+                          }`}
                         style={{
                           textDecoration: "none",
                           display: "flex",
@@ -191,7 +246,7 @@ const Sidebar = () => {
                             <IconComponent icon={tab.icon} />
                           </div>
                         </Tooltip>
-                        {!isCollapsed ? <span>{tab?.name}</span> : ""}
+                        {!isCollapsed ? <span>{tab?.label}</span> : ""}
                       </Link>
                       {tab?.children?.length > 0 &&
                         (openTab === tab?.name ? (
@@ -214,20 +269,18 @@ const Sidebar = () => {
                         {tab.children.map((child) => (
                           <li
                             key={child.name}
-                            className={`sidebar-subitem ${
-                              location.pathname === child.link ? "active" : ""
-                            }`}
+                            className={`sidebar-subitem ${location.pathname === child.link ? "active" : ""
+                              }`}
                           >
                             <Link
                               to={child.link}
-                              className={`sidebar-color sidebar-sublink ${
-                                location.pathname === child.link ? "active" : ""
-                              }`}
+                              className={`sidebar-color sidebar-sublink ${location.pathname === child.link ? "active" : ""
+                                }`}
                               style={{
                                 textDecoration: "none",
                                 display: "flex",
                                 alignItems: "center",
-                                gap: "10px",
+                                // gap: "10px",
                               }}
                             >
                               {" "}
@@ -285,7 +338,15 @@ const IconComponent = ({ icon }) => {
     FileQuestion,
     CircleUserRound,
     Bell,
-    Puzzle
+    Puzzle,
+    Handshake,
+    ClipboardX,
+    GitCompare,
+    MessageCircle,
+    CircleFadingArrowUp,
+    Ticket,
+    Mails,
+    Facebook
 
   };
 

@@ -1,7 +1,7 @@
 const router = require("express").Router()
 const { checkPermission } = require('../Middleware/permissionMiddleware');
 
-const {AddClient,getClient,updateClient,deleteClient,detailClient,statusChange,activeClient,processPayoutRequest,payoutList,freetrialList,deleteFreetrial,helpdeskList,deleteHelpdesk,myPlan,myService,deActiveClient,getClientWithFilter,freetrialListWithFilter,getClientWithFilterExcel,getDeleteClientWithFilter,clientRequest,deleteClientrequest,orderListDetail,PlanCartList,BasketCartList,getClientWithFilterwithplan} = require('../Controllers/Clients')
+const {AddClient,getClient,updateClient,deleteClient,detailClient,statusChange,activeClient,processPayoutRequest,payoutList,freetrialList,deleteFreetrial,helpdeskList,deleteHelpdesk,myPlan,myService,deActiveClient,getClientWithFilter,freetrialListWithFilter,getClientWithFilterExcel,getDeleteClientWithFilter,clientRequest,deleteClientrequest,orderListDetail,PlanCartList,BasketCartList,getClientWithFilterwithplan,orderListDetailexport,getClientWithFilterExport,freetrialListWithFilterExport,getClientFive,getClientEmailsForMailing,getClientsByPlanExpiry} = require('../Controllers/Clients')
 
 
 
@@ -18,7 +18,10 @@ const PERMISSIONS = {
 
 router.post('/client/add', AddClient);
 router.get('/client/list', getClient);
+router.get('/client/listfive', getClientFive);
+
 router.post('/client/listwithfilter', getClientWithFilter);
+
 router.post('/client/deletelistwithfilter', getDeleteClientWithFilter);
 
 router.get('/client/listwithfilterexcel', getClientWithFilterExcel);
@@ -50,6 +53,16 @@ router.get('/client/plancartlist/:client_id', PlanCartList);
 router.get('/client/basketcartlist/:client_id', BasketCartList); 
 
 router.post('/client/listwithfilterwithplan', getClientWithFilterwithplan);
+
+router.post('/client/orderlistdetailexport', orderListDetailexport); 
+
+
+router.post('/client/listwithfilterexport', getClientWithFilterExport);
+router.post('/client/freetriallistwithfilterexport', freetrialListWithFilterExport);
+
+
+router.post('/client/getclientemailsformailing', getClientEmailsForMailing);
+router.post('/client/getclientsbyplanexpiry', getClientsByPlanExpiry);
 
 
 module.exports = router;

@@ -1,345 +1,383 @@
 import React, { useEffect, useState } from "react";
 import ApexCharts from "react-apexcharts";
-// import moment from "moment";
 import Content from "../../../components/Contents/Content";
 import { Link } from "react-router-dom";
 import { House, Tally1 } from "lucide-react";
-import { CircleUserRound, ShoppingCart, History, Shield, CreditCard } from 'lucide-react'
+import { Bar } from "react-chartjs-2";
+import { CircleUserRound, ShoppingCart, History, Shield, CreditCard, Puzzle } from 'lucide-react'
+import { getpastperformaceCashdata, getpastperformaceFuturedata, getpastperformaceOptiondata, GetUserData } from "../../../Services/UserService/User";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import { clientKycAndAgreement } from "../../../Services/UserService/User"
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import Loader from "../../../../Utils/Loader";
+import ReusableModal from '../../../components/Models/ReusableModal';
+import {
+  getbannerlist,
+} from "../../../Services/Admin/Admin";
+import { getblogslist } from "../../../Services/Admin/Admin";
+import { GetNewsData } from "../../../Services/UserService/User";
+import { image_baseurl } from "../../../../Utils/config";
+import { Getdashboardata } from "../../../Services/UserService/User";
+import Kyc from "../Profile/Kyc";
+
+
 
 const Dashboard = () => {
-  const [chartColumnData, setChartColumnData] = useState([]);
-  const [chartLineData, setChartLineData] = useState([]);
-  const [chartCircleData, setChartCircleData] = useState([]);
-  const [chartProgress1Data, setChartProgress1Data] = useState(44);
-  const [chartProgress2Data, setChartProgress2Data] = useState(80);
-  const [chartProgress3Data, setChartProgress3Data] = useState(74);
 
-  const getRandom = () => {
-    return (
-      (Math.sin(iteration / trigoStrength) * (iteration / trigoStrength) +
-        iteration / trigoStrength +
-        1) *
-      (trigoStrength * 2)
-    );
-  };
 
-  const getRangeRandom = (yrange) => {
-    return Math.floor(Math.random() * (yrange.max - yrange.min + 1)) + yrange.min;
-  };
+  const [cashpastdata, setCashPastdata] = useState([]);
+  const [futurepastdata, setFuturePastdata] = useState([]);
+  const [optionpastdata, setOptionPastdata] = useState([]);
+  const [cashAvgProfit, setCashAvgProfit] = useState(0);
+  const [futureAvgProfit, setFutureAvgProfit] = useState(0);
+  const [optionAvgProfit, setOptionAvgProfit] = useState(0);
+  const [months, setMonths] = useState([]);
+  const [bannerimg, setBannerimg] = useState([]);
+  const [blogslist, setBlogslist] = useState([]);
+  const [newslist, setNewslist] = useState([]);
+  const [model, setModel] = useState(false);
+  const [viewmodel2, setViewModel2] = useState(false);
 
-  const generateMinuteWiseTimeSeries = (baseval, count, yrange) => {
-    let series = [];
-    let i = 0;
-    while (i < count) {
-      let x = baseval;
-      let y =
-        (Math.sin(i / trigoStrength) * (i / trigoStrength) +
-          i / trigoStrength +
-          1) *
-        (trigoStrength * 2);
-      series.push([x, y]);
-      baseval += 300000;
-      i++;
+
+
+  const [userDetail, setUserDetail] = useState({});
+  const [loading, setLoading] = useState(false);
+  const token = localStorage.getItem("token");
+  const userid = localStorage.getItem("id");
+  const [dashboard, setDashboard] = useState({});
+
+  useEffect(() => {
+    getCashpastdata();
+    getFuturepastdata();
+    getOptionpastdata();
+    getBannerList();
+    getNewslist();
+    getBloglist();
+    getuserdetail();
+    getdashboardata();
+  }, []);
+
+
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    aadhar: "",
+    panno: "PAN",
+  });
+
+
+
+
+  const [touched, setTouched] = useState({
+    fullName: false,
+    email: false,
+    phone: false,
+    aadhar: false,
+    panno: false,
+  });
+
+  const [errors, setErrors] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    aadhar: "",
+    panno: "",
+  });
+
+  const validateField = (name, value) => {
+    let errorMessage = "";
+
+    switch (name) {
+      case "fullName":
+        if (!value.trim()) {
+          errorMessage = "Name is required";
+        } else if (value.trim().length < 3) {
+          errorMessage = "Name must be at least 3 characters";
+        } else if (!/^[A-Za-z\s]+$/.test(value)) {
+          errorMessage = "Name should contain only letters and spaces";
+        }
+        break;
+
+      case "email":
+        if (!value) {
+          errorMessage = "Email is required";
+        } else if (!/^\S+@\S+\.\S+$/.test(value)) {
+          errorMessage = "Please enter a valid email address";
+        }
+        break;
+
+      case "phone":
+        if (!value) {
+          errorMessage = "Phone number is required";
+        } else if (!/^[6-9]\d{9}$/.test(value)) {
+          errorMessage = "Please enter a valid 10-digit Indian mobile number";
+        }
+        break;
+
+      case "aadhar":
+        if (!value) {
+          errorMessage = "Aadhar number is required";
+        } else if (!/^\d{12}$/.test(value)) {
+          errorMessage = "Aadhar number must be 12 digits";
+        }
+        break;
+
+      case "panno":
+        if (!value) {
+          errorMessage = "PAN number is required";
+        } else if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value)) {
+          errorMessage = "PAN must be in valid format (e.g., ABCDE1234F)";
+        }
+        break;
+
+      default:
+        break;
     }
-    return series;
+
+    return errorMessage;
   };
 
-  const trigoStrength = 3;
-  const iteration = 11;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-  const optionsColumn = {
-    chart: {
-      height: 350,
-      type: "bar",
-      animations: {
-        enabled: false,
-      },
-      events: {
-        animationEnd: (chartCtx) => {
-          const newData = chartCtx.w.config.series[0].data.slice();
-          newData.shift();
-          window.setTimeout(() => {
-            chartCtx.updateOptions(
-              {
-                series: [{ data: newData }],
-                xaxis: {
-                  min: chartCtx.minX,
-                  max: chartCtx.maxX,
-                },
-                subtitle: {
-                  text: parseInt(getRangeRandom({ min: 1, max: 20 })).toString() + "%",
-                },
-              },
-              false,
-              false
-            );
-          }, 300);
-        },
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      width: 0,
-    },
-    series: [
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+
+    if (touched[name]) {
+      const errorMessage = validateField(name, value);
+      setErrors(prev => ({
+        ...prev,
+        [name]: errorMessage
+      }));
+    }
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+
+    setTouched(prev => ({
+      ...prev,
+      [name]: true
+    }));
+
+    const errorMessage = validateField(name, value);
+    setErrors(prev => ({
+      ...prev,
+      [name]: errorMessage
+    }));
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {};
+    const newTouched = {};
+
+
+    Object.keys(formData).forEach(key => {
+      newTouched[key] = true;
+      const errorMessage = validateField(key, formData[key]);
+      newErrors[key] = errorMessage;
+      if (errorMessage) {
+        isValid = false;
+      }
+    });
+
+    setTouched(newTouched);
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleKycSubmit = async (e) => {
+    e.preventDefault();
+
+
+    if (!validateForm()) {
+      showCustomAlert("error", "Please fix the errors in the form");
+      return;
+    }
+
+    setLoading(true);
+
+    const data = new FormData();
+    data.append('email', formData.email);
+    data.append('name', formData.fullName);
+    data.append('phone', formData.phone);
+    data.append('panno', formData.panno);
+    data.append('aadhaarno', formData.aadhar);
+    data.append('id', userid);
+
+    try {
+      const token = localStorage.getItem('token');
+      const result = await clientKycAndAgreement(data, token);
+      showCustomAlert("success", "KYC form submitted successfully!")
+      setFormData({
+        fullName: "",
+        email: "",
+        phone: "",
+        aadhar: "",
+        panno: "",
+      });
+      setTouched({
+        fullName: false,
+        email: false,
+        phone: false,
+        aadhar: false,
+        panno: false,
+      });
+    } catch (err) {
+      showCustomAlert("error", "KYC submission failed. Please try again.");
+    }
+    setLoading(false);
+  };
+
+
+  const getBannerList = async () => {
+    try {
+      const response = await getbannerlist(token);
+      setBannerimg(response.data);
+    } catch (error) {
+      console.error("Error fetching banner list:", error);
+    }
+  };
+
+
+
+  const getNewslist = async () => {
+    try {
+      const response = await GetNewsData(token);
+      setNewslist(response.data);
+    }
+    catch (error) {
+      console.error("Error fetching blog list:", error);
+    }
+
+  };
+
+
+  const getBloglist = async () => {
+    try {
+      const response = await getblogslist(token);
+      setBlogslist(response.data);
+
+    }
+    catch (error) {
+      console.error("Error fetching blog list:", error);
+    }
+  };
+
+  const getdashboardata = async () => {
+    try {
+      const response = await Getdashboardata(token);
+
+      if (response) {
+        setDashboard(response);
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    }
+  };
+
+
+
+  const formatMonth = (key) => {
+    const [year, month] = key.split("-");
+    return new Date(year, month - 1).toLocaleString("en-US", { month: "long" });
+  };
+
+  const getuserdetail = async () => {
+    try {
+      const response = await GetUserData(userid, token);
+
+      if (response.status) {
+        setUserDetail(response.data);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+
+
+
+  const getCashpastdata = async () => {
+    try {
+      const response = await getpastperformaceCashdata({ id: "66d2c3bebf7e6dc53ed07626" }, token);
+      if (response?.status) {
+        const { months, avgMonthlyProfit } = response.data["6_months"];
+        setMonths(Object.keys(months).map(formatMonth));
+        setCashPastdata(Object.values(months).map(m => m.netProfit));
+        setCashAvgProfit(avgMonthlyProfit);
+      }
+    } catch (error) {
+      console.error("Error fetching Cash data:", error);
+    }
+  };
+
+
+
+
+
+  const getFuturepastdata = async () => {
+    try {
+      const response = await getpastperformaceFuturedata({ id: "66dfede64a88602fbbca9b72" }, token);
+      if (response?.status) {
+        const { months, avgMonthlyProfit } = response.data["6_months"];
+        setFuturePastdata(Object.values(months).map(m => m.netProfit));
+        setFutureAvgProfit(avgMonthlyProfit);
+      }
+    } catch (error) {
+      console.error("Error fetching Future data:", error);
+    }
+  };
+
+
+
+
+  const getOptionpastdata = async () => {
+    try {
+      const response = await getpastperformaceOptiondata({ id: "66dfeef84a88602fbbca9b79" }, token);
+      if (response?.status) {
+        const { months, avgMonthlyProfit } = response.data["6_months"];
+        setOptionPastdata(Object.values(months).map(m => m.netProfit));
+        setOptionAvgProfit(avgMonthlyProfit);
+      }
+    } catch (error) {
+      console.error("Error fetching Option data:", error);
+    }
+  };
+
+
+
+
+  const chartData = {
+    labels: months,
+    datasets: [
       {
-        name: "Load Average",
-        data: generateMinuteWiseTimeSeries(
-          new Date("12/12/2016 00:20:00").getTime(),
-          12,
-          {
-            min: 10,
-            max: 110,
-          }
-        ),
+        label: "Cash",
+        data: cashpastdata,
+        backgroundColor: "rgba(75, 192, 192, 0.6)",
+      },
+      {
+        label: "Future",
+        data: futurepastdata,
+        backgroundColor: "rgba(153, 102, 255, 0.6)",
+      },
+      {
+        label: "Option",
+        data: optionpastdata,
+        backgroundColor: "rgba(255, 159, 64, 0.6)",
       },
     ],
-    title: {
-      text: "Load Average",
-      align: "left",
-      style: {
-        fontSize: "12px",
-      },
-    },
-    subtitle: {
-      // text: "20%",
-      floating: true,
-      align: "right",
-      offsetY: 0,
-      style: {
-        fontSize: "22px",
-      },
-    },
-    fill: {
-      type: "gradient",
-      gradient: {
-        shade: "dark",
-        type: "vertical",
-        shadeIntensity: 0.5,
-        inverseColors: false,
-        opacityFrom: 1,
-        opacityTo: 0.8,
-        stops: [0, 100],
-      },
-    },
-    xaxis: {
-      type: "datetime",
-      range: 2700000,
-    },
-    legend: {
-      show: true,
-    },
   };
 
-  const optionsLine = {
-    chart: {
-      height: 350,
-      type: "line",
-      stacked: true,
-      animations: {
-        enabled: true,
-        easing: "linear",
-        dynamicAnimation: {
-          speed: 1000,
-        },
-      },
-      dropShadow: {
-        enabled: true,
-        opacity: 0.3,
-        blur: 5,
-        left: -7,
-        top: 22,
-      },
-      events: {
-        animationEnd: (chartCtx) => {
-          const newData1 = chartCtx.w.config.series[0].data.slice();
-          newData1.shift();
-          const newData2 = chartCtx.w.config.series[1].data.slice();
-          newData2.shift();
-          window?.setTimeout(() => {
-            chartCtx?.updateOptions(
-              {
-                series: [
-                  { data: newData1 },
-                  { data: newData2 },
-                ],
-                subtitle: {
-                  text: parseInt(getRandom() * Math.random()).toString(),
-                },
-              },
-              false,
-              false
-            );
-          }, 300);
-        },
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: "straight",
-      width: 5,
-    },
-    series: [
-      {
-        name: "Running",
-        data: generateMinuteWiseTimeSeries(
-          new Date("12/12/2016 00:20:00").getTime(),
-          12,
-          {
-            min: 30,
-            max: 110,
-          }
-        ),
-      },
-      {
-        name: "Waiting",
-        data: generateMinuteWiseTimeSeries(
-          new Date("12/12/2016 00:20:00").getTime(),
-          12,
-          {
-            min: 30,
-            max: 110,
-          }
-        ),
-      },
-    ],
-    xaxis: {
-      type: "datetime",
-      range: 2700000,
-    },
-    title: {
-      text: "Processes",
-      align: "left",
-      style: {
-        fontSize: "12px",
-      },
-    },
-    subtitle: {
-      text: "20",
-      floating: true,
-      align: "right",
-      offsetY: 0,
-      style: {
-        fontSize: "22px",
-      },
-    },
-    legend: {
-      show: true,
-      floating: true,
-      horizontalAlign: "left",
-      onItemClick: {
-        toggleDataSeries: false,
-      },
-      position: "top",
-      offsetY: -33,
-      offsetX: 60,
-    },
-  };
 
-  const optionsCircle = {
-    chart: {
-      type: "radialBar",
-      height: 250,
-      offsetX: 0,
-    },
-    plotOptions: {
-      radialBar: {
-        inverseOrder: false,
-        hollow: {
-          margin: 5,
-          size: "48%",
-          background: "transparent",
-        },
-        track: {
-          show: true,
-          background: "#40475D",
-          strokeWidth: "10%",
-          opacity: 1,
-          margin: 3,
-        },
-      },
-    },
-    series: [71, 63],
-    labels: ["Device 1", "Device 2"],
-    legend: {
-      show: true,
-      position: "left",
-      offsetX: -30,
-      offsetY: -10,
-      formatter: function (val, opts) {
-        return val + " - " + opts.w.globals.series[opts.seriesIndex] + "%";
-      },
-    },
-    fill: {
-      type: "gradient",
-      gradient: {
-        shade: "dark",
-        type: "horizontal",
-        shadeIntensity: 0.5,
-        inverseColors: true,
-        opacityFrom: 1,
-        opacityTo: 1,
-        stops: [0, 100],
-      },
-    },
-  };
-
-  const optionsProgress1 = {
-    chart: {
-      height: 70,
-      type: "bar",
-      stacked: true,
-      sparkline: {
-        enabled: true,
-      },
-    },
-    plotOptions: {
-      bar: {
-        horizontal: true,
-        barHeight: "20%",
-        colors: {
-          backgroundBarColors: ["#40475D"],
-        },
-      },
-    },
-    series: [
-      {
-        name: "Process 1",
-        data: [chartProgress1Data],
-      },
-    ],
-    title: {
-      floating: true,
-      offsetX: -10,
-      offsetY: 5,
-      text: "Process 1",
-    },
-    subtitle: {
-      floating: true,
-      align: "right",
-      offsetY: 0,
-      text: chartProgress1Data + "%",
-      style: {
-        fontSize: "20px",
-      },
-    },
-    tooltip: {
-      enabled: false,
-    },
-    xaxis: {
-      categories: ["Process 1"],
-    },
-    yaxis: {
-      max: 100,
-    },
-    fill: {
-      opacity: 1,
-    },
-  };
 
   // Other chart progress configurations follow similarly
 
@@ -372,21 +410,19 @@ const Dashboard = () => {
       </div>
 
       <div class="row g-3 mt-4" >
-      <div className="col-lg-4 col-md-4">
+        <div className="col-lg-4 col-md-4">
           <div className="card">
             <div className="card-body">
               <div className="d-flex flex-column align-items-center text-center">
                 <div className="btn-primary p-3 rounded-circle " style={{ marginTop: '-50px', width: '100px', height: '100px' }}>
-                  <CircleUserRound className="w-100 h-100 " />
+                  <CircleUserRound className="w-100 h-100 m-0" />
                 </div>
                 <div className="mt-3">
-                  <h4>Hello,John Doe</h4>
+                  <h4>Hello,{userDetail?.FullName}</h4>
                   <hr />
-                  <h3 class="h6 fw-semibold">Total Balance</h3>
-                  <p class="h3 font-weight-bold">$<span id="totalBalance">10,457.00</span></p>
-                  <p class="text-success">
-                    +$<span id="balanceChange">1,169.28</span> (<span id="balanceChangePercent">12.4</span>%)
-                  </p>
+                  <h3 class="h6 fw-semibold">Wallet Balance</h3>
+                  <p class="h3 font-weight-bold">₹<span id="totalBalance">{userDetail?.wamount}</span></p>
+
 
                 </div>
               </div>
@@ -394,252 +430,322 @@ const Dashboard = () => {
 
               <ul className="list-group list-group-flush">
                 <li className="list-group-item">
-                  <Link to="/user/subscription">
+                  <Link to="/user/subscription" className="text-dark">
                     <CreditCard className="me-2" /> My Subscription
                   </Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="/user/kyc">
+                  <Link onClick={() => setViewModel2(true)} className="text-dark">
                     <Shield className="me-2" /> KYC Pending
                   </Link>
                 </li>
-                <li className="list-group-item">
-                  <Link to="/user/payment-history">
+                <li className="list-group-item" >
+                  <Link to="/user/subscription" className="text-dark">
                     <History className="me-2" /> Payment History
                   </Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="">
+                  <Link to="/user/basket"
+                    state={{ activeTab: 'basket' }}
+                    className="text-dark">
                     <ShoppingCart className="me-2" /> My Basket Subscription
                   </Link>
+
                 </li>
                 <li className="list-group-item">
-                  <button className="btn btn-primary mt-3 w-100">View Proflie</button>
+                  <Link to="/user/refer-earn" className="text-dark">
+                    <Puzzle className="me-2" /> Refer & Earn
+                  </Link>
+
                 </li>
+                {/* <li className="list-group-item">
+                  <button className="btn btn-primary mt-3 w-100">View Proflie</button>
+                </li> */}
               </ul>
 
             </div>
           </div>
         </div>
         <div class="col-lg-8 col-md-8">
-          <div className="card h-100 activity-card">
+          <div className="card h-100 user-card">
             <div className="card-body">
+              <div className="row row-cols-1 row-cols-md-2 row-cols-xl-3">
+                <div className="col">
+                  <div className="card radius-10 bg-gradient-deepblue">
+                    <div className="card-body">
+                      <div className="d-flex align-items-center">
+                        <h5 className="mb-0 text-white">{dashboard?.open}</h5>
+                        <div className="ms-auto">
+                          <i className="bx bx-cart fs-3 text-white" />
+                        </div>
+                      </div>
+                      <div
+                        className="progress my-2 bg-opacity-25 bg-white"
+                        style={{ height: 4 }}
+                      >
+                        <div
+                          className="progress-bar bg-white"
+                          role="progressbar"
+                          style={{ width: "55%" }}
+                          aria-valuenow={25}
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                        />
+                      </div>
+                      <div className="d-flex align-items-center text-white">
+                        <p className="mb-0 text-white">Live Trade</p>
 
-              <div className="row ">
-                <div class="col-md-6">
-                  <h3>Activity</h3>
-                </div>
-                <div class="col-md-6">
-                  <div class="d-flex justify-content-end align-items-center mb-3">
-
-                    <div class="time-selector d-flex gap-2 ">
-                      <button class="btn btn-secondary active" data-period="1D">1D</button>
-                      <button class="btn btn-secondary" data-period="1W">1W</button>
-                      <button class="btn btn-secondary" data-period="1M">1M</button>
-                      <button class="btn btn-secondary" data-period="1Y">1Y</button>
-                      <button class="btn btn-secondary" data-period="ALL">ALL</button>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <div className="col">
+                  <div className="card radius-10 bg-gradient-ohhappiness">
+                    <div className="card-body">
+                      <div className="d-flex align-items-center">
+                        <h5 className="mb-0 text-white">{dashboard?.closed}</h5>
+                        <div className="ms-auto">
+                          <i className="bx bx-dollar fs-3 text-white" />
+                        </div>
+                      </div>
+                      <div
+                        className="progress my-2 bg-opacity-25 bg-white"
+                        style={{ height: 4 }}
+                      >
+                        <div
+                          className="progress-bar bg-white"
+                          role="progressbar"
+                          style={{ width: "55%" }}
+                          aria-valuenow={25}
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                        />
+                      </div>
+                      <div className="d-flex align-items-center text-white">
+                        <p className="mb-0  text-white">Close Trade</p>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col">
+                  <div className="card radius-10 bg-gradient-ibiza">
+                    <div className="card-body">
+                      <div className="d-flex align-items-center">
+                        <h5 className="mb-0 text-white">{dashboard?.openstrategy}</h5>
+                        <div className="ms-auto">
+                          <i className="bx bx-group fs-3 text-white" />
+                        </div>
+                      </div>
+                      <div
+                        className="progress my-2 bg-opacity-25 bg-white"
+                        style={{ height: 4 }}
+                      >
+                        <div
+                          className="progress-bar bg-white"
+                          role="progressbar"
+                          style={{ width: "55%" }}
+                          aria-valuenow={25}
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                        />
+                      </div>
+                      <div className="d-flex align-items-center text-white">
+                        <p className="mb-0  text-white">Strategy Trade</p>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
-              <>
-                <div className="my-4">
-                  <label className="fw-semibold">Trades</label>
-                  <div className="progress ">
-
-                    <div
-                      className="progress-bar progress-bar-striped"
-                      role="progressbar"
-                      style={{ width: "10%" }}
-                      aria-valuenow={10}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </div>
-                <div className="my-4">
-                  <label className="fw-semibold">Past Performance</label>
-                  <div className="progress ">
-
-                    <div
-                      className="progress-bar progress-bar-striped bg-success"
-                      role="progressbar"
-                      style={{ width: "25%" }}
-                      aria-valuenow={25}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </div>
-                <div className="my-4">
-                  <label className="fw-semibold">Basket</label>
-                  <div className="progress ">
-                    <div
-                      className="progress-bar progress-bar-striped bg-info"
-                      role="progressbar"
-                      style={{ width: "50%" }}
-                      aria-valuenow={50}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </div>
-                <div className="my-4">
-                  <label className="fw-semibold">Subscription</label>
-                  <div className="progress " >
-                    <div
-                      className="progress-bar progress-bar-striped bg-warning"
-                      role="progressbar"
-                      style={{ width: "75%" }}
-                      aria-valuenow={75}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </div>
-                <div className="my-4">
-                  <label className="fw-semibold">Coupon</label>
-                  <div className="progress ">
-                    <div
-                      className="progress-bar progress-bar-striped bg-danger"
-                      role="progressbar"
-                      style={{ width: "100%" }}
-                      aria-valuenow={100}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    />
-                  </div>
-                </div>
-              </>
+              <div className="row mt-3">
 
 
+                <Swiper
+                  spaceBetween={50}
+                  slidesPerView={1}
+                  autoplay={{ delay: 3000, disableOnInteraction: false }}
+                  navigation
+                  pagination={{ clickable: true }}
+                  modules={[Autoplay, Navigation, Pagination]}
 
+                >
+                  {bannerimg?.map((item, index) => {
+                    return (
+                      <SwiperSlide key={index}>
+                        <img
+                          src={`${image_baseurl}uploads/banner/${item.image}`}
+                          style={{ height: '300px', width: '100%' }}
+                          alt={`banner-${index}`}
+                        />
+                      </SwiperSlide>
+                    );
+                  })}
+                </Swiper>
+
+              </div>
             </div>
           </div>
-        </div>
-        
-      </div>
 
+        </div>
+
+      </div>
       <div className="row mt-4">
-        <div className="col-lg-4">
+        <div className="col-md-4">
           <div className="card">
             <div className="card-body">
-              <h3 class="h6 fw-semibold mb-2">Sales Statistic</h3>
-              <p class="h4 font-weight-bold">$<span id="salesValue">1,062.56</span></p>
-              <p class="text-success">Today (+<span id="salesChangePercent">40.8</span>%)</p>
-              {/* <ApexCharts
-                options={optionsLine}
-                series={optionsLine.series}
-                type="line"
-                height={350}
-              /> */}
-              <ApexCharts
-                options={optionsColumn}
-                series={optionsColumn.series}
-                type="bar"
-                height={350}
-              />
+              <h5>
+                <Link to="/user/past-performance/cash" className="text-decoration-none text-dark">
+                  Cash
+                </Link>
+              </h5>
+              <Bar data={{ labels: months, datasets: [chartData?.datasets[0]] }} />
+              <hr />
+              <div className="row">
+                <div className="col-md-2 pe-0 border-right">
+                  <h6>
+                    <i className="bx bx-rupee fs-1 text-success"></i>
+                  </h6>
+                </div>
+                <div className="col-md-6">
+                  <h6>Average Profit</h6>
+                  <h4>{cashAvgProfit.toFixed(2)}</h4>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div className="col-lg-4">
+        <div className="col-md-4">
           <div className="card">
             <div className="card-body">
-              <h3 class="h6 fw-semibold mb-2">Exchange Offer</h3>
-              <p class="h4 font-weight-bold">$<span id="exchangeValue">491.20</span></p>
-              <p class="text-success">Today (+<span id="exchangeChangePercent">19.5</span>%)</p>
-              <ApexCharts
-                options={optionsColumn}
-                series={optionsColumn.series}
-                type="bar"
-                height={350}
-              />
+              <h5>
+                <Link to="/user/past-performance/future" className="text-decoration-none text-dark">
+                  Future
+                </Link>
+              </h5>
+              <Bar data={{ labels: months, datasets: [chartData.datasets[1]] }} />
+              <hr />
+              <div className="row">
+                <div className="col-md-2 pe-0 border-right">
+                  <h6>
+                    <i className="bx bx-rupee fs-1 text-success"></i>
+                  </h6>
+                </div>
+                <div className="col-md-6">
+                  <h6>Average Profit</h6>
+                  <h4>{futureAvgProfit.toFixed(2)}</h4>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div className="col-lg-4">
-          <div className="card h-100">
+        <div className="col-md-4">
+          <div className="card">
             <div className="card-body">
-              <h3 class="h6 fw-semibold mb-2">Greed Index</h3>
-              <ApexCharts
-                options={optionsCircle}
-                series={optionsCircle.series}
-                type="radialBar"
-                height={250}
-              />
-              <p class="text-center mt-3">
-                <span class="h4 font-weight-bold"><span id="greedIndexValue">75</span>%</span>
-                <span class="text-success ms-2"><span id="greedIndexChange">+10.30%</span></span>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="dashboard-page" class="page-content">
-
-        <div class="card p-4 mt-3">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="h5 fw-semibold">Tokens</h3>
-            <div>
-              <button class="btn btn-secondary me-2">Filter</button>
-              <button class="btn btn-secondary">Customize</button>
-            </div>
-          </div>
-          <div class="table-responsive">
-            <table class="table table-bordered table-striped token-table">
-              <thead>
-                <tr>
-                  <th class="text-start pb-2">Name</th>
-                  <th class="text-end pb-2">Price</th>
-                  <th class="text-end pb-2">Balance</th>
-                  <th class="text-end pb-2">Market Cap</th>
-                  <th class="text-end pb-2">Volume (24H)</th>
-                  <th class="text-end pb-2">Circ Supply</th>
-                </tr>
-              </thead>
-              <tbody id="tokenTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <div id="swap-page" class="page-content d-none">
-        <div class="card p-4">
-          <h2 class="h4 fw-semibold mb-4">Swap Tokens</h2>
-          <div class="max-w-md mx-auto">
-            <div class="mb-3">
-              <label class="form-label" for="swapFullInput">You Pay</label>
-              <div class="d-flex align-items-center">
-                <input type="number" class="form-control flex-grow-1 me-2" id="swapFullInput" />
-                <select class="form-select w-auto" id="swapFullInputCurrency">
-                  <option value="bnb">BNB</option>
-                  <option value="eth">ETH</option>
-                  <option value="btc">BTC</option>
-                </select>
+              <h5>
+                <Link to="/user/past-performance/option" className="text-decoration-none text-dark">
+                  Option
+                </Link>
+              </h5>
+              <Bar data={{ labels: months, datasets: [chartData.datasets[2]] }} />
+              <hr />
+              <div className="row">
+                <div className="col-md-2 pe-0 border-right">
+                  <h6>
+                    <i className="bx bx-rupee fs-1 text-success"></i>
+                  </h6>
+                </div>
+                <div className="col-md-6">
+                  <h6>Average Profit</h6>
+                  <h4>{optionAvgProfit.toFixed(2)}</h4>
+                </div>
               </div>
             </div>
-            <div class="swap-icon d-flex justify-content-center align-items-center my-3">
-              <button id="swapFullButton" class="btn btn-primary rounded-circle p-2">
-                <i class="fas fa-exchange-alt"></i>
-              </button>
-            </div>
-            <div class="mb-4">
-              <label class="form-label" for="swapFullOutput">You Receive</label>
-              <div class="d-flex align-items-center">
-                <input type="number" class="form-control flex-grow-1 me-2" id="swapFullOutput" readonly />
-                <select class="form-select w-auto" id="swapFullOutputCurrency">
-                  <option value="eth">ETH</option>
-                  <option value="bnb">BNB</option>
-                  <option value="btc">BTC</option>
-                </select>
+          </div>
+        </div>
+      </div>
+      <div className="row mt-4">
+        <div className="col-lg-6">
+          <div className="card radius-10 w-100">
+            <div className="card-header">
+              <div className="d-flex align-items-center">
+                <div>
+                  <h5 className="mb-1">News</h5>
+                </div>
+
               </div>
             </div>
-            <button id="performFullSwapButton" class="btn btn-gradient w-100">Swap Tokens</button>
+            <div className="product-list p-3 mb-3 ps ps--active-y">
+              <div className="d-flex flex-column gap-3">
+                {newslist?.slice(0, 5).map((item, index) => {
+                  return (
+                    <div key={index} className="d-flex align-items-center justify-content-between gap-3 p-2 border radius-10">
+                      <div className="">
+                        <img src={`${item.image}`} width={50} alt={item.title} />
+                      </div>
+                      <div className="flex-grow-1">
+                        <h6 className="mb-0">{item.title}</h6>
+                      </div>
+                      <div className="">
+                        <small className="text-muted" style={{ fontSize: 12 }}> {new Date(item.created_at).toLocaleDateString()}</small>
+                      </div>
+                    </div>
+                  );
+                }
+                )}
+
+              </div>
+            </div>
+
+
+          </div>
+
+
+        </div>
+        <div className="col-lg-6">
+          <div className="card">
+            <div className="card-header">
+              <div className="d-flex align-items-center">
+                <div>
+                  <h5 className="mb-1">Blogs</h5>
+                </div>
+
+              </div>
+            </div>
+            <div className="card-body">
+
+              <ul className="list-unstyled" style={{ margin: 0, padding: 0 }}>
+                {blogslist?.slice(0, 5)?.map((item, index) => {
+                  return (
+                    <li key={index} className="d-flex my-2 align-items-center justify-content-between gap-3 p-2 border radius-10">
+                      <div className="">
+                        <img src={`${image_baseurl}uploads/blogs/${item.image}`} width={50} alt={item.title} />
+                      </div>
+                      <div className="flex-grow-1">
+                        <h6 className="mb-0">{item.title}</h6>
+                        <p className="mb-0 mt-2" style={{ fontSize: 12 }}> {new Date(item.created_at).toLocaleDateString()}</p>
+                      </div>
+                    </li>
+                  );
+                })}
+
+              </ul>
+
+            </div>
           </div>
         </div>
       </div>
 
+      <ReusableModal
+        show={viewmodel2}
+        onClose={() => setViewModel2(false)}
+        title={<span><b>KYC Details</b></span>}
+        body={
+          <Kyc setViewModel2={setViewModel2} />
+        }
 
+      />
     </div>
 
 

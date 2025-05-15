@@ -14,9 +14,7 @@ import Loader from '../../../../Utils/Loader';
 
 
 
-
 const History = () => {
-
 
 
     const navigate = useNavigate();
@@ -35,11 +33,9 @@ const History = () => {
     const [isLoading, setIsLoading] = useState(true)
 
 
-
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
-
 
 
     const [updatetitle, setUpdatetitle] = useState({
@@ -67,6 +63,7 @@ const History = () => {
         setSearchInput("")
         setStartDate("")
         setEndDate("")
+        setCurrentPage(1);
 
 
     }
@@ -75,7 +72,8 @@ const History = () => {
 
     const getexportfile = async () => {
         try {
-            const response = await getPayementhistory(token);
+            const data = { page: "", fromDate: startDate, toDate: endDate, search: searchInput }
+            const response = await getPayementhistory(data, token);
             if (response.status) {
                 if (response.data?.length > 0) {
                     const csvArr = response.data?.map((item) => ({
@@ -89,7 +87,7 @@ const History = () => {
                         PlanDiscount: item.discount || 0,
                         CouponID: item.coupon || "N/A",
                         PlanAmount: item.plan_price || 0,
-                        Total: item?.segment || '-',
+                        Total: item?.total || '-',
                         Validity: item.planDetails?.validity || '-',
                         PurchaseDate: fDateTime(item.created_at) || '-',
                     }));
@@ -107,6 +105,37 @@ const History = () => {
 
 
 
+
+
+
+
+    const gethistory = async () => {
+        try {
+            setIsLoading(true)
+            const data = { page: currentPage, fromDate: startDate, toDate: endDate, search: searchInput }
+            const response = await getPayementhistorywithfilter(data, token);
+            if (response.status) {
+                let filteredData = response.data;
+
+                setTotalRows(response.pagination.total)
+                setClients(filteredData);
+            }
+        } catch (error) {
+            console.log("Error fetching services:", error);
+        }
+        setIsLoading(false)
+    };
+
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [searchInput])
+
+
+    useEffect(() => {
+        gethistory();
+    }, [searchInput, startDate, endDate, currentPage]);
+
+
     const handleDownload = (row) => {
         const url = `${image_baseurl}uploads/invoice/${row.invoice}`;
         const link = document.createElement('a');
@@ -117,32 +146,6 @@ const History = () => {
         link.click();
         document.body.removeChild(link);
     };
-
-
-
-
-
-
-    const gethistory = async () => {
-        try {
-            const data = { page: currentPage, fromDate: startDate, toDate: endDate, search: searchInput }
-            const response = await getPayementhistorywithfilter(data, token);
-            if (response.status) {
-                let filteredData = response.data;
-                setTotalRows(response.pagination.total)
-                setClients(filteredData);
-            }
-        } catch (error) {
-            console.log("Error fetching services:", error);
-        }
-        setIsLoading(false)
-    };
-
-
-
-    useEffect(() => {
-        gethistory();
-    }, [searchInput, startDate, endDate, currentPage]);
 
 
 
@@ -168,6 +171,12 @@ const History = () => {
         {
             name: 'Phone',
             selector: row => row.clientPhoneNo,
+            sortable: true,
+            width: '200px',
+        },
+        {
+            name: 'State',
+            selector: row => row.state ? row.state : "-",
             sortable: true,
             width: '200px',
         },
@@ -208,33 +217,43 @@ const History = () => {
             sortable: true,
             width: '200px',
         },
-        {
-            name: 'Plan Discount',
-            selector: row => <div> <IndianRupee />{row.discount}</div>,
-            sortable: true,
-            width: '200px',
-        },
 
         {
             name: 'Plan Amount',
-            selector: row => <div> <IndianRupee />{row.plan_price}</div>,
+            selector: row => <div> <IndianRupee />{(row.plan_price).toFixed(2)}</div>,
             sortable: true,
             width: '200px',
         },
         {
-            name: 'Coupon Id',
-            selector: row => row.coupon ? row.coupon : "N/A",
+            name: 'Plan Discount',
+            selector: row => <div> <IndianRupee />{(row.discount).toFixed(2)}</div>,
+            sortable: true,
+            width: '200px',
+        },
+        {
+            name: 'Total Amount',
+            selector: row => row?.total || "-",
+            cell: row => <div>{row?.total} <span style={{ fontSize: "12px" }}>({row?.gst}% Gst Included)</span></div>,
             sortable: true,
             width: '250px',
         },
 
-
         {
-            name: 'Total',
-            selector: row => <div> <IndianRupee />{row.total}</div>,
+            name: 'Coupon Id',
+            selector: row => row.coupon ? row.coupon : "N/A",
             sortable: true,
             width: '200px',
         },
+
+
+
+
+        // {
+        //     name: 'Total',
+        //     selector: row => <div> <IndianRupee />{row.total}</div>,
+        //     sortable: true,
+        //     width: '200px',
+        // },
         // {
         //     name: 'Plan Price',
         //     selector: row => row.planDetails.plan_price,
@@ -257,8 +276,9 @@ const History = () => {
             cell: row => (
                 <>
 
+
                     <div className='d-flex '>
-                        {row.invoice ?
+                        {row?.invoice ?
                             <Link className="btn px-2" onClick={() => handleDownload(row)}>
                                 <Tooltip placement="top" overlay="Download">
                                     <ArrowDownToLine />
@@ -311,6 +331,9 @@ const History = () => {
 
 
 
+
+
+
     return (
         <div>
             <div className="page-content">
@@ -321,7 +344,7 @@ const History = () => {
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb mb-0 p-0">
                                 <li className="breadcrumb-item">
-                                    <Link to="/admin/dashboard">
+                                    <Link to="/employee/dashboard">
                                         <i className="bx bx-home-alt" />
                                     </Link>
                                 </li>
@@ -329,10 +352,10 @@ const History = () => {
                         </nav>
                     </div>
                 </div>
-                <hr />
+
                 <div className="card">
                     <div className="card-body">
-                        <div className="d-lg-flex align-items-center mb-4 gap-3 justify-content-between">
+                        <div className="d-sm-flex align-items-center mb-4 gap-3 justify-content-between">
 
                             <div className="position-relative">
                                 <input
@@ -352,12 +375,12 @@ const History = () => {
                             <div>
 
                                 <div
-                                    className="ms-2"
+                                    className="ms-sm-2 mt-2 mt-sm-0"
                                     onClick={(e) => getexportfile()}
                                 >
                                     <button
                                         type="button"
-                                        className="btn btn-primary float-end"
+                                        className="btn btn-primary float-md-end"
                                         data-toggle="tooltip"
                                         data-placement="top"
                                         title="Export To Excel"
@@ -372,7 +395,7 @@ const History = () => {
                             </div>
                         </div>
                         <div className='row mb-2'>
-                            <div className="col-md-3">
+                            <div className="col-md-3 col-sm-4 mb-3 mb-sm-0">
                                 <input
                                     type="date"
                                     className="form-control"
@@ -382,9 +405,7 @@ const History = () => {
                             </div>
 
 
-
-
-                            <div className='col-md-3'>
+                            <div className='col-md-3 col-sm-4 mb-3 mb-sm-0'>
                                 <input
                                     type="date"
                                     className="form-control"
@@ -393,31 +414,28 @@ const History = () => {
                                 />
                             </div>
 
-                            <div className="col-md-1">
+                            <div className="col-md-1 col-sm-2">
                                 <div className="refresh-icon mt-1">
                                     <RefreshCcw onClick={resethandle} />
                                 </div>
                             </div>
                         </div>
-
-                        {isLoading ? (
-                            <Loader />
+                        {isLoading ? <Loader /> : clients.length > 0 ? (
+                            <div className="table-responsive">
+                                <Table
+                                    columns={columns}
+                                    data={clients}
+                                    totalRows={totalRows}
+                                    currentPage={currentPage}
+                                    onPageChange={handlePageChange}
+                                />
+                            </div>
                         ) : (
-                            <>
-
-                                <div className="table-responsive">
-                                    <Table
-                                        columns={columns}
-                                        data={clients}
-                                        totalRows={totalRows}
-                                        currentPage={currentPage}
-                                        onPageChange={handlePageChange}
-                                    />
-                                </div>
-                            </>
+                            <div className="text-center mt-5">
+                                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                            </div>
                         )}
                     </div>
-
                 </div>
             </div>
 
@@ -457,7 +475,7 @@ const History = () => {
                                     <li>
                                         <div className="row justify-content-between">
                                             <div className="col-md-6">
-                                                <b>Price : {viewpage?.planDetails?.price}</b>
+                                                <b>Price aaa : {viewpage?.planDetails?.price}</b>
                                             </div>
                                             <div className="col-md-6">
 

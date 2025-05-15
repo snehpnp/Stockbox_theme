@@ -111,7 +111,7 @@ const Updatebankdetail = () => {
     {
       name: "image",
       label: "Image",
-      type: "file3",
+      type: "file2",
       label_size: 12,
       col_size: 6,
       disable: false,
@@ -133,7 +133,6 @@ const Updatebankdetail = () => {
     >
       <DynamicForm
         fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
-        page_title="Update Bank Account"
         btn_name="Update Bank Account"
         btn_name1="Cancel"
         formik={formik}

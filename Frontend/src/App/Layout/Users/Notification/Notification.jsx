@@ -1,32 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
 import { GetNotificationData } from "../../../Services/UserService/User";
-import Content from '../../../components/Contents/Content';
+import Content from "../../../components/Contents/Content";
 import Loader from "../../../../Utils/Loader";
+import { useNavigate } from "react-router-dom";
 
 const Notification = () => {
+  const navigate = useNavigate();
+
   const [notificationData, setNotificationData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [notificationsPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+
   const [isLoading, setIsLoading] = useState(true);
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
 
-
   const GetNotificationDataApi = async () => {
+
+    setIsLoading(true);
     try {
       const data = { user_id: userid, page: currentPage };
       const response = await GetNotificationData(data, token);
+
       if (response.status) {
         setNotificationData(response.data);
+        setTotalPages(response.pagination.totalPages);
       }
     } catch (error) {
       console.log(error);
     }
     setIsLoading(false);
   };
+
 
 
 
@@ -37,49 +45,53 @@ const Notification = () => {
 
 
 
-  const indexOfLastNotification = currentPage * notificationsPerPage;
-  const indexOfFirstNotification = indexOfLastNotification - notificationsPerPage;
-  const currentNotifications = notificationData.slice(indexOfFirstNotification, indexOfLastNotification);
-
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const nextPage = () => currentPage < totalPages && setCurrentPage((prev) => prev + 1);
+  const prevPage = () => currentPage > 1 && setCurrentPage((prev) => prev - 1);
 
-  const nextPage = () => setCurrentPage((prevPage) => prevPage + 1);
-  const prevPage = () => setCurrentPage((prevPage) => prevPage - 1);
 
+  const handleNotificationClick = (notification) => {
+    if (notification?.type === "open signal") {
+      navigate("/user/trades")
+    } else if (notification?.type === "close signal") {
+      navigate("/user/trades", { state: { type: "closeSignal" } })
+    } else if (notification?.type === "add broadcast") {
+      navigate("/user/broadcast");
+    }
+  };
 
-  console.log("currentPage", currentPage)
 
 
 
   return (
-    <Content
-      Page_title="Notifications"
+
+    <Content Page_title="Notifications"
       button_status={false}
-      backbutton_status={true}
-    >
+      backbutton_status={true}>
       <div className="page-content">
         {isLoading ? (
           <Loader />
         ) : notificationData.length === 0 ? (
           <div className="text-center text-muted mt-4">
             <div className="text-center mt-5">
-              <img
-                src="/assets/images/norecordfound.png"
-                alt="No Records Found"
-              />
+              <img src="/assets/images/norecordfound.png" alt="No Records Found" />
             </div>
           </div>
         ) : (
           <div className="notifications-list">
-            {currentNotifications.map((notification, index) => (
-              <div key={index} className="notification-item d-flex align-items-center border-bottom py-3">
+            {notificationData.map((notification, index) => (
+              <div
+                key={index}
+                className="notification-item d-flex align-items-center border-bottom py-3"
+                onClick={() => handleNotificationClick(notification)}
+                style={{ cursor: "pointer" }}
+              >
                 <div
                   className="rounded-circle p-2 border d-flex align-items-center justify-content-center btn-primary"
                   style={{ width: "50px", height: "50px", textAlign: "center" }}
                 >
                   <Bell />
                 </div>
-
                 <div className="flex-grow-1 ms-3">
                   <div className="d-flex justify-content-between align-items-center">
                     <h6 className="mt-0 mb-1 text-dark">{notification.title}</h6>
@@ -94,7 +106,7 @@ const Notification = () => {
           </div>
         )}
 
-        {!isLoading && notificationData.length > 0 && (
+        {!isLoading && totalPages > 1 && (
           <nav>
             <ul className="pagination justify-content-center mt-4">
               <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
@@ -102,14 +114,16 @@ const Notification = () => {
                   Previous
                 </button>
               </li>
-              {Array.from({ length: Math.ceil(notificationData.length / notificationsPerPage) }).map((_, index) => (
+
+              {Array.from({ length: totalPages }).map((_, index) => (
                 <li key={index} className={`page-item ${currentPage === index + 1 ? "active" : ""}`}>
                   <button className="page-link" onClick={() => paginate(index + 1)}>
                     {index + 1}
                   </button>
                 </li>
               ))}
-              <li>
+
+              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
                 <button className="page-link" onClick={nextPage}>
                   Next
                 </button>

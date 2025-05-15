@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Content from "../../../components/Contents/Content";
 import { GetCouponlist } from '../../../Services/UserService/User';
 import { fa_time } from '../../../../Utils/Date_formate';
-import Swal from 'sweetalert2';
 import Loader from '../../../../Utils/Loader';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Coupon = () => {
 
@@ -14,20 +14,9 @@ const Coupon = () => {
 
     const handleCopyCode = (code) => {
         navigator.clipboard.writeText(code).then(() => {
-            Swal.fire({
-                title: 'Copied!',
-                text: `Coupon code "${code}" has been copied to your clipboard.`,
-                icon: 'success',
-                confirmButtonText: 'OK',
-                timer: 2000,
-            });
+            showCustomAlert("Success", `Coupon code "${code}" has been copied to your clipboard.`)
         }).catch((err) => {
-            Swal.fire({
-                title: 'Error!',
-                text: 'Failed to copy the coupon code. Please try again.',
-                icon: 'error',
-                confirmButtonText: 'OK',
-            });
+            showCustomAlert("error", 'Failed to copy the coupon code. Please try again.')
         });
     };
 
@@ -39,7 +28,7 @@ const Coupon = () => {
             const response = await GetCouponlist()
             if (response.status) {
                 setCoupon(response?.data)
-                console.log("response", response.data)
+
             }
         } catch (error) {
 
@@ -108,7 +97,7 @@ const Coupon = () => {
                                             </button>
                                         </li>
                                     ))}
-                            </ul> : 
+                            </ul> :
                             <div className="text-center mt-5">
                                 <img src="/assets/images/norecordfound.png" alt="No Records Found" />
                             </div>

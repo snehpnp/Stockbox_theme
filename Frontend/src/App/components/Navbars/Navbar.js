@@ -17,15 +17,21 @@ import BrokersData from "../../../Utils/BrokersData";
 import axios from "axios";
 import { GetUserData } from "../../Services/UserService/User";
 import { GetNotificationData } from "../../Services/UserService/User";
-
+import { base_url } from "../../../Utils/config";
+import showCustomAlert from "../../Extracomponents/CustomAlert/CustomAlert";
 
 
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
+
+
+
   useEffect(() => {
     getdemoclient();
     gettradedetail();
     getuserdetail();
   }, []);
+
+
 
   const navigate = useNavigate();
   const theme = JSON.parse(localStorage.getItem("theme")) || {};
@@ -34,13 +40,15 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const userid = localStorage.getItem("id");
 
   const [clients, setClients] = useState([]);
+
+
+
   const [isDisabled, setIsDisabled] = useState(false);
   const [model, setModel] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [isChecked1, setIsChecked1] = useState(false);
   const [getstatus, setGetstatus] = useState([]);
   const [badgecount, setBadgecount] = useState([]);
-  // const [badgecount1, setBadgecount1] = useState([]);
   const [viewmodel, setViewModel] = useState(false);
   const [UserDetail, setUserDetail] = useState([]);
   const [userNotification, setUserNotification] = useState([]);
@@ -49,6 +57,20 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
     apikey: "",
     secretkey: "",
   });
+
+
+
+
+  useEffect(() => {
+    if (
+      UserDetail?.devicetoken !== "" &&
+      UserDetail?.devicetoken !== null &&
+      UserDetail?.devicetoken !== undefined
+    ) {
+      localStorage.clear();
+      window.location.href = "/user-login";
+    }
+  }, [UserDetail?.devicetoken]);
 
 
 
@@ -65,8 +87,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
 
 
-
   const handleNotificationClick = async (event, notification) => {
+
     const user_active_status = "1";
     const data = { id: notification._id, status: user_active_status };
 
@@ -85,8 +107,11 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
         } else if (notification.type === "plan expire") {
           navigate("/admin/planexpiry");
           getdemoclient();
+        } else if (notification.type === "help desk") {
+          navigate("/admin/help");
+          getdemoclient();
         } else {
-          navigate("/admin/client");
+          navigate("/admin/notificationlist");
           getdemoclient();
         }
       } else {
@@ -123,7 +148,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       try {
         const response = await GetNotificationData({ user_id: userid }, token);
         if (response.status) {
-          setUserNotification(response.data);
+          setUserNotification(response?.data);
         }
       } catch (error) {
         console.log(error);
@@ -134,7 +159,15 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const getAllMessageRead = async () => {
     try {
       const response = await GetAllNotificationRead(token);
-      navigate("/admin/notificationlist");
+      if (Role === 'ADMIN')
+        navigate("/admin/notificationlist");
+      else if (Role === 'USER')
+        navigate("/user/notification");
+      else if (Role === 'EMPLOYEE')
+        navigate("/employee/notification");
+      else
+        navigate("/admin/notificationlist");
+
       getdemoclient();
     } catch (error) {
       console.error("Error while marking notifications as read:", error);
@@ -152,6 +185,10 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       body.classList.add("sidebar-open");
     }
   };
+
+
+
+
 
   const gettradedetail = async () => {
     try {
@@ -222,6 +259,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
 
 
+
+
   const UpdateloginOff = async (e) => {
     const dataoff = e.target.checked ? 1 : 0;
     Swal.fire({
@@ -278,6 +317,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   };
 
 
+
+
   useEffect(() => {
     if (getstatus[0]?.brokerloginstatus === 1) {
       setIsChecked(true);
@@ -286,6 +327,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       setIsChecked1(true);
     }
   }, [getstatus, UserDetail]);
+
 
 
 
@@ -301,9 +343,13 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   };
 
 
+
+
   const TradingBtnCall = async (e) => {
     if (UserDetail.dlinkstatus == 0) {
-      setViewModel(true);
+      showCustomAlert("error", "Please Link The Demat Account")
+      navigate("/user/demat")
+      // setViewModel(true);
     } else {
       if (UserDetail.brokerid == 1) {
         window.location.href = `https://smartapi.angelone.in/publisher-login?api_key=${UserDetail.apikey}`;
@@ -311,6 +357,11 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
         window.location.href = `https://ant.aliceblueonline.com/?appcode=${UserDetail.apikey}`;
       } else if (UserDetail.brokerid == 3) {
       } else if (UserDetail.brokerid == 4) {
+      } else if (UserDetail.brokerid == 5) {
+        window.location.href = `https://kite.zerodha.com/connect/login?v=3&api_key=${UserDetail.apikey};`;
+      } else if (UserDetail.brokerid == 6) {
+        window.location.href = `https://api-v2.upstox.com/login/authorization/dialog?response_type=code&client_id=${UserDetail.apikey}&redirect_uri=https://${base_url}/backend/upstox/getaccesstoken&state=${UserDetail.Email};`
+      } else if (UserDetail.brokerid == 7) {
       }
     }
   };
@@ -417,7 +468,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       />
                     </div>
                   </div>
-                ) : (
+                ) : Role === "USER" ? (
                   <div className="d-flex">
                     <span className="switch-label p-1">Login with API:</span>
                     <div
@@ -438,7 +489,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                       />
                     </div>
                   </div>
-                )}
+                ) : ""}
 
                 {Role === "ADMIN" ? (
                   <div className="dropdown">
@@ -654,7 +705,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                               top: "-5px",
                               right: "-5px",
                               background: "red",
-                              color: "white",
+                              color: "#fff",
                               fontSize: "12px",
                               fontWeight: "bold",
                               borderRadius: "50%",
@@ -884,7 +935,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
               <div className="modal-dialog">
                 <div className="modal-content">
                   <div className="modal-header">
-                    <h5 className="modal-title" id="exampleModalLabel">
+                    <h5 className="modal-title heading-color" id="exampleModalLabel" >
                       Login with API
                     </h5>
                     <button

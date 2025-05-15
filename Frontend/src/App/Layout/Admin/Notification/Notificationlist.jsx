@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { RefreshCcw } from 'lucide-react';
+import { RefreshCcw,Eye } from 'lucide-react';
 import Table from '../../../Extracomponents/Table1';
 import { exportToCSV } from '../../../../Utils/ExportData';
 import { getAllNotificationlist } from '../../../Services/Admin/Admin';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import Content from '../../../components/Contents/Content';
+import ReusableModal from '../../../components/Models/ReusableModal';
 
 
 
@@ -18,6 +19,9 @@ const Notificationlist = () => {
     const [clients, setClients] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRows, setTotalRows] = useState(0);
+
+    const [showModal, setShowModal] = useState(false);
+    const [message, setMessage] = useState([])
 
 
 
@@ -69,11 +73,24 @@ const Notificationlist = () => {
         },
         {
             name: 'Message',
-            selector: (row) => row.message,
+            selector: (row) => {
+                const truncatedMessage = row.message.split(' ').slice(0, 3).join(' ') + '...';
+                return (
+                    <div>
+                        {truncatedMessage}
+                        <span style={{ cursor: 'pointer' }}>
+                            
+                            <Eye onClick={() => {
+                                setShowModal(true);
+                                setMessage(row.message);
+                            }} />
+                        </span>
+                    </div>
+                );
+            },
             sortable: true,
-            width: '600px',
-
-        },
+            width: '350px',
+        }, 
         {
             name: 'Date',
             selector: (row) => fDateTime(row.createdAt),
@@ -86,7 +103,7 @@ const Notificationlist = () => {
 
     return (
         <Content
-            Page_title="Notitfications"
+            Page_title="Notification"
             button_status={false}
             backbutton_status={true}
             backForword={true}
@@ -140,6 +157,13 @@ const Notificationlist = () => {
                     </div>
                 </div>
             </div>
+
+            <ReusableModal
+                show={showModal}
+                onClose={() => setShowModal(false)}
+                title="Message"
+                body={<p>{message || "No description available."}</p>}
+            />
         </Content>
     );
 };

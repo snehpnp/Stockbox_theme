@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { GETPlanList } from '../../../Services/UserService/User';
 import Table from '../../../Extracomponents/Table';
 import { SquarePen, Trash2, PanelBottomOpen, Eye, RefreshCcw, IndianRupee, ArrowDownToLine } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDateTime } from '../../../../Utils/Date_formate';
@@ -150,43 +149,64 @@ const PaymentHistory = () => {
       width: '200px',
     },
     {
-      name: 'Order_ID',
-      selector: row => row.orderid ? row.orderid : "Make By Admin",
+      name: 'Date',
+      selector: row => fDateTime(row?.plan_start),
       sortable: true,
-      width: '200px',
+      width: '150px',
     },
-
     {
-      name: 'Plan Amount',
-      selector: row => <div> <IndianRupee />{row.plan_price}</div>,
+      name: 'Paid Amount',
+      selector: row => <div> <IndianRupee />{(row.total).toFixed(2)}</div>,
       sortable: true,
       width: '200px',
     },
     {
       name: 'Plan Discount',
-      selector: row => <div> <IndianRupee />{row?.discount}</div>,
-      sortable: true,
-      width: '200px',
-    },
-
-    {
-      name: 'Coupon Id',
-      selector: row => row.coupon ? row.coupon : "N/A",
+      selector: row => <div> <IndianRupee />{(row?.discount).toFixed(2)}</div>,
       sortable: true,
       width: '200px',
     },
     {
-      name: 'Total',
-      selector: row => <div> <IndianRupee />{row.total}</div>,
+      name: 'Purchase Type',
+      selector: row => row.orderid ? row.orderid : "Assigned by Admin",
       sortable: true,
       width: '200px',
     },
     {
-      name: 'Validity',
+      name: 'Plan Validity',
       selector: row => row?.planDetails?.validity,
       sortable: true,
       width: '200px',
     },
+     {
+      name: 'Order Id',
+      selector: row => row.orderid ? row.orderid : "null",
+      sortable: true,
+      width: '200px',
+    },
+    {
+      name: 'User Coupon',
+      selector: row => row.coupon ? row.coupon : "0",
+      sortable: true,
+      width: '200px',
+    },
+
+    // {
+    //   name: 'Plan Amount',
+    //   selector: row => <div> <IndianRupee />{row.plan_price}</div>,
+    //   sortable: true,
+    //   width: '200px',
+    // },
+    
+
+    // {
+    //   name: 'Coupon Id',
+    //   selector: row => row.coupon ? row.coupon : "N/A",
+    //   sortable: true,
+    //   width: '200px',
+    // },
+    
+    
     // {
     //   name: 'Purchase Date.',
     //   selector: row => fDateTime(row?.created_at),

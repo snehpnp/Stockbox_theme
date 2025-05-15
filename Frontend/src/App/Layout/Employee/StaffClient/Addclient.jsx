@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-import { AddClient } from '../../../Services/Admin/Admin';
+import { AddClient, GetAllStates, GetAllCities } from '../../../Services/Admin/Admin';
 import { Link } from 'react-router-dom';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
-const AddUser = () => { 
+
+const AddUser = () => {
+
+
   const navigate = useNavigate();
 
   const user_id = localStorage.getItem("id");
@@ -15,16 +18,17 @@ const AddUser = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const [state, setState] = useState([])
+  const [city, setCity] = useState([])
+
 
   const validate = (values) => {
     let errors = {};
-
-
+    const fullNameRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)?$/;
     if (!values.FullName) {
       errors.FullName = "Please Enter Full Name";
-    }
-    if (/\d/.test(values.FullName)) {
-      errors.FullName = "Numbers are not allowed in the Full Name";
+    } else if (!fullNameRegex.test(values.FullName)) {
+      errors.FullName = "Full Name should only contain alphabets and one space between first and last name";
     }
     if (!values.Email) {
       errors.Email = "Please Enter Email";
@@ -33,12 +37,18 @@ const AddUser = () => {
       errors.PhoneNo = "Please Enter Phone Number";
     }
     if (!values.password) {
-      errors.password = "Please Enter password";
+      errors.password = "Please Enter Password";
     }
     if (!values.ConfirmPassword) {
       errors.ConfirmPassword = "Please Confirm Your Password";
     } else if (values.password !== values.ConfirmPassword) {
-      errors.ConfirmPassword = "Password Must Match";
+      errors.ConfirmPassword = "Passwords Must Match";
+    }
+    if (!values.state) {
+      errors.state = "Please Select State";
+    }
+    if (!values.city) {
+      errors.city = "Please Select City";
     }
 
     return errors;
@@ -52,40 +62,25 @@ const AddUser = () => {
       PhoneNo: values.PhoneNo,
       password: values.password,
       add_by: user_id,
+      freetrial: values.freetrial,
+      state: values.state,
+      city: values.city
     };
+
 
     try {
       const response = await AddClient(req, token);
+
       if (response.status) {
-        Swal.fire({
-          title: "Client Create Successfull !",
-          text: response.message,
-          icon: "success",
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        setTimeout(() => {
-          navigate("/employee/client");
-        }, 1500);
+        showCustomAlert("Success", response.message, navigate, "/employee/client");
       } else {
-        Swal.fire({
-          title: "Alert",
-          text: response.message,
-          icon: "warning",
-          timer: 1500,
-          timerProgressBar: true,
-        });
+        showCustomAlert("error", response.message);
         setLoading(false)
       }
     } catch (error) {
       setLoading(false)
-      Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred. Please try again later.",
-        icon: "error",
-        timer: 1500,
-        timerProgressBar: true,
-      });
+      showCustomAlert("error", "An unexpected error occurred. Please try again later.");
+
     }
   };
 
@@ -96,11 +91,21 @@ const AddUser = () => {
       PhoneNo: "",
       password: "",
       ConfirmPassword: "",
+      freetrial: 0,
       add_by: "",
+      state: "",
+      city: "",
     },
     validate,
     onSubmit,
   });
+
+
+  const traialStatus = formik.values.freetrial;
+
+
+  const handleToggleChange = () => {
+  }
 
   const fields = [
     {
@@ -110,6 +115,7 @@ const AddUser = () => {
       label_size: 6,
       col_size: 6,
       disable: false,
+      star: true
     },
     {
       name: "Email",
@@ -118,6 +124,8 @@ const AddUser = () => {
       label_size: 12,
       col_size: 6,
       disable: false,
+      star: true
+
     },
     {
       name: "PhoneNo",
@@ -126,14 +134,16 @@ const AddUser = () => {
       label_size: 12,
       col_size: 6,
       disable: false,
+      star: true
     },
     {
       name: "password",
       label: "Password",
-      type: "password", 
+      type: "password",
       label_size: 12,
       col_size: 6,
       disable: false,
+      star: true
     },
     {
       name: "ConfirmPassword",
@@ -142,41 +152,105 @@ const AddUser = () => {
       label_size: 12,
       col_size: 6,
       disable: false,
+      star: true
+    },
+    {
+      name: "state",
+      label: "Select State",
+      type: 'select',
+      options: state?.map((item) => ({
+        label: item.name,
+        value: item.name,
+      })),
+      label_size: 12,
+      col_size: 6,
+      disable: false,
+      star: true
+    },
+    {
+      name: "city",
+      label: "Select City",
+      type: 'select',
+      options: city?.map((item) => ({
+        label: item.city,
+        value: item.city,
+      })),
+      label_size: 12,
+      col_size: 6,
+      disable: false,
+      star: true
+
     },
   ];
 
-    const handlefreeTrialChange = (e) => {
-      const currentValue = formik.values.freetrial; // Store current value
-    
-      console.log("Current toggle value:", e.target.checked);
-    
-      Swal.fire({
-        title: currentValue ? "Are you sure you want to disable the free trial?" : "Are you sure you want to enable the free trial?",
-        showDenyButton: true,
-        showCancelButton: false,
-        confirmButtonText: "Yes",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // If toggle is currently true (checked), and user clicks "Yes", set it to false
-          // If toggle is false (unchecked), and user clicks "Yes", set it to true
-          formik.setFieldValue("freetrial", !currentValue);
-          console.log("Updated toggle value:", !currentValue); // Log the updated value
-        } else if (result.isDenied) {
-          // If "No" (Deny) clicked, revert the value to its original state
-          formik.setFieldValue("freetrial", currentValue);
-          console.log("Value reverted to:", currentValue); // Log reverted value
-        }
-      });
-    };
+
+
+  const handlefreeTrialChange = async () => {
+    const currentValue = formik.values.freetrial;
+
+    const result = await showCustomAlert(
+      "confirm",
+      currentValue ? "Are you sure you want to disable the free trial?" : "Are you sure you want to enable the free trial?"
+    );
+
+    if (!result) return;
+    formik.setFieldValue("freetrial", !currentValue);
+    if (result.isDenied) {
+      formik.setFieldValue("freetrial", currentValue);
+    }
+  };
+
+
+  const getStatedata = async () => {
+    try {
+      const response = await GetAllStates(token);
+      if (response) {
+        setState(response);
+
+      }
+    } catch (error) {
+      console.log("error");
+    }
+  }
+
+
+
+  const getCitydata = async () => {
+    try {
+      const response = await GetAllCities(formik.values.state, token);
+      if (response) {
+        setCity(response);
+
+      }
+    } catch (error) {
+      console.error("Error fetching cities:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (formik.values.state) {
+      getCitydata();
+    }
+  }, [formik.values.state]);
+
+
+
+
+
+  useEffect(() => {
+    getStatedata()
+  }, [])
+
 
   return (
     <Content
-    Page_title="New Client"
-    button_status={false}
-    backbutton_status={true}
-    backForword={true}
-  >
-    
+      Page_title="Add New Client"
+      button_status={false}
+      backbutton_status={true}
+      backForword={true}
+    >
+      <div className="page-content">
+
         <DynamicForm
           fields={fields}
           formik={formik}
@@ -184,10 +258,12 @@ const AddUser = () => {
           btn_name="Add Client"
           btn_name1="Cancel"
           sumit_btn={true}
+          btnstatus={loading}
           btn_name1_route={"/employee/client"}
           additional_field={<>
 
-            <div className={`col-lg-6`}>
+
+            {/* <div className={`col-lg-6`}>
               <div className="input-block row">
 
                 <label htmlFor="freetrial" className={`col-lg-12 col-form-label`}>
@@ -209,12 +285,14 @@ const AddUser = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
+
           </>}
 
         />
-      
+      </div>
     </Content>
+
   );
 };
 

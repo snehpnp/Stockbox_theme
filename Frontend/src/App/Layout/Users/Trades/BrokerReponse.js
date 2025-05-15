@@ -2,13 +2,21 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BrokerResponsedata } from "../../../Services/UserService/User";
 import Content from "../../../components/Contents/Content";
+import { fDate, fDateTime, fDateTimeH } from "../../../../Utils/Date_formate";
+import Loader from "../../../../Utils/Loader";
 
 const BrokerResponse = () => {
+
+
+
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
 
-  const [responsedata, setResponseData] = useState([]);
+  const [responsedata, setResponseData] = useState([]); 
+
+  const [isLoading, setIsLoading] = useState(true)
+
 
 
 
@@ -22,6 +30,7 @@ const BrokerResponse = () => {
     } catch (error) {
       console.log("Error fetching broker history:", error);
     }
+    setIsLoading(false)
   };
 
 
@@ -31,7 +40,8 @@ const BrokerResponse = () => {
   }, []);
 
 
-  let BrokerDAta = ["Demo", "Angel", "Alice Blue", "Kotak Neo", "Market Hub"];
+  let BrokerDAta = ["", "Angel", "Alice Blue", "Kotak Neo", "Market Hub", "Zerodha"];
+
 
 
 
@@ -39,11 +49,15 @@ const BrokerResponse = () => {
     <Content
       Page_title="Broker Response"
       button_status={false}
-      backbutton_status={true}
-      backForword={true}
+      // backbutton_status={true}
+      // backForword={true}
     >
       <div className="accordion accordion-flush" id="accordionFlushExample">
-        {responsedata.length > 0 ?
+        {isLoading ? (
+          <div className="text-center my-5">
+            <Loader />
+          </div>
+        ) : responsedata.length > 0 ? (
           responsedata.map((data, index) => (
             <div
               className="accordion-item rounded-3 border-0 shadow mb-2"
@@ -61,7 +75,7 @@ const BrokerResponse = () => {
                   <div className="d-md-flex justify-content-between align-items-center w-100">
                     <div>
                       <h5 className="m-0">
-                        <strong>{data.signalDetails.tradesymbol}</strong>{" "}
+                        <strong>{data.signalDetails.tradesymbol}</strong>
                       </h5>
                       <p className="m-0 pe-2 pt-2">
                         Price : {data.signalDetails.price || "N/A"}
@@ -69,12 +83,14 @@ const BrokerResponse = () => {
                     </div>
 
                     <div>
-                      <span className="badge bg-success badgespan mb-2">
+                      <span
+                        className="badge bg-success badgespan mb-2"
+                        style={{ marginLeft: "200px" }}
+                      >
                         {data.ordertype || "N/A"}
                       </span>
-
                       <p className="m-0 pe-2 pt-2">
-                        Expires on: {data.signalDetails.expirydate || "N/A"}
+                        Expires on: {fDateTimeH(data.createdAt) || "N/A"}
                       </p>
                     </div>
                   </div>
@@ -96,6 +112,10 @@ const BrokerResponse = () => {
                           </tr>
                         </thead>
                         <tbody>
+                        <tr>
+                            <td>Created At</td>
+                            <td>{fDateTime(data.signalDetails.created_at) || "N/A"}</td>
+                          </tr>
                           <tr>
                             <td>Symbol</td>
                             <td>{data.signalDetails.tradesymbol || "N/A"}</td>
@@ -106,7 +126,7 @@ const BrokerResponse = () => {
                           </tr>
                           <tr>
                             <td>Broker</td>
-                            <td>{BrokerDAta[data.borkerid] || "N/A"}</td>
+                            <td>{BrokerDAta[data?.borkerid] || "N/A"}</td>
                           </tr>
                           <tr>
                             <td>Order Id</td>
@@ -114,44 +134,49 @@ const BrokerResponse = () => {
                           </tr>
                           <tr>
                             <td>Order Status</td>
+                            {/* {console.log("data.data",data)} */}
                             <td>
-                              {["Success", "Done", "Ok"].includes(
-                                data.data[0]?.Status
-                              ) ? (
-                                <span className="badge bg-success badgespan">
-                                  ✅{" "}
-                                  {data.data[0]?.Status
-                                    ? data.data[0]?.Status.toUpperCase()
-                                    : "-"}
-                                </span>
-                              ) : (
-                                // <span className="badge bg-danger badgespan">
-                                //   ❌{" "}
-                                //   {data.data[0]?.Status
-                                //     ? data.data[0]?.Status.toUpperCase()
-                                //     : "UNKNOWN"}
-                                // </span>
-
+                              {["Success", "Done", "Ok", "open"].includes(data.data?.data?.status) ? (
                                 <span
                                   className="badge"
-                                  style={{ color: "red", fontSize: "0.9rem" }}
+                                  style={{ color: "green", fontSize: "16px", marginLeft: "-12px" }}
                                 >
-                                  {data.data[0]?.Status
-                                    ? data.data[0]?.Status.toUpperCase()
-                                    : "UNKNOWN"}
+                                  {/* ✅ {data?.data?.data?.status || "-"} */}
+                                  {(data?.data?.data?.status)?.toUpperCase() || "-"}
+                                </span>
+                              ) : (
+                                <span
+                                  className="badge"
+                                  style={{ color: "red", fontSize: "16px", marginLeft: "-12px" }}
+                                >
+                                  {/* ❌ {data?.data?.data?.status || "UNKNOWN"} */}
+                                  {(data?.data?.data?.status)?.toUpperCase() || "UNKNOWN"}
                                 </span>
                               )}
                             </td>
+                            {/* {data?.data?.data?.status || "N/A"} */}
+
                           </tr>
                           <tr>
-                            {["Success", "Done", "Ok"].includes(
-                              data.data[0]?.Status
-                            ) ? (
+                            {/* {["Success", "Done", "Ok"].includes(data?.data?.data?.Status) ? (
                               <td>Order Detail </td>
                             ) : (
                               <td>Reject Reason </td>
+                            )} */}
+                             {["Success", "Done", "Ok"].includes(data?.data?.data?.Status) ? (
+                              <td>Reject Reason </td>
+                            ) : (
+                              <td>Order Detail </td>
                             )}
-                            <td>{data.data[0]?.rejectionreason || "N/A"}</td>
+                            <td
+                              style={{
+                                wordBreak: "break-word",
+                                whiteSpace: "normal",
+                                maxWidth: "200px",
+                              }}
+                            >
+                              {data?.data?.data?.text || "N/A"}
+                            </td>
                           </tr>
                         </tbody>
                       </table>
@@ -160,16 +185,15 @@ const BrokerResponse = () => {
                 </div>
               </div>
             </div>
-          )) :
+          ))
+        ) : (
           <div className="text-center mt-5">
-            <img
-              src="/assets/images/norecordfound.png"
-              alt="No Records Found"
-            />
+            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
           </div>
-        }
+        )}
       </div>
-    </Content>
+
+    </Content >
   );
 };
 

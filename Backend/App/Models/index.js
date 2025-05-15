@@ -7,7 +7,8 @@ const db_GET_VIEW = client.db(process.env.DB_NAME);
 
 const open_position = db_GET_VIEW.collection('open_position');
 const open_position_excute = db_GET_VIEW.collection('open_position_excute');
-
+const States = db_GET_VIEW.collection('states');
+const City = db_GET_VIEW.collection('cities');
 
 
 module.exports = {
@@ -53,18 +54,20 @@ module.exports = {
     Company1 :require("./Company1"),
     Stockrating :require("./Stockrating"),
     Addtocart :require("./Addtocart"),
+    Basketgraphdata :require("./Basketgraphdata"),
+    Signalsdata :require("./Signalsdata"),
+    Signalstock :require("./Signalstock"),
+    Smstemplate: require("./Smstemplate"),
+    Smsprovider: require("./Smsprovider"),
+    Ticket: require("./Ticket"),
+    Ticketmessage: require("./Ticketmessage"),
+    Utmsource: require("./Utmsource"),
 
 
     open_position:open_position,
     open_position_excute:open_position_excute,
-
-
-
-
-
-
-
-
+    States:States,
+    City:City,
 
 
 }

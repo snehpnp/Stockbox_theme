@@ -14,19 +14,19 @@ import {
   GetService,
 } from "../../../Services/Admin/Admin";
 import {
-  fDate,
   fDateTime,
   fDateTimeH,
   fDateTimeSuffix,
 } from "../../../../Utils/Date_formate";
-import { RefreshCcw, IndianRupee } from "lucide-react";
+import { RefreshCcw, Eye, IndianRupee, ArrowDownToLine } from "lucide-react";
 import { exportToCSV } from "../../../../Utils/ExportData";
 import Select from "react-select";
 import Content from "../../../components/Contents/Content";
-
+import { image_baseurl } from "../../../../Utils/config";
+import ReusableModal from "../../../components/Models/ReusableModal";
 
 const Viewclientdetail = () => {
-  
+
   const { id } = useParams();
   const token = localStorage?.getItem("token");
 
@@ -35,17 +35,24 @@ const Viewclientdetail = () => {
   const [service, setService] = useState([]);
   const [clients, setClients] = useState([]);
 
+
   const [viewMode, setViewMode] = useState("plan");
 
   const [serviceList, setServiceList] = useState([]);
   const [searchstock, setSearchstock] = useState("");
-  const [ForGetCSV, setForGetCSV] = useState([]);
+  // const [ForGetCSV, setForGetCSV] = useState([]);
 
   const [searchInput, setSearchInput] = useState("");
   const [stockList, setStockList] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
+
+  const [showModal, setShowModal] = useState(false);
+  const [description, setDescription] = useState([])
+  const [titename, setTilename] = useState([])
+
+
   const [filters, setFilters] = useState({
     from: "",
     to: "",
@@ -58,58 +65,41 @@ const Viewclientdetail = () => {
   };
 
   useEffect(() => {
-    getPlanDetail();
-    getClientDetail();
+    if (viewMode === "signal") {
+
+      fetchAdminServices();
+    }
     getclientservice();
-    fetchAdminServices();
-  }, []);
+    fetchAllClientData()
+  }, [viewMode]);
 
-  const getCategoryTitle = async (categoryId) => {
+
+
+  const fetchAllClientData = async () => {
     try {
-      const response = await getcategoryplan(token);
-      if (response.status) {
-        const category = response.data.find((item) => item._id === categoryId);
-        return category ? category.title : "-";
+
+      const categoryResponse = await getcategoryplan(token);
+      if (categoryResponse.status) {
+        setTilename(categoryResponse.data);
+      }
+
+
+      const planResponse = await clientplandatabyid(id, token);
+      if (planResponse.status) {
+        setData(planResponse.data);
+      }
+
+
+      const clientResponse = await clientdetailbyid(id, token);
+      if (clientResponse.status) {
+        setClient([clientResponse.data]);
       }
     } catch (error) {
-      console.error("Error fetching category title:", error);
-    }
-    return "-";
-  };
-
-  const getPlanDetail = async () => {
-    try {
-      const response = await clientplandatabyid(id, token);
-      if (response.status) {
-        const plansWithTitles = await Promise.all(
-          response.data.map(async (plan) => {
-            const categoryId = plan.planDetails?.category;
-            if (categoryId) {
-              const categoryTitle = await getCategoryTitle(categoryId);
-              return { ...plan, categoryTitle };
-            }
-            return plan;
-          })
-        );
-
-        setData(plansWithTitles);
-      }
-    } catch (error) {
-      console.error("Error fetching plan details:", error);
+      console.error("Error fetching all client data:", error);
     }
   };
 
-  const getClientDetail = async () => {
-    try {
-      const response = await clientdetailbyid(id, token);
 
-      if (response.status) {
-        setClient([response.data]);
-      }
-    } catch (error) {
-      console.error("Error fetching client details:", error);
-    }
-  };
 
   const getclientservice = async () => {
     try {
@@ -123,6 +113,10 @@ const Viewclientdetail = () => {
     }
   };
 
+
+
+
+
   const fetchAdminServices = async () => {
     try {
       const response = await GetService(token);
@@ -134,28 +128,40 @@ const Viewclientdetail = () => {
     }
   };
 
+
+
   const getAllSignal = async () => {
     try {
       const data = {
         page: currentPage,
         client_id: id,
-        from: filters.from,
-        to: filters.to,
-        service_id: filters.service,
-        stock: searchstock,
+        from: filters.from || "",
+        to: filters.to || "",
+        service_id: filters.service || "",
+        stock: searchstock || "",
         type: "",
-        search: searchInput,
+        search: searchInput || "",
       };
 
       const response = await GetClientSignaldetail(data, token);
-      if (response && response.status) {
-        setTotalRows(response.pagination.total);
-        setClients(response.data);
+
+      if (response.status) {
+        if (response?.data?.length > 0 && response?.data) {
+          setClients(response.data);
+          setTotalRows(response.pagination.total);
+        } else {
+          setClients([]);
+        }
+      } else {
+        setClients([]);
       }
     } catch (error) {
       console.log("Error:", error);
     }
   };
+
+
+
 
   const getexportfile = async () => {
     try {
@@ -179,6 +185,9 @@ const Viewclientdetail = () => {
       console.log("Error:", error);
     }
   };
+
+
+
 
   const fetchStockList = async () => {
     try {
@@ -217,12 +226,29 @@ const Viewclientdetail = () => {
     setSearchInput("");
     fetchAdminServices("");
     fetchStockList();
-    getAllSignal();
+
   };
 
   useEffect(() => {
-    getAllSignal();
-  }, [filters, searchInput, searchstock, currentPage]);
+    if (viewMode === "signal") {
+      getAllSignal();
+    }
+
+  }, [filters, viewMode, searchInput, searchstock, currentPage]);
+
+
+
+  const handleDownload = (row) => {
+    const url = `${image_baseurl}uploads/invoice/${row.invoice}`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
 
   const columns = [
     {
@@ -232,13 +258,24 @@ const Viewclientdetail = () => {
     },
     {
       name: "Plan Name",
-      selector: (row) => row.categoryTitle || "-",
+      selector: (row) => {
+        const matchedItem = titename.find((item) => item._id === row?.planDetails?.category);
+        return matchedItem ? matchedItem.title : "-";
+      },
       width: "180px",
     },
+
     {
       name: "Amount",
-      selector: (row) => <>  <IndianRupee />  {row.plan_price ?? "-"} </>,
+      selector: (row) => <>  <IndianRupee style={{ width: "16px" }} />  {(row.plan_price)?.toFixed(2) ?? "-"} </>,
       width: "189px",
+    },
+    {
+      name: 'GST',
+      selector: row => row?.total || "-",
+      cell: row => <div>{row?.total} <span style={{ fontSize: "12px" }}>({row?.gst}% Gst Included)</span></div>,
+      sortable: true,
+      width: '250px',
     },
     {
       name: "Validity Date",
@@ -266,6 +303,25 @@ const Viewclientdetail = () => {
       selector: (row) => (row?.plan_end ? fDateTimeH(row?.plan_end) : ""),
       width: "260px",
     },
+    {
+      name: 'Invoice',
+      cell: row => (
+        <>
+
+          <div className='d-flex '>
+            {row.invoice ?
+              <Link className="btn px-2" onClick={() => handleDownload(row)}>
+                <Tooltip placement="top" overlay="Download">
+                  <ArrowDownToLine />
+                </Tooltip>
+              </Link> : "-"}
+          </div>
+
+        </>
+      ),
+      sortable: true,
+      width: '200px',
+    },
   ];
 
   let columns1 = [
@@ -277,10 +333,19 @@ const Viewclientdetail = () => {
     },
     {
       name: "Segment",
-      selector: (row) =>
-        row.segment == "C" ? "CASH" : row.segment == "O" ? "OPTION" : "FUTURE",
+      selector: (row) => {
+        const segmentLabel =
+          row.segment === "C"
+            ? "CASH"
+            : row.segment === "O"
+              ? "OPTION"
+              : "FUTURE";
+        return row.closeprice == 0
+          ? <div>{segmentLabel}<span style={{ color: "red" }}> (Avoid)<Eye onClick={() => { setShowModal(true); setDescription(row?.close_description) }} /></span></div>
+          : segmentLabel;
+      },
       sortable: true,
-      width: "132px",
+      width: "200px",
     },
 
     {
@@ -297,7 +362,7 @@ const Viewclientdetail = () => {
     },
     {
       name: "Quantity/Lot",
-      selector: (row) => row.lot,
+      selector: (row) => row.lot ? row.lot : "-",
       sortable: true,
       width: "200px",
     },
@@ -306,7 +371,7 @@ const Viewclientdetail = () => {
       selector: (row) => (
         <div>
           {" "}
-          <IndianRupee />
+          <IndianRupee style={{ width: "16px" }} />
           {row.price}
         </div>
       ),
@@ -316,13 +381,21 @@ const Viewclientdetail = () => {
 
     {
       name: "Exit Price",
-      selector: (row) =>
-        <>
-          <IndianRupee />  {row.closeprice ? row.closeprice : "-"}
-        </>,
+      selector: (row) => (
+        <div>
+          {row?.closeprice ? (
+            <>
+              <IndianRupee style={{ width: "16px" }} />
+              {row.closeprice}
+            </>
+          ) : (
+            "–"
+          )}
+        </div>
+      ),
       sortable: true,
-      width: "150px",
-    }, ,
+      width: "132px",
+    },
     {
       name: "Entry Date",
       selector: (row) => fDateTimeH(row?.created_at),
@@ -351,19 +424,23 @@ const Viewclientdetail = () => {
             <div className="card-body">
               <div className="p-4 border radius-15">
                 <div className="row justify-content-center align-items-center">
-                  {client.map(({ id, FullName, Email, PhoneNo }) => (
+                  {client.map(({ id, FullName, Email, PhoneNo, state }) => (
                     <div key={id} className="row">
-                      <div className="col-md-3 d-flex align-items-center">
+                      <div className="col-md-2 d-flex align-items-center">
                         <strong>Full Name</strong>
                         <p className="my-0 ms-3">{FullName}</p>
                       </div>
-                      <div className="col-md-5 d-flex align-items-center">
-                        <strong>Email</strong>
-                        <p className="my-0 ms-4">{Email}</p>
-                      </div>
                       <div className="col-md-4 d-flex align-items-center">
+                        <strong>Email</strong>
+                        <p className="my-0 ms-3">{Email}</p>
+                      </div>
+                      <div className="col-md-3 d-flex align-items-center">
                         <strong>Phone No</strong>
                         <p className="my-0 ms-4">{PhoneNo}</p>
+                      </div>
+                      <div className="col-md-3 d-flex align-items-center">
+                        <strong>State</strong>
+                        <p className="my-0 ms-4">{state}</p>
                       </div>
                     </div>
                   ))}
@@ -475,11 +552,11 @@ const Viewclientdetail = () => {
                       <select
                         name="service"
                         className="form-control radius-10"
-                        value={filters.service}
+                        value={filters.service || ""}
                         onChange={handleFilterChange}
                       >
                         <option value="">Select Service</option>
-                        {serviceList.map((service) => (
+                        {serviceList?.map((service) => (
                           <option key={service._id} value={service._id}>
                             {service.title}
                           </option>
@@ -511,11 +588,9 @@ const Viewclientdetail = () => {
                   <Table1
                     columns={columns1}
                     data={clients}
-                    pagination
-                    paginationServer
-                    paginationTotalRows={totalRows}
-                    onChangePage={handlePageChange}
-                    paginationDefaultPage={currentPage}
+                    totalRows={totalRows}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
                   />
                 </>
               )}
@@ -523,6 +598,12 @@ const Viewclientdetail = () => {
           </div>
         </div>
       </Content>
+      <ReusableModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        title="Description"
+        body={<p>{description || "No description available."}</p>}
+      />
     </div>
   );
 };

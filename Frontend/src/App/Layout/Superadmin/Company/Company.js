@@ -17,6 +17,7 @@ import { Tooltip } from "antd";
 import { fDate } from "../../../../Utils/Date_formate";
 import { GetAllThemesNameApi } from '../../../Services/Themes/Theme'
 import Loader from "../../../../Utils/Loader";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 const Company = () => {
   const token = localStorage.getItem("token");
@@ -26,7 +27,7 @@ const Company = () => {
   const [searchInput, setSearchInput] = useState("");
   const [themes, setThemes] = useState([]);
 
-  const [isLoader,setIsLoader] = useState(true)
+  const [isLoader, setIsLoader] = useState(true)
 
   useEffect(() => {
     getAdminclient();
@@ -69,14 +70,8 @@ const Company = () => {
 
   const DeleteCompanydata = async (_id) => {
     try {
-      const result = await Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to delete this Client member? This action cannot be undone.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel",
-      });
+      const result = await showCustomAlert('confirm', 'Do you want to delete this ? This action cannot be undone.')
+       
 
       if (result.isConfirmed) {
         const response = await deleteCompany(_id, token);
@@ -113,13 +108,7 @@ const Company = () => {
     const user_active_status = originalChecked ? "true" : "false";
     const data = { id: id, status: user_active_status };
 
-    const result = await Swal.fire({
-      title: "Do you want to save the changes?",
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      cancelButtonText: "Cancel",
-      allowOutsideClick: false,
-    });
+    const result = await showCustomAlert('confirm', 'Do you want to save the changes?') 
 
     if (result.isConfirmed) {
       try {
@@ -155,7 +144,6 @@ const Company = () => {
 
   const UpdateTheme = async (id, theme_id) => {
     const data = { id: id, theme_id: theme_id };
-    console.log(data);
     try {
       const response = await UpdateThemeApi(data);
       if (response.status) {
@@ -257,9 +245,9 @@ const Company = () => {
           <Tooltip title="Update">
             <UserPen onClick={() => updateCompany(row)} />
           </Tooltip>
-          <Tooltip title="delete">
+          {/* <Tooltip title="delete">
             <Trash2 onClick={() => DeleteCompanydata(row._id)} />
-          </Tooltip>
+          </Tooltip> */}
         </>
       ),
       ignoreRowClick: true,
@@ -311,12 +299,12 @@ const Company = () => {
                   </Link>
                 </div>
               </div>
-              {isLoader?(
-                <Loader/>
-              ):(
+              {isLoader ? (
+                <Loader />
+              ) : (
                 <>
-              <Table columns={columns} data={clients} />
-              </>
+                  <Table columns={columns} data={clients} />
+                </>
               )}
             </div>
           </div>

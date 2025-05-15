@@ -6,47 +6,21 @@ import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import Content from '../../../components/Contents/Content';
 
-
 const Viewblog = () => {
+
+
     const navigate = useNavigate();
     const location = useLocation();
     const { row } = location.state;
 
     return (
         <Content
-        Page_title="Blog Details"
-        button_status={false}
-        backbutton_status={true}
-        backForword={true}
-      >
-        <div className="page-content">
-            {/* <div className="row">
-                <div className="col-md-6">
-                    <div className="page-breadcrumb  d-flex align-items-center">
-                        <div className="breadcrumb-title pe-3">Blog Details</div>
-                        <div className="ps-3">
-                            <nav aria-label="breadcrumb">
-                                <ol className="breadcrumb mb-0 p-0">
-                                    <li className="breadcrumb-item">
-                                        <Link to="/employee/dashboard">
-                                            <i className="bx bx-home-alt" />
-                                        </Link>
-                                    </li>
-                                </ol>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-md-6 d-flex justify-content-end">
-                    <Link to="/employee/blogs">
-                        <Tooltip title="Back">
-                            <i className="lni lni-arrow-left-circle" style={{ fontSize: "2rem" }} />
-                        </Tooltip>
-                    </Link>
-                </div>
-            </div>
+            Page_title="View Blog"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
 
-            <hr /> */}
             <div className="row">
                 <div className="col-lg-8 mx-auto">
                     <div className="card radius-15">
@@ -61,7 +35,7 @@ const Viewblog = () => {
                             {({ values }) => (
                                 <Form className="card-body p-4">
                                     <div className="p-4 border radius-15">
-                                        {/* Title */}
+
                                         <div className="row mb-3 align-items-center">
                                             <label htmlFor="title" className="col-sm-3 col-form-label">
                                                 <b>Title</b>
@@ -76,6 +50,8 @@ const Viewblog = () => {
                                                         type="text"
                                                         className="form-control"
                                                         placeholder="Blog Title"
+                                                        disabled
+
                                                     />
                                                 </div>
                                             </div>
@@ -103,7 +79,7 @@ const Viewblog = () => {
                                                 <b>Description</b>
                                             </label>
                                             <div className="col-sm-9">
-                                                <div className="input-group dis_img">
+                                                <div className="input-group blog-detail">
                                                     <div
                                                         className="form-control"
                                                         style={{ width: "100%" }}
@@ -125,6 +101,7 @@ const Viewblog = () => {
                                                     {row.image && (
                                                         <div className="file-preview">
                                                             <img
+
                                                                 src={`${image_baseurl}uploads/blogs/${row.image}`}
                                                                 alt="Image Preview"
                                                                 className="image-preview"
@@ -159,11 +136,8 @@ const Viewblog = () => {
                     color: red;
                     font-size: 12px;
                 }
-                    .input-group.dis_img img {
-                        height: 100px;
-}
             `}</style>
-        </div>
+
         </Content>
     );
 };

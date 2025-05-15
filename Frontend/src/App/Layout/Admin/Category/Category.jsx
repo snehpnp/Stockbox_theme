@@ -3,17 +3,21 @@ import { Link, useNavigate } from 'react-router-dom';
 import { GetService, Addplancategory, UpdateCategoryplan, getcategoryplan, deleteplancategory, updatecategorydstatus } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table';
 import { SquarePen, Trash2, PanelBottomOpen } from 'lucide-react';
-import Swal from 'sweetalert2';
 import DropdownMultiselect from "react-multiselect-dropdown-bootstrap";
 import { Tooltip } from 'antd';
 import styled from 'styled-components';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import Loader from '../../../../Utils/Loader'
 import ReusableModal from '../../../components/Models/ReusableModal';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+import Select from 'react-select'
 
 
 const Category = () => {
+
     const navigate = useNavigate();
+
+
     const [clients, setClients] = useState([]);
     const [model, setModel] = useState(false);
     const [serviceid, setServiceid] = useState({});
@@ -21,7 +25,6 @@ const Category = () => {
     const [searchInput, setSearchInput] = useState("");
     const [selectedServices, setSelectedServices] = useState([]);
 
-    //set state for loding
     const [isLoading, setIsLoading] = useState(true)
 
     const [showAddModal, setShowAddModal] = useState(false);
@@ -36,7 +39,8 @@ const Category = () => {
     const [title, setTitle] = useState({
         title: "",
         add_by: "",
-        service: ""
+        service: "",
+        freetrial_status: ""
     });
 
     const token = localStorage.getItem('token');
@@ -45,7 +49,7 @@ const Category = () => {
 
 
 
-    // Getting services
+
     const getcategory = async () => {
         try {
             const response = await getcategoryplan(token);
@@ -92,51 +96,30 @@ const Category = () => {
 
             const response = await UpdateCategoryplan(data, token);
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: response.message || 'Category updated successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
-
+                showCustomAlert("Success", response.message || 'Category updated successfully.')
                 setUpdatetitle({ title: "", id: "", service: "" });
                 getcategory();
                 setModel(false);
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: response.message || 'There was an error updating the Category.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", response.message || 'There was an error updating the Category.')
+
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'server error',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'server error')
+
         }
     };
 
     // Add service
     const addcategory = async () => {
         try {
+            const data = { title: title.title, add_by: userid, service: title.service, freetrial_status: title.freetrial_status ? 1 : 0 };
 
-            const data = { title: title.title, add_by: userid, service: title.service };
             const response = await Addplancategory(data, token);
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: response.message || 'Category added successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
+                showCustomAlert("Success", response.message || 'Category added successfully.')
                 setShowAddModal(false)
-                setTitle({ title: "", add_by: "", service: "" });
+                setTitle({ title: "", add_by: "", service: "", freetrial_status: "" });
                 getcategory();
 
                 const modal = document.getElementById('exampleModal');
@@ -145,58 +128,36 @@ const Category = () => {
                     bootstrapModal.hide();
                 }
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: response.message || 'There was an error adding the Category.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", response.message || 'There was an error adding the Category.')
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'server error.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'server error.')
+
         }
     };
 
+
+
     // Update status
+
     const handleSwitchChange = async (event, id) => {
         const user_active_status = event.target.checked ? "true" : "false";
         const data = { id: id, status: user_active_status };
-        const result = await Swal.fire({
-            title: "Do you want to save the changes?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
+        const result = await showCustomAlert("confirm", "Do you want to save the changes?")
 
         if (result.isConfirmed) {
             try {
                 const response = await updatecategorydstatus(data, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: "Saved!",
-                        icon: "success",
-                        timer: 1000,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1000);
+                    showCustomAlert("Success", response.message)
                 }
                 getcategory();
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+                showCustomAlert("error", "There was an error processing your request.")
+
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
+            event.target.checked = !event.target.checked
             getcategory();
         }
     };
@@ -204,46 +165,24 @@ const Category = () => {
     // delete plan cartegory 
     const DeleteCategory = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this catrgory? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert("confirm", 'Do you want to delete this catrgory This action cannot be undone.')
 
             if (result.isConfirmed) {
                 const response = await deleteplancategory(_id, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The catrgory has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
+                    showCustomAlert("Success", 'The catrgory has been successfully deleted.')
                     getcategory();
 
                 }
             } else {
-
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The catrgory deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
+                showCustomAlert("error", 'The catrgory deletion was cancelled.')
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the catrgory.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'There was an error deleting the catrgory.')
 
         }
     };
+
 
     const handleCheckboxChange = (serviceId) => {
         setSelectedServices((prevSelected) => {
@@ -254,6 +193,8 @@ const Category = () => {
             }
         });
     };
+
+
 
     const columns = [
 
@@ -407,23 +348,49 @@ const Category = () => {
                                     body={
                                         <>
                                             <div className="row">
-                                                <div className="col-md-12">
+                                                <div className="col-md-12 d-flex justify-content-between">
+                                                    <label htmlFor="freetrial_status">Freetrial Status</label>
+                                                    <div className="form-check form-switch form-check-info">
+                                                        <input
+                                                            id="freetrial_toggle"
+                                                            className="form-check-input toggleswitch"
+                                                            type="checkbox"
+                                                            checked={title.freetrial_status}
+                                                            onChange={(e) =>
+                                                                setTitle({ ...title, freetrial_status: e.target.checked })
+                                                            }
+                                                        />
+                                                        <label
+                                                            htmlFor="freetrial_toggle"
+                                                            className="checktoggle checkbox-bg"
+                                                        ></label>
+                                                    </div>
+                                                </div>
+
+                                                <div className="col-md-12 mb-3">
                                                     <label htmlFor="service">Segment</label>
                                                     <span className="text-danger">*</span>
-                                                    {servicedata.length > 0 && (
-                                                        <DropdownMultiselect
-                                                            name="Service"
-                                                            options={servicedata.map((item) => ({
-                                                                key: item._id,
-                                                                label: item.title,
-                                                            }))}
-                                                            placeholder="Select Segment"
-                                                            handleOnChange={(selected) => {
-                                                                const selectedService = selected;
-                                                                setTitle({ ...title, service: selectedService });
-                                                            }}
-                                                        />
-                                                    )}
+
+                                                    <div style={{ border: "2px solid #ccc", borderRadius: "10px" }}>
+
+                                                        {servicedata.length > 0 && (
+                                                            <Select
+                                                                options={servicedata.map(({ _id, title }) => ({
+                                                                    value: _id,
+                                                                    label: title,
+                                                                }))}
+                                                                isMulti
+                                                                placeholder="Select Segment"
+                                                                onChange={(selected) =>
+                                                                    setTitle((prev) => ({
+                                                                        ...prev,
+                                                                        service: selected.map((item) => item.value),
+                                                                    }))
+                                                                }
+                                                            />
+                                                        )}
+                                                    </div>
+
                                                 </div>
                                                 <div className="col-md-12">
                                                     <label htmlFor="categoryTitle">Category</label>
@@ -537,7 +504,7 @@ const Category = () => {
                         {isLoading ? (
                             <Loader />
 
-                        ) : (
+                        ) : clients.length > 0 ? (
                             <div className="table-responsive">
                                 <Table
                                     columns={columns}
@@ -547,6 +514,10 @@ const Category = () => {
                                     highlightOnHover
                                     dense
                                 />
+                            </div>
+                        ) : (
+                            <div className="text-center mt-5">
+                                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
                             </div>
                         )}
                     </div>

@@ -9,6 +9,7 @@ import { Tooltip } from 'antd';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import { exportToCSV } from '../../../../Utils/ExportCSV';
 import Content from '../../../components/Contents/Content';
+import Loader from '../../../../Utils/Loader';
 
 
 
@@ -27,6 +28,9 @@ const BasketPurchaseHistory = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
+
+  const [isLoading, setIsLoading] = useState(true)
+
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -61,6 +65,7 @@ const BasketPurchaseHistory = () => {
     } catch (error) {
       console.log("Error fetching services:", error);
     }
+    setIsLoading(false)
   };
 
 
@@ -111,7 +116,7 @@ const BasketPurchaseHistory = () => {
 
     {
       name: 'Plan Amount',
-      selector: row => <div> <IndianRupee />{row.plan_price}</div>,
+      selector: row => <div> <IndianRupee />{(row.plan_price).toFixed(2)}</div>,
       sortable: true,
       width: '200px',
     },
@@ -125,7 +130,7 @@ const BasketPurchaseHistory = () => {
 
     {
       name: 'Total',
-      selector: row => <div> <IndianRupee />{row.total}</div>,
+      selector: row => <div> <IndianRupee />{(row.total).toFixed(2)}</div>,
       sortable: true,
       width: '200px',
     },
@@ -202,6 +207,9 @@ const BasketPurchaseHistory = () => {
                 </div>
               </div>
             </div>
+            {isLoading ? (
+            <Loader />
+          ) : clients.length > 0 ? (
             <div className="table-responsive">
               <Table
                 columns={columns}
@@ -211,6 +219,11 @@ const BasketPurchaseHistory = () => {
                 onPageChange={handlePageChange}
               />
             </div>
+          ):(
+            <div className="text-center mt-5">
+            <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+          </div>
+          )}
           </div>
         </div>
       </div>

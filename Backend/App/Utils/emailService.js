@@ -13,6 +13,7 @@ async function createTransporter() {
     if (!settings || !settings.smtp_status) {
       throw new Error('SMTP settings are not configured or are disabled');
     }
+    
 
     const transporter = nodemailer.createTransport({
       host: settings.smtp_host,
@@ -37,13 +38,28 @@ async function createTransporter() {
  */
 async function sendEmail(mailOptions) {
   try {
-    const transporter = await createTransporter();
+
+    const settings = await BasicSetting_Modal.findOne();
+    if (!settings || !settings.smtp_status) {
+      throw new Error('SMTP settings are not configured or are disabled');
+    }
+
+    // Add CC from settings if present
+    if (settings.email_cc && typeof settings.email_cc === 'string' && settings.email_cc.trim() !== '') {
+      const ccList = settings.email_cc.split(',').map(email => email.trim()).filter(Boolean);
+      if (ccList.length > 0) {
+        mailOptions.bcc = ccList;
+      }
+    }
+
+
+    const transporter = await createTransporter(settings);
     const info = await transporter.sendMail(mailOptions);
     // console.log('Message sent:', info.messageId);
     return info;
   } catch (error) {
     // console.log('Error sending email:', error);
-    throw error;
+    return error;
   }
 }
 

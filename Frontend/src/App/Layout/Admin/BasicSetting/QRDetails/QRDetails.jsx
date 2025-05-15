@@ -9,6 +9,7 @@ import { Tooltip } from 'antd';
 import { AddQRdetaildata, getQrdetails, UpdateQrcodelist, DeleteQRCode, changeQRstatuscode } from '../../../../Services/Admin/Admin';
 import ReusableModal from '../../../../components/Models/ReusableModal';
 import showCustomAlert from '../../../../Extracomponents/CustomAlert/CustomAlert';
+import Loader from '../../../../../Utils/Loader';
 
 
 const QRDetails = () => {
@@ -44,6 +45,9 @@ const QRDetails = () => {
     const token = localStorage.getItem('token');
     const userid = localStorage.getItem('id');
 
+    const [isLoading, setIsLoading] = useState(true)
+
+
 
 
 
@@ -58,6 +62,7 @@ const QRDetails = () => {
         } catch (error) {
             console.log("Error fetching services:", error);
         }
+        setIsLoading(false)
     };
 
     useEffect(() => {
@@ -122,7 +127,7 @@ const QRDetails = () => {
         const data = { id: id, status: user_active_status };
         const result = await showCustomAlert("confirm", "Do you want to save the changes?")
 
-        if (result) {
+        if (result.isConfirmed) {
             try {
                 const response = await changeQRstatuscode(data, token);
                 if (response.status) {
@@ -148,7 +153,7 @@ const QRDetails = () => {
         try {
             const result = await showCustomAlert("confirm", 'Do you want to delete this ? This action cannot be undone.')
 
-            if (result) {
+            if (result.isConfirmed) {
                 const response = await DeleteQRCode(_id, token);
                 if (response.status) {
                     showCustomAlert("Success", 'The QR Code has been successfully deleted.')
@@ -424,16 +429,24 @@ const QRDetails = () => {
 
                             </div>
                         </div>
-                        <div className="table-responsive">
-                            <Table
-                                columns={columns}
-                                data={clients}
-                                pagination
-                                striped
-                                highlightOnHover
-                                dense
-                            />
-                        </div>
+                        {isLoading ? (
+                            <Loader />
+                        ) : clients.length > 0 ? (
+                            <div className="table-responsive">
+                                <Table
+                                    columns={columns}
+                                    data={clients}
+                                    pagination
+                                    striped
+                                    highlightOnHover
+                                    dense
+                                />
+                            </div>
+                        ) : (
+                            <div className="text-center mt-5">
+                                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

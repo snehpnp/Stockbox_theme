@@ -251,7 +251,108 @@ const BasicSettingSchema = new Schema({
         trim: true,
         default: 0
     },
-
+    gststatus: {
+        type: Number,
+        enum: [1, 0],
+        default: 0
+    },
+    simage: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    gstin: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    state: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    saccode: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    invoice: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    invoicestart: {
+        type: Number,
+        default: 0
+    },
+    invoicetnc: {
+        type: String,
+        default: null
+    },
+    refersendmsg: {
+        type: String,
+        default: null
+    },
+    pdf_template: {
+        type: String,
+        default: null
+    },
+    pdf_header: {
+        type: String,
+        default: null
+    },
+    pdf_footer: {
+        type: String,
+        default: null
+    },
+    noof_pdf_pages: {
+        type: Number,
+        default: 0
+    },
+    base_url: {
+        type: String,
+        default: null
+    },
+    color1: {
+        type: String,
+        default: null
+    },
+    color2: {
+        type: String,
+        default: null
+    },
+    color3: {
+        type: String,
+        default: null
+    },
+    color4: {
+        type: String,
+        default: null
+    },
+    popupstatus: {
+        type: Number,
+        enum: [1, 0],
+        default: 0
+    },
+    popupcontent: {
+        type: String,
+        default: null
+    },
+    wh_number: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    smsprovider: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    email_cc: {
+        type: String,
+        trim: true,
+        default: null
+    },
 }, {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 });

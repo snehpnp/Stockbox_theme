@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { UpdateClient } from '../../../Services/Admin/Admin';
+import { UpdateClient, GetAllStates, GetAllCities } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
@@ -13,6 +13,13 @@ const EditClient = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { row } = location.state;
+
+
+  const [selectedState, setSelectedState] = useState("");
+
+
+  const [state, setState] = useState([])
+  const [city, setCity] = useState([])
 
 
 
@@ -56,6 +63,12 @@ const EditClient = () => {
       errors.PhoneNo = "Phone Number should be exactly 10 digits";
     }
 
+    if (!values.state) {
+      errors.state = "Please Select State";
+    }
+    if (!values.city) {
+      errors.city = "Please Select City";
+    }
 
     return errors;
   };
@@ -65,6 +78,8 @@ const EditClient = () => {
       FullName: values.FullName,
       Email: values.Email,
       PhoneNo: values.PhoneNo,
+      state: values.state,
+      city: values.city,
       id: row._id,
     };
 
@@ -81,7 +96,6 @@ const EditClient = () => {
           showCustomAlert("error", response.error.message);
         } else {
           showCustomAlert("error", "Email or Mobile number are already exists.");
-
         }
       }
     } catch (error) {
@@ -96,6 +110,8 @@ const EditClient = () => {
       // UserName: row?.UserName || "",
       Email: row?.Email || "",
       PhoneNo: row?.PhoneNo || "",
+      state: row?.state || "",
+      city: row?.city || "",
 
     },
     validate,
@@ -109,7 +125,7 @@ const EditClient = () => {
       type: "text",
       star: true,
       label_size: 6,
-      col_size: 4,
+      col_size: 3,
       disable: false,
       star: true
 
@@ -128,7 +144,7 @@ const EditClient = () => {
       type: "text",
       star: true,
       label_size: 12,
-      col_size: 4,
+      col_size: 3,
       disable: false,
       star: true
 
@@ -138,12 +154,38 @@ const EditClient = () => {
       label: "Phone Number",
       type: "text3",
       label_size: 12,
-      col_size: 4,
+      col_size: 3,
+      disable: false,
+      star: true
+    },
+    {
+      name: "state",
+      label: "Select State",
+      type: 'select',
+      options: state?.map((item) => ({
+        label: item.name,
+        value: item.name,
+      })),
+      label_size: 12,
+      col_size: 3,
+      disable: false,
+      star: true
+    },
+    {
+      name: "city",
+      label: "Select City",
+      type: 'select',
+      options: city?.map((item) => ({
+        label: item.city,
+        value: item.city,
+      })),
+      label_size: 12,
+      col_size: 3,
       disable: false,
       star: true
 
-
     },
+
     // {
     //   name: "password",
     //   label: "Password",
@@ -154,6 +196,50 @@ const EditClient = () => {
     // },
   ];
 
+
+
+  const getStatedata = async () => {
+    try {
+      const response = await GetAllStates(token);
+      if (response) {
+        setState(response);
+
+      }
+    } catch (error) {
+      console.log("error");
+    }
+  }
+
+
+
+  const getCitydata = async () => {
+    try {
+      const response = await GetAllCities(formik.values.state, token);
+      if (response) {
+        setCity(response);
+
+      }
+    } catch (error) {
+      console.error("Error fetching cities:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (formik.values.state) {
+      getCitydata();
+    }
+  }, [formik.values.state]);
+
+
+
+
+  useEffect(() => {
+    getStatedata()
+  }, [])
+
+
+
+
   return (
     <Content
       Page_title="Update Client"
@@ -163,13 +249,15 @@ const EditClient = () => {
     >
       <DynamicForm
         fields={fields}
-        page_title="Update Client"
         btn_name="Update Client"
         btn_name1="Cancel"
         formik={formik}
         sumit_btn={true}
         btn_name1_route={"/admin/client"}
-        additional_field={<></>}
+        additional_field={<>
+
+
+        </>}
       />
     </Content>
 

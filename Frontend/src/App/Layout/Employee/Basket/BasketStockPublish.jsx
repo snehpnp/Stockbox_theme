@@ -1,36 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, RefreshCcw, Trash2, RotateCcw, IndianRupee, X, Plus, History } from 'lucide-react';
-import Swal from "sweetalert2";
 import { Tooltip } from 'antd';
 // import Table from "../../../components/Table";
 import Table from '../../../Extracomponents/Table1';
+
 import { BasketAllActiveList, BasketAllActiveListbyfilter, changestatusrebalance, deletebasket, Basketstatusofdetail, getstaffperuser } from "../../../Services/Admin/Admin";
 import { fDate } from "../../../../Utils/Date_formate";
 import Loader from "../../../../Utils/Loader";
-
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 const BasketStockPublish = () => {
 
 
-  useEffect(() => {
-    getpermissioninfo()
-  }, [])
-
-  const userid = localStorage.getItem('id');
-
   const navigate = useNavigate();
   const [clients, setClients] = useState([]);
   const token = localStorage.getItem("token");
+  const userid = localStorage.getItem('id');
 
 
   const [searchInput, setSearchInput] = useState("");
-  const [permission, setPermission] = useState([]);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
+  const [permission, setPermission] = useState([]);
 
-  //state for loading
+
   const [isLoading, setIsLoading] = useState(true)
 
 
@@ -38,6 +33,24 @@ const BasketStockPublish = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+
+
+
+  const getbasketlist = async () => {
+    try {
+      const data = { page: currentPage, search: searchInput || "" }
+      const response = await BasketAllActiveListbyfilter(data, token);
+      if (response.status) {
+        setTotalRows(response.pagination.total);
+        setClients(response.data);
+      }
+    } catch (error) {
+      console.log("error", JSON.stringify(error));
+
+    }
+    setIsLoading(false)
+  };
+
 
 
 
@@ -55,26 +68,10 @@ const BasketStockPublish = () => {
   }
 
 
+  useEffect(() => {
+    getpermissioninfo();
 
-  // Fetch basket list
-  const getbasketlist = async () => {
-    try {
-      const data = { page: currentPage, search: searchInput || "" }
-      const response = await BasketAllActiveListbyfilter(data, token);
-      // console.log("BasketAllActiveListbyfilter",response);
-
-      if (response.status) {
-        setTotalRows(response.pagination.total);
-        setClients(response.data);
-      }
-    } catch (error) {
-      console.log("error", JSON.stringify(error));
-
-    }
-    setIsLoading(false)
-
-  };
-
+  }, []);
 
 
 
@@ -86,40 +83,22 @@ const BasketStockPublish = () => {
 
   const handleSwitchChange = async (event, id) => {
     const originalChecked = event.target.checked;
-    const user_active_status = originalChecked
+    const user_active_status = originalChecked;
     const data = { id: id, status: user_active_status };
 
-    const result = await Swal.fire({
-      title: "Do you want to save the changes?",
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      cancelButtonText: "Cancel",
-      allowOutsideClick: false,
-    });
+    const result = await showCustomAlert("confirm", "Do you want to save the changes?");
 
     if (result.isConfirmed) {
       try {
         const response = await Basketstatusofdetail(data, token);
         if (response.status) {
-          Swal.fire({
-            title: "Saved!",
-            icon: "success",
-            timer: 1000,
-            timerProgressBar: true,
-          });
-          setTimeout(() => {
-            Swal.close();
-          }, 1000);
+          await showCustomAlert("success", "Changed successfully!");
+          getbasketlist();
         }
-        getbasketlist();
       } catch (error) {
-        Swal.fire(
-          "Error",
-          "There was an error processing your request.",
-          "error"
-        );
+        await showCustomAlert("error", "There was an error processing your request.");
       }
-    } else if (result.dismiss === Swal.DismissReason.cancel) {
+    } else {
       event.target.checked = !originalChecked;
       getbasketlist();
     }
@@ -130,37 +109,20 @@ const BasketStockPublish = () => {
     const originalChecked = event.target.checked;
     const user_active_status = originalChecked
     const data = { id: id, status: user_active_status };
-    const result = await Swal.fire({
-      title: "Do you want to save the changes?",
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      cancelButtonText: "Cancel",
-      allowOutsideClick: false,
-    });
+
+    const result = await showCustomAlert("confirm", "Do you want to save the changes?");
 
     if (result.isConfirmed) {
       try {
         const response = await changestatusrebalance(data, token);
         if (response.status) {
-          Swal.fire({
-            title: "Saved!",
-            icon: "success",
-            timer: 1000,
-            timerProgressBar: true,
-          });
-          setTimeout(() => {
-            Swal.close();
-          }, 1000);
+          showCustomAlert("Sucess", "Changed successfully!");
         }
         getbasketlist();
       } catch (error) {
-        Swal.fire(
-          "Error",
-          "There was an error processing your request.",
-          "error"
-        );
+        showCustomAlert("error", "There was an error processing your request.");
       }
-    } else if (result.dismiss === Swal.DismissReason.cancel) {
+    } else {
       event.target.checked = !originalChecked;
       getbasketlist();
     }
@@ -170,6 +132,12 @@ const BasketStockPublish = () => {
 
 
   const rebalancePubliceStock = async (row) => {
+    if (!row) return
+    navigate("/employee/editstock", { state: { row } });
+  };
+
+
+  const rebalancePubliceStockadd = async (row) => {
     navigate("/employee/addstock/" + row._id, { state: { state: "publish" } });
   }
 
@@ -184,43 +152,23 @@ const BasketStockPublish = () => {
 
   const Deletebasket = async (_id) => {
     try {
-      const result = await Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to delete this item? This action cannot be undone.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel",
-      });
-
+      const result = await showCustomAlert("confirm", "Do you want to delete this item? This action cannot be undone.");
       if (result.isConfirmed) {
         const response = await deletebasket(_id, token);
         if (response.status) {
-          Swal.fire({
-            title: "Deleted!",
-            text: "The item has been successfully deleted.",
-            icon: "success",
-            confirmButtonText: "OK",
-          });
+          showCustomAlert("Success", "The item has been successfully deleted.");
           getbasketlist();
         }
       } else {
-        Swal.fire({
-          title: "Cancelled",
-          text: "The item deletion was cancelled.",
-          icon: "info",
-          confirmButtonText: "OK",
-        });
+        showCustomAlert("error", "The item deletion was cancelled.");
       }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: "There was an error deleting the item.",
-        icon: "error",
-        confirmButtonText: "Try Again",
-      });
+      showCustomAlert("error", "There was an error deleting the item.");
+
     }
   };
+
+
 
 
   function stripHtml(html) {
@@ -228,6 +176,9 @@ const BasketStockPublish = () => {
     div.innerHTML = html;
     return div.textContent || div.innerText || "";
   }
+
+
+
 
   // Columns for DataTable
   const columns = [
@@ -273,7 +224,7 @@ const BasketStockPublish = () => {
           WebkitBoxOrient: 'vertical',
           maxWidth: '200px',
           textAlign: 'left',
-          whiteSpace: 'normal', // Ensure multi-line text
+          whiteSpace: 'normal',
         }}>
           {stripHtml(row.description)}
         </div>
@@ -305,7 +256,7 @@ const BasketStockPublish = () => {
         </div>
       ),
       sortable: true,
-      width: '165px',
+      width: '180px',
     },
     permission.includes("Rebalancestatus") && {
       name: 'Rebalancing',
@@ -327,27 +278,34 @@ const BasketStockPublish = () => {
 
       ),
       sortable: true,
+      width: '180px',
 
     },
-    permission.includes("Rebalancebutton") ||
-      permission.includes("basketdetail") ||
-      permission.includes("Subscriptionhistory") ?
-      {
-        name: "Actions",
-        cell: (row) => (
-          <div className="w-100">
-            {permission.includes("Rebalancebutton") && (
-              row.rebalancestatus === false ? (
-                <Tooltip title="Rebalance">
-                  <RotateCcw onClick={() => rebalancePubliceStock(row)} />
-                </Tooltip>
-              ) : null
-            )}
-            {permission.includes("basketdetail") &&
-              <Tooltip title="view">
-                <Eye onClick={() => viewdetailpage(row)} className='ms-2'/>
-              </Tooltip>}
-            {/* <Tooltip title="Edit">
+    {
+      name: "Actions",
+      cell: (row) => (
+        <div className="w-100">
+          {permission.includes("Rebalancebutton") && row.rebalancestatus === false ? (
+            row?.stockstatus == 0 ? (
+              <Tooltip title="Rebalance">
+                <RotateCcw
+                  onClick={() => rebalancePubliceStock(row)}
+                  style={{ marginRight: "5px" }}
+                />
+              </Tooltip>
+            ) : (
+              <Tooltip title="Rebalance">
+                <RotateCcw
+                  onClick={() => rebalancePubliceStockadd(row)}
+                  style={{ marginRight: "5px" }}
+                />
+              </Tooltip>
+            )
+          ) : null}
+          {permission.includes("basketdetail") && <Tooltip title="view">
+            <Eye onClick={() => viewdetailpage(row)} />
+          </Tooltip>}
+          {/* <Tooltip title="Edit">
             <Link
               to={`editbasket/${row._id}`}
               className="btn px-2"
@@ -355,25 +313,24 @@ const BasketStockPublish = () => {
               <SquarePen />
             </Link>
           </Tooltip> */}
-            {permission.includes("Subscriptionhistory") &&
-              <Tooltip title="History ">
-                <Link
-                  to={`/employee/basket-purchase-history/${row._id}`}
-                  className="btn px-2"
-                >
-                  <History />
-                </Link>
-              </Tooltip>}
-            {/* <button
+          <Tooltip title="History ">
+            <Link
+              to={`/employee/basket-purchase-history/${row._id}`}
+              className="btn px-2"
+            >
+              <History />
+            </Link>
+          </Tooltip>
+          {/* <button
             className="btn px-2"
             onClick={() => Deletebasket(row._id)}
           >
             <Trash2 />
           </button> */}
-          </div>
-        ),
-        width: '150px',
-      } : "",
+        </div>
+      ),
+      width: '150px',
+    },
   ];
 
 
@@ -396,7 +353,7 @@ const BasketStockPublish = () => {
           </nav>
         </div>
       </div>
-      
+      <hr />
       <div className="card">
         <div className="card-body">
           <div className="d-lg-flex align-items-center mb-4 gap-3">
@@ -427,7 +384,7 @@ const BasketStockPublish = () => {
           </div>
           {isLoading ? (
             <Loader />
-          ) : (
+          ) : clients.length > 0 ? (
             <>
               <Table
                 columns={columns}
@@ -437,7 +394,12 @@ const BasketStockPublish = () => {
                 onPageChange={handlePageChange}
               />
             </>
+          ) : (
+            <div className="text-center mt-5">
+              <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+            </div>
           )}
+
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { image_baseurl } from "../../../../Utils/config";
 import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import * as Yup from "yup";
 
 const ReferAndEarn = () => {
 
@@ -12,7 +13,10 @@ const ReferAndEarn = () => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const [clients, setClients] = useState(null);
+
   const [isChanged, setIsChanged] = useState(false);
+
+  const [refreshData, setRefreshData] = useState(false);
 
   const getsettinglist = async () => {
     try {
@@ -27,18 +31,26 @@ const ReferAndEarn = () => {
 
   useEffect(() => {
     getsettinglist();
-  }, []);
+  }, [refreshData]);
 
-  const handleFieldChange = (fieldName, value, setFieldValue) => {
+const handleFieldChange = (fieldName, value, setFieldValue) => {
+  if (fieldName === "sender_earn" || fieldName === "receiver_earn") {
     if (value === "" || (Number(value) <= 100 && !isNaN(value))) {
       setFieldValue(fieldName, value);
     }
-    setIsChanged(true);
-  };
+  } else {
+    setFieldValue(fieldName, value);
+  }
+  setIsChanged(true);
+};
 
   if (!clients) {
     return <div><Loader /></div>;
   }
+
+  const validationSchema = Yup.object().shape({
+    refersendmsg: Yup.string().trim().required("R&E Share Message is required"),
+  });
 
 
 
@@ -62,6 +74,7 @@ const ReferAndEarn = () => {
       <div className="row">
         <div className="col-lg-8 mx-auto">
           <div className="card radius-15">
+
             <Formik
               enableReinitialize={true}
               initialValues={{
@@ -73,7 +86,9 @@ const ReferAndEarn = () => {
                 refer_image: null,
                 Multipletime: clients[0]?.refer_status === 1,
                 Singletime: clients[0]?.refer_status === 0,
+                refersendmsg: clients[0]?.refersendmsg || "",
               }}
+              validationSchema={validationSchema}
               onSubmit={async (values) => {
                 const req = {
                   sender_earn: values?.sender_earn,
@@ -82,6 +97,7 @@ const ReferAndEarn = () => {
                   refer_description: values?.refer_description,
                   refer_image: values?.refer_image,
                   refer_status: values?.refer_status,
+                  refersendmsg: values?.refersendmsg,
                 };
 
                 try {
@@ -89,6 +105,7 @@ const ReferAndEarn = () => {
 
                   if (response.status) {
                     showCustomAlert("Success", "Refer and Earn Updated Successfully")
+                    setRefreshData(prev => !prev);
                   } else {
                     showCustomAlert("error", response.message)
                   }
@@ -104,7 +121,7 @@ const ReferAndEarn = () => {
                 }
               }}
             >
-              {({ setFieldValue, values }) => (
+              {({ setFieldValue, values, errors, touched }) => (
                 <Form className="card-body p-4">
                   <div className="p-4 border radius-15">
 
@@ -196,6 +213,29 @@ const ReferAndEarn = () => {
                             }}
                           />
                         </div>
+                      </div>
+                    </div>
+
+                    <div className="row mb-3 align-items-center">
+                      <label htmlFor="refersendmsg" className="col-sm-3 col-form-label">
+                        <b>R&E Share Message</b>
+                      </label>
+                      <div className="col-sm-9">
+                        <div className="input-group">
+                          <Field
+                            as="textarea"
+                            name="refersendmsg"
+                            className={`form-control ${errors.refersendmsg && touched.refersendmsg ? "is-invalid" : ""}`}
+                            placeholder="R&E Share Message"
+                            style={{ width: "100%" }}
+                            onChange={(e) => {
+                              setFieldValue("refersendmsg", e.target.value);
+                            }}
+                          />
+                        </div>
+                        {errors.refersendmsg && touched.refersendmsg && (
+                          <div className="invalid-feedback">{errors.refersendmsg}</div>
+                        )}
                       </div>
                     </div>
 

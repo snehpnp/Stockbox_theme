@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import { updateStockList } from "../../../Services/Admin/Admin";
+import { updateStockList,getstocklistById } from "../../../Services/Admin/Admin";
 import { Tooltip } from 'antd';
 import axios from "axios";
 import * as Config from "../../../../Utils/config";
@@ -13,6 +13,9 @@ const EditStock = () => {
 
 
     const location = useLocation();
+
+    const token = localStorage.getItem("token");
+
 
 
     const { stock } = location.state || {};
@@ -30,23 +33,39 @@ const EditStock = () => {
 
 
 
+    const [stockdata, setStockdata] = useState([])
+
+
+    const [getrebalance, setGetrebalance] = useState({})
+    const [header, setHeader] = useState("Edit Stock")
+
+
+
+
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (location?.state) {
-            setCurrentlocation(location?.state?.Key);
+        if (location?.state?.row) {
+            setGetrebalance(location?.state?.row);
+
         }
     }, [location]);
-
-    const redirectTo = (currentlocation === "editStock") ? "/admin/basket/basketstockpublish" : "/admin/basket";
 
 
 
 
 
     useEffect(() => {
-        if (stock && Array.isArray(stock)) {
+        if (getrebalance) {
+            GetStocklistbyid();
+        }
+    }, [getrebalance]);
+
+
+
+    useEffect(() => {
+        if (stock && Array.isArray(stock) && stock.length > 0) {
             const initialServices = stock.map((item) => ({
                 label: item.name || item.symbol || item.tradesymbol || "",
                 value: String(item._id),
@@ -56,6 +75,7 @@ const EditStock = () => {
                 price: item.price || "",
                 type: item.type || "",
             }));
+
             setSelectedServices(initialServices);
 
             const initialFormValues = initialServices.reduce((acc, service) => {
@@ -68,9 +88,35 @@ const EditStock = () => {
                 };
                 return acc;
             }, {});
+
+            setFormValues(initialFormValues);
+        } else if (stockdata && Array.isArray(stockdata) && stockdata.length > 0) {
+            const initialServices = stockdata?.map((item) => ({
+                label: item.name || item.symbol || item.tradesymbol || "",
+                value: String(item._id),
+                tradesymbol: item.tradesymbol,
+                name: item.name || item.symbol || "",
+                weightage: item.weightage || "",
+                price: item.price || "",
+                type: item.type || "",
+            }));
+
+            setSelectedServices(initialServices);
+
+            const initialFormValues = initialServices.reduce((acc, service) => {
+                acc[service.value] = {
+                    tradesymbol: service.tradesymbol,
+                    name: service.name,
+                    weightage: service.weightage,
+                    price: service.price,
+                    type: service.type,
+                };
+                return acc;
+            }, {});
+
             setFormValues(initialFormValues);
         }
-    }, [stock]);
+    }, [stock, stockdata]);
 
 
 
@@ -187,12 +233,11 @@ const EditStock = () => {
         try {
             if (Object.keys(formValues).length === 0) {
                 showCustomAlert("error", "Stock is required for edit", "warning");
-
                 return;
             }
 
             const invalidStocks = Object.values(formValues).filter(
-                (stock) => Number(stock.weightage || 0) <= 0
+                ({ weightage }) => Number(weightage || 0) <= 0
             );
 
             if (invalidStocks.length > 0) {
@@ -201,7 +246,7 @@ const EditStock = () => {
             }
 
             const totalWeightage = Object.values(formValues).reduce(
-                (sum, stock) => sum + Number(stock.weightage || 0),
+                (sum, { weightage }) => sum + Number(weightage || 0),
                 0
             );
 
@@ -210,47 +255,45 @@ const EditStock = () => {
                 return;
             }
 
-            const emptyType = Object.values(formValues).filter(
-                (stock) => stock.type === ""
+            const missingTypeStocks = Object.values(formValues).filter(
+                ({ type }) => !type?.trim()
             );
 
-            if (emptyType.length > 0) {
-                showCustomAlert("error", "Please select type.");
+            if (missingTypeStocks.length > 0) {
+                showCustomAlert("error", "Please select a Type.");
                 return;
             }
 
-            const stocksWithStatus = Object.values(formValues).map((stock) => ({
-                ...stock,
+            const stocksWithStatus = Object.values(formValues).map(({ weightage, ...rest }) => ({
+                ...rest,
                 status,
-                percentage: stock.weightage,
+                percentage: weightage
             }));
 
-            const version = stock && stock[0]?.version ? stock[0].version : "";
+            const version = stock?.[0]?.version || stockdata?.[0]?.version || "";
+            const basket_id = stock?.[0]?.basket_id || stockdata?.[0]?.basket_id || "";
 
             const requestData = {
-                basket_id: stock[0]?.basket_id || "",
+                basket_id,
                 stocks: stocksWithStatus,
                 version,
-                publishstatus: status === 0 ? false : status === 1 ? true : "",
+                publishstatus: status === 1,
                 comments: description
             };
 
-            if (status === 1) {
-                setLoadingPublish(true);
-            } else {
-                setLoadingSubmit(true);
-            }
+            status === 1 ? setLoadingPublish(true) : setLoadingSubmit(true);
+
 
 
             const response = await updateStockList(requestData);
+
             if (response?.status) {
-                showCustomAlert("Success", response.message, navigate, "/admin/basket");
+                showCustomAlert("Success", response.message, navigate, "/admin/basket/basketstockpublish");
             } else {
                 showCustomAlert("error", response.message);
-
             }
         } catch (error) {
-            showCustomAlert("error", "An unexpected error occurred. Please try again.");
+            showCustomAlert("error", `An unexpected error occurred: ${error.message || ""}`);
         } finally {
             setLoadingSubmit(false);
             setLoadingPublish(false);
@@ -266,11 +309,31 @@ const EditStock = () => {
 
     }, [formValues])
 
+    const GetStocklistbyid = async () => {
+        try {
+            if (getrebalance) {
+                const response = await getstocklistById(getrebalance._id, token);
+
+                if (response?.status && Array.isArray(response.data)) {
+                    const filteredStockData = response.data?.filter(item => item.status == 0);
+                    setStockdata(filteredStockData && filteredStockData);
+                    setDescription(filteredStockData[0]?.comment)
+                    setHeader(filteredStockData.length > 0 ? "Rebalance Stock" : "Edit Stock");
+                } else {
+                    console.error("Invalid data received:", response?.data);
+                }
+            }
+
+        } catch (error) {
+            console.error("Error fetching stock list:", error);
+        }
+    };
+
 
 
     return (
         <Content
-            Page_title="Edit Stock"
+            Page_title={header}
             button_status={false}
             backbutton_status={true}
             backForword={true}

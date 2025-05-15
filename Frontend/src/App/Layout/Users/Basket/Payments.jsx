@@ -1,34 +1,73 @@
 import React, { useEffect, useState } from "react";
 import Content from "../../../components/Contents/Content";
 import { HandCoins } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { loadScript } from "../../../../Utils/Razorpayment";
-import { AddBasketsubscription, getQRcodedata, getBankdetaildata } from "../../../Services/UserService/User";
+import { AddBasketsubscription, getQRcodedata, getBankdetaildata, GetUserData } from "../../../Services/UserService/User";
 import { basicsettinglist } from "../../../Services/Admin/Admin";
 import { image_baseurl } from "../../../../Utils/config";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
+import Kyc from "../Profile/Kyc";
+import ReusableModal from "../../../components/Models/ReusableModal";
+
+
 
 const Payments = () => {
 
     const token = localStorage.getItem("token");
     const userid = localStorage.getItem("id");
-
-
-    const [activeTab, setActiveTab] = useState("online");
-
+    const navigate = useNavigate();
+    const location = useLocation();
+    const key = location?.state?.key;
     const { state } = useLocation()
     const item = state?.item
-
-
-    const [getkey, setGetkey] = useState([]);
-    const [company, setCompany] = useState([]);
+    const [activeTab, setActiveTab] = useState("online");
+    const [allKey, setAllKey] = useState([])
     const [bankdetail, setBankdetail] = useState([]);
     const [qrdata, setQrdata] = useState([]);
+    const [userdata, setUserdata] = useState([]);
+    const [kycStatus, setKycStatus] = useState("")
+    const [viewmodel2, setViewModel2] = useState(false);
+
 
     useEffect(() => {
         getkeybydata()
         getQRimage()
         getbankdata()
+        fetchUserData();
     }, [])
+
+    useEffect(() => {
+        if (location.state?.key) {
+            setActiveTab("offline");
+        }
+    }, [location.state?.key]);
+
+
+
+
+
+    const handleShowModal = (item) => {
+
+        if (kycStatus == 1 && userdata?.kyc_verification == 0) {
+            setViewModel2(true)
+        } else {
+            AddbasketSubscribeplan()
+        }
+    };
+
+
+    const fetchUserData = async () => {
+        try {
+            const userData = await GetUserData(userid, token);
+            if (userData && userData.data) {
+                setUserdata(userData.data)
+
+            }
+        } catch (error) {
+            showCustomAlert("error", "Failed to load user data. Please refresh and try again.");
+        }
+    }
 
 
     const getQRimage = async () => {
@@ -60,9 +99,10 @@ const Payments = () => {
     const getkeybydata = async () => {
         try {
             const response = await basicsettinglist();
+
             if (response.status) {
-                setGetkey(response?.data[0]?.razorpay_key);
-                setCompany(response?.data[0]?.from_name);
+                setAllKey(response.data[0])
+                setKycStatus(response?.data[0].kyc)
             }
         } catch (error) {
             console.error("Error fetching coupons:", error);
@@ -73,42 +113,45 @@ const Payments = () => {
 
     const AddbasketSubscribeplan = async (item) => {
         try {
-
             if (!window.Razorpay) {
                 await loadScript("https://checkout.razorpay.com/v1/checkout.js");
             }
+
+            const price = item?.basket_price;
+            const finalAmount = Math.round(price * (1 + allKey?.gst / 100) * 100);
+
             const options = {
-                key: getkey,
-                amount: item?.basket_price * 100,
-                name: company,
+                key: allKey.razorpay_key,
+                amount: finalAmount,
+                name: allKey.from_name,
                 currency: "INR",
                 title: item?.title || "Subscription Basket",
                 handler: async function (response1) {
                     const data = {
                         basket_id: item?._id,
                         client_id: userid,
-                        price: item?.basket_price,
-                        discount: response1?.orderid,
-                        orderid: response1?.orderid,
-
+                        price: finalAmount,
+                        discount: 0,
+                        orderid: response1?.razorpay_order_id || "",
+                        coupon: "",
                     };
 
                     try {
                         const response2 = await AddBasketsubscription(data, token);
                         if (response2?.status) {
-                            window.location.reload();
+                            navigate("/user/thankyou")
+                            // window.location.reload();
                         }
                     } catch (error) {
                         console.error("Error while adding plan subscription:", error);
                     }
                 },
-                prefill: {
-
-                },
+                prefill: {},
                 theme: {
                     color: "#F37254",
                 },
             };
+
             const rzp = new window.Razorpay(options);
             rzp.open();
         } catch (error) {
@@ -116,8 +159,11 @@ const Payments = () => {
         }
     };
 
-
-
+    useEffect(() => {
+        if (allKey?.paymentstatus === 0 && activeTab === "online") {
+            setActiveTab("offline");
+        }
+    }, [allKey?.paymentstatus, activeTab]);
 
 
     return (
@@ -130,47 +176,80 @@ const Payments = () => {
             backForword={true}
         >
             <ul className="nav nav-pills mb-3 justify-content-center border-bottom">
-                <li className="nav-item">
-                    <button
-                        className={`nav-link ${activeTab === "online" ? "active btn-primary" : ""}`}
-                        onClick={() => setActiveTab("online")}
-                    >
-                        Pay Online
-                    </button>
-                </li>
-                <li className="nav-item">
-                    <button
-                        className={`nav-link ${activeTab === "offline" ? "active btn-primary" : ""}`}
-                        onClick={() => setActiveTab("offline")}
-                    >
-                        Pay Offline
-                    </button>
-                </li>
+
+                {!key && allKey?.paymentstatus === 1 && (
+                    <li className="nav-item">
+                        <button
+                            className={`nav-link ${activeTab === "online" ? "active btn-primary" : ""}`}
+                            onClick={() => setActiveTab("online")}
+                        >
+                            Pay Online
+                        </button>
+                    </li>
+                )}
+
+
+                {allKey?.officepaymenystatus === 1 && (
+                    <li className="nav-item">
+                        <button
+                            className={`nav-link ${activeTab === "offline" ? "active btn-primary" : ""}`}
+                            onClick={() => setActiveTab("offline")}
+                        >
+                            Pay Offline
+                        </button>
+                    </li>
+                )}
             </ul>
 
-            {activeTab === "online" && (
+            {!key && activeTab === "online" && allKey?.paymentstatus === 1 && (
                 <div className="row justify-content-center mt-4">
                     <div className="col-md-6">
                         <div className="card">
-                            <div className="card-header"><HandCoins className="me-2 btn-primary p-1 rounded" />your total saving is off ₹ {Number(item?.full_price) - Number(item?.basket_price)}</div>
+                            <div className="card-header"><HandCoins className="me-2 btn-primary p-1 rounded" />Your total saving is off ₹ {Number(item?.full_price) - Number(item?.basket_price)}</div>
                             <div className="card-body">
-                                <div className="d-md-flex justify-content-between">
-                                    <h6 className="card-title mb-0"><strong>{item?.title}</strong></h6>
-                                    <h6 className="card-title mb-0"><strong>₹10,000</strong></h6>
+                                <div className="d-md-flex justify-content-between py-2">
+                                    <h6 className="card-title mb-0"><strong>Validity</strong></h6>
+                                    <h6 className="card-title mb-0"><strong>{item?.validity}</strong></h6>
                                 </div>
 
-                                <p className="mt-1">
+                                <div className="d-md-flex justify-content-between py-2">
+                                    <h6 className="card-title mb-0"><strong>GST ({allKey?.gst}%)</strong></h6>
+                                    <h6 className="card-title mb-0"><strong>₹ {(((item?.basket_price) * allKey?.gst) / 100).toFixed(2)}</strong></h6>
+                                </div>
+                                <div className="d-md-flex justify-content-between py-2 pb-3">
+                                    <h6 className="card-title mb-0"><strong>Grand Total</strong></h6>
+                                    <h6 className="card-title mb-0">
+                                        <strong>
+                                            ₹ {(
+                                                allKey?.gststatus === 1
+                                                    ? item?.basket_price + (item?.basket_price * allKey?.gst) / 100
+                                                    : item?.basket_price
+                                            ).toFixed(2)}
+                                        </strong>
+                                    </h6>
+                                </div>
 
-                                    - validity {item?.validity}
-                                </p>
-                                <button className="btn btn-primary w-100" onClick={() => { AddbasketSubscribeplan(item) }} >Subscribe Now <span className="text-decoration-line-through btn btn-primary ">₹ {item?.full_price}</span> ₹ {item?.basket_price}</button>
+                                <button
+                                    className="btn btn-success w-100"
+                                    onClick={() => handleShowModal(item)}
+                                >
+                                    Subscribe Now
+                                    <span className="text-decoration-line-through text-light small mx-2">
+                                        ₹ {item?.full_price}
+                                    </span>
+                                    ₹ {(allKey?.gstStatus === 1
+                                        ? (item?.basket_price + (item?.basket_price * allKey?.gst) / 100)
+                                        : item?.basket_price
+                                    ).toFixed(2)}
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             )}
 
-            {activeTab === "offline" && (
+
+            {allKey?.officepaymenystatus === 1 && activeTab === "offline" && (
                 <div className="row justify-content-center">
                     <div className="col-md-6">
                         <div className="card">
@@ -202,6 +281,7 @@ const Payments = () => {
                                                 <li className="list-group-item d-flex justify-content-between"> <b>Account Name:</b> {item?.name} </li>
                                                 <li className="list-group-item d-flex justify-content-between">  <b>Account Number:</b> {item?.accountno}</li>
                                                 <li className="list-group-item d-flex justify-content-between">  <b>IFSC Code:</b> {item?.ifsc}</li>
+                                                <li className="list-group-item d-flex justify-content-between">  <b>Branch Name :</b> {item?.branch}</li>
 
                                             </ul>
 
@@ -213,8 +293,17 @@ const Payments = () => {
                         </div>
                     </div>
                 </div>
-            )}
-        </Content>
+            )
+            }
+
+
+            <ReusableModal
+                show={viewmodel2}
+                onClose={() => setViewModel2(false)}
+                title={<>KYC</>}
+                body={<Kyc setViewModel2={setViewModel2} />}
+            />
+        </Content >
     );
 };
 

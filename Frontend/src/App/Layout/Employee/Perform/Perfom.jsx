@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getPerformerstatus, GetService, getperformacebysegment, getperformacebysegmentwithfilter } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table1';
-import Swal from 'sweetalert2';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import { Link } from 'react-router-dom';
 import { Settings2, Eye, IndianRupee } from 'lucide-react';
@@ -15,8 +14,8 @@ import ReusableModal from '../../../components/Models/ReusableModal';
 const Perform = () => {
 
 
-    const token = localStorage.getItem('Token');
 
+    const token = localStorage.getItem('token');
     const [clients, setClients] = useState([]);
     const [searchInput, setSearchInput] = useState("");
     const [activeTab, setActiveTab] = useState(null);
@@ -26,14 +25,13 @@ const Perform = () => {
     const [ForGetCSV, setForGetCSV] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRows, setTotalRows] = useState(0);
-
     const [service, setserviceid] = useState("66d2c3bebf7e6dc53ed07626");
+    const [showModal, setShowModal] = useState(false);
 
-
+    //state for loading
     const [isLoading, setIsLoading] = useState(true)
 
-    const [model,setModel] = useState(false)
-    
+    const [model, setModel] = useState(false)
 
 
 
@@ -111,7 +109,6 @@ const Perform = () => {
         } catch (error) {
             console.log("Error fetching services:", error);
         }
-
     };
 
 
@@ -144,13 +141,16 @@ const Perform = () => {
         } catch (error) {
             console.log("Error fetching performance data:", error);
         }
+        setIsLoading(false)
     };
-
 
 
     const handleViewClick = (description) => {
         setDescription({ description });
     };
+
+
+
 
 
     const columns1 = [
@@ -162,29 +162,48 @@ const Perform = () => {
         },
         {
             name: 'Tradesymbol',
-            selector: row => row.tradesymbol,
+            selector: row => row?.tradesymbol,
             sortable: true,
             width: '200px',
         },
         {
             name: 'Entry Type',
-            selector: row => row.calltype,
+            selector: row => row?.calltype,
             sortable: true,
             width: '200px',
         },
         {
             name: 'Entry price',
-            selector: row => <div> <IndianRupee />{row.price}</div>,
+            selector: row => Number(row?.price) || 0,
+            cell: row => {
+                const price = Number(row?.price);
+                return (
+                    <div>
+                        <IndianRupee />
+                        {isNaN(price) ? '-' : price.toFixed(2)}
+                    </div>
+                );
+            },
             sortable: true,
             width: '200px',
         },
 
+
         {
             name: 'Exit Price',
-            selector: row => <div> <IndianRupee />{row.closeprice}</div>,
+            selector: row => {
+                const price = Number(row?.closeprice);
+                return (
+                    <div>
+                        <IndianRupee />
+                        {!isNaN(price) ? price.toFixed(2) : '—'}
+                    </div>
+                );
+            },
             sortable: true,
             width: '200px',
         },
+
         {
             name: 'Total P&L (%)',
             cell: row => {
@@ -192,11 +211,11 @@ const Perform = () => {
                 let plPercent = 0;
 
                 if (row.calltype === "BUY") {
-                    totalPL = ((row.closeprice - row.price) * row.lotsize).toFixed(2);
-                    plPercent = (((row.closeprice - row.price) / row.price) * 100).toFixed(2);
+                    totalPL = ((row?.closeprice - row?.price) * row?.lotsize).toFixed(2);
+                    plPercent = (((row?.closeprice - row?.price) / row?.price) * 100).toFixed(2);
                 } else if (row.calltype === "SELL") {
-                    totalPL = ((row.price - row.closeprice) * row.lotsize).toFixed(2);
-                    plPercent = (((row.price - row.closeprice) / row.price) * 100).toFixed(2);
+                    totalPL = ((row?.price - row?.closeprice) * row?.lotsize).toFixed(2);
+                    plPercent = (((row?.price - row?.closeprice) / row?.price) * 100).toFixed(2);
                 }
 
                 const style = {
@@ -214,14 +233,14 @@ const Perform = () => {
         },
         {
             name: 'Entry Date',
-            selector: row => fDateTime(row.created_at),
+            selector: row => fDateTime(row?.created_at),
             sortable: true,
             width: '200px',
         },
 
         {
             name: 'Exit Date',
-            selector: row => fDateTime(row.closedate),
+            selector: row => fDateTime(row?.closedate),
             sortable: true,
             width: '200px',
         },
@@ -233,9 +252,10 @@ const Perform = () => {
 
                     <Tooltip title="view">
                         <Eye
-
-                            
-                            onClick={() => {setModel(true);handleViewClick([row.description])}} />
+                            onClick={() => {
+                                handleViewClick([row?.description]);
+                                setShowModal(true);
+                            }} />
                     </Tooltip>
 
 
@@ -253,20 +273,36 @@ const Perform = () => {
 
 
 
+
     const renderTable1 = () => {
         const activeService = servicedata.find(service => service._id === activeTab);
-        return (
+
+        if (isLoading) {
+            return (
+                <div className="text-center mt-5">
+                    <Loader />
+                </div>
+            );
+        }
+
+        return closesignal.length > 0 ? (
             <div className="table-responsive">
                 <h5>{activeService ? `Performance for ${activeService.title}` : 'Performance'}</h5>
-                <Table columns={columns1}
+                <Table
+                    columns={columns1}
                     data={closesignal}
                     totalRows={totalRows}
                     currentPage={currentPage}
                     onPageChange={handlePageChange}
                 />
             </div>
+        ) : (
+            <div className="text-center mt-5">
+                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+            </div>
         );
     };
+
 
 
 
@@ -276,6 +312,7 @@ const Perform = () => {
         getperformdata(serviceId);
         getdatabysegment(serviceId)
         setserviceid(serviceId)
+
     };
 
 
@@ -284,7 +321,7 @@ const Perform = () => {
     return (
         <div>
             <div className='page-content'>
-                <div className="page-breadcrumb  d-flex align-items-center mb-3">
+                <div className="page-breadcrumb d-flex align-items-center mb-3">
                     <div className="breadcrumb-title pe-3">Performance Status</div>
                     <div className="ps-3">
                         <nav aria-label="breadcrumb">
@@ -301,159 +338,125 @@ const Perform = () => {
                 <hr />
 
 
-                {isLoading ? (
-                    <Loader />
-                ) : (
-                    <>
-                        <div className='card'>
-                            <div className='card-body'>
-                                <div className="tab-content" id="myTabContent3">
-                                    <div className="tab-pane fade show active" id="NavPills">
-                                        <div className="card-body pt-0">
-                                            <ul className="nav nav-pills nav-pills1 mb-4 light border-bottom justify-content-center" >
-                                                {servicedata.map((service) => (
-                                                    <li className="nav-item" key={service._id}>
-                                                        <button
-                                                            className={`nav-link navlink ${activeTab === service._id ? 'active' : ''}`}
-                                                            onClick={() => handleTabClick(service._id)}
-                                                        >
-                                                            {service.title}
-                                                        </button>
-                                                    </li>
-                                                ))}
-                                            </ul>
+
+                <div className='card'>
+                    <div className='card-body'>
+                        <div className="tab-content" id="myTabContent3">
+                            <div className="tab-pane fade show active" id="NavPills">
+                                <div className="card-body pt-0">
+                                    <ul className="nav nav-pills nav-pills1 mb-4 light">
+                                        {servicedata.map((service) => (
+                                            <li className="nav-item" key={service._id}>
+                                                <button
+                                                    className={`nav-link navlink ${activeTab === service._id ? 'active' : ''}`}
+                                                    onClick={() => handleTabClick(service._id)}
+                                                >
+                                                    {service.title}
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <div className="row">
+                                        <div className="col-6">
                                             <div className="row">
-                                                <div className="col-md-6">
-                                                    <div className="row">
-                                                        <div>
+                                                <div>
 
-                                                            <div className="card radius-10 w-100" >
-                                                                {clients && clients.map((item) => (
-                                                                    <div className="card-body p-0" style={{ border: "1px solid grey" }}>
-                                                                        <div className="row g-0 row-group text-center" style={{ borderBottom: "1px solid grey" }}>
-                                                                            <div className="col-lg-6">
+                                                    <div className="card radius-10 w-100" >
+                                                        {clients && clients.map((item) => (
+                                                            <div className="card-body p-0" style={{ border: "1px solid grey" }}>
+                                                                <div className="row g-0 row-group text-center" style={{ borderBottom: "1px solid grey" }}>
+                                                                    <div className="col-lg-6">
 
-                                                                                <div className="p-3">
-                                                                                    <b className="mb-0">Avg.return / trade</b>
-                                                                                    <small className="mb-0">
-                                                                                        {item?.avgreturnpertrade?.toFixed(2)}
+                                                                        <div className="p-3">
+                                                                            <b className="mb-0">Avg.return / trade :  </b>
+                                                                            <small className="mb-0">
+                                                                                {item?.avgreturnpertrade?.toFixed(2)}
 
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div className="col-lg-6 ">
-                                                                                <div className="p-3">
-                                                                                    <b className="mb-0">  Avg.return / month</b>
-                                                                                    <small className="mb-0">
-                                                                                        {item?.avgreturnpermonth?.toFixed(2)}
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-
-                                                                        </div>
-                                                                        <div className='p-3'>
-                                                                            <b className='text-black p-0'>Ideal Hit Accuracy</b><br />
-                                                                            <b className='text-black p-0'>Ideal Hit Closed : <small className="mb-0">
-                                                                                {item?.count}
-
-                                                                            </small></b><br />
-
-
-                                                                        </div>
-
-                                                                        <div className="d-flex p-3 justify-content-between align-items-center ms-auto font-13 gap-2">
-                                                                            <span className="border px-1 rounded cursor-pointer">
-                                                                                <i className="bx bxs-circle me-1 text-success" />
-                                                                                Hit: {item?.profitCount}
-                                                                            </span>
-                                                                            <span className="border px-1 rounded cursor-pointer">
-                                                                                <i className="bx bxs-circle me-1 text-danger" />
-                                                                                Miss: {item?.lossCount}
-                                                                            </span>
+                                                                            </small>
                                                                         </div>
                                                                     </div>
-                                                                ))}
+                                                                    <div className="col-lg-6 ">
+                                                                        <div className="p-3">
+                                                                            <b className="mb-0">  Avg.return/month : </b>
+                                                                            <small className="mb-0">
+                                                                                {item?.avgreturnpermonth?.toFixed(2)}
+                                                                            </small>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                                <div className='p-3'>
+                                                                    <b className='text-black p-0'>Ideal Hit Accuracy : <small className="mb-0">
+                                                                        {item?.accuracy?.toFixed(2)}
+                                                                    </small>
+                                                                    </b><br />
+                                                                    <b className='text-black p-0'>Ideal Hit Closed : <small className="mb-0">
+                                                                        {item?.count}
+
+                                                                    </small></b><br />
 
 
+                                                                </div>
+
+                                                                <div className="d-flex p-3 justify-content-between align-items-center ms-auto font-13 gap-2">
+                                                                    <span className="border px-1 rounded cursor-pointer">
+                                                                        <i className="bx bxs-circle me-1 text-success" />
+                                                                        Hit: {item?.profitCount}
+                                                                    </span>
+                                                                    <span className="border px-1 rounded cursor-pointer">
+                                                                        <i className="bx bxs-circle me-1 text-danger" />
+                                                                        Miss: {item?.lossCount}
+                                                                    </span>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        ))}
 
 
                                                     </div>
                                                 </div>
-                                                <div
-                                                    className="ms-sm-auto mt-2 mt-md-0 mb-3"
-                                                    onClick={(e) => getexportfile()}
-                                                >
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-primary float-sm-end"
-                                                        data-toggle="tooltip"
-                                                        data-placement="top"
-                                                        title="Export To Excel"
-                                                        delay={{ show: "0", hide: "100" }}
 
-                                                    >
-                                                        <i className="bx bxs-download" aria-hidden="true"></i>
 
-                                                        Export-Excel
-                                                    </button>
-                                                </div>
                                             </div>
+                                        </div>
+                                        <div
+                                            className="ms-2"
+                                            onClick={(e) => getexportfile()}
+                                        >
+                                            <button
+                                                type="button"
+                                                className="btn btn-primary float-end"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title="Export To Excel"
+                                                delay={{ show: "0", hide: "100" }}
 
-                                            <div className="tab-content">
-                                                <div id="navpills" className="tab-pane active">
-                                                    {renderTable1()}
-                                                </div>
-                                            </div>
+                                            >
+                                                <i className="bx bxs-download" aria-hidden="true"></i>
+
+                                                Export-Excel
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="tab-content">
+                                        <div id="navpills" className="tab-pane active">
+                                            {renderTable1()}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </>
-                )}
-
-                {/* <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">Description</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div className="modal-body">
-                                {description?.description}
-                            </div>
-
-                        </div>
                     </div>
-                </div> */}
+                </div>
+
 
                 <ReusableModal
-                    show={model}
-                    onClose={() => setModel(false)}
-                    title={<strong>Description</strong>}
-                    body={
-                        <>
-                            <div className="row">
-                                <div className="col-md-12">
-                                    <label htmlFor="description">Description</label>
-                                    <p>{description?.description || 'No description available'}</p>
-                                </div>
-                            </div>
-                        </>
-                    }
-                    footer={
-                        <>
-                            <button
-                                className="btn btn-secondary"
-                                onClick={() => setModel(false)}
-                            >
-                                Close
-                            </button>
-                        </>
-                    }
+                    show={showModal}
+                    onClose={() => setShowModal(false)}
+                    title="Description"
+                    body={<p>{description?.description || "No description available."}</p>}
                 />
+
             </div>
         </div>
     );

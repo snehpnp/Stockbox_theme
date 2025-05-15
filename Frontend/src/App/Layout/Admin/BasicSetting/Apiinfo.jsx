@@ -11,7 +11,9 @@ const Apiinfo = () => {
     const navigate = useNavigate();
 
     const [clients, setClients] = useState("");
-    const [kycstatus, setKycstatus] = useState({});
+    const [kycstatus, setKycstatus] = useState({
+        kyc: ""
+    });
     const [initialApiData, setInitialApiData] = useState({
         digio_client_id: "",
         digio_client_secret: "",
@@ -89,28 +91,21 @@ const Apiinfo = () => {
         }
     };
 
-    const handleSwitchChange = async (event) => {
-
-        const originalChecked = event.target.checked;
-        const user_active_status = originalChecked ? 1 : 0;
-        const data = { kyc: user_active_status };
-        const result = await showCustomAlert("confirm", "Do you want to change the status?")
-
-        if (result) {
+    const handleSwitchChange = async (newValue) => {
+        const result = await showCustomAlert("confirm", "Do you want to change the KYC status?");
+        if (result.isConfirmed) {
             try {
-                const response = await UpdateKycstatus(data, token);
+                const response = await UpdateKycstatus({ kyc: newValue }, token);
                 if (response.status) {
-                    showCustomAlert("Success", "Status changed successfully!")
+                    showCustomAlert("Success", "KYC status updated successfully!");
                     getApidetail();
                 }
             } catch (error) {
-                showCustomAlert("error", "There was an error processing your request.")
+                showCustomAlert("error", "There was an error updating the KYC status.");
             }
-        } else {
-            event.target.checked = !originalChecked;
-            getApidetail();
         }
     };
+
 
 
     const handleSwitchChange1 = async (event) => {
@@ -119,7 +114,7 @@ const Apiinfo = () => {
         const data = { invoicestatus: user_active_status };
         const result = await showCustomAlert("confirm", "Do you want to change the status?")
 
-        if (result) {
+        if (result.isConfirmed) {
             try {
                 const response = await Invoicestatus(data, token);
                 if (response.status) {
@@ -163,25 +158,23 @@ const Apiinfo = () => {
                         <div className="card">
                             <div className="card-header mt-2">
                                 <div className="row justify-content-end mb-3">
-                                    <div className="col-md-5">
+                                    <div className="col-md-4">
                                         <h5>Kyc Status</h5>
                                     </div>
 
-                                    <div className="col-md-1 d-flex justify-content-end">
-                                        <div className="form-check form-switch form-check-info">
-                                            <input
-                                                id={`rating_${kycstatus?._id}`}
-                                                className="form-check-input toggleswitch"
-                                                type="checkbox"
-                                                checked={kycstatus?.kyc === 1}
-                                                onChange={handleSwitchChange}
-                                            />
-                                            <label
-                                                htmlFor={`rating_${kycstatus?._id}`}
-                                                className="checktoggle checkbox-bg"
-                                            ></label>
-                                        </div>
+                                    <div className="col-md-2 d-flex justify-content-end align-items-center">
+                                        <select
+                                            className="form-select"
+                                            value={kycstatus?.kyc}
+                                            onChange={(e) => handleSwitchChange(e.target.value)}
+                                        >
+                                            <option value={0}>None</option>
+                                            <option value={2}>After Payment</option>
+                                            <option value={1}>Before Payment</option>
+                                        </select>
+
                                     </div>
+
 
                                     <div className="col-md-5">
                                         <h5>Invoice Status</h5>
@@ -225,7 +218,7 @@ const Apiinfo = () => {
                                                 type="text"
                                                 className="form-control"
                                                 id="digioTemplateName"
-                                                disabled={kycstatus?.kyc === 1}
+                                                disabled={kycstatus?.kyc !== 0}
                                                 value={updateapi.digio_template_name}
                                                 onChange={(e) => setUpdateapi({ ...updateapi, digio_template_name: e.target.value })}
                                             />
@@ -239,7 +232,7 @@ const Apiinfo = () => {
                                                 type="text"
                                                 className="form-control"
                                                 id="digioClientId"
-                                                disabled={kycstatus?.kyc === 1}
+                                                disabled={kycstatus?.kyc !== 0}
                                                 value={updateapi.digio_client_id}
                                                 onChange={(e) => setUpdateapi({ ...updateapi, digio_client_id: e.target.value })}
                                             />
@@ -253,7 +246,7 @@ const Apiinfo = () => {
                                                 type="text"
                                                 className="form-control"
                                                 id="digioClientSecret"
-                                                disabled={kycstatus?.kyc === 1}
+                                                disabled={kycstatus?.kyc !== 0}
                                                 value={updateapi.digio_client_secret}
                                                 onChange={(e) => setUpdateapi({ ...updateapi, digio_client_secret: e.target.value })}
                                             />
@@ -266,7 +259,7 @@ const Apiinfo = () => {
                                     type="button"
                                     className="btn btn-primary mb-2"
                                     onClick={UpdateApi}
-                                    disabled={isButtonDisabled || kycstatus.kyc === 1}
+                                    disabled={isButtonDisabled || kycstatus.kyc !== 0}
                                 >
                                     Update
                                 </button>

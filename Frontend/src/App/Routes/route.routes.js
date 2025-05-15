@@ -5,17 +5,28 @@ import Superadmin from "./superadmin.routes";
 import User from "./user.routes";
 import Admin from "./admin.routes";
 import Employee from "./Employee.routes";
+import PrivateRoute from "./PrivateRoute.routes";
 
 const MainRoutes = () => {
 
 
   return (
     <Routes>
-      <Route path="/superadmin/*" element={<Superadmin />} />
-      <Route path="/user/*" element={<User />} />
-      <Route path="/admin/*" element={<Admin />} />
-      <Route path="/employee/*" element={<Employee />} />
 
+      <Route element={<PrivateRoute allowedRoles={["SUPERADMIN"]} />}>
+        <Route path="/superadmin/*" element={<Superadmin />} />
+      </Route>
+
+      <Route path="/user/*" element={<User />} />
+
+      <Route element={<PrivateRoute allowedRoles={["ADMIN"]} />}>
+        <Route path="/admin/*" element={<Admin />} />
+      </Route>
+
+
+      <Route element={<PrivateRoute allowedRoles={["EMPLOYEE"]} />}>
+        <Route path="/employee/*" element={<Employee />} />
+      </Route>
 
     </Routes>
   );

@@ -4,6 +4,9 @@ import Content from "../../../components/Contents/Content";
 import { Getbasketorderlist } from "../../../Services/UserService/User";
 import { fDateTimeH } from "../../../../Utils/Date_formate";
 
+
+
+
 const BasketResponse = () => {
   let userid = localStorage.getItem("id");
   let token = localStorage.getItem("token");
@@ -27,8 +30,6 @@ const BasketResponse = () => {
 
 
   let BrokerDAta = ["Demo", "Angel", "Alice Blue", "Kotak Neo", "Market Hub"];
-
-
 
   return (
     <Content

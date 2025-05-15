@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Swal from "sweetalert2"; // Import SweetAlert2
 import { Link } from "react-router-dom";
 import Content from "../../../components/Contents/Content";
 import { basicsettinglist } from "../../../Services/Admin/Admin";
@@ -7,7 +6,7 @@ import { GetUserData, ReferAndEarnData } from "../../../Services/UserService/Use
 import { base_url, image_baseurl } from "../../../../Utils/config";
 import { fDate } from "../../../../Utils/Date_formate";
 import Loader from "../../../../Utils/Loader";
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 const Refer = () => {
@@ -18,6 +17,7 @@ const Refer = () => {
 
   const [data, setData] = useState([]);
   const [refertoken, setRefertoken] = useState({});
+
   const [isLoading, setIsLoading] = useState(true)
 
   const [referdata, setReferData] = useState([])
@@ -47,9 +47,10 @@ const Refer = () => {
     try {
       const data = { id: userid }
       const response = await ReferAndEarnData(data, token);
+
       if (response.status) {
         setReferData(response.data)
-        console.log("response", response.data)
+
       }
     } catch (error) {
       console.error("Error fetching trade data:", error);
@@ -75,12 +76,7 @@ const Refer = () => {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(refertoken?.refer_token);
-    Swal.fire({
-      icon: "success",
-      title: "Referral Code copied to clipboard!",
-      showConfirmButton: false,
-      timer: 1500,
-    });
+    showCustomAlert("Success", "Referral Code copied to clipboard!")
   };
 
 
@@ -94,10 +90,11 @@ const Refer = () => {
           text: `Use my link ${referralLink} to Earn rewards!`,
         })
         .catch((error) =>
-          Swal.fire("Error sharing referral code", error.message, "error")
+          showCustomAlert("error", error.message,)
         );
     } else {
-      Swal.fire("Sharing not supported on this browser.", "", "warning");
+      showCustomAlert("error", "Sharing not supported on this browser.")
+
     }
   };
 
@@ -106,7 +103,7 @@ const Refer = () => {
 
   return (
     <div>
-      { isLoading ?
+      {isLoading ?
         <Loader /> : <Content Page_title="Referral & Rewards" button_status={false}>
           <div className="page-content">
             <div className="row align-items-center">
@@ -117,7 +114,7 @@ const Refer = () => {
                 </div>
                 <hr />
                 <div>
-                  <ul className="nav nav-pills border-bottom mb-3" role="tablist">
+                  <ul className="nav nav-pills border-bottom mb-3 border-tab" role="tablist">
                     <li className="nav-item mt-2 ms-2" role="presentation">
                       <a
                         className="nav-link active  border-bottom"
@@ -218,15 +215,18 @@ const Refer = () => {
                                 </tr>
                               </thead>
                               <tbody>
-                                {referdata?.map((item) => (
-                                  <tr key={item?.id}>
-                                    <th scope="row">{item?.clientName}</th>
-                                    <td>{item?.amountType?.amount}</td>
-                                    <td>{item?.status === 1 ? "Completed" : "Pending"}</td>
-                                    <td>{fDate(item?.created_at)}</td>
-                                  </tr>
-                                ))}
+                                {referdata
+                                  ?.filter((item) => item.clientName && item.clientName.trim() !== "")
+                                  .map((item) => (
+                                    <tr key={item?._id}>
+                                      <th scope="row">{item.clientName}</th>
+                                      <td>{item?.amountType?.amount.toFixed(2)}</td>
+                                      <td>{item?.status === 1 ? "Completed" : "Pending"}</td>
+                                      <td>{fDate(item?.created_at)}</td>
+                                    </tr>
+                                  ))}
                               </tbody>
+
                             </table>
                           </div>
                         </div>

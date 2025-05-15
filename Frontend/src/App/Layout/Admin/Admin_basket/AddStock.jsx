@@ -64,7 +64,6 @@ const AddStock = () => {
         setOptions([]);
       }
     } catch (error) {
-      console.error("Error fetching options:", error);
       setOptions([]);
     } finally {
       setLoadingOptions(false);
@@ -253,13 +252,11 @@ const AddStock = () => {
                 }
               />
               <div className="row">
-                <div className="col-md-6"></div>
+                <div className="col-md-6"> <h5 className="mt-3">Stock</h5></div>
                 <div className="col-md-6 text-end">
                   <h6 className="mt-3">Total Weightage : {weightagecounting}  </h6>
                 </div>
-
               </div>
-              <hr />
             </div>
           </div>
           <form>

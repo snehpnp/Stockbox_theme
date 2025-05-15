@@ -128,7 +128,6 @@ const Update = () => {
     >
       <DynamicForm
         fields={fields}
-        page_title="Edit Employee"
         btn_name="Edit Employee"
         btn_name1="Cancel"
         formik={formik}

@@ -4,11 +4,10 @@ import ReusableModal from "../../../components/Models/ReusableModal";
 import { useLocation } from "react-router-dom";
 import { BasketStockListdata, AddStockplaceorder, GetLivePricedata, PortfolioStock, GetUserData } from "../../../Services/UserService/User";
 import Loader from "../../../../Utils/Loader";
-import Swal from "sweetalert2";
 import io from 'socket.io-client';
 import $ from "jquery";
 import { soket_url } from '../../../../Utils/config';
-
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
 const BasketStockList = () => {
@@ -26,7 +25,6 @@ const BasketStockList = () => {
     getbasketpurchasedata();
     getuserdetail();
     getportfolio();
-    // getlivepricedata();
   }, []);
 
 
@@ -48,6 +46,7 @@ const BasketStockList = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+
   const [isConfirming, setIsConfirming] = useState(false);
   const [purchasedata, setPurchasedata] = useState([]);
   const [inputdata, setInputdata] = useState({});
@@ -59,26 +58,6 @@ const BasketStockList = () => {
   const totalInvestment = portfolio.reduce((acc, curr) => acc + curr.price * curr.totalQuantity, 0);
   const totalInvestment1 = purchasedata.reduce((acc, curr) => acc + curr.price * curr.quantity, 0);
 
-
-
-  // const getlivepricedata = async () => {
-  //   try {
-  //     const response = await GetLivePricedata(userid, token);
-  //     if (response.status) {
-  //       const getlive = purchasedata.map((purchase) => {
-  //         return response?.data
-  //           .filter((item) => item.token == purchase.instrument_token)
-  //           .map((item) => item.lp);
-  //       });
-
-  //       setLiveprice(getlive);
-  //       // console.log(getlive);
-  //       // console.log("response?.data", response?.data);
-  //     }
-  //   } catch (error) {
-  //     console.log("error", error);
-  //   }
-  // };
 
 
 
@@ -297,33 +276,19 @@ const BasketStockList = () => {
       setIsConfirming(false);
 
       if (response.status) {
-        Swal.fire({
-          icon: "success",
-          title: response.message || "Order Placed Successfully!",
-          text: "Your order has been placed successfully.",
-          confirmButtonText: "OK",
-        }).then(() => {
-          if (type === 1) {
-            setShowModal(false);
-            setInputdata("")
-          }
-        });
+        showCustomAlert("Success", response.message || "Order Placed Successfully!")
+          .then(() => {
+            if (type === 1) {
+              setShowModal(false);
+              setInputdata("")
+            }
+          });
       } else {
-        Swal.fire({
-          icon: "error",
-          title: response.message || "Order Failed",
-          text: "Failed to place the order. Please try again.",
-          confirmButtonText: "Retry",
-        });
+        showCustomAlert("error", response.message || "Order Failed")
       }
     } catch (error) {
       setIsPlacingOrder(false);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "An error occurred while placing the order. Please check your network or try again later.",
-        confirmButtonText: "Retry",
-      });
+      showCustomAlert("error", "An error occurred while placing the order. Please check your network or try again later.")
     }
   };
 
@@ -557,7 +522,7 @@ const BasketStockList = () => {
               />
 
               <button
-                className="btn btn-primary"
+                className="btn btn-primary mt-2"
                 onClick={() => {
                   setIsConfirming(true);
                   BUYstockdata(0);
@@ -576,9 +541,10 @@ const BasketStockList = () => {
               <button
                 className="btn btn-primary"
                 onClick={() => BUYstockdata(1)}
-                disabled={isPlacingOrder}
+                // disabled={isPlacingOrder}
+                disabled={!isConfirming}
               >
-                {isPlacingOrder ? "Placing Order..." : "Place Order"}
+                Place Order
               </button>
               <button className="btn btn-secondary" onClick={handleCloseModal}>
                 Cancel

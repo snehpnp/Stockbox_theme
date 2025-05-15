@@ -146,7 +146,7 @@ const Banner = () => {
     const user_active_status = event.target.checked ? "true" : "false";
     const data = { id: id, status: user_active_status };
     const result = await showCustomAlert("confirm", "Do you want to save the changes?")
-    if (result) {
+    if (result.isConfirmed) {
       try {
         const response = await changeBannerStatus(data, token);
         if (response.status) {
@@ -170,7 +170,7 @@ const Banner = () => {
   const Deletebannerlist = async (_id) => {
     try {
       const result = await showCustomAlert("confirm", "Do you want to delete this This action cannot be undone.")
-      if (result) {
+      if (result.isConfirmed) {
         const response = await DeleteBanner(_id, token);
         if (response.status) {
           showCustomAlert("Success", "The Banner has been successfully deleted.")
@@ -463,7 +463,7 @@ const Banner = () => {
             </div>
             {isLoading ? (
               <Loader />
-            ) : (
+            ) : clients.length > 0 ? (
               <>
                 <div className="table-responsive">
                   <Table
@@ -476,6 +476,10 @@ const Banner = () => {
                   />
                 </div>
               </>
+            ):(
+              <div className="text-center mt-5">
+              <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+          </div>
             )}
           </div>
         </div>

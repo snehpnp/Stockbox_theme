@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getPayementhistory, getOrderlistofclient } from '../../../Services/Admin/Admin';
+import { getPayementhistory, GetSegmentList, getOrderlistofclient, getOrderlistofclientExport } from '../../../Services/Admin/Admin';
 
 import Table1 from '../../../Extracomponents/Table1';
 import Table from '../../../Extracomponents/Table';
@@ -10,6 +10,8 @@ import { Tooltip } from 'antd';
 import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
 import { exportToCSV } from '../../../../Utils/ExportData';
 import ReusableModal from '../../../components/Models/ReusableModal';
+import Loader from '../../../../Utils/Loader';
+
 
 
 
@@ -26,9 +28,19 @@ const ClientOrderlist = () => {
     const [ForGetCSV, setForGetCSV] = useState([])
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
+    const [ordertype, setOrdertype] = useState("");
+    const [broker, setBroker] = useState("");
+    const [segemnt, setSegemnt] = useState("");
+    const [serviceList, setServiceList] = useState([]);
+
+
 
     const [showModal, setShowModal] = useState(false);
     const [text, setText] = useState([]);
+
+    //state for Loading
+    const [isLoading, setIsLoading] = useState(true)
+
 
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -41,11 +53,18 @@ const ClientOrderlist = () => {
     const token = localStorage.getItem('token');
     const userid = localStorage.getItem('id');
 
+    useEffect(() => {
+        fetchAdminSegment()
+    }, [])
+
 
     const resethandle = () => {
         setSearchInput("")
         setStartDate("")
         setEndDate("")
+        setBroker("")
+        setOrdertype("")
+        setSegemnt("")
 
 
     }
@@ -54,25 +73,28 @@ const ClientOrderlist = () => {
 
     const getexportfile = async () => {
         try {
-            const response = await getPayementhistory(token);
+            const data = { fromDate: startDate, toDate: endDate, ordertype: ordertype, borkerid: broker, page: currentPage, search: searchInput, clientid: "", signalid: "", segment: segemnt }
+            const response = await getOrderlistofclientExport(data, token);
             if (response.status) {
                 if (response.data?.length > 0) {
                     const csvArr = response.data?.map((item) => ({
-                        Name: item.clientName || "-",
-                        Email: item.clientEmail || "-",
-                        Phone: item.clientPhoneNo || "-",
-                        Title: item?.planCategoryTitle || '-',
-                        ClientSegment: item?.serviceNames.map(statusItem => statusItem || 'N/A')
-                            .join(', ') || 'N/A',
-                        OerderId: item.orderid ? item.orderid : "Make By Admin",
-                        PlanDiscount: item.discount || 0,
-                        CouponID: item.coupon || "N/A",
-                        PlanAmount: item.plan_price || 0,
-                        Total: item?.total || '-',
-                        Validity: item.planDetails?.validity || '-',
-                        PurchaseDate: fDateTime(item.created_at) || '-',
+                        Date: fDateTimeH(item?.createdAt) || "-",
+                        Name: item?.clientDetails?.FullName || "-",
+                        Email: item?.clientDetails?.Email || "-",
+                        PhoneNo: item?.clientDetails?.PhoneNo || "-",
+                        OrderStatus: item?.data?.data?.status || "-",
+                        EntryType: item?.signalDetails?.calltype || "-",
+                        Symbol: item?.signalDetails?.tradesymbol || "-",
+                        Segment: item?.signalDetails?.segment === "C" ? "CASH" : item?.signalDetails?.segment === "O" ? "OPTION" : item?.signalDetails?.segment === "F" ? "FUTURE" : "-",
+                        Price: item?.signalDetails?.price || "-",
+                        Quantity: item?.quantity || "-",
+                        Broker: item?.borkerid == 1 ? "Angel One" : item?.borkerid == 2 ? "Alice Blue" : item?.borkerid == 3 ? "Kotak Neo" : item?.borkerid == 4 ? "Market Hub" : "",
+                        OrderId: item?.orderid || "-",
+
+
+
                     }));
-                    exportToCSV(csvArr, 'Payment History')
+                    exportToCSV(csvArr, 'Order List')
                 } else {
                     console.log("No data available.");
                 }
@@ -86,29 +108,27 @@ const ClientOrderlist = () => {
 
 
 
-
-
-
-
     const getorder = async () => {
         try {
-            const data = { page: currentPage, clientid: "", signalid: "" }
+            const data = { fromDate: startDate, toDate: endDate, ordertype: ordertype, borkerid: broker, page: currentPage, search: searchInput, clientid: "", signalid: "", segment: segemnt }
             const response = await getOrderlistofclient(data, token);
             if (response.status) {
                 let filteredData = response.data;
                 setTotalRows(response.pagination?.totalRecords)
                 setClients(filteredData);
+
             }
         } catch (error) {
             console.log("Error fetching services:", error);
         }
+        setIsLoading(false)
     };
 
 
 
     useEffect(() => {
         getorder();
-    }, [currentPage]);
+    }, [currentPage, startDate, endDate, broker, ordertype, searchInput, segemnt]);
 
 
 
@@ -146,43 +166,49 @@ const ClientOrderlist = () => {
         },
         {
             name: 'Order Status',
-            selector: row => row?.data?.data?.status,
+            selector: row => row?.data?.data?.status || "-",
             sortable: true,
             width: '200px',
         },
         {
             name: 'Entry Type',
-            selector: row => row?.data?.data?.transactiontype,
+            selector: row => row?.signalDetails?.calltype,
             sortable: true,
             width: '200px',
         },
         {
             name: 'Symbol',
-            selector: row => row?.data?.data?.tradingsymbol,
+            selector: row => row?.signalDetails?.tradesymbol,
+            sortable: true,
+            width: '300px',
+        },
+        {
+            name: 'Segment',
+            selector: row => row?.signalDetails?.segment === "C" ? "CASH" : row?.signalDetails?.segment === "O" ? "OPTION" : row?.signalDetails?.segment === "F" ? "FUTURE" : "-",
             sortable: true,
             width: '300px',
         },
         {
             name: 'Price',
-            selector: row => row?.data?.data?.price,
+            selector: row => row?.signalDetails?.price,
             sortable: true,
             width: '200px',
         },
         {
             name: 'Quantity',
-            selector: row => row?.data?.data?.quantity,
+            selector: row => row?.quantity,
             sortable: true,
             width: '200px',
         },
         {
             name: 'Broker',
-            selector: row => row?.borkerid == 1 ? "Angel One" : row?.borkerid == 2 ? "Alice Blue" : row?.borkerid == 3 ? "Kotak Neo" : row?.borkerid == 4 ? "Market Hub" : "",
+            selector: row => row?.borkerid == 1 ? "Angel One" : row?.borkerid == 2 ? "Alice Blue" : row?.borkerid == 3 ? "Kotak Neo" : row?.borkerid == 4 ? "Market Hub" : row?.borkerid == 5 ? "Zerodha" : row?.borkerid == 6 ? "Upstox" : row?.borkerid == 7 ? "Dhan" : "",
             sortable: true,
             width: '200px',
         },
         {
             name: 'Order Id',
-            selector: row => row?.data?.data?.orderid,
+            selector: row => row?.orderid,
             sortable: true,
             width: '300px',
         },
@@ -202,6 +228,19 @@ const ClientOrderlist = () => {
 
     ];
 
+
+
+    const fetchAdminSegment = async () => {
+        try {
+            const response = await GetSegmentList(token);
+            if (response.status) {
+                setServiceList(response.data);
+
+            }
+        } catch (error) {
+            console.log('Error fetching services:', error);
+        }
+    };
 
 
 
@@ -241,9 +280,7 @@ const ClientOrderlist = () => {
                                 </span>
 
                             </div>
-
-
-                            {/* <div>
+                            <div>
 
                                 <div
                                     className="ms-sm-2 mt-2 mt-sm-0"
@@ -263,10 +300,11 @@ const ClientOrderlist = () => {
                                         Export-Excel
                                     </button>
                                 </div>
-                            </div> */}
+                            </div>
+
                         </div>
                         <div className='row mb-2'>
-                            <div className="col-md-3 col-sm-4 mb-3 mb-sm-0">
+                            <div className="col-md-2 col-sm-4 mb-3 mb-sm-0">
                                 <label htmlFor="">From Date</label>
                                 <input
                                     type="date"
@@ -277,7 +315,7 @@ const ClientOrderlist = () => {
                             </div>
 
 
-                            <div className='col-md-3 col-sm-4 mb-3 mb-sm-0'>
+                            <div className='col-md-2 col-sm-4 mb-3 mb-sm-0'>
                                 <label htmlFor="">To Date</label>
 
                                 <input
@@ -287,11 +325,12 @@ const ClientOrderlist = () => {
                                     value={endDate}
                                 />
                             </div>
-                            <div className='col-md-3 col-sm-4 mb-3 mb-sm-0'>
+                            <div className='col-md-2 col-sm-4 mb-3 mb-sm-0'>
                                 <label htmlFor="">Type</label>
-
                                 <select
                                     className="form-control"
+                                    value={ordertype}
+                                    onChange={(e) => setOrdertype(e.target.value)}
 
                                 >
                                     <option value="">Select</option>
@@ -299,52 +338,70 @@ const ClientOrderlist = () => {
                                     <option value="SELL">SELL</option>
                                 </select>
                             </div>
-                            <div className='col-md-3 col-sm-4 mb-3 mb-sm-0'>
-                                <label htmlFor="">Status</label>
-
-                                <select
-                                    className="form-control"
-
-                                >
-                                    <option value="">Select</option>
-                                    <option value="BUY">Pending</option>
-                                    <option value="SELL">Rejected</option>
-                                    <option value="SELL">Completed</option>
-                                </select>
-                            </div>
-                            <div className='col-md-3 col-sm-4 mb-3 mb-sm-0 mt-1'>
+                            <div className='col-md-2 col-sm-4 mb-3 mb-sm-0 '>
                                 <label htmlFor="">Broker</label>
 
                                 <select
                                     className="form-control"
-
+                                    value={broker}
+                                    onChange={(e) => setBroker(e.target.value)}
                                 >
                                     <option value="">Select</option>
                                     <option value="1">Angel One</option>
                                     <option value="2">Alice Blue</option>
                                     <option value="3">Kotak Neo</option>
                                     <option value="4">Market Hub</option>
+                                    <option value="5">Zerodha</option>
+                                    <option value="6">Upstox</option>
+                                    <option value="7">Dhan</option>
+                                </select>
+                            </div>
+                            <div className='col-md-2 col-sm-4 mb-3 mb-sm-0 '>
+                                <label htmlFor="">Segement</label>
+
+                                <select
+                                    className="form-control"
+                                    value={segemnt}
+                                    onChange={(e) => setSegemnt(e.target.value)}
+                                >
+                                    <option value="">Select</option>
+                                    {serviceList?.map((item) => {
+                                        return (
+                                            <option key={item.segment} value={item.segment}>
+                                                {item.title}
+                                            </option>
+                                        );
+                                    })}
+
                                 </select>
                             </div>
 
 
 
-                            <div className="col-md-1 col-sm-2">
+                            <div className="col-md-1 col-sm-2 mt-1">
                                 <div className="refresh-icon mt-4">
                                     <RefreshCcw onClick={resethandle} />
                                 </div>
                             </div>
                         </div>
 
-                        <div className="table-responsive">
-                            <Table1
-                                columns={columns}
-                                data={clients}
-                                totalRows={totalRows}
-                                currentPage={currentPage}
-                                onPageChange={handlePageChange}
-                            />
-                        </div>
+                        {isLoading ? (
+                            <Loader />
+                        ) : clients.length > 0 ? (
+                            <div className="table-responsive">
+                                <Table1
+                                    columns={columns}
+                                    data={clients}
+                                    totalRows={totalRows}
+                                    currentPage={currentPage}
+                                    onPageChange={handlePageChange}
+                                />
+                            </div>
+                        ) : (
+                            <div className="text-center mt-5">
+                                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -360,6 +417,7 @@ const ClientOrderlist = () => {
                             <textarea
                                 className="w-full h-full border-none outline-none p-2 resize-none bg-transparent"
                                 value={text}
+                                readOnly
                                 onChange={(e) => setText(e.target.value)}
                             />
                         </div>

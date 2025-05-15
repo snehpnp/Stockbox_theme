@@ -46,6 +46,10 @@ const BasketSchema = new Schema({
         type: Number,
         default: 0
     },
+    remaining_amount: {
+        type: Number,
+        default: 0
+    },
     cagr: {
         type: String,
         trim: true,
@@ -109,6 +113,11 @@ const BasketSchema = new Schema({
         default: null
     },
     url: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    stockname: {
         type: String,
         trim: true,
         default: null

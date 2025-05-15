@@ -37,7 +37,7 @@ const Admin = [
       { label: "Package", icon: "Repeat2", link: "/admin/plan", name: "Package" },
       { label: "Segment", icon: "ScatterChart", link: "/admin/service", name: "Segment" },
       { label: "Category", icon: "ClipboardType", link: "/admin/category", name: "Category" },
-      { label: "Free Trial Status", icon: "Boxes", link: "/admin/freetrialstatus", name: "FreeTrialStatus" },
+      // { label: "Free Trial Status", icon: "Boxes", link: "/admin/freetrialstatus", name: "FreeTrialStatus" },
     ],
     name: "Plan",
   },
@@ -80,6 +80,11 @@ const Admin = [
         icon: "ScatterChart", link: "/admin/closesignal",
         name: "CloseSignal"
       },
+      // {
+      //   label: "Signal Strategy",
+      //   icon: "Activity", link: "/admin/signalstrategy",
+      //   name: "SignalStrategy"
+      // },
     ],
     name: "Signal",
   },
@@ -171,6 +176,18 @@ const Admin = [
         name: "EmailTemplate"
       },
       {
+        label: "SMS Template",
+        icon: "MessageCircle",
+        link: "/admin/smstemplate",
+        name: "SMS Template"
+      },
+      {
+        label: "SMS Provider",
+        icon: "CircleFadingArrowUp",
+        link: "/admin/smsprovider",
+        name: "SMS Provider"
+      },
+      {
         label: "Refer And Earn",
         icon: "HelpingHand",
         link: "/admin/referandearn",
@@ -194,6 +211,12 @@ const Admin = [
         link: "/admin/QRdetails",
         name: "QRDetail"
       },
+      {
+        label: "Description",
+        icon: "Wrench",
+        link: "/admin/popupdescription",
+        name: "Description"
+      },
     ],
     name: "BasicSettings",
   },
@@ -210,22 +233,40 @@ const Admin = [
     name: "BroadcastSMS"
   },
   {
+    label: "Send Mail To Client",
+    icon: "Mails",
+    link: "/admin/addmail-to-client",
+    name: "SendMailToClient"
+  },
+  {
     label: "FAQ",
     icon: "FileQuestion",
     link: "/admin/faq",
     name: "FAQ"
   },
-  {
-    label: "Help Center",
-    icon: "HelpingHand",
-    link: "/admin/help",
-    name: "HelpCenter"
-  },
+  // {
+  //   label: "Help Center",
+  //   icon: "HelpingHand",
+  //   link: "/admin/help",
+  //   name: "HelpCenter"
+  // },
   {
     label: "Policy",
     icon: "Wrench",
     link: "/admin/termsandcondtion",
     name: "Policy"
+  },
+  {
+    label: "Help Disk",
+    icon: "Ticket",
+    link: "/admin/tickets",
+    name: "HelpDisk"
+  },
+  {
+    label: "UTM Source",
+    icon: "Facebook",
+    link: "/admin/utm-source",
+    name: "utmSource"
   },
 ];
 
@@ -278,6 +319,13 @@ const User = [
     link: "/user/trades",
     children: [],
   },
+  // {
+  //   name: "Strategy",
+  //   label: "Strategy",
+  //   icon: "GitCompare",
+  //   link: "/user/strategy",
+  //   children: [],
+  // },
   {
     name: "Basket",
     label: "Basket",
@@ -320,13 +368,13 @@ const User = [
     link: "/user/broker-response",
     children: [],
   },
-  {
-    name: "Coupons",
-    label: "Coupons",
-    icon: "Copyright",
-    link: "/user/coupons",
-    children: [],
-  },
+  // {
+  //   name: "Coupons",
+  //   label: "Coupons",
+  //   icon: "Copyright",
+  //   link: "/user/coupons",
+  //   children: [],
+  // },
   {
     name: "ReferEarn",
     label: "Refer & Earn",
@@ -341,24 +389,11 @@ const User = [
     link: "/user/faq",
     children: [],
   },
+
   {
-    name: "PrivacyPolicy",
-    label: "Privacy Policy",
-    icon: "Wrench",
-    link: "/user/privacy-policy",
-    children: [],
-  },
-  {
-    name: "TermsConditions",
-    label: "Terms & Conditions",
-    icon: "Wrench",
-    link: "/user/terms-conditions",
-    children: [],
-  },
-  {
-    name: "HelpDesk",
-    label: "Help Desk",
-    icon: "HelpingHand",
+    name: "Help Disk",
+    label: "Help Disk",
+    icon: "Ticket",
     link: "/user/help-desk",
     children: [],
   },
@@ -369,13 +404,13 @@ const User = [
     link: "/user/broadcast",
     children: [],
   },
-  {
-    name: "Notification",
-    label: "Notification",
-    icon: "Bell",
-    link: "/user/notification",
-    children: [],
-  },
+  // {
+  //   name: "Notification",
+  //   label: "Notification",
+  //   icon: "Bell",
+  //   link: "/user/notification",
+  //   children: [],
+  // },
   {
     name: "News",
     label: "News",
@@ -389,22 +424,47 @@ const User = [
     icon: "Paintbrush",
     link: "/user/blogs",
     children: [],
-
-  }
-  ,
-  {
-    name: "PaymentHistory",
-    label: "Payment History",
-    icon: "WalletCards",
-    link: "/user/payment-history",
-    children: [],
   },
+  // {
+  //   name: "PaymentHistory",
+  //   label: "Payment History",
+  //   icon: "WalletCards",
+  //   link: "/user/payment-history",
+  //   children: [],
+  // },
+  // {
+  //   name: "PastPerformance",
+  //   label: "Past Performance",
+  //   icon: "ScatterChart",
+  //   link: "/user/past-performance",
+  //   children: [],
+  // },
   {
-    name: "PastPerformance",
-    label: "Past Performance",
-    icon: "ScatterChart",
-    link: "/user/past-performance",
-    children: [],
+    label: "Our Policy",
+    icon: "Handshake",
+    children: [
+      {
+        name: "PrivacyPolicy",
+        label: "Privacy Policy",
+        icon: "Wrench",
+        link: "/user/privacy-policy",
+
+      },
+      {
+        name: "TermsConditions",
+        label: "Terms & Conditions",
+        icon: "Handshake",
+        link: "/user/terms-conditions",
+      },
+      {
+        name: "Disclaimer",
+        label: "Disclaimer",
+        icon: "ClipboardX",
+        link: "/user/disclaimer",
+      },
+
+    ],
+    name: "Our Policy",
   },
 ];
 
@@ -529,7 +589,19 @@ const Employee = [
     icon: "HelpingHand",
     link: "/employee/faq",
     name: "FAQ"
-  }
+  },
+  {
+    label: "Broadcast SMS",
+    icon: "MessageCircleMore",
+    link: "/employee/message",
+    name: "BroadcastSMS"
+  },
+  {
+    label: "Help Disk",
+    icon: "Ticket",
+    link: "/employee/tickets",
+    name: "HelpDisk"
+  },
 ];
 
 

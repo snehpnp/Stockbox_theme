@@ -8,6 +8,7 @@ import { image_baseurl } from '../../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDateTime } from '../../../../../Utils/Date_formate';
 import showCustomAlert from '../../../../Extracomponents/CustomAlert/CustomAlert';
+import Loader from '../../../../../Utils/Loader';
 
 
 const Bankdetail = () => {
@@ -21,6 +22,9 @@ const Bankdetail = () => {
     const [datewise, setDatewise] = useState("")
 
     const token = localStorage.getItem('token');
+
+    const [isLoading, setIsLoading] = useState(true)
+
 
 
 
@@ -43,6 +47,7 @@ const Bankdetail = () => {
         } catch (error) {
             console.log("error");
         }
+        setIsLoading(false)
     }
 
 
@@ -64,7 +69,7 @@ const Bankdetail = () => {
         try {
             const result = await showCustomAlert("confirm", 'Do you want to delete this bank detail? This action cannot be undone.')
 
-            if (result) {
+            if (result.isConfirmed) {
                 const response = await DeleteBankDetail(_id, token);
                 if (response.status) {
                     showCustomAlert("Success", 'The Details has been successfully deleted.')
@@ -92,7 +97,7 @@ const Bankdetail = () => {
 
         const result = await showCustomAlert("confirm", "Do you want to save the changes?");
 
-        if (result) {
+        if (result.isConfirmed) {
             try {
                 const response = await BankStatusdetail(data, token);
                 if (response?.status) {
@@ -264,10 +269,18 @@ const Bankdetail = () => {
                                 </div>
                             </div>
 
-                            <Table
-                                columns={columns}
-                                data={clients}
-                            />
+                            {isLoading ? (
+                                <Loader />
+                            ) : clients.length > 0 ? (
+                                <Table
+                                    columns={columns}
+                                    data={clients}
+                                />
+                            ) : (
+                                <div className="text-center mt-5">
+                                    <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -8,7 +8,7 @@ const qs = require('qs');
 
 export async function GetClient(token) {
     try {
-        const res = await axios.get(`${Config.base_url}client/list`, {
+        const res = await axios.get(`${Config.base_url}client/listfive`, {
             headers: {
                 'Authorization': `${token}`
             },
@@ -359,9 +359,24 @@ export async function GetStockDetail(token) {
 
 
 
+
 export async function GetSignallist(data, token) {
     try {
-        const res = await axios.get(`${Config.base_url}signal/list`, {
+        const res = await axios.post(`${Config.base_url}signal/listwithfilterexport`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+export async function GetSignallistWithExport(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/listwithfilterwithplanexport`, data, {
             headers: {
                 'Authorization': token,
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -424,11 +439,26 @@ export async function Getclientsignaltoexport(data, token) {
 
 
 
-// getsignal by signal filter
+// // getsignal by signal filter
+
+// export async function GetSignallistWithFilter(data, token) {
+//     try {
+//         const res = await axios.post(`${Config.base_url}signal/listwithfilter`, data, {
+//             headers: {
+//                 data: {},
+//                 'Authorization': `${token}`,
+//             },
+//         });
+//         return res?.data;
+//     } catch (err) {
+//         return err.response?.data || err.message;
+//     }
+// }
+
 
 export async function GetSignallistWithFilter(data, token) {
     try {
-        const res = await axios.post(`${Config.base_url}signal/listwithfilter`, data, {
+        const res = await axios.post(`${Config.base_url}signal/listwithfilterwithplan`, data, {
             headers: {
                 data: {},
                 'Authorization': `${token}`,
@@ -439,6 +469,7 @@ export async function GetSignallistWithFilter(data, token) {
         return err.response?.data || err.message;
     }
 }
+
 
 
 // get signal detailperuser
@@ -475,9 +506,24 @@ export async function DeleteSignal(_id, token) {
 
 
 // for signal close api 
+// export async function SignalCloseApi(data, token) {
+//     try {
+//         const res = await axios.post(`${Config.base_url}signal/closesignal`, data, {
+//             headers: {
+//                 data: {},
+//                 'Authorization': `${token}`,
+//             },
+//         });
+//         return res?.data;
+//     } catch (err) {
+//         return err.response?.data || err.message;
+//     }
+// }
+
+
 export async function SignalCloseApi(data, token) {
     try {
-        const res = await axios.post(`${Config.base_url}signal/closesignal`, data, {
+        const res = await axios.post(`${Config.base_url}signal/closesignalwithplan`, data, {
             headers: {
                 data: {},
                 'Authorization': `${token}`,
@@ -488,6 +534,25 @@ export async function SignalCloseApi(data, token) {
         return err.response?.data || err.message;
     }
 }
+
+
+
+
+// for signal close api 
+export async function SignalCloseApiWithPlan(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/closesignalwithplan`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
 
 
 
@@ -872,6 +937,25 @@ export async function getActivecategoryplan(token) {
 
     try {
         const res = await axios.get(`${Config.base_url}plancategory/activeplancategory`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return { error: err.response?.data || err.message };
+    }
+}
+
+
+
+
+// category active plan 
+
+export async function getActivecategoryplans(token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}plancategory/activeplancategorys`, {
             headers: {
                 'Authorization': `${token}`
             },
@@ -1656,6 +1740,24 @@ export async function PlanSubscription(data, token) {
     }
 }
 
+// add subscription
+
+export async function PlanSubscriptionAddtoCart(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}plan/addplansubscriptionaddtocart`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
 
 // basket service assign 
 
@@ -1876,6 +1978,15 @@ export async function Updatebasicsettings(data, token) {
     formData.append('favicon', data.favicon);
     formData.append('logo', data.logo);
     formData.append('offer_image', data.offer_image);
+    formData.append('simage', data.simage);
+    formData.append('gstin', data.gstin);
+    formData.append('state', data.state);
+    formData.append('invoicetnc', data.invoicetnc);
+    formData.append('saccode', data.saccode);
+    formData.append('wh_number', data.wh_number);
+    formData.append('email_cc', data.email_cc);
+
+
 
 
     try {
@@ -2048,6 +2159,51 @@ export async function UpdatePaymentstatus(data, token) {
 
 
 
+
+// gst stataus update 
+
+export async function UpdatePaymentGSTstatus(data, token) {
+    const formData = new FormData();
+    formData.append('gststatus', data.gststatus);
+    try {
+        const res = await axios.post(`${Config.base_url}basicsetting/add`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+export async function UpdateGST(data, token) {
+    const formData = new FormData();
+    formData.append('gst', data.gst);
+    try {
+        const res = await axios.post(`${Config.base_url}basicsetting/add`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+
+
 // get email template page
 
 export async function getemailtemplate(token) {
@@ -2164,6 +2320,26 @@ export async function ForgetPasswordApi(data, token) {
 }
 
 
+// // for client  forget api 
+
+export async function ForgetClientPasswordApi(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}api/client/forgot-password`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
 // get dasboard api 
 
 export async function getDashboarddetail(token) {
@@ -2207,9 +2383,9 @@ export async function getstockStrickprice(data, token) {
 
 
 
-export async function getPayementhistory(token) {
+export async function getPayementhistory(data, token) {
     try {
-        const res = await axios.get(`${Config.base_url}plan/paymenthistory`, {
+        const res = await axios.post(`${Config.base_url}plan/paymenthistorywithfilterexport`, data, {
             headers: {
                 'Authorization': `${token}`
             },
@@ -2258,9 +2434,9 @@ export async function getClientRequestforfilter(data, token) {
 
 // get freelist client 
 
-export async function FreeClientList(token) {
+export async function FreeClientList(data, token) {
     try {
-        const res = await axios.get(`${Config.base_url}client/freetriallist`, {
+        const res = await axios.post(`${Config.base_url}client/freetriallistwithfilterexport`, data, {
             headers: {
                 'Authorization': `${token}`
             },
@@ -2571,6 +2747,7 @@ export async function UpdatereferAndEarn(data, token) {
     formData.append('refer_description', data.refer_description);
     formData.append('refer_image', data.refer_image);
     formData.append('refer_status', data.refer_status);
+    formData.append('refersendmsg', data.refersendmsg);
 
     try {
         const res = await axios.post(`${Config.base_url}basicsetting/add`, formData, {
@@ -2709,9 +2886,9 @@ export async function Updatesquareoffdata(data, token) {
 
 
 
-export async function getclientPlanexpiry(token) {
+export async function getclientPlanexpiry(data, token) {
     try {
-        const res = await axios.get(`${Config.base_url}dashboard/planexiprelist`, {
+        const res = await axios.post(`${Config.base_url}dashboard/planexiprelistwithfilterexport`, data, {
             headers: {
                 'Authorization': `${token}`
             },
@@ -2880,12 +3057,33 @@ export async function getPlanbyUser(_id, token) {
 }
 
 
+// get basket list by id 
+
+export async function BasketListbyUser(_id, token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}basket/activebasketlistbyclient/${_id}`, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
 // get client export file 
 
 export async function getclientExportfile(data, token) {
 
     try {
-        const res = await axios.get(`${Config.base_url}client/listwithfilterexcel`, data, {
+        const res = await axios.post(`${Config.base_url}client/listwithfilterexport`, data, {
             headers: {
                 data: {},
                 'Authorization': `${token}`,
@@ -3194,6 +3392,92 @@ export async function UpdatesignalReport(data, token) {
     }
 }
 
+// sSend notification signal 
+
+export async function SendSignalNotificationWithPlan(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/sendsignalnotificationwithplan`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+// get multiple Stratege signal  data 
+
+export async function GetOpenMultipleSignaldata(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/getsignalslistwithfilte`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+//
+
+//get multiple Stratege data
+
+
+export async function CloseMultipleStrategydata(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/closesignalwithstock`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// edit multiple signal startegy 
+
+export async function Updatemultiplesignalpdf(data, token) {
+    const formData = new FormData();
+    formData.append('report', data.report);
+    formData.append('id', data.id);
+    formData.append('description', data.description);
+
+    try {
+        const res = await axios.post(`${Config.base_url}signal/updatereports`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
 
 
 // get plan expiry month detail
@@ -3216,6 +3500,8 @@ export async function getExpiryByMonth(token) {
         return err.response?.data || err.message;
     }
 }
+
+
 
 
 
@@ -3317,6 +3603,29 @@ export async function getOrderlistofclient(data, token) {
 
 
 
+
+// order list export 
+
+
+export async function getOrderlistofclientExport(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}client/orderlistdetailexport`, data, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+
+
+
 export async function getReferAndEarnlist(data, token) {
     try {
         const res = await axios.post(`${Config.base_url}dashboard/referearn`, data, {
@@ -3325,6 +3634,701 @@ export async function getReferAndEarnlist(data, token) {
             },
         });
 
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+
+/// expiry count 
+
+export async function GetPlanexpiryCount(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}dashboard/getmonthlysubscriptioncounts`, data, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+// get all states
+
+export async function GetAllStates(token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/getstates`, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+                "Content-Type": "application/json"
+            },
+        });
+
+        return res?.data;
+
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+// get all cities
+
+export async function GetAllCities(data, token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/getcitybystates/${data}`, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+                "Content-Type": "application/json"
+            },
+        });
+
+        return res?.data;
+
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+
+// pop up stataus update 
+
+export async function PopUpstatusdata(data, token) {
+    const formData = new FormData();
+    formData.append('popupstatus', data.popupstatus);
+    try {
+        const res = await axios.post(`${Config.base_url}basicsetting/add`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+// update pop up description 
+
+
+export async function popupdescription(data, token) {
+    const formData = new FormData();
+    formData.append('popupcontent', data.popupcontent);
+    try {
+        const res = await axios.post(`${Config.base_url}basicsetting/add`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// get sms template 
+
+
+export async function getSMStemplate(token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}smstemplate/list`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return { error: err.response?.data || err.message };
+    }
+}
+
+
+
+// update SMS template 
+
+//  update template 
+
+
+export async function UpdateSMSTemplate(data, token) {
+    try {
+        const res = await axios.put(`${Config.base_url}smstemplate/update`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// get sms Provider
+
+
+export async function getSMSProvider(token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}smsprovider/list`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return { error: err.response?.data || err.message };
+    }
+}
+
+
+
+//  update Provider
+
+
+export async function UpdateSMSProvider(data, token) {
+    try {
+        const res = await axios.put(`${Config.base_url}smsprovider/update`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// provide status 
+
+export async function UpdateSMSProviderStatus(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}smsprovider/changestatus`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+// sSend notification signal 
+
+// export async function SendSignalNotification(data, token) {
+//     try {
+//         const res = await axios.post(`${Config.base_url}signal/sendsignalnotification`, data, {
+//             headers: {
+//                 data: {},
+//                 'Authorization': `${token}`,
+//             },
+//         });
+
+//         return res?.data;
+//     } catch (err) {
+
+//         return err.response?.data || err.message;
+//     }
+// }
+
+
+export async function SendSignalNotification(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/sendsignalnotificationwithplan`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+
+// get notification data list 
+
+export async function GetSignalNotificationdata(signalid, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}signal/getnotificationsbysignal/${signalid}`, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+export async function GetSignallistWithFilterWithPlan(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/listwithfilterwithplan`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
+// segment  list
+
+
+export async function GetSegmentList(token) {
+    try {
+        const res = await axios.get(`${Config.base_url}service/listcfo`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+// get strategy segment 
+
+export async function GetStrategySegmentList(token) {
+    try {
+        const res = await axios.get(`${Config.base_url}service/liststratrgy`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+
+// /service/liststratrgy
+
+
+export async function ServiceListStratrgy(token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}service/liststratrgy`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return { error: err.response?.data || err.message };
+    }
+}
+
+
+
+/// stock Stratege
+
+export async function StockListStratrgy(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}stock/getstockbyservicestratrgy`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+// multiple signal 
+
+
+export async function MultipleSignaldata(data, token) {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            if (key === 'report' && data[key]) {
+                formData.append(key, data[key]);
+            } else if (key === 'stocks') {
+                formData.append(key, JSON.stringify(data[key]));
+            } else {
+                formData.append(key, data[key]?.toString() || "");
+            }
+        }
+
+        const res = await axios.post(`${Config.base_url}signal/addsignalwithstock`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// get multiple signal startegy 
+
+// get signal detailperuser
+export async function GetmultipleSignalstrategy(_id, token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}signal/detailstrategy/${_id}`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return { error: err.response?.data || err.message };
+    }
+}
+
+
+
+// get help message
+
+export async function GetTicketRaiseMesaage(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}ticket/listwithfilter`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+// get message tisket detail 
+
+
+// get help message
+
+export async function GetTicketmessagedetailbyuser(id, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}ticket/detail/${id}`, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+//send ticket reply
+
+export async function sendTicketReply(data, token) {
+    try {
+        const formData = new FormData();
+        formData.append('ticket_id', data.ticket_id);
+        formData.append('message', data.message);
+        formData.append('adminname', data.adminname);
+
+        if (data.attachment) {
+            formData.append('attachment', data.attachment);
+        }
+        const response = await axios.post(
+            `${Config.base_url}ticket/reply`,
+            formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        console.error('Error in sendTicketReply API:', error.message);
+        throw error.response?.data || { status: false, message: 'Something went wrong!' };
+    }
+}
+
+
+
+// ticket status 
+
+export async function TicketRaiseStatus(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}ticket/change-status`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// delete ticket message 
+
+export async function DeleteRaiseTicket(_id, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}ticket/delete/${_id}`, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+//Add main to client 
+
+export async function sendMailToClient(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}dashboard/sendmailtoclient`, data, {
+            headers: {
+                'Authorization': `${token}`,   // ✅ Correct header
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
+//UTM Source data 
+
+export async function getUtmSource(token) {
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/utmsource`, {
+            headers: {
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
+//   add signal by plan 
+
+export async function AddSignalByPlan(data, token) {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            if (key === 'report' && data[key]) {
+                formData.append(key, data[key]);
+            } else {
+                formData.append(key, data[key]);
+            }
+        }
+
+        const res = await axios.post(`${Config.base_url}signal/addsignalwithplan`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
+// get plan by service
+
+
+export async function getPlanbyservice(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}signal/getplansbyservice`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+// add plan
+
+export async function PlanSubscriptionWithPlan(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}plan/addplansubscriptionwithplan`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// client with send to mail 
+
+//Add main to client 
+
+export async function sendMailForClient(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}client/getclientemailsformailing`, data, {
+            headers: {
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// get today,yesterday , tommaro expiry data 
+
+
+export async function GetDayExpirydata(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}client/getclientsbyplanexpiry`, data, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+
+//  free trial 
+
+export async function CurrentMonthfreeTrialdata(token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/getmonthlydaybasedplancount`, {
+            headers: {
+                data: {},
+                // 'Authorization': `${token}`,
+                "Content-Type": "application/json"
+            },
+        });
+
+        return res?.data;
+
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+
+export async function FreeTrialDetail({ month, year }, token) {
+    try {
+        const res = await axios.get(
+            `${Config.base_url}dashboard/getfreetrialclientsbymonth?month=${month}&year=${year}`,
+            {
+                headers: {
+                    'Authorization': token
+                }
+            }
+        );
 
         return res?.data;
     } catch (err) {

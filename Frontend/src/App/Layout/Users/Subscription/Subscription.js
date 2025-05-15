@@ -7,12 +7,16 @@ import ReusableModal from "../../../components/Models/ReusableModal";
 import Loader from "../../../../Utils/Loader";
 
 
+
 const Subscription = () => {
 
   const token = localStorage.getItem("token");
 
+
+
   const [planData, setPlanData] = useState([]);
   const [basketData, setBasketData] = useState([]);
+  
   const [activeTab, setActiveTab] = useState("plan");
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [discription, setDiscription] = useState("");
@@ -21,19 +25,24 @@ const Subscription = () => {
   const [servicedata, setServicedata] = useState([])
 
 
+
+
+
   useEffect(() => {
-    fetchMySubscription();
-    fetchMyService()
-    fetchBasketMySubscription()
-  }, []);
-
-
-
+    if (activeTab === "plan") {
+      fetchMySubscription();
+      fetchMyService()
+    } else if (activeTab === "basket") {
+      fetchBasketMySubscription()
+    }
+  }, [activeTab]);
 
 
   const fetchMySubscription = async () => {
     try {
       const res = await getMySubscription(id, token);
+
+
       if (res?.status) {
         setPlanData(res?.data);
       } else {
@@ -44,6 +53,9 @@ const Subscription = () => {
     }
     // setIsLoading(false)
   };
+
+
+
 
 
   const fetchBasketMySubscription = async () => {
@@ -75,24 +87,6 @@ const Subscription = () => {
     setIsLoading(false)
   };
 
-
-
-  const columns = [
-    {
-      name: "Basket Name",
-      selector: (row) => row?.categoryDetails?.title,
-      sortable: true,
-      width: "200px",
-    },
-    {
-      name: "Title",
-      selector: (row) => row?.serviceNames,
-    },
-    {
-      name: "Year",
-      selector: (row) => row?.year,
-    },
-  ];
 
 
   const handleViewClick = (plan) => {
@@ -128,7 +122,7 @@ const Subscription = () => {
                 </p>
               </div>
               <p className="m-0 pe-2">
-                <span className="badge bg-primary rounded-pill">
+                <span className="badge bg-success rounded-pill text-capitalize" >
                   {accordion?.planDetails.status}
                 </span>
               </p>
@@ -154,47 +148,108 @@ const Subscription = () => {
                 </button>
               </div>
               <div className="card-body">
-                <table className="table table-bordered mb-0">
-                  <tbody>
-                    <tr>
-                      <td>
-                        <strong>Plan Duration:</strong>
-                      </td>
-                      <td>{accordion?.planDetails?.validity || "--"}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Purchase On:</strong>
-                      </td>
-                      <td>{accordion?.plan_start || "--"}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Purchase Price:</strong>
-                      </td>
-                      <td>₹{accordion?.plan_price || "--"}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Expired On:</strong>
-                      </td>
-                      <td>{accordion?.plan_end || "--"}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Plan Price:</strong>
-                      </td>
-                      <td>₹{accordion?.plan_price || "--"}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <strong>Discount Price:</strong>
-                      </td>
-                      <td>₹{accordion?.discount || "--"}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+  <div className="row">
+    {/* Plan Details */}
+    <div className="col-lg-6 mb-4">
+      <div className="p-4 shadow rounded-4 bg-light border-0 h-100">
+        <div className="mb-3 text-center text-white py-2 rounded-top-3" style={{backgroundColor: 'var(--BtnPriBgCol, black)'}}>
+          <h5 className="mb-0">
+            <i className="bi bi-info-circle-fill me-2"></i>
+            Plan Details
+          </h5>
+        </div>
+        <table className="table table-borderless table-hover align-middle mb-0">
+          <tbody>
+            <tr>
+              <td className="fw-semibold"> Plan Duration:</td>
+              <td>{accordion?.planDetails?.validity || "--"}</td>
+            </tr>
+            <tr>
+              <td className="fw-semibold"> Purchase On:</td>
+              <td>{fDateTime(accordion?.plan_start) || "--"}</td>
+            </tr>
+            <tr>
+              <td className="fw-semibold"> Purchase Price:</td>
+              <td>
+                <span className="badge bg-success fs-6">₹{accordion?.total}</span>
+                {accordion?.plan_price !== accordion?.total && accordion?.gst && (
+                  <small className="text-muted ms-1">
+                    ({accordion?.gst}% Tax included)
+                  </small>
+                )}
+              </td>
+            </tr>
+            <tr>
+              <td className="fw-semibold"> Expired On:</td>
+              <td>{fDateTime(accordion?.plan_end) || "--"}</td>
+            </tr>
+            <tr>
+              <td className="fw-semibold"> Plan Price:</td>
+              <td><span className="badge bg-primary">₹{accordion?.plan_price ?? "--"}</span></td>
+            </tr>
+            <tr>
+              <td className="fw-semibold"> Discount:</td>
+              <td><span className="badge bg-warning text-dark">₹ {accordion?.discount ?? "--"}</span></td>
+            </tr>
+            <tr>
+              <td className="fw-semibold"> Start Date:</td>
+              <td>{fDateTime(accordion?.plan_start) || "Make By Admin"}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {/* Payment History */}
+    <div className="col-lg-6 mb-4">
+      <div className="p-4 shadow rounded-4 bg-light border-0 h-100">
+        <div className="mb-3 text-center text-white py-2 rounded-top-3" style={{backgroundColor: 'var(--BtnPriBgCol, black)'}}>
+          <h5 className="mb-0">
+            <i className="bi bi-clock-history me-2"></i>
+            Payment History
+          </h5>
+        </div>
+        <table className="table table-borderless table-hover align-middle mb-0">
+          <tbody>
+            <tr>
+              <td className="fw-semibold"> Plan Duration:</td>
+              <td>{accordion?.planDetails?.validity || "--"}</td>
+            </tr>
+            <tr>
+              <td className="fw-semibold"> Purchase On:</td>
+              <td>{fDateTime(accordion?.plan_start) || "--"}</td>
+            </tr>
+            <tr>
+              <td className="fw-semibold"> Expired On:</td>
+              <td>{fDateTime(accordion?.plan_end) || "--"}</td>
+            </tr>
+            <tr>
+              <td className="fw-semibold"> Plan Price:</td>
+              <td>₹{accordion?.plan_price || "--"}</td>
+            </tr>
+            <tr>
+              <td className="fw-semibold"> Discount:</td>
+              <td><span className="badge bg-warning text-dark">₹ {accordion?.discount || "0"}</span></td>
+            </tr>
+            <tr>
+              <td className="fw-semibold"> Purchase Price:</td>
+              <td>
+                <span className="badge bg-success fs-6">₹{accordion?.total}</span>
+                {accordion?.plan_price !== accordion?.total && accordion?.gst && (
+                  <small className="text-muted ms-1">
+                    ({accordion?.gst}% Tax included)
+                  </small>
+                )}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
             </div>
           </div>
         </div>
@@ -229,10 +284,11 @@ const Subscription = () => {
                 </p>
               </div>
               <p className="m-0 pe-2">
-                <span className="badge bg-primary rounded-pill">
-                  {/* {accordion?.planDetails.status} */}
+                <span className={`badge rounded-pill ${new Date(accordion?.enddate) > new Date() ? "bg-success" : "bg-danger"}`}>
+                  {new Date(accordion?.enddate) > new Date() ? "Active" : "Expired"}
                 </span>
               </p>
+
             </div>
           </button>
         </h2>
@@ -260,24 +316,28 @@ const Subscription = () => {
                 <table className="table table-bordered mb-0">
                   <tbody>
                     <tr>
-                      <td><strong>Plan Duration:</strong></td>
+                      <td><strong>Plan Duration</strong></td>
                       <td>{accordion?.validity || "--"}</td>
                     </tr>
                     <tr>
-                      <td><strong>Purchase On:</strong></td>
+                      <td><strong>Purchased on</strong></td>
                       <td>{fDateTime(accordion?.startdate) || "--"}</td>
                     </tr>
                     <tr>
-                      <td><strong>Purchase Price:</strong></td>
+                      <td><strong>Purchase Price</strong></td>
                       <td>₹{accordion?.plan_price || "--"}</td>
                     </tr>
                     <tr>
-                      <td><strong>Expired On:</strong></td>
+                      <td><strong>Expires On</strong></td>
                       <td>{fDateTime(accordion?.enddate) || "--"}</td>
                     </tr>
                     <tr>
-                      <td><strong>Minimum Investment:</strong></td>
-                      <td>₹{accordion?.basketDetails?.mininvamount || "--"}</td>
+                      <td><strong>Plan Price</strong></td>
+                      <td>₹{accordion?.total || "--"}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Discount Price</strong></td>
+                      <td>₹{accordion?.coupon || "0"}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -367,12 +427,28 @@ const Subscription = () => {
                 </div>
               )}
 
-              {activeTab === "basket" && (
+              {/* {activeTab === "basket" && (
                 <div className="mt-4">
                   <div className="accordion accordion-flush" id="accordionFlushExample">
                     {renderAccordionItems1()}
                   </div>
                 </div>
+              )} */}
+              {activeTab === "basket" && (
+                basketData && basketData.length > 0 ? (
+                  <div className="mt-4">
+                    <div className="accordion accordion-flush" id="accordionFlushExample">
+                      {renderAccordionItems1()}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center mt-5">
+                    <img
+                      src="/assets/images/norecordfound.png"
+                      alt="No Records Found"
+                    />
+                  </div>
+                )
               )}
             </>
           )}

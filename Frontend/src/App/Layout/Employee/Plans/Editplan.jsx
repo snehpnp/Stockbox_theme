@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getcategoryplan, getbyidplan, Updateplan } from '../../../Services/Admin/Admin';
+import { getcategoryplan, getActivecategoryplan, getbyidplan, Updateplan } from '../../../Services/Admin/Admin';
+import { Link } from 'react-router-dom';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 import Content from '../../../components/Contents/Content';
 
 
@@ -18,12 +19,13 @@ const Editplan = () => {
     const [clients, setClients] = useState([]);
     const [info, setInfo] = useState({});
 
+    const [isFreeTrialZero, setIsFreeTrialZero] = useState("");
 
 
 
     const getcategoryplanlist = async () => {
         try {
-            const response = await getcategoryplan(token);
+            const response = await getActivecategoryplan(token);
             if (response.status) {
                 setClients(response.data);
             }
@@ -51,10 +53,27 @@ const Editplan = () => {
         getplaninfo();
     }, []);
 
+
+
+
     const validate = (values) => {
         let errors = {};
-        if (!values.description) errors.description = "Please Enter Description";
-        if (!values.price) errors.price = "Please Enter Price";
+        if (!values.description || values.description === "<p><br></p>") {
+            errors.description = "Please Enter Description";
+        }
+        if (isFreeTrialZero == 1) {
+            if (values.price === "" || values.price === null || values.price === undefined) {
+                errors.price = "Please Enter Price";
+            } else if (isNaN(values.price) || Number(values.price) < 0) {
+                errors.price = "Price must be 0 or more";
+            }
+        } else if (isFreeTrialZero == 0) {
+            if (values.price === "" || values.price === null || values.price === undefined) {
+                errors.price = "Please Enter Price";
+            } else if (isNaN(values.price) || Number(values.price) <= 0) {
+                errors.price = "Price must be greater than 0";
+            }
+        }
         if (!values.validity) errors.validity = "Please Enter Validity";
         if (!values.category) errors.category = "Please Enter Category";
         return errors;
@@ -66,7 +85,7 @@ const Editplan = () => {
             price: values.price,
             validity: values.validity,
             category: values.category,
-            deliverystatus: values.deliverystatus == 1 ? true : false,
+            // deliverystatus: values.deliverystatus == 1 ? true : false,
             id: id,
 
         };
@@ -75,33 +94,12 @@ const Editplan = () => {
             const response = await Updateplan(req, token);
 
             if (response.status) {
-                Swal.fire({
-                    title: "Edit Successful!",
-                    text: response.message,
-                    icon: "success",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
-                setTimeout(() => {
-                    navigate("/employee/plan");
-                }, 1500);
+                showCustomAlert('Success', "Edit Successful!", navigate, "/employee/plan")
             } else {
-                Swal.fire({
-                    title: "Error",
-                    text: response.message,
-                    icon: "error",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
+                showCustomAlert('error', response.message)
             }
         } catch (error) {
-            Swal.fire({
-                title: "Error",
-                text: "An unexpected error occurred. Please try again later.",
-                icon: "error",
-                timer: 1500,
-                timerProgressBar: true,
-            });
+            showCustomAlert('error', 'An unexpected error occurred. Please try again later.')
         }
     };
 
@@ -111,13 +109,24 @@ const Editplan = () => {
             price: info?.price || "",
             validity: info?.validity ? info.validity : "",
             category: info?.category ? info.category._id : "",
-            deliverystatus: info?.deliverystatus ? 1 : 0,
+            // deliverystatus: info?.deliverystatus ? 1 : 0,
         },
         enableReinitialize: true,
         validate,
         onSubmit,
     });
 
+    useEffect(() => {
+        const matchedClient = clients.find(
+            (item) => item._id === formik.values.category
+        );
+
+        if (matchedClient && matchedClient.freetrial_status == 1) {
+            setIsFreeTrialZero(1);
+        } else {
+            setIsFreeTrialZero(0);
+        }
+    }, [formik.values.category, clients]);
 
 
     const fields = [
@@ -140,13 +149,23 @@ const Editplan = () => {
             type: "select",
             label_size: 12,
             col_size: 3,
-            disable: true,
-            options: [
-                { value: "1 month", label: "1 month" },
-                { value: "3 months", label: "3 months" },
-                { value: "6 months", label: "6 months" },
-                { value: "1 year", label: "1 year" },
-            ],
+            disable: isFreeTrialZero == 1 ? false : true,
+            options: isFreeTrialZero == 0
+                ? [
+                    { value: "1 month", label: "1 Month" },
+                    { value: "3 months", label: "3 Months" },
+                    { value: "6 months", label: "6 Months" },
+                    { value: "1 year", label: "1 Year" }
+                ]
+                : [
+                    { value: "1 day", label: "1 day" },
+                    { value: "2 days", label: "2 days" },
+                    { value: "3 days", label: "3 days" },
+                    { value: "4 days", label: "4 days" },
+                    { value: "5 days", label: "5 days" },
+                    { value: "6 days", label: "6 days" },
+                    { value: "7 days", label: "7 days" }
+                ],
             star: true
         },
         {
@@ -158,15 +177,15 @@ const Editplan = () => {
             disable: false,
             star: true
         },
-        {
-            name: "deliverystatus",
-            label: "Plan Delivery status ",
-            type: "togglebtn",
-            label_size: 12,
-            col_size: 3,
-            disable: false,
-            star: true
-        },
+        // {
+        //     name: "deliverystatus",
+        //     label: "Plan Delivery status ",
+        //     type: "togglebtn",
+        //     label_size: 12,
+        //     col_size: 3,
+        //     disable: false,
+        //     star: true
+        // },
         {
             name: "description",
             label: "Description",
@@ -180,23 +199,24 @@ const Editplan = () => {
 
     return (
         <Content
-        Page_title="Edit Plan"
-        button_status={false}
-        backbutton_status={true}
-        backForword={true}
-      >
+            Page_title="Edit Plan"
+            button_status={false}
+            backbutton_status={true}
+            backForword={true}
+        >
+            <hr />
             <DynamicForm
                 fields={fields}
                 formik={formik}
-                page_title="Edit Plan"
+                // page_title="Edit Plan"
                 btn_name="Edit Plan"
                 btn_name1="Cancel"
                 sumit_btn={true}
                 btn_name1_route={"/employee/plan"}
                 additional_field={<></>}
             />
-            </Content>
-        
+        </Content>
+
     );
 };
 

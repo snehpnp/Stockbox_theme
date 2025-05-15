@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { basicsettinglist, updatePayementgateway, UpdatePaymentstatus } from '../../../Services/Admin/Admin';
+import { basicsettinglist, updatePayementgateway, UpdatePaymentstatus, UpdatePaymentGSTstatus, UpdateGST } from '../../../Services/Admin/Admin';
 import { Link } from 'react-router-dom';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
@@ -12,12 +12,17 @@ const Payementgateway = () => {
     const [clients, setClients] = useState(null);
     const [onlinePaymentEnabled, setOnlinePaymentEnabled] = useState(false);
 
+    const [addgst, setAddgst] = useState("");
+
     const [initialValues, setInitialValues] = useState({
         razorpay_secret: "",
         razorpay_key: "",
         paymentstatus: "",
-        officepaymenystatus: ""
+        officepaymenystatus: "",
+        gststatus: ""
     });
+
+
 
     const [updateapi, setUpdateapi] = useState(initialValues);
 
@@ -30,6 +35,7 @@ const Payementgateway = () => {
                 setInitialValues(clientData);
                 setUpdateapi(clientData);
                 setOnlinePaymentEnabled(clientData.paymentstatus === 1);
+                setAddgst(clientData.gst)
             }
         } catch (error) {
             console.log('Error fetching API details:', error);
@@ -47,6 +53,8 @@ const Payementgateway = () => {
         setUpdateapi((prev) => ({ ...prev, [field]: value }));
     };
 
+
+
     const handleSwitchChange = async (event, type) => {
         const user_active_status = event.target.checked ? 1 : 0;
         const data =
@@ -55,7 +63,7 @@ const Payementgateway = () => {
                 : { paymentstatus: clients?.paymentstatus, officepaymenystatus: user_active_status };
         const result = await showCustomAlert("confirm", "Do you want to save the changes?")
 
-        if (result) {
+        if (result.isConfirmed) {
             try {
                 const response = await UpdatePaymentstatus(data, token);
                 if (response?.status) {
@@ -69,6 +77,7 @@ const Payementgateway = () => {
             }
         }
     };
+
 
     const UpdateApi = async () => {
         try {
@@ -89,6 +98,8 @@ const Payementgateway = () => {
         }
     };
 
+
+
     const SwitchField = ({ label, checked, onChange }) => (
         <div className="col-md-6 d-flex justify-content-between align-items-center mb-3">
             <label className="form-label">{label}</label>
@@ -102,6 +113,44 @@ const Payementgateway = () => {
             </div>
         </div>
     );
+
+
+
+    const GSThandleSwitchChange = async (event) => {
+        const user_active_status = event.target.checked ? 1 : 0;
+        const data = { gststatus: user_active_status }
+        const result = await showCustomAlert("confirm", "Do you want to save the changes?")
+        if (result.isConfirmed) {
+            try {
+                const response = await UpdatePaymentGSTstatus(data, token);
+                if (response?.status) {
+                    showCustomAlert("Success", "Status Changed")
+                    getApidetail();
+                }
+            } catch (error) {
+                showCustomAlert("error", "There was an error processing your request.")
+
+            }
+        }
+    };
+
+
+
+    const UpdateGstdata = async () => {
+        try {
+            const data = { gst: addgst };
+            const response = await UpdateGST(data, token);
+            if (response?.status) {
+                showCustomAlert("Success", 'GST updated successfully.');
+                getApidetail();
+            }
+        } catch (error) {
+            showCustomAlert("error", 'There was an error updating GST. Please try again.');
+        }
+    };
+
+
+
 
     return (
         <div className="page-content">
@@ -134,9 +183,42 @@ const Payementgateway = () => {
                                     checked={clients?.officepaymenystatus === 1}
                                     onChange={(e) => handleSwitchChange(e, "officepaymenystatus")}
                                 />
+                                <SwitchField
+                                    label="GST Status"
+                                    checked={clients?.gststatus === 1}
+                                    // onChange={(e) => GSThandleSwitchChange(e)}
+                                    onChange={() => showCustomAlert("error", "cannot change status")}
+                                />
                             </form>
                         </div>
                     </div>
+
+                    <div className="card mb-4">
+                        <div className="card-header">GST %</div>
+                        <div className="card-body">
+                            <form className="row">
+                                <div className="col-md-12 d-flex align-items-center">
+                                    <input
+                                        type="number"
+                                        className="form-control me-2"
+                                        id="gst"
+                                        value={addgst}
+                                    // onChange={(e) => setAddgst(e.target.value)}
+                                    />
+                                    {/* <button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        disabled
+                                        // onClick={UpdateGstdata}
+                                    >
+                                        Update
+                                    </button> */}
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
 
                     <div className="card">
                         <div className="card-header">Razorpay</div>

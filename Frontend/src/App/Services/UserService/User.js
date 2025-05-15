@@ -37,7 +37,23 @@ export async function GetPrivacyPolicy(token) {
         throw err;
     }
 }
+export async function Getdashboardata(token) {
+    try {
+        const res = await axios.get(
+            `${Config.base_url}api/list/countsignalstatus`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
 
+        return res?.data;
+    } catch (err) {
+        console.log("Error fetching dashboard count data:", err);
+        throw err;
+    }
+}
 export async function getTermsCondition(token) {
     try {
         const res = await axios.get(
@@ -55,6 +71,30 @@ export async function getTermsCondition(token) {
         throw err;
     }
 }
+
+
+// desclaimer
+
+export async function Disclaimerdata(token) {
+    try {
+        const res = await axios.get(
+            `${Config.base_url}api/list/content/66ebc51cf6b4908639cc487a`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        return res?.data;
+    } catch (err) {
+        console.log("Error fetching Terms Condition data:", err);
+        throw err;
+    }
+}
+
+
+
 
 export async function getFaq(token) {
     try {
@@ -340,6 +380,12 @@ export async function UpdateBroker(data, token) {
             url = "kotakneo/getaccesstoken";
         } else if (data.brokerid == 4) {
             url = "markethub/getaccesstoken";
+        } else if (data.brokerid == 5) {
+            url = "zerodha/getaccesstoken";
+        } else if (data.brokerid == 6) {
+            url = "upstox/getaccesstoken";
+        } else if (data.brokerid == 7) {
+            url = "dhan/getaccesstoken";
         }
 
         const res = await axios.post(`${Config.base_url}${url}`, data, {
@@ -389,6 +435,12 @@ export async function PlaceOrderApi(data, token, brokerstatus) {
             url = `${Config.base_url}kotakneo/placeorder`;
         } else if (brokerstatus == 4) {
             url = `${Config.base_url}markethub/placeorder`;
+        } if (brokerstatus == 5) {
+            url = `${Config.base_url}zerodha/placeorder`;
+        } if (brokerstatus == 6) {
+            url = `${Config.base_url}upstox/placeorder`;
+        } if (brokerstatus == 7) {
+            url = `${Config.base_url}dhan/placeorder`;
         }
 
         const res = await axios.post(url, data, {
@@ -420,6 +472,12 @@ export async function ExitPlaceOrderData(data, token, brokerstatus) {
             url = `${Config.base_url}kotakneo/exitplaceorder`;
         } else if (brokerstatus == 4) {
             url = `${Config.base_url}markethub/exitplaceorder`;
+        } else if (brokerstatus == 5) {
+            url = `${Config.base_url}zerodha/exitplaceorder`;
+        } else if (brokerstatus == 6) {
+            url = `${Config.base_url}upstox/exitplaceorder`;
+        } else if (brokerstatus == 7) {
+            url = `${Config.base_url}dhan/exitplaceorder`;
         }
 
         const res = await axios.post(url, data, {
@@ -525,7 +583,7 @@ export async function UpdateUserProfile(data, token) {
 
 export async function DeleteClient(data, token) {
     try {
-        const res = await axios.get(`${Config.base_url}api/client/deleteclient/:${data}`, {
+        const res = await axios.get(`${Config.base_url}api/client/deleteclient/${data}`, {
             headers: {
                 data: {},
                 'Authorization': `${token}`,
@@ -573,29 +631,53 @@ export async function GetNewsData(token) {
 
 // /api/list/broadcast
 
-export async function GetBroadcastData(token) {
-    try {
-        const res = await axios.post(`${Config.base_url}api/list/broadcast`, {}, {
-            headers: {
-                Authorization: `${token}`,
-            },
-        });
+// export async function GetBroadcastData(token) {
+//     try {
+//         const res = await axios.post(`${Config.base_url}api/list/broadcast`, {}, {
+//             headers: {
+//                 Authorization: `${token}`,
+//             },
+//         });
 
-        return res?.data;
-    } catch (err) {
-        return err;
+//         return res?.data;
+//     } catch (err) {
+//         return err;
+//     }
+// }
+
+export async function GetBroadcastData(id, token) {
+    try {
+        const response = await axios.post(
+            `${Config.base_url}api/list/broadcast`, { id },
+            {
+                headers: {
+                    Authorization: `${token}`,
+                },
+            }
+        );
+
+        return response?.data
+    } catch (error) {
+        console.error("GetBroadcastData error:", error?.response || error.message);
+
+        return {
+            success: false,
+            message: error?.response?.data?.message || "Something went wrong",
+        };
     }
 }
 
 
-
 export async function GetNotificationData(data, token) {
     try {
-        const res = await axios.get(`${Config.base_url}api/list/notification/${data.user_id}?${data.page}`, {
-            headers: {
-                Authorization: ` ${token}`,
-            },
-        });
+        const res = await axios.get(
+            `${Config.base_url}api/list/notification/${data.user_id}?page=${data.page}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
 
         return res?.data;
     } catch (err) {
@@ -663,9 +745,9 @@ export async function GetWithdrawRequest(data, token) {
 
 //refer earning 
 
-export async function GetReferEarning(data, token) {
+export async function GetReferEarning(id, token) {
     try {
-        const res = await axios.post(`${Config.base_url}api/client/referearn`, data, {
+        const res = await axios.post(`${Config.base_url}api/client/referearn`, { id }, {
             headers: {
                 Authorization: `${token}`,
             },
@@ -681,9 +763,9 @@ export async function GetReferEarning(data, token) {
 // get payout 
 
 
-export async function GetPayoutDetail(data, token) {
+export async function GetPayoutDetail(id, token) {
     try {
-        const res = await axios.post(`${Config.base_url}api/client/payoutlist`, data, {
+        const res = await axios.post(`${Config.base_url}api/client/payoutlist`, { id }, {
             headers: {
                 Authorization: `${token}`,
             },
@@ -947,5 +1029,264 @@ export async function GetLivePricedata(token) {
 }
 
 
+// nse data 
+
+
+
+export async function GetNsePriceData(token) {
+    try {
+        const res = await axios.get(`${Config.base_url}signal/getsymbol`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+
+
+export async function getpastperformaceCashdata(data, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/getmonthlyprofitloss/${data.id}`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        console.log("Error fetching plan data:", err);
+        throw err;
+    }
+}
+
+
+
+export async function getpastperformaceFuturedata(data, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/getmonthlyprofitloss/${data.id}`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        console.log("Error fetching plan data:", err);
+        throw err;
+    }
+}
+
+
+export async function getpastperformaceOptiondata(data, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/getmonthlyprofitloss/${data.id}`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        console.log("Error fetching plan data:", err);
+        throw err;
+    }
+}
+
+
+
+export async function getpastperformacebymonth(data, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}dashboard/getdailyprofitloss/${data.id}?month=${data.month}&year=${data.year}`, {
+            headers: {
+                Authorization: `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        console.log("Error fetching plan data:", err);
+        throw err;
+    }
+}
+
+
+
+//user kyc api
+
+export async function clientKycAndAgreement(data, token) {
+    try {
+        const response = await axios.post(`${Config.base_url}api/client/clientkycandagreement`, data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+            }
+        );
+
+        return response.data;
+
+    } catch (error) {
+        console.error('Error in clientKycAndAgreement API:', error.message);
+        throw error.response?.data || { message: 'Something went wrong!' };
+    }
+}
+
+// chat line data
+
+export async function getChatLineData(data, token) {
+    try {
+        const response = await axios.post(`${Config.base_url}api/list/getbasketgraphdata`, data, {
+
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+        }
+        );
+
+        return response.data;
+
+    } catch (error) {
+        console.error('Error in clientKycAndAgreement API:', error.message);
+        throw error.response?.data || { message: 'Something went wrong!' };
+    }
+}
+
+
+
+// ticket for help 
+
+
+export async function GetTicketForhelp(data, token) {
+    try {
+        const formData = new FormData();
+        formData.append("client_id", data.client_id);
+        formData.append("subject", data.subject);
+        formData.append("message", data.message);
+        if (data.attachment) {
+            console.log("Attachment: ", data.attachment);
+            formData.append("attachment", data.attachment);
+        }
+
+        const response = await axios.post(
+            `${Config.base_url}api/client/addticket`,
+            formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error in GetTicketForhelp API:', error.message);
+        throw error.response?.data || { message: 'Something went wrong!' };
+    }
+}
+
+
+
+export async function GetAllTicketData(data, token) {
+    try {
+        const response = await axios.post(`${Config.base_url}api/client/gettickets`, data, {
+
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+        }
+        );
+
+        return response.data;
+
+    } catch (error) {
+        console.error('Error in clientKycAndAgreement API:', error.message);
+        throw error.response?.data || { message: 'Something went wrong!' };
+    }
+}
+
+
+
+// export async function GetReplyTicketData(data, token) {
+//     try {
+//         const response = await axios.post(`${Config.base_url}api/client/ticketreply`, data, {
+
+//             headers: {
+//                 Authorization: `Bearer ${token}`,
+//                 'Content-Type': 'application/json'
+//             },
+//         }
+//         );
+
+//         return response.data;
+
+//     } catch (error) {
+//         console.error('Error in clientKycAndAgreement API:', error.message);
+//         throw error.response?.data || { message: 'Something went wrong!' };
+//     }
+// }
+
+
+
+//send ticket reply
+
+export async function GetReplyTicketData(data, token) {
+    try {
+        const formData = new FormData();
+        formData.append('ticket_id', data.ticket_id);
+        formData.append('client_id', data.client_id);
+        formData.append('message', data.message);
+
+
+
+        if (data.attachment) {
+            formData.append('attachment', data.attachment);
+        }
+        const response = await axios.post(
+            `${Config.base_url}api/client/ticketreply`,
+            formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        console.error('Error in sendTicketReply API:', error.message);
+        throw error.response?.data || { status: false, message: 'Something went wrong!' };
+    }
+}
+
+
+
+
+
+export async function GetTicketDetaildata(ticketId, token) {
+    try {
+        const response = await axios.get(`${Config.base_url}api/client/ticketdetail/${ticketId}`, {
+
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+        }
+        );
+
+        return response.data;
+
+    } catch (error) {
+        console.error('Error in getreplyticket API:', error.message);
+        throw error.response?.data || { message: 'Something went wrong!' };
+    }
+}
 
 

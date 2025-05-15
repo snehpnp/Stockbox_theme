@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import DynamicForm from "../../../Extracomponents/FormicForm";
 import Swal from "sweetalert2";
@@ -140,21 +140,20 @@ const Addcompany = () => {
       disable: false,
     },
     {
-        name: "theme",
-        label: "Theme",
-        type: "select",
-        label_size: 12,
-        col_size: 6,
-        disable: false,
-        options: themes,
-        
+      name: "theme",
+      label: "Theme",
+      type: "select",
+      label_size: 12,
+      col_size: 6,
+      disable: false,
+      options: themes,
+
     }
   ];
   const GetAllThemes = async () => {
     try {
       const response = await GetAllThemesNameApi();
       if (response.status) {
-        console.log(response.data);
         response.data.map((item) => {
           item.value = item._id;
           item.label = item.ThemeName;
@@ -168,9 +167,9 @@ const Addcompany = () => {
 
     }
   };
-    useEffect(() => {
-        GetAllThemes();
-    }, []);
+  useEffect(() => {
+    GetAllThemes();
+  }, []);
 
   return (
     <Content
@@ -180,7 +179,6 @@ const Addcompany = () => {
     >
       <DynamicForm
         fields={fields}
-        page_title="Add New Company"
         btn_name="Add Company"
         btn_name1="Cancel"
         formik={formik}

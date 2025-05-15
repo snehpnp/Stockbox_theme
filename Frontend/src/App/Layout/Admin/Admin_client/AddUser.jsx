@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
 import { useNavigate } from 'react-router-dom';
-import { AddClient } from '../../../Services/Admin/Admin';
+import { AddClient, GetAllStates, GetAllCities } from '../../../Services/Admin/Admin';
 import { Link } from 'react-router-dom';
 import Content from '../../../components/Contents/Content';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
@@ -18,15 +18,13 @@ const AddUser = () => {
 
   const [loading, setLoading] = useState(false);
 
-
+  const [state, setState] = useState([])
+  const [city, setCity] = useState([])
 
 
   const validate = (values) => {
     let errors = {};
-
-    // Full Name validation: Only alphabets and one space between two words allowed
     const fullNameRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)?$/;
-
     if (!values.FullName) {
       errors.FullName = "Please Enter Full Name";
     } else if (!fullNameRegex.test(values.FullName)) {
@@ -46,6 +44,12 @@ const AddUser = () => {
     } else if (values.password !== values.ConfirmPassword) {
       errors.ConfirmPassword = "Passwords Must Match";
     }
+    if (!values.state) {
+      errors.state = "Please Select State";
+    }
+    if (!values.city) {
+      errors.city = "Please Select City";
+    }
 
     return errors;
   };
@@ -58,7 +62,9 @@ const AddUser = () => {
       PhoneNo: values.PhoneNo,
       password: values.password,
       add_by: user_id,
-      freetrial: values.freetrial
+      freetrial: values.freetrial,
+      state: values.state,
+      city: values.city
     };
 
 
@@ -87,6 +93,8 @@ const AddUser = () => {
       ConfirmPassword: "",
       freetrial: 0,
       add_by: "",
+      state: "",
+      city: "",
     },
     validate,
     onSubmit,
@@ -94,10 +102,9 @@ const AddUser = () => {
 
 
   const traialStatus = formik.values.freetrial;
-  // console.log("traialStatus",traialStatus);
+
 
   const handleToggleChange = () => {
-    console.log("Custom Clicked", traialStatus);
   }
 
   const fields = [
@@ -147,15 +154,33 @@ const AddUser = () => {
       disable: false,
       star: true
     },
-    // {
-    //   name: "freetrial",
-    //   label: "Free trial status",
-    //   type: "togglebtn",
-    //   label_size: 6,
-    //   col_size: 4,
-    //   disable: false,
-    //   star: true,
-    // },
+    {
+      name: "state",
+      label: "Select State",
+      type: 'select',
+      options: state?.map((item) => ({
+        label: item.name,
+        value: item.name,
+      })),
+      label_size: 12,
+      col_size: 6,
+      disable: false,
+      star: true
+    },
+    {
+      name: "city",
+      label: "Select City",
+      type: 'select',
+      options: city?.map((item) => ({
+        label: item.city,
+        value: item.city,
+      })),
+      label_size: 12,
+      col_size: 6,
+      disable: false,
+      star: true
+
+    },
   ];
 
 
@@ -175,6 +200,46 @@ const AddUser = () => {
     }
   };
 
+
+  const getStatedata = async () => {
+    try {
+      const response = await GetAllStates(token);
+      if (response) {
+        setState(response);
+
+      }
+    } catch (error) {
+      console.log("error");
+    }
+  }
+
+
+
+  const getCitydata = async () => {
+    try {
+      const response = await GetAllCities(formik.values.state, token);
+      if (response) {
+        setCity(response);
+
+      }
+    } catch (error) {
+      console.error("Error fetching cities:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (formik.values.state) {
+      getCitydata();
+    }
+  }, [formik.values.state]);
+
+
+
+
+
+  useEffect(() => {
+    getStatedata()
+  }, [])
 
 
   return (
@@ -198,7 +263,7 @@ const AddUser = () => {
           additional_field={<>
 
 
-            <div className={`col-lg-6`}>
+            {/* <div className={`col-lg-6`}>
               <div className="input-block row">
 
                 <label htmlFor="freetrial" className={`col-lg-12 col-form-label`}>
@@ -220,7 +285,8 @@ const AddUser = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
+
           </>}
 
         />

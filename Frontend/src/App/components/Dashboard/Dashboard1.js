@@ -3,6 +3,8 @@ import { fDateTime, fDateMonth } from "../../../Utils/Date_formate";
 import { Link } from "react-router-dom";
 
 const DashboardCards = ({ monthexpiry }) => {
+  const role = localStorage.getItem("Role")?.toLowerCase();
+
   const currentMonthYear = new Date().toLocaleString("en-US", {
     month: "long",
     year: "numeric",
@@ -10,18 +12,18 @@ const DashboardCards = ({ monthexpiry }) => {
 
   const cardsData = [
     {
-      link: "/admin/planexpirymonth",
+      link: `/${role}/planexpirymonth`,
       bgClass: "bg-gradient-moonlit",
       value1:
         monthexpiry?.monthexpiry?.length > 0
           ? monthexpiry?.monthexpiry?.some(
-              (item) => fDateMonth(item?.month) === currentMonthYear
-            )
+            (item) => fDateMonth(item?.month) === currentMonthYear
+          )
             ? monthexpiry?.monthexpiry.reduce((acc, item) => {
-                return fDateMonth(item?.month) === currentMonthYear
-                  ? acc + (item.noofclient || 0)
-                  : acc;
-              }, 0)
+              return fDateMonth(item?.month) === currentMonthYear
+                ? acc + (item.noofclient || 0)
+                : acc;
+            }, 0)
             : 0
           : 0,
 
@@ -30,7 +32,7 @@ const DashboardCards = ({ monthexpiry }) => {
       progress: 55,
     },
     {
-      link: "/admin/client",
+      link: `/${role}/client`,
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.clientCountTotal,
       label: "Total Clients",
@@ -38,7 +40,7 @@ const DashboardCards = ({ monthexpiry }) => {
       progress: 55,
     },
     {
-      link: "/admin/client",
+      link: `/${role}/client`,
       state: { clientStatus: 1 },
       bgClass: "bg-gradient-ohhappiness",
       value1: monthexpiry?.data?.clientCountActive,
@@ -47,7 +49,7 @@ const DashboardCards = ({ monthexpiry }) => {
       progress: 55,
     },
     {
-      link: "/admin/client",
+      link: `/${role}/client`,
       state: { clientStatus: 0 },
       bgClass: "bg-gradient-ibiza",
       value1:
@@ -58,7 +60,7 @@ const DashboardCards = ({ monthexpiry }) => {
       progress: 55,
     },
     {
-      link: "/admin/signal",
+      link: `/${role}/signal`,
       state: { clientStatus: "todayopensignal" },
       bgClass: "bg-gradient-moonlit",
       value1: monthexpiry?.data?.todayOpenSignal,
@@ -67,7 +69,7 @@ const DashboardCards = ({ monthexpiry }) => {
       progress: 55,
     },
     {
-      link: "/admin/closesignal",
+      link: `/${role}/closesignal`,
       state: { clientStatus: "todayclosesignal" },
       bgClass: "bg-gradient-ibiza",
       value1: monthexpiry?.data?.todayCloseSignal,
@@ -76,7 +78,7 @@ const DashboardCards = ({ monthexpiry }) => {
       progress: 55,
     },
     {
-      link: "/admin/signal",
+      link: `/${role}/signal`,
       bgClass: "bg-gradient-ohhappiness",
       value1: monthexpiry?.data?.OpensignalCountTotal,
       label: "Total Open Signals",
@@ -84,7 +86,7 @@ const DashboardCards = ({ monthexpiry }) => {
       progress: 55,
     },
     {
-      link: "/admin/closesignal",
+      link: `/${role}/closesignal`,
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.CloseSignalCountTotal,
       label: "Total Close Signals",
@@ -92,7 +94,7 @@ const DashboardCards = ({ monthexpiry }) => {
       progress: 55,
     },
     {
-      link: "/admin/client",
+      link: `/${role}/client`,
       state: { clientStatus: "active" },
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.activePlanclient,
@@ -101,7 +103,7 @@ const DashboardCards = ({ monthexpiry }) => {
       progress: 55,
     },
     {
-      link: "/admin/client",
+      link: `/${role}/client`,
       state: { clientStatus: "expired" },
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.inActivePlanclient,
@@ -110,7 +112,7 @@ const DashboardCards = ({ monthexpiry }) => {
       progress: 55,
     },
     {
-      link: "/admin/freeclient",
+      link: `/${role}/freeclient`,
       state: { clientStatus: "active" },
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.activeFreetrial,
@@ -119,11 +121,46 @@ const DashboardCards = ({ monthexpiry }) => {
       progress: 55,
     },
     {
-      link: "/admin/freeclient",
+      link: `/${role}/freeclient`,
       state: { clientStatus: "expired" },
       bgClass: "bg-gradient-deepblue",
       value1: monthexpiry?.data?.inActiveFreetrial,
       label: "Total Inactive Free Clients",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+    },
+    {
+      link: `/${role}/todayExpiry-data`,
+      state: { clientStatus: 0 },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.counts?.["0"],
+      label: "Today's Expiry Data",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+    },
+    {
+      link: `/${role}/yesterdayExpiry-data`,
+      state: { clientStatus: -1 },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.counts?.["-1"],
+      label: "Yesterday Expiry Data",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+    },
+    {
+      link: `/${role}/tomorrowExpiry-data`,
+      state: { clientStatus: 1 },
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.counts?.["1"],
+      label: "Tomorrow Expiry Data",
+      icon: "bx bx-wifi-2 fs-3",
+      progress: 55,
+    },
+    {
+      link: `/${role}/CurrentMonth-freeTrial`,
+      bgClass: "bg-gradient-deepblue",
+      value1: monthexpiry?.data?.totalfreetrial,
+      label: "Current Month Free Trial",
       icon: "bx bx-wifi-2 fs-3",
       progress: 55,
     },

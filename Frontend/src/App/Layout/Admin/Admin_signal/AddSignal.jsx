@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import { AddSignalByAdmin, GetService, getstockbyservice, getexpirydate, getstockStrickprice } from '../../../Services/Admin/Admin';
+import { AddSignalByPlan, GetSegmentList, getstockbyservice, getPlanbyservice, getexpirydate, getstockStrickprice } from '../../../Services/Admin/Admin';
 import { useNavigate } from 'react-router-dom';
 import Content from '../../../components/Contents/Content';
 import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
@@ -18,12 +18,16 @@ const AddSignal = () => {
 
   const [loading, setLoading] = useState(false);
   const [serviceList, setServiceList] = useState([]);
+
+
   const [stockList, setStockList] = useState([]);
   const [expirydate, setExpirydate] = useState([]);
   const [strikePrice, setStrikePrice] = useState([]);
+  const [planPrice, setPlanPrice] = useState([]);
   const [searchItem, setSearchItem] = useState("");
   const [selectitem, setSelectitem] = useState("");
   const [showDropdown, setShowDropdown] = useState(true);
+
 
 
 
@@ -37,7 +41,7 @@ const AddSignal = () => {
 
   const fetchAdminServices = async () => {
     try {
-      const response = await GetService(token);
+      const response = await GetSegmentList(token);
       if (response.status) {
         setServiceList(response.data);
       }
@@ -68,11 +72,13 @@ const AddSignal = () => {
       strikeprice: '',
       entrytype: '',
       lot: '',
+      planid: '',
       tradesymbol: expirydate[0]?.stock?.tradesymbol || "",
       lotsize: expirydate[0]?.stock?.lotsize || ""
 
     },
     validate: (values) => {
+
       const errors = {};
       if (!values.segment) errors.segment = 'Please Select a Segment';
       if (!values.stock) errors.stock = 'Please Select a Stock';
@@ -83,7 +89,6 @@ const AddSignal = () => {
       if (!values.tag1) errors.tag1 = 'Please Enter Target1';
       if (values.calltype === "BUY") {
 
-
         if (values.price && values.tag1 && values.price > values.tag1) {
           errors.tag1 = "Please Enter Greater Than Entry Price";
         }
@@ -91,15 +96,14 @@ const AddSignal = () => {
         if (values.tag2 && values.tag1 > values.tag2) {
           errors.tag2 = "Please Enter Greater Than Target1";
         }
-
         if (values.tag3 && !values.tag2) {
           errors.tag2 = "Please Enter Target2";
         }
 
-
         if (values.tag3 && values.tag2 && values.tag2 > values.tag3) {
           errors.tag3 = "Please Enter Greater Than Target2";
         }
+
 
         if (values.stoploss && values.price < values.stoploss) {
           errors.stoploss = "Please Enter Less Than Entry Price";
@@ -111,16 +115,17 @@ const AddSignal = () => {
           errors.tag1 = "Please Enter Less Than Entry Price";
         }
 
-
         if (values.tag2 && values.tag1 < values.tag2) {
           errors.tag2 = "Please Enter Less Than Target1";
         }
         if (values.tag3 && !values.tag2) {
           errors.tag2 = "Please Enter Target2";
         }
+
         if (values.tag3 && values.tag2 && values.tag2 < values.tag3) {
           errors.tag3 = "Please Enter Less Than Target2";
         }
+
 
         if (values.stoploss && values.price > values.stoploss) {
           errors.stoploss = "Please Enter Greater Than Entry Price";
@@ -140,10 +145,13 @@ const AddSignal = () => {
       }
 
       if (values.segment === "O" && !values.strikeprice) {
-        errors.strikePrice = 'Please Select Strike Price';
+        errors.strikeprice = 'Please Select Strike Price';
       }
       if (!values.entrytype) {
         errors.entrytype = 'Please Select Entry Type';
+      }
+      if (!values.planid) {
+        errors.planid = 'Please Select Plan';
       }
 
       // if (!values.lot) {
@@ -152,6 +160,9 @@ const AddSignal = () => {
       if (values.lot && values.lot <= 0) {
         errors.lot = 'Please Enter Greater Than Zero';
       }
+
+      // console.log("errors", errors)
+      // console.log("values.segment", values.segment)
 
       return errors;
     },
@@ -180,10 +191,10 @@ const AddSignal = () => {
         strikeprice: values.strikeprice,
         entrytype: values.entrytype,
         lot: values.lot,
+        planid: values.planid
       };
-
       try {
-        const response = await AddSignalByAdmin(req, token);
+        const response = await AddSignalByPlan(req, token);
         if (response.status) {
           showCustomAlert("Success", response.message, navigate, '/admin/signal')
         } else {
@@ -221,7 +232,8 @@ const AddSignal = () => {
         tradesymbol: '',
         lotsize: '',
         entrytype: '',
-        lot: ''
+        lot: '',
+        planid: ''
       });
 
       setSearchItem("")
@@ -244,6 +256,7 @@ const AddSignal = () => {
 
 
   useEffect(() => {
+
     const fetchStockData = async () => {
 
       const data = { segment: formik.values.segment, symbol: searchItem };
@@ -270,9 +283,23 @@ const AddSignal = () => {
         } else {
           console.log("Failed to fetch strike price", strikePriceResponse);
         }
+
+
+        const data2 = { serviceId: formik.values.segment };
+        const planPriceResponse = await getPlanbyservice(data2);
+        console.log("planPriceResponse", planPriceResponse)
+        if (planPriceResponse.status) {
+          setPlanPrice(planPriceResponse.data);
+
+        } else {
+          console.log("Failed to fetch service", planPriceResponse);
+        }
+
       } catch (error) {
         console.log("Error fetching stock or expiry date:", error);
       }
+
+
     };
 
     fetchStockData();
@@ -286,17 +313,27 @@ const AddSignal = () => {
       name: 'segment',
       label: 'Segment',
       type: 'select2',
-      options: [
-        { label: 'Cash', value: 'C' },
-        { label: 'Future', value: 'F' },
-        { label: 'Option', value: 'O' },
-      ],
+      options: serviceList?.map((item) => ({
+        label: item.title,
+        value: item.segment,
+      })),
       label_size: 12,
       col_size: 6,
       star: true
     },
-
-
+    {
+      name: 'planid',
+      label: 'Plan',
+      type: 'selectcheckbox',
+      label_size: 12,
+      multi: true,
+      col_size: 6,
+      star: true,
+      options: planPrice?.map((item) => ({
+        label: item.title,
+        value: item._id,
+      })),
+    },
     {
       name: 'expiry',
       label: 'Expiry Date',
@@ -304,12 +341,26 @@ const AddSignal = () => {
       label_size: 12,
       col_size: 6,
       star: true,
-      options: expirydate.map((item) => ({
-        label: item.expiry,
-        value: item.expiry,
-      })),
+      options: expirydate.map((item) => {
+        const raw = item.expiry;
+        const day = raw.substring(0, 2);
+        const month = raw.substring(2, 4);
+        const year = raw.substring(4, 8);
+
+        const monthNames = [
+          "January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December"
+        ];
+        const formattedLabel = `${day} ${monthNames[parseInt(month, 10) - 1]} ${year}`;
+
+        return {
+          label: formattedLabel,
+          value: raw,
+        };
+      }),
       showWhen: (values) => values.segment !== "C",
     },
+
     {
       name: 'optiontype',
       label: 'Option Type',
@@ -323,6 +374,7 @@ const AddSignal = () => {
       star: true,
       showWhen: (values) => values.segment === "O",
     },
+
     {
       name: 'calltype',
       label: 'Call Type',
@@ -364,27 +416,35 @@ const AddSignal = () => {
       options: (() => {
         if (formik.values.segment === "C") {
           return formik.values.calltype === "SELL" ? [
-            { label: 'Intraday', value: 'Intraday' }
-          ] : [
-            { label: 'Short Term (15-30 Days)', value: 'Short Term' },
-            { label: 'Medium Term (Above 3 Month)', value: 'Medium Term' },
+            { label: 'Intraday', value: 'Intraday' },
+            { label: 'BTST', value: 'BTST' },
+            { label: 'Swing (1-6 Days)', value: 'Swing' },
+            { label: 'Short Term (1 Month - 6 Month)', value: 'Short Term' },
             { label: 'Long Term (Above 1 year)', value: 'Long Term' },
-            { label: 'Intraday', value: 'Intraday' }
+            { label: 'Multi Bagger', value: 'Multi Bagger' }
+          ] : [
+            { label: 'Intraday', value: 'Intraday' },
+            { label: 'BTST', value: 'BTST' },
+            { label: 'Swing (1-6 Days)', value: 'Swing' },
+            { label: 'Short Term (1 Month - 6 Month)', value: 'Short Term' },
+            { label: 'Long Term (Above 1 year)', value: 'Long Term' },
+            { label: 'Multi Bagger', value: 'Multi Bagger' }
+
           ];
         } else if (formik.values.segment === "F") {
           return formik.values.calltype === "SELL" ? [
-            { label: 'Short Term', value: 'Short Term' },
             { label: 'Intraday', value: 'Intraday' },
+            { label: 'BTST', value: 'BTST' },
             { label: 'Still Expiry Date', value: 'Still Expiry Date' }
           ] : [
-            { label: 'Short Term', value: 'Short Term' },
             { label: 'Intraday', value: 'Intraday' },
+            { label: 'BTST', value: 'BTST' },
             { label: 'Still Expiry Date', value: 'Still Expiry Date' }
           ];
         } else if (formik.values.segment === "O") {
           return [
-            { label: 'Short Term', value: 'Short Term' },
             { label: 'Intraday', value: 'Intraday' },
+            { label: 'BTST', value: 'BTST' },
             { label: 'Still Expiry Date', value: 'Still Expiry Date' }
           ];
         }
@@ -415,6 +475,9 @@ const AddSignal = () => {
       col_size: 6,
       star: false
     },
+
+
+
     {
       name: 'tag1',
       label: 'Target-1',
@@ -461,6 +524,7 @@ const AddSignal = () => {
       col_size: 6,
       star: true
     },
+
   ];
 
 

@@ -115,15 +115,15 @@ const fieldConfigurations = [
     ],
     star: true
   },
-  {
-    name: "cagr",
-    label: "CAGR",
-    type: "number",
-    label_size: 12,
-    col_size: 4,
-    disable: false,
-    star: true
-  },
+  // {
+  //   name: "cagr",
+  //   label: "CAGR",
+  //   type: "number",
+  //   label_size: 12,
+  //   col_size: 4,
+  //   disable: false,
+  //   star: true
+  // },
   {
     name: "next_rebalance_date",
     label: "Rebalance Date",
@@ -267,7 +267,7 @@ const Viewbasketdetail = () => {
     description: "",
     accuracy: "",
     price: "",
-    cagr: "",
+    // cagr: "",
     mininvamount: "",
     portfolioweightage: "",
     themename: "",
@@ -303,7 +303,7 @@ const Viewbasketdetail = () => {
 
 
   const updateStock = async (stock) => {
-    navigate("/admin/editstock/" + stock._id, { state: { stock } })
+    navigate("/admin/editstock", { state: { stock } })
   }
 
 
@@ -324,7 +324,7 @@ const Viewbasketdetail = () => {
           frequency: basketData?.frequency ? basketData?.frequency : "",
           validity: basketData?.validity ? basketData?.validity : "",
           next_rebalance_date: basketData?.next_rebalance_date ? basketData?.next_rebalance_date : "",
-          cagr: basketData?.cagr || "",
+          // cagr: basketData?.cagr || "",
           type: basketData?.type || "",
           image: basketData?.image || "",
           short_description: basketData?.short_description || "",
@@ -366,7 +366,7 @@ const Viewbasketdetail = () => {
             >
               {({ values }) => (
                 <div>
-                  <h4>Basket Details</h4>
+                  {/* <h4>Basket Details</h4> */}
                   <div className="row">
                     {fieldConfigurations?.map((field) =>
                       field.type !== "Stock" ? (
@@ -399,7 +399,7 @@ const Viewbasketdetail = () => {
                               )}
                               <Modal show={showModal} onHide={closeModal} centered>
                                 <Modal.Header closeButton>
-                                  <Modal.Title>Image</Modal.Title>
+                                  <Modal.Title style={{ color: "black" }}>Image</Modal.Title>
                                 </Modal.Header>
                                 <Modal.Body>
                                   {values[field.name] ? (
@@ -447,9 +447,9 @@ const Viewbasketdetail = () => {
                                   <h6>Version {version} ({fDate(versionStocks[0]?.created_at)})</h6>
 
                                   <div className="d-flex align-items-center">
-                                    <div title="View Rationale">
+                                    {stockdata[0]?.comment && <div title="View Rationale">
                                       <Eye className="cursor-pointer me-2" onClick={() => setViewRationale(true)} />
-                                    </div>
+                                    </div>}
 
                                     {versionStocks[0].status === 0 ? (
                                       <Tooltip title="Update All">

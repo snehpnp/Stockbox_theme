@@ -5,6 +5,7 @@ import DynamicForm from '../../../Extracomponents/FormicForm';
 import { useNavigate } from 'react-router-dom';
 import { SendBroadCast, GetService } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Addbroadcast = () => {
 
@@ -40,9 +41,12 @@ const Addbroadcast = () => {
 
     const validate = (values) => {
         let errors = {};
-        if (values.type !== "nonsubscribe" && !values.service) {
+
+        if (values.type !== "nonsubscribe" && values.type !== "All" && !values.service) {
             errors.service = "Please Select Service";
         }
+
+
         if (!values.subject) {
             errors.subject = "Please Enter Subject";
         }
@@ -52,8 +56,10 @@ const Addbroadcast = () => {
         if (!values.type) {
             errors.type = "Please Select Type";
         }
+
         return errors;
     };
+
 
     const onSubmit = async (values) => {
         setLoading(!loading)
@@ -64,39 +70,20 @@ const Addbroadcast = () => {
             type: values.type
         };
 
+
+
         try {
             const response = await SendBroadCast(req, token);
             if (response.status) {
-                Swal.fire({
-                    title: "Send Successful!",
-                    text: response.message,
-                    icon: "success",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
-                setTimeout(() => {
-                    navigate("/admin/message");
-                }, 1500);
+                showCustomAlert("Success", response.message, navigate, "/admin/message")
             } else {
-                Swal.fire({
-                    title: "Alert",
-                    text: response.message,
-                    icon: "warning",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
+                showCustomAlert("error", response.message)
                 setLoading(false)
             }
         } catch (error) {
             setLoading(false)
-            // console.error("Error in API call:", error);
-            Swal.fire({
-                title: "Error",
-                text: "An unexpected error occurred. Please try again later.",
-                icon: "error",
-                timer: 1500,
-                timerProgressBar: true,
-            });
+
+            showCustomAlert("error", "An unexpected error occurred. Please try again later.")
         }
     };
 
@@ -121,7 +108,7 @@ const Addbroadcast = () => {
             col_size: 4,
             disable: false,
             options: [
-                // { value: "all", label: "All" },
+                { value: "All", label: "All" },
                 { value: "active", label: "Active" },
                 { value: "expired", label: "Expired" },
                 { value: "nonsubscribe", label: "Non Subscribe" },
@@ -135,12 +122,15 @@ const Addbroadcast = () => {
             label_size: 6,
             col_size: 4,
             disable: false,
-            options: servicedata?.map((item) => ({
-                label: item?.title,
-                value: item?._id,
-            })),
+            options: [
+                { value: "All", label: "All" },
+                ...servicedata?.map((item) => ({
+                    value: item?._id,
+                    label: item?.title,
+                }))
+            ],
             star: true,
-            showWhen: (values) => values.type !== "nonsubscribe"
+            showWhen: (values) => !(values.type === "nonsubscribe" || values.type === "All")
         },
         {
             name: "subject",
@@ -174,7 +164,7 @@ const Addbroadcast = () => {
             <DynamicForm
                 fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
                 formik={formik}
-                page_title="Add Broadcast"
+                // page_title="Add Broadcast"
                 btn_name="Add Broadcast"
                 btn_name1="Cancel"
                 sumit_btn={true}

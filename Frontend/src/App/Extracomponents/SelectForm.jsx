@@ -57,7 +57,6 @@ const SelectForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form Data Submitted:", formData);
   };
 
 
@@ -128,7 +127,7 @@ const SelectForm = () => {
 
     try {
       const response = await Addstockbasketform(req, token);
-      console.log(response);
+
 
       if (response.status) {
         Swal.fire({

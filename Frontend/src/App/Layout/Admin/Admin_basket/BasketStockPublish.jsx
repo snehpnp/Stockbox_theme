@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, RefreshCcw, Trash2, RotateCcw, IndianRupee, X, Plus, History } from 'lucide-react';
+import { Eye, RefreshCcw, Trash2, RotateCcw,SquarePen, IndianRupee, X, Plus, History } from 'lucide-react';
 import { Tooltip } from 'antd';
 // import Table from "../../../components/Table";
 import Table from '../../../Extracomponents/Table1';
@@ -39,7 +39,7 @@ const BasketStockPublish = () => {
       const data = { page: currentPage, search: searchInput || "" }
       const response = await BasketAllActiveListbyfilter(data, token);
       if (response.status) {
-        setTotalRows(response.pagination.total);
+        setTotalRows(response.pagination.totalRecords);
         setClients(response.data);
       }
     } catch (error) {
@@ -65,7 +65,7 @@ const BasketStockPublish = () => {
 
     const result = await showCustomAlert("confirm", "Do you want to save the changes?");
 
-    if (result) {
+    if (result.isConfirmed) {
       try {
         const response = await Basketstatusofdetail(data, token);
         if (response.status) {
@@ -89,7 +89,7 @@ const BasketStockPublish = () => {
 
     const result = await showCustomAlert("confirm", "Do you want to save the changes?");
 
-    if (result) {
+    if (result.isConfirmed) {
       try {
         const response = await changestatusrebalance(data, token);
         if (response.status) {
@@ -109,6 +109,12 @@ const BasketStockPublish = () => {
 
 
   const rebalancePubliceStock = async (row) => {
+    if (!row) return
+    navigate("/admin/editstock", { state: { row } });
+  };
+
+
+  const rebalancePubliceStockadd = async (row) => {
     navigate("/admin/addstock/" + row._id, { state: { state: "publish" } });
   }
 
@@ -124,7 +130,7 @@ const BasketStockPublish = () => {
   const Deletebasket = async (_id) => {
     try {
       const result = await showCustomAlert("confirm", "Do you want to delete this item? This action cannot be undone.");
-      if (result) {
+      if (result.isConfirmed) {
         const response = await deletebasket(_id, token);
         if (response.status) {
           showCustomAlert("Success", "The item has been successfully deleted.");
@@ -140,11 +146,16 @@ const BasketStockPublish = () => {
   };
 
 
+
+
   function stripHtml(html) {
     const div = document.createElement("div");
     div.innerHTML = html;
     return div.textContent || div.innerText || "";
   }
+
+
+
 
   // Columns for DataTable
   const columns = [
@@ -190,7 +201,7 @@ const BasketStockPublish = () => {
           WebkitBoxOrient: 'vertical',
           maxWidth: '200px',
           textAlign: 'left',
-          whiteSpace: 'normal', // Ensure multi-line text
+          whiteSpace: 'normal',
         }}>
           {stripHtml(row.description)}
         </div>
@@ -251,11 +262,23 @@ const BasketStockPublish = () => {
       name: "Actions",
       cell: (row) => (
         <div className="w-100">
-          {row.rebalancestatus === false ?
-            <Tooltip title="Rebalance">
-
-              <RotateCcw onClick={() => rebalancePubliceStock(row)} />
-            </Tooltip> : ""}
+          {row.rebalancestatus === false ? (
+            row?.stockstatus == 0 ? (
+              <Tooltip title="Rebalance">
+                <RotateCcw
+                  onClick={() => rebalancePubliceStock(row)}
+                  style={{ marginRight: "5px" }}
+                />
+              </Tooltip>
+            ) : (
+              <Tooltip title="Rebalance">
+                <RotateCcw
+                  onClick={() => rebalancePubliceStockadd(row)}
+                  style={{ marginRight: "5px" }}
+                />
+              </Tooltip>
+            )
+          ) : null}
           <Tooltip title="view">
             <Eye onClick={() => viewdetailpage(row)} />
           </Tooltip>
@@ -267,6 +290,14 @@ const BasketStockPublish = () => {
               <SquarePen />
             </Link>
           </Tooltip> */}
+          <Tooltip title="Edit">
+            <Link
+              to={`${row._id}`}
+              className="btn px-2"
+            >
+              <SquarePen />
+            </Link>
+          </Tooltip>
           <Tooltip title="History ">
             <Link
               to={`/admin/basket-purchase-history/${row._id}`}
@@ -283,7 +314,7 @@ const BasketStockPublish = () => {
           </button> */}
         </div>
       ),
-      width: '150px',
+      width: '200px',
     },
   ];
 
@@ -338,7 +369,7 @@ const BasketStockPublish = () => {
           </div>
           {isLoading ? (
             <Loader />
-          ) : (
+          ) : clients.length > 0 ? (
             <>
               <Table
                 columns={columns}
@@ -348,6 +379,10 @@ const BasketStockPublish = () => {
                 onPageChange={handlePageChange}
               />
             </>
+          ) : (
+            <div className="text-center mt-5">
+              <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+            </div>
           )}
 
         </div>

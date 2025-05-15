@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { Addcouponbyadmin, GetService } from '../../../Services/Admin/Admin';
 import Content from '../../../components/Contents/Content';
-
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 const Addcoupon = () => {
     const navigate = useNavigate();
@@ -13,29 +12,31 @@ const Addcoupon = () => {
     const user_id = localStorage.getItem("id");
     const token = localStorage.getItem("token");
 
-    const [servicedata, setServicedata] = useState([])
+    const [servicedata, setServicedata] = useState([]);
 
     const today = new Date().toISOString().slice(0, 10);
 
     const [loading, setLoading] = useState(false);
 
 
+
     useEffect(() => {
         getservice();
-    }, [])
+    }, []);
+
 
 
     const getservice = async () => {
         try {
             const response = await GetService(token);
             if (response.status) {
-                setServicedata(response.data)
+                setServicedata(response.data);
             }
         } catch (error) {
-            console.log("Error fetching services:", error);
-
+            console.error("Error fetching services:", error);
         }
-    }
+    };
+
 
 
     const validate = (values) => {
@@ -65,19 +66,19 @@ const Addcoupon = () => {
             errors.minpurchasevalue = "Please Enter Greater Than Discount value";
         }
         if (values.enddate && values.startdate > values.enddate) {
-            errors.enddate = "Please Enter Greater Than Startdate";
+            errors.enddate = "Please Enter Greater Than Start date";
         }
         if (!values.type) {
-            errors.type = "Please Enter type";
+            errors.type = "Please Enter Type";
         }
         if (!values.value) {
-            errors.value = "Please Enter value";
+            errors.value = "Please Enter Value";
         }
         if (!values.startdate) {
-            errors.startdate = "Please Enter Startdate";
+            errors.startdate = "Please Enter Start Date";
         }
         if (!values.enddate) {
-            errors.enddate = "Please Enter Enddate";
+            errors.enddate = "Please Enter End Date";
         }
         if (!values.minpurchasevalue) {
             errors.minpurchasevalue = "Please Enter Min Purchase Value";
@@ -97,7 +98,7 @@ const Addcoupon = () => {
 
 
     const onSubmit = async (values) => {
-        setLoading(!loading);
+        setLoading(!loading)
         const req = {
             name: values.name,
             code: values.code,
@@ -116,37 +117,17 @@ const Addcoupon = () => {
 
         try {
             const response = await Addcouponbyadmin(req, token);
-            if (response.status) {
 
-                Swal.fire({
-                    title: "Create Successful!",
-                    text: response.message,
-                    icon: "success",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
-                setTimeout(() => {
-                    navigate("/employee/coupon");
-                }, 1500);
+            if (response.status) {
+                showCustomAlert("Success", response.message, navigate, "/employee/coupon")
+
             } else {
-                Swal.fire({
-                    title: "Error",
-                    text: response.message,
-                    icon: "error",
-                    timer: 1500,
-                    timerProgressBar: true,
-                });
+                showCustomAlert("error", response.message)
                 setLoading(false)
             }
         } catch (error) {
             setLoading(false)
-            Swal.fire({
-                title: "Error",
-                text: "An unexpected error occurred. Please try again later.",
-                icon: "error",
-                timer: 1500,
-                timerProgressBar: true,
-            });
+            showCustomAlert("error", "An unexpected error occurred. Please try again later.",)
         }
     };
 
@@ -163,7 +144,7 @@ const Addcoupon = () => {
             description: '',
             image: '',
             limitation: '',
-            service: '',
+            service: "",
             add_by: ''
         },
         validate,
@@ -242,8 +223,7 @@ const Addcoupon = () => {
             disable: false,
             star: true,
             showWhen: (values) => values.type === "percentage"
-        },
-        {
+        }, {
             name: "limitation",
             label: "Set Limit",
             type: "number",
@@ -264,7 +244,7 @@ const Addcoupon = () => {
                 ...servicedata?.map((item) => ({
                     label: item?.title,
                     value: item?._id,
-                }))
+                })),
             ],
             star: true,
         },
@@ -320,7 +300,6 @@ const Addcoupon = () => {
             <DynamicForm
                 fields={fields.filter(field => !field.showWhen || field.showWhen(formik.values))}
                 formik={formik}
-                // page_title="Add Coupon Code"
                 btn_name="Add Coupon"
                 btn_name1="Cancel"
                 sumit_btn={true}
@@ -330,7 +309,6 @@ const Addcoupon = () => {
 
             />
         </Content>
-
     );
 };
 

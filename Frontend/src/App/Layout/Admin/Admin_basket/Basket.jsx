@@ -10,7 +10,9 @@ import Loader from "../../../../Utils/Loader";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 
+
 const Basket = () => {
+
 
 
   const navigate = useNavigate();
@@ -24,7 +26,6 @@ const Basket = () => {
   const [totalRows, setTotalRows] = useState(0);
 
   const [isLoading, setIsLoading] = useState(true)
-
 
 
 
@@ -42,7 +43,7 @@ const Basket = () => {
 
       if (response.status) {
         setClients(response.data);
-        setTotalRows(response.pagination.total);
+        setTotalRows(response.pagination.totalRecords);
       }
     } catch (error) {
       console.log("error");
@@ -58,70 +59,34 @@ const Basket = () => {
 
 
 
-  // const handleSwitchChange = async (event, id) => {
-  //   const originalChecked = true;
-  //   const user_active_status = originalChecked
-  //   const data = { id: id, status: user_active_status };
-
-  //   const result = await Swal.fire({
-  //     title: "Do you want to save the changes?",
-  //     showCancelButton: true,
-  //     confirmButtonText: "Save",
-  //     cancelButtonText: "Cancel",
-  //     allowOutsideClick: false,
-  //   });
-
-  //   if (result.isConfirmed) {
-  //     try {
-  //       const response = await Basketstatus(data, token);
-
-  //       if (response.status) {
-  //         Swal.fire({
-  //           title: "Saved!",
-  //           icon: "success",
-  //           timer: 1000,
-  //           timerProgressBar: true,
-  //         });
-  //         setTimeout(() => {
-  //           Swal.close();
-  //         }, 1000);
-  //       }
-  //       getbasketlist();
-  //     } catch (error) {
-  //       Swal.fire(
-  //         "Error",
-  //         "There was an error processing your request.",
-  //         "error"
-  //       );
-  //     }
-  //   } else if (result.dismiss === Swal.DismissReason.cancel) {
-  //     event.target.checked = !originalChecked;
-  //     getbasketlist();
-  //   }
-  // };
-
-
 
 
   const handleSwitchChange = async (event, id) => {
-    const originalChecked = true;
-    const user_active_status = originalChecked
-    const data = { id: id, status: user_active_status };
-    const confirmed = await showCustomAlert("confirm", "Do you want to save the changes ?");
-    if (!confirmed) return;
+    const user_active_status = true;
+    const data = { id, status: user_active_status };
 
     try {
+      const result = await showCustomAlert("confirm", "Do you want to save the changes?");
+      if (!result?.isConfirmed) {
+        event.target.checked = !event.target.checked;
+        return;
+      }
+
       const response = await Basketstatus(data, token);
-      if (response.status) {
-        showCustomAlert("Success", "Publish Stock Successfully ")
-        getbasketlist();
+      if (response?.status) {
+        showCustomAlert("success", response.message);
       } else {
-        showCustomAlert("error", response.message)
+        throw new Error(response.message);
       }
     } catch (error) {
-      showCustomAlert("error", "There was an error processing your request.")
+      event.target.checked = !event.target.checked;
+      showCustomAlert("error", error.message, "There was an error processing your request.");
+    } finally {
+      getbasketlist();
     }
   };
+
+
 
 
 
@@ -155,19 +120,23 @@ const Basket = () => {
   const Deletebasket = async (_id) => {
     try {
       const result = await showCustomAlert("confirm", "Do you want to delete this item? This action cannot be undone.");
-      if (!result) return
+
+      if (!result.isConfirmed) return;
+
       const response = await deletebasket(_id, token);
-      if (response.status) {
-        showCustomAlert("Success", "The item has been successfully deleted.")
+
+      if (response?.status) {
+        showCustomAlert("success", "The item has been successfully deleted.");
         getbasketlist();
       } else {
-        showCustomAlert("error", response.message)
+        showCustomAlert("error", response?.message || "Failed to delete item.");
       }
     } catch (error) {
-      showCustomAlert("error", "There was an error deleting the item.")
-
+      console.error("Delete error:", error);
+      showCustomAlert("error", "There was an error deleting the item.");
     }
   };
+
 
 
   function stripHtml(html) {
@@ -223,8 +192,6 @@ const Basket = () => {
       wrap: true,
       width: '200px',
     },
-
-
     {
       name: "Validity",
       selector: (row) => row.validity,
@@ -249,7 +216,6 @@ const Basket = () => {
       sortable: true,
       width: '250px',
     },
-
     {
       name: "Actions",
       cell: (row) => (
@@ -353,7 +319,7 @@ const Basket = () => {
           </div>
           {isLoading ? (
             <Loader />
-          ) : (
+          ) : clients.length > 0 ? (
             <>
               <Table
                 columns={columns}
@@ -363,6 +329,10 @@ const Basket = () => {
                 onPageChange={handlePageChange}
               />
             </>
+          ) : (
+            <div className="text-center mt-5">
+              <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+            </div>
           )}
         </div>
       </div>

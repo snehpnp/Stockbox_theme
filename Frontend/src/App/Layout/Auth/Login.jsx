@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import Swal from "sweetalert2";
 import { redirect, useNavigate } from "react-router-dom";
 import { LoginApi } from "../../Services/Auth/Login";
 import { image_baseurl } from "../../../Utils/config";
 import { Link } from "react-router-dom";
 import BgImg from "./bg-login-img.png";
 import showCustomAlert from "../../Extracomponents/CustomAlert/CustomAlert";
-
 import { basicsettinglist } from "../../Services/Admin/Admin";
 import $ from "jquery";
+
+
 
 const Login = () => {
 
@@ -36,6 +36,7 @@ const Login = () => {
     if (ResData.status) {
       localStorage.setItem("token", ResData.data?.token);
       localStorage.setItem("id", ResData.data?.id);
+
 
       const roleMap = {
         0: "SUPERADMIN",

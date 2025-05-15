@@ -1,6 +1,6 @@
 const router = require("express").Router()
 
-const {AddBulkStockCron,DeleteTokenAliceToken,TradingStatusOff,PlanExpire,downloadKotakNeotoken,CheckExpireSignalCash,calculateCAGRForBaskets,processPendingOrders,downloadZerodhatoken,downloadAndExtractUpstox} = require('../Controllers/Cron')
+const {AddBulkStockCron,DeleteTokenAliceToken,TradingStatusOff,PlanExpire,downloadKotakNeotoken,CheckExpireSignalCash,calculateCAGRForBaskets,processPendingOrders,downloadZerodhatoken,downloadAndExtractUpstox,addBasketgraphdata,addBasketVolatilityData,getCurrentPrices,processPendingOrdersBasket,calculateCAGRForBasketsClient,updateAllStockPrices,updateStockPricesFromSheet} = require('../Controllers/Cron')
 
 
 
@@ -12,11 +12,24 @@ router.get('/cron/downloadkotakneotoken', downloadKotakNeotoken);
 
 router.get('/cron/cashaotusquareoff', CheckExpireSignalCash);
 router.get('/cron/calculatecagrforbaskets', calculateCAGRForBaskets);
+router.get('/cron/calculatecagrforbasketsclient', calculateCAGRForBasketsClient);
+
 router.get('/cron/processpendingorders', processPendingOrders);
+router.get('/cron/processpendingordersbasket', processPendingOrdersBasket);
 
 
 router.get('/cron/downloadzerodhatoken', downloadZerodhatoken);
 router.get('/cron/downloadupstoxtoken', downloadAndExtractUpstox);
+
+router.get('/cron/addbasketgraphdata', addBasketgraphdata);
+
+router.get('/cron/addbasketvolatilitydata', addBasketVolatilityData);
+
+
+router.get('/cron/getcurrentprice/:tradesymbol', getCurrentPrices);
+router.get('/cron/updateallstockprices', updateAllStockPrices);
+router.get('/cron/updatestockpricesfromsheet', updateStockPricesFromSheet);
+
 
 
 module.exports = router;

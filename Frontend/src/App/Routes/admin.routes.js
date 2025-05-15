@@ -81,6 +81,24 @@ import Apiinfo from "../Layout/Admin/BasicSetting/Apiinfo";
 import ClientOrderlist from "../Layout/Admin/ClientOrderlist/ClientOrderlist";
 import Changepass from "../Layout/Auth/Changepass";
 import ReferAndEarnlist from "../Layout/Admin/BasicSetting/ReferAndEarnlist";
+import PlanExpirymonthDetail from "../Layout/Admin/PlanExpiryMonth/PlanExpirymonthDetail";
+import PopupDescription from "../Layout/Admin/BasicSetting/PopupDescription";
+import SmsTemplate from "../Layout/Admin/BasicSetting/SmsTemplate";
+import SMSProvider from "../Layout/Admin/BasicSetting/SMSProvider";
+import Tickets from "../Layout/Admin/Tickets/Tickets";
+import ViewTicket from "../Layout/Admin/Tickets/ViewTicket";
+import EditBasketStockPublish from "../Layout/Admin/Admin_basket/EditBasketStockPublish";
+import AddMailToClient from '../Layout/Admin/SendMailToClient/AddMailToClient';
+import ViewMail from '../Layout/Admin/SendMailToClient/ViewMail';
+import UpdateMail from '../Layout/Admin/SendMailToClient/UpdateMail'
+import UtmSource from '../Layout/Admin/UTM_Source/Utmource'
+import TodayExpirydata from "../Layout/Admin/Admin_dashboard/TodayExpirydata";
+import YesterdayExpirydata from "../Layout/Admin/Admin_dashboard/YesterdayExpirydata";
+import TommarrowExpirydata from "../Layout/Admin/Admin_dashboard/TommarrowExpirydata";
+import MultipleSignal from "../Layout/Admin/Admin_signal/MultipleSignal";
+import MultipleSignaldetail from "../Layout/Admin/Admin_signal/MultipleSignaldetail";
+import CurrentMonthfreeTrial from "../Layout/Admin/CurrentMonthfreeTrial.jsx/CurrentMonthfreeTrial";
+import CurrentMonthFreeTrialDetail from "../Layout/Admin/CurrentMonthfreeTrial.jsx/CurrentMonthFreeTrialDetail";
 
 
 
@@ -103,9 +121,10 @@ export default function App() {
       <Route path="/basket/editbasket/:id" element={<Editbasket />} />
       <Route path="/addstock/:id" element={<AddStock />} />
       <Route path="/basket/basketstockpublish" element={<BasketStockPublish />} />
+      <Route path="/basket/basketstockpublish/:id" element={<EditBasketStockPublish />} />
       <Route path="/basket-purchase-history/:id" element={<BasketPurchaseHistory />} />
       <Route path="/purchasebaskethistory" element={<AllBasketHistory />} />
-      <Route path="/editstock/:id" element={<EditStock />} />
+      <Route path="/editstock" element={<EditStock />} />
 
       <Route path="/stock" element={<Stock />} />
 
@@ -142,6 +161,8 @@ export default function App() {
       <Route path="/addsignal" element={<AddSignal />} />
       <Route path="/signaldetaile/:id" element={<Signaldetail />} />
       <Route path="/closesignal" element={<Closesignal />} />
+      <Route path="/multiplesignal" element={<MultipleSignal />} />
+      <Route path="/multipleSignaldetail/:id" element={<MultipleSignaldetail />} />
 
 
       <Route path="/staff" element={<Staff />} />
@@ -156,8 +177,11 @@ export default function App() {
       <Route path="/paymentgeteway" element={<Payementgateway />} />
       <Route path="/emailsetting" element={<Emailsettings />} />
       <Route path="/emailtemplate" element={<Emailtemplate />} />
+      <Route path="/smstemplate" element={<SmsTemplate />} />
+      <Route path="/smsprovider" element={<SMSProvider />} />
       <Route path="/referandearn" element={<ReferAndEarn />} />
       <Route path="/autosquareoff" element={<Autosquareoff />} />
+      <Route path="/popupdescription" element={<PopupDescription />} />
 
       <Route path="/bankdetail" element={<Bankdetail />} />
       <Route path="/addbankdetail" element={<Addbankdetail />} />
@@ -186,6 +210,10 @@ export default function App() {
 
       <Route path="/planexpiry" element={<Planexpiry />} />
       <Route path="/planexpirymonth" element={<Planexpirymonth />} />
+      <Route path="/planExpirymonthDetail" element={<PlanExpirymonthDetail />} />
+
+
+
       <Route path="/notificationlist" element={<Notificationlist />} />
 
 
@@ -206,6 +234,24 @@ export default function App() {
 
       <Route path="/orderlist" element={<ClientOrderlist />} />
       <Route path="/referAndEarnlist" element={<ReferAndEarnlist />} />
+
+
+      <Route path="/tickets" element={<Tickets />} />
+      <Route path="/viewticket/:id" element={<ViewTicket />} />
+
+      <Route path="/addmail-to-client" element={<AddMailToClient />} />
+      <Route path="/view-mail" element={<ViewMail />} />
+      <Route path="/update-mail" element={<UpdateMail />} />
+
+      <Route path="/utm-source" element={<UtmSource />} />
+
+
+      <Route path="/todayExpiry-data" element={<TodayExpirydata />} />
+      <Route path="/yesterdayExpiry-data" element={<YesterdayExpirydata />} />
+      <Route path="/tomorrowExpiry-data" element={<TommarrowExpirydata />} />
+
+      <Route path="/CurrentMonth-freeTrial" element={<CurrentMonthfreeTrial />} />
+      <Route path="/freeTrial-detail" element={<CurrentMonthFreeTrialDetail />} />
 
     </Routes>
   );

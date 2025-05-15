@@ -3,15 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getblogslist, Addblogsbyadmin, Updateblogsbyadmin, changeblogsstatus, DeleteBlog, getstaffperuser } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table';
 import { SquarePen, Trash2, PanelBottomOpen, Eye } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDateTime } from '../../../../Utils/Date_formate';
 import Loader from '../../../../Utils/Loader'
-
-
-
-
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 
 
 const Blogs = () => {
@@ -19,15 +15,13 @@ const Blogs = () => {
 
 
     const navigate = useNavigate();
-
-    const token = localStorage.getItem('token');
-    const userid = localStorage.getItem('id');
-
-
-
-    const [permission, setPermission] = useState([]);
     const [clients, setClients] = useState([]);
     const [model, setModel] = useState(false);
+
+    //set state for loding
+    const [isLoading, setIsLoading] = useState(true)
+    const [permission, setPermission] = useState([]);
+
     const [serviceid, setServiceid] = useState({});
     const [searchInput, setSearchInput] = useState("");
     const [updatetitle, setUpdatetitle] = useState({
@@ -37,8 +31,6 @@ const Blogs = () => {
         image: "",
 
     });
-
-    const [isLoading, setIsLoading] = useState(true)
 
 
 
@@ -50,6 +42,8 @@ const Blogs = () => {
         add_by: "",
     });
 
+    const token = localStorage.getItem('token');
+    const userid = localStorage.getItem('id');
 
 
 
@@ -59,6 +53,8 @@ const Blogs = () => {
     const getblogs = async () => {
         try {
             const response = await getblogslist(token);
+
+
             if (response.status) {
                 const filterdata = response.data.filter((item) =>
                     searchInput === "" ||
@@ -71,6 +67,7 @@ const Blogs = () => {
         }
         setIsLoading(false)
     };
+
 
 
     const getpermissioninfo = async () => {
@@ -86,9 +83,15 @@ const Blogs = () => {
         }
     }
 
+
+    useEffect(() => {
+        getpermissioninfo();
+    }, []);
+
+
+
     useEffect(() => {
         getblogs();
-        getpermissioninfo()
     }, [searchInput]);
 
 
@@ -147,14 +150,7 @@ const Blogs = () => {
             const data = { title: title.title, description: title.description, image: title.image, add_by: userid };
             const response = await Addblogsbyadmin(data, token);
             if (response && response.status) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: response.message || 'blogs added successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                });
-
+                showCustomAlert("Success", response.message)
                 setTitle({ title: "", add_by: "" });
                 getblogs();
 
@@ -164,20 +160,10 @@ const Blogs = () => {
                     bootstrapModal.hide();
                 }
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: response.message || 'There was an error adding.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again',
-                });
+                showCustomAlert("error", response.message)
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'internal error',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'internal error')
         }
     };
 
@@ -194,37 +180,20 @@ const Blogs = () => {
     const handleSwitchChange = async (event, id) => {
         const user_active_status = event.target.checked ? "true" : "false";
         const data = { id: id, status: user_active_status };
-        const result = await Swal.fire({
-            title: "Do you want to save the changes?",
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            cancelButtonText: "Cancel",
-            allowOutsideClick: false,
-        });
+        const result = await showCustomAlert("confirm", "Do you want to save the changes?")
 
         if (result.isConfirmed) {
             try {
                 const response = await changeblogsstatus(data, token);
                 if (response.status) {
-                    Swal.fire({
-                        title: "Saved!",
-                        icon: "success",
-                        timer: 1000,
-                        timerProgressBar: true,
-                    });
-                    setTimeout(() => {
-                        Swal.close();
-                    }, 1000);
+                    showCustomAlert("Success", response.message)
                 }
                 getblogs();
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "There was an error processing your request.",
-                    "error"
-                );
+                showCustomAlert("error", "There was an error processing your request.")
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
+            event.target.checked = !event.target.checked
             getblogs();
         }
     };
@@ -236,44 +205,21 @@ const Blogs = () => {
 
     const DeleteBlogs = async (_id) => {
         try {
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to delete this blogs ? This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel',
-            });
+            const result = await showCustomAlert("confirm", "Do you want to save the changes?")
 
             if (result.isConfirmed) {
                 const response = await DeleteBlog(_id, token);
 
                 if (response.status) {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'The Blogs has been successfully deleted.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    });
+                    showCustomAlert("Success", 'The Blogs has been successfully deleted.')
                     getblogs();
 
                 }
             } else {
-
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'The Blogs deletion was cancelled.',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                });
+                showCustomAlert("error", 'The Blogs deletion was cancelled.')
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: 'There was an error deleting the Blogs.',
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-            });
+            showCustomAlert("error", 'There was an error deleting the Blogs.')
 
         }
     };
@@ -293,7 +239,7 @@ const Blogs = () => {
             sortable: true,
             width: '300px',
         },
-        permission.includes("blogsstatus") ? {
+        permission.includes("blogsstatus") && {
             name: 'Active Status',
             selector: row => (
                 <div className="form-check form-switch form-check-info">
@@ -312,7 +258,7 @@ const Blogs = () => {
             ),
             sortable: true,
             width: '200px',
-        } : "",
+        },
         {
             name: 'Image',
             cell: row => <img src={`${image_baseurl}/uploads/blogs/${row.image}`} alt="Image" width="50" height="50" />,
@@ -343,7 +289,7 @@ const Blogs = () => {
             name: 'Actions',
             cell: row => (
                 <>
-                    {permission.includes("blogdetail") ? <div>
+                    {permission.includes("blogdetail") && <div>
                         <Tooltip placement="top" overlay="View">
 
                             <Eye style={{ marginRight: "10px" }}
@@ -352,22 +298,21 @@ const Blogs = () => {
                                 }} />
 
                         </Tooltip>
-                    </div> : ""}
-                    {permission.includes("editblogs") ? <div>
+                    </div>}
+                    {permission.includes("editblogs") && <div>
                         <Tooltip placement="top" overlay="Update">
                             <SquarePen
                                 onClick={() => {
                                     updateblogs(row)
                                 }}
-                                className='me-2'
                             />
                         </Tooltip>
-                    </div> : ""}
-                    {permission.includes("deleteblogs") ? <div>
+                    </div>}
+                    {permission.includes("deleteblogs") && <div>
                         <Tooltip placement="top" overlay="Delete">
                             <Trash2 onClick={() => DeleteBlogs(row._id)} />
                         </Tooltip>
-                    </div> : ""}
+                    </div>}
                 </>
             ),
             ignoreRowClick: true,
@@ -396,6 +341,7 @@ const Blogs = () => {
 
 
     return (
+
         <div>
             <div className="page-content">
 
@@ -430,11 +376,10 @@ const Blogs = () => {
                                     <i className="bx bx-search" />
                                 </span>
                             </div>
-                            {permission.includes("addblogs") ? <div className="ms-auto">
+                            {permission.includes("addblogs") && <div className="ms-auto">
                                 <Link
                                     to="/employee/addblogs"
                                     className="btn btn-primary mt-2 mt-sm-0"
-
                                 >
                                     <i className="bx bxs-plus-square" />
                                     Add Blog
@@ -468,7 +413,7 @@ const Blogs = () => {
                                                             <input
                                                                 className="form-control mb-3"
                                                                 type="text"
-                                                                placeholder='Enter blogs Title'
+                                                                placeholder="Enter blogs Title"
                                                                 value={title.title}
                                                                 onChange={(e) => setTitle({ ...title, title: e.target.value })}
                                                             />
@@ -489,11 +434,11 @@ const Blogs = () => {
 
                                                     <div className="row">
                                                         <div className="col-md-12">
-                                                            <label htmlFor="">description</label>
+                                                            <label htmlFor="">Description</label>
                                                             <textarea
                                                                 className="form-control mb-3"
                                                                 type="text"
-                                                                placeholder='Enter description'
+                                                                placeholder="Enter description"
                                                                 value={title.description}
                                                                 onChange={(e) => setTitle({ ...title, description: e.target.value })}
                                                             />
@@ -520,7 +465,6 @@ const Blogs = () => {
                                         </div>
                                     </div>
                                 </div>
-
 
                                 {model && (
                                     <>
@@ -552,9 +496,11 @@ const Blogs = () => {
                                                                     <input
                                                                         className="form-control mb-2"
                                                                         type="text"
-                                                                        placeholder='Enter blogs Title'
+                                                                        placeholder="Enter blogs Title"
                                                                         value={updatetitle.title}
-                                                                        onChange={(e) => updateServiceTitle({ title: e.target.value })}
+                                                                        onChange={(e) =>
+                                                                            updateServiceTitle({ title: e.target.value })
+                                                                        }
                                                                     />
                                                                 </div>
                                                             </div>
@@ -583,14 +529,15 @@ const Blogs = () => {
                                                                     <textarea
                                                                         className="form-control mb-2"
                                                                         type="text"
-                                                                        placeholder='Enter  Description'
+                                                                        placeholder="Enter Description"
                                                                         value={updatetitle.description}
-                                                                        onChange={(e) => updateServiceTitle({ description: e.target.value })}
+                                                                        onChange={(e) =>
+                                                                            updateServiceTitle({ description: e.target.value })
+                                                                        }
                                                                     />
                                                                 </div>
                                                             </div>
                                                         </form>
-
                                                     </div>
                                                     <div className="modal-footer">
                                                         <button
@@ -613,13 +560,15 @@ const Blogs = () => {
                                         </div>
                                     </>
                                 )}
-
-                            </div> : ""}
+                            </div>}
                         </div>
+
                         {isLoading ? (
                             <Loader />
-                        ) : (
+
+                        ) : clients.length > 0 ? (
                             <>
+
                                 <div className="table-responsive">
                                     <Table
                                         columns={columns}
@@ -631,12 +580,18 @@ const Blogs = () => {
                                     />
                                 </div>
                             </>
+                        ) : (
+                            <div className="text-center mt-5">
+                                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                            </div>
                         )}
                     </div>
                 </div>
+
             </div>
         </div>
     );
+
 };
 
 export default Blogs;

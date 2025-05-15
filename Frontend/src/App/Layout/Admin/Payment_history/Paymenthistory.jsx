@@ -9,6 +9,7 @@ import { image_baseurl } from '../../../../Utils/config';
 import { Tooltip } from 'antd';
 import { fDateTime, fDateTimeH } from '../../../../Utils/Date_formate';
 import { exportToCSV } from '../../../../Utils/ExportData';
+import Loader from '../../../../Utils/Loader';
 
 
 
@@ -28,6 +29,9 @@ const History = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRows, setTotalRows] = useState(0);
+
+    const [isLoading, setIsLoading] = useState(true)
+
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -59,6 +63,7 @@ const History = () => {
         setSearchInput("")
         setStartDate("")
         setEndDate("")
+        setCurrentPage(1);
 
 
     }
@@ -67,7 +72,8 @@ const History = () => {
 
     const getexportfile = async () => {
         try {
-            const response = await getPayementhistory(token);
+            const data = { page: "", fromDate: startDate, toDate: endDate, search: searchInput }
+            const response = await getPayementhistory(data, token);
             if (response.status) {
                 if (response.data?.length > 0) {
                     const csvArr = response.data?.map((item) => ({
@@ -105,11 +111,11 @@ const History = () => {
 
     const gethistory = async () => {
         try {
+            setIsLoading(true)
             const data = { page: currentPage, fromDate: startDate, toDate: endDate, search: searchInput }
             const response = await getPayementhistorywithfilter(data, token);
             if (response.status) {
                 let filteredData = response.data;
-                console.log("response response", response);
 
                 setTotalRows(response.pagination.total)
                 setClients(filteredData);
@@ -117,8 +123,12 @@ const History = () => {
         } catch (error) {
             console.log("Error fetching services:", error);
         }
+        setIsLoading(false)
     };
 
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [searchInput])
 
 
     useEffect(() => {
@@ -164,6 +174,12 @@ const History = () => {
             sortable: true,
             width: '200px',
         },
+        {
+            name: 'State',
+            selector: row => row.state ? row.state : "-",
+            sortable: true,
+            width: '200px',
+        },
 
         {
             name: 'Title',
@@ -204,15 +220,22 @@ const History = () => {
 
         {
             name: 'Plan Amount',
-            selector: row => <div> <IndianRupee />{row.plan_price}</div>,
+            selector: row => <div> <IndianRupee />{(row.plan_price).toFixed(2)}</div>,
             sortable: true,
             width: '200px',
         },
         {
             name: 'Plan Discount',
-            selector: row => <div> <IndianRupee />{row.discount}</div>,
+            selector: row => <div> <IndianRupee />{(row.discount).toFixed(2)}</div>,
             sortable: true,
             width: '200px',
+        },
+        {
+            name: 'Total Amount',
+            selector: row => row?.total || "-",
+            cell: row => <div>{row?.total} <span style={{ fontSize: "12px" }}>({row?.gst}% Gst Included)</span></div>,
+            sortable: true,
+            width: '250px',
         },
 
         {
@@ -225,12 +248,12 @@ const History = () => {
 
 
 
-        {
-            name: 'Total',
-            selector: row => <div> <IndianRupee />{row.total}</div>,
-            sortable: true,
-            width: '200px',
-        },
+        // {
+        //     name: 'Total',
+        //     selector: row => <div> <IndianRupee />{row.total}</div>,
+        //     sortable: true,
+        //     width: '200px',
+        // },
         // {
         //     name: 'Plan Price',
         //     selector: row => row.planDetails.plan_price,
@@ -253,8 +276,9 @@ const History = () => {
             cell: row => (
                 <>
 
+
                     <div className='d-flex '>
-                        {row.invoice ?
+                        {row?.invoice ?
                             <Link className="btn px-2" onClick={() => handleDownload(row)}>
                                 <Tooltip placement="top" overlay="Download">
                                     <ArrowDownToLine />
@@ -396,15 +420,21 @@ const History = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="table-responsive">
-                            <Table
-                                columns={columns}
-                                data={clients}
-                                totalRows={totalRows}
-                                currentPage={currentPage}
-                                onPageChange={handlePageChange}
-                            />
-                        </div>
+                        {isLoading ? <Loader /> : clients.length > 0 ? (
+                            <div className="table-responsive">
+                                <Table
+                                    columns={columns}
+                                    data={clients}
+                                    totalRows={totalRows}
+                                    currentPage={currentPage}
+                                    onPageChange={handlePageChange}
+                                />
+                            </div>
+                        ) : (
+                            <div className="text-center mt-5">
+                                <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

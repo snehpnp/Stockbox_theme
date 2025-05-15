@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { PaymentRequestlist, ChangePaymentStatus } from '../../../Services/Admin/Admin';
 import Table from '../../../Extracomponents/Table';
-import Swal from 'sweetalert2';
 import { fDateTime, fDateTimeH, fDate } from '../../../../Utils/Date_formate';
 import { Link } from 'react-router-dom';
 import { IndianRupee } from 'lucide-react';
 import { GetUserData } from '../../../Services/UserService/User';
+import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
+import Loader from '../../../../Utils/Loader';
 
 
 const PaymentRequest = () => {
@@ -19,11 +20,15 @@ const PaymentRequest = () => {
     const [activeTab, setActiveTab] = useState('Pending');
     const [selectedValues, setSelectedValues] = useState({});
 
+    const [isLoading, setIsLoading] = useState(true)
+
+
 
 
     const getpaymentrequest = async () => {
         try {
             const response = await PaymentRequestlist(token);
+
             if (response.status) {
                 const filterdata = response.data.filter((item) =>
                     searchInput === "" ||
@@ -34,6 +39,7 @@ const PaymentRequest = () => {
         } catch (error) {
             console.log("Error fetching services:", error);
         }
+        setIsLoading(false)
     };
 
 
@@ -48,32 +54,14 @@ const PaymentRequest = () => {
             };
             const response = await ChangePaymentStatus(data, token);
             if (response.status) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: response.message || "Status updated successfully.",
-                    timer: 2000
-                });
+                showCustomAlert('Success', 'Status updated successfully.')
                 getpaymentrequest();
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: response.message || 'Failed to update the request. Please try again.',
-                    timer: 3000
-                });
+                showCustomAlert('error', 'Failed to update status.')
                 window.location.reload();
-
-
             }
         } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: error.message || 'An unexpected error occurred. Please try again.',
-                timer: 2000
-            });
-
+            showCustomAlert('error', 'Failed to update status.')
         }
     };
 
@@ -116,13 +104,13 @@ const PaymentRequest = () => {
         },
         {
             name: 'Available balance',
-            selector: row => <div> <IndianRupee />{row?.client_details?.wamount}</div>,
+            selector: row => <div> <IndianRupee />{(row?.client_details?.wamount).toFixed(2)}</div>,
             sortable: true,
             width: '220px',
         },
         {
             name: 'Amount',
-            selector: row => <div> <IndianRupee />{row?.amount}</div>,
+            selector: row => <div> <IndianRupee />{(row?.amount).toFixed(2)}</div>,
             sortable: true,
             width: '130px',
         },
@@ -140,20 +128,38 @@ const PaymentRequest = () => {
         },
         {
             name: 'Status',
-            selector: row => {
+            selector: row => row.status,
+            cell: row => {
+                let statusText = '';
+                let color = '';
+
                 switch (row.status) {
                     case 0:
-                        return "Pending";
+                        statusText = 'Pending';
+                        color = 'orange';
+                        break;
                     case 1:
-                        return "Completed";
+                        statusText = 'Completed';
+                        color = 'green';
+                        break;
                     case 2:
-                        return "Rejected";
+                        statusText = 'Rejected';
+                        color = 'red';
+                        break;
                     default:
-                        return "Unknown";
+                        statusText = 'Unknown';
+                        color = 'gray';
                 }
+
+                return (
+                    <span style={{ color: color, fontWeight: 'bold' }}>
+                        {statusText}
+                    </span>
+                );
             },
             sortable: true,
         }
+
     ];
 
 
@@ -192,16 +198,7 @@ const PaymentRequest = () => {
             2: 'Reject',
         };
 
-        const result = await Swal.fire({
-            title: 'Are you sure?',
-            text: `Do you want to change the status to "${statusMap[selectedValue]}"?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, update it!',
-            cancelButtonText: 'No, cancel!',
-        });
+        const result = await showCustomAlert("confirm", "Do you want to save the changes?");
 
         if (result.isConfirmed) {
             try {
@@ -210,14 +207,11 @@ const PaymentRequest = () => {
                     ...prevValues,
                     [rowId]: selectedValue,
                 }));
-                // Swal.fire('Updated!', 'The status has been updated.', 'success');
             } catch (error) {
-                Swal.fire('Error!', 'There was a problem updating the status.', 'error');
+                showCustomAlert('error', 'There was a problem updating the status.')
             }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
             window.location.reload()
-
-
         }
     };
 
@@ -233,13 +227,25 @@ const PaymentRequest = () => {
 
 
     const renderTable = (status) => {
+        const filteredData = filterDataByStatus(status);
+
         return (
             <div className="table-responsive">
                 <h5>{activeTab} Transactions</h5>
-                <Table columns={columns} data={filterDataByStatus(status)} />
+
+                {isLoading ? (
+                    <Loader />
+                ) : filteredData.length > 0 ? (
+                    <Table columns={columns} data={filteredData} />
+                ) : (
+                    <div className="text-center mt-5">
+                        <img src="/assets/images/norecordfound.png" alt="No Records Found" />
+                    </div>
+                )}
             </div>
         );
     };
+
 
 
 
@@ -277,26 +283,13 @@ const PaymentRequest = () => {
 
 
 
-                        {/* <div className="card-header flex-wrap border-0">
-                                        <h4 className="card-title">Payment Request</h4>
-                                    </div> */}
+
 
 
                         <div className="tab-content" id="myTabContent3">
                             <div className="tab-pane fade show active" id="NavPills">
                                 <div className="card-body pt-0">
                                     <div className="d-lg-flex align-items-center mb-4 gap-3">
-                                        {/* <div className="position-relative">
-                                            <input
-                                                type="text"
-                                                className="form-control ps-5 radius-10"
-                                                placeholder="Search Payment Request"
-                                                defaultValue=""
-                                            />
-                                            <span className="position-absolute top-50 product-show translate-middle-y">
-                                                <i className="bx bx-search" />
-                                            </span>
-                                        </div> */}
 
                                     </div>
 
