@@ -250,7 +250,7 @@ export async function GetUserData(id, token) {
 export async function AddplanSubscription(data, token) {
     try {
         const res = await axios.post(
-            `${Config.base_url}api/list/addplansubscription`,
+            `${Config.base_url}api/list/addplansubscriptionwithplan`,
             data,
             {
                 headers: {
@@ -289,10 +289,29 @@ export async function ApplyCoupondata(data, token) {
 
 // get open client signal
 
+// export async function GetSignalClient(data, token) {
+//     try {
+//         const res = await axios.post(
+//             `${Config.base_url}api/list/signalclient`,
+//             data,
+//             {
+//                 headers: {
+//                     data: {},
+//                     Authorization: `${token}`,
+//                 },
+//             }
+//         );
+
+//         return res?.data;
+//     } catch (err) {
+//         return err.response?.data || err.message;
+//     }
+// }
+
 export async function GetSignalClient(data, token) {
     try {
         const res = await axios.post(
-            `${Config.base_url}api/list/signalclient`,
+            `${Config.base_url}api/list/signalclientwithplan`,
             data,
             {
                 headers: {
@@ -310,10 +329,30 @@ export async function GetSignalClient(data, token) {
 
 // close client signal
 
+// export async function GetCloseSignalClient(data, token) {
+//     try {
+//         const res = await axios.post(
+//             `${Config.base_url}api/list/closesignalclient`,
+//             data,
+//             {
+//                 headers: {
+//                     data: {},
+//                     Authorization: `${token}`,
+//                 },
+//             }
+//         );
+
+//         return res?.data;
+//     } catch (err) {
+//         return err.response?.data || err.message;
+//     }
+// }
+
+
 export async function GetCloseSignalClient(data, token) {
     try {
         const res = await axios.post(
-            `${Config.base_url}api/list/closesignalclient`,
+            `${Config.base_url}api/list/signalclientwithplanclose`,
             data,
             {
                 headers: {
@@ -328,7 +367,6 @@ export async function GetCloseSignalClient(data, token) {
         return err.response?.data || err.message;
     }
 }
-
 
 
 //help desk api for add
