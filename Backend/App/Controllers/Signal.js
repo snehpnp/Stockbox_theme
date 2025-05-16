@@ -1841,19 +1841,35 @@ async closeSignalwithplan(req, res) {
     //   devicetoken: { $exists: true, $ne: null }
     // }).select('devicetoken');
     
-    const today = new Date();
+    // const today = new Date();
 
-    const clients = await Clients_Modal.find({
-      del: 0,
-      ActiveStatus: 1,
-      devicetoken: { $exists: true, $ne: null },
-      _id: {
-        $in: await Planmanage.find({
-          serviceid: service,  // Replace `service` with your actual service value
-          enddate: { $gte: today }
-        }).distinct('clientid')  // Assuming 'clientid' is the field linking to Clients_Modal
-      }
-    }).select('devicetoken');
+    // const clients = await Clients_Modal.find({
+    //   del: 0,
+    //   ActiveStatus: 1,
+    //   devicetoken: { $exists: true, $ne: null },
+    //   _id: {
+    //     $in: await Planmanage.find({
+    //       serviceid: service,  
+    //       enddate: { $gte: today }
+    //     }).distinct('clientid')  
+    //   }
+    // }).select('devicetoken');
+
+
+    const planSubscribers = await PlanSubscription_Modal.find({
+  plan_category_id: Signal.planid,
+  plan_end: { $gte: Signal.created_at }, // Signal creation date check
+  status: "active",
+  del: false
+}).distinct("client_id");
+
+const clients = await Clients_Modal.find({
+  _id: { $in: planSubscribers },
+  del: 0,
+  ActiveStatus: 1,
+  devicetoken: { $exists: true, $ne: null }
+}).select("devicetoken");
+
 
 
     const tokens = clients.map(client => client.devicetoken);
