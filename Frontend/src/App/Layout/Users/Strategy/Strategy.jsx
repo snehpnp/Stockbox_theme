@@ -245,7 +245,7 @@ const Strategy = () => {
     const today = new Date().toISOString().split("T")[0];
 
     return getsignaldata?.map((item, index) => {
-      const isClosedDatePassed = new Date(item?.closedate) >= new Date(today);
+      const isClosedDatePassed = new Date(item?.closedate) > new Date(today);
 
       const tradeStatus =
         item?.closeprice == 0
