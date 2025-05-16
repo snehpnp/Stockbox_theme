@@ -78,6 +78,8 @@ const Client = () => {
 
 
 
+
+
   const [basketdetail, setBasketdetail] = useState({
     basket_id: "",
     client_id: "",
@@ -179,6 +181,7 @@ const Client = () => {
   const handleCancel = () => {
     setIsModalVisible(false);
     setSelectcategory("");
+    setSelectedPlanId("")
   };
 
 
@@ -430,6 +433,7 @@ const Client = () => {
       if (response && response.status) {
         showCustomAlert("success", response.message);
         setUpdatetitle({ plan_id: "", client_id: "", price: "" });
+        setSelectedPlanId("")
         getAdminclient();
         handleCancel();
       } else {
@@ -455,6 +459,7 @@ const Client = () => {
       if (response && response.status) {
         showCustomAlert("Success", "Basket service updated successfully.");
         setBasketdetail({ basket_id: "", client_id: "", price: "" });
+        setSelectedPlanId("")
         getAdminclient();
         handleCancel();
       } else {

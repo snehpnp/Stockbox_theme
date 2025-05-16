@@ -66,9 +66,9 @@ const Strategy = () => {
             </div>
             <hr />
             <div className="d-flex justify-content-between mt-2">
-            <button className="btn-success btn">Place Order</button>
+              <button className="btn-success btn">Place Order</button>
               <button className="btn btn-secondary">About trade</button>
-              
+
             </div>
           </div>
         </div>
@@ -123,9 +123,9 @@ const Strategy = () => {
             </div>
             <hr />
             <div className="d-flex justify-content-between mt-2">
-            <button className="btn-success btn">Place Order</button>
+              <button className="btn-success btn">Place Order</button>
               <button className="btn btn-secondary">About trade</button>
-            
+
             </div>
           </div>
         </div>

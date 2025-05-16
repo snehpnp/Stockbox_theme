@@ -319,13 +319,13 @@ const User = [
     link: "/user/trades",
     children: [],
   },
-  // {
-  //   name: "Strategy",
-  //   label: "Strategy",
-  //   icon: "GitCompare",
-  //   link: "/user/strategy",
-  //   children: [],
-  // },
+  {
+    name: "Strategy",
+    label: "Strategy",
+    icon: "GitCompare",
+    link: "/user/strategy",
+    children: [],
+  },
   {
     name: "Basket",
     label: "Basket",
