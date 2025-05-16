@@ -1000,7 +1000,7 @@ end.setHours(23, 59, 59, 999);
         await client.save();
       }
 
-       if (!plan.validity.toLowerCase().includes('day') && client.kyc_verification === 0 && settings.kyc === 2) {
+       if (orderid && client.kyc_verification === 0 && settings.kyc === 2) {
          client.kyc_verification = 2;
          await client.save();
        }
@@ -6038,7 +6038,7 @@ await sendEmail(mailOptions);
 
       planprice = planprice+plan.price;
 
-  if (!plan.validity.toLowerCase().includes('day') && client.kyc_verification === 0 && settings.kyc === 2) {
+  if (orderid && client.kyc_verification === 0 && settings.kyc === 2) {
          client.kyc_verification = 2;
          await client.save();
        }
@@ -6578,7 +6578,7 @@ await sendEmail(mailOptions);
 
       planprice = planprice+plan.price;
 
- if (!plan.validity.toLowerCase().includes('day') && client.kyc_verification === 0 && settings.kyc === 2) {
+ if (orderid && client.kyc_verification === 0 && settings.kyc === 2) {
          client.kyc_verification = 2;
          await client.save();
        }
