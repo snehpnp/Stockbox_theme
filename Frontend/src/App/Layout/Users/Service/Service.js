@@ -375,82 +375,81 @@ const Service = () => {
 
             <div className="row row-cols-1 row-cols-lg-3">
               {/* Free Tier */}
+              {console.log("getFilteredPlans", getFilteredPlans)}
+              {[...getFilteredPlans]
+                ?.sort((a, b) => b.freetrial_status - a.freetrial_status)
+                ?.map((item) =>
+                  item?.plans?.length > 0 ? (
+                    item?.plans?.map((plan, index) => (
+                      <div className="col mb-3" key={`${item?._id}-${index}`}>
+                        <div className="card mb-5 mb-lg-0">
+                          <div className="card-header py-3">
+                            <h5 className="card-title text-white text-uppercase text-center">
+                              {item?.title}
+                            </h5>
+                            <h6 className="card-price text-white text-center">
+                              {plan?.price?.toFixed(2)}
+                              <span className="term">
+                                {Array.isArray(item?.services) && item?.services?.length > 0
+                                  ? item.services
+                                    .map((service) =>
+                                      typeof service.title === "string"
+                                        ? service.title.split(/(?=[A-Z])/).join(" + ")
+                                        : "N/A"
+                                    )
+                                    .join(" + ")
+                                  : "N/A"}
+                              </span>
+                            </h6>
+                          </div>
+                          <div className="card-body">
+                            <ul className="list-group list-group-flush" style={{ minHeight: "200px" }}>
+                              <li className="list-group-item">
+                                <i className="bx bx-check me-2 font-18" />
+                                Validity: {plan?.validity}
+                              </li>
 
-              {getFilteredPlans?.map((item) =>
-                item?.plans?.length > 0 ? (
-                  item?.plans?.map((plan, index) => (
-                    <div className="col mb-3" key={`${item?._id}-${index}`}>
-                      <div className="card mb-5 mb-lg-0">
-                        <div className="card-header  py-3">
-                          <h5 className="card-title text-white text-uppercase text-center">
-                            {item?.title}
-                          </h5>
-                          <h6 className="card-price text-white text-center">
-                            {(plan?.price)?.toFixed(2)}
-                            <span className="term"> {Array.isArray(item?.services) && item?.services?.length > 0
-                              ? item.services
-                                .map((service) =>
-                                  typeof service.title === "string"
-                                    ? service.title.split(/(?=[A-Z])/).join(" + ")
-                                    : "N/A"
-                                )
-                                .join(" + ")
-                              : "N/A"}</span>
-                          </h6>
-                        </div>
-                        <div className="card-body">
-                          <ul className="list-group list-group-flush" style={{ minHeight: "200px" }}>
-                            <li className="list-group-item">
-                              <i className="bx bx-check me-2 font-18" />
-                              Validity: {plan?.validity}
-                            </li>
+                              <li className="list-group-item text-secondary">
+                                <p style={{ minHeight: "3em", overflow: "hidden" }}>
+                                  {(() => {
+                                    const text = stripHtmlTags(plan?.description || "");
+                                    const words = text.split(" ");
+                                    if (text === "") {
+                                      return "No description available.....";
+                                    }
+                                    return words.length > 20
+                                      ? words.slice(0, 20).join(" ") + "....."
+                                      : text.padEnd(100, " ");
+                                  })()}
+                                </p>
+                                <Link
+                                  className="text-decoration-underline"
+                                  onClick={() => {
+                                    setViewModel(true);
+                                    setDiscription(plan?.description);
+                                  }}
+                                >
+                                  Know More...
+                                </Link>
+                              </li>
+                            </ul>
 
-                            <li className="list-group-item text-secondary">
-                              <p style={{ minHeight: "3em", overflow: "hidden" }}>
-                                {(() => {
-                                  const text = stripHtmlTags(plan?.description || "");
-                                  const words = text.split(" ");
-                                  if (text === "") {
-                                    return "No description available.....";
-                                  }
-                                  return words.length > 20
-                                    ? words.slice(0, 20).join(" ") + "....."
-                                    : text.padEnd(100, " "); // To give placeholder space
-                                })()}
-                              </p>
-                              <Link
-                                className=" text-decoration-underline  "
-                                onClick={() => {
-                                  setViewModel(true);
-                                  setDiscription(plan?.description);
-                                }}
+                            <div className="border-top pt-3">
+                              <button
+                                className="btn btn-primary rounded-pill mt-2 mt-sm-0 ms-3"
+                                onClick={() => handleShowModal(plan)}
                               >
-                                Know More...
-                              </Link>
-                            </li>
-                          </ul>
-
-                          <div className="border-top pt-3">
-                            {/* <Link to="/user/cart"
-                              className="btn btn-secondary  rounded-pill mt-2 mt-sm-0 me-2 me-sm-0"
-
-                            >
-                              Add to cart
-                            </Link> */}
-
-                            <button
-                              className="btn btn-primary rounded-pill mt-2 mt-sm-0 ms-3"
-                              onClick={() => handleShowModal(plan)}
-                            >
-                              Subscribe Now
-                            </button>
+                                Subscribe Now
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))
-                ) : null
-              )}
+                    ))
+                  ) : null
+                )}
+
+
 
             </div>
 
