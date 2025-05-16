@@ -1328,3 +1328,111 @@ export async function GetTicketDetaildata(ticketId, token) {
 }
 
 
+export async function getOpenSignalStrategyData(data, token) {
+    try {
+        const response = await axios.post(`${Config.base_url}api/list/signalclientwithplanstrategy`, data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+            }
+        );
+
+        return response.data;
+
+    } catch (error) {
+        console.error('Error in clientKycAndAgreement API:', error.message);
+        throw error.response?.data || { message: 'Something went wrong!' };
+    }
+}
+
+
+export async function getCloseSignalStrategyData(data, token) {
+    try {
+        const response = await axios.post(`${Config.base_url}api/list/signalclientwithplanclosestrategy`, data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+            }
+        );
+
+        return response.data;
+
+    } catch (error) {
+        console.error('Error in clientKycAndAgreement API:', error.message);
+        throw error.response?.data || { message: 'Something went wrong!' };
+    }
+}
+
+
+
+export async function PlaceOrderofmultiplesignal(data, token, brokerstatus) {
+    try {
+
+        let url;
+        if (brokerstatus == 1) {
+            url = `${Config.base_url}angle/multipleplaceorder`;
+        } else if (brokerstatus == 2) {
+            url = `${Config.base_url}alice/multipleplaceorder`;
+        } else if (brokerstatus == 3) {
+            url = `${Config.base_url}kotakneo/multipleplaceorder`;
+        } else if (brokerstatus == 4) {
+            url = `${Config.base_url}markethub/multipleplaceorder`;
+        } if (brokerstatus == 5) {
+            url = `${Config.base_url}zerodha/multipleplaceorder`;
+        } if (brokerstatus == 6) {
+            url = `${Config.base_url}upstox/multipleplaceorder`;
+        } if (brokerstatus == 7) {
+            url = `${Config.base_url}dhan/multipleplaceorder`;
+        }
+
+        const res = await axios.post(url, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+export async function ExitPlaceOrderofmultiplesignal(data, token, brokerstatus) {
+    try {
+
+        let url;
+        if (brokerstatus == 1) {
+            url = `${Config.base_url}angle/multipleexitplaceorder`;
+        } else if (brokerstatus == 2) {
+            url = `${Config.base_url}alice/multipleexitplaceorder`;
+        } else if (brokerstatus == 3) {
+            url = `${Config.base_url}kotakneo/multipleexitplaceorder`;
+        } else if (brokerstatus == 4) {
+            url = `${Config.base_url}markethub/multipleexitplaceorder`;
+        } else if (brokerstatus == 5) {
+            url = `${Config.base_url}zerodha/multipleexitplaceorder`;
+        } else if (brokerstatus == 6) {
+            url = `${Config.base_url}upstox/multipleexitplaceorder`;
+        } else if (brokerstatus == 7) {
+            url = `${Config.base_url}dhan/multipleexitplaceorder`;
+        }
+
+        const res = await axios.post(url, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+        return err.response?.data || err.message;
+    }
+}
