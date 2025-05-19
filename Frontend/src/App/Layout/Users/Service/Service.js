@@ -450,9 +450,6 @@ const Service = () => {
                     ))
                   ) : null
                 )}
-
-
-
             </div>
 
 
