@@ -388,8 +388,12 @@ const Generalsettings = () => {
                                                         <i className="fadeIn animated bx bx-phone" />
                                                     </span>
                                                     <Field name="wh_number"
-                                                        type="text" className="form-control"
+                                                        type="number" className="form-control"
                                                         placeholder="WhatsApp No"
+                                                        maxLength={10}
+                                                        onInput={(e) => {
+                                                            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                                        }}
 
                                                     />
                                                 </div>
@@ -397,7 +401,7 @@ const Generalsettings = () => {
                                         </div>
 
                                         <div className="row mb-3 align-items-center">
-                                            <label htmlFor="wh_number" className="col-sm-3 col-form-label">
+                                            <label htmlFor="email_cc" className="col-sm-3 col-form-label">
                                                 <b>Email CC</b>
                                             </label>
                                             <div className="col-sm-9">
@@ -408,6 +412,7 @@ const Generalsettings = () => {
                                                     <Field name="email_cc"
                                                         type="text" className="form-control"
                                                         placeholder="email_cc"
+
 
                                                     />
                                                 </div>

@@ -36,6 +36,8 @@ const Viewclientdetail = () => {
   const [clients, setClients] = useState([]);
 
 
+
+
   const [viewMode, setViewMode] = useState("plan");
 
   const [serviceList, setServiceList] = useState([]);
@@ -424,7 +426,7 @@ const Viewclientdetail = () => {
             <div className="card-body">
               <div className="p-4 border radius-15">
                 <div className="row justify-content-center align-items-center">
-                  {client.map(({ id, FullName, Email, PhoneNo, state }) => (
+                  {client.map(({ id, FullName, Email, PhoneNo, state, city }) => (
                     <div key={id} className="row">
                       <div className="col-md-2 d-flex align-items-center">
                         <strong>Full Name</strong>
@@ -441,6 +443,10 @@ const Viewclientdetail = () => {
                       <div className="col-md-3 d-flex align-items-center">
                         <strong>State</strong>
                         <p className="my-0 ms-4">{state}</p>
+                      </div>
+                      <div className="col-md-3 mt-3 d-flex align-items-center">
+                        <strong>City</strong>
+                        <p className="my-0 ms-4">{city}</p>
                       </div>
                     </div>
                   ))}

@@ -126,6 +126,7 @@ const Ticket = () => {
     {
       name: "Subject",
       selector: (row) => row.subject,
+      width: "250px",
     },
     {
       name: "Created At",
@@ -149,6 +150,7 @@ const Ticket = () => {
 
         </div>
       ),
+      width: "200px",
     },
 
 
@@ -169,6 +171,7 @@ const Ticket = () => {
           </div> */}
         </>
       ),
+      width: "200px",
     },
   ];
 

@@ -269,7 +269,7 @@ const Service = () => {
 
 
   const handleShowModal = (item, freetrial_status) => {
-
+  
     if (
       kycStatus == 1 &&
       (userdata?.kyc_verification == 0 || userdata?.kyc_verification == 2) &&

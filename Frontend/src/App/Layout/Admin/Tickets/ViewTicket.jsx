@@ -337,7 +337,7 @@ const ViewTicket = () => {
                       key={index}
                       className="list-group-item bg-transparent my-2 border shadow-lg"
                     >
-                      <div className="d-flex align-items-center justify-content-between">
+                      <div className="d-flex  justify-content-between">
                         <div className="d-flex align-items-center">
                           <img
                             src="assets/images/avatar/1.png"

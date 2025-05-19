@@ -116,6 +116,7 @@ const ClientOrderlist = () => {
                 let filteredData = response.data;
                 setTotalRows(response.pagination?.totalRecords)
                 setClients(filteredData);
+                console.log("filteredData", filteredData)
 
             }
         } catch (error) {
@@ -166,7 +167,7 @@ const ClientOrderlist = () => {
         },
         {
             name: 'Order Status',
-            selector: row => row?.data?.data?.status || "-",
+            selector: row => row?.data?.[0]?.Status || "-",
             sortable: true,
             width: '200px',
         },
