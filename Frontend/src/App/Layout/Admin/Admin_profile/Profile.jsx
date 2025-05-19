@@ -79,11 +79,11 @@ const Profile = () => {
       backForword={true}
     >
 
-      
+
       <div className="container">
         <div className="main-body">
           <div className="row">
-         
+
             <div className="col-lg-4">
               <div className="card">
                 <div className="card-body text-center">
@@ -122,7 +122,7 @@ const Profile = () => {
               </div>
             </div>
 
-        
+
             <div className="col-lg-8">
               <div className="card">
                 <div className="card-body mt-1">

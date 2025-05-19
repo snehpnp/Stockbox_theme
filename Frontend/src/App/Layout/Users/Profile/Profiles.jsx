@@ -31,7 +31,7 @@ const Profiles = () => {
     newPassword: false,
     confirmPassword: false,
   });
-  
+
 
   // const [dmateStatus, setDemateStatus] = useState(0);
 
@@ -110,7 +110,7 @@ const Profiles = () => {
 
   const getuserdetail = async () => {
     try {
-      const response = await GetUserData(userid, token);      
+      const response = await GetUserData(userid, token);
 
       if (response.status) {
         setUserDetail(response.data);
@@ -255,6 +255,7 @@ const Profiles = () => {
       Page_title="User Profile"
       button_status={false}
       backbutton_status={false}
+      backForword={true}
     >
       <div className="container mt-4">
         <div className="row">
