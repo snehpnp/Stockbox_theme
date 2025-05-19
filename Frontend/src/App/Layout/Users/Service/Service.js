@@ -268,16 +268,19 @@ const Service = () => {
 
 
 
-  const handleShowModal = (item) => {
+  const handleShowModal = (item, freetrial_status) => {
 
-    if (kycStatus == 1 && (userdata?.kyc_verification == 0 || userdata?.kyc_verification == 2)) {
-      setViewModel2(true)
+    if (
+      kycStatus == 1 &&
+      (userdata?.kyc_verification == 0 || userdata?.kyc_verification == 2) &&
+      (freetrial_status == 1 && item.price > 0)
+    ) {
+      setViewModel2(true);
     } else {
       setSelectedPlanDetails(item);
       setShowModal(true);
     }
   };
-
 
 
 
@@ -307,6 +310,7 @@ const Service = () => {
     return filteredPlans;
 
   }, [plan, selectedPlan, sortCriteria]);
+
 
 
 
@@ -374,8 +378,6 @@ const Service = () => {
           <div className="pricing-container price1 mt-4">
 
             <div className="row row-cols-1 row-cols-lg-3">
-              {/* Free Tier */}
-              {console.log("getFilteredPlans", getFilteredPlans)}
               {[...getFilteredPlans]
                 ?.sort((a, b) => b.freetrial_status - a.freetrial_status)
                 ?.map((item) =>
@@ -437,7 +439,7 @@ const Service = () => {
                             <div className="border-top pt-3">
                               <button
                                 className="btn btn-primary rounded-pill mt-2 mt-sm-0 ms-3"
-                                onClick={() => handleShowModal(plan)}
+                                onClick={() => handleShowModal(plan, item.freetrial_status)}
                               >
                                 Subscribe Now
                               </button>
