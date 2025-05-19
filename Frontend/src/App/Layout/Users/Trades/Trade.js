@@ -262,7 +262,7 @@ function Trade() {
 
       if (response.status) {
         setTradeData((prev) => ({ ...prev, live: response.data }));
-        setTotalPages(response.pagination?.totalPages || 1);
+        setTotalPages(response.pagination?.totalPages);
       }
     } catch (error) {
       console.error("Error fetching trade data:", error);
@@ -286,7 +286,7 @@ function Trade() {
 
       if (response.status) {
         setTradeData((prev) => ({ ...prev, close: response.data }));
-        setTotalPages(response.pagination?.totalPages || 1);
+        setTotalPages(response.pagination?.totalPages);
       }
     } catch (error) {
       console.error("Error fetching close trade data:", error);
