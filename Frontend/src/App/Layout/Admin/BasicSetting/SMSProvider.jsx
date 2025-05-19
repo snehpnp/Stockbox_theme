@@ -125,7 +125,7 @@ const SMSProvider = () => {
                                         value={client.name}
                                         disabled />
                                 </div>
-                                {['pushsms', 'pgapi.smartping.ai'].includes(client.name) && (
+                                {['pushsms', 'smartping'].includes(client.name) && (
                                     <div className="form-group">
                                         <label>User Name</label>
                                         <input type="text"
@@ -134,7 +134,7 @@ const SMSProvider = () => {
                                             disabled />
                                     </div>
                                 )}
-                                {client.name === 'pgapi.smartping.ai' && (
+                                {client.name === 'smartping' && (
                                     <div className="form-group">
                                         <label>Password</label>
                                         <input type="text"
@@ -143,7 +143,7 @@ const SMSProvider = () => {
                                             disabled />
                                     </div>
                                 )}
-                                {client.name !== 'pgapi.smartping.ai' && (
+                                {client.name !== 'smartping' && (
                                     <div className="form-group">
                                         <label>Auth Key</label>
                                         <input type="text"
@@ -166,7 +166,7 @@ const SMSProvider = () => {
                                         value={client.url}
                                         disabled />
                                 </div>
-                                {['pushsms', 'pgapi.smartping.ai'].includes(client.name) ? (
+                                {['pushsms', 'smartping'].includes(client.name) ? (
                                     <div className="form-group">
                                         <label>Entity ID</label>
                                         <input type="text"
@@ -202,7 +202,7 @@ const SMSProvider = () => {
                                 value={updateData.name}
                                 disabled />
                         </div>
-                        {['pushsms', 'pgapi.smartping.ai'].includes(updateData.name) && (
+                        {['pushsms', 'smartping'].includes(updateData.name) && (
                             <div className="col-md-12">
                                 <label>User Name</label>
                                 <input type="text"
@@ -211,7 +211,7 @@ const SMSProvider = () => {
                                     onChange={(e) => updateServiceTitle({ username: e.target.value })} />
                             </div>
                         )}
-                        {updateData.name === 'pgapi.smartping.ai' && (
+                        {updateData.name === 'smartping' && (
                             <div className="col-md-12">
                                 <label>Password</label>
                                 <input type="text"
@@ -220,7 +220,7 @@ const SMSProvider = () => {
                                     onChange={(e) => updateServiceTitle({ password: e.target.value })} />
                             </div>
                         )}
-                        {updateData.name !== 'pgapi.smartping.ai' && (
+                        {updateData.name !== 'smartping' && (
                             <div className="col-md-12">
                                 <label>API Key</label>
                                 <input type="text"
@@ -243,7 +243,7 @@ const SMSProvider = () => {
                                 value={updateData.url}
                                 onChange={(e) => updateServiceTitle({ url: e.target.value })} />
                         </div>
-                        {['pushsms', 'pgapi.smartping.ai'].includes(updateData.name) ? (
+                        {['pushsms', 'smartping'].includes(updateData.name) ? (
                             <div className="col-md-12">
                                 <label>Entity ID</label>
                                 <input type="text"
