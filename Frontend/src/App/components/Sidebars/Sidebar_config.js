@@ -34,9 +34,9 @@ const Admin = [
     label: "Plan",
     icon: "Rocket",
     children: [
-      { label: "Package", icon: "Repeat2", link: "/admin/plan", name: "Package" },
-      { label: "Segment", icon: "ScatterChart", link: "/admin/service", name: "Segment" },
       { label: "Category", icon: "ClipboardType", link: "/admin/category", name: "Category" },
+      { label: "Package", icon: "Repeat2", link: "/admin/plan", name: "Package" },
+      // { label: "Segment", icon: "ScatterChart", link: "/admin/service", name: "Segment" },
       // { label: "Free Trial Status", icon: "Boxes", link: "/admin/freetrialstatus", name: "FreeTrialStatus" },
     ],
     name: "Plan",

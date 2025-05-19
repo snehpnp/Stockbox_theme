@@ -233,7 +233,7 @@ const History = () => {
         {
             name: 'Total Amount',
             selector: row => row?.total || "-",
-            cell: row => <div>{row?.total} <span style={{ fontSize: "12px" }}>({row?.gst}% Gst Included)</span></div>,
+            cell: row => <div>{(row?.total).toFixed(2)} <span style={{ fontSize: "12px" }}>({row?.gst}% Gst Included)</span></div>,
             sortable: true,
             width: '250px',
         },
