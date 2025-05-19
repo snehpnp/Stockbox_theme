@@ -13,7 +13,7 @@ import {
   DeleteDematAccount,
 } from "../../../Services/UserService/User";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
-
+import Kyc from "./Kyc";
 
 
 const Profiles = () => {
@@ -25,6 +25,8 @@ const Profiles = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [userDetail, setUserDetail] = useState({});
+  const [viewmodel2, setViewModel2] = useState(false);
+
 
   const [showPassword, setShowPassword] = useState({
     currentPassword: false,
@@ -294,7 +296,7 @@ const Profiles = () => {
                   >My Basket Subscription</Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="/user/kyc">User Kyc</Link>
+                  <Link onClick={() => setViewModel2(true)} >User Kyc</Link>
                 </li>
                 {userDetail?.dlinkstatus === 1 &&
                   <li className="list-group-item">
@@ -434,6 +436,16 @@ const Profiles = () => {
           </form>
 
         }
+      />
+
+      <ReusableModal
+        show={viewmodel2}
+        onClose={() => setViewModel2(false)}
+        title={<span><b>KYC Details</b></span>}
+        body={
+          <Kyc setViewModel2={setViewModel2} />
+        }
+
       />
     </Content>
   );

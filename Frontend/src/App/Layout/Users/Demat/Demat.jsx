@@ -107,7 +107,7 @@ const Demat = () => {
     setViewModel(false);
   };
 
-  
+
 
   return (
     <div>
