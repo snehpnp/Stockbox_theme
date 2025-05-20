@@ -211,10 +211,14 @@ const Service = () => {
 
 
   const handleShowModal = (item, freetrial_status) => {
+    console.log("kycStatus", kycStatus)
+    console.log("userdata?.kyc_verification", userdata?.kyc_verification)
+    console.log("freetrial_status", freetrial_status)
+    console.log("item.price", item.price)
     if (
       kycStatus == 1 &&
       (userdata?.kyc_verification == 0 || userdata?.kyc_verification == 2) &&
-      (freetrial_status == 1 && item.price > 0)
+      item.price > 0
     ) {
       setViewModel2(true);
     }
@@ -318,11 +322,6 @@ const Service = () => {
 
 
 
-
-
-
-
-
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedPlanDetails(null);
@@ -330,6 +329,7 @@ const Service = () => {
     setManualCoupon("")
     setAppliedCoupon(null)
   };
+
 
 
 
@@ -348,7 +348,6 @@ const Service = () => {
     return filteredPlans;
 
   }, [plan, selectedPlan, sortCriteria]);
-
 
 
 
