@@ -66,6 +66,7 @@ const Service = () => {
   const [gstdata, setGstdata] = useState([]);
   const [sortCriteria, setSortCriteria] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoading1, setIsLoading1] = useState(false);
 
   const [viewmodel, setViewModel] = useState(false);
   const [viewmodel2, setViewModel2] = useState(false);
@@ -73,6 +74,7 @@ const Service = () => {
   const [discription, setDiscription] = useState("");
 
   const [kycStatus, setKycStatus] = useState("")
+
 
 
 
@@ -208,6 +210,54 @@ const Service = () => {
 
 
 
+  const handleShowModal = (item, freetrial_status) => {
+    if (
+      kycStatus == 1 &&
+      (userdata?.kyc_verification == 0 || userdata?.kyc_verification == 2) &&
+      (freetrial_status == 1 && item.price > 0)
+    ) {
+      setViewModel2(true);
+    }
+    else if (freetrial_status == 1 && item.price == 0) {
+      freeTrialsubscription(item);
+    }
+    else {
+      setSelectedPlanDetails(item);
+      setShowModal(true);
+    }
+  };
+
+  ;
+
+
+  const freeTrialsubscription = async (item) => {
+    setIsLoading1(true);
+
+    try {
+      const data = {
+        plan_ids: Array.isArray(item) ? item.map(i => i._id) : [item._id],
+        client_id: userid,
+        coupon_code: appliedCoupon?.code || 0,
+        orderid: "",
+        discount: appliedCoupon?.value || 0,
+        price: item.price,
+      };
+
+      const response = await AddplanSubscription(data, token);
+      if (response.status) {
+        navigate("/user/thankyou", {
+          state: {
+            planType: data,
+          }
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching coupons:", error);
+    }
+    setIsLoading1(false);
+
+  };
+
 
 
   const AddSubscribeplan = async (item) => {
@@ -268,19 +318,7 @@ const Service = () => {
 
 
 
-  const handleShowModal = (item, freetrial_status) => {
 
-    if (
-      kycStatus == 1 &&
-      (userdata?.kyc_verification == 0 || userdata?.kyc_verification == 2) &&
-      (freetrial_status == 1 && item.price > 0)
-    ) {
-      setViewModel2(true);
-    } else {
-      setSelectedPlanDetails(item);
-      setShowModal(true);
-    }
-  };
 
 
 
@@ -322,6 +360,28 @@ const Service = () => {
 
 
 
+
+  const modalStyle = {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100vw",
+    height: "100vh",
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 9999,
+  };
+
+  const loaderBoxStyle = {
+    backgroundColor: "#fff",
+    padding: "40px 60px",
+    borderRadius: "14px",
+    textAlign: "center",
+    boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
+    minWidth: "280px",
+  };
 
 
   return (
@@ -732,14 +792,6 @@ const Service = () => {
                       (gstStatus === 1 ? ((selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0)) * gstdata) / 100 : 0)
                     )?.toFixed(2)}
 
-
-
-
-                    {/* if want to less totel price - discount price use this logic */}
-                    {/* {(
-                      (selectedPlanDetails?.price * (1 + gstdata / 100)) -
-                      (appliedCoupon ? discountedPrice || 0 : 0)  // Coupon hatne pe discount 0
-                    ).toFixed(2)} */}
                   </span>
                 </div>
 
@@ -790,6 +842,18 @@ const Service = () => {
           </>
         }
       />
+
+      {isLoading1 && (
+        <div style={modalStyle}>
+          <div style={loaderBoxStyle}>
+            <div className="custom-spinner" />
+            <p><Loader /></p>
+          </div>
+
+        </div>
+      )}
+
+
 
       <ReusableModal
         show={viewmodel2}

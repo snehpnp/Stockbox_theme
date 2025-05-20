@@ -458,7 +458,7 @@ const Strategy = () => {
                       <span className="alert alert-success px-2 py-1 me-2">{stock?.calltype}</span>
                     </td>
                     <td>{stock?.tradesymbols}</td>
-                    <td>{stock?.lot}</td>
+                    <td>{signalquantity ? stock?.lot * signalquantity : stock?.lot}</td>
                   </tr>
                 ))}
               </tbody>
