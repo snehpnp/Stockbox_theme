@@ -47,6 +47,7 @@ function Trade() {
   const [brokerstatus, setBrokerstatus] = useState([])
   const [targetEnabled, setTargetEnabled] = useState(1);
   const [checkdata, setCheckdata] = useState([])
+  const [searchInput, setSearchInput] = useState("");
 
 
 
@@ -134,7 +135,7 @@ function Trade() {
 
   useEffect(() => {
     fetchData();
-  }, [page, selectedTab]);
+  }, [page, selectedTab, searchInput]);
 
 
 
@@ -256,7 +257,7 @@ function Trade() {
         page: page,
         service_id: selectedService,
         client_id: userid,
-        search: "",
+        search: searchInput,
       };
       const response = await GetSignalClient(data, token);
 
@@ -631,11 +632,11 @@ function Trade() {
   return (
     <Content Page_title="Trades" button_title="Add Trade" button_status={false}>
       <div className="page-content">
-        <div>
-          <label htmlFor="planSelect" className="mb-1">
-            Trades for you
-          </label>
-          <div className="col-lg-4 d-flex">
+        <div className="row align-items-end g-3">
+          <div className="col-lg-6">
+            <label htmlFor="planSelect" className="form-label">
+              Trades for you
+            </label>
             <select
               id="planSelect"
               className="form-select"
@@ -643,12 +644,28 @@ function Trade() {
               onChange={(e) => setSelectedService(e.target.value)}
             >
               {service?.map((item) => (
-
                 <option key={item._id} value={item._id}>
                   {item?.title}
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className="col-lg-6 ">
+            <label htmlFor="searchInput" className="form-label fw-semibold">
+              🔍 Search
+            </label>
+            <div className="input-group">
+              <input
+                type="text"
+                id="searchInput"
+                className="form-control rounded shadow-sm"
+                placeholder="Type to search..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label="Search input"
+              />
+            </div>
           </div>
         </div>
 

@@ -321,29 +321,29 @@ const Staffpermission = () => {
 
 
 
-    // useEffect(() => {
-    //     if (formik.values.userPermissions == true) {
-    //         formik.setFieldValue('addclient', true);
-    //         formik.setFieldValue('viewclient', true);
-    //         formik.setFieldValue('Ownclient', false);
-    //         formik.setFieldValue('viewdetail', true);
-    //         formik.setFieldValue('editclient', true);
-    //         // formik.setFieldValue('deleteclient', true);
-    //         formik.setFieldValue('clientchangestatus', true);
-    //         formik.setFieldValue('assignPackage', true);
-    //     }
-    //     else {
-    //         formik.setFieldValue('addclient', false);
-    //         formik.setFieldValue('viewclient', false);
-    //         // formik.setFieldValue('Ownclient', true);
-    //         formik.setFieldValue('viewdetail', false);
-    //         formik.setFieldValue('editclient', false);
-    //         // formik.setFieldValue('deleteclient', false);
-    //         formik.setFieldValue('clientchangestatus', false);
-    //         formik.setFieldValue('assignPackage', false);
-    //     }
+    useEffect(() => {
+        if (formik.values.userPermissions == true) {
+            formik.setFieldValue('addclient', true);
+            formik.setFieldValue('viewclient', true);
+            formik.setFieldValue('Ownclient', false);
+            formik.setFieldValue('viewdetail', true);
+            formik.setFieldValue('editclient', true);
+            // formik.setFieldValue('deleteclient', true);
+            formik.setFieldValue('clientchangestatus', true);
+            formik.setFieldValue('assignPackage', true);
+        }
+        else {
+            formik.setFieldValue('addclient', false);
+            formik.setFieldValue('viewclient', false);
+            // formik.setFieldValue('Ownclient', true);
+            formik.setFieldValue('viewdetail', false);
+            formik.setFieldValue('editclient', false);
+            // formik.setFieldValue('deleteclient', false);
+            formik.setFieldValue('clientchangestatus', false);
+            formik.setFieldValue('assignPackage', false);
+        }
 
-    // }, [formik.values.userPermissions])
+    }, [formik.values.userPermissions])
 
 
 
@@ -369,17 +369,14 @@ const Staffpermission = () => {
         if (formik.values.userPermissions) {
             permissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
-            const anyPermissionChecked = permissions.some(permission => formik.values[permission]);
+            // const anyPermissionChecked = permissions.some(permission => formik.values[permission]);
 
-            if (!anyPermissionChecked) {
+            // if (!anyPermissionChecked) {
 
-                permissions.forEach(permission => formik.setFieldValue(permission, false));
-            }
+            permissions.forEach(permission => formik.setFieldValue(permission, false));
+            // }
         }
     }, [formik.values.userPermissions]);
-
-
-
 
 
 
@@ -423,11 +420,11 @@ const Staffpermission = () => {
             signalPermissions.forEach(permission => formik.setFieldValue(permission, true));
             formik.setFieldValue("ownsignal", false);
         } else {
-            const anySignalChecked = signalPermissions.some(permission => formik.values[permission]);
+            // const anySignalChecked = signalPermissions.some(permission => formik.values[permission]);
 
-            if (!anySignalChecked) {
-                signalPermissions.forEach(permission => formik.setFieldValue(permission, false));
-            }
+            // if (!anySignalChecked) {
+            signalPermissions.forEach(permission => formik.setFieldValue(permission, false));
+            // }
         }
     }, [formik.values.Signalpermission]);
 
@@ -471,11 +468,11 @@ const Staffpermission = () => {
         if (formik.values.categorypermission) {
             categoryPermissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
-            const anyCategoryChecked = categoryPermissions.some(permission => formik.values[permission]);
+            // const anyCategoryChecked = categoryPermissions.some(permission => formik.values[permission]);
 
-            if (!anyCategoryChecked) {
-                categoryPermissions.forEach(permission => formik.setFieldValue(permission, false));
-            }
+            // if (!anyCategoryChecked) {
+            categoryPermissions.forEach(permission => formik.setFieldValue(permission, false));
+            // }
         }
     }, [formik.values.categorypermission]);
 
@@ -513,11 +510,11 @@ const Staffpermission = () => {
         if (formik.values.planpermission) {
             planPermissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
-            const anyPlanChecked = planPermissions.some(permission => formik.values[permission]);
+            // const anyPlanChecked = planPermissions.some(permission => formik.values[permission]);
 
-            if (!anyPlanChecked) {
-                planPermissions.forEach(permission => formik.setFieldValue(permission, false));
-            }
+            // if (anyPlanChecked) {
+            planPermissions.forEach(permission => formik.setFieldValue(permission, false));
+            // }
         }
     }, [formik.values.planpermission]);
 
@@ -570,11 +567,11 @@ const Staffpermission = () => {
     // }, [formik.values.Staffpermission]) 
 
 
-    useEffect(() => {
-        if (formik.values.addstaff || formik.values.editstaff || formik.values.staffstatus) {
-            formik.setFieldValue('viewstaff', true);
-        }
-    }, [formik.values.addstaff, formik.values.editstaff, formik.values.staffstatus]);
+    // useEffect(() => {
+    //     if (formik.values.addstaff || formik.values.editstaff || formik.values.staffstatus) {
+    //         formik.setFieldValue('viewstaff', true);
+    //     }
+    // }, [formik.values.addstaff, formik.values.editstaff, formik.values.staffstatus]);
 
 
 
@@ -586,11 +583,11 @@ const Staffpermission = () => {
             bannerPermissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
 
-            const anyBannerChecked = bannerPermissions.some(permission => formik.values[permission]);
+            // const anyBannerChecked = bannerPermissions.some(permission => formik.values[permission]);
 
-            if (!anyBannerChecked) {
-                bannerPermissions.forEach(permission => formik.setFieldValue(permission, false));
-            }
+            // if (!anyBannerChecked) {
+            bannerPermissions.forEach(permission => formik.setFieldValue(permission, false));
+            // }
         }
     }, [formik.values.bannerpermission]);
 
@@ -637,11 +634,11 @@ const Staffpermission = () => {
 
             couponPermissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
-            const anyCouponChecked = couponPermissions.some(permission => formik.values[permission]);
+            // const anyCouponChecked = couponPermissions.some(permission => formik.values[permission]);
 
-            if (!anyCouponChecked) {
-                couponPermissions.forEach(permission => formik.setFieldValue(permission, false));
-            }
+            // if (!anyCouponChecked) {
+            couponPermissions.forEach(permission => formik.setFieldValue(permission, false));
+            // }
         }
     }, [formik.values.couponpermission]);
 
@@ -690,11 +687,11 @@ const Staffpermission = () => {
         if (formik.values.blogspermission) {
             blogPermissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
-            const anyBlogChecked = blogPermissions.some(permission => formik.values[permission]);
+            // const anyBlogChecked = blogPermissions.some(permission => formik.values[permission]);
 
-            if (!anyBlogChecked) {
-                blogPermissions.forEach(permission => formik.setFieldValue(permission, false));
-            }
+            // if (!anyBlogChecked) {
+            blogPermissions.forEach(permission => formik.setFieldValue(permission, false));
+            // }
         }
     }, [formik.values.blogspermission]);
 
@@ -744,11 +741,11 @@ const Staffpermission = () => {
             faqPermissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
 
-            const anyFaqChecked = faqPermissions.some(permission => formik.values[permission]);
+            // const anyFaqChecked = faqPermissions.some(permission => formik.values[permission]);
 
-            if (!anyFaqChecked) {
-                faqPermissions.forEach(permission => formik.setFieldValue(permission, false));
-            }
+            // if (!anyFaqChecked) {
+            faqPermissions.forEach(permission => formik.setFieldValue(permission, false));
+            // }
         }
     }, [formik.values.faqpermission]);
 
@@ -793,11 +790,11 @@ const Staffpermission = () => {
         if (formik.values.newspermission) {
             newsPermissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
-            const anyNewsChecked = newsPermissions.some(permission => formik.values[permission]);
+            // const anyNewsChecked = newsPermissions.some(permission => formik.values[permission]);
 
-            if (!anyNewsChecked) {
-                newsPermissions.forEach(permission => formik.setFieldValue(permission, false));
-            }
+            // if (!anyNewsChecked) {
+            newsPermissions.forEach(permission => formik.setFieldValue(permission, false));
+            // }
         }
     }, [formik.values.newspermission]);
 
@@ -866,11 +863,11 @@ const Staffpermission = () => {
             permissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
 
-            const anyChecked = permissions.some(permission => formik.values[permission]);
+            // const anyChecked = permissions.some(permission => formik.values[permission]);
 
-            if (!anyChecked) {
-                permissions.forEach(permission => formik.setFieldValue(permission, false));
-            }
+            // if (!anyChecked) {
+            permissions.forEach(permission => formik.setFieldValue(permission, false));
+            // }
         }
     }, [formik.values.otherpermission]);
 
@@ -906,11 +903,11 @@ const Staffpermission = () => {
         if (formik.values.basketpermission) {
             permissions.forEach(permission => formik.setFieldValue(permission, true));
         } else {
-            const anyChecked = permissions.some(permission => formik.values[permission]);
+            // const anyChecked = permissions.some(permission => formik.values[permission]);
 
-            if (!anyChecked) {
-                permissions.forEach(permission => formik.setFieldValue(permission, false));
-            }
+            // if (!anyChecked) {
+            permissions.forEach(permission => formik.setFieldValue(permission, false));
+            // }
         }
     }, [formik.values.basketpermission]);
 

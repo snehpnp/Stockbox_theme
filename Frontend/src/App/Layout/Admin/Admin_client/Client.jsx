@@ -428,7 +428,6 @@ const Client = () => {
         client_id: client._id,
         price: updatetitle.price,
       };
-      // const response = await PlanSubscription(data, token);
       const response = await PlanSubscriptionWithPlan(data, token);
       if (response && response.status) {
         showCustomAlert("success", response.message);
@@ -783,6 +782,8 @@ const Client = () => {
           </div>
         </div>
       </div>
+
+
       <ReusableModal
         show={isModalVisible}
         onClose={() => handleCancel()}
@@ -1056,6 +1057,7 @@ const Client = () => {
             )}
           </>
         }
+
       />
     </div>
   );

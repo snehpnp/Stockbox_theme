@@ -25,6 +25,8 @@ const Strategy = () => {
   const [signaldetail, setSignaldetail] = useState("");
   const [brokerstatus, setBrokerstatus] = useState([])
   const [signalquantity, setSignalquantity] = useState("")
+  const [searchInput, setSearchInput] = useState("");
+
 
 
 
@@ -35,7 +37,7 @@ const Strategy = () => {
 
   const getSignalopenStrategydata = async () => {
     try {
-      const data = { client_id: userid, search: "", page: page };
+      const data = { client_id: userid, search: searchInput, page: page };
       const response = await getOpenSignalStrategyData(data, token);
       if (response.status) {
         setSignaldata(response.data);
@@ -49,7 +51,7 @@ const Strategy = () => {
 
   const getSignalcloseStrategydata = async () => {
     try {
-      const data = { client_id: userid, search: "", page: page };
+      const data = { client_id: userid, search: searchInput, page: page };
       const response = await getCloseSignalStrategyData(data, token);
       if (response.status) {
         setSignaldata(response.data);
@@ -80,7 +82,7 @@ const Strategy = () => {
       getSignalopenStrategydata();
     }
 
-  }, [selectedTab]);
+  }, [selectedTab, searchInput]);
 
 
   const handlePageChange = (direction) => {
@@ -349,11 +351,6 @@ const Strategy = () => {
   };
 
 
-  console.log("signaldetail", signaldetail)
-
-
-
-
 
 
   return (
@@ -363,6 +360,25 @@ const Strategy = () => {
       backbutton_status={false}
     // backForword={true}
     >
+      <div className="row align-items-end g-3">
+        <div className="col-lg-6 mb-3">
+          <label htmlFor="searchInput" className="form-label fw-semibold">
+            🔍 Search
+          </label>
+          <div className="input-group">
+            <input
+              type="text"
+              id="searchInput"
+              className="form-control rounded shadow-sm"
+              placeholder="Type to search..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              aria-label="Search input"
+            />
+          </div>
+        </div>
+
+      </div>
       <ul
         className="nav nav-pills border-bottom my-3 justify-content-center"
         role="tablist"

@@ -116,22 +116,19 @@ const Ticket = () => {
     {
       name: "Ticket ID",
       selector: (row) => `#${row?.ticketnumber}`,
-      width: "250px",
+
     },
     {
       name: "Email",
       selector: (row) => row?.client?.Email,
-      width: "250px",
     },
     {
       name: "Subject",
       selector: (row) => row.subject,
-      width: "250px",
     },
     {
       name: "Created At",
       selector: (row) => fDate(row?.created_at),
-      width: "250px",
     },
     {
       name: "Status",
@@ -150,7 +147,6 @@ const Ticket = () => {
 
         </div>
       ),
-      width: "200px",
     },
 
 
@@ -171,7 +167,6 @@ const Ticket = () => {
           </div> */}
         </>
       ),
-      width: "200px",
     },
   ];
 

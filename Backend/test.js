@@ -46,4 +46,28 @@
 
 
 
+// let arr = [1, 2, 3, 3, 4, 5]
+// let emptyarr = []
 
+// for (let i = 0; i < arr.length; i++) {
+//     for (let j = 0; j < arr.length; j++) {
+//         if (arr[i] === arr[j] && !emptyarr.includes(arr[i])) {
+//             emptyarr.push(arr[i])
+//         }
+//     }
+// }
+
+// console.log(emptyarr)
+
+
+// let arr = [1, 2, 3, 3, 4, 4, 5];
+// let emptyarr = [];
+
+// for (let i = 0; i < arr.length; i++) {
+//     for (let j = i + 1; j < arr.length; j++) {
+//         if (arr[i] === arr[j] && i !== j) {
+//             emptyarr.push(arr[i]);
+//         }
+//     }
+// }
+// console.log(emptyarr); 

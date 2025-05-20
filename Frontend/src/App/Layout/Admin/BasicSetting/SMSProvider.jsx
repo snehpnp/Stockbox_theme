@@ -6,10 +6,13 @@ import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 import { SquarePen } from 'lucide-react';
 
 const SMSProvider = () => {
+
+
     const [clients, setClients] = useState([]);
     const [searchInput, setSearchInput] = useState("");
     const [model, setModel] = useState(false);
     const token = localStorage.getItem('token');
+
 
     const [updateData, setUpdateData] = useState({
         id: "",
@@ -22,6 +25,8 @@ const SMSProvider = () => {
         url: "",
         apikey: ""
     });
+
+
 
     const getProvider = async () => {
         try {
@@ -37,9 +42,12 @@ const SMSProvider = () => {
         }
     };
 
+
+
     useEffect(() => {
         getProvider();
     }, [searchInput]);
+
 
     const handleSwitchChange = async (client) => {
         const data = { providerId: client._id };
@@ -54,7 +62,9 @@ const SMSProvider = () => {
         } catch (err) {
             showCustomAlert("error", "There was an error processing your request.");
         }
+
     };
+
 
     const updateServiceTitle = (updatedField) => {
         setUpdateData((prev) => ({ ...prev, ...updatedField }));
