@@ -211,10 +211,7 @@ const Service = () => {
 
 
   const handleShowModal = (item, freetrial_status) => {
-    console.log("kycStatus", kycStatus)
-    console.log("userdata?.kyc_verification", userdata?.kyc_verification)
-    console.log("freetrial_status", freetrial_status)
-    console.log("item.price", item.price)
+
     if (
       kycStatus == 1 &&
       (userdata?.kyc_verification == 0 || userdata?.kyc_verification == 2) &&
