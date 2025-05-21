@@ -1,29 +1,4 @@
-const winston = require('winston');
-
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.json(),
-  transports: [
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'combined.log' }),
-  ],
-});
-
-if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.simple(),
-  }));
-}
-
-app.use((req, res, next) => {
-  logger.info(`Request: ${req.method} ${req.url}`);
-  next();
-});
-
-app.use((err, req, res, next) => {
-  logger.error(`Error: ${err.message}`);
-  next();
-});"use strict";
+"use strict";
 
 
 require('dotenv').config();
@@ -193,4 +168,4 @@ const PORT = process.env.PORT || 3002;
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
-
+const logs_Modal = db.Logs;
