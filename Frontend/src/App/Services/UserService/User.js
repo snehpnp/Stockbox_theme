@@ -166,7 +166,7 @@ export async function GetServicedata(token) {
 
 export async function GetCategorylist(token) {
     try {
-        const res = await axios.get(`${Config.base_url}api/list/planbycategory`, {
+        const res = await axios.get(`${Config.base_url}api/list/planbycategorys`, {
             headers: {
                 Authorization: `${token}`,
             },
@@ -196,9 +196,9 @@ export async function GETPlanList(id, token) {
 
 // get plan by category
 
-export async function GetPlanByCategory(token) {
+export async function GetPlanByCategory(id, token) {
     try {
-        const res = await axios.get(`${Config.base_url}api/list/planbycategory`, {
+        const res = await axios.get(`${Config.base_url}api/list/planbycategorys/${id}`, {
             headers: {
                 Authorization: `${token}`,
             },

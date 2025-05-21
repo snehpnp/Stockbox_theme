@@ -197,7 +197,7 @@ const Service = () => {
 
   const getPlan = async () => {
     try {
-      const response = await GetPlanByCategory(token);
+      const response = await GetPlanByCategory(userid, token);
       if (response.status) {
         setPlan(response?.data);
         setCategory(response?.data.sort((a, b) => b._id.localeCompare(a._id)));
@@ -211,7 +211,6 @@ const Service = () => {
 
 
   const handleShowModal = (item, freetrial_status) => {
-
     if (
       kycStatus == 1 &&
       (userdata?.kyc_verification == 0 || userdata?.kyc_verification == 2) &&
