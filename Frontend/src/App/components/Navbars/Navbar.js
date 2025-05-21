@@ -19,6 +19,8 @@ import { GetUserData } from "../../Services/UserService/User";
 import { GetNotificationData } from "../../Services/UserService/User";
 import { base_url } from "../../../Utils/config";
 import showCustomAlert from "../../Extracomponents/CustomAlert/CustomAlert";
+import Kyc from "../../Layout/Users/Profile/Kyc";
+import ReusableModal from "../Models/ReusableModal1";
 
 
 const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
@@ -52,6 +54,8 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
   const [viewmodel, setViewModel] = useState(false);
   const [UserDetail, setUserDetail] = useState([]);
   const [userNotification, setUserNotification] = useState([]);
+  const [viewmodel2, setViewModel2] = useState(false);
+
   const [statusinfo, setStatusinfo] = useState({
     aliceuserid: "",
     apikey: "",
@@ -71,6 +75,21 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       window.location.href = "/user-login";
     }
   }, [UserDetail?.devicetoken]);
+
+
+  useEffect(() => {
+    if (
+      UserDetail &&
+      getstatus[0]?.kyc !== 0 &&
+      UserDetail?.kyc_verification == 2 &&
+      Role === "USER"
+    ) {
+      setViewModel2(true);
+    }
+  }, [UserDetail, Role]);
+
+
+
 
 
 
@@ -1009,6 +1028,14 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
         {viewmodel && (
           <BrokersData closeModal={closeBrokerModal} data={UserDetail} />
         )}
+
+        <ReusableModal
+          show={viewmodel2}
+          onClose={() => setViewModel2(false)}
+          title={<>KYC</>}
+          body={<Kyc setViewModel2={setViewModel2} />}
+          disableClose={false}
+        />
       </nav>
     </>
   );

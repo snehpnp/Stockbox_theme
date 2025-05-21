@@ -31,17 +31,17 @@ const Service = () => {
 
   const navigate = useNavigate();
 
-  const [selectedPlan, setSelectedPlan] = useState("all");
 
+
+  const [selectedPlan, setSelectedPlan] = useState("all");
   const [category, setCategory] = useState([]);
   const [plan, setPlan] = useState([]);
   const [userdata, setUserdata] = useState([]);
 
 
+
   const [showModal, setShowModal] = useState(false);
   const [selectedPlanDetails, setSelectedPlanDetails] = useState(null);
-
-
 
 
 
@@ -50,12 +50,10 @@ const Service = () => {
   const [offlinePaymentStatus, setOfflinePaymentStatus] = useState()
 
 
+
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [manualCoupon, setManualCoupon] = useState("");
-
   const [coupondata, setCouponData] = useState("");
-
-
   const [discountedPrice, setDiscountedPrice] = useState(0);
 
 
@@ -67,14 +65,11 @@ const Service = () => {
   const [sortCriteria, setSortCriteria] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isLoading1, setIsLoading1] = useState(false);
-
   const [viewmodel, setViewModel] = useState(false);
   const [viewmodel2, setViewModel2] = useState(false);
-
+  const [viewmodel3, setViewModel3] = useState(false);
   const [discription, setDiscription] = useState("");
-
   const [kycStatus, setKycStatus] = useState("")
-
 
 
 
@@ -85,6 +80,8 @@ const Service = () => {
     getkeybydata();
     fetchUserData();
   }, []);
+
+
 
 
 
@@ -103,6 +100,7 @@ const Service = () => {
 
 
 
+
   const handleCouponSelect = (coupon) => {
     setManualCoupon(coupon?.code);
     setCouponData(coupon);
@@ -110,7 +108,6 @@ const Service = () => {
       applyButtonRef.current.focus();
     }
   };
-
 
 
 
@@ -157,7 +154,6 @@ const Service = () => {
 
 
 
-
   const getCoupon = async () => {
     try {
       const response = await GetCouponlist();
@@ -168,8 +164,6 @@ const Service = () => {
       console.error("Error fetching coupons:", error);
     }
   };
-
-
 
 
 
@@ -190,8 +184,6 @@ const Service = () => {
       console.error("Error fetching coupons:", error);
     }
   };
-
-
 
 
 
@@ -227,7 +219,7 @@ const Service = () => {
     }
   };
 
-  ;
+
 
 
   const freeTrialsubscription = async (item) => {
@@ -277,7 +269,6 @@ const Service = () => {
         currency: "INR",
         title: item?.title || "Subscription Plan",
 
-
         handler: async function (response1) {
           const data = {
             plan_ids: Array.isArray(item) ? item.map(i => i._id) : [item._id],
@@ -288,20 +279,30 @@ const Service = () => {
             price: finalAmount,
           };
 
+          setIsLoading1(true);
+          setShowModal(false);
           try {
             const response2 = await AddplanSubscription(data, token);
-            if (response2?.status) {
-              navigate("/user/thankyou", {
-                state: {
-                  planType: data,
-                }
-              });
 
+            if (response2?.status) {
+              if (kycStatus == 2) {
+                setShowModal(false);
+                setViewModel3(true);
+              } else {
+                navigate("/user/thankyou", {
+                  state: {
+                    planType: data,
+                  },
+                });
+              }
             }
           } catch (error) {
             console.error("Error while adding plan subscription:", error);
+          } finally {
+            setIsLoading1(false);
           }
         },
+
         prefill: {},
         theme: {
           color: "#F37254",
@@ -313,8 +314,10 @@ const Service = () => {
 
     } catch (error) {
       console.error("Subscription error:", error);
+      setIsLoading1(false);
     }
   };
+
 
 
 
@@ -347,11 +350,11 @@ const Service = () => {
 
 
 
-
   const stripHtmlTags = (input) => {
     if (!input) return "";
     return input.replace(/<\/?[^>]+(>|$)/g, "");
   };
+
 
 
 
@@ -369,6 +372,7 @@ const Service = () => {
     zIndex: 9999,
   };
 
+
   const loaderBoxStyle = {
     backgroundColor: "#fff",
     padding: "40px 60px",
@@ -377,6 +381,8 @@ const Service = () => {
     boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
     minWidth: "280px",
   };
+
+
 
 
   return (
@@ -517,7 +523,13 @@ const Service = () => {
 
       </div>
 
-      <Modal show={showModal} onHide={handleCloseModal} centered size="xxl">
+
+      <Modal
+        show={showModal}
+        onHide={handleCloseModal}
+        centered size="xxl"
+
+      >
         <Modal.Header closeButton>
           <Modal.Title className="text-center w-100 heading-color modal-title h4 ">
             Plan Details
@@ -759,7 +771,6 @@ const Service = () => {
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <b>💰 GST ({gstdata}％):</b>
                     <span className="text-primary fw-bold">
-                      {/* <IndianRupee />{gstdata}％ */}
                       <IndianRupee style={{ width: '15%;' }} /> {(gstStatus === 1 ? ((selectedPlanDetails?.price - (appliedCoupon ? discountedPrice || 0 : 0)) * gstdata) / 100 : 0).toFixed(2)}
                     </span>
                   </div>
@@ -823,10 +834,13 @@ const Service = () => {
         </Modal.Body>
       </Modal>
 
+
+
       <ReusableModal
         show={viewmodel}
         onClose={() => setViewModel(false)}
         title={<>Detail</>}
+
         body={
           <>
             <div className="modal-body">
@@ -837,6 +851,8 @@ const Service = () => {
           </>
         }
       />
+
+
 
       {isLoading1 && (
         <div style={modalStyle}>
@@ -849,13 +865,21 @@ const Service = () => {
       )}
 
 
-
       <ReusableModal
         show={viewmodel2}
         onClose={() => setViewModel2(false)}
         title={<>KYC</>}
         body={<Kyc setViewModel2={setViewModel2} />}
       />
+
+      <ReusableModal
+        show={viewmodel3}
+        onClose={() => setViewModel3(false)}
+        title={<>KYC</>}
+        body={<Kyc />}
+        disableClose={false}
+      />
+
     </Content>
   );
 };

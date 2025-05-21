@@ -1,17 +1,27 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
 
-const ReusableModal = ({ show, onClose, title, body, footer, size = "md" }) => {
+const ReusableModal = ({
+  show,
+  onClose,
+  title,
+  body,
+  footer,
+  size = "md",
+  disableClose = true,
+}) => {
   return (
     <Modal
       show={show}
-      onHide={onClose}
+      onHide={disableClose ? onClose : () => { }}
       centered
       size={size}
       id="verticalycentered"
+      backdrop={disableClose ? true : "static"}
+      keyboard={disableClose}
     >
-      <Modal.Header closeButton>
-        <Modal.Title className="heading-color">{title}</Modal.Title>
+      <Modal.Header closeButton={disableClose}>
+        <Modal.Title className="heading-color ">{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body style={{ maxHeight: "300px", overflowY: "auto" }}>
         {body}

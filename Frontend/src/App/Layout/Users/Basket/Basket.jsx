@@ -98,7 +98,6 @@ function Basket() {
         setOfflinePaymentStatus(response.data[0].officepaymenystatus);
         setKycStatus(response?.data[0].kyc)
 
-
       }
     } catch (error) {
       console.error("Error fetching coupons:", error);
