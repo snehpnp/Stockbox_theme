@@ -170,14 +170,28 @@ const DashboardCards = ({ monthexpiry }) => {
     <div className="row newbg dashboard-card">
       {cardsData?.map((card, index) => (
         <div className="col-md-3" key={index}>
-          <div className={`card radius-10 mb-4 ${card.bgClass}`}>
+          <div className={`card border-0 radius-10 mb-4 ${card.bgClass}`}>
             <Link to={card.link} state={card.state}>
               <div className="card-body">
                 <div className="d-flex align-items-center">
-                  <h5 className="mb-0 primary-text">{card.value1}</h5>
-                  <div className="ms-auto">
+                  <div className="d-flex align-items-center">
+                     <div className="dashboard-icon">
                     <i className={`bx ${card.icon} fs-3`} />
+                    </div>
+  <h5 className="mb-0 primary-text ms-3">{card.value1}</h5>
                   </div>
+                
+                  <div className="ms-auto">
+                     <span className="badge bg-light-success ms-2">
+                      <i className="bx bx-up-arrow-alt fs-5" />
+                    </span>
+                  </div>
+                </div>
+                 <div className="d-flex align-items-center mt-3">
+                  <p className="mb-0 content-heading">{card.label}</p>
+                  <p className="mb-0 ms-auto">
+                  
+                  </p>
                 </div>
                 <div
                   className="progress my-2 bg-opacity-25"
@@ -192,14 +206,7 @@ const DashboardCards = ({ monthexpiry }) => {
                     aria-valuemax={100}
                   />
                 </div>
-                <div className="d-flex align-items-center">
-                  <p className="mb-0 content-heading">{card.label}</p>
-                  <p className="mb-0 ms-auto">
-                    <span>
-                      <i className="bx bx-up-arrow-alt" />
-                    </span>
-                  </p>
-                </div>
+               
               </div>
             </Link>
           </div>

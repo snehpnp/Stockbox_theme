@@ -2064,3 +2064,14 @@ svg.lucide.lucide-x.text-danger {
     text-transform: capitalize;
     
 }
+.dashboard-card .dashboard-icon {
+    background-color: var(--headSidebarFontActiveCol, white) !important;
+    border-radius: 5px !important;
+    color: #fff;
+    padding: 5px 8px;
+    line-height: 20px;
+}
+.badge.bg-light-success {
+    background: #e8fdf8;
+    color: #1de9b6;
+}
