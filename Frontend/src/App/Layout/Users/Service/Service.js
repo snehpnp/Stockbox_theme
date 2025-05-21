@@ -870,6 +870,7 @@ const Service = () => {
         onClose={() => setViewModel2(false)}
         title={<>KYC</>}
         body={<Kyc setViewModel2={setViewModel2} />}
+        size="lg"
       />
 
       <ReusableModal
@@ -878,6 +879,7 @@ const Service = () => {
         title={<>KYC</>}
         body={<Kyc />}
         disableClose={false}
+        size="lg"
       />
 
     </Content>

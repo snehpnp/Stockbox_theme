@@ -1035,6 +1035,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
           title={<>KYC</>}
           body={<Kyc setViewModel2={setViewModel2} />}
           disableClose={false}
+          size="lg"
         />
       </nav>
     </>

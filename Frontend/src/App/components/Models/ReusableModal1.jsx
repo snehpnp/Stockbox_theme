@@ -42,7 +42,7 @@ const ReusableModal = ({
                 <Modal.Header closeButton={disableClose}>
                     <Modal.Title className="heading-color">{title}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body style={{ maxHeight: "300px", overflowY: "auto" }}>
+                <Modal.Body >
                     {body}
                 </Modal.Body>
                 <Modal.Footer>{footer || null}</Modal.Footer>

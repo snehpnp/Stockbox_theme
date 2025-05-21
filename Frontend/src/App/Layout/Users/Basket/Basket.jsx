@@ -408,6 +408,7 @@ function Basket() {
         onClose={() => setViewModel2(false)}
         title={<>KYC</>}
         body={<Kyc setViewModel2={setViewModel2} />}
+        size="lg"
       />
 
     </Content>

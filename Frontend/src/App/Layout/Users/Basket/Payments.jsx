@@ -47,7 +47,6 @@ const Payments = () => {
 
 
 
-    console.log("kycStatus", kycStatus)
 
 
     const handleShowModal = (item) => {
@@ -55,7 +54,7 @@ const Payments = () => {
         if (kycStatus == 1 && (userdata?.kyc_verification == 0 || userdata?.kyc_verification == 2)) {
             setViewModel2(true)
         } else {
-            AddbasketSubscribeplan()
+            AddbasketSubscribeplan(item)
         }
     };
 
@@ -138,6 +137,8 @@ const Payments = () => {
                         orderid: response1?.razorpay_order_id || "",
                         coupon: "",
                     };
+
+
 
                     try {
                         const response2 = await AddBasketsubscription(data, token);
@@ -313,6 +314,7 @@ const Payments = () => {
                 onClose={() => setViewModel2(false)}
                 title={<>KYC</>}
                 body={<Kyc setViewModel2={setViewModel2} />}
+                size="lg"
             />
 
             <ReusableModal
@@ -321,6 +323,7 @@ const Payments = () => {
                 title={<>KYC</>}
                 body={<Kyc />}
                 disableClose={false}
+                size="lg"
             />
         </Content >
     );
