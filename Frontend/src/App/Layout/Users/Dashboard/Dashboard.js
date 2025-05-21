@@ -740,6 +740,7 @@ const Dashboard = () => {
       <ReusableModal
         show={viewmodel2}
         onClose={() => setViewModel2(false)}
+        size="lg"
         title={<span><b>KYC Details</b></span>}
         body={
           <Kyc setViewModel2={setViewModel2} />

@@ -253,7 +253,8 @@ function Kyc({ setViewModel2 }) {
       <div className="card shadow-sm">
         <div className="card-body">
           <form onSubmit={handleKycSubmit}>
-            <div className="mb-3">
+            <div className="mb-3 row">
+              <div className="col-md-6">
               <label htmlFor="fullName" className="form-label">
                 Name
               </label>
@@ -272,9 +273,10 @@ function Kyc({ setViewModel2 }) {
                   {errors.fullName}
                 </div>
               )}
-            </div>
+              </div>
+           
 
-            <div className="mb-3">
+            <div className="col-md-6">
               <label htmlFor="email" className="form-label">
                 Email
               </label>
@@ -296,7 +298,7 @@ function Kyc({ setViewModel2 }) {
               )}
             </div>
 
-            <div className="mb-3">
+            <div className="col-md-6">
               <label htmlFor="phone" className="form-label">
                 Mobile No.
               </label>
@@ -319,7 +321,7 @@ function Kyc({ setViewModel2 }) {
               )}
             </div>
 
-            <div className="mb-3">
+            <div className="mb-3 col-md-6">
               <label htmlFor="aadhar" className="form-label">
                 Aadhar No.
               </label>
@@ -341,7 +343,7 @@ function Kyc({ setViewModel2 }) {
               )}
             </div>
 
-            <div className="mb-3">
+            <div className="mb-3 col-md-6">
               <label htmlFor="panno" className="form-label">
                 PAN No.
               </label>
@@ -362,8 +364,8 @@ function Kyc({ setViewModel2 }) {
                 </div>
               )}
             </div>
-
-            <div className="d-grid">
+</div>
+            <div className=" w-auto">
               <button
                 type="submit"
                 className="btn btn-primary"
