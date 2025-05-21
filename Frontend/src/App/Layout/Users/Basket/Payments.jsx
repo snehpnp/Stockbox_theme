@@ -28,6 +28,8 @@ const Payments = () => {
     const [userdata, setUserdata] = useState([]);
     const [kycStatus, setKycStatus] = useState("")
     const [viewmodel2, setViewModel2] = useState(false);
+    const [viewmodel3, setViewModel3] = useState(false);
+
 
 
     useEffect(() => {
@@ -45,11 +47,12 @@ const Payments = () => {
 
 
 
+    console.log("kycStatus", kycStatus)
 
 
     const handleShowModal = (item) => {
 
-        if (kycStatus == 1 && userdata?.kyc_verification == 0) {
+        if (kycStatus == 1 && (userdata?.kyc_verification == 0 || userdata?.kyc_verification == 2)) {
             setViewModel2(true)
         } else {
             AddbasketSubscribeplan()
@@ -139,8 +142,16 @@ const Payments = () => {
                     try {
                         const response2 = await AddBasketsubscription(data, token);
                         if (response2?.status) {
-                            navigate("/user/thankyou")
-                            // window.location.reload();
+                            if (kycStatus == 2) {
+                                setViewModel3(true);
+                            } else {
+                                navigate("/user/thankyou", {
+                                    state: {
+                                        planType: data,
+                                    },
+                                });
+                            }
+
                         }
                     } catch (error) {
                         console.error("Error while adding plan subscription:", error);
@@ -302,6 +313,14 @@ const Payments = () => {
                 onClose={() => setViewModel2(false)}
                 title={<>KYC</>}
                 body={<Kyc setViewModel2={setViewModel2} />}
+            />
+
+            <ReusableModal
+                show={viewmodel3}
+                onClose={() => setViewModel3(false)}
+                title={<>KYC</>}
+                body={<Kyc />}
+                disableClose={false}
             />
         </Content >
     );

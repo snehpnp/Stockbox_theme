@@ -21,6 +21,8 @@
 //     }
 // }
 
+
+
 // for (let i = 0; i <= 10; i++) {
 //     //    console.log(i * 3)
 //     if (i * 3 % 2 == 0) {
@@ -29,6 +31,9 @@
 //         console.log(i * 3, "-odd")
 //     }
 // }
+
+
+
 
 // let num = 1
 // for (let i = 0; i <= 10; i++) {
@@ -45,13 +50,12 @@
 // console.log(n);
 
 
-
 // let arr = [1, 2, 3, 3, 4, 5]
 // let emptyarr = []
 
 // for (let i = 0; i < arr.length; i++) {
-//     for (let j = 0; j < arr.length; j++) {
-//         if (arr[i] === arr[j] && !emptyarr.includes(arr[i])) {
+//     for (let j = i + 1; j < arr.length; j++) {
+//         if (arr[i] === arr[j]) {
 //             emptyarr.push(arr[i])
 //         }
 //     }
@@ -70,4 +74,19 @@
 //         }
 //     }
 // }
-// console.log(emptyarr); 
+// console.log(emptyarr);
+
+
+// let fruits = ["apple", "banana", "mango"];
+
+// for (let i = 0; i < fruits.length; i++) {
+//     console.log(fruits[i]);
+// }
+
+
+// let i = 1;
+
+// while (i <= 5) {
+//     console.log("i is", i);
+//     i++;
+// }
