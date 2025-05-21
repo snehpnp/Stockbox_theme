@@ -2075,3 +2075,6 @@ svg.lucide.lucide-x.text-danger {
     background: #e8fdf8;
     color: #1de9b6;
 }
+.dashboard-card  .progress-bar {
+    background-color: var(--BtnPriBgCol, black) !important;
+}
