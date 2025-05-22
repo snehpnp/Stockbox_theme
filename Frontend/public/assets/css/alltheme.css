@@ -2087,3 +2087,10 @@ label {
     font-size: 14px;
     font-weight: 600;
 }
+svg.lucide.lucide-indian-rupee {
+    width: 16px;
+    color: green;
+}
+.col-form-label {
+    font-weight: 500;
+}

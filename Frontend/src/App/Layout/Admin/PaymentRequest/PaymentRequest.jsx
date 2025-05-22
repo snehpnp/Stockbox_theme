@@ -126,39 +126,36 @@ const PaymentRequest = () => {
             sortable: true,
             width: '160px',
         },
-        {
-            name: 'Status',
-            selector: row => row.status,
-            cell: row => {
-                let statusText = '';
-                let color = '';
+       {
+  name: 'Status',
+  selector: row => row.status,
+  cell: row => {
+    let statusText = '';
+    let badgeClass = '';
 
-                switch (row.status) {
-                    case 0:
-                        statusText = 'Pending';
-                        color = 'orange';
-                        break;
-                    case 1:
-                        statusText = 'Completed';
-                        color = 'green';
-                        break;
-                    case 2:
-                        statusText = 'Rejected';
-                        color = 'red';
-                        break;
-                    default:
-                        statusText = 'Unknown';
-                        color = 'gray';
-                }
+    switch (row.status) {
+      case 0:
+        statusText = 'Pending';
+        badgeClass = 'badge bg-warning text-dark';
+        break;
+      case 1:
+        statusText = 'Completed';
+        badgeClass = 'badge bg-success';
+        break;
+      case 2:
+        statusText = 'Rejected';
+        badgeClass = 'badge bg-danger';
+        break;
+      default:
+        statusText = 'Unknown';
+        badgeClass = 'badge bg-secondary';
+    }
 
-                return (
-                    <span style={{ color: color, fontWeight: 'bold' }}>
-                        {statusText}
-                    </span>
-                );
-            },
-            sortable: true,
-        }
+    return <span className={badgeClass}>{statusText}</span>;
+  },
+  sortable: true,
+}
+
 
     ];
 
