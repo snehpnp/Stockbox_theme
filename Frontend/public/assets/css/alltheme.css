@@ -2075,6 +2075,15 @@ svg.lucide.lucide-x.text-danger {
     background: #e8fdf8;
     color: #1de9b6;
 }
+.badge.bg-light-danger {
+    background: #feeceb;
+    color: #f44236;
+}
 .dashboard-card  .progress-bar {
     background-color: var(--BtnPriBgCol, black) !important;
+}
+label {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 600;
 }

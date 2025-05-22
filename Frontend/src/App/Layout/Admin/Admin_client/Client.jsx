@@ -489,7 +489,7 @@ const Client = () => {
       name: "Email",
       selector: (row) => row.Email,
       sortable: true,
-      width: "350px",
+      width: "200px",
     },
     {
       name: "Phone No",
@@ -503,25 +503,31 @@ const Client = () => {
       sortable: true,
       width: "200px",
     },
+   
+
     {
-      name: "Plan Status",
-      cell: (row) => {
-        const hasActive = row?.plansStatus?.some((item) => item.status === "active");
-        const hasExpired = row?.plansStatus?.some((item) => item.status === "expired");
-        let statusText = "N/A";
-        let color = "red";
-        if (hasActive) {
-          statusText = "Active";
-          color = "green";
-        } else if (hasExpired) {
-          statusText = "Expired";
-          color = "orange";
-        }
-        return <span style={{ color }}>{statusText}</span>;
-      },
-      sortable: true,
-      width: "200px",
-    },
+  name: "Plan Status",
+  cell: (row) => {
+    const hasActive = row?.plansStatus?.some((item) => item.status === "active");
+    const hasExpired = row?.plansStatus?.some((item) => item.status === "expired");
+
+    let statusText = "N/A";
+    let className = "badge bg-light-warning text-warning"; // Default for N/A
+
+    if (hasActive) {
+      statusText = "Active";
+      className = "badge bg-light-success text-success";
+    } else if (hasExpired) {
+      statusText = "Expired";
+      className = "badge bg-light-danger text-danger";
+    }
+
+    return <span className={className}>{statusText}</span>;
+  },
+  sortable: true,
+  idth: "200px",
+},
+
     {
       name: "Client Segment",
       cell: (row) => {
