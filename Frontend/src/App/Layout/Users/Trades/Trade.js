@@ -119,7 +119,6 @@ function Trade() {
 
   useEffect(() => {
     fetchServiceData();
-    fetchData();
     fetchuserDetail()
     getnsedata()
   }, [selectedService]);
@@ -132,27 +131,25 @@ function Trade() {
 
 
 
-
-  useEffect(() => {
-    fetchData();
-  }, [page, selectedTab, searchInput]);
-
-
-
   useEffect(() => {
     setPage(1);
   }, [selectedTab]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (selectedTab === "live") {
+          await fetchTradeData();
+        } else if (selectedTab === "close") {
+          await fetchCloseData();
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
-
-
-  const fetchData = async () => {
-    if (selectedTab === "live") {
-      await fetchTradeData();
-    } else if (selectedTab === "close") {
-      await fetchCloseData();
-    }
-  };
+    fetchData();
+  }, [page, selectedTab, searchInput]);
 
 
 
@@ -280,7 +277,7 @@ function Trade() {
         page: page,
         service_id: selectedService,
         client_id: userid,
-        search: "",
+        search: searchInput,
       };
       const response = await GetCloseSignalClient(data, token);
 

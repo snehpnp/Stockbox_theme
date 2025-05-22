@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import DynamicForm from '../../../Extracomponents/FormicForm';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { addStaffpermission, getstaffperuser } from '../../../Services/Admin/Admin';
 import { Subscript } from 'lucide-react';
 import Content from '../../../components/Contents/Content';
@@ -11,12 +11,11 @@ import showCustomAlert from '../../../Extracomponents/CustomAlert/CustomAlert';
 const Staffpermission = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { row } = location.state;
     const token = localStorage.getItem('token');
     const [clients, setClients] = useState([]);
-    const _id = row._id;
+    const [data, setData] = useState([]);
 
-
+    const { id } = useParams()
 
 
     useEffect(() => {
@@ -25,9 +24,10 @@ const Staffpermission = () => {
 
     const getAdminclient = async () => {
         try {
-            const response = await getstaffperuser(_id, token);
+            const response = await getstaffperuser(id, token);
             if (response.status) {
                 setClients(response.data.permissions);
+                setData(response.data);
             }
         } catch (error) {
             console.log("Error fetching client permissions:", error);
@@ -42,7 +42,7 @@ const Staffpermission = () => {
 
         const req = {
             permissions,
-            id: row._id,
+            id: id,
         };
         try {
             const response = await addStaffpermission(req, token);
@@ -60,10 +60,10 @@ const Staffpermission = () => {
 
     const formik = useFormik({
         initialValues: {
-            FullName: row?.FullName || '',
-            UserName: row?.UserName || '',
-            Email: row?.Email || '',
-            PhoneNo: row?.PhoneNo || '',
+            FullName: data?.FullName || '',
+            UserName: data?.UserName || '',
+            Email: data?.Email || '',
+            PhoneNo: data?.PhoneNo || '',
 
             userPermissions: false,
             addclient: false,
