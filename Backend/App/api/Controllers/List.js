@@ -5297,7 +5297,7 @@ i++;
         //     .sort({ created_at: -1 })
         //     .limit(5)
         //     .lean();
-     const lastFiveSignals = await Signal_Modal.aggregate([
+    const lastFiveSignals = await Signal_Modal.aggregate([
   {
     $match: { close_status: false, service: service_id }
   },
@@ -5333,6 +5333,15 @@ i++;
   },
   {
     $sort: { created_at: -1 }
+  },
+  {
+    $group: {
+      _id: "$_id",
+      doc: { $first: "$$ROOT" }
+    }
+  },
+  {
+    $replaceRoot: { newRoot: "$doc" }
   },
   {
     $limit: 5
