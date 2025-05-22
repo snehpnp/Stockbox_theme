@@ -1441,7 +1441,7 @@ export async function ExitPlaceOrderofmultiplesignal(data, token, brokerstatus) 
 
 export async function getdocumentfile(data, token) {
     try {
-        const response = await axios.post(`${Config.base_url}api/client/downloaddocument`, data,
+        const response = await axios.post(`${Config.base_url}api/client/uploaddocument`, data,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -1453,7 +1453,6 @@ export async function getdocumentfile(data, token) {
         return response.data;
 
     } catch (error) {
-        console.error('Error in clientKycAndAgreement API:', error.message);
         throw error.response?.data || { message: 'Something went wrong!' };
     }
 }

@@ -60,18 +60,9 @@ const Dashboard = () => {
     getBloglist();
     getuserdetail();
     getdashboardata();
-    getdetail();
   }, []);
 
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const status = queryParams.get("status");
-    const docId = queryParams.get("digio_doc_id");
 
-    if (status === "success" && docId) {
-      getdetail(docId);
-    }
-  }, [location]);
 
 
 
@@ -105,18 +96,35 @@ const Dashboard = () => {
 
 
 
+  // useEffect(() => {
+  //   const queryParams = new URLSearchParams(location.search);
+  //   const status = queryParams.get("status");
+  //   const docId = queryParams.get("digio_doc_id");
 
-  const getdetail = async (docId) => {
-    try {
-      const data = { id: userid, doc_id: docId };
-      const response = await getdocumentfile(data, token);
-      if (response.status) {
-        console.log("response", response.data);
-      }
-    } catch (error) {
-      console.log("Error fetching services:", error);
-    }
-  };
+  //   if (status === true && docId) {
+  //     getdetail();
+  //   }
+  // }, [location]);
+
+
+
+  // const getdetail = async () => {
+  //   try {
+  //     const data = { id: userid };
+  //     const response = await getdocumentfile(data, token);
+
+  //     if (response?.redirectUrl) {
+  //       console.log("Opening URL:", response.redirectUrl);
+  //       window.open(response.redirectUrl, '_blank');
+  //       // window.location.href = response.redirectUrl;
+  //     } else {
+  //       console.log("No redirect URL found.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching services:", error);
+  //   }
+  // };
+
 
 
   const validateField = (name, value) => {

@@ -101,3 +101,14 @@
 
 // console.log(reversed); 
 
+
+// let arr = [111, 222, 333, 444]
+// for (let i = 0; i < arr.length; i++) {
+//     let num = arr[i].toString()
+//     let revise = num.split('').reverse().join('')
+//     if (revise !== num) {
+//         console.log("false")
+//     }
+//     console.log("true")
+// }
+

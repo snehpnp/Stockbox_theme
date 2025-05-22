@@ -4,7 +4,7 @@ import Content from "../../../components/Contents/Content";
 import { clientKycAndAgreement, GetUserData } from "../../../Services/UserService/User";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import { redirect } from "react-router-dom";
-import { base_url } from "../../../../Utils/config";
+import { base_url, base_urlfrontend } from "../../../../Utils/config";
 
 
 
@@ -231,7 +231,7 @@ function Kyc({ setViewModel2 }) {
       });
       setViewModel2(false)
       window.open(
-        `https://app.digio.in/#/gateway/login/${result?.kid}/${result?.refid}/${result?.customer_identifier}?redirect_url=${encodeURIComponent(base_url + "/#/user/dashboard")}`,
+        `https://app.digio.in/#/gateway/login/${result?.kid}/${result?.refid}/${result?.customer_identifier}?redirect_url=${encodeURIComponent(base_urlfrontend + "/#/user/dashboard")}`,
         '_blank'
       );
 
