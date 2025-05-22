@@ -14,6 +14,7 @@ const PlanSubscription_Modal = db.PlanSubscription;
 const States = db.States;
 const City = db.City;
 const Utmsource_Model = db.Utmsource; // adjust path as needed
+const Rating_Modal = db.Rating;
 
 
 const path = require('path');
@@ -2050,6 +2051,97 @@ async getCityByStates(req, res) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+
+async getRating(req, res) {
+  try {
+    const { search = "", page = 1, limit = 10 } = req.body;
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const pipeline = [
+      {
+        $match: { del: false }
+      },
+      {
+        $lookup: {
+          from: "clients",
+          localField: "client_id",
+          foreignField: "_id",
+          as: "client_info"
+        }
+      },
+      {
+        $unwind: "$client_info"
+      },
+      {
+        $addFields: {
+          client_name: "$client_info.FullName",
+          client_email: "$client_info.Email",
+          client_phone: "$client_info.PhoneNo"
+        }
+      },
+      {
+        $match: {
+          $or: [
+            { client_name: { $regex: search, $options: "i" } },
+            { client_email: { $regex: search, $options: "i" } },
+            { client_phone: { $regex: search, $options: "i" } }
+          ]
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          text: 1,
+          rating: 1,
+          created_at: 1,
+          client: {
+            _id: "$client_info._id",
+            name: "$client_info.FullName",
+            email: "$client_info.Email",
+            phone: "$client_info.PhoneNo"
+          }
+        }
+      },
+      {
+        $facet: {
+          data: [
+            { $skip: skip },
+            { $limit: parseInt(limit) }
+          ],
+          total: [
+            { $count: "count" }
+          ]
+        }
+      }
+    ];
+
+    const result = await Rating_Modal.aggregate(pipeline);
+    const ratings = result[0]?.data || [];
+    const total = result[0]?.total[0]?.count || 0;
+
+    return res.json({
+      status: true,
+      message: "Ratings fetched successfully",
+      data: ratings,
+      pagination: {
+        total,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        pages: Math.ceil(total / limit)
+      }
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "Server error",
+      error: error.message
+    });
+  }
+}
+
 
 
 

@@ -40,6 +40,7 @@ const Signalsdata_Modal = db.Signalsdata;
 const Signalstock_Modal = db.Signalstock;
 const States = db.States;
 const City = db.City;
+const Rating_Modal = db.Rating;
 
 const { sendEmail } = require('../../Utils/emailService');
 const { generatePDF } = require('../../Utils/pdfGenerator');
@@ -8907,6 +8908,33 @@ async BasketExpire(req, res) {
     return res.status(500).json({ message: "Server Error", error: error.message, status: false });
   }
 }
+
+
+
+  async addRating(req, res) {
+    try {
+      const { client_id, text, rating } = req.body;
+
+
+
+      const result = new Rating_Modal({
+        client_id: client_id,
+        text: text,
+        rating: rating
+      });
+
+      const savedSubscription = await result.save();
+
+      return res.status(201).json({
+        status: true,
+      });
+
+    } catch (error) {
+      return res.status(500).json({ status: false, message: 'Server error', data: [] });
+    }
+  }
+
+
 
 
 }
