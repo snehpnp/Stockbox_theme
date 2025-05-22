@@ -2097,3 +2097,11 @@ svg.lucide.lucide-indian-rupee {
 {
   font-size: 12px !important;
 }
+.blog-para
+{
+  overflow: hidden;
+text-overflow: ellipsis;
+display: -webkit-box;
+-webkit-line-clamp: 5;
+-webkit-box-orient: vertical;
+}
