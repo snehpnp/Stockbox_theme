@@ -40,6 +40,8 @@ const Signalsdata_Modal = db.Signalsdata;
 const Signalstock_Modal = db.Signalstock;
 const States = db.States;
 const City = db.City;
+const Rating_Modal = db.Rating;
+const Clover_Modal = db.Clover;
 
 const { sendEmail } = require('../../Utils/emailService');
 const { generatePDF } = require('../../Utils/pdfGenerator');
@@ -8909,6 +8911,65 @@ async BasketExpire(req, res) {
 }
 
 
+
+  async addRating(req, res) {
+    try {
+      const { client_id, text, rating } = req.body;
+
+
+
+      const result = new Rating_Modal({
+        client_id: client_id,
+        text: text,
+        rating: rating
+      });
+
+      const savedSubscription = await result.save();
+
+      return res.status(201).json({
+        status: true,
+      });
+
+    } catch (error) {
+      return res.status(500).json({ status: false, message: 'Server error', data: [] });
+    }
+  }
+
+
+  async Cloverlist(req, res) {
+
+  
+    try {
+      const clovers = await Clover_Modal.find({ del: false, status: true });
+      const protocol = req.protocol; // Will be 'http' or 'https'
+      const baseUrl = `https://${req.headers.host}`;
+
+      const cloverWithImageUrls = clovers.map(clover => {
+        return {
+          ...clover._doc, // Spread the original bannerss document
+          image: clover.image ? `${baseUrl}/uploads/banner/${clover.image}` : null // Append full image URL
+        };
+      });
+
+
+
+      return res.status(200).json({
+        status: true,
+        message: "Banner retrieved successfully",
+        data: cloverWithImageUrls
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: false,
+        message: "Server error",
+        error: error.message
+      });
+    }
+  }
+
+
+
+
 }
 
 function convertAmountToWords(amount) {
@@ -8974,6 +9035,7 @@ function getFinancialYear() {
   // Return in format 24-25
   return `${startYear.toString().slice(-2)}-${endYear.toString().slice(-2)}`;
 }
+
 
 
 

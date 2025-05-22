@@ -2,7 +2,7 @@ const router = require("express").Router()
 const cors = require('cors');
 
 
-const { getcount, getLicense, pastPerformance, pastPerformances, CloseSignal, PlanExipreList, CloseSignalWithFilter, PlanExipreListWithFilter, CompanyStatus, Notification, statusChangeNotifiction, totalClient, NotificationList,allStatusChangeNotifiction,pastPerformancewithtype,CloseSignalwithtype,referEarn,PlanExipreListWithFilterExport,CloseSignalWithFilterExport,getMonthlySubscriptionCounts,getMonthlyProfitLoss,getDailyProfitLoss,getAllStates,getCityByStates, sendMailToClient,utmSource,getMonthlyDayBasedPlanCount,getFreetrialClientsByMonth} = require('../Controllers/Dashboard')
+const { getcount, getLicense, pastPerformance, pastPerformances, CloseSignal, PlanExipreList, CloseSignalWithFilter, PlanExipreListWithFilter, CompanyStatus, Notification, statusChangeNotifiction, totalClient, NotificationList,allStatusChangeNotifiction,pastPerformancewithtype,CloseSignalwithtype,referEarn,PlanExipreListWithFilterExport,CloseSignalWithFilterExport,getMonthlySubscriptionCounts,getMonthlyProfitLoss,getDailyProfitLoss,getAllStates,getCityByStates, sendMailToClient,utmSource,getMonthlyDayBasedPlanCount,getFreetrialClientsByMonth,getRating} = require('../Controllers/Dashboard')
 
 router.get('/dashboard/getcount', getcount);
 router.post('/dashboard/getlicense', getLicense);
@@ -43,6 +43,7 @@ router.get('/dashboard/utmsource', utmSource);
 router.get('/dashboard/getmonthlydaybasedplancount', getMonthlyDayBasedPlanCount);
 router.get('/dashboard/getfreetrialclientsbymonth', getFreetrialClientsByMonth);
 
+router.post('/dashboard/getrating', getRating);
 
 
 module.exports = router;
