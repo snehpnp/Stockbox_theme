@@ -231,7 +231,7 @@ function Kyc({ setViewModel2 }) {
       });
       setViewModel2(false)
       window.open(
-        `https://app.digio.in/#/gateway/login/${result?.kid}/${result?.refid}/${result?.customer_identifier}?redirect_url=${encodeURIComponent(base_url)}`,
+        `https://app.digio.in/#/gateway/login/${result?.kid}/${result?.refid}/${result?.customer_identifier}?redirect_url=${encodeURIComponent("http://localhost:3000/#/user/dashboard")}`,
         '_blank'
       );
 
@@ -255,116 +255,116 @@ function Kyc({ setViewModel2 }) {
           <form onSubmit={handleKycSubmit}>
             <div className="mb-3 row">
               <div className="col-md-6">
-              <label htmlFor="fullName" className="form-label">
-                Name
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="fullName"
-                name="fullName"
-                placeholder="Enter your full name"
-                value={formData.fullName}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-              {touched.fullName && errors.fullName && (
-                <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
-                  {errors.fullName}
-                </div>
-              )}
+                <label htmlFor="fullName" className="form-label">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="fullName"
+                  name="fullName"
+                  placeholder="Enter your full name"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                {touched.fullName && errors.fullName && (
+                  <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
+                    {errors.fullName}
+                  </div>
+                )}
               </div>
-           
 
-            <div className="col-md-6">
-              <label htmlFor="email" className="form-label">
-                Email
-              </label>
-              <input
-                type="email"
-                className="form-control"
-                id="email"
-                name="email"
-                placeholder="Enter your email"
-                value={formData.email}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                disabled
-              />
-              {touched.email && errors.email && (
-                <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
-                  {errors.email}
-                </div>
-              )}
-            </div>
 
-            <div className="col-md-6">
-              <label htmlFor="phone" className="form-label">
-                Mobile No.
-              </label>
-              <input
-                type="tel"
-                className="form-control"
-                id="phone"
-                name="phone"
-                placeholder="Enter your 10-digit mobile number"
-                value={formData.phone}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                maxLength="10"
-                disabled
-              />
-              {touched.phone && errors.phone && (
-                <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
-                  {errors.phone}
-                </div>
-              )}
-            </div>
+              <div className="col-md-6">
+                <label htmlFor="email" className="form-label">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  className="form-control"
+                  id="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  disabled
+                />
+                {touched.email && errors.email && (
+                  <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
+                    {errors.email}
+                  </div>
+                )}
+              </div>
 
-            <div className="mb-3 col-md-6">
-              <label htmlFor="aadhar" className="form-label">
-                Aadhar No.
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="aadhar"
-                name="aadhar"
-                placeholder="Enter your 12-digit Aadhar number"
-                value={formData.aadhar}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                maxLength="12"
-              />
-              {touched.aadhar && errors.aadhar && (
-                <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
-                  {errors.aadhar}
-                </div>
-              )}
-            </div>
+              <div className="col-md-6">
+                <label htmlFor="phone" className="form-label">
+                  Mobile No.
+                </label>
+                <input
+                  type="tel"
+                  className="form-control"
+                  id="phone"
+                  name="phone"
+                  placeholder="Enter your 10-digit mobile number"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  maxLength="10"
+                  disabled
+                />
+                {touched.phone && errors.phone && (
+                  <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
+                    {errors.phone}
+                  </div>
+                )}
+              </div>
 
-            <div className="mb-3 col-md-6">
-              <label htmlFor="panno" className="form-label">
-                PAN No.
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="panno"
-                name="panno"
-                placeholder="Enter your PAN (e.g., ABCDE1234F)"
-                value={formData.panno}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                maxLength="10"
-              />
-              {touched.panno && errors.panno && (
-                <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
-                  {errors.panno}
-                </div>
-              )}
+              <div className="mb-3 col-md-6">
+                <label htmlFor="aadhar" className="form-label">
+                  Aadhar No.
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="aadhar"
+                  name="aadhar"
+                  placeholder="Enter your 12-digit Aadhar number"
+                  value={formData.aadhar}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  maxLength="12"
+                />
+                {touched.aadhar && errors.aadhar && (
+                  <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
+                    {errors.aadhar}
+                  </div>
+                )}
+              </div>
+
+              <div className="mb-3 col-md-6">
+                <label htmlFor="panno" className="form-label">
+                  PAN No.
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="panno"
+                  name="panno"
+                  placeholder="Enter your PAN (e.g., ABCDE1234F)"
+                  value={formData.panno}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  maxLength="10"
+                />
+                {touched.panno && errors.panno && (
+                  <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
+                    {errors.panno}
+                  </div>
+                )}
+              </div>
             </div>
-</div>
             <div className=" w-auto">
               <button
                 type="submit"
