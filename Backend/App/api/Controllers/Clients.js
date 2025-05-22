@@ -267,11 +267,20 @@ class Clients {
           message: "Client not found"
         });
       }
+              const image = `https://${req.headers.host}/uploads/basicsetting/${client.image}`;
+
+      const clientData = {
+      ...client._doc,
+      image: client.image ? image : null
+    };
+
+
+
 
       return res.json({
         status: true,
         message: "Client details fetched successfully",
-        data: client
+        data: clientData
       });
 
     } catch (error) {
@@ -583,7 +592,20 @@ class Clients {
 
   async updateProfile(req, res) {
     try {
+
+  await new Promise((resolve, reject) => {
+                upload('basicsetting').fields([{ name: 'image', maxCount: 1 }])(req, res, (err) => {
+                    if (err) {
+                        return reject(err);
+                    }
+                 
+                    resolve();
+                });
+            });
+    
+
       const { id, FullName } = req.body;
+
 
       if (!FullName) {
         return res.status(400).json({ status: false, message: "Please enter name" });
@@ -605,9 +627,11 @@ class Clients {
           message: "Client not found",
         });
       }
+            const image = req.files && req.files['image'] ? req.files['image'][0].filename : null;
 
       // Update the user's profile information
       if (FullName) client.FullName = FullName;
+       if (image) client.image = image;
 
       await client.save();
 

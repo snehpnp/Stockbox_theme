@@ -201,6 +201,11 @@ const clientsModel = new Schema({
         trim: true,
         default: null
     },
+    image: {
+        type: String,
+        trim: true,
+        default: null
+    },
 
 }, {
     timestamps: true

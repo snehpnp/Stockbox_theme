@@ -8804,7 +8804,7 @@ async PlanSubscriptionExpire(req, res) {
       reminders.push(`Oops! Your ${plans} plan${groupedPlans["-1"].length > 1 ? "s" : ""} expired yesterday. Let’s get you back on track—renew now and stay connected.`);
     }
 
-    return res.json({ reminders,status: false });
+    return res.json({ reminders,status: true });
 
   } catch (err) {
     return res.status(500).json({ message: "Server Error", error: err.message,status: false });

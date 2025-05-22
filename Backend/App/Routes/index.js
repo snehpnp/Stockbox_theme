@@ -38,6 +38,7 @@ module.exports = function (app) {
     app.use(require("./Smstemplate"))
     app.use(require("./Smsprovider"))
     app.use(require("./Ticket"))
+    app.use(require("./Clover"))
 
 
 

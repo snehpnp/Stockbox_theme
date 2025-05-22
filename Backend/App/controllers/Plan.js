@@ -1873,6 +1873,12 @@ class Plan {
       }
 
 
+      if (client.kyc_verification === 0 && settings.kyc === 2) {
+        client.kyc_verification = 2;
+        await client.save();
+      }
+
+
 
       const refertokens = await Refer_Modal.find({ user_id: client._id, status: 0 });
 
