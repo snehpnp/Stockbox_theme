@@ -130,24 +130,24 @@ const Ticket = () => {
       name: "Created At",
       selector: (row) => fDate(row?.created_at),
     },
-    {
-      name: "Status",
-      cell: (row) => (
+   {
+    name: "Status",
+    cell: (row) => (
         <div>
-          <button
-            className={`btn btn-sm ${row.status === 0
-              ? "btn-warning"
-              : row.status === 1
-                ? "btn-success"
-                : "btn-danger"
-              }`}
-          >
-            {row.status === 0 ? "Pending" : row.status === 1 ? "Open" : "Close"}
-          </button>
-
+            <span
+                className={`badge ${row.status === 0
+                    ? "bg-warning "
+                    : row.status === 1
+                        ? "bg-success"
+                        : "bg-danger"
+                    }`}
+            >
+                {row.status === 0 ? "Pending" : row.status === 1 ? "Open" : "Close"}
+            </span>
         </div>
-      ),
-    },
+    ),
+},
+
 
 
     {

@@ -172,24 +172,24 @@ const HelpDesk = () => {
                             selector: (row) => fDate(row?.created_at),
                             width: "300px"
                         },
-                        {
-                            name: "Status",
-                            cell: (row) => (
-                                <div>
-                                    <button
-                                        className={`btn btn-sm ${row.status === 0
-                                            ? "btn-warning"
-                                            : row.status === 1
-                                                ? "btn-success"
-                                                : "btn-danger"
-                                            }`}
-                                    >
-                                        {row.status === 0 ? "Pending" : row.status === 1 ? "Open" : "Close"}
-                                    </button>
+                      {
+    name: "Status",
+    cell: (row) => (
+        <div>
+            <span
+                className={`badge ${row.status === 0
+                    ? "bg-warning text-dark"
+                    : row.status === 1
+                        ? "bg-success"
+                        : "bg-danger"
+                    }`}
+            >
+                {row.status === 0 ? "Pending" : row.status === 1 ? "Open" : "Close"}
+            </span>
+        </div>
+    ),
+},
 
-                                </div>
-                            ),
-                        },
                         {
                             name: "Action",
                             cell: (row) => (

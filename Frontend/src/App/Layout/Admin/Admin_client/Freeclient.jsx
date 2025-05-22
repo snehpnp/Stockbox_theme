@@ -384,8 +384,8 @@ const Freeclient = () => {
   selector: row => (
     <span className={
       row.status === "active"
-        ? "badge bg-light-success text-success"
-        : "badge bg-light-danger text-danger"
+        ? "badge bg-success "
+        : "badge bg-danger"
     }>
       {row.status === "active" ? "Active" : "Expired"}
     </span>

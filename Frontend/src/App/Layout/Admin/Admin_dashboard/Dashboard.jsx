@@ -97,14 +97,14 @@ const Dashbord = () => {
     );
 
     let statusText = "N/A";
-    let className = "badge bg-light-danger"; // default for N/A
+    let className = "badge bg-danger"; // default for N/A
 
     if (hasActive) {
       statusText = "Active";
-      className = "badge bg-light-success text-success";
+      className = "badge bg-success ";
     } else if (hasExpired) {
       statusText = "Expired";
-      className = "badge bg-light-warning text-danger";
+      className = "badge bg-warning text-danger";
     }
 
     return <span className={className}>{statusText}</span>;

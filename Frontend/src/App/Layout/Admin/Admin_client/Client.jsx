@@ -512,14 +512,14 @@ const Client = () => {
     const hasExpired = row?.plansStatus?.some((item) => item.status === "expired");
 
     let statusText = "N/A";
-    let className = "badge bg-light-warning text-warning"; // Default for N/A
+    let className = "badge bg-warning "; // Default for N/A
 
     if (hasActive) {
       statusText = "Active";
-      className = "badge bg-light-success text-success";
+      className = "badge bg-success ";
     } else if (hasExpired) {
       statusText = "Expired";
-      className = "badge bg-light-danger text-danger";
+      className = "badge bg-danger";
     }
 
     return <span className={className}>{statusText}</span>;
