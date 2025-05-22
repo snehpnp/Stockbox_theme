@@ -101,10 +101,10 @@ const Dashbord = () => {
 
     if (hasActive) {
       statusText = "Active";
-      className = "badge bg-light-success";
+      className = "badge bg-light-success text-success";
     } else if (hasExpired) {
       statusText = "Expired";
-      className = "badge bg-light-warning";
+      className = "badge bg-light-warning text-danger";
     }
 
     return <span className={className}>{statusText}</span>;
