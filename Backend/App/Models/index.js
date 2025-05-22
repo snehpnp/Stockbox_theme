@@ -62,6 +62,7 @@ module.exports = {
     Ticket: require("./Ticket"),
     Ticketmessage: require("./Ticketmessage"),
     Utmsource: require("./Utmsource"),
+    Clover: require("./Clover"),
 
 
     open_position:open_position,

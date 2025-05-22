@@ -25,19 +25,24 @@ const encodedMessage = encodeURIComponent(message);
 if(name=="bulksmsservice")
 {
   config = `authkey=${authKey}&sender=${sender}&mobiles=${mobile}&route=${route}&coding=${coding}&Template_ID=${templateId}&message=${encodedMessage}`;
-}else if(name=="pushsms")
+}
+else if(name=="pushsms")
 {
   config = `user=${username}&key=${authKey}&sender=${sender}&mobile=${mobile}&text=${encodedMessage}&entityid=${entity_id}&templateid=${templateId}`;
- 
+}
+else if(name=="smartping")
+{
+  config = `username=${username}&password=${password}&unicode=false&from=${sender}&to=${mobile}&text=${encodedMessage}&dltPrincipalEntityId=${entity_id}&dltContentId=${templateId}`;
 }
 
   const url = `${urls}?${config}`;
+  console.log('SMS URL:', url);
   try {
     const response = await axios.get(url);
-  // console.log('SMS Response:', response.data);
+  console.log('SMS Response:', response.data);
     return response.data;
   } catch (error) {
-  //  console.log('SMS Send Error:', error.response?.data || error.message);
+   console.log('SMS Send Error:', error.response?.data || error.message);
     return error.message;
   }
 
