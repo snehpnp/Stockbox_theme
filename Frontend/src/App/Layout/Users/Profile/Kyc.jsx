@@ -231,9 +231,10 @@ function Kyc({ setViewModel2 }) {
       });
       setViewModel2(false)
       window.open(
-        `https://app.digio.in/#/gateway/login/${result?.kid}/${result?.refid}/${result?.customer_identifier}?redirect_url=${encodeURIComponent("http://localhost:3000/#/user/dashboard")}`,
+        `https://app.digio.in/#/gateway/login/${result?.kid}/${result?.refid}/${result?.customer_identifier}?redirect_url=${encodeURIComponent(base_url + "/#/user/dashboard")}`,
         '_blank'
       );
+
 
     } catch (err) {
       console.error('KYC Failed:', err);

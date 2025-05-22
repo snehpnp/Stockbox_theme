@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import ApexCharts from "react-apexcharts";
 import Content from "../../../components/Contents/Content";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { House, Tally1 } from "lucide-react";
 import { Bar } from "react-chartjs-2";
 import { CircleUserRound, ShoppingCart, History, Shield, CreditCard, Puzzle } from 'lucide-react'
-import { getpastperformaceCashdata, getpastperformaceFuturedata, getpastperformaceOptiondata, GetUserData } from "../../../Services/UserService/User";
+import { getpastperformaceCashdata, getpastperformaceFuturedata, getpastperformaceOptiondata, GetUserData, getdocumentfile } from "../../../Services/UserService/User";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
@@ -42,6 +42,7 @@ const Dashboard = () => {
   const [model, setModel] = useState(false);
   const [viewmodel2, setViewModel2] = useState(false);
 
+  const location = useLocation();
 
 
   const [userDetail, setUserDetail] = useState({});
@@ -59,7 +60,20 @@ const Dashboard = () => {
     getBloglist();
     getuserdetail();
     getdashboardata();
+    getdetail();
   }, []);
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const status = queryParams.get("status");
+    const docId = queryParams.get("digio_doc_id");
+
+    if (status === "success" && docId) {
+      getdetail(docId);
+    }
+  }, [location]);
+
+
 
 
   const [formData, setFormData] = useState({
@@ -88,6 +102,22 @@ const Dashboard = () => {
     aadhar: "",
     panno: "",
   });
+
+
+
+
+  const getdetail = async (docId) => {
+    try {
+      const data = { id: userid, doc_id: docId };
+      const response = await getdocumentfile(data, token);
+      if (response.status) {
+        console.log("response", response.data);
+      }
+    } catch (error) {
+      console.log("Error fetching services:", error);
+    }
+  };
+
 
   const validateField = (name, value) => {
     let errorMessage = "";
@@ -436,7 +466,7 @@ const Dashboard = () => {
                 </li>
                 <li className="list-group-item">
                   <Link onClick={() => setViewModel2(true)} className="text-dark">
-                    <Shield className="me-2" /> KYC Pending
+                    <Shield className="me-2" /> KYC
                   </Link>
                 </li>
                 <li className="list-group-item" >
