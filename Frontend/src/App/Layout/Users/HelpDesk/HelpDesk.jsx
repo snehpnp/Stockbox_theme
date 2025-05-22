@@ -8,13 +8,13 @@ import Table from "../../../Extracomponents/Table1";
 import { Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 import { fDate } from "../../../../Utils/Date_formate";
-
+import ReusableModal from '../../../components/Models/ReusableModal';
 
 
 
 const HelpDesk = () => {
 
-
+const [viewmodel2, setViewModel2] = useState(false);
     const token = localStorage.getItem("token");
     const userid = localStorage.getItem("id");
     const [messagedata, setMessagedata] = useState([]);
@@ -102,58 +102,11 @@ const HelpDesk = () => {
     });
 
     return (
+        <>
         <Content Page_title="Help Desk" button_status={false}>
-            <form onSubmit={formik.handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="subject">Subject</label>
-                    <input
-                        type="text"
-                        id="subject"
-                        name="subject"
-                        className="form-control"
-                        value={formik.values.subject}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                    />
-                    {formik.touched.subject && formik.errors.subject && (
-                        <div className="text-danger">{formik.errors.subject}</div>
-                    )}
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="message">Message</label>
-                    <textarea
-                        id="message"
-                        name="message"
-                        className="form-control"
-                        rows="4"
-                        value={formik.values.message}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                    />
-                    {formik.touched.message && formik.errors.message && (
-                        <div className="text-danger">{formik.errors.message}</div>
-                    )}
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="file">Upload File</label>
-                    <input
-                        type="file"
-                        id="file"
-                        name="file"
-                        className="form-control"
-                        onChange={(event) => formik.setFieldValue('file', event.currentTarget.files[0])}
-                    />
-                    {formik.touched.file && formik.errors.file && (
-                        <div className="text-danger">{formik.errors.file}</div>
-                    )}
-                </div>
-
-                <button type="submit" className="btn btn-primary mt-2">
-                    Submit
-                </button>
-            </form>
+            <button className="btn btn-primary float-end" onClick={() => setViewModel2(true)}>
+                  Add Message
+                  </button>
 
             <div className="table-responsive mt-2">
                 <Table
@@ -206,6 +159,67 @@ const HelpDesk = () => {
                 />
             </div>
         </Content>
+           <ReusableModal
+                show={viewmodel2}
+                onClose={() => setViewModel2(false)}
+                size="lg"
+                title={<span><b>Add Message</b></span>}
+                body={
+                   <form onSubmit={formik.handleSubmit}>
+                <div className="form-group ">
+                    <label htmlFor="subject">Subject</label>
+                    <input
+                        type="text"
+                        id="subject"
+                        name="subject"
+                        className="form-control"
+                        value={formik.values.subject}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                    />
+                    {formik.touched.subject && formik.errors.subject && (
+                        <div className="text-danger">{formik.errors.subject}</div>
+                    )}
+                </div>
+
+                <div className="form-group mt-2">
+                    <label htmlFor="message">Message</label>
+                    <textarea
+                        id="message"
+                        name="message"
+                        className="form-control"
+                        rows="4"
+                        value={formik.values.message}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                    />
+                    {formik.touched.message && formik.errors.message && (
+                        <div className="text-danger">{formik.errors.message}</div>
+                    )}
+                </div>
+
+                <div className="form-group mt-2">
+                    <label htmlFor="file">Upload File</label>
+                    <input
+                        type="file"
+                        id="file"
+                        name="file"
+                        className="form-control"
+                        onChange={(event) => formik.setFieldValue('file', event.currentTarget.files[0])}
+                    />
+                    {formik.touched.file && formik.errors.file && (
+                        <div className="text-danger">{formik.errors.file}</div>
+                    )}
+                </div>
+
+                <button type="submit" className="btn btn-primary mt-2">
+                    Submit
+                </button>
+            </form>
+                }
+        
+              />
+              </>
     );
 };
 

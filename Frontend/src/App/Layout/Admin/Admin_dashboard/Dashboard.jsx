@@ -101,7 +101,7 @@ const Dashbord = () => {
 
     if (hasActive) {
       statusText = "Active";
-      className = "badge bg-success ";
+      className = "badge bg-success text-success";
     } else if (hasExpired) {
       statusText = "Expired";
       className = "badge bg-warning text-danger";
