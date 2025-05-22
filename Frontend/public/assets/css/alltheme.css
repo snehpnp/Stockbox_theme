@@ -913,7 +913,6 @@ ol.breadcrumb.mb-0.p-0 {
 }
 .btn-primary,
 .nav-link.active,
-.btn-primary i,
 .btn-secondary.active,
 .btn-secondary:hover {
   background-color: var(--BtnPriBgCol, black) !important;
@@ -2073,8 +2072,36 @@ svg.lucide.lucide-x.text-danger {
 }
 .badge.bg-light-success {
     background: #e8fdf8;
-    color: #1de9b6;
+    color: #18b76d;
+}
+.badge.bg-light-danger {
+    background: #feeceb;
+    color: #f44236;
 }
 .dashboard-card  .progress-bar {
     background-color: var(--BtnPriBgCol, black) !important;
+}
+label {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 600;
+}
+svg.lucide.lucide-indian-rupee {
+    width: 16px;
+    color: green;
+}
+.col-form-label {
+    font-weight: 500;
+}
+.btn-sm i,.btn-sm
+{
+  font-size: 12px !important;
+}
+.blog-para
+{
+overflow: hidden;
+text-overflow: ellipsis;
+display: -webkit-box;
+-webkit-line-clamp: 5;
+-webkit-box-orient: vertical;
 }

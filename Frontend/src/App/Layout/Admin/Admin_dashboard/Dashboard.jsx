@@ -72,46 +72,45 @@ const Dashbord = () => {
       name: "S.No",
       selector: (row, index) => index + 1,
       sortable: false,
-      width: "100px",
+     
     },
     {
       name: "Full Name",
       selector: (row) => row.FullName,
       sortable: true,
-      width: "200px",
+      
     },
     {
       name: "Email",
       selector: (row) => row.Email,
       sortable: true,
-      width: "400px",
+     
     },
-    {
-      name: "Plan Status",
-      cell: (row) => {
-        const hasActive = row?.plansStatus?.some(
-          (item) => item.status === "active"
-        );
-        const hasExpired = row?.plansStatus?.some(
-          (item) => item.status === "expired"
-        );
+   {
+  name: "Plan Status",
+  cell: (row) => {
+    const hasActive = row?.plansStatus?.some(
+      (item) => item.status === "active"
+    );
+    const hasExpired = row?.plansStatus?.some(
+      (item) => item.status === "expired"
+    );
 
-        let statusText = "N/A";
-        let color = "red";
+    let statusText = "N/A";
+    let className = "badge bg-danger"; // default for N/A
 
-        if (hasActive) {
-          statusText = "Active";
-          color = "green";
-        } else if (hasExpired) {
-          statusText = "Expired";
-          color = "orange";
-        }
+    if (hasActive) {
+      statusText = "Active";
+      className = "badge bg-success text-success";
+    } else if (hasExpired) {
+      statusText = "Expired";
+      className = "badge bg-warning text-danger";
+    }
 
-        return <span style={{ color }}>{statusText}</span>;
-      },
-      sortable: true,
-      width: "200px",
-    },
+    return <span className={className}>{statusText}</span>;
+  },
+  sortable: true,
+},
     {
       name: "Client Segment",
       cell: (row) => {
@@ -142,13 +141,13 @@ const Dashbord = () => {
         );
       },
       sortable: true,
-      width: "200px",
+     
     },
     {
       name: "Phone No",
       selector: (row) => row.PhoneNo,
       sortable: true,
-      width: "200px",
+      
     },
 
     {
@@ -156,7 +155,7 @@ const Dashbord = () => {
       selector: (row) =>
         row.addedByDetails?.FullName ?? (row.clientcome === 1 ? "WEB" : "APP"),
       sortable: true,
-      width: "165px",
+      
     },
 
     {

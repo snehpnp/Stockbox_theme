@@ -124,7 +124,7 @@ const PopupDescription = () => {
             </div>
 
             <div className="row justify-content-center">
-                <div className="col-lg-8">
+                <div className="col-lg-12">
 
                     <div className="card mb-4 shadow-sm">
                         <div className="card-header fw-semibold">Pop-up Status</div>

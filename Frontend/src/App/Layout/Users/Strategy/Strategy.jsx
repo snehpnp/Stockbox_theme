@@ -205,7 +205,7 @@ const Strategy = () => {
               {item?.stockDetails?.map((stock, i) => (
                 <tr key={i}>
                   <td>
-                    <span className="alert alert-success px-2 py-1 me-2">{stock?.calltype}</span>
+                    <span className="badge bg-light-success px-2 py-1 me-2">{stock?.calltype}</span>
                     {stock?.tradesymbol}
                   </td>
                   <td>₹{stock?.price}</td>
@@ -408,7 +408,7 @@ const Strategy = () => {
 
 
 
-      <div className=" nav nav-pills border-bottom my-3 justify-content-center row">
+      <div className=" nav nav-pills border-bottom my-3  row">
         {selectedTab === "live" ? renderLiveStrategies() : renderClosedStrategies()}
       </div>
 
@@ -455,7 +455,7 @@ const Strategy = () => {
                 {signaldetail?.stockDetails?.map((stock, i) => (
                   <tr key={i}>
                     <td>
-                      <span className="alert alert-success px-2 py-1 me-2">{stock?.calltype}</span>
+                      <span className="alert alert-success px-2 py-1 me-2 ">{stock?.calltype}</span>
                     </td>
                     <td>{stock?.tradesymbols}</td>
                     <td>{signalquantity ? stock?.lot * signalquantity : stock?.lot}</td>

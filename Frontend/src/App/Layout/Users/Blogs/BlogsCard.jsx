@@ -12,7 +12,7 @@ const BlogCard = ({ blog }) => {
           {new Date(blog.created_at).toLocaleDateString()}
         </small>
         <h3 style={styles.title}>{blog.title}</h3>
-        <p dangerouslySetInnerHTML={{ __html: blog.description }} />
+        <p className="blog-para" dangerouslySetInnerHTML={{ __html: blog.description }} />
         {/* <p style={styles.description}>{blog.description}</p> */}
        
         <Link to="/user/blogdetail" className="btn btn-primary">Read More</Link>
