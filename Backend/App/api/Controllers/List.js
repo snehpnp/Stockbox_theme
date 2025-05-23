@@ -8925,7 +8925,28 @@ async BasketExpire(req, res) {
     try {
       const { client_id, text, rating } = req.body;
 
+  if (!client_id || typeof rating === 'undefined') {
+      return res.status(400).json({
+        status: false,
+        message: "client_id and rating are required"
+      });
+    }
 
+    const client = await Clients_Modal.findById(client_id);
+    if (!client) {
+      return res.status(404).json({
+        status: false,
+        message: "Client not found"
+      });
+    }
+
+    // Check if client has already rated
+    if (client.rating_status === 1) {
+      return res.status(403).json({
+        status: false,
+        message: "You have already submitted a rating"
+      });
+    }
 
       const result = new Rating_Modal({
         client_id: client_id,
@@ -8934,6 +8955,11 @@ async BasketExpire(req, res) {
       });
 
       const savedSubscription = await result.save();
+
+
+        client.rating_status = 1;
+        await client.save();
+
 
       return res.status(201).json({
         status: true,

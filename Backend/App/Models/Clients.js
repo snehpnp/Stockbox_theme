@@ -206,6 +206,12 @@ const clientsModel = new Schema({
         trim: true,
         default: null
     },
+    rating_status: {
+        type: Number, // changed to Number
+        enum: [1, 0],
+        default: 0
+    }
+
 
 }, {
     timestamps: true
