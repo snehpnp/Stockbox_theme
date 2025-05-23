@@ -50,6 +50,10 @@ const Dashboard = () => {
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
   const [dashboard, setDashboard] = useState({});
+  const [userdata, setUserdata] = useState([]);
+
+  console.log("userdata", userdata)
+
 
   useEffect(() => {
     getCashpastdata();
@@ -60,6 +64,7 @@ const Dashboard = () => {
     getBloglist();
     getuserdetail();
     getdashboardata();
+    fetchUserData();
   }, []);
 
 
@@ -93,37 +98,6 @@ const Dashboard = () => {
     aadhar: "",
     panno: "",
   });
-
-
-
-  // useEffect(() => {
-  //   const queryParams = new URLSearchParams(location.search);
-  //   const status = queryParams.get("status");
-  //   const docId = queryParams.get("digio_doc_id");
-
-  //   if (status === true && docId) {
-  //     getdetail();
-  //   }
-  // }, [location]);
-
-
-
-  // const getdetail = async () => {
-  //   try {
-  //     const data = { id: userid };
-  //     const response = await getdocumentfile(data, token);
-
-  //     if (response?.redirectUrl) {
-  //       console.log("Opening URL:", response.redirectUrl);
-  //       window.open(response.redirectUrl, '_blank');
-  //       // window.location.href = response.redirectUrl;
-  //     } else {
-  //       console.log("No redirect URL found.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching services:", error);
-  //   }
-  // };
 
 
 
@@ -232,48 +206,19 @@ const Dashboard = () => {
     return isValid;
   };
 
-  const handleKycSubmit = async (e) => {
-    e.preventDefault();
 
 
-    if (!validateForm()) {
-      showCustomAlert("error", "Please fix the errors in the form");
-      return;
-    }
-
-    setLoading(true);
-
-    const data = new FormData();
-    data.append('email', formData.email);
-    data.append('name', formData.fullName);
-    data.append('phone', formData.phone);
-    data.append('panno', formData.panno);
-    data.append('aadhaarno', formData.aadhar);
-    data.append('id', userid);
-
+  const fetchUserData = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const result = await clientKycAndAgreement(data, token);
-      showCustomAlert("success", "KYC form submitted successfully!")
-      setFormData({
-        fullName: "",
-        email: "",
-        phone: "",
-        aadhar: "",
-        panno: "",
-      });
-      setTouched({
-        fullName: false,
-        email: false,
-        phone: false,
-        aadhar: false,
-        panno: false,
-      });
-    } catch (err) {
-      showCustomAlert("error", "KYC submission failed. Please try again.");
+      const userData = await GetUserData(userid, token);
+      if (userData && userData.data) {
+        setUserdata(userData.data)
+      }
+    } catch (error) {
+      showCustomAlert("error", "Failed to load user data. Please refresh and try again.");
     }
-    setLoading(false);
   };
+
 
 
   const getBannerList = async () => {

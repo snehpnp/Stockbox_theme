@@ -29,13 +29,13 @@ const Service = () => {
     add_by: "",
   });
 
-  //state for loading
+
   const [isLoading, setIsLoading] = useState(true);
 
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
-  // Getting services
+
   const getAdminservice = async () => {
     try {
       const response = await GetService(token);

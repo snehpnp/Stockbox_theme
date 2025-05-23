@@ -580,7 +580,7 @@ const Client = () => {
     {
       name: "Kyc",
       selector: (row) =>
-        row.kyc_verification === 1 ? (
+        row.kyc_verification == 1 ? (
           <div style={{ color: "green", cursor: "pointer" }} onClick={() => handleDownload(row)}>
             <Tooltip placement="top" overlay="Download">
               Verified <ArrowDownToLine />

@@ -143,7 +143,7 @@ const Payments = () => {
                     try {
                         const response2 = await AddBasketsubscription(data, token);
                         if (response2?.status) {
-                            if (kycStatus == 2) {
+                            if (kycStatus == 2 && userdata?.kyc_verification == 2) {
                                 setViewModel3(true);
                             } else {
                                 navigate("/user/thankyou", {

@@ -90,7 +90,6 @@ const Service = () => {
       const userData = await GetUserData(userid, token);
       if (userData && userData.data) {
         setUserdata(userData.data)
-
       }
     } catch (error) {
       showCustomAlert("error", "Failed to load user data. Please refresh and try again.");
@@ -285,7 +284,7 @@ const Service = () => {
             const response2 = await AddplanSubscription(data, token);
 
             if (response2?.status) {
-              if (kycStatus == 2) {
+              if (kycStatus === 2 && userdata?.kyc_verification == 2) {
                 setShowModal(false);
                 setViewModel3(true);
               } else {
