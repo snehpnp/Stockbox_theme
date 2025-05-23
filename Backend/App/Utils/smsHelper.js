@@ -28,7 +28,8 @@ if(name=="bulksmsservice")
 }
 else if(name=="pushsms")
 {
-  config = `user=${username}&key=${authKey}&sender=${sender}&mobile=${mobile}&text=${encodedMessage}&entityid=${entity_id}&templateid=${templateId}`;
+ // config = `user=${username}&key=${authKey}&sender=${sender}&mobile=${mobile}&text=${encodedMessage}&entityid=${entity_id}&templateid=${templateId}`;
+  config = `UserID=${username}&Password=${authKey}&SenderID=${sender}&Phno=${mobile}&Msg=${encodedMessage}&EntityID=${entity_id}&TemplateID=${templateId}`;
 }
 else if(name=="smartping")
 {
