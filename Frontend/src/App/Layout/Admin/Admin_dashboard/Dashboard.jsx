@@ -10,6 +10,8 @@ import Dashboard from "../../../components/Dashboard/DashbaordMain";
 import Loader from "../../../../Utils/Loader";
 
 const Dashbord = () => {
+
+
   useEffect(() => {
     getdetail();
     getAdminclient();
@@ -30,6 +32,8 @@ const Dashbord = () => {
     year: "numeric",
   });
 
+
+
   const getdetail = async () => {
     try {
       const response = await getDashboarddetail(token);
@@ -42,6 +46,8 @@ const Dashbord = () => {
     setLoading(false)
   };
 
+
+
   const getExpirydata = async () => {
     try {
       const response = await getExpiryByMonth(token);
@@ -53,6 +59,9 @@ const Dashbord = () => {
     }
     setLoading(false)
   };
+
+
+
 
   const getAdminclient = async () => {
     try {

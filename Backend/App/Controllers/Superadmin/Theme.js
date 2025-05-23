@@ -140,7 +140,7 @@ exports.updateThemeCompany = async (req, res) => {
   try {
     const { id, theme_id } = req.body;
     if (!id || !theme_id) {
-      return res.status(400).json({
+      return res.json({
         status: false,
         message: "Please provide company id and theme id",
       });
@@ -155,7 +155,7 @@ exports.updateThemeCompany = async (req, res) => {
     );
 
     if (!updatedCompany) {
-      return res.status(404).json({
+      return res.json({
         status: false,
         message: "Company not found",
       });
@@ -168,7 +168,7 @@ exports.updateThemeCompany = async (req, res) => {
           { theme_id: theme_id }
         );
 
-        return res.status(200).json({
+        return res.json({
           status: true,
           data: updatedCompany,
           message: "Company updated successfully",
@@ -179,7 +179,7 @@ exports.updateThemeCompany = async (req, res) => {
           { theme_id: theme_id }
         );
       }
-      return res.status(200).json({
+      return res.json({
         status: true,
         data: updatedCompany,
         message: "Company updated successfully",
@@ -187,7 +187,7 @@ exports.updateThemeCompany = async (req, res) => {
     }
   } catch (error) {
     console.error("Error updating Company:", error);
-    res.status(500).json({
+    res.json({
       status: false,
       message: "Server error",
       error: error.message,

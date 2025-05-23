@@ -47,7 +47,7 @@ export default function Setting_sidebar() {
   });
 
 
-  
+
   const [isOpen, setIsOpen] = useState(false);
   const sidebarRef = useRef(null);
   const RoleData = localStorage.getItem("Role");
