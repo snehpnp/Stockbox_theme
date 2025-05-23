@@ -379,20 +379,20 @@ const Freeclient = () => {
             sortable: true,
             width: '200px',
         },
-      {
-  name: 'Status',
-  selector: row => (
-    <span className={
-      row.status === "active"
-        ? "badge bg-success "
-        : "badge bg-danger"
-    }>
-      {row.status === "active" ? "Active" : "Expired"}
-    </span>
-  ),
-  sortable: true,
-  width: '200px',
-},
+        {
+            name: 'Status',
+            selector: row => (
+                <span className={
+                    row.status === "active"
+                        ? "badge bg-success "
+                        : "badge bg-danger"
+                }>
+                    {row.status === "active" ? "Active" : "Expired"}
+                </span>
+            ),
+            sortable: true,
+            width: '200px',
+        },
 
         {
             name: 'Start Date',
