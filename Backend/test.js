@@ -99,7 +99,7 @@
 //     reversed += arr[i];
 // }
 
-// console.log(reversed); 
+// console.log(reversed);
 
 
 // let arr = [111, 222, 333, 444]
@@ -118,21 +118,40 @@
 
 // Creating the bblSort function
 
-function bubbleSort(arr) {
-    let n = arr.length;
+// function bubbleSort(arr) {
+//     let n = arr.length;
 
-    for (let i = 0; i < n; i++) {
-        for (let j = 0; j < n - 1; j++) {
-            if (arr[j] > arr[j + 1]) {
-                let temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
-            }
-        }
-    }
-    return arr;
-}
+//     for (let i = 0; i < n; i++) {
+//         for (let j = 0; j < n - 1; j++) {
+//             if (arr[j] > arr[j + 1]) {
+//                 let temp = arr[j];
+//                 arr[j] = arr[j + 1];
+//                 arr[j + 1] = temp;
+//             }
+//         }
+//     }
+//     return arr;
+// }
 
-const unsorted = [5, 3, 8, 4, 2];
-console.log(bubbleSort(unsorted));
-  
+// const unsorted = [5, 3, 8, 4, 2];
+// console.log(bubbleSort(unsorted));
+
+
+
+// function bubbleSort(arr) {
+//     let n = arr.length;
+
+//     for (let i = 0; i < n; i++) {
+//         for (let j = 0; j < n - 1; j++) {
+//             if (arr[j] > arr[j + 1]) {
+//                 [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+//             }
+//         }
+//     }
+//     return arr;
+// }
+
+// const unsorted = [5, 3, 8, 4, 2];
+// console.log(bubbleSort(unsorted));
+
+
