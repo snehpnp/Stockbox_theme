@@ -385,7 +385,10 @@ const Service = () => {
 
 
   return (
-    <Content Page_title="Service" button_title="Back" button_status={false}>
+    <Content Page_title="Service"
+      button_title="Back"
+      button_status={false} >
+
       <div className="pricing-table">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <div className="row w-100">

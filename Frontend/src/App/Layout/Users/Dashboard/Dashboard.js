@@ -101,113 +101,6 @@ const Dashboard = () => {
 
 
 
-  const validateField = (name, value) => {
-    let errorMessage = "";
-
-    switch (name) {
-      case "fullName":
-        if (!value.trim()) {
-          errorMessage = "Name is required";
-        } else if (value.trim().length < 3) {
-          errorMessage = "Name must be at least 3 characters";
-        } else if (!/^[A-Za-z\s]+$/.test(value)) {
-          errorMessage = "Name should contain only letters and spaces";
-        }
-        break;
-
-      case "email":
-        if (!value) {
-          errorMessage = "Email is required";
-        } else if (!/^\S+@\S+\.\S+$/.test(value)) {
-          errorMessage = "Please enter a valid email address";
-        }
-        break;
-
-      case "phone":
-        if (!value) {
-          errorMessage = "Phone number is required";
-        } else if (!/^[6-9]\d{9}$/.test(value)) {
-          errorMessage = "Please enter a valid 10-digit Indian mobile number";
-        }
-        break;
-
-      case "aadhar":
-        if (!value) {
-          errorMessage = "Aadhar number is required";
-        } else if (!/^\d{12}$/.test(value)) {
-          errorMessage = "Aadhar number must be 12 digits";
-        }
-        break;
-
-      case "panno":
-        if (!value) {
-          errorMessage = "PAN number is required";
-        } else if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value)) {
-          errorMessage = "PAN must be in valid format (e.g., ABCDE1234F)";
-        }
-        break;
-
-      default:
-        break;
-    }
-
-    return errorMessage;
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-
-    if (touched[name]) {
-      const errorMessage = validateField(name, value);
-      setErrors(prev => ({
-        ...prev,
-        [name]: errorMessage
-      }));
-    }
-  };
-
-  const handleBlur = (e) => {
-    const { name, value } = e.target;
-
-    setTouched(prev => ({
-      ...prev,
-      [name]: true
-    }));
-
-    const errorMessage = validateField(name, value);
-    setErrors(prev => ({
-      ...prev,
-      [name]: errorMessage
-    }));
-  };
-
-  const validateForm = () => {
-    let isValid = true;
-    const newErrors = {};
-    const newTouched = {};
-
-
-    Object.keys(formData).forEach(key => {
-      newTouched[key] = true;
-      const errorMessage = validateField(key, formData[key]);
-      newErrors[key] = errorMessage;
-      if (errorMessage) {
-        isValid = false;
-      }
-    });
-
-    setTouched(newTouched);
-    setErrors(newErrors);
-    return isValid;
-  };
-
-
-
   const fetchUserData = async () => {
     try {
       const userData = await GetUserData(userid, token);
@@ -255,6 +148,9 @@ const Dashboard = () => {
     }
   };
 
+
+
+
   const getdashboardata = async () => {
     try {
       const response = await Getdashboardata(token);
@@ -274,6 +170,8 @@ const Dashboard = () => {
     return new Date(year, month - 1).toLocaleString("en-US", { month: "long" });
   };
 
+
+
   const getuserdetail = async () => {
     try {
       const response = await GetUserData(userid, token);
@@ -285,7 +183,6 @@ const Dashboard = () => {
       console.log("error", error);
     }
   };
-
 
 
 
@@ -306,7 +203,6 @@ const Dashboard = () => {
 
 
 
-
   const getFuturepastdata = async () => {
     try {
       const response = await getpastperformaceFuturedata({ id: "66dfede64a88602fbbca9b72" }, token);
@@ -322,7 +218,6 @@ const Dashboard = () => {
 
 
 
-
   const getOptionpastdata = async () => {
     try {
       const response = await getpastperformaceOptiondata({ id: "66dfeef84a88602fbbca9b79" }, token);
@@ -335,7 +230,6 @@ const Dashboard = () => {
       console.error("Error fetching Option data:", error);
     }
   };
-
 
 
 
@@ -360,9 +254,6 @@ const Dashboard = () => {
     ],
   };
 
-
-
-  // Other chart progress configurations follow similarly
 
   return (
 
@@ -414,37 +305,38 @@ const Dashboard = () => {
               <ul className="list-group list-group-flush">
                 <li className="list-group-item">
                   <Link to="/user/subscription" className="text-dark">
-                    <CreditCard className="me-2" /> My Subscription
+                    <CreditCard className="me-2 text-primary" /> My Subscription
                   </Link>
                 </li>
                 <li className="list-group-item">
-                  <Link onClick={() => setViewModel2(true)} className="text-dark">
-                    <Shield className="me-2" /> KYC
+                  <Link
+                    onClick={() => {
+                      if (userdata.kyc_verification !== 1) setViewModel2(true);
+                    }}
+                    className={`text-decoration-none d-flex align-items-center ${userdata.kyc_verification === 1 ? 'text-success' : 'text-danger'}`}
+                    style={{ pointerEvents: userdata.kyc_verification === 1 ? 'none' : 'auto' }}
+                  >
+                    <Shield className={`me-2 ${userdata.kyc_verification === 1 ? 'text-success' : 'text-danger'}`} />
+                    KYC - {userdata.kyc_verification === 1 ? 'Completed' : 'Pending'}
                   </Link>
                 </li>
-                <li className="list-group-item" >
+                <li className="list-group-item">
                   <Link to="/user/subscription" className="text-dark">
-                    <History className="me-2" /> Payment History
+                    <History className="me-2 text-warning" /> Payment History
                   </Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="/user/basket"
-                    state={{ activeTab: 'basket' }}
-                    className="text-dark">
-                    <ShoppingCart className="me-2" /> My Basket Subscription
+                  <Link to="/user/basket" state={{ activeTab: 'basket' }} className="text-dark">
+                    <ShoppingCart className="me-2 text-info" /> My Basket Subscription
                   </Link>
-
                 </li>
                 <li className="list-group-item">
                   <Link to="/user/refer-earn" className="text-dark">
-                    <Puzzle className="me-2" /> Refer & Earn
+                    <Puzzle className="me-2 text-success" /> Refer & Earn
                   </Link>
-
                 </li>
-                {/* <li className="list-group-item">
-                  <button className="btn btn-primary mt-3 w-100">View Proflie</button>
-                </li> */}
               </ul>
+
 
             </div>
           </div>
