@@ -231,10 +231,9 @@ function Kyc({ setViewModel2 }) {
       });
       setViewModel2(false)
       window.open(
-        `https://app.digio.in/#/gateway/login/${result?.kid}/${result?.refid}/${result?.customer_identifier}?redirect_url=${encodeURIComponent(base_urlfrontend + "/#/user/dashboard")}`,
+        encodeURI(`${base_url}/api/client/uploaddocuments?id=${userid}`),
         '_blank'
       );
-
 
     } catch (err) {
       console.error('KYC Failed:', err);

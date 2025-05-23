@@ -16,6 +16,7 @@ import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import Kyc from "./Kyc";
 
 
+
 const Profiles = () => {
 
   const token = localStorage.getItem("token");
