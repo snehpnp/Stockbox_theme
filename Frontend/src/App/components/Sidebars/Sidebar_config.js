@@ -131,6 +131,12 @@ const Admin = [
     name: "Banner"
   },
   {
+    label: "Clover",
+    icon: "Frame",
+    link: "/admin/clover",
+    name: "Clover"
+  },
+  {
     label: "Client Plan Expiry",
     icon: "FolderClock",
     link: "/admin/planexpiry",
@@ -244,12 +250,12 @@ const Admin = [
     link: "/admin/faq",
     name: "FAQ"
   },
-  // {
-  //   label: "Help Center",
-  //   icon: "HelpingHand",
-  //   link: "/admin/help",
-  //   name: "HelpCenter"
-  // },
+  {
+    label: "Rating",
+    icon: "Star",
+    link: "/admin/rating-list",
+    name: "Rating"
+  },
   {
     label: "Policy",
     icon: "Wrench",

@@ -4335,3 +4335,131 @@ export async function FreeTrialDetail({ month, year }, token) {
         return err;
     }
 }
+
+
+
+// get clover list
+
+export async function getCloverlist(token) {
+
+    try {
+        const res = await axios.get(`${Config.base_url}clover/list`, {
+            headers: {
+                'Authorization': `${token}`
+            },
+        });
+        return res?.data;
+    } catch (err) {
+        return { error: err.response?.data || err.message };
+    }
+}
+
+
+// add banner by admin 
+
+
+export async function AddClover(data, token) {
+    const formData = new FormData();
+    formData.append('title', data.title);
+    formData.append('add_by', data.add_by);
+    formData.append('image', data.image);
+    try {
+        const res = await axios.post(`${Config.base_url}clover/add`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// update  banner
+
+export async function UpdateClover(data, token) {
+    const formData = new FormData();
+    formData.append('image', data.image);
+    formData.append('id', data.id);
+    formData.append('title', data.title);
+    try {
+        const res = await axios.post(`${Config.base_url}clover/update`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// banner status
+
+export async function changeCloverStatus(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}clover/change-status`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+// banner delete
+
+export async function DeleteClover(_id, token) {
+    try {
+        const res = await axios.get(`${Config.base_url}clover/delete/${_id}`, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}
+
+
+
+//rating 
+
+
+export async function GetRatingList(data, token) {
+    try {
+        const res = await axios.post(`${Config.base_url}dashboard/getrating`, data, {
+            headers: {
+                data: {},
+                'Authorization': `${token}`,
+            },
+        });
+
+        return res?.data;
+    } catch (err) {
+
+        return err.response?.data || err.message;
+    }
+}

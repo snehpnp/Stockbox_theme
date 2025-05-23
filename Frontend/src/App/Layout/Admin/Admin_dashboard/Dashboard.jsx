@@ -72,45 +72,42 @@ const Dashbord = () => {
       name: "S.No",
       selector: (row, index) => index + 1,
       sortable: false,
-     
+
     },
     {
       name: "Full Name",
       selector: (row) => row.FullName,
       sortable: true,
-      
+
     },
     {
       name: "Email",
       selector: (row) => row.Email,
       sortable: true,
-     
+
     },
-   {
-  name: "Plan Status",
-  cell: (row) => {
-    const hasActive = row?.plansStatus?.some(
-      (item) => item.status === "active"
-    );
-    const hasExpired = row?.plansStatus?.some(
-      (item) => item.status === "expired"
-    );
+    {
+      name: "Plan Status",
+      cell: (row) => {
+        const hasActive = row?.plansStatus?.some((item) => item.status === "active");
+        const hasExpired = row?.plansStatus?.some((item) => item.status === "expired");
 
-    let statusText = "N/A";
-    let className = "badge bg-danger"; // default for N/A
+        let statusText = "N/A";
+        let className = "badge bg-warning ";
 
-    if (hasActive) {
-      statusText = "Active";
-      className = "badge bg-success text-success";
-    } else if (hasExpired) {
-      statusText = "Expired";
-      className = "badge bg-warning text-danger";
-    }
+        if (hasActive) {
+          statusText = "Active";
+          className = "badge bg-success ";
+        } else if (hasExpired) {
+          statusText = "Expired";
+          className = "badge bg-danger";
+        }
 
-    return <span className={className}>{statusText}</span>;
-  },
-  sortable: true,
-},
+        return <span className={className}>{statusText}</span>;
+      },
+      sortable: true,
+      idth: "200px",
+    },
     {
       name: "Client Segment",
       cell: (row) => {
@@ -141,13 +138,13 @@ const Dashbord = () => {
         );
       },
       sortable: true,
-     
+
     },
     {
       name: "Phone No",
       selector: (row) => row.PhoneNo,
       sortable: true,
-      
+
     },
 
     {
@@ -155,7 +152,7 @@ const Dashbord = () => {
       selector: (row) =>
         row.addedByDetails?.FullName ?? (row.clientcome === 1 ? "WEB" : "APP"),
       sortable: true,
-      
+
     },
 
     {

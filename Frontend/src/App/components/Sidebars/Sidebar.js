@@ -49,7 +49,8 @@ import {
   CircleFadingArrowUp,
   Ticket,
   Mails,
-  Facebook
+  Facebook,
+  Star
 } from "lucide-react";
 
 import { Link, useLocation } from "react-router-dom";
@@ -346,7 +347,8 @@ const IconComponent = ({ icon }) => {
     CircleFadingArrowUp,
     Ticket,
     Mails,
-    Facebook
+    Facebook,
+    Star
 
   };
 

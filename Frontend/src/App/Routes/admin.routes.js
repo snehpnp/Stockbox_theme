@@ -99,6 +99,8 @@ import MultipleSignal from "../Layout/Admin/Admin_signal/MultipleSignal";
 import MultipleSignaldetail from "../Layout/Admin/Admin_signal/MultipleSignaldetail";
 import CurrentMonthfreeTrial from "../Layout/Admin/CurrentMonthfreeTrial.jsx/CurrentMonthfreeTrial";
 import CurrentMonthFreeTrialDetail from "../Layout/Admin/CurrentMonthfreeTrial.jsx/CurrentMonthFreeTrialDetail";
+import Clover from "../Layout/Admin/Clover/Clover";
+import Rating from "../Layout/Admin/Rating/Rating";
 
 
 
@@ -146,6 +148,9 @@ export default function App() {
       <Route path="/perfom" element={<Perform />} />
       <Route path="/service" element={<Service />} />
       <Route path="/banner" element={<Banner />} />
+      <Route path="/clover" element={<Clover />} />
+      <Route path="/rating-list" element={<Rating />} />
+
 
 
       <Route path="/blogs" element={<Blogs />} />

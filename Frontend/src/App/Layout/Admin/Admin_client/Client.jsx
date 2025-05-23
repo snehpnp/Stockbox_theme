@@ -503,30 +503,30 @@ const Client = () => {
       sortable: true,
       width: "200px",
     },
-   
+
 
     {
-  name: "Plan Status",
-  cell: (row) => {
-    const hasActive = row?.plansStatus?.some((item) => item.status === "active");
-    const hasExpired = row?.plansStatus?.some((item) => item.status === "expired");
+      name: "Plan Status",
+      cell: (row) => {
+        const hasActive = row?.plansStatus?.some((item) => item.status === "active");
+        const hasExpired = row?.plansStatus?.some((item) => item.status === "expired");
 
-    let statusText = "N/A";
-    let className = "badge bg-warning "; // Default for N/A
+        let statusText = "N/A";
+        let className = "badge bg-warning ";
 
-    if (hasActive) {
-      statusText = "Active";
-      className = "badge bg-success ";
-    } else if (hasExpired) {
-      statusText = "Expired";
-      className = "badge bg-danger";
-    }
+        if (hasActive) {
+          statusText = "Active";
+          className = "badge bg-success ";
+        } else if (hasExpired) {
+          statusText = "Expired";
+          className = "badge bg-danger";
+        }
 
-    return <span className={className}>{statusText}</span>;
-  },
-  sortable: true,
-  idth: "200px",
-},
+        return <span className={className}>{statusText}</span>;
+      },
+      sortable: true,
+      idth: "200px",
+    },
 
     {
       name: "Client Segment",
