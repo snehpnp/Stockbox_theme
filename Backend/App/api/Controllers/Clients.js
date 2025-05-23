@@ -1089,7 +1089,10 @@ class Clients {
           gid,
           refid
         };
-        return res.json(data); // Ensure only one response is sent
+
+                    return res.json(data);
+                
+
       } else {
         return res.status(400).json({ error: 'Digio status is not requested' });
       }
@@ -2346,6 +2349,248 @@ else {
           return res.status(500).json({ success: false, message: "Server Error" });
         }
       }
+
+
+      
+  async uploadDocuments(req, res) {
+    const id = req.query.id;
+
+    // Fetch client details
+    const client = await Clients_Modal.findOne({ _id: id });
+    if (!client) {
+      return res.status(400).json({
+        status: false,
+        message: "Client not found",
+      });
+    }
+
+    // Fetch Digio settings
+    const settings = await BasicSetting_Modal.findOne();
+    if (!settings || !settings.digio_client_id || !settings.digio_client_secret) {
+      return res.status(500).json({
+        status: false,
+        message: 'Digio settings are not configured or missing',
+      });
+    }
+
+    // Extract Digio credentials
+    const digio_client_id = settings.digio_client_id;
+    const digio_client_secret = settings.digio_client_secret;
+
+    // Path to the PDF document
+    const filename = client.pdf;
+    const dir = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads/pdf`, filename);
+
+    if (!fs.existsSync(dir)) {
+      return res.status(400).json({
+        status: false,
+        message: 'PDF file not found',
+      });
+    }
+
+    // Create form-data with the PDF file
+    const form = new FormData();
+    form.append('file', fs.createReadStream(dir), {
+      filename: filename,
+      contentType: 'application/pdf'
+    });
+
+    // Prepare the request body for signing
+    const noof_pdf_pages = settings.noof_pdf_pages; // Number of pages in the PDF
+
+    // Generate sign_coordinates dynamically
+    const signCoordinates = {};
+    signCoordinates[client.PhoneNo] = {}; // Initialize the phone number key
+    
+    for (let i = 1; i <= noof_pdf_pages; i++) {
+        signCoordinates[client.PhoneNo][i] = [{ llx: 290, lly: 170, urx: 520, ury: 70 }];
+    }
+    
+    const requestBody = {
+        signers: [{
+            identifier: client.PhoneNo,
+            aadhaar_id: client.aadhaarno,
+            reason: 'Contract'
+        }],
+        sign_coordinates: signCoordinates, // Use dynamically generated object
+        expire_in_days: 10,
+        display_on_page: "custom",
+        notify_signers: true,
+        send_sign_link: true
+    };
+
+    // Add the request payload to the form
+    form.append('request', JSON.stringify(requestBody));
+
+    // Prepare the Authorization header
+    const authToken = Buffer.from(`${digio_client_id}:${digio_client_secret}`).toString('base64');
+
+    try {
+      // Send the request to upload the document and get Digio response
+      const response = await axios.post('https://api.digio.in/v2/client/document/upload', form, {
+        headers: {
+          ...form.getHeaders(),
+          'Authorization': `Basic ${authToken}`
+        }
+      });
+
+      // Process the response data
+      const refid = Math.floor(10000 + Math.random() * 90000); // Generate a random reference ID
+      const doc_id = response.data.id;
+      const email = client.Email;
+      const PhoneNo = client.PhoneNo;
+      // Define the redirect URL
+      const baseUrl = "https://app.digio.in/#/gateway/login/";
+     
+
+      // Respond with the redirect URL or use it on the frontend
+      
+
+
+  if (client.devicetoken) {
+
+       const redirectUrl = encodeURIComponent(`https://${req.headers.host}`);
+       const fullUrl = `${baseUrl}${doc_id}/${refid}/${PhoneNo}?redirect_url=${redirectUrl}`;
+                   return res.json({
+                    status: true,
+                    message: 'Document uploaded successfully',
+                    redirectUrl: fullUrl
+                });
+                } else {
+                   const redirectUrl = encodeURIComponent(`https://${req.headers.host}/backend/api/client/downloaddocuments?id=${client._id}&doc_id=${doc_id}`);
+
+                   const fullUrl = `${baseUrl}${doc_id}/${refid}/${PhoneNo}?redirect_url=${redirectUrl}`;
+                    const dynamicUrl = `${req.protocol}://${req.headers.host}`;
+                    return res.redirect(fullUrl);
+                }
+
+
+
+
+    } catch (error) {
+
+      return res.status(500).json({
+        status: false,
+        error: 'Error during PDF generation or API request',
+        message: error?.response?.data?.message || error?.message || 'Unknown error',
+      });
+   
+    }
+  }
+  async downloadDocuments(req, res) {
+    try {
+      const { id, doc_id } = req.query;
+
+      // Fetch client details
+      const client = await Clients_Modal.findById(id);
+      if (!client) {
+        return res.status(404).json({
+          status: false,
+          message: "Client not found",
+        });
+      }
+
+      // Fetch Digio settings
+      const settings = await BasicSetting_Modal.findOne();
+      if (!settings || !settings.digio_client_id || !settings.digio_client_secret) {
+        return res.status(500).json({
+          status: false,
+          message: 'Digio settings are not configured or missing',
+        });
+      }
+
+      // Prepare the authentication token
+      const authToken = Buffer.from(`${settings.digio_client_id}:${settings.digio_client_secret}`).toString('base64');
+
+      // Define the API endpoint with the document ID
+      const url = `https://api.digio.in/v2/client/document/download?document_id=${doc_id}`;
+
+      // Make a GET request to download the document
+      const response = await axios.get(url, {
+        headers: {
+          'Authorization': `Basic ${authToken}`,
+          'Content-Type': 'application/json'
+        },
+        responseType: 'arraybuffer'  // Handle binary data like PDF
+      });
+
+      // Generate a unique filename
+      const fileName = `kyc-agreement-${client.PhoneNo}.pdf`;
+      const tempPath = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads/pdf`, fileName);
+
+      // Ensure the directory exists
+      await fs.promises.mkdir(path.dirname(tempPath), { recursive: true });
+
+      // Write the downloaded content to a PDF file
+      await fs.promises.writeFile(tempPath, response.data);
+
+      // Update client record
+      client.kyc_verification = 1;
+      client.pdf = fileName;  // Set the PDF filename
+      await client.save();
+
+      const titles = 'Important Update';
+      const message = `Congratulations! ${client.FullName} KYC Verified successfully.`;
+      const resultnm = new Adminnotification_Modal({
+        clientid: client._id,
+        type: 'kyc verification',
+        title: titles,
+        message: message
+      });
+
+
+      await resultnm.save();
+
+
+//////////////////// send mail sign document ///////////// 
+const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'kyc' });
+if (mailtemplate) {
+  let finalMailBody = mailtemplate.mail_body.replace(/{clientName}/g, client.FullName);
+       
+    const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+    const finalHtml = finalMailBody
+        .replace(/{{company_name}}/g, settings.website_title)
+        .replace(/{{body}}/g, finalMailBody)
+        .replace(/{{logo}}/g, logo);
+
+    const mailOptions = {
+        to: client.Email,
+        from: `${settings.from_name} <${settings.from_mail}>`,
+        subject: `${mailtemplate.mail_subject}`,
+        html: finalHtml,
+       attachments: [{ filename: fileName, path: tempPath }]
+    };
+
+    await sendEmail(mailOptions);
+}
+
+//////////////////// send mail sign document ///////////// 
+
+
+      // Return the file name or path for further use
+
+ if (client.devicetoken) {
+ res.json({
+        status: true,
+        pdf: fileName,
+        message: 'Document downloaded and saved successfully'
+      });
+    }
+    else {
+       const redirectUrl = `https://${req.headers.host}/#/user/dashboard`;
+       return res.redirect(redirectUrl);
+    }
+     
+    } catch (error) {
+      
+      return res.status(500).json({
+        status: false,
+        message: error?.response?.data?.message || error?.message || 'Unknown error',
+        error: error.message || 'An unknown error occurred'
+      });
+    }
+  }
+
 
   
 

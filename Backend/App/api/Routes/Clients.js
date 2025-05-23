@@ -1,6 +1,6 @@
 const router = require("express").Router()
 
-const {AddClient,detailClient,loginClient,forgotPassword,resetPassword,changePassword,updateProfile,deleteClient,otpSubmit,aadhaarVerification,aadhaarOtpSubmit,clientKycAndAgreement,uploadDocument,downloadDocument,requestPayout,payoutList,referEarn,brokerLink,deleteBrokerLink,addHelpDesk,helpdeskList,resend,orderList,orderListDetail,basketOrderList,getClientSignalOrders,clientDelete,getTickets,detailTicket,rePly,addTicket,handleUtmSource} = require('../Controllers/Clients')
+const {AddClient,detailClient,loginClient,forgotPassword,resetPassword,changePassword,updateProfile,deleteClient,otpSubmit,aadhaarVerification,aadhaarOtpSubmit,clientKycAndAgreement,uploadDocument,downloadDocument,requestPayout,payoutList,referEarn,brokerLink,deleteBrokerLink,addHelpDesk,helpdeskList,resend,orderList,orderListDetail,basketOrderList,getClientSignalOrders,clientDelete,getTickets,detailTicket,rePly,addTicket,handleUtmSource,uploadDocuments,downloadDocuments} = require('../Controllers/Clients')
 
 
 
@@ -20,6 +20,11 @@ router.post('/api/client/aadhaarotpsubmit', aadhaarOtpSubmit);
 router.post('/api/client/clientkycandagreement', clientKycAndAgreement);
 router.post('/api/client/uploaddocument', uploadDocument);
 router.post('/api/client/downloaddocument', downloadDocument);
+
+router.get('/api/client/uploaddocuments', uploadDocuments);
+router.get('/api/client/downloaddocuments', downloadDocuments);
+
+
 router.post('/api/client/payoutlist', payoutList);
 router.post('/api/client/requestpayout', requestPayout);
 router.post('/api/client/referearn', referEarn);
