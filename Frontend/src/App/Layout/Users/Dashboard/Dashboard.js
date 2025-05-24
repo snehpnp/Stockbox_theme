@@ -41,6 +41,7 @@ const Dashboard = () => {
   const [newslist, setNewslist] = useState([]);
   const [model, setModel] = useState(false);
   const [viewmodel2, setViewModel2] = useState(false);
+  
   const [image, setImage] = useState(
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTox5GjcAiQFx_AhZfdb1Y4Y5TViXM613ATDg&s"
   );
