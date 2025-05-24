@@ -882,7 +882,7 @@ class Plan {
       
               await browser.close();
       */
-
+if(plan.price > 0)  { 
       const pdfresponse = await generatePDF({
         htmlContent,
         fileName: `${orderNumber}.pdf`,
@@ -948,7 +948,7 @@ class Plan {
       }
 
 
-
+    }
 
 
 
@@ -1618,7 +1618,7 @@ class Plan {
       
               await browser.close();
       */
-
+if(plan.price > 0)  { 
 
       const pdfresponse = await generatePDF({
         htmlContent,
@@ -1686,7 +1686,7 @@ class Plan {
       }
 
 
-
+    }
       // Return success response
       return res.status(201).json({
         status: true,
@@ -2078,7 +2078,7 @@ class Plan {
               await browser.close();
       */
 
-
+if(plan.price > 0)  { 
       const pdfresponse = await generatePDF({
         htmlContent,
         fileName: `${orderNumber}.pdf`,
@@ -2144,7 +2144,7 @@ class Plan {
 
       }
 
-
+    }
 
       // Return success response
       return res.status(201).json({
