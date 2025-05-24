@@ -43,7 +43,9 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
 
   const [clients, setClients] = useState([]);
 
-
+  const [image, setImage] = useState(
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTox5GjcAiQFx_AhZfdb1Y4Y5TViXM613ATDg&s"
+  );
 
   const [isDisabled, setIsDisabled] = useState(false);
   const [model, setModel] = useState(false);
@@ -355,6 +357,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
       const response = await GetUserData(userid, token);
       if (response.status) {
         setUserDetail(response.data);
+        setImage(response.data.image)
       }
     } catch (error) {
       console.log("error", error);
@@ -904,7 +907,7 @@ const Navbar = ({ headerStatus, toggleHeaderStatus }) => {
                     aria-expanded="false"
                   >
                     <img
-                      src={ProfileImage}
+                      src={image}
                       alt="Profile"
                       style={{
                         width: "40px",
