@@ -252,7 +252,7 @@ class Clients {
 
       return res.json({
         status: true,
-        message: "add",
+        message: "Client Added Successfully",
       });
 
     } catch (error) {
