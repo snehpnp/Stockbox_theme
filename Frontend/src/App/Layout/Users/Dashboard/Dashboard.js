@@ -55,7 +55,7 @@ const Dashboard = () => {
   const [dashboard, setDashboard] = useState({});
   const [userdata, setUserdata] = useState([]);
 
-  console.log("userdata", userdata)
+
 
 
   useEffect(() => {
