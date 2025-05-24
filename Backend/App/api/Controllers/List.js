@@ -1190,7 +1190,7 @@ if(settings.state) {
           .replace(/{{totalworld}}/g, convertAmountToWords(savedSubscription.total.toFixed(2)))
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
-
+if(plan.price > 0)  { 
           const pdfresponse = await generatePDF({
           htmlContent,
           fileName: `${orderNumber}.pdf`,
@@ -1283,6 +1283,9 @@ if (pdfresponse.status === true) {
         });
 
       }
+
+    }
+
       // Return success response
       return res.status(201).json({
         status: true,
@@ -5980,6 +5983,7 @@ await browser.close();
 */
 
 
+if(plan.price > 0)  { 
 
 const pdfresponse =  await generatePDF({
   htmlContent,
@@ -6046,7 +6050,7 @@ await sendEmail(mailOptions);
 });
 
 }
-
+      }
       planprice = planprice+plan.price;
 
   if (orderid && client.kyc_verification === 0 && settings.kyc === 2) {
@@ -6520,7 +6524,7 @@ if(settings.state) {
           .replace(/{{plan_start}}/g, formatDate(savedSubscription.plan_start));
 
 
-
+if(plan.price > 0)  { 
 const pdfresponse =  await generatePDF({
   htmlContent,
   fileName: `${orderNumber}.pdf`,
@@ -6586,7 +6590,8 @@ await sendEmail(mailOptions);
 });
 
 }
-
+      }
+      
       planprice = planprice+plan.price;
 
  if (orderid && client.kyc_verification === 0 && settings.kyc === 2) {
