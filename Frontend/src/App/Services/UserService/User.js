@@ -603,21 +603,29 @@ export async function ChangePasswordOfclient(data, token) {
     }
 }
 
+
 export async function UpdateUserProfile(data, token) {
+    const formData = new FormData();
+    formData.append('id', data.id);
+    formData.append('FullName', data.FullName);
+    formData.append('image', data.image);
     try {
-        const res = await axios.post(`${Config.base_url}api/client/update-profile`, data, {
+        const res = await axios.post(`${Config.base_url}api/client/update-profile`, formData, {
             headers: {
-                data: {},
+                'Content-Type': 'multipart/form-data',
                 'Authorization': `${token}`,
             },
         });
 
         return res?.data;
-    }
-    catch (err) {
+    } catch (err) {
+
         return err.response?.data || err.message;
     }
 }
+
+
+
 
 export async function DeleteClient(data, token) {
     try {

@@ -4,10 +4,11 @@ import ReusableModal from "../../../components/Models/ReusableModal";
 import FormicForm from "../../../Extracomponents/Newformicform";
 import { useFormik } from "formik";
 import Content from "../../../components/Contents/Content";
-import { GetUserData } from "../../../Services/UserService/User";
+import { GetUserData, DeleteDematAccount } from "../../../Services/UserService/User";
 import BrokersData from "../../../../Utils/BrokersData";
 import { base_url } from "../../../../Utils/config";
 import { Eye } from "lucide-react";
+import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 
 const Demat = () => {
   const [brokers,
@@ -63,6 +64,25 @@ const Demat = () => {
   useEffect(() => {
     getuserdetail();
   }, []);
+
+
+  const DeleteDematAccountApi = async () => {
+    const result = await showCustomAlert("confirm", "Are You Sure to Want To Remove Demat")
+    if (result.isConfirmed) {
+      try {
+        const response = await DeleteDematAccount({ id: userid }, token);
+        if (response.status) {
+          showCustomAlert("Deleted!", "Your account has been deleted.", "success");
+        } else {
+          showCustomAlert("error", response.message || "Something went wrong.");
+        }
+      } catch (error) {
+
+        showCustomAlert("error", "Failed to delete account. Try again later.");
+      }
+    }
+  };
+
 
   const getuserdetail = async () => {
     try {
@@ -125,20 +145,29 @@ const Demat = () => {
                       <h5 className="mb-2 mt-3">{broker?.name}</h5>
 
                       {brokerData?.dlinkstatus == 0 ? (
-                        <button
-                          className="btn btn-sm btn-primary"
-                          onClick={() => {
-                            handleShowModal(broker?.name);
-                            setUserDetail(broker?.id);
-                          }}
-                        >
-                          <i className="fa fa-eye"></i> View
-                        </button>
+                        <>
+
+                          <button
+                            className="btn btn-sm btn-primary"
+                            onClick={() => {
+                              handleShowModal(broker?.name);
+                              setUserDetail(broker?.id);
+                            }}
+                          >
+                            <i className="fa fa-eye"></i> View
+                          </button>
+                        </>
+
                       ) : brokerData?.brokerid == broker?.id
                         ? (
-                          <button className="btn btn-sm btn-success" >
-                            Active
-                          </button>
+                          <>
+                            <button className="btn btn-sm btn-success" >
+                              Active
+                            </button>
+                            <button className="btn btn-sm btn-success" onClick={(e) => DeleteDematAccountApi()}>
+                              Remove
+                            </button>
+                          </>
                         ) : ""
                         //(
                         //   <button

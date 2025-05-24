@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import Content from "../../../components/Contents/Content";
 import ReusableModal from "../../../components/Models/ReusableModal";
@@ -14,7 +14,7 @@ import {
 } from "../../../Services/UserService/User";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import Kyc from "./Kyc";
-
+import { FaLock, FaWallet, FaClipboardList, FaIdCard, FaTrashAlt, FaMoneyCheckAlt, FaCartPlus } from 'react-icons/fa';
 
 
 const Profiles = () => {
@@ -22,11 +22,15 @@ const Profiles = () => {
   const token = localStorage.getItem("token");
   const userid = localStorage.getItem("id");
 
-
+  const [image, setImage] = useState(
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTox5GjcAiQFx_AhZfdb1Y4Y5TViXM613ATDg&s"
+  );
+  const [uploadimage, setUploadimage] = useState([])
 
   const [showModal, setShowModal] = useState(false);
   const [userDetail, setUserDetail] = useState({});
   const [viewmodel2, setViewModel2] = useState(false);
+
 
 
   const [showPassword, setShowPassword] = useState({
@@ -110,14 +114,14 @@ const Profiles = () => {
 
 
 
-
   const getuserdetail = async () => {
     try {
       const response = await GetUserData(userid, token);
 
       if (response.status) {
-        setUserDetail(response.data);
-        // setDemateStatus(response?.data?.dlinkstatus)
+        setUserDetail(response?.data);
+        setImage(response?.data?.image);
+
       }
     } catch (error) {
       console.log("error", error);
@@ -140,6 +144,7 @@ const Profiles = () => {
       let Data = {
         id: userDetail._id,
         FullName: userDetail.FullName,
+        image: uploadimage
       };
       const response = await UpdateUserProfile(Data, token);
       if (response.status) {
@@ -250,6 +255,19 @@ const Profiles = () => {
   };
 
 
+  const fileInputRef = useRef(null);
+
+  const handleImageClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setUploadimage(file)
+      setImage(URL.createObjectURL(file));
+    }
+  }
 
 
 
@@ -264,56 +282,90 @@ const Profiles = () => {
         <div className="row">
           <div className="col-lg-4 mb-4">
             <div className="card shadow-sm">
-              <div className="card-body text-center">
+              <div className="card-body text-center" style={{ position: "relative", display: "inline-block" }}>
                 <img
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTox5GjcAiQFx_AhZfdb1Y4Y5TViXM613ATDg&s"
+                  src={image}
                   alt="User"
                   style={{
                     width: "100px",
                     height: "100px",
                     backgroundColor: "#f1f1f1",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    cursor: "pointer",
                   }}
+                  onClick={handleImageClick}
+                />
+                <div
+                >
+                  <i className="fas fa-pencil-alt" style={{ fontSize: "12px", color: "#333" }}></i>
+                </div>
+
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  style={{ display: "none" }}
+                  accept="image/*"
+                  onChange={handleImageChange}
                 />
               </div>
+
               <ul className="list-group list-group-flush">
                 <li className="list-group-item">
-                  <Link onClick={() => setShowModal(true)}>
-                    Change Password
+                  <Link onClick={() => setShowModal(true)} className="d-flex align-items-center gap-2">
+                    <FaLock /> Change Password
                   </Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="/user/subscription">My Subscription</Link>
+                  <Link to="/user/subscription" className="d-flex align-items-center gap-2">
+                    <FaClipboardList /> My Subscription
+                  </Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="/user/wallet">Wallet</Link>
+                  <Link to="/user/wallet" className="d-flex align-items-center gap-2">
+                    <FaWallet /> Wallet
+                  </Link>
                 </li>
                 {/* <li className="list-group-item">
-                  <Link to="/user/payment-history">Payment History</Link>
-                </li> */}
+               <Link to="/user/payment-history" className="d-flex align-items-center gap-2">
+               <FaMoneyCheckAlt /> Payment History
+                </Link>
+                 </li> */}
                 <li className="list-group-item">
                   <Link
                     to="/user/basket"
                     state={{ activeTab: 'basket' }}
-                  >My Basket Subscription</Link>
+                    className="d-flex align-items-center gap-2"
+                  >
+                    <FaCartPlus /> My Basket Subscription
+                  </Link>
                 </li>
                 <li className="list-group-item">
-                  <Link onClick={() => setViewModel2(true)} >User Kyc</Link>
+                  <Link
+                    onClick={() => {
+                      if (userDetail.kyc_verification !== 1) setViewModel2(true);
+                    }}
+                    className={`text-decoration-none d-flex align-items-center gap-2 ${userDetail.kyc_verification === 1 ? 'text-success' : 'text-danger'}`}
+                    style={{ pointerEvents: userDetail.kyc_verification === 1 ? 'none' : 'auto' }}
+                  >
+                    <FaIdCard />
+                    KYC - {userDetail.kyc_verification === 1 ? 'Completed' : 'Pending'}
+                  </Link>
                 </li>
                 {userDetail?.dlinkstatus === 1 &&
                   <li className="list-group-item">
-                    <Link to="" onClick={(e) => DeleteDematAccountApi()}
-                      className="btn btn-secondary w-100">
-                      Delete Demat Account
+                    <Link to="" onClick={(e) => DeleteDematAccountApi()} className="btn btn-secondary w-100 d-flex align-items-center justify-content-center gap-2">
+                      <FaTrashAlt /> Delete Demat Account
                     </Link>
                   </li>
                 }
                 <li className="list-group-item">
                   <Link
                     to=""
-                    className="btn btn-primary w-100"
+                    className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
                     onClick={(e) => DeleteAccount()}
                   >
-                    Delete Account
+                    <FaTrashAlt /> Delete Account
                   </Link>
                 </li>
               </ul>

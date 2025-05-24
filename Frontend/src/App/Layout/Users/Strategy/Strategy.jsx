@@ -6,6 +6,9 @@ import { fDateTimeH } from "../../../../Utils/Date_formate";
 import ReusableModal from "../../../components/Models/ReusableModal";
 import showCustomAlert from "../../../Extracomponents/CustomAlert/CustomAlert";
 import { image_baseurl } from "../../../../Utils/config";
+import Loader from "../../../../Utils/Loader";
+
+
 
 const Strategy = () => {
 
@@ -32,6 +35,7 @@ const Strategy = () => {
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
 
 
 
@@ -46,6 +50,7 @@ const Strategy = () => {
     } catch (err) {
       console.error("Error fetching strategy data:", err);
     }
+    setLoading(false)
   };
 
 
@@ -60,6 +65,7 @@ const Strategy = () => {
     } catch (err) {
       console.error("Error fetching strategy data:", err);
     }
+    setLoading(false)
   };
 
 
@@ -181,10 +187,10 @@ const Strategy = () => {
       <div className="col-md-6" key={index}>
         <div className="trade-card">
           <div className="trade-header ">
-            <div>📅 {fDateTimeH(item?.created_at)}</div>
+            <div>{item?.strategy_name}</div>
             <div className="tags">
               <div className="tag">{item?.callduration}</div>
-              <div className="tag">{item?.strategy_name}</div>
+              <div className="tag">📅{fDateTimeH(item?.created_at)}</div>
             </div>
           </div>
           <div className="strategy-title ">
@@ -198,14 +204,19 @@ const Strategy = () => {
           <table className="strategy-table table border mt-4">
             <tbody>
               <tr>
-                <th>Strategy (execute all)</th>
+                <th>Seg</th>
+                <th>Type</th>
+                <th>Trade Symbol</th>
                 <th>Entry</th>
-                <th>LTP</th>
               </tr>
               {item?.stockDetails?.map((stock, i) => (
                 <tr key={i}>
                   <td>
-                    <span className="badge bg-light-success px-2 py-1 me-2">{stock?.calltype}</span>
+                    <span className="alert alert-success px-2 py-1 me-2">
+                      {stock?.calltype}
+                    </span>
+                  </td>
+                  <td>
                     {stock?.tradesymbol}
                   </td>
                   <td>₹{stock?.price}</td>
@@ -218,7 +229,7 @@ const Strategy = () => {
             <div className="info d-flex justify-content-between w-100">
               <div>Maximum Loss: ₹{item?.maximum_loss}</div>
               <div>Maximum Profit: ₹{item?.maximum_profit}</div>
-              <div>Maximum Profit: ₹{item?.required_margin}</div>
+              <div>Required Margin : ₹{item?.required_margin}</div>
             </div>
           </div>
           <hr />
@@ -264,10 +275,10 @@ const Strategy = () => {
         <div className="col-md-6" key={index}>
           <div className="trade-card">
             <div className="trade-header">
-              <div>📅 {fDateTimeH(item?.created_at)}</div>
+              <div>{item?.strategy_name}</div>
               <div className="tags">
                 <div className="tag">{item?.callduration}</div>
-                <div className="tag">{item?.strategy_name}</div>
+                <div className="tag">📅{fDateTimeH(item?.created_at)}</div>
               </div>
             </div>
             <div className="strategy-title">
@@ -283,9 +294,10 @@ const Strategy = () => {
             <table className="strategy-table table border mt-4">
               <tbody>
                 <tr>
-                  <th>Strategy (execute all)</th>
+                  <th>Seg</th>
+                  <th>Type</th>
+                  <th>Trade Symbol</th>
                   <th>Entry</th>
-                  <th>LTP</th>
                 </tr>
                 {item?.stockDetails?.map((stock, i) => (
                   <tr key={i}>
@@ -293,6 +305,8 @@ const Strategy = () => {
                       <span className="alert alert-success px-2 py-1 me-2">
                         {stock?.calltype}
                       </span>
+                    </td>
+                    <td>
                       {stock?.tradesymbol}
                     </td>
                     <td>₹{stock?.price}</td>
@@ -379,7 +393,7 @@ const Strategy = () => {
         </div>
 
       </div>
-      <ul
+      {loading ? <Loader /> : <ul
         className="nav nav-pills border-bottom my-3 justify-content-center"
         role="tablist"
       >
@@ -404,7 +418,7 @@ const Strategy = () => {
             </a>
           </li>
         ))}
-      </ul>
+      </ul>}
 
 
 

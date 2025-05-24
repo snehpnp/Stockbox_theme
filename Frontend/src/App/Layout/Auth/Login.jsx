@@ -9,7 +9,6 @@ import { basicsettinglist } from "../../Services/Admin/Admin";
 import $ from "jquery";
 
 
-
 const Login = () => {
 
 
