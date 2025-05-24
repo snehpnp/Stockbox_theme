@@ -41,6 +41,9 @@ const Dashboard = () => {
   const [newslist, setNewslist] = useState([]);
   const [model, setModel] = useState(false);
   const [viewmodel2, setViewModel2] = useState(false);
+  const [image, setImage] = useState(
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTox5GjcAiQFx_AhZfdb1Y4Y5TViXM613ATDg&s"
+  );
 
   const location = useLocation();
 
@@ -178,6 +181,7 @@ const Dashboard = () => {
 
       if (response.status) {
         setUserDetail(response.data);
+        setImage(response?.data?.image)
       }
     } catch (error) {
       console.log("error", error);
@@ -288,8 +292,21 @@ const Dashboard = () => {
           <div className="card">
             <div className="card-body">
               <div className="d-flex flex-column align-items-center text-center">
-                <div className="btn-primary p-3 rounded-circle " style={{ marginTop: '-50px', width: '100px', height: '100px' }}>
-                  <CircleUserRound className="w-100 h-100 m-0" />
+                <div className="btn-primary  rounded-circle " style={{ marginTop: '-50px', width: '100px', height: '100px' }}>
+                  <img
+                    src={image}
+                    alt="User"
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      backgroundColor: "#f1f1f1",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                      cursor: "pointer",
+                    }}
+
+
+                  />
                 </div>
                 <div className="mt-3">
                   <h4>Hello,{userDetail?.FullName}</h4>
