@@ -1217,111 +1217,134 @@ class Clients {
    
     }
   }
-  async downloadDocument(req, res) {
-    try {
-      const { id, doc_id } = req.body;
-
-      // Fetch client details
-      const client = await Clients_Modal.findById(id);
-      if (!client) {
-        return res.status(404).json({
+  
+    async downloadDocument(req, res) {
+      try {
+        const { id, doc_id } = req.body;
+  
+        // Fetch client details
+        const client = await Clients_Modal.findById(id);
+        if (!client) {
+          return res.status(404).json({
+            status: false,
+            message: "Client not found",
+          });
+        }
+  
+        // Fetch Digio settings
+        const settings = await BasicSetting_Modal.findOne();
+        if (!settings || !settings.digio_client_id || !settings.digio_client_secret) {
+          return res.status(500).json({
+            status: false,
+            message: 'Digio settings are not configured or missing',
+          });
+        }
+  
+        // Prepare the authentication token
+        const authToken = Buffer.from(`${settings.digio_client_id}:${settings.digio_client_secret}`).toString('base64');
+  
+        // Define the API endpoint with the document ID
+        const url = `https://api.digio.in/v2/client/document/download?document_id=${doc_id}`;
+  
+        // Make a GET request to download the document
+        const response = await axios.get(url, {
+          headers: {
+            'Authorization': `Basic ${authToken}`,
+            'Content-Type': 'application/json'
+          },
+          responseType: 'arraybuffer'  // Handle binary data like PDF
+        });
+  
+        // Generate a unique filename
+        const fileName = `kyc-agreement-${client.PhoneNo}.pdf`;
+        const tempPath = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads/pdf`, fileName);
+  
+        // Ensure the directory exists
+        await fs.promises.mkdir(path.dirname(tempPath), { recursive: true });
+  
+        // Write the downloaded content to a PDF file
+        await fs.promises.writeFile(tempPath, response.data);
+  
+        // Update client record
+  
+  const pdfText = response.data.toString('utf8'); // Or 'latin1' if utf8 fails
+  
+  
+  
+  
+  if (
+    pdfText.includes('Signed by') ||
+    pdfText.includes('eSigned')
+  ) {
+        
+        client.kyc_verification = 1;
+        client.pdf = fileName;  // Set the PDF filename
+        await client.save();
+  
+        const titles = 'Important Update';
+        const message = `Congratulations! ${client.FullName} KYC Verified successfully.`;
+        const resultnm = new Adminnotification_Modal({
+          clientid: client._id,
+          type: 'kyc verification',
+          title: titles,
+          message: message
+        });
+  
+  
+        await resultnm.save();
+  
+  
+  //////////////////// send mail sign document ///////////// 
+  const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'kyc' });
+  if (mailtemplate) {
+    let finalMailBody = mailtemplate.mail_body.replace(/{clientName}/g, client.FullName);
+         
+      const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+      const finalHtml = finalMailBody
+          .replace(/{{company_name}}/g, settings.website_title)
+          .replace(/{{body}}/g, finalMailBody)
+          .replace(/{{logo}}/g, logo);
+  
+      const mailOptions = {
+          to: client.Email,
+          from: `${settings.from_name} <${settings.from_mail}>`,
+          subject: `${mailtemplate.mail_subject}`,
+          html: finalHtml,
+         attachments: [{ filename: fileName, path: tempPath }]
+      };
+  
+      await sendEmail(mailOptions);
+  }
+  
+  //////////////////// send mail sign document ///////////// 
+  
+  
+        // Return the file name or path for further use
+      return  res.json({
+          status: true,
+          pdf: fileName,
+          message: 'Document downloaded and saved successfully'
+        });
+  
+      }
+      else {
+       return res.status(400).json({
           status: false,
-          message: "Client not found",
+          message: 'Document is not signed or does not contain the required signature text.',
         });
       }
-
-      // Fetch Digio settings
-      const settings = await BasicSetting_Modal.findOne();
-      if (!settings || !settings.digio_client_id || !settings.digio_client_secret) {
+  
+  
+      } catch (error) {
+        
         return res.status(500).json({
           status: false,
-          message: 'Digio settings are not configured or missing',
+          message: error?.response?.data?.message || error?.message || 'Unknown error',
+          error: error.message || 'An unknown error occurred'
         });
       }
-
-      // Prepare the authentication token
-      const authToken = Buffer.from(`${settings.digio_client_id}:${settings.digio_client_secret}`).toString('base64');
-
-      // Define the API endpoint with the document ID
-      const url = `https://api.digio.in/v2/client/document/download?document_id=${doc_id}`;
-
-      // Make a GET request to download the document
-      const response = await axios.get(url, {
-        headers: {
-          'Authorization': `Basic ${authToken}`,
-          'Content-Type': 'application/json'
-        },
-        responseType: 'arraybuffer'  // Handle binary data like PDF
-      });
-
-      // Generate a unique filename
-      const fileName = `kyc-agreement-${client.PhoneNo}.pdf`;
-      const tempPath = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads/pdf`, fileName);
-
-      // Ensure the directory exists
-      await fs.promises.mkdir(path.dirname(tempPath), { recursive: true });
-
-      // Write the downloaded content to a PDF file
-      await fs.promises.writeFile(tempPath, response.data);
-
-      // Update client record
-      client.kyc_verification = 1;
-      client.pdf = fileName;  // Set the PDF filename
-      await client.save();
-
-      const titles = 'Important Update';
-      const message = `Congratulations! ${client.FullName} KYC Verified successfully.`;
-      const resultnm = new Adminnotification_Modal({
-        clientid: client._id,
-        type: 'kyc verification',
-        title: titles,
-        message: message
-      });
-
-
-      await resultnm.save();
-
-
-//////////////////// send mail sign document ///////////// 
-const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'kyc' });
-if (mailtemplate) {
-  let finalMailBody = mailtemplate.mail_body.replace(/{clientName}/g, client.FullName);
-       
-    const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
-    const finalHtml = finalMailBody
-        .replace(/{{company_name}}/g, settings.website_title)
-        .replace(/{{body}}/g, finalMailBody)
-        .replace(/{{logo}}/g, logo);
-
-    const mailOptions = {
-        to: client.Email,
-        from: `${settings.from_name} <${settings.from_mail}>`,
-        subject: `${mailtemplate.mail_subject}`,
-        html: finalHtml,
-       attachments: [{ filename: fileName, path: tempPath }]
-    };
-
-    await sendEmail(mailOptions);
-}
-
-//////////////////// send mail sign document ///////////// 
-
-
-      // Return the file name or path for further use
-      res.json({
-        status: true,
-        pdf: fileName,
-        message: 'Document downloaded and saved successfully'
-      });
-    } catch (error) {
-      
-      return res.status(500).json({
-        status: false,
-        message: error?.response?.data?.message || error?.message || 'Unknown error',
-        error: error.message || 'An unknown error occurred'
-      });
     }
-  }
+  
 
   async requestPayout(req, res) {
     try {
@@ -2477,119 +2500,146 @@ else {
    
     }
   }
-  async downloadDocuments(req, res) {
-    try {
-      const { id, doc_id } = req.query;
-
-      // Fetch client details
-      const client = await Clients_Modal.findById(id);
-      if (!client) {
-        return res.status(404).json({
-          status: false,
-          message: "Client not found",
-        });
-      }
-
-      // Fetch Digio settings
-      const settings = await BasicSetting_Modal.findOne();
-      if (!settings || !settings.digio_client_id || !settings.digio_client_secret) {
-        return res.status(500).json({
-          status: false,
-          message: 'Digio settings are not configured or missing',
-        });
-      }
-
-      // Prepare the authentication token
-      const authToken = Buffer.from(`${settings.digio_client_id}:${settings.digio_client_secret}`).toString('base64');
-
-      // Define the API endpoint with the document ID
-      const url = `https://api.digio.in/v2/client/document/download?document_id=${doc_id}`;
-
-      // Make a GET request to download the document
-      const response = await axios.get(url, {
-        headers: {
-          'Authorization': `Basic ${authToken}`,
-          'Content-Type': 'application/json'
-        },
-        responseType: 'arraybuffer'  // Handle binary data like PDF
-      });
-
-      // Generate a unique filename
-      const fileName = `kyc-agreement-${client.PhoneNo}.pdf`;
-      const tempPath = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads/pdf`, fileName);
-
-      // Ensure the directory exists
-      await fs.promises.mkdir(path.dirname(tempPath), { recursive: true });
-
-      // Write the downloaded content to a PDF file
-      await fs.promises.writeFile(tempPath, response.data);
-
-      // Update client record
-      client.kyc_verification = 1;
-      client.pdf = fileName;  // Set the PDF filename
-      await client.save();
-
-      const titles = 'Important Update';
-      const message = `Congratulations! ${client.FullName} KYC Verified successfully.`;
-      const resultnm = new Adminnotification_Modal({
-        clientid: client._id,
-        type: 'kyc verification',
-        title: titles,
-        message: message
-      });
-
-
-      await resultnm.save();
-
-
-//////////////////// send mail sign document ///////////// 
-const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'kyc' });
-if (mailtemplate) {
-  let finalMailBody = mailtemplate.mail_body.replace(/{clientName}/g, client.FullName);
-       
-    const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
-    const finalHtml = finalMailBody
-        .replace(/{{company_name}}/g, settings.website_title)
-        .replace(/{{body}}/g, finalMailBody)
-        .replace(/{{logo}}/g, logo);
-
-    const mailOptions = {
-        to: client.Email,
-        from: `${settings.from_name} <${settings.from_mail}>`,
-        subject: `${mailtemplate.mail_subject}`,
-        html: finalHtml,
-       attachments: [{ filename: fileName, path: tempPath }]
-    };
-
-    await sendEmail(mailOptions);
-}
-
-//////////////////// send mail sign document ///////////// 
-
-
-      // Return the file name or path for further use
-
+ 
+   async downloadDocuments(req, res) {
+     try {
+       const { id, doc_id } = req.query;
+ 
+       // Fetch client details
+       const client = await Clients_Modal.findById(id);
+       if (!client) {
+         return res.status(404).json({
+           status: false,
+           message: "Client not found",
+         });
+       }
+ 
+       // Fetch Digio settings
+       const settings = await BasicSetting_Modal.findOne();
+       if (!settings || !settings.digio_client_id || !settings.digio_client_secret) {
+         return res.status(500).json({
+           status: false,
+           message: 'Digio settings are not configured or missing',
+         });
+       }
+ 
+       // Prepare the authentication token
+       const authToken = Buffer.from(`${settings.digio_client_id}:${settings.digio_client_secret}`).toString('base64');
+ 
+       // Define the API endpoint with the document ID
+       const url = `https://api.digio.in/v2/client/document/download?document_id=${doc_id}`;
+ 
+       // Make a GET request to download the document
+       const response = await axios.get(url, {
+         headers: {
+           'Authorization': `Basic ${authToken}`,
+           'Content-Type': 'application/json'
+         },
+         responseType: 'arraybuffer'  // Handle binary data like PDF
+       });
+ 
+       // Generate a unique filename
+       const fileName = `kyc-agreement-${client.PhoneNo}.pdf`;
+       const tempPath = path.join(__dirname, `../../../../${process.env.DOMAIN}/uploads/pdf`, fileName);
+ 
+       // Ensure the directory exists
+       await fs.promises.mkdir(path.dirname(tempPath), { recursive: true });
+ 
+       // Write the downloaded content to a PDF file
+       await fs.promises.writeFile(tempPath, response.data);
+ const pdfText = response.data.toString('utf8'); // Or 'latin1' if utf8 fails
+ 
+ 
+ 
+ 
+ if (
+   pdfText.includes('Signed by') ||
+   pdfText.includes('eSigned')
+ ) {
+  
+       // Update client record
+       client.kyc_verification = 1;
+       client.pdf = fileName;  // Set the PDF filename
+       await client.save();
+ 
+       const titles = 'Important Update';
+       const message = `Congratulations! ${client.FullName} KYC Verified successfully.`;
+       const resultnm = new Adminnotification_Modal({
+         clientid: client._id,
+         type: 'kyc verification',
+         title: titles,
+         message: message
+       });
+ 
+ 
+       await resultnm.save();
+ 
+ 
+ //////////////////// send mail sign document ///////////// 
+ const mailtemplate = await Mailtemplate_Modal.findOne({ mail_type: 'kyc' });
+ if (mailtemplate) {
+   let finalMailBody = mailtemplate.mail_body.replace(/{clientName}/g, client.FullName);
+        
+     const logo = `https://${req.headers.host}/uploads/basicsetting/${settings.logo}`;
+     const finalHtml = finalMailBody
+         .replace(/{{company_name}}/g, settings.website_title)
+         .replace(/{{body}}/g, finalMailBody)
+         .replace(/{{logo}}/g, logo);
+ 
+     const mailOptions = {
+         to: client.Email,
+         from: `${settings.from_name} <${settings.from_mail}>`,
+         subject: `${mailtemplate.mail_subject}`,
+         html: finalHtml,
+        attachments: [{ filename: fileName, path: tempPath }]
+     };
+ 
+     await sendEmail(mailOptions);
+ }
+ 
+ //////////////////// send mail sign document ///////////// 
+ 
+ 
+       // Return the file name or path for further use
+ 
+  if (client.devicetoken) {
+ return res.json({
+         status: true,
+         pdf: fileName,
+         message: 'Document downloaded and saved successfully'
+       });
+     }
+     else {
+        const redirectUrl = `https://${req.headers.host}/#/user/dashboard`;
+        return res.redirect(redirectUrl);
+     }
+   } else {
  if (client.devicetoken) {
- res.json({
-        status: true,
-        pdf: fileName,
-        message: 'Document downloaded and saved successfully'
-      });
-    }
-    else {
+       return res.status(400).json({
+         status: false,
+         message: 'Document is not signed or does not contain the required signature text.',
+       });
+     }
+     else {
        const redirectUrl = `https://${req.headers.host}/#/user/dashboard`;
-       return res.redirect(redirectUrl);
-    }
-     
-    } catch (error) {
+       return res.redirect
+     }
+ 
+     }
+ 
+ 
+ 
       
-      return res.status(500).json({
-        status: false,
-        message: error?.response?.data?.message || error?.message || 'Unknown error',
-        error: error.message || 'An unknown error occurred'
-      });
-    }
-  }
+     } catch (error) {
+       
+       return res.status(500).json({
+         status: false,
+         message: error?.response?.data?.message || error?.message || 'Unknown error',
+         error: error.message || 'An unknown error occurred'
+       });
+     }
+   }
+ 
 
 
   
