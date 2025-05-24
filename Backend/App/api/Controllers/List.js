@@ -6591,6 +6591,7 @@ await sendEmail(mailOptions);
 
 }
       }
+      
       planprice = planprice+plan.price;
 
  if (orderid && client.kyc_verification === 0 && settings.kyc === 2) {
